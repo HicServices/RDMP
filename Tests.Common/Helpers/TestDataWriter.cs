@@ -14,10 +14,9 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Tests.Common.Helpers;
 
-public class TestDataWriter : CacheFilesystemDestination
+public sealed class TestDataWriter : CacheFilesystemDestination
 {
-    public TestDataWriterChunk ProcessPipelineData(TestDataWriterChunk toProcess, IDataLoadEventListener listener,
-        GracefulCancellationToken cancellationToken)
+    private TestDataWriterChunk ProcessPipelineData(TestDataWriterChunk toProcess)
     {
         var layout = CreateCacheLayout();
 
@@ -38,7 +37,7 @@ public class TestDataWriter : CacheFilesystemDestination
 
     public override ICacheChunk ProcessPipelineData(ICacheChunk toProcess, IDataLoadEventListener listener,
         GracefulCancellationToken cancellationToken) =>
-        ProcessPipelineData((TestDataWriterChunk)toProcess, listener, cancellationToken);
+        ProcessPipelineData((TestDataWriterChunk)toProcess);
 
     public override ICacheLayout CreateCacheLayout() => new BasicCacheLayout(CacheDirectory);
 

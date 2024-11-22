@@ -29,9 +29,9 @@ public partial class DatasetsCollectionUI : RDMPCollectionUI, ILifetimeSubscribe
         base.SetItemActivator(activator);
 
         CommonTreeFunctionality.SetUp(RDMPCollection.Datasets, tlvDatasets, Activator, olvName, olvName,
-            new RDMPCollectionCommonFunctionalitySettings(),tbFilter);
+            new RDMPCollectionCommonFunctionalitySettings(), tbFilter);
         CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter =
-            a => new IAtomicCommand[]
+            _ => new IAtomicCommand[]
             {
                 new ExecuteCommandCreateNewDatasetUI(Activator)
                     { OverrideCommandName = "Add New Dataset", Weight = -50.9f }
@@ -41,29 +41,27 @@ public partial class DatasetsCollectionUI : RDMPCollectionUI, ILifetimeSubscribe
 
         RefreshDatasets(Activator.CoreChildProvider.DatasetRootFolder);
 
-        if (_firstTime)
+        if (!_firstTime) return;
+
+        CommonTreeFunctionality.SetupColumnTracking(olvName, new Guid("f8b0481e-378c-4996-9400-cb039c2efc5c"));
+        _firstTime = false;
+        var _refresh = new ToolStripMenuItem
         {
-            CommonTreeFunctionality.SetupColumnTracking(olvName, new Guid("f8b0481e-378c-4996-9400-cb039c2efc5c"));
-            _firstTime = false;
-            var _refresh = new ToolStripMenuItem
+            Visible = true,
+            Image = FamFamFamIcons.arrow_refresh.ImageToBitmap(),
+            Alignment = ToolStripItemAlignment.Right,
+            ToolTipText = "Refresh Object"
+        };
+        _refresh.Click += delegate (object sender, EventArgs e) {
+            var dataset = Activator.CoreChildProvider.AllDatasets.First();
+            if (dataset is not null)
             {
-                Visible = true,
-                Image = FamFamFamIcons.arrow_refresh.ImageToBitmap(),
-                Alignment = ToolStripItemAlignment.Right,
-                ToolTipText = "Refresh Object"
-            };
-            _refresh.Click += delegate (object sender, EventArgs e) {
-                var dataset = Activator.CoreChildProvider.AllDatasets.First();
-                if (dataset is not null)
-                {
-                    var cmd = new ExecuteCommandRefreshObject(Activator, dataset);
-                    cmd.Execute();
-                }
-            };
-            CommonFunctionality.Add(_refresh);
-        }
+                var cmd = new ExecuteCommandRefreshObject(Activator, dataset);
+                cmd.Execute();
+            }
+        };
+        CommonFunctionality.Add(_refresh);
     }
-   
 
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)

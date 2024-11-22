@@ -95,7 +95,7 @@ public class RemoteRDMP : DatabaseEntity, INamed, IEncryptedPasswordHost
     }
 
     /// <inheritdoc/>
-    public RemoteRDMP(ICatalogueRepository repository) : base()
+    public RemoteRDMP(ICatalogueRepository repository)
     {
         // need a new copy of the catalogue repository so a new DB connection can be made to use with the encrypted host.
         _encryptedPasswordHost = new EncryptedPasswordHost(repository);

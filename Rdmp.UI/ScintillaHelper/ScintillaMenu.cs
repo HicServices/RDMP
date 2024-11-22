@@ -33,7 +33,7 @@ internal class ScintillaMenu : ContextMenuStrip
     /// </summary>
     public WordList Hunspell { get; set; }
 
-    public ScintillaMenu(Scintilla scintilla, bool spellCheck) : base()
+    public ScintillaMenu(Scintilla scintilla, bool spellCheck)
     {
         _scintilla = scintilla;
         InitContextMenu(spellCheck);

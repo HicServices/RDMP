@@ -113,7 +113,7 @@ public abstract class Argument : DatabaseEntity, IArgument
     #endregion
 
     /// <inheritdoc/>
-    protected Argument() : base()
+    protected Argument()
     {
     }
 

@@ -18,8 +18,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
-using Terminal.Gui;
 
 namespace Rdmp.Core.DataExport.DataRelease;
 
@@ -27,9 +25,8 @@ namespace Rdmp.Core.DataExport.DataRelease;
 /// Release engine for S3 buckets.
 /// Write the release directory structure to an S3 bucket, with optional subdirectory
 /// </summary>
-public class AWSReleaseEngine : ReleaseEngine
+public sealed class AWSReleaseEngine : ReleaseEngine
 {
-
     private readonly AWSS3 _s3Helper;
     private readonly S3Bucket _bucket;
     private readonly string _bucketFolder;
@@ -63,37 +60,30 @@ public class AWSReleaseEngine : ReleaseEngine
             sw.Flush();
             sw.Close();
 
-            Task.Run(async () =>
-            {
-                await _s3Helper.PutObject(_bucket.BucketName, contentsFileName, auditFilePath, GetLocation(null, null));
-            }
-            ).Wait();
+            _s3Helper.PutObject(_bucket.BucketName, contentsFileName, auditFilePath, GetLocation(null, null)).Wait();
             File.Delete(auditFilePath);
-
         }
+
         ReleaseSuccessful = true;
     }
 
     protected override void ReleaseGlobalFolder()
     {
-
         var directory = ReleaseAudit.SourceGlobalFolder;
 
-        if (ReleaseAudit.SourceGlobalFolder != null)
+        if (ReleaseAudit.SourceGlobalFolder == null) return;
+
+        foreach (var file in directory.EnumerateFiles())
         {
-            foreach (var file in directory.EnumerateFiles())
-            {
-                var location = GetLocation("Globals", null);
-                Task.Run(async () => await _s3Helper.PutObject(_bucket.BucketName, file.Name, file.FullName, location)).Wait();
-            }
-            foreach (var dir in directory.EnumerateDirectories())
-            {
-                foreach (var file in dir.EnumerateFiles())
-                {
-                    var location = GetLocation("Globals", dir.Name);
-                    Task.Run(async () => await _s3Helper.PutObject(_bucket.BucketName, file.Name, file.FullName, location)).Wait();
-                }
-            }
+            var location = GetLocation("Globals", null);
+            _s3Helper.PutObject(_bucket.BucketName, file.Name, file.FullName, location).Wait();
+        }
+
+        foreach (var dir in directory.EnumerateDirectories())
+        foreach (var file in dir.EnumerateFiles())
+        {
+            var location = GetLocation("Globals", dir.Name);
+            _s3Helper.PutObject(_bucket.BucketName, file.Name, file.FullName, location).Wait();
         }
     }
 
@@ -108,7 +98,7 @@ public class AWSReleaseEngine : ReleaseEngine
     }
 
     protected override void ReleaseAllExtractionConfigurations(Dictionary<IExtractionConfiguration, List<ReleasePotential>> toRelease, StreamWriter sw,
-    Dictionary<IExtractionConfiguration, ReleaseEnvironmentPotential> environments, bool isPatch)
+        Dictionary<IExtractionConfiguration, ReleaseEnvironmentPotential> environments, bool isPatch)
     {
         //for each configuration, all the release potentials can be released
         foreach (var kvp in toRelease)
@@ -129,122 +119,104 @@ public class AWSReleaseEngine : ReleaseEngine
 
             var wordDocName = $"ReleaseDocument_{extractionIdentifier}.docx";
             var wordDocPath = Path.Combine(Path.GetTempPath(),
-               wordDocName);
+                wordDocName);
             var generator = new WordDataReleaseFileGenerator(kvp.Key, _repository);
             generator.GenerateWordFile(wordDocPath);
-            Task.Run(async () => await _s3Helper.PutObject(_bucket.BucketName, wordDocName, wordDocPath, locationWithinBucket)).Wait();
+            _s3Helper.PutObject(_bucket.BucketName, wordDocName, wordDocPath, locationWithinBucket).Wait();
             AuditFileCreation(wordDocName, sw, 1);
 
-            foreach (var rp in kvp.Value.Where(rp => rp.ExtractDirectory != null))
+            foreach (var rp in kvp.Value.Where(static rp => rp.ExtractDirectory != null))
             {
                 var rpDirectory = !string.IsNullOrWhiteSpace(locationWithinBucket) ? $"{locationWithinBucket}/{rp.ExtractDirectory.Name}" : rp.ExtractDirectory.Name;
                 AuditDirectoryCreation(rpDirectory, sw, 1);
                 CutTreeRecursive(rp.ExtractDirectory, rpDirectory, sw, 2);
                 AuditProperRelease(rp, environments[kvp.Key], rpDirectory, isPatch);
-
-
             }
+
             ConfigurationsReleased.Add(kvp.Key);
         }
     }
 
-    protected void AuditProperRelease(ReleasePotential rp, ReleaseEnvironmentPotential environment,
-    string rpDirectory, bool isPatch)
+    private void AuditProperRelease(ReleasePotential rp, ReleaseEnvironmentPotential environment,
+        string rpDirectory, bool isPatch)
     {
-        FileInfo datasetFile = null;
-
         if (rp.ExtractFile != null)
         {
             var expectedFilename = rp.ExtractFile.Name;
             var directory = !string.IsNullOrWhiteSpace(rpDirectory) ? $"{rpDirectory}/{expectedFilename}" : expectedFilename;
             if (!_s3Helper.ObjectExists(directory, _bucket.BucketName))
-            {
                 throw new Exception(
                     $"Expected to find file called {expectedFilename} in S3 Bucket under {rpDirectory}, but could not");
-            }
         }
 
         //creates a new one in the database
-        new ReleaseLog(_repository, rp, environment, isPatch, new DirectoryInfo(rpDirectory), datasetFile);
+        _ = new ReleaseLog(_repository, rp, environment, isPatch, new DirectoryInfo(rpDirectory), null);
     }
 
-    protected void CutTreeRecursive(DirectoryInfo from, string into, StreamWriter audit, int tabDepth)
+    private void CutTreeRecursive(DirectoryInfo from, string into, StreamWriter audit, int tabDepth)
     {
         //found files in current directory
-        foreach (var file in from.GetFiles())
+        foreach (var file in from.EnumerateFiles())
         {
             //audit as -Filename at tab indent
             AuditFileCreation(file.Name, audit, tabDepth);
-            Task.Run(async () => await _s3Helper.PutObject(_bucket.BucketName, file.Name, file.FullName, into)).Wait();
-
+            _s3Helper.PutObject(_bucket.BucketName, file.Name, file.FullName, into).Wait();
         }
 
         //found subdirectory
-        foreach (var dir in from.GetDirectories().Where(dir => dir.GetFiles().Any() || dir.GetDirectories().Any())){
+        foreach (var dir in from.EnumerateDirectories().Where(static dir => dir.EnumerateFiles().Any() || dir.EnumerateDirectories().Any())){
             //audit as +DirectoryName at tab indent
             AuditDirectoryCreation(dir.Name, audit, tabDepth);
             CutTreeRecursive(dir, !string.IsNullOrWhiteSpace(into) ? $"{into}/{dir.Name}" : dir.Name, audit, tabDepth + 1);
         }
     }
-    protected string ReleaseMetadata(KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> kvp,
-  string configurationSubDirectory)
+
+    private string ReleaseMetadata(KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> kvp,
+        string configurationSubDirectory)
     {
         //if there is custom data copy that across for the specific cohort
         var folderFound = GetAllFoldersCalled(ExtractionDirectory.METADATA_FOLDER_NAME, kvp);
         var source = GetUniqueDirectoryFrom(folderFound.Distinct(new DirectoryInfoComparer()).ToList());
 
-        if (source != null)
-        {
-            var locationPath = !string.IsNullOrWhiteSpace(configurationSubDirectory) ? $"{configurationSubDirectory}/{source.Name}" : source.Name;
-            foreach (var file in source.EnumerateFiles())
-            {
-                Task.Run(async () => await _s3Helper.PutObject(_bucket.BucketName, file.Name, file.FullName, locationPath)).Wait();
-            }
-            return locationPath;
-        }
+        if (source == null) return null;
 
-        return null;
+        var locationPath = !string.IsNullOrWhiteSpace(configurationSubDirectory) ? $"{configurationSubDirectory}/{source.Name}" : source.Name;
+        foreach (var file in source.EnumerateFiles())
+            _s3Helper.PutObject(_bucket.BucketName, file.Name, file.FullName, locationPath).Wait();
+        return locationPath;
     }
 
 
-    protected string ReleaseMasterData(
-  KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> kvp, string configurationSubDirectory)
+    private string ReleaseMasterData(
+        KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> kvp, string configurationSubDirectory)
     {
         //if there is custom data copy that across for the specific cohort
         var fromMasterData = ThrowIfMasterDataConflictElseReturnFirstOtherDataFolder(kvp);
-        if (fromMasterData != null)
-        {
-            var locationPath = !string.IsNullOrWhiteSpace(configurationSubDirectory) ? $"{configurationSubDirectory}/{fromMasterData.Name}" : fromMasterData.Name;
-            foreach (var file in fromMasterData.EnumerateFiles())
-            {
-                Task.Run(async () => await _s3Helper.PutObject(_bucket.BucketName, file.Name, file.FullName, locationPath)).Wait();
-            }
-            return locationPath;
-        }
+        if (fromMasterData == null) return null;
 
-        return null;
+        var locationPath = !string.IsNullOrWhiteSpace(configurationSubDirectory) ? $"{configurationSubDirectory}/{fromMasterData.Name}" : fromMasterData.Name;
+        foreach (var file in fromMasterData.EnumerateFiles())
+            _s3Helper.PutObject(_bucket.BucketName, file.Name, file.FullName, locationPath).Wait();
+
+        return locationPath;
     }
 
-    protected string ReleaseCustomData(
-  KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> kvp, string configurationSubDirectory)
+    private string ReleaseCustomData(
+        KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> kvp, string configurationSubDirectory)
     {
         //if there is custom data copy that across for the specific cohort
         var fromCustomData = ThrowIfCustomDataConflictElseReturnFirstCustomDataFolder(kvp);
-        if (fromCustomData != null)
-        {
-            var locationPath = !string.IsNullOrWhiteSpace(configurationSubDirectory) ? $"{configurationSubDirectory}/{fromCustomData.Name}" : fromCustomData.Name;
-            foreach (var file in fromCustomData.EnumerateFiles())
-            {
-                Task.Run(async () => await _s3Helper.PutObject(_bucket.BucketName, file.Name, file.FullName, locationPath)).Wait();
-            }
-            return locationPath;
-        }
+        if (fromCustomData == null) return null;
 
-        return null;
+        var locationPath = !string.IsNullOrWhiteSpace(configurationSubDirectory) ? $"{configurationSubDirectory}/{fromCustomData.Name}" : fromCustomData.Name;
+        foreach (var file in fromCustomData.EnumerateFiles())
+            _s3Helper.PutObject(_bucket.BucketName, file.Name, file.FullName, locationPath).Wait();
+
+        return locationPath;
     }
 
-    protected void AuditExtractionConfigurationDetails(StreamWriter sw, string configurationSubDirectory,
-   KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> kvp, string extractionIdentifier)
+    private void AuditExtractionConfigurationDetails(StreamWriter sw, string configurationSubDirectory,
+        KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> kvp, string extractionIdentifier)
     {
         //audit in contents.txt
         sw.WriteLine($"Folder:{configurationSubDirectory}");
@@ -253,13 +225,13 @@ public class AWSReleaseEngine : ReleaseEngine
         sw.WriteLine($"ExtractionConfiguration.ID:{kvp.Key.ID}");
         sw.WriteLine($"ExtractionConfiguration Identifier:{extractionIdentifier}");
         sw.WriteLine(
-            $"CumulativeExtractionResult.ID(s):{kvp.Value.Select(v => v.DatasetExtractionResult.ID).Distinct().Aggregate("", (s, n) => $"{s}{n},").TrimEnd(',')}");
+            $"CumulativeExtractionResult.ID(s):{kvp.Value.Select(static v => v.DatasetExtractionResult.ID).Distinct().Aggregate("", static (s, n) => $"{s}{n},").TrimEnd(',')}");
         sw.WriteLine($"CohortName:{_repository.GetObjectByID<ExtractableCohort>((int)kvp.Key.Cohort_ID)}");
         sw.WriteLine($"CohortID:{kvp.Key.Cohort_ID}");
     }
 
 
-    protected StreamWriter PrepareAuditFile(string path)
+    private StreamWriter PrepareAuditFile(string path)
     {
         var sw = new StreamWriter(path);
 

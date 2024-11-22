@@ -22,7 +22,7 @@ public class DataExportIconProvider : CatalogueIconProvider
     {
         //Calls to the Resource manager cause file I/O (I think or at the least CPU use anyway) so cache them all at once
         StateBasedIconProviders.Add(new ExtractableDataSetStateBasedIconProvider(CatalogueStateBasedIconProvider));
-        StateBasedIconProviders.Add(new ExtractionConfigurationStateBasedIconProvider(this));
+        StateBasedIconProviders.Add(new ExtractionConfigurationStateBasedIconProvider());
     }
 
     protected override Image<Rgba32> GetImageImpl(object concept, OverlayKind kind = OverlayKind.None)

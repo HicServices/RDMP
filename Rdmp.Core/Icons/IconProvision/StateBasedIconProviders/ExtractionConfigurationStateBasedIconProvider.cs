@@ -10,24 +10,11 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
 
-public class ExtractionConfigurationStateBasedIconProvider : IObjectStateBasedIconProvider
+public sealed class ExtractionConfigurationStateBasedIconProvider : IObjectStateBasedIconProvider
 {
-    private readonly Image<Rgba32> _normal;
-    private readonly Image<Rgba32> _frozen;
+    private static readonly Image<Rgba32> Normal = Image.Load<Rgba32>(CatalogueIcons.ExtractionConfiguration);
+    private static readonly Image<Rgba32> Frozen = Image.Load<Rgba32>(CatalogueIcons.FrozenExtractionConfiguration);
 
-    public ExtractionConfigurationStateBasedIconProvider(DataExportIconProvider iconProvider)
-    {
-        _normal = Image.Load<Rgba32>(CatalogueIcons.ExtractionConfiguration);
-        _frozen = Image.Load<Rgba32>(CatalogueIcons.FrozenExtractionConfiguration);
-    }
-
-    public Image<Rgba32> GetImageIfSupportedObject(object o)
-    {
-        if (o is not ExtractionConfiguration ec)
-            return null;
-
-        var basicImage = ec.IsReleased ? _frozen : _normal;
-
-        return basicImage; //it's all fine and green
-    }
+    public Image<Rgba32> GetImageIfSupportedObject(object o) =>
+        o is not ExtractionConfiguration ec ? null : ec.IsReleased ? Frozen : Normal;
 }

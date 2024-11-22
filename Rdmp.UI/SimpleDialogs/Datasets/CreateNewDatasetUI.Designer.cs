@@ -1,6 +1,6 @@
 ﻿namespace Rdmp.UI.SimpleDialogs.Datasets
 {
-    partial class CreateNewDatasetUI
+    sealed partial class CreateNewDatasetUI
     {
         /// <summary>
         /// Required designer variable.

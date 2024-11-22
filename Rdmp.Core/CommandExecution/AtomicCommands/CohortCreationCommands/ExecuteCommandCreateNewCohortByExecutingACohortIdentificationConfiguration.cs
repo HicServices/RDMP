@@ -14,7 +14,6 @@ using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
-using Rdmp.Core.Setting;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
@@ -23,7 +22,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
 /// <summary>
 /// Generates and runs an SQL query based on a <see cref="CohortIdentificationConfiguration"/> and pipes the resulting private identifier list to create a new <see cref="ExtractableCohort"/>.
 /// </summary>
-public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration : CohortCreationCommandExecution
+public sealed class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration : CohortCreationCommandExecution
 {
     private CohortIdentificationConfiguration _cic;
 
@@ -70,19 +69,20 @@ public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfig
         if (cic == null)
             return;
 
-        if (BasicActivator.IsInteractive) {
-            var PromptForVersionOnCohortCommit = false;
-            var PromptForVersionOnCohortCommitSetting = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Setting.Setting>().Where(s => s.Key == "PromptForVersionOnCohortCommit").FirstOrDefault();
-            if (PromptForVersionOnCohortCommitSetting is not null) PromptForVersionOnCohortCommit = Convert.ToBoolean(PromptForVersionOnCohortCommitSetting.Value);
-            if (PromptForVersionOnCohortCommit && BasicActivator.YesNo("It is recommended to save your cohort as a new version before committing. Would you like to do this?", "Save cohort as new version before committing?"))
+        if (BasicActivator.IsInteractive)
+        {
+            var promptForVersionOnCohortCommit = false;
+            var promptForVersionOnCohortCommitSetting = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Setting.Setting>().Where(static s => s.Key == "PromptForVersionOnCohortCommit").FirstOrDefault();
+            if (promptForVersionOnCohortCommitSetting is not null) promptForVersionOnCohortCommit = Convert.ToBoolean(promptForVersionOnCohortCommitSetting.Value);
+            if (promptForVersionOnCohortCommit && BasicActivator.YesNo("It is recommended to save your cohort as a new version before committing. Would you like to do this?", "Save cohort as new version before committing?"))
             {
                 var newVersion = new ExecuteCommandCreateVersionOfCohortConfiguration(BasicActivator, cic);
                 newVersion.Execute();
                 var versions = cic.GetVersions();
                 cic = versions.Last();
             }
-
         }
+
         if (Project == null && BasicActivator.CoreChildProvider is DataExportChildProvider dx)
         {
             var projAssociations = dx.AllProjectAssociatedCics
@@ -90,7 +90,7 @@ public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfig
             if (projAssociations.Length == 1) Project = projAssociations[0].Project;
         }
 
-        var auditLogBuilder = new ExtractableCohortAuditLogBuilder();
+        _ = new ExtractableCohortAuditLogBuilder();
         var request = GetCohortCreationRequest(ExtractableCohortAuditLogBuilder.GetDescription(cic));
 
         //user choose to cancel the cohort creation request dialogue
@@ -101,7 +101,7 @@ public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfig
 
         var configureAndExecute = GetConfigureAndExecuteControl(request, $"Execute CIC {cic} and commit results", cic);
 
-        configureAndExecute.PipelineExecutionFinishedsuccessfully += (s, u) => OnImportCompletedSuccessfully(cic);
+        configureAndExecute.PipelineExecutionFinishedsuccessfully += (_, _) => OnImportCompletedSuccessfully(cic);
 
         configureAndExecute.Run(BasicActivator.RepositoryLocator, null, null, null);
     }

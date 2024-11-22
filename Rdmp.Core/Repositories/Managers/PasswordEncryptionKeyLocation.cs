@@ -9,7 +9,6 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using Rdmp.Core.Curation;
-using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
 
 namespace Rdmp.Core.Repositories.Managers;
 
@@ -20,11 +19,11 @@ namespace Rdmp.Core.Repositories.Managers;
 /// 
 /// <para>See PasswordEncryptionKeyLocationUI for more information.</para>
 /// </summary>
-public class PasswordEncryptionKeyLocation : IEncryptionManager
+public sealed class PasswordEncryptionKeyLocation : IEncryptionManager
 {
     private readonly ICatalogueRepository _catalogueRepository;
 
-    public const string RDMP_KEY_LOCATION = "RDMP_KEY_LOCATION";
+    private const string RDMPKeyLocation = "RDMP_KEY_LOCATION";
 
     /// <summary>
     /// Prepares to retrieve/create the key file for the given platform database
@@ -52,7 +51,7 @@ public class PasswordEncryptionKeyLocation : IEncryptionManager
     private string GetKeyFileLocationImpl()
     {
         // Prefer to get it from the environment variable
-        var fromEnvVar = Environment.GetEnvironmentVariable(RDMP_KEY_LOCATION);
+        var fromEnvVar = Environment.GetEnvironmentVariable(RDMPKeyLocation);
 
         return fromEnvVar ?? _catalogueRepository.GetEncryptionKeyPath();
     }
@@ -72,6 +71,7 @@ public class PasswordEncryptionKeyLocation : IEncryptionManager
     {
         if (string.IsNullOrWhiteSpace(keyLocation))
             return;
+
         try
         {
             new RSACryptoServiceProvider().FromXmlString(File.ReadAllText(keyLocation));

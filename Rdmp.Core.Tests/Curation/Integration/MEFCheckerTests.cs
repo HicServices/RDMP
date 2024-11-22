@@ -13,7 +13,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.Integration;
 
-public class MEFCheckerTests : UnitTests
+public sealed class MEFCheckerTests : UnitTests
 {
     [Test]
     public void FindClass_WrongCase_FoundAnyway()
@@ -24,23 +24,23 @@ public class MEFCheckerTests : UnitTests
     [Test]
     public void FindClass_EmptyString()
     {
-        var m = new MEFChecker("", s => Assert.Fail());
+        var m = new MEFChecker("", static _ => Assert.Fail());
         var ex = Assert.Throws<Exception>(() => m.Check(ThrowImmediatelyCheckNotifier.Quiet));
         Assert.That(
-            ex.Message, Is.EqualTo("MEFChecker was asked to check for the existence of an Export class but the _classToFind string was empty"));
+            ex?.Message, Is.EqualTo("MEFChecker was asked to check for the existence of an Export class but the _classToFind string was empty"));
     }
 
     [Test]
     public void FindClass_CorrectNamespace()
     {
-        var m = new MEFChecker("Rdmp.Core.DataLoad.Modules.Attachers.AnySeparatorFileAttacher", s => Assert.Fail());
+        var m = new MEFChecker("Rdmp.Core.DataLoad.Modules.Attachers.AnySeparatorFileAttacher", static _ => Assert.Fail());
         m.Check(ThrowImmediatelyCheckNotifier.Quiet);
     }
 
     [Test]
     public void FindClass_WrongNamespace()
     {
-        var m = new MEFChecker("CatalogueLibrary.AnySeparatorFileAttacher", s => Assert.Pass());
+        var m = new MEFChecker("CatalogueLibrary.AnySeparatorFileAttacher", static _ => Assert.Pass());
         m.Check(new AcceptAllCheckNotifier());
 
         Assert.Fail("Expected the class not to be found but to be identified under the correct namespace (above)");
@@ -49,7 +49,7 @@ public class MEFCheckerTests : UnitTests
     [Test]
     public void FindClass_NonExistent()
     {
-        var m = new MEFChecker("CatalogueLibrary.UncleSam", s => Assert.Fail());
+        var m = new MEFChecker("CatalogueLibrary.UncleSam", static _ => Assert.Fail());
         var ex = Assert.Throws<Exception>(() => m.Check(ThrowImmediatelyCheckNotifier.Quiet));
         Assert.That(
             ex?.Message, Does.Contain("Could not find MEF class called CatalogueLibrary.UncleSam in LoadModuleAssembly.GetAllTypes() and couldn't even find any with the same basic name"));

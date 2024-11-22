@@ -109,7 +109,7 @@ public class TicketingSystemConfiguration : DatabaseEntity, INamed
     }
 
     /// <inheritdoc/>
-    public TicketingSystemConfiguration(ICatalogueRepository repository, string name) : base()
+    public TicketingSystemConfiguration(ICatalogueRepository repository, string name)
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {

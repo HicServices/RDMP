@@ -14,7 +14,6 @@ using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Discovery.TableCreation;
 using NUnit.Framework;
-using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Defaults;
@@ -132,15 +131,15 @@ internal class CrossDatabaseDataLoadTests : DataLoadEngineTestsBase
                     blk.Upload(dt);
                 }
 
-                    Assert.That(tbl.DiscoverColumns().Count(c =>
-                        c.GetRuntimeName().Equals("ID", StringComparison.CurrentCultureIgnoreCase)), Is.EqualTo(1),
+                Assert.That(tbl.DiscoverColumns().Count(static c =>
+                        c.GetRuntimeName().Equals("ID", StringComparison.OrdinalIgnoreCase)), Is.EqualTo(1),
                     "Table created did not contain ID column");
                 break;
             }
             case TestCase.AllPrimaryKeys:
                 dt.PrimaryKey = dt.Columns.Cast<DataColumn>().ToArray();
                 tbl = db.CreateTable("MyTable", dt, new[] { nameCol }); //upload the column as is
-                Assert.That(tbl.DiscoverColumns().All(c => c.IsPrimaryKey));
+                Assert.That(tbl.DiscoverColumns().All(static c => c.IsPrimaryKey));
                 break;
             default:
                 tbl = db.CreateTable("MyTable", dt, new[]
@@ -192,9 +191,9 @@ MrMurder,2001-01-01,Yella");
 
         Assert.Multiple(() =>
         {
-            Assert.That(tbl.DiscoverColumns().Select(c => c.GetRuntimeName()).Contains(SpecialFieldNames.DataLoadRunID), Is.EqualTo(testCase != TestCase.NoTrigger),
-                    $"When running with NoTrigger there shouldn't be any additional columns added to table. Test case was {testCase}");
-            Assert.That(tbl.DiscoverColumns().Select(c => c.GetRuntimeName()).Contains(SpecialFieldNames.ValidFrom), Is.EqualTo(testCase != TestCase.NoTrigger),
+            Assert.That(tbl.DiscoverColumns().Select(static c => c.GetRuntimeName()).Contains(SpecialFieldNames.DataLoadRunID), Is.EqualTo(testCase != TestCase.NoTrigger),
+                $"When running with NoTrigger there shouldn't be any additional columns added to table. Test case was {testCase}");
+            Assert.That(tbl.DiscoverColumns().Select(static c => c.GetRuntimeName()).Contains(SpecialFieldNames.ValidFrom), Is.EqualTo(testCase != TestCase.NoTrigger),
                 $"When running with NoTrigger there shouldn't be any additional columns added to table. Test case was {testCase}");
         });
 
@@ -240,7 +239,7 @@ MrMurder,2001-01-01,Yella");
 
                 //frank should be updated to like Neon instead of Orange
                 Assert.That(tbl.GetRowCount(), Is.EqualTo(3));
-                var frankOld = tbl.GetDataTable().Rows.Cast<DataRow>().Single(r => (string)r["Name"] == "Frank");
+                var frankOld = tbl.GetDataTable().Rows.Cast<DataRow>().Single(static r => (string)r["Name"] == "Frank");
                 Assert.That(frankOld["FavouriteColour"], Is.EqualTo("Orange"));
                 Assert.Pass();
             }
@@ -248,14 +247,14 @@ MrMurder,2001-01-01,Yella");
             //frank should be updated to like Neon instead of Orange
             Assert.That(tbl.GetRowCount(), Is.EqualTo(3));
             var result = tbl.GetDataTable();
-            var frank = result.Rows.Cast<DataRow>().Single(r => (string)r["Name"] == "Frank");
+            var frank = result.Rows.Cast<DataRow>().Single(static r => (string)r["Name"] == "Frank");
             Assert.That(frank["FavouriteColour"], Is.EqualTo("Neon"));
 
             if (testCase != TestCase.NoTrigger)
                 AssertHasDataLoadRunId(frank);
 
             //MrMurder is a new person who likes Yella
-            var mrmurder = result.Rows.Cast<DataRow>().Single(r => (string)r["Name"] == "MrMurder");
+            var mrmurder = result.Rows.Cast<DataRow>().Single(static r => (string)r["Name"] == "MrMurder");
             Assert.Multiple(() =>
             {
                 Assert.That(mrmurder["FavouriteColour"], Is.EqualTo("Yella"));
@@ -266,7 +265,7 @@ MrMurder,2001-01-01,Yella");
                 AssertHasDataLoadRunId(mrmurder);
 
             //bob should be untouched (same values as before and no dataloadrunID)
-            var bob = result.Rows.Cast<DataRow>().Single(r => (string)r["Name"] == "Bob");
+            var bob = result.Rows.Cast<DataRow>().Single(static r => (string)r["Name"] == "Bob");
             Assert.Multiple(() =>
             {
                 Assert.That(bob["FavouriteColour"], Is.EqualTo("Pink"));
@@ -284,9 +283,9 @@ MrMurder,2001-01-01,Yella");
 
             Assert.Multiple(() =>
             {
-                Assert.That(tbl.DiscoverColumns().Select(c => c.GetRuntimeName()).Contains(SpecialFieldNames.DataLoadRunID), Is.EqualTo(testCase != TestCase.NoTrigger),
-                            $"When running with NoTrigger there shouldn't be any additional columns added to table. Test case was {testCase}");
-                Assert.That(tbl.DiscoverColumns().Select(c => c.GetRuntimeName()).Contains(SpecialFieldNames.ValidFrom), Is.EqualTo(testCase != TestCase.NoTrigger),
+                Assert.That(tbl.DiscoverColumns().Select(static c => c.GetRuntimeName()).Contains(SpecialFieldNames.DataLoadRunID), Is.EqualTo(testCase != TestCase.NoTrigger),
+                    $"When running with NoTrigger there shouldn't be any additional columns added to table. Test case was {testCase}");
+                Assert.That(tbl.DiscoverColumns().Select(static c => c.GetRuntimeName()).Contains(SpecialFieldNames.ValidFrom), Is.EqualTo(testCase != TestCase.NoTrigger),
                     $"When running with NoTrigger there shouldn't be any additional columns added to table. Test case was {testCase}");
             });
         }
@@ -358,7 +357,8 @@ MrMurder,2001-01-01,Yella");
         var args = new CreateTableArgs(
             db,
             "Child",
-            null,
+            // ReSharper disable once NullableWarningSuppressionIsUsed - FAnsi should know schema is often null
+            null!,
             dtChild,
             false,
             new Dictionary<DatabaseColumnRequest, DiscoveredColumn>
@@ -437,7 +437,7 @@ MrMurder,2001-01-01,Yella");
                 Assert.That(parentTbl.GetRowCount(), Is.EqualTo(2));
             });
             var result = parentTbl.GetDataTable();
-            var dave = result.Rows.Cast<DataRow>().Single(r => (string)r["Name"] == "Dave");
+            var dave = result.Rows.Cast<DataRow>().Single(static r => (string)r["Name"] == "Dave");
             Assert.That(dave["Height"], Is.EqualTo(3.2f)); //should now be only 3.2 inches high
             AssertHasDataLoadRunId(dave);
 
@@ -445,7 +445,7 @@ MrMurder,2001-01-01,Yella");
             Assert.That(childTbl.GetRowCount(), Is.EqualTo(3));
             result = childTbl.GetDataTable();
 
-            var updC1 = result.Rows.Cast<DataRow>().Single(r => (string)r["Name"] == "UpdC1");
+            var updC1 = result.Rows.Cast<DataRow>().Single(static r => (string)r["Name"] == "UpdC1");
             Assert.Multiple(() =>
             {
                 Assert.That(updC1["Parent_ID"], Is.EqualTo(1));
@@ -453,7 +453,7 @@ MrMurder,2001-01-01,Yella");
             });
             AssertHasDataLoadRunId(updC1);
 
-            var newC1 = result.Rows.Cast<DataRow>().Single(r => (string)r["Name"] == "NewC1");
+            var newC1 = result.Rows.Cast<DataRow>().Single(static r => (string)r["Name"] == "NewC1");
             Assert.Multiple(() =>
             {
                 Assert.That(newC1["Parent_ID"], Is.EqualTo(2));
@@ -481,7 +481,7 @@ MrMurder,2001-01-01,Yella");
     }
 }
 
-internal class CustomINameDatabasesAndTablesDuringLoads : INameDatabasesAndTablesDuringLoads
+internal sealed class CustomINameDatabasesAndTablesDuringLoads : INameDatabasesAndTablesDuringLoads
 {
     public string GetDatabaseName(string rootDatabaseName, LoadBubble convention)
     {

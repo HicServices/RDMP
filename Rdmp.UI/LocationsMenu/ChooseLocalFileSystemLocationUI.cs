@@ -5,9 +5,8 @@ using System.Windows.Forms;
 
 namespace Rdmp.UI.LocationsMenu;
 
-public partial class ChooseLocalFileSystemLocationUI : Form
+public sealed class ChooseLocalFileSystemLocationUI : Form
 {
-
     public ChooseLocalFileSystemLocationUI()
     {
         InitializeComponent();
@@ -80,7 +79,6 @@ public partial class ChooseLocalFileSystemLocationUI : Form
 
     private void label1_Click(object sender, EventArgs e)
     {
-
     }
 
     private void btnConfirm_Click(object sender, EventArgs e)
@@ -105,7 +103,6 @@ public partial class ChooseLocalFileSystemLocationUI : Form
         {
             lblBadFilePath.Visible = true;
         }
-
     }
 
     private Label lblBadFilePath;

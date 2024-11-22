@@ -119,24 +119,24 @@ public class RunUITests : DatabaseTests
         }
     }
 
-    private class TestCommandDiscoveredDatabase : BasicCommandExecution
+    private sealed class TestCommandDiscoveredDatabase : BasicCommandExecution
     {
         public TestCommandDiscoveredDatabase(IBasicActivateItems activator, DiscoveredDatabase _) : base(activator)
         {
         }
     }
 
-    private class TestCommandLotsOfParameters : BasicCommandExecution
+    private sealed class TestCommandLotsOfParameters : BasicCommandExecution
     {
         public TestCommandLotsOfParameters(IRDMPPlatformRepositoryServiceLocator _1, DiscoveredDatabase _2,
-            DirectoryInfo _3) : base()
+            DirectoryInfo _3)
         {
         }
     }
 
-    private class TestCommandTypeParameter : BasicCommandExecution
+    private sealed class TestCommandTypeParameter : BasicCommandExecution
     {
-        public TestCommandTypeParameter(IRDMPPlatformRepositoryServiceLocator _1, Type _2) : base()
+        public TestCommandTypeParameter(IRDMPPlatformRepositoryServiceLocator _1, Type _2)
         {
         }
     }

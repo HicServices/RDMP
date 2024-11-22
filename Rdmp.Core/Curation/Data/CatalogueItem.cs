@@ -15,7 +15,6 @@ using Rdmp.Core.Curation.Data.Serialization;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
-using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode;
@@ -36,7 +35,7 @@ namespace Rdmp.Core.Curation.Data;
 /// 
 /// <para>Both the above would extract from the same ColumnInfo DateOfBirth</para>
 /// </summary>
-public class CatalogueItem : DatabaseEntity, IComparable, IHasDependencies, INamed,
+public sealed class CatalogueItem : DatabaseEntity, IComparable, IHasDependencies, INamed,
     IInjectKnown<ExtractionInformation>, IInjectKnown<ColumnInfo>, IInjectKnown<Catalogue>
 {
     #region Database Properties

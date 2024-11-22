@@ -9,38 +9,43 @@ using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Annotations;
 using System.Collections.Generic;
 using System.Data.Common;
-namespace Rdmp.Core.Curation
+
+namespace Rdmp.Core.Curation;
+
+/// <summary>
+/// Stored a status name and which ticketing system it coresponds to
+/// </summary>
+public class TicketingSystemReleaseStatus : DatabaseEntity
 {
-    /// <summary>
-    /// Stored a status name and which ticketing system it coresponds to
-    /// </summary>
-    public class TicketingSystemReleaseStatus : DatabaseEntity
+    private string _status;
+    private int _ticketingSystemConfiguratonID;
+
+    [NotNull]
+    public string Status
     {
+        get => _status;
+        set => SetField(ref _status, value);
+    }
 
-        private string _status;
-        private int _ticketingSystemConfiguratonID;
+    [NotNull]
+    public int TicketingSystemConfigurationID
+    {
+        get => _ticketingSystemConfiguratonID;
+        set => SetField(ref _ticketingSystemConfiguratonID, value);
+    }
 
-        [NotNull]
-        public string Status { get => _status; set => SetField(ref _status, value); }
-
-        [NotNull]
-        public int TicketingSystemConfigurationID { get => _ticketingSystemConfiguratonID; set => SetField(ref _ticketingSystemConfiguratonID, value); }
-
-        public TicketingSystemReleaseStatus() { }
-
-        public TicketingSystemReleaseStatus(ICatalogueRepository repository, string status, int? statusID, TicketingSystemConfiguration config) : base()
+    public TicketingSystemReleaseStatus(ICatalogueRepository repository, string status, int? statusID, TicketingSystemConfiguration config)
+    {
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            repository.InsertAndHydrate(this, new Dictionary<string, object>
-            {
-                {"Status", status},
-                {"TicketingSystemConfigurationID", config.ID }
-            });
-        }
+            { "Status", status },
+            { "TicketingSystemConfigurationID", config.ID }
+        });
+    }
 
-        public TicketingSystemReleaseStatus(ICatalogueRepository repository, DbDataReader r) : base(repository, r)
-        {
-            Status = r["Status"] as string;
-            TicketingSystemConfigurationID = int.Parse(r["TicketingSystemConfigurationID"].ToString());
-        }
+    public TicketingSystemReleaseStatus(ICatalogueRepository repository, DbDataReader r) : base(repository, r)
+    {
+        Status = r["Status"] as string;
+        TicketingSystemConfigurationID = int.Parse(r["TicketingSystemConfigurationID"].ToString());
     }
 }

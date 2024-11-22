@@ -10,19 +10,19 @@ using Rdmp.UI.SimpleDialogs.Datasets;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandCreateNewDatasetUI : ExecuteCommandCreateDataset
+public sealed class ExecuteCommandCreateNewDatasetUI : ExecuteCommandCreateDataset
 {
     private readonly IActivateItems _activator;
 
     public ExecuteCommandCreateNewDatasetUI(IActivateItems activator) : base(
-        activator,"New Dataset")
+        activator, "New Dataset")
     {
         _activator = activator;
     }
 
     public override void Execute()
     {
-        var ui = new CreateNewDatasetUI(_activator, this);
+        var ui = new CreateNewDatasetUI(_activator);
         ui.ShowDialog();
     }
 }

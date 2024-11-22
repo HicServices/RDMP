@@ -42,7 +42,7 @@ public abstract class ReferenceOtherObjectDatabaseEntity : DatabaseEntity, IRefe
     }
 
     /// <inheritdoc/>
-    protected ReferenceOtherObjectDatabaseEntity() : base()
+    protected ReferenceOtherObjectDatabaseEntity()
     {
     }
 

@@ -12,11 +12,8 @@ namespace Rdmp.Core.CommandExecution;
 /// <see cref="CommandInvokerDelegate"/> that only ever returns a single object (in <see cref="CommandInvokerDelegate.Run"/>)
 /// and claims only to handle that object's exact <see cref="Type"/>.
 /// </summary>
-internal class CommandInvokerFixedValueDelegate : CommandInvokerDelegate
+internal sealed class CommandInvokerFixedValueDelegate(Type type, object o)
+    : CommandInvokerDelegate(type, false, _ => o)
 {
-    public CommandInvokerFixedValueDelegate(Type type, object o) : base(type, false, p => o)
-    {
-    }
-
     public override bool CanHandle(Type t) => HandledType == t;
 }
