@@ -1,4 +1,5 @@
-﻿using FAnsi;
+﻿#nullable enable
+using FAnsi;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation;
@@ -12,11 +13,22 @@ using Rdmp.Core.CommandLine.Interactive;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using System.Data;
 using FAnsi.Discovery;
+using Rdmp.Core.CommandExecution;
 
 namespace Rdmp.Core.Tests.CommandExecution;
 
 public class ExecuteCommandPerformRegexRedactionOnCatalogueTests : DatabaseTests
 {
+    private static ThrowImmediatelyActivator? _activator;
+
+    // ReSharper disable once NullableWarningSuppressionIsUsed
+    private static DiscoveredDatabase _db = null!;
+#pragma warning disable NUnit1032
+    // ReSharper disable once NullableWarningSuppressionIsUsed
+    private static DataTable _dt = null!;
+#pragma warning restore NUnit1032
+    private static Catalogue? _catalogue;
+
     private static DataTable GetRedactionTestDataTable()
     {
         DataTable dt = new();
@@ -27,7 +39,7 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogueTests : DatabaseTests
     }
 
 
-    private (Catalogue, ColumnInfo[]) CreateTable(DiscoveredDatabase db, DataTable dt, bool[] pks = null)
+    private (Catalogue, ColumnInfo[]) CreateTable(DiscoveredDatabase db, DataTable dt, bool[]? pks = null)
     {
         pks ??= new[] { false, true, false };
         var table = db.CreateTable("RedactionTest", dt, new DatabaseColumnRequest[]
@@ -62,21 +74,47 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogueTests : DatabaseTests
         return dt;
     }
 
+    [OneTimeSetUp]
+    public void OneTimeSetup()
+    {
+        _db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+        _dt = GetRedactionTestDataTable();
+        _activator = new ThrowImmediatelyActivator(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet);
+    }
+
+    [OneTimeTearDown]
+    public void OneTimeTearDown()
+    {
+        _dt.Dispose();
+    }
+
+    [SetUp]
+    public new void SetUp()
+    {
+        _dt.Rows.Clear();
+    }
+
+    [TearDown]
+    public new void TearDown()
+    {
+        var t = _db.ExpectTable("RedactionTest");
+        if (t.Exists()) t.Drop();
+        _catalogue?.DeleteInDatabase();
+    }
+
     [Test]
     public void Redaction_BasicRedactionTest()
     {
-        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
-        var dt = GetRedactionTestDataTable();
-        dt.Rows.Add(new object[] { DateTime.Now, '1', "1234TEST1234" });
-        dt.Rows.Add(new object[] { DateTime.Now, '2', "1234TEST1234" });
-        var (catalogue, columnInfos) = CreateTable(db, dt);
+        _dt.Rows.Add(new object[] { DateTime.Now, '1', "1234TEST1234" });
+        _dt.Rows.Add(new object[] { DateTime.Now, '2', "1234TEST1234" });
+        (_catalogue, var columnInfos) = CreateTable(_db, _dt);
 
-        var activator = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet);
         var regexConfiguration = new RegexRedactionConfiguration(CatalogueRepository, "TestReplacer", new Regex("TEST"), "GG", "Replace TEST with GG");
         regexConfiguration.SaveToDatabase();
-        var cmd = new ExecuteCommandPerformRegexRedactionOnCatalogue(activator, catalogue, regexConfiguration, columnInfos.Where(static c => c.GetRuntimeName() == "Condition2").ToList());
+        var cmd = new ExecuteCommandPerformRegexRedactionOnCatalogue(_activator, _catalogue, regexConfiguration, columnInfos.Where(static c => c.GetRuntimeName() == "Condition2").ToList());
         Assert.DoesNotThrow(() => cmd.Execute());
-        dt = Retrieve(db);
+
+        using var dt = Retrieve(_db);
         Assert.Multiple(() =>
         {
             Assert.That(dt.Rows, Has.Count.EqualTo(2));
@@ -88,20 +126,21 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogueTests : DatabaseTests
     [Test]
     public void Redaction_BasicRedactionTestWithLimit()
     {
-        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
-        var dt = GetRedactionTestDataTable();
-        dt.Rows.Add(new object[] { DateTime.Now, '1', "1234TEST1234" });
-        dt.Rows.Add(new object[] { DateTime.Parse("10-10-2010"), '2', "1234TEST1234" });
-        var (catalogue, columnInfos) = CreateTable(db, dt, new[] { true, true, false });
-        var activator = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet);
+        _dt.Rows.Add(new object[] { DateTime.Now, '1', "1234TEST1234" });
+        _dt.Rows.Add(new object[] { DateTime.Parse("10-10-2010"), '2', "1234TEST1234" });
+        (_catalogue, var columnInfos) = CreateTable(_db, _dt, new[] { true, true, false });
+
         var regexConfiguration = new RegexRedactionConfiguration(CatalogueRepository, "TestReplacer", new Regex("TEST"), "GG", "Replace TEST with GG");
         regexConfiguration.SaveToDatabase();
-        var cmd = new ExecuteCommandPerformRegexRedactionOnCatalogue(activator, catalogue, regexConfiguration, columnInfos.Where(static c => c.GetRuntimeName() == "Condition2").ToList(), 1);
+        var cmd = new ExecuteCommandPerformRegexRedactionOnCatalogue(_activator, _catalogue, regexConfiguration, columnInfos.Where(static c => c.GetRuntimeName() == "Condition2").ToList(), 1);
         Assert.DoesNotThrow(() => cmd.Execute());
-        dt = Retrieve(db);
-        Assert.That(dt.Rows, Has.Count.EqualTo(2));
-        Assert.That(dt.Rows[0].ItemArray[0], Is.EqualTo("1234<GG>1234"));
-        Assert.That(dt.Rows[1].ItemArray[0], Is.EqualTo("1234TEST1234"));
+        using var dt = Retrieve(_db);
+        Assert.Multiple(() =>
+        {
+            Assert.That(dt.Rows, Has.Count.EqualTo(2));
+            Assert.That(dt.Rows[0].ItemArray[0], Is.EqualTo("1234<GG>1234"));
+            Assert.That(dt.Rows[1].ItemArray[0], Is.EqualTo("1234TEST1234"));
+        });
     }
 
 
