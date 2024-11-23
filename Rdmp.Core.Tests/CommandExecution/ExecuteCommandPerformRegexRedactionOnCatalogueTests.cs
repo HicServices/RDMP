@@ -147,16 +147,13 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogueTests : DatabaseTests
     [Test]
     public void Redaction_OddStringLength()
     {
-        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
-        var dt = GetRedactionTestDataTable();
-        dt.Rows.Add(new object[] { DateTime.Now, '1', "1234TESTT1234" });
-        var (catalogue, columnInfos) = CreateTable(db, dt);
-        var activator = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet);
+        _dt.Rows.Add(new object[] { DateTime.Now, '1', "1234TESTT1234" });
+        (_catalogue, var columnInfos) = CreateTable(_db, _dt);
         var regexConfiguration = new RegexRedactionConfiguration(CatalogueRepository, "TestReplacer", new Regex("TESTT"), "GG", "Replace TEST with GG");
         regexConfiguration.SaveToDatabase();
-        var cmd = new ExecuteCommandPerformRegexRedactionOnCatalogue(activator, catalogue, regexConfiguration, columnInfos.Where(static c => c.GetRuntimeName() == "Condition2").ToList());
+        var cmd = new ExecuteCommandPerformRegexRedactionOnCatalogue(_activator, _catalogue, regexConfiguration, columnInfos.Where(static c => c.GetRuntimeName() == "Condition2").ToList());
         Assert.DoesNotThrow(() => cmd.Execute());
-        dt = Retrieve(db);
+        using var dt = Retrieve(_db);
         Assert.That(dt.Rows, Has.Count.EqualTo(1));
         Assert.That(dt.Rows[0].ItemArray[0], Is.EqualTo("1234<GG>>1234"));
     }
@@ -164,14 +161,11 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogueTests : DatabaseTests
     [Test]
     public void Redaction_RedactionTooLong()
     {
-        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
-        var dt = GetRedactionTestDataTable();
-        dt.Rows.Add(new object[] { DateTime.Now, '1', "1234TEST1234" });
-        var (catalogue, columnInfos) = CreateTable(db, dt);
-        var activator = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet);
+        _dt.Rows.Add(new object[] { DateTime.Now, '1', "1234TEST1234" });
+        var (catalogue, columnInfos) = CreateTable(_db, _dt);
         var regexConfiguration = new RegexRedactionConfiguration(CatalogueRepository, "TestReplacer", new Regex("TEST"), "FARTOOLONG", "Replace TEST with GG");
         regexConfiguration.SaveToDatabase();
-        var cmd = new ExecuteCommandPerformRegexRedactionOnCatalogue(activator, catalogue, regexConfiguration, columnInfos.Where(static c => c.GetRuntimeName() == "Condition2").ToList());
+        var cmd = new ExecuteCommandPerformRegexRedactionOnCatalogue(_activator, catalogue, regexConfiguration, columnInfos.Where(static c => c.GetRuntimeName() == "Condition2").ToList());
         var ex = Assert.Throws<Exception>(() => cmd.Execute());
         Assert.That(ex?.Message, Is.EqualTo("Redaction string 'FARTOOLONG' is longer than found match 'TEST'."));
     }
@@ -179,16 +173,13 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogueTests : DatabaseTests
     [Test]
     public void Redaction_RedactAPK()
     {
-        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
-        var dt = GetRedactionTestDataTable();
-        dt.Rows.Add(new object[] { DateTime.Now, '1', "1234TEST1234" });
-        var (catalogue, columnInfos) = CreateTable(db, dt, new[] { true,true,true});
-        var activator = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet);
+        _dt.Rows.Add(new object[] { DateTime.Now, '1', "1234TEST1234" });
+        (_catalogue, var columnInfos) = CreateTable(_db, _dt, new[] { true,true,true});
         var regexConfiguration = new RegexRedactionConfiguration(CatalogueRepository, "TestReplacer", new Regex("TEST"), "GG", "Replace TEST with GG");
         regexConfiguration.SaveToDatabase();
-        var cmd = new ExecuteCommandPerformRegexRedactionOnCatalogue(activator, catalogue, regexConfiguration, columnInfos.Where(static c => c.GetRuntimeName() == "Condition2").ToList());
+        var cmd = new ExecuteCommandPerformRegexRedactionOnCatalogue(_activator, _catalogue, regexConfiguration, columnInfos.Where(static c => c.GetRuntimeName() == "Condition2").ToList());
         Assert.DoesNotThrow(() => cmd.Execute());
-        dt = Retrieve(db);
+        using var dt = Retrieve(_db);
         Assert.That(dt.Rows, Has.Count.EqualTo(1));
         Assert.That(dt.Rows[0].ItemArray[0], Is.EqualTo("1234TEST1234"));
     }
@@ -196,32 +187,26 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogueTests : DatabaseTests
     [Test]
     public void Redaction_NoPKS()
     {
-        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
-        var dt = GetRedactionTestDataTable();
-        dt.Rows.Add(new object[] { DateTime.Now, '1', "1234TEST1234" });
-        var (catalogue, columnInfos) = CreateTable(db, dt, new[] { false, false, false });
-        var activator = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet);
+        _dt.Rows.Add(new object[] { DateTime.Now, '1', "1234TEST1234" });
+        (_catalogue, var columnInfos) = CreateTable(_db, _dt, new[] { false, false, false });
         var regexConfiguration = new RegexRedactionConfiguration(CatalogueRepository, "TestReplacer", new Regex("TEST"), "GG", "Replace TEST with GG");
         regexConfiguration.SaveToDatabase();
-        var cmd = new ExecuteCommandPerformRegexRedactionOnCatalogue(activator, catalogue, regexConfiguration, columnInfos.Where(static c => c.GetRuntimeName() == "Condition2").ToList());
+        var cmd = new ExecuteCommandPerformRegexRedactionOnCatalogue(_activator, _catalogue, regexConfiguration, columnInfos.Where(static c => c.GetRuntimeName() == "Condition2").ToList());
         var ex = Assert.Throws<Exception>(() => cmd.Execute());
-        Assert.That(ex?.Message, Is.EqualTo($"Unable to identify any primary keys in table '{db.GetWrappedName()}.[dbo].[RedactionTest]'. Redactions cannot be performed on tables without primary keys"));
+        Assert.That(ex?.Message, Is.EqualTo($"Unable to identify any primary keys in table '{_db.GetWrappedName()}.[dbo].[RedactionTest]'. Redactions cannot be performed on tables without primary keys"));
     }
 
     [Test]
     public void Redaction_MultipleInOneCell()
     {
-        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
-        var dt = GetRedactionTestDataTable();
-        dt.Rows.Add(new object[] { DateTime.Now, '1', "1234TEST1234TEST1234" });
-        var (catalogue, columnInfos) = CreateTable(db, dt);
-        var activator = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet);
+        _dt.Rows.Add(new object[] { DateTime.Now, '1', "1234TEST1234TEST1234" });
+        (_catalogue, var columnInfos) = CreateTable(_db, _dt);
         var regexConfiguration = new RegexRedactionConfiguration(CatalogueRepository, "TestReplacer", new Regex("TEST"), "DB", "Replace TEST with GG");
         regexConfiguration.SaveToDatabase();
-        var cmd = new ExecuteCommandPerformRegexRedactionOnCatalogue(activator, catalogue, regexConfiguration, columnInfos.Where(static c => c.GetRuntimeName() == "Condition2").ToList());
+        var cmd = new ExecuteCommandPerformRegexRedactionOnCatalogue(_activator, _catalogue, regexConfiguration, columnInfos.Where(static c => c.GetRuntimeName() == "Condition2").ToList());
         Assert.DoesNotThrow(() => cmd.Execute());
-        dt = Retrieve(db);
-        Assert.That(dt.Rows.Count, Is.EqualTo(1));
+        using var dt = Retrieve(_db);
+        Assert.That(dt.Rows, Has.Count.EqualTo(1));
         Assert.That(dt.Rows[0].ItemArray[0], Is.EqualTo("1234<DB>1234<DB>1234"));
         var redactions = CatalogueRepository.GetAllObjectsWhere<RegexRedaction>("ReplacementValue", "<DB>");
         Assert.That(redactions, Has.Length.EqualTo(2));
