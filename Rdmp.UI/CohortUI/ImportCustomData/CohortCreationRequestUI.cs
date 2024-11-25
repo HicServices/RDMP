@@ -134,6 +134,26 @@ public partial class CohortCreationRequestUI : RDMPForm
         if (notifier.GetWorst() <= CheckResult.Warning)
         {
             DialogResult = DialogResult.OK;
+            var cohorts = Project.ExtractionConfigurations.Select(ec => ec.Cohort);
+            if (cohorts.Any())
+            {
+                if (Activator.YesNo("Would you like to depricate all other cohorts?", "Depriate Other Ocohorts"))
+                {
+                    foreach(var cohort in cohorts)
+                    {
+                        cohort.IsDeprecated = true;
+                        cohort.SaveToDatabase();
+                    }
+                }
+            }
+            //if (Project..Count() > 0)
+            //{
+            //    if (Activator.YesNo("Would you like to depricate all other cohorts?", "Depriate Other Ocohorts"))
+            //    {
+            //        //Project.ProjectCohortIdentificationConfigurationAssociations.Select(pca => pca.CohortIdentificationConfiguration)
+            //    }
+            //}
+            
             Close();
         }
         else
