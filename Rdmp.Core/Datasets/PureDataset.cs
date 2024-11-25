@@ -90,6 +90,9 @@ public class PureDataset : PluginDataset
 
     public TemporalCoveragePeriod? TemporalCoveragePeriod { get; set; }
 
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public List<PureLink> Links { get; set; }
+
 #nullable disable
 
     public PureDataset() { }

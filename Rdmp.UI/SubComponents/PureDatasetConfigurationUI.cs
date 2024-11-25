@@ -1,4 +1,5 @@
-﻿using Rdmp.Core.Curation.Data.Datasets;
+﻿using NPOI.HSSF.Record.Aggregates.Chart;
+using Rdmp.Core.Curation.Data.Datasets;
 using Rdmp.Core.Datasets;
 using Rdmp.Core.Datasets.PureItems;
 using Rdmp.Core.ReusableLibraryCode;
@@ -25,6 +26,7 @@ public partial class PureDatasetConfigurationUI : DatsetConfigurationUI_Design, 
     private IActivateItems _activator;
     private PureDatasetProvider _provider;
     private Dataset _dbObject;
+    private List<PureDatasetLinkUI> links = new();
     public PureDatasetConfigurationUI()
     {
         InitializeComponent();
@@ -32,6 +34,7 @@ public partial class PureDatasetConfigurationUI : DatsetConfigurationUI_Design, 
 
     public override void SetDatabaseObject(IActivateItems activator, Dataset databaseObject)
     {
+        links = new();
         _activator = activator;
         _dbObject = databaseObject;
         base.SetDatabaseObject(activator, databaseObject);
@@ -48,6 +51,24 @@ public partial class PureDatasetConfigurationUI : DatsetConfigurationUI_Design, 
             tbTemporalStart.Text = _dataset.TemporalCoveragePeriod.StartDate.ToDateTime().ToString();
         if (_dataset.TemporalCoveragePeriod is not null && _dataset.TemporalCoveragePeriod.EndDate is not null)
             tbTemporalEnd.Text = _dataset.TemporalCoveragePeriod.EndDate.ToDateTime().ToString();
+
+        if (_dataset.Links is not null)
+        {
+            var yOffset = 0;
+            foreach (var link in _dataset.Links)
+            {
+                var linkUI = new PureDatasetLinkUI(link);
+                links.Add(linkUI);
+                this.panelLinks.Controls.Add(linkUI);
+                linkUI.Location = new Point(linkUI.Location.X, linkUI.Location.Y + yOffset);
+                yOffset += 40;
+            }
+            this.panelLinks.Height += yOffset;
+        }
+        else
+        {
+            lblLinks.Visible = false;
+        }
     }
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
@@ -99,6 +120,19 @@ public partial class PureDatasetConfigurationUI : DatsetConfigurationUI_Design, 
             }
             if (!string.IsNullOrWhiteSpace(tbTemporalStart.Text) || !string.IsNullOrWhiteSpace(tbTemporalEnd.Text))
                 datasetUpdate.TemporalCoveragePeriod = _dataset.TemporalCoveragePeriod;
+
+            datasetUpdate.Links = new();
+            foreach (var link in links)
+            {
+                var original = _dataset.Links.Where(l => l.PureID == link.Link.PureID).First();
+                if (original.Url == link.linkUrl && link.linkDescription == original.Description.En_GB)
+                {
+                    continue;
+                }
+                var pl = new PureLink(link.Link.PureID, link.linkUrl, link.Link.Alias, new ENGBWrapper(link.linkDescription), link.Link.LinkType);
+                datasetUpdate.Links.Add(pl);
+            }
+            if (!datasetUpdate.Links.Any()) datasetUpdate.Links = null;
             _provider.Update(_dataset.UUID, datasetUpdate);
             SetDatabaseObject(_activator, _dbObject);
             _activator.Show("Successfully updated Pure dataset");
@@ -109,6 +143,7 @@ public partial class PureDatasetConfigurationUI : DatsetConfigurationUI_Design, 
     {
 
     }
+
 }
 
 [TypeDescriptionProvider(

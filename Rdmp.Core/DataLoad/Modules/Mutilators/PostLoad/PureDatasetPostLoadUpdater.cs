@@ -119,6 +119,7 @@ Some variables are available:
             _provider = new PureDatasetProvider(new ThrowImmediatelyActivator(job.RepositoryLocator), job.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<DatasetProviderConfiguration>("ID", Dataset.Provider_ID).First());
             _pureDataset = _provider.FetchPureDataset(Dataset);
             var datasetUpdate = new PureDataset();
+            datasetUpdate.Links = null;
             if (UpdateDescription)
             {
                 datasetUpdate.Descriptions = GetDescriptions();

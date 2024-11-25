@@ -39,6 +39,9 @@
             tbTemporalEnd = new System.Windows.Forms.TextBox();
             label4 = new System.Windows.Forms.Label();
             btnSave = new System.Windows.Forms.Button();
+            panelLinks = new System.Windows.Forms.Panel();
+            lblLinks = new System.Windows.Forms.Label();
+            panelLinks.SuspendLayout();
             SuspendLayout();
             // 
             // columnButtonRenderer1
@@ -124,7 +127,8 @@
             // 
             // btnSave
             // 
-            btnSave.Location = new System.Drawing.Point(807, 466);
+            btnSave.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            btnSave.Location = new System.Drawing.Point(736, 49);
             btnSave.Name = "btnSave";
             btnSave.Size = new System.Drawing.Size(75, 23);
             btnSave.TabIndex = 14;
@@ -132,11 +136,29 @@
             btnSave.UseVisualStyleBackColor = true;
             btnSave.Click += btnSave_Click;
             // 
+            // panelLinks
+            // 
+            panelLinks.Controls.Add(btnSave);
+            panelLinks.Location = new System.Drawing.Point(68, 471);
+            panelLinks.Name = "panelLinks";
+            panelLinks.Size = new System.Drawing.Size(814, 84);
+            panelLinks.TabIndex = 15;
+            // 
+            // lblLinks
+            // 
+            lblLinks.AutoSize = true;
+            lblLinks.Location = new System.Drawing.Point(68, 453);
+            lblLinks.Name = "lblLinks";
+            lblLinks.Size = new System.Drawing.Size(37, 15);
+            lblLinks.TabIndex = 16;
+            lblLinks.Text = "Links:";
+            // 
             // PureDatasetConfigurationUI
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            Controls.Add(btnSave);
+            Controls.Add(lblLinks);
+            Controls.Add(panelLinks);
             Controls.Add(label4);
             Controls.Add(tbTemporalEnd);
             Controls.Add(tbTemporalStart);
@@ -149,6 +171,7 @@
             Name = "PureDatasetConfigurationUI";
             Size = new System.Drawing.Size(955, 648);
             Load += PureDatasetConfigurationUI_Load;
+            panelLinks.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -165,5 +188,7 @@
         private System.Windows.Forms.TextBox tbTemporalEnd;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button btnSave;
+        private System.Windows.Forms.Panel panelLinks;
+        private System.Windows.Forms.Label lblLinks;
     }
 }
