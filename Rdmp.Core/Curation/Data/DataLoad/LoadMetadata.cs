@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.ImportExport;
@@ -270,8 +271,9 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
 
     public void LinkToCatalogue(ICatalogue catalogue)
     {
-        var linkage = new LoadMetadataCatalogueLinkage(CatalogueRepository, this, catalogue);
-        linkage.SaveToDatabase();
+        Clone();
+        //var linkage = new LoadMetadataCatalogueLinkage(CatalogueRepository, this, catalogue);
+        //linkage.SaveToDatabase();
     }
 
     public void UnlinkFromCatalogue(ICatalogue catalogue)
@@ -464,5 +466,49 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     {
         return loadMetadata.CatalogueRepository.GetExtendedProperties(ExtendedProperty.PersistentRaw,
             loadMetadata).Any(p => p.Value == "true");
+    }
+
+    public void Clone()
+    {
+        var lmd = new LoadMetadata()
+        {
+            LocationOfForLoadingDirectory = this.LocationOfForLoadingDirectory,
+            LocationOfForArchivingDirectory = this.LocationOfForArchivingDirectory,
+            LocationOfExecutablesDirectory = LocationOfForArchivingDirectory = this.LocationOfExecutablesDirectory,
+            LocationOfCacheDirectory = LocationOfForArchivingDirectory = this.LocationOfCacheDirectory,
+            AnonymisationEngineClass = this.AnonymisationEngineClass,
+            Name = this.Name,
+            Description = this.Description,
+            CacheArchiveType = this.CacheArchiveType,
+            OverrideRAWServer_ID = this.OverrideRAWServer_ID,
+            IgnoreTrigger = this.IgnoreTrigger,
+            Folder = this.Folder,
+            LastLoadTime = this.LastLoadTime,
+            AllowReservedPrefix = this.AllowReservedPrefix,
+            Repository = this.Repository
+        };
+        lmd.SaveToDatabase();
+        foreach (var catalogue in this.GetAllCatalogues())
+        {
+            lmd.LinkToCatalogue(catalogue);
+        }
+        foreach (var pt in this.ProcessTasks)
+        {
+            var newPT = new ProcessTask()
+            {
+                LoadMetadata_ID = lmd.ID,
+                ProcessTaskType = pt.ProcessTaskType,
+                LoadStage = pt.LoadStage,
+                Name = pt.Name,
+                Order = pt.Order
+            };
+            newPT.SaveToDatabase();
+            foreach (var ptArg in pt.GetAllArguments())
+            {
+                var newPTArg = ((ProcessTaskArgument)ptArg).ShallowClone(newPT);
+                newPTArg.SaveToDatabase();
+
+            }
+        }
     }
 }
