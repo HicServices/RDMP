@@ -185,15 +185,15 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
         Publish(request.CohortCreatedIfAny);
         Emphasise(request.CohortCreatedIfAny);
         if (BasicActivator.IsInteractive)
-            DepricateExistingCohorts(BasicActivator, request.CohortCreatedIfAny);
+            DeprecateExistingCohorts(BasicActivator, request.CohortCreatedIfAny);
     }
 
-    protected void DepricateExistingCohorts(IBasicActivateItems activator, ExtractableCohort newCohort)
+    protected void DeprecateExistingCohorts(IBasicActivateItems activator, ExtractableCohort newCohort)
     {
         var cohorts = activator.CoreChildProvider.GetAllChildrenRecursively(Project).Where(obj => obj.GetType() == typeof(ObjectUsedByOtherObjectNode<CohortSourceUsedByProjectNode, ExtractableCohort>))
                .Select(obj => ((ObjectUsedByOtherObjectNode<CohortSourceUsedByProjectNode, ExtractableCohort>)obj).ObjectBeingUsed).Where(o => o.ID != newCohort.ID);
         var cohortsWithoutDeprication = cohorts.Where(o => !o.IsDeprecated);
-        var cohortsThatAreDepricatedOrHaveBeenDepricated = cohorts.Where(c => c.IsDeprecated).ToList();
+        var cohortsThatAreDeprecatedOrHaveBeenDeprecated = cohorts.Where(c => c.IsDeprecated).ToList();
         if (cohortsWithoutDeprication.Any())
         {
             if (activator.YesNo("Would you like to deprecate all other cohorts?", "Deprecate Other Cohorts"))
@@ -203,11 +203,11 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
                     cohort.IsDeprecated = true;
                     cohort.SaveToDatabase();
                     activator.Publish(cohort);
-                    cohortsThatAreDepricatedOrHaveBeenDepricated.Add(cohort);
+                    cohortsThatAreDeprecatedOrHaveBeenDeprecated.Add(cohort);
                 }
             }
         }
-        var cohortIDs = cohortsThatAreDepricatedOrHaveBeenDepricated.Select(c => c.ID).ToList();
+        var cohortIDs = cohortsThatAreDeprecatedOrHaveBeenDeprecated.Select(c => c.ID).ToList();
         var extractionConfigurations = activator.RepositoryLocator.DataExportRepository.GetAllObjects<ExtractionConfiguration>().Where(ei => ei.Cohort_ID is not null && cohortIDs.Contains((int)ei.Cohort_ID));
         if (extractionConfigurations.Any() && activator.YesNo("Would you like to replace all uses of a deprecated cohort in this project with this cohort?", "Replace Deprecated Cohorts"))
         {
