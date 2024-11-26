@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix Delta Load off by one issue
 - Update Migration strategy to account for all Primary Keys when moving from staging -> live
 - Fix UI issue with viewing cross-database SQL results
-- Add UI Steps to depricate old cohorts when importing a cohort
+- Add UI Steps to deprecate old cohorts when importing a cohort
 
 ## [8.3.1] - 2024-10-22
 
