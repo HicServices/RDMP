@@ -13,6 +13,9 @@ using Rdmp.Core.CommandExecution;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
+using Rdmp.Core.Providers.Nodes.ProjectCohortNodes;
+using Rdmp.Core.Providers.Nodes.UsedByNodes;
+using Rdmp.Core.Providers.Nodes.UsedByProject;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.UI.ItemActivation;
@@ -134,26 +137,6 @@ public partial class CohortCreationRequestUI : RDMPForm
         if (notifier.GetWorst() <= CheckResult.Warning)
         {
             DialogResult = DialogResult.OK;
-            var cohorts = Project.ExtractionConfigurations.Select(ec => ec.Cohort);
-            if (cohorts.Any())
-            {
-                if (Activator.YesNo("Would you like to depricate all other cohorts?", "Depriate Other Ocohorts"))
-                {
-                    foreach(var cohort in cohorts)
-                    {
-                        cohort.IsDeprecated = true;
-                        cohort.SaveToDatabase();
-                    }
-                }
-            }
-            //if (Project..Count() > 0)
-            //{
-            //    if (Activator.YesNo("Would you like to depricate all other cohorts?", "Depriate Other Ocohorts"))
-            //    {
-            //        //Project.ProjectCohortIdentificationConfigurationAssociations.Select(pca => pca.CohortIdentificationConfiguration)
-            //    }
-            //}
-            
             Close();
         }
         else

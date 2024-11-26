@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Linq;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CommandLine.Runners;
@@ -14,6 +15,8 @@ using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Logging.Listeners;
 using Rdmp.Core.Providers;
+using Rdmp.Core.Providers.Nodes.UsedByNodes;
+using Rdmp.Core.Providers.Nodes.UsedByProject;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
 
@@ -163,9 +166,9 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
         var logManager = new LogManager(loggingServer);
         logManager.CreateNewLoggingTaskIfNotExists(ExtractableCohort.CohortLoggingTask);
 
-            //create a db listener
-            var toDbListener = new ToLoggingDatabaseDataLoadEventListener(this, logManager,
-                ExtractableCohort.CohortLoggingTask, description);
+        //create a db listener
+        var toDbListener = new ToLoggingDatabaseDataLoadEventListener(this, logManager,
+            ExtractableCohort.CohortLoggingTask, description);
 
         //make all messages go to both the db and the UI
         pipelineRunner.SetAdditionalProgressListener(toDbListener);
@@ -182,5 +185,41 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
 
         Publish(request.CohortCreatedIfAny);
         Emphasise(request.CohortCreatedIfAny);
+        if (BasicActivator.IsInteractive)
+            DepricateExistingCohorts(BasicActivator, request.CohortCreatedIfAny);
+    }
+
+    protected void DepricateExistingCohorts(IBasicActivateItems activator, ExtractableCohort newCohort)
+    {
+        var cohorts = activator.CoreChildProvider.GetAllChildrenRecursively(Project).Where(obj => obj.GetType() == typeof(ObjectUsedByOtherObjectNode<CohortSourceUsedByProjectNode, ExtractableCohort>))
+               .Select(obj => ((ObjectUsedByOtherObjectNode<CohortSourceUsedByProjectNode, ExtractableCohort>)obj).ObjectBeingUsed).Where(o => o.ID != newCohort.ID);
+        var cohortsWithoutDeprication = cohorts.Where(o => !o.IsDeprecated);
+        var cohortsThatAreDepricatedOrHaveBeenDepricated = cohorts.Where(c => c.IsDeprecated).ToList();
+        if (cohortsWithoutDeprication.Any())
+        {
+            if (activator.YesNo("Would you like to depricate all other cohorts?", "Depricate Other Cohorts"))
+            {
+                foreach (var cohort in cohortsWithoutDeprication)
+                {
+                    cohort.IsDeprecated = true;
+                    cohort.SaveToDatabase();
+                    activator.Publish(cohort);
+                    cohortsThatAreDepricatedOrHaveBeenDepricated.Add(cohort);
+                }
+            }
+        }
+        var cohortIDs = cohortsThatAreDepricatedOrHaveBeenDepricated.Select(c => c.ID).ToList();
+        var extractionConfigurations = activator.RepositoryLocator.DataExportRepository.GetAllObjects<ExtractionConfiguration>().Where(ei => ei.Cohort_ID is not null && cohortIDs.Contains((int)ei.Cohort_ID));
+        if (extractionConfigurations.Any() && activator.YesNo("Would you like to replace all uses of a depricated cohort in this project with this cohort?", "Replace Depricated Cohorts"))
+        {
+            foreach (var config in extractionConfigurations)
+            {
+                config.Cohort_ID = newCohort.ID;
+                config.SaveToDatabase();
+                activator.Publish(config);
+            }
+        }
+
+
     }
 }
