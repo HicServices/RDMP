@@ -24,7 +24,10 @@ internal class CatalogueMenu : RDMPContextMenuStrip
     public CatalogueMenu(RDMPContextMenuStripArgs args, Catalogue catalogue) : base(args, catalogue)
     {
         var isApiCall = catalogue.IsApiCall();
-        Add(new ExecuteCommandLinkCatalogueToDatasetUI(_activator, catalogue));
+        Add(new ExecuteCommandLinkCatalogueToDatasetUI(_activator, catalogue)
+        {
+            OverrideCommandName = "Link Catalogue to Dataset"
+        });
         Add(new ExecuteCommandGenerateMetadataReport(_activator, catalogue)
         {
             Weight = -99.059f
@@ -70,7 +73,7 @@ internal class CatalogueMenu : RDMPContextMenuStrip
         Add(new ExecuteCommandUpdateCatalogueDataLocationUI(_activator, catalogue)
         { SuggestedCategory = CatalogueItems, Weight = -99.049f, OverrideCommandName = "Update Catalogue Data Location" });
         Add(new ExecuteCommandPasteClipboardAsNewCatalogueItems(_activator, catalogue, Clipboard.GetText)
-        { SuggestedCategory = CatalogueItems, Weight = -99.047f }); 
+        { SuggestedCategory = CatalogueItems, Weight = -99.047f });
         Add(new ExecuteCommandReOrderColumns(_activator, catalogue)
         { SuggestedCategory = CatalogueItems, Weight = -99.046f });
         Add(new ExecuteCommandGuessAssociatedColumns(_activator, catalogue, null)

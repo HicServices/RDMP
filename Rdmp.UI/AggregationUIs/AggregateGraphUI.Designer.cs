@@ -31,246 +31,228 @@ namespace Rdmp.UI.AggregationUIs
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea6 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend6 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series6 = new System.Windows.Forms.DataVisualization.Charting.Series();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AggregateGraphUI));
-            this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            this.label1 = new System.Windows.Forms.Label();
-            this.pbLoading = new System.Windows.Forms.PictureBox();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.tpGraph = new System.Windows.Forms.TabPage();
-            this.ragSmiley1 = new RAGSmiley();
-            this.lblLoadStage = new System.Windows.Forms.Label();
-            this.llCancel = new System.Windows.Forms.LinkLabel();
-            this.tpCode = new System.Windows.Forms.TabPage();
-            this.tpDataTable = new System.Windows.Forms.TabPage();
-            this.btnClearFromCache = new System.Windows.Forms.Button();
-            this.lblCannotLoadData = new System.Windows.Forms.Label();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.tpHeatmap = new System.Windows.Forms.TabPage();
-            this.heatmapUI = new HeatmapUI();
-            ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbLoading)).BeginInit();
-            this.tabControl1.SuspendLayout();
-            this.tpGraph.SuspendLayout();
-            this.tpDataTable.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
-            this.tpHeatmap.SuspendLayout();
-            this.SuspendLayout();
-            // 
-            // chart1
-            // 
-            this.chart1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            chartArea6.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea6);
-            legend6.Name = "Legend1";
-            this.chart1.Legends.Add(legend6);
-            this.chart1.Location = new System.Drawing.Point(0, 0);
-            this.chart1.Name = "chart1";
-            series6.ChartArea = "ChartArea1";
-            series6.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Area;
-            series6.Legend = "Legend1";
-            series6.MarkerSize = 1;
-            series6.Name = "Series1";
-            this.chart1.Series.Add(series6);
-            this.chart1.Size = new System.Drawing.Size(686, 432);
-            this.chart1.TabIndex = 0;
-            this.chart1.Text = "chart1";
+            label1 = new System.Windows.Forms.Label();
+            pbLoading = new System.Windows.Forms.PictureBox();
+            tabControl1 = new System.Windows.Forms.TabControl();
+            tpGraph = new System.Windows.Forms.TabPage();
+            ragSmiley1 = new RAGSmiley();
+            lblLoadStage = new System.Windows.Forms.Label();
+            llCancel = new System.Windows.Forms.LinkLabel();
+            tpCode = new System.Windows.Forms.TabPage();
+            tpDataTable = new System.Windows.Forms.TabPage();
+            btnClearFromCache = new System.Windows.Forms.Button();
+            lblCannotLoadData = new System.Windows.Forms.Label();
+            dataGridView1 = new System.Windows.Forms.DataGridView();
+            tpHeatmap = new System.Windows.Forms.TabPage();
+            heatmapUI = new HeatmapUI();
+            ((System.ComponentModel.ISupportInitialize)pbLoading).BeginInit();
+            tabControl1.SuspendLayout();
+            tpGraph.SuspendLayout();
+            tpDataTable.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            tpHeatmap.SuspendLayout();
+            SuspendLayout();
             // 
             // label1
             // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(3, 433);
-            this.label1.MaximumSize = new System.Drawing.Size(710, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(35, 39);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "label1\r\n\r\nbob\r\n";
+            label1.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            label1.AutoSize = true;
+            label1.Location = new System.Drawing.Point(4, 529);
+            label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label1.MaximumSize = new System.Drawing.Size(828, 0);
+            label1.Name = "label1";
+            label1.Size = new System.Drawing.Size(38, 45);
+            label1.TabIndex = 1;
+            label1.Text = "label1\r\n\r\nbob\r\n";
             // 
             // pbLoading
             // 
-            this.pbLoading.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.pbLoading.BackColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.pbLoading.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.pbLoading.Image = ((System.Drawing.Image)(resources.GetObject("pbLoading.Image")));
-            this.pbLoading.InitialImage = null;
-            this.pbLoading.Location = new System.Drawing.Point(286, 166);
-            this.pbLoading.Name = "pbLoading";
-            this.pbLoading.Size = new System.Drawing.Size(105, 102);
-            this.pbLoading.TabIndex = 2;
-            this.pbLoading.TabStop = false;
-            this.pbLoading.Visible = false;
+            pbLoading.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            pbLoading.BackColor = System.Drawing.SystemColors.ButtonHighlight;
+            pbLoading.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            pbLoading.Image = (System.Drawing.Image)resources.GetObject("pbLoading.Image");
+            pbLoading.InitialImage = null;
+            pbLoading.Location = new System.Drawing.Point(334, 192);
+            pbLoading.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            pbLoading.Name = "pbLoading";
+            pbLoading.Size = new System.Drawing.Size(122, 118);
+            pbLoading.TabIndex = 2;
+            pbLoading.TabStop = false;
+            pbLoading.Visible = false;
             // 
             // tabControl1
             // 
-            this.tabControl1.Alignment = System.Windows.Forms.TabAlignment.Right;
-            this.tabControl1.Controls.Add(this.tpGraph);
-            this.tabControl1.Controls.Add(this.tpCode);
-            this.tabControl1.Controls.Add(this.tpDataTable);
-            this.tabControl1.Controls.Add(this.tpHeatmap);
-            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabControl1.Location = new System.Drawing.Point(0, 25);
-            this.tabControl1.Multiline = true;
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(698, 483);
-            this.tabControl1.TabIndex = 3;
+            tabControl1.Alignment = System.Windows.Forms.TabAlignment.Right;
+            tabControl1.Controls.Add(tpGraph);
+            tabControl1.Controls.Add(tpCode);
+            tabControl1.Controls.Add(tpDataTable);
+            tabControl1.Controls.Add(tpHeatmap);
+            tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            tabControl1.Location = new System.Drawing.Point(0, 0);
+            tabControl1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tabControl1.Multiline = true;
+            tabControl1.Name = "tabControl1";
+            tabControl1.SelectedIndex = 0;
+            tabControl1.Size = new System.Drawing.Size(814, 586);
+            tabControl1.TabIndex = 3;
             // 
             // tpGraph
             // 
-            this.tpGraph.Controls.Add(this.ragSmiley1);
-            this.tpGraph.Controls.Add(this.lblLoadStage);
-            this.tpGraph.Controls.Add(this.llCancel);
-            this.tpGraph.Controls.Add(this.pbLoading);
-            this.tpGraph.Controls.Add(this.chart1);
-            this.tpGraph.Controls.Add(this.label1);
-            this.tpGraph.Location = new System.Drawing.Point(4, 4);
-            this.tpGraph.Name = "tpGraph";
-            this.tpGraph.Padding = new System.Windows.Forms.Padding(3);
-            this.tpGraph.Size = new System.Drawing.Size(671, 475);
-            this.tpGraph.TabIndex = 0;
-            this.tpGraph.Text = "Graph";
-            this.tpGraph.UseVisualStyleBackColor = true;
+            tpGraph.Controls.Add(ragSmiley1);
+            tpGraph.Controls.Add(lblLoadStage);
+            tpGraph.Controls.Add(llCancel);
+            tpGraph.Controls.Add(pbLoading);
+            tpGraph.Controls.Add(label1);
+            tpGraph.Location = new System.Drawing.Point(4, 4);
+            tpGraph.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tpGraph.Name = "tpGraph";
+            tpGraph.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tpGraph.Size = new System.Drawing.Size(783, 578);
+            tpGraph.TabIndex = 0;
+            tpGraph.Text = "Graph";
+            tpGraph.UseVisualStyleBackColor = true;
             // 
             // ragSmiley1
             // 
-            this.ragSmiley1.AlwaysShowHandCursor = false;
-            this.ragSmiley1.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.ragSmiley1.BackColor = System.Drawing.Color.Transparent;
-            this.ragSmiley1.Cursor = System.Windows.Forms.Cursors.Arrow;
-            this.ragSmiley1.Location = new System.Drawing.Point(316, 189);
-            this.ragSmiley1.Name = "ragSmiley1";
-            this.ragSmiley1.Size = new System.Drawing.Size(37, 38);
-            this.ragSmiley1.TabIndex = 6;
-            this.ragSmiley1.Visible = false;
+            ragSmiley1.AlwaysShowHandCursor = false;
+            ragSmiley1.Anchor = System.Windows.Forms.AnchorStyles.None;
+            ragSmiley1.BackColor = System.Drawing.Color.Transparent;
+            ragSmiley1.Location = new System.Drawing.Point(369, 233);
+            ragSmiley1.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
+            ragSmiley1.Name = "ragSmiley1";
+            ragSmiley1.Size = new System.Drawing.Size(43, 44);
+            ragSmiley1.TabIndex = 6;
+            ragSmiley1.Visible = false;
             // 
             // lblLoadStage
             // 
-            this.lblLoadStage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblLoadStage.Location = new System.Drawing.Point(6, 107);
-            this.lblLoadStage.Name = "lblLoadStage";
-            this.lblLoadStage.Size = new System.Drawing.Size(659, 17);
-            this.lblLoadStage.TabIndex = 5;
-            this.lblLoadStage.Text = "label2";
-            this.lblLoadStage.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.lblLoadStage.Visible = false;
+            lblLoadStage.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            lblLoadStage.Location = new System.Drawing.Point(7, 123);
+            lblLoadStage.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            lblLoadStage.Name = "lblLoadStage";
+            lblLoadStage.Size = new System.Drawing.Size(769, 20);
+            lblLoadStage.TabIndex = 5;
+            lblLoadStage.Text = "label2";
+            lblLoadStage.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            lblLoadStage.Visible = false;
             // 
             // llCancel
             // 
-            this.llCancel.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.llCancel.AutoSize = true;
-            this.llCancel.Location = new System.Drawing.Point(313, 266);
-            this.llCancel.Name = "llCancel";
-            this.llCancel.Size = new System.Drawing.Size(40, 13);
-            this.llCancel.TabIndex = 4;
-            this.llCancel.TabStop = true;
-            this.llCancel.Text = "Cancel";
-            this.llCancel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.llCancel_LinkClicked);
+            llCancel.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            llCancel.AutoSize = true;
+            llCancel.Location = new System.Drawing.Point(365, 307);
+            llCancel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            llCancel.Name = "llCancel";
+            llCancel.Size = new System.Drawing.Size(43, 15);
+            llCancel.TabIndex = 4;
+            llCancel.TabStop = true;
+            llCancel.Text = "Cancel";
+            llCancel.LinkClicked += llCancel_LinkClicked;
             // 
             // tpCode
             // 
-            this.tpCode.Location = new System.Drawing.Point(4, 4);
-            this.tpCode.Name = "tpCode";
-            this.tpCode.Padding = new System.Windows.Forms.Padding(3);
-            this.tpCode.Size = new System.Drawing.Size(671, 475);
-            this.tpCode.TabIndex = 1;
-            this.tpCode.Text = "SQL Code";
-            this.tpCode.UseVisualStyleBackColor = true;
+            tpCode.Location = new System.Drawing.Point(4, 4);
+            tpCode.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tpCode.Name = "tpCode";
+            tpCode.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tpCode.Size = new System.Drawing.Size(783, 549);
+            tpCode.TabIndex = 1;
+            tpCode.Text = "SQL Code";
+            tpCode.UseVisualStyleBackColor = true;
             // 
             // tpDataTable
             // 
-            this.tpDataTable.Controls.Add(this.btnClearFromCache);
-            this.tpDataTable.Controls.Add(this.lblCannotLoadData);
-            this.tpDataTable.Controls.Add(this.dataGridView1);
-            this.tpDataTable.Location = new System.Drawing.Point(4, 4);
-            this.tpDataTable.Name = "tpDataTable";
-            this.tpDataTable.Padding = new System.Windows.Forms.Padding(3);
-            this.tpDataTable.Size = new System.Drawing.Size(671, 475);
-            this.tpDataTable.TabIndex = 2;
-            this.tpDataTable.Text = "Data";
-            this.tpDataTable.UseVisualStyleBackColor = true;
+            tpDataTable.Controls.Add(btnClearFromCache);
+            tpDataTable.Controls.Add(lblCannotLoadData);
+            tpDataTable.Controls.Add(dataGridView1);
+            tpDataTable.Location = new System.Drawing.Point(4, 4);
+            tpDataTable.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tpDataTable.Name = "tpDataTable";
+            tpDataTable.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tpDataTable.Size = new System.Drawing.Size(783, 549);
+            tpDataTable.TabIndex = 2;
+            tpDataTable.Text = "Data";
+            tpDataTable.UseVisualStyleBackColor = true;
             // 
             // btnClearFromCache
             // 
-            this.btnClearFromCache.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnClearFromCache.Location = new System.Drawing.Point(3, 468);
-            this.btnClearFromCache.Name = "btnClearFromCache";
-            this.btnClearFromCache.Size = new System.Drawing.Size(113, 23);
-            this.btnClearFromCache.TabIndex = 7;
-            this.btnClearFromCache.Text = "Clear From Cache";
-            this.btnClearFromCache.UseVisualStyleBackColor = true;
-            this.btnClearFromCache.Click += new System.EventHandler(this.btnClearFromCache_Click);
+            btnClearFromCache.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            btnClearFromCache.Location = new System.Drawing.Point(4, 540);
+            btnClearFromCache.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            btnClearFromCache.Name = "btnClearFromCache";
+            btnClearFromCache.Size = new System.Drawing.Size(132, 27);
+            btnClearFromCache.TabIndex = 7;
+            btnClearFromCache.Text = "Clear From Cache";
+            btnClearFromCache.UseVisualStyleBackColor = true;
+            btnClearFromCache.Click += btnClearFromCache_Click;
             // 
             // lblCannotLoadData
             // 
-            this.lblCannotLoadData.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.lblCannotLoadData.AutoSize = true;
-            this.lblCannotLoadData.ForeColor = System.Drawing.Color.Red;
-            this.lblCannotLoadData.Location = new System.Drawing.Point(276, 205);
-            this.lblCannotLoadData.Name = "lblCannotLoadData";
-            this.lblCannotLoadData.Size = new System.Drawing.Size(98, 13);
-            this.lblCannotLoadData.TabIndex = 1;
-            this.lblCannotLoadData.Text = "lblCannotLoadData";
-            this.lblCannotLoadData.Visible = false;
+            lblCannotLoadData.Anchor = System.Windows.Forms.AnchorStyles.None;
+            lblCannotLoadData.AutoSize = true;
+            lblCannotLoadData.ForeColor = System.Drawing.Color.Red;
+            lblCannotLoadData.Location = new System.Drawing.Point(322, 237);
+            lblCannotLoadData.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            lblCannotLoadData.Name = "lblCannotLoadData";
+            lblCannotLoadData.Size = new System.Drawing.Size(109, 15);
+            lblCannotLoadData.TabIndex = 1;
+            lblCannotLoadData.Text = "lblCannotLoadData";
+            lblCannotLoadData.Visible = false;
             // 
             // dataGridView1
             // 
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dataGridView1.Location = new System.Drawing.Point(3, 3);
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.ReadOnly = true;
-            this.dataGridView1.Size = new System.Drawing.Size(665, 469);
-            this.dataGridView1.TabIndex = 0;
+            dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            dataGridView1.Location = new System.Drawing.Point(4, 3);
+            dataGridView1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            dataGridView1.Name = "dataGridView1";
+            dataGridView1.ReadOnly = true;
+            dataGridView1.Size = new System.Drawing.Size(775, 543);
+            dataGridView1.TabIndex = 0;
             // 
             // tpHeatmap
             // 
-            this.tpHeatmap.AutoScroll = true;
-            this.tpHeatmap.Controls.Add(this.heatmapUI);
-            this.tpHeatmap.Location = new System.Drawing.Point(4, 4);
-            this.tpHeatmap.Name = "tpHeatmap";
-            this.tpHeatmap.Padding = new System.Windows.Forms.Padding(3);
-            this.tpHeatmap.Size = new System.Drawing.Size(671, 475);
-            this.tpHeatmap.TabIndex = 3;
-            this.tpHeatmap.Text = "Heat Map";
-            this.tpHeatmap.UseVisualStyleBackColor = true;
+            tpHeatmap.AutoScroll = true;
+            tpHeatmap.Controls.Add(heatmapUI);
+            tpHeatmap.Location = new System.Drawing.Point(4, 4);
+            tpHeatmap.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tpHeatmap.Name = "tpHeatmap";
+            tpHeatmap.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tpHeatmap.Size = new System.Drawing.Size(783, 549);
+            tpHeatmap.TabIndex = 3;
+            tpHeatmap.Text = "Heat Map";
+            tpHeatmap.UseVisualStyleBackColor = true;
             // 
             // heatmapUI
             // 
-            this.heatmapUI.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.heatmapUI.AutoSize = true;
-            this.heatmapUI.Location = new System.Drawing.Point(3, 3);
-            this.heatmapUI.Name = "heatmapUI";
-            this.heatmapUI.Size = new System.Drawing.Size(659, 441);
-            this.heatmapUI.TabIndex = 1;
+            heatmapUI.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            heatmapUI.AutoSize = true;
+            heatmapUI.Location = new System.Drawing.Point(4, 3);
+            heatmapUI.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
+            heatmapUI.Name = "heatmapUI";
+            heatmapUI.Size = new System.Drawing.Size(769, 509);
+            heatmapUI.TabIndex = 1;
             // 
-            // AggregateGraph
+            // AggregateGraphUI
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.SystemColors.Control;
-            this.Controls.Add(this.tabControl1);
-            this.Name = "AggregateGraphUI";
-            this.Size = new System.Drawing.Size(698, 508);
-            ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbLoading)).EndInit();
-            this.tabControl1.ResumeLayout(false);
-            this.tpGraph.ResumeLayout(false);
-            this.tpGraph.PerformLayout();
-            this.tpDataTable.ResumeLayout(false);
-            this.tpDataTable.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
-            this.tpHeatmap.ResumeLayout(false);
-            this.tpHeatmap.PerformLayout();
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            BackColor = System.Drawing.SystemColors.Control;
+            Controls.Add(tabControl1);
+            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            Name = "AggregateGraphUI";
+            Size = new System.Drawing.Size(814, 586);
+            ((System.ComponentModel.ISupportInitialize)pbLoading).EndInit();
+            tabControl1.ResumeLayout(false);
+            tpGraph.ResumeLayout(false);
+            tpGraph.PerformLayout();
+            tpDataTable.ResumeLayout(false);
+            tpDataTable.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            tpHeatmap.ResumeLayout(false);
+            tpHeatmap.PerformLayout();
+            ResumeLayout(false);
         }
 
         #endregion

@@ -61,6 +61,9 @@
 		<ProjectReference Include="..\Rdmp.Core\Rdmp.Core.csproj" />
 	</ItemGroup>
 	<ItemGroup>
+		<Compile Update="CatalogueSummary\DataQualityReporting\AreaChartUI.cs">
+		  <SubType>UserControl</SubType>
+		</Compile>
 		<Compile Update="ChecksUI\ChecksUI.cs">
 			<SubType>UserControl</SubType>
 		</Compile>
@@ -119,6 +122,7 @@
 		<Compile Update="LocationsMenu\Versioning\VersioningControlUI.cs">
 		  <SubType>UserControl</SubType>
 		</Compile>
+		<Compile Update="Overview\ViewCatalogueOverviewUI.cs" />
 		<Compile Update="PieCharts\CatalogueToDatasetLinkagePieChart.cs">
 			<SubType>UserControl</SubType>
 		</Compile>

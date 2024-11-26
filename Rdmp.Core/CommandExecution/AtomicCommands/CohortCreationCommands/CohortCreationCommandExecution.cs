@@ -1,4 +1,4 @@
-// Copyright (c) The University of Dundee 2018-2019
+// Copyright (c) The University of Dundee 2018-2024
 // This file is part of the Research Data Management Platform (RDMP).
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -14,6 +14,8 @@ using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Logging.Listeners;
 using Rdmp.Core.Providers;
+using Rdmp.Core.Providers.Nodes.UsedByNodes;
+using Rdmp.Core.Providers.Nodes.UsedByProject;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
 
@@ -163,9 +165,9 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
         var logManager = new LogManager(loggingServer);
         logManager.CreateNewLoggingTaskIfNotExists(ExtractableCohort.CohortLoggingTask);
 
-            //create a db listener
-            var toDbListener = new ToLoggingDatabaseDataLoadEventListener(this, logManager,
-                ExtractableCohort.CohortLoggingTask, description);
+        //create a db listener
+        var toDbListener = new ToLoggingDatabaseDataLoadEventListener(this, logManager,
+            ExtractableCohort.CohortLoggingTask, description);
 
         //make all messages go to both the db and the UI
         pipelineRunner.SetAdditionalProgressListener(toDbListener);
@@ -182,5 +184,41 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
 
         Publish(request.CohortCreatedIfAny);
         Emphasise(request.CohortCreatedIfAny);
+        if (BasicActivator.IsInteractive)
+            DeprecateExistingCohorts(BasicActivator, request.CohortCreatedIfAny);
+    }
+
+    protected void DeprecateExistingCohorts(IBasicActivateItems activator, ExtractableCohort newCohort)
+    {
+        var cohorts = activator.CoreChildProvider.GetAllChildrenRecursively(Project).Where(obj => obj.GetType() == typeof(ObjectUsedByOtherObjectNode<CohortSourceUsedByProjectNode, ExtractableCohort>))
+               .Select(obj => ((ObjectUsedByOtherObjectNode<CohortSourceUsedByProjectNode, ExtractableCohort>)obj).ObjectBeingUsed).Where(o => o.ID != newCohort.ID);
+        var cohortsWithoutDeprecation = cohorts.Where(o => !o.IsDeprecated);
+        var cohortsThatAreDeprecatedOrHaveBeenDeprecated = cohorts.Where(c => c.IsDeprecated).ToList();
+        if (cohortsWithoutDeprecation.Any())
+        {
+            if (activator.YesNo("Would you like to deprecate all other cohorts?", "Deprecate Other Cohorts"))
+            {
+                foreach (var cohort in cohortsWithoutDeprecation)
+                {
+                    cohort.IsDeprecated = true;
+                    cohort.SaveToDatabase();
+                    activator.Publish(cohort);
+                    cohortsThatAreDeprecatedOrHaveBeenDeprecated.Add(cohort);
+                }
+            }
+        }
+        var cohortIDs = cohortsThatAreDeprecatedOrHaveBeenDeprecated.Select(c => c.ID).ToList();
+        var extractionConfigurations = activator.RepositoryLocator.DataExportRepository.GetAllObjects<ExtractionConfiguration>().Where(ei => ei.Cohort_ID is not null && cohortIDs.Contains((int)ei.Cohort_ID));
+        if (extractionConfigurations.Any() && activator.YesNo("Would you like to replace all uses of a deprecated cohort in this project with this cohort?", "Replace Deprecated Cohorts"))
+        {
+            foreach (var config in extractionConfigurations)
+            {
+                config.Cohort_ID = newCohort.ID;
+                config.SaveToDatabase();
+                activator.Publish(config);
+            }
+        }
+
+
     }
 }
