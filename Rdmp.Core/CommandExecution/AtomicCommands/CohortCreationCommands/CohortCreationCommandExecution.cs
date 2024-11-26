@@ -192,13 +192,13 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
     {
         var cohorts = activator.CoreChildProvider.GetAllChildrenRecursively(Project).Where(obj => obj.GetType() == typeof(ObjectUsedByOtherObjectNode<CohortSourceUsedByProjectNode, ExtractableCohort>))
                .Select(obj => ((ObjectUsedByOtherObjectNode<CohortSourceUsedByProjectNode, ExtractableCohort>)obj).ObjectBeingUsed).Where(o => o.ID != newCohort.ID);
-        var cohortsWithoutDeprication = cohorts.Where(o => !o.IsDeprecated);
+        var cohortsWithoutDeprecation = cohorts.Where(o => !o.IsDeprecated);
         var cohortsThatAreDeprecatedOrHaveBeenDeprecated = cohorts.Where(c => c.IsDeprecated).ToList();
-        if (cohortsWithoutDeprication.Any())
+        if (cohortsWithoutDeprecation.Any())
         {
             if (activator.YesNo("Would you like to deprecate all other cohorts?", "Deprecate Other Cohorts"))
             {
-                foreach (var cohort in cohortsWithoutDeprication)
+                foreach (var cohort in cohortsWithoutDeprecation)
                 {
                     cohort.IsDeprecated = true;
                     cohort.SaveToDatabase();
