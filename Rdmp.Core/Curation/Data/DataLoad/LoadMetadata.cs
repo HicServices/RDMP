@@ -62,6 +62,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     private string _folder;
     private DateTime? _lastLoadTime;
     private bool _allowReservedPrefix;
+    private int? _version;
 
     public string DefaultForLoadingPath = Path.Combine("Data", "ForLoading");
     public string DefaultForArchivingPath = Path.Combine("Data", "ForArchiving");
@@ -145,6 +146,12 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     {
         get => _description;
         set => SetField(ref _description, value);
+    }
+
+    public int? Version
+    {
+        get => _version;
+        set => SetField(ref _version, value);
     }
 
     /// <summary>
@@ -262,6 +269,8 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         Folder = r["Folder"] as string ?? FolderHelper.Root;
         LastLoadTime = string.IsNullOrWhiteSpace(r["LastLoadTime"].ToString()) ? null : DateTime.Parse(r["LastLoadTime"].ToString());
         AllowReservedPrefix = ObjectToNullableBool(r["AllowReservedPrefix"]) ?? false;
+        Version = ObjectToNullableInt(r["Version"]);
+
     }
 
     internal LoadMetadata(ShareManager shareManager, ShareDefinition shareDefinition) : base()
@@ -271,9 +280,8 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
 
     public void LinkToCatalogue(ICatalogue catalogue)
     {
-        Clone();
-        //var linkage = new LoadMetadataCatalogueLinkage(CatalogueRepository, this, catalogue);
-        //linkage.SaveToDatabase();
+        var linkage = new LoadMetadataCatalogueLinkage(CatalogueRepository, this, catalogue);
+        linkage.SaveToDatabase();
     }
 
     public void UnlinkFromCatalogue(ICatalogue catalogue)
@@ -468,9 +476,9 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
             loadMetadata).Any(p => p.Value == "true");
     }
 
-    public void Clone()
+    public void Clone(ICatalogueRepository repository)
     {
-        var lmd = new LoadMetadata()
+        var lmd = new LoadMetadata(repository, this.Name)
         {
             LocationOfForLoadingDirectory = this.LocationOfForLoadingDirectory,
             LocationOfForArchivingDirectory = this.LocationOfForArchivingDirectory,
@@ -485,7 +493,6 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
             Folder = this.Folder,
             LastLoadTime = this.LastLoadTime,
             AllowReservedPrefix = this.AllowReservedPrefix,
-            Repository = this.Repository
         };
         lmd.SaveToDatabase();
         foreach (var catalogue in this.GetAllCatalogues())
@@ -494,11 +501,9 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         }
         foreach (var pt in this.ProcessTasks)
         {
-            var newPT = new ProcessTask()
+            var newPT = new ProcessTask(repository,lmd,pt.LoadStage)
             {
-                LoadMetadata_ID = lmd.ID,
                 ProcessTaskType = pt.ProcessTaskType,
-                LoadStage = pt.LoadStage,
                 Name = pt.Name,
                 Order = pt.Order
             };
