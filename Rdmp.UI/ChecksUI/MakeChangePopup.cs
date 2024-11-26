@@ -6,9 +6,12 @@
 
 using System;
 using System.Windows.Forms;
+using NPOI.OpenXmlFormats.Wordprocessing;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.UI.SimpleDialogs;
+using Rdmp.Core.Setting;
 using WideMessageBox = Rdmp.UI.SimpleDialogs.WideMessageBox;
+using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.ChecksUI;
 
@@ -19,6 +22,8 @@ namespace Rdmp.UI.ChecksUI;
 public class MakeChangePopup : ICheckNotifier
 {
     private readonly YesNoYesToAllDialog _dialog;
+    //private Setting[] _settings;
+    //private readonly IActivateItems _activator;
 
     public MakeChangePopup(YesNoYesToAllDialog dialog)
     {
@@ -27,6 +32,8 @@ public class MakeChangePopup : ICheckNotifier
 
     public static bool ShowYesNoMessageBoxToApplyFix(YesNoYesToAllDialog dialog, string problem, string proposedChange)
     {
+        
+
         var message =
             $"The following configuration problem was detected:{Environment.NewLine}\"{problem}\"{Environment.NewLine}";
         message += Environment.NewLine;
