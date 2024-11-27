@@ -20,6 +20,7 @@ public class YesNoYesToAllDialog : WideMessageBox
     private bool NoToAllClicked;
     private object lockShowDialog = new();
 
+
     private FlowLayoutPanel p = new();
     private Button btnYes = new() { Text = "Yes" };
     private Button btnYesToAll = new() { Text = "Yes To All" };
