@@ -27,8 +27,8 @@ namespace Rdmp.Core.Curation.Data.Overview;
 public class OverviewModel
 {
 
-    private ICatalogue _catalogue;
-    private IBasicActivateItems _activator;
+    private readonly ICatalogue _catalogue;
+    private readonly IBasicActivateItems _activator;
 
     private DataTable _dataLoads;
 
@@ -72,6 +72,7 @@ public class OverviewModel
         _numberOfRecords = dt.Rows.Count;
         _numberOfPeople = hasExtractionIdentifier ? dt.DefaultView.ToTable(true, column.ColumnInfo.GetRuntimeName()).Rows.Count : 0;
         GetDataLoads();
+        dt.Dispose();
     }
 
     public int GetNumberOfRecords()
@@ -186,10 +187,8 @@ public class OverviewModel
             dt.BeginLoadData();
             da.Fill(dt);
             Dictionary<string, int> counts = [];
-            foreach (var row in dt.AsEnumerable())
+            foreach (var key in dt.AsEnumerable().Select(row => DateTime.Parse(row.ItemArray[0].ToString()).ToString(dateString)))
             {
-                var datetime = DateTime.Parse(row.ItemArray[0].ToString());
-                var key = datetime.ToString(dateString);
                 counts[key]++;
             }
             dt = new DataTable();

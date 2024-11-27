@@ -124,7 +124,7 @@ public class AggregateFilter : ConcreteFilter, IDisableable
         Name = r["Name"] as string;
         IsMandatory = (bool)r["IsMandatory"];
         ClonedFromExtractionFilter_ID = ObjectToNullableInt(r["ClonedFromExtractionFilter_ID"]);
-        Order = int.Parse(r["Order"].ToString());
+        Order = (int)ObjectToNullableInt(r["Order"]);
 
         var associatedColumnInfo_ID = r["AssociatedColumnInfo_ID"];
         if (associatedColumnInfo_ID != DBNull.Value)

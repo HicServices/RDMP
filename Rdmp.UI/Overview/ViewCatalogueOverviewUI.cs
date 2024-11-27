@@ -59,14 +59,7 @@ public partial class ViewCatalogueOverviewUI : ViewCatalogueOverviewUI_Design
         lblDescription.Text = _catalogue.Description;
 
         var latestDataLoad = _overview.GetMostRecentDataLoad();
-        if (latestDataLoad != null)
-        {
-            lblLastDataLoad.Text = latestDataLoad.Rows[0][3].ToString();
-        }
-        else
-        {
-            lblLastDataLoad.Text = "No Successful DataLoads";
-        }
+        lblLastDataLoad.Text = latestDataLoad != null ? latestDataLoad.Rows[0][3].ToString() : "No Successful DataLoads";
         var extractions = _overview.GetExtractions();
         if (extractions.Any())
         {
@@ -81,8 +74,8 @@ public partial class ViewCatalogueOverviewUI : ViewCatalogueOverviewUI_Design
         {
             var syntaxHelper = _catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.InternalDataProcessing, false)?.GetQuerySyntaxHelper();
             var dateTypeString = syntaxHelper.TypeTranslater.GetSQLDBTypeForCSharpType(new TypeGuesser.DatabaseTypeRequest(typeof(DateTime)));
-       
-        _dateColumns = _catalogue.CatalogueItems.Where(ci => ci.ColumnInfo.Data_type == dateTypeString).ToList();
+
+            _dateColumns = _catalogue.CatalogueItems.Where(ci => ci.ColumnInfo.Data_type == dateTypeString).ToList();
         }
         catch
         {
@@ -92,15 +85,12 @@ public partial class ViewCatalogueOverviewUI : ViewCatalogueOverviewUI_Design
         cbTimeColumns.Items.AddRange(_dateColumns.ToArray());
         var pks = _dateColumns.Where(ci => ci.ColumnInfo.IsPrimaryKey).ToList();
 
-        DataTable dt = new();
         if (pks.Any())
         {
-            dt = OverviewModel.GetCountsByDatePeriod(pks[0].ColumnInfo, cbFrequency.SelectedItem.ToString());
             cbTimeColumns.SelectedIndex = _dateColumns.IndexOf(pks[0]);
         }
         else if (_dateColumns.Any())
         {
-            dt = OverviewModel.GetCountsByDatePeriod(_dateColumns[0].ColumnInfo, cbFrequency.SelectedItem.ToString());
             cbTimeColumns.SelectedIndex = 0;
         }
         lblRecords.Text = _overview.GetNumberOfRecords().ToString();
@@ -201,7 +191,7 @@ public partial class ViewCatalogueOverviewUI : ViewCatalogueOverviewUI_Design
         lblDateRange.Text = $"{dates.Item1} - {dates.Item2}";
         lblPeople.Text = $"{_overview.GetNumberOfPeople()}";
         var dt = OverviewModel.GetCountsByDatePeriod(_dateColumns[cbTimeColumns.SelectedIndex].ColumnInfo, cbFrequency.SelectedItem.ToString(), tbMainWhere.Text);
-        areaChart1.GenerateChart(dt, $"Records per {cbFrequency.SelectedItem.ToString()}");
+        areaChart1.GenerateChart(dt, $"Records per {cbFrequency.SelectedItem}");
     }
 
     private void label4_Click(object sender, EventArgs e)

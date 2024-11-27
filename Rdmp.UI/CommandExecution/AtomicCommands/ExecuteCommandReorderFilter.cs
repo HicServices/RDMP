@@ -14,9 +14,9 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandReorderFilter : BasicUICommandExecution
 {
-    private ConcreteFilter _source;
-    private ConcreteFilter _target;
-    private InsertOption _insertOption;
+    private readonly ConcreteFilter _source;
+    private readonly ConcreteFilter _target;
+    private readonly InsertOption _insertOption;
 
     public ExecuteCommandReorderFilter(IActivateItems activator, ConcreteFilter source, ConcreteFilter destination, InsertOption insertOption) : base(activator)
     {
