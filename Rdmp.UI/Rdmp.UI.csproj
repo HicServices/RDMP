@@ -118,6 +118,7 @@
 		<Compile Update="CommandExecution\AtomicCommands\UIFactory\AtomicCommandLinkLabel.Designer.cs">
 			<DependentUpon>AtomicCommandLinkLabel.cs</DependentUpon>
 		</Compile>
+		<Compile Update="DataLoadUIs\LoadMetadataUIs\LoadMetadataVersionsUI.cs" />
 		<Compile Update="DataLoadUIs\LoadMetadataUIs\ProcessTasks\SqlBakFileProcessTaskUI.cs" />
 		<Compile Update="LocationsMenu\Versioning\VersioningControlUI.cs">
 		  <SubType>UserControl</SubType>

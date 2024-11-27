@@ -17,6 +17,7 @@ internal class LoadMetadataMenu : RDMPContextMenuStrip
     public LoadMetadataMenu(RDMPContextMenuStripArgs args, LoadMetadata loadMetadata) : base(args, loadMetadata)
     {
         Add(new ExecuteCommandEditLoadMetadataDescription(_activator, loadMetadata));
+        Add(new ExecuteCommandViewLoadMetadataVersions(_activator, loadMetadata));
         Add(new ExecuteCommandViewLoadDiagram(_activator, loadMetadata));
         ReBrandActivateAs("Check and Execute", RDMPConcept.LoadMetadata, OverlayKind.Execute);
     }

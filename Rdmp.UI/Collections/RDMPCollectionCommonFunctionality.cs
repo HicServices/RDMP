@@ -634,7 +634,13 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     private bool CanExpandGetter(object model)
     {
         var result = ChildrenGetter(model);
-
+        try
+        {
+            throw new Exception("");
+        }catch(Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
         return result?.Cast<object>().Any() == true;
     }
 

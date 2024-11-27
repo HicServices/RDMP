@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.Curation.Data.Defaults;
@@ -63,6 +64,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     private DateTime? _lastLoadTime;
     private bool _allowReservedPrefix;
     private int? _version;
+    private int? _rootLoadMetadata;
 
     public string DefaultForLoadingPath = Path.Combine("Data", "ForLoading");
     public string DefaultForArchivingPath = Path.Combine("Data", "ForArchiving");
@@ -148,10 +150,22 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         set => SetField(ref _description, value);
     }
 
+    /// <summary>
+    /// Ordered version of the load metadata
+    /// </summary>
     public int? Version
     {
         get => _version;
         set => SetField(ref _version, value);
+    }
+
+    /// <summary>
+    /// base version of the load metadata
+    /// </summary>
+    public int? RootLoadMetadata
+    {
+        get => _rootLoadMetadata;
+        set => SetField(ref _rootLoadMetadata, value);
     }
 
     /// <summary>
@@ -270,6 +284,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         LastLoadTime = string.IsNullOrWhiteSpace(r["LastLoadTime"].ToString()) ? null : DateTime.Parse(r["LastLoadTime"].ToString());
         AllowReservedPrefix = ObjectToNullableBool(r["AllowReservedPrefix"]) ?? false;
         Version = ObjectToNullableInt(r["Version"]);
+        RootLoadMetadata = ObjectToNullableInt(r["RootLoadMetadata"]);
 
     }
 
@@ -493,6 +508,8 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
             Folder = this.Folder,
             LastLoadTime = this.LastLoadTime,
             AllowReservedPrefix = this.AllowReservedPrefix,
+            Version = this.Version is not null ? this.Version++ : 1,
+            RootLoadMetadata = this.ID
         };
         lmd.SaveToDatabase();
         foreach (var catalogue in this.GetAllCatalogues())
@@ -501,7 +518,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         }
         foreach (var pt in this.ProcessTasks)
         {
-            var newPT = new ProcessTask(repository,lmd,pt.LoadStage)
+            var newPT = new ProcessTask(repository, lmd, pt.LoadStage)
             {
                 ProcessTaskType = pt.ProcessTaskType,
                 Name = pt.Name,

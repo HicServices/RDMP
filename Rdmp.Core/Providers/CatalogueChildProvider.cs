@@ -249,7 +249,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         AllDatasets = GetAllObjects<Curation.Data.Dataset>(repository);
 
-        AllLoadMetadatas = GetAllObjects<LoadMetadata>(repository);
+        AllLoadMetadatas = GetAllObjects<LoadMetadata>(repository).Where(lmd => lmd.Version is null).ToArray();
         AllLoadMetadataLinkage = GetAllObjects<LoadMetadataCatalogueLinkage>(repository);
         AllProcessTasks = GetAllObjects<ProcessTask>(repository);
         AllProcessTasksArguments = GetAllObjects<ProcessTaskArgument>(repository);
