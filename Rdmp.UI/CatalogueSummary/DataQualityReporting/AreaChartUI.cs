@@ -6,14 +6,6 @@
 
 using System;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
-using System.Windows.Forms.DataVisualization.Charting;
-using Rdmp.Core.CommandExecution;
-using Rdmp.Core.DataQualityEngine.Data;
-using Rdmp.UI.CatalogueSummary.DataQualityReporting.SubComponents;
-using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
 
@@ -26,9 +18,7 @@ namespace Rdmp.UI.CatalogueSummary.DataQualityReporting;
 /// </summary>
 public partial class AreaChartUI : RDMPUserControl
 {
-    private readonly ChartLookAndFeelSetter _chartLookAndFeelSetter = new();
-
-    private Func<int,int> _OnTabChange;
+    private readonly Func<int,int> _OnTabChange;
 
     public AreaChartUI(Func<int,int> onTabChange=null)
     {

@@ -12,7 +12,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
     internal class ExecuteCommandViewCatalogueOverviewUI : BasicUICommandExecution
     {
-        private Catalogue _catalogue;
+        private readonly Catalogue _catalogue;
 
         public ExecuteCommandViewCatalogueOverviewUI(IActivateItems activator, Catalogue catalogue) : base(activator)
         {

@@ -134,7 +134,7 @@ public class ExtractionFilter : ConcreteFilter, IHasDependencies, IInjectKnown<E
         Description = r["Description"] as string;
         Name = r["Name"] as string;
         IsMandatory = (bool)r["IsMandatory"];
-        Order = int.Parse(r["Order"].ToString());
+        Order = (int)ObjectToNullableInt(r["Order"]);
 
 
         ClearAllInjections();
