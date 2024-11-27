@@ -45,8 +45,7 @@ public partial class ChecksUI : UserControl, ICheckNotifier
     private ConcurrentBag<CheckEventArgs> _results = new();
     private bool outOfDate;
 
-
-    public ChecksUI()
+            public ChecksUI()
     {
         InitializeComponent();
         olvChecks.ItemActivate += olvChecks_ItemActivate;
