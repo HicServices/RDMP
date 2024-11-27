@@ -27,6 +27,7 @@ namespace Rdmp.UI.SimpleDialogs
 
             RegisterCheckbox(cbAutoSuggestProjectNumbers, "AutoSuggestProjectNumbers");
             RegisterCheckbox(cbCohortVersioningOnCommit, "PromptForVersionOnCohortCommit");
+            RegisterCheckbox(cbYesNoAll, "ToggleYestoAllNotoAlldataloadcheck");
             _loaded = true;
         }
 
@@ -61,7 +62,7 @@ namespace Rdmp.UI.SimpleDialogs
             var value = false;
             if (prop is null)
             {
-                prop = new Setting(_activator.RepositoryLocator.CatalogueRepository,propertyName, Convert.ToString(false));
+                prop = new Setting(_activator.RepositoryLocator.CatalogueRepository, propertyName, Convert.ToString(false));
                 prop.SaveToDatabase();
             }
             value = Convert.ToBoolean(prop.Value);
@@ -74,6 +75,11 @@ namespace Rdmp.UI.SimpleDialogs
 
             // add help
             AddTooltip(cb, propertyName);
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
