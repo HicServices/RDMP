@@ -41,7 +41,7 @@ public class ExecuteCommandBulkProcessExtractionInformation : BasicCommandExecut
             var defaultRunTimeName = extractionInformation.CatalogueItem.ColumnInfo.GetFullyQualifiedName();
             var alias = extractionInformation.CatalogueItem.ColumnInfo.GetRuntimeName();
             Console.WriteLine(defaultRunTimeName);
-            var newSQL = _newSelectQuery.Replace("$RTN", defaultRunTimeName) + $" AS {alias}";
+            var newSQL = _newSelectQuery.Replace("$RTN", defaultRunTimeName);
             extractionInformation.SelectSQL = newSQL;
             extractionInformation.Alias = alias;
             extractionInformation.SaveToDatabase();
