@@ -331,7 +331,7 @@
 		<PackageReference Include="NLog" />
 		<PackageReference Include="SixLabors.ImageSharp" />
 		<PackageReference Include="SixLabors.ImageSharp.Drawing" />
-		<PackageReference Include="System.Private.Uri" /
+		<PackageReference Include="System.Private.Uri" />
 		<PackageReference Include="Spectre.Console" />
 		<PackageReference Include="System.Resources.Extensions" />
 		<PackageReference Include="SSH.NET" />
