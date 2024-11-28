@@ -7,6 +7,7 @@
 
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories.Construction;
 using System;
 using System.Collections.Generic;
@@ -14,19 +15,20 @@ using System.Linq;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandBulkProcessExtractionInformation : BasicCommandExecution, IAtomicCommand
+public class ExecuteCommandBulkProcessExtractionInformation : BasicCommandExecution
 {
     private List<ExtractionInformation> _extractionInformations = new List<ExtractionInformation>();
     private string _newSelectQuery;
 
-   
-    public ExecuteCommandBulkProcessExtractionInformation(IBasicActivateItems activator, int eiID, string newSelectQuery) : base(activator)
+    public ExecuteCommandBulkProcessExtractionInformation(IBasicActivateItems activator, string newSelectQuery, IMapsDirectlyToDatabaseTable[] eiIDs) : base(activator)
     {
-
-        var ei = activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<ExtractionInformation>("ID", eiID).FirstOrDefault();
-        if (ei is not null)
+        foreach (var eiID in eiIDs)
         {
-            _extractionInformations.Add(ei);
+            var ei = activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<ExtractionInformation>("ID", eiID.ID).FirstOrDefault();
+            if (ei is not null)
+            {
+                _extractionInformations.Add(ei);
+            }
         }
         _newSelectQuery = newSelectQuery;
     }

@@ -165,6 +165,7 @@ public class AtomicCommandFactory : CommandFactoryBase
                 Weight = -95.10f,
                 SuggestedCategory = Metadata
             };
+            yield return new ExecuteCommandBulkProcessExtractionInformation(_activator, "", Array.Empty<ExtractionInformation>());
             yield return new ExecuteCommandExtractMetadata(_activator, new[] { c }, null, null, null, false, null)
             {
                 OverrideCommandName = "Generate Metadata Report (with custom template)",
@@ -509,7 +510,7 @@ public class AtomicCommandFactory : CommandFactoryBase
             var reservedTest = lmd.AllowReservedPrefix ? "Drop" : "Allow";
             yield return new ExecuteCommandToggleAllowReservedPrefixForLoadMetadata(lmd)
             {
-                OverrideCommandName=$"{reservedTest} Reserved Prefix Columns"
+                OverrideCommandName = $"{reservedTest} Reserved Prefix Columns"
             };
 
             yield return new ExecuteCommandSetGlobalDleIgnorePattern(_activator) { SuggestedCategory = Advanced };
@@ -578,7 +579,6 @@ public class AtomicCommandFactory : CommandFactoryBase
         {
             yield return new ExecuteCommandImportTableInfo(_activator, null, false);
             yield return new ExecuteCommandBulkImportTableInfos(_activator);
-            yield return new ExecuteCommandBulkProcessExtractionInformation(_activator, 1,"");
         }
 
         if (Is(o, out IFilter filter))
