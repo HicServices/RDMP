@@ -1,2 +1,2 @@
-CatalogueConnectionString: Server=(localdb)\MSSQLLocalDB;Database=TEST_Catalogue;Trusted_Connection=True;TrustServerCertificate=true;
-DataExportConnectionString: Server=(localdb)\MSSQLLocalDB;Database=TEST_DataExport;Trusted_Connection=True;TrustServerCertificate=true;
+CatalogueConnectionString: Server=(localdb)\MSSQLLocalDB;Database=RDMP_1_Catalogue;Trusted_Connection=True;TrustServerCertificate=true;
+DataExportConnectionString: Server=(localdb)\MSSQLLocalDB;Database=RDMP_1_DataExport;Trusted_Connection=True;TrustServerCertificate=true;

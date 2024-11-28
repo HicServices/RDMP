@@ -578,6 +578,7 @@ public class AtomicCommandFactory : CommandFactoryBase
         {
             yield return new ExecuteCommandImportTableInfo(_activator, null, false);
             yield return new ExecuteCommandBulkImportTableInfos(_activator);
+            yield return new ExecuteCommandBulkProcessExtractionInformation(_activator, 1,"");
         }
 
         if (Is(o, out IFilter filter))
