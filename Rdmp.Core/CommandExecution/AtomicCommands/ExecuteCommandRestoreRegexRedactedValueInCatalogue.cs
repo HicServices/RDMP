@@ -36,11 +36,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             base.Execute();
             var memoryRepo = new MemoryCatalogueRepository();
             var columnInfo = _activator.RepositoryLocator.CatalogueRepository.GetObjectByID<ColumnInfo>(_redaction.ColumnInfo_ID);
-            var pks = _redaction.RedactionKeys.Select(pk => _activator.RepositoryLocator.CatalogueRepository.GetObjectByID<ColumnInfo>(pk.ColumnInfo_ID));
             var catalogue = columnInfo.CatalogueItems.FirstOrDefault().Catalogue;
             var server = catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.InternalDataProcessing, false);
             DiscoveredTable discoveredTable = columnInfo.TableInfo.Discover(DataAccessContext.InternalDataProcessing);
-            DiscoveredColumn[] discoveredColumns = discoveredTable.DiscoverColumns();
             var qb = new QueryBuilder(null, null, null);
             qb.AddColumn(new ColumnInfoToIColumn(memoryRepo, columnInfo));
             foreach (var rk in _redaction.RedactionKeys)
@@ -92,6 +90,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             {
                 throw new Exception("Original redaction cannot be replaced");
             }
+            dt.Dispose();
         }
     }
 }

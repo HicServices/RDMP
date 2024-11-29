@@ -61,7 +61,6 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
             redactionsToSaveTable = RegexRedactionHelper.GenerateRedactionsDataTable();
             pksToSave = RegexRedactionHelper.GeneratePKDataTable();
 
-            var columnName = columnInfo.Name;
             var table = columnInfo.TableInfo.Name;
             
             _discoveredTable = columnInfo.TableInfo.Discover(DataAccessContext.InternalDataProcessing);
@@ -133,6 +132,7 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
                 {
                     RegexRedactionHelper.DoJoinUpdate(columnInfo, _discoveredTable, _server, redactionUpdates, _discoveredPKColumns);
                 }
+                dt.Dispose();
             }
             else
             {
