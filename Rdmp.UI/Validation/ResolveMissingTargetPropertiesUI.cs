@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -38,6 +39,7 @@ public partial class ResolveMissingTargetPropertiesUI : Form
         lbMissingReferences.Items.AddRange(GetMissingReferences(validator, availableColumns).ToArray());
     }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Validator AdjustedValidator { get; set; }
 
     public static IEnumerable<string> GetUnReferencedColumns(Validator v, IEnumerable<string> columns)

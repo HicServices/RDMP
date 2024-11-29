@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -40,6 +41,7 @@ public partial class WideMessageBox : Form
     /// <summary>
     /// The currently displayed message
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public WideMessageBoxArgs Args { get; set; }
 
     private readonly Stack<WideMessageBoxArgs> _navigationStack = new();
