@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
@@ -37,10 +38,13 @@ public partial class ParameterEditorScintillaControlUI : RDMPUserControl
     public event ParameterEventHandler ParameterChanged = delegate { };
     public event Action ProblemObjectsFound = delegate { };
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public ParameterCollectionUIOptions Options { get; set; }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Dictionary<ISqlParameter, Exception> ProblemObjects { get; private set; }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public bool IsBroken { get; private set; }
 
     public ParameterEditorScintillaControlUI()

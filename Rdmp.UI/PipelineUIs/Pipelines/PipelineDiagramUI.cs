@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
@@ -34,7 +35,10 @@ public partial class PipelineDiagramUI : UserControl
 {
     private IPipeline _pipeline;
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public bool AllowSelection { get; set; }
+
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public bool AllowReOrdering { get; set; }
 
     private RAGSmiley pipelineSmiley = new();

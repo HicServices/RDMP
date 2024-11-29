@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.IO;
@@ -47,7 +48,10 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
     private FileInfo _selectedFile;
     private DataFlowPipelineContext<DataTable> _context;
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public HelpWorkflow HelpWorkflow { get; set; }
+
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public string TargetFolder { get; set; }
 
     public CreateNewCatalogueByImportingFileUI(IActivateItems activator,

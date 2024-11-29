@@ -31,36 +31,42 @@ public partial class ServerDatabaseTableSelector : UserControl
 {
     private bool _allowTableValuedFunctionSelection;
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public string Server
     {
         get => cbxServer.Text;
         set => cbxServer.Text = value;
     }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public string Database
     {
         get => cbxDatabase.Text;
         set => cbxDatabase.Text = value;
     }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public string Table
     {
         private get => cbxTable.Text;
         set => cbxTable.Text = value;
     }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public string Username
     {
         get => tbUsername.Text;
         set => tbUsername.Text = value;
     }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public string Password
     {
         get => tbPassword.Text;
         set => tbPassword.Text = value;
     }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public string Timeout
     {
         get => tbTimeout.Text;
@@ -268,6 +274,7 @@ public partial class ServerDatabaseTableSelector : UserControl
         cbxServer.Items.AddRange(defaultServers);
     }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public bool AllowTableValuedFunctionSelection
     {
         get => _allowTableValuedFunctionSelection;
@@ -281,6 +288,7 @@ public partial class ServerDatabaseTableSelector : UserControl
         }
     }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public DatabaseType DatabaseType
     {
         get => databaseTypeUI1.DatabaseType;
@@ -289,6 +297,7 @@ public partial class ServerDatabaseTableSelector : UserControl
 
     public DiscoveredServer Result => new(GetBuilder());
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public bool TableShouldBeNovel
     {
         set

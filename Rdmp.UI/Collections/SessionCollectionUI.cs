@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core;
@@ -31,7 +32,9 @@ public class SessionCollectionUI : RDMPUserControl, IObjectCollectionControl, IC
     private BrightIdeasSoftware.OLVColumn olvName;
     private bool _firstTime = true;
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public SessionCollection Collection { get; private set; }
+
     public RDMPCollectionCommonFunctionality CommonTreeFunctionality { get; } = new();
 
     public SessionCollectionUI()

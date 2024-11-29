@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -81,7 +82,7 @@ public partial class RDMPMainForm : RDMPForm
         WindowState = FormWindowState.Maximized;
         CloseOnEscape = false;
 
-        if (UserSettings.LicenseAccepted != new License("LIBRARYLICENSES").GetHashOfLicense())
+        if (UserSettings.LicenseAccepted != new WindowManagement.Licenses.License("LIBRARYLICENSES").GetHashOfLicense())
             new LicenseUI().ShowDialog();
     }
 
@@ -163,6 +164,7 @@ public partial class RDMPMainForm : RDMPForm
         Loading = false;
     }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public override string Text
     {
         get => base.Text;

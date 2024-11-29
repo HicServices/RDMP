@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,6 +20,7 @@ public partial class RAGSmiley : UserControl, IRAGSmiley
 {
     private bool _alwaysShowHandCursor;
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public bool AlwaysShowHandCursor
     {
         get => _alwaysShowHandCursor;

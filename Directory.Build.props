@@ -1,7 +1,9 @@
 <Project>
-  <PropertyGroup>
-    <LangVersion>11.0</LangVersion>
-    <Version>8.3.0</Version>
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<LangVersion>latest</LangVersion>
+		<Version>8.3.0</Version>
 		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-  </PropertyGroup>
+		<NoWarn>NU1902;NU1903;NU1904;1701;1702;CS1591;NU1701;CA1416</NoWarn>
+	</PropertyGroup>
 </Project>

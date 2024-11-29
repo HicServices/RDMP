@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using System.Windows.Forms;
 using Rdmp.UI.SimpleControls;
 
@@ -19,6 +20,7 @@ public class SaveMenuItem : ToolStripMenuItem
 {
     private ISaveableUI _saveable;
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public ISaveableUI Saveable
     {
         get => _saveable;

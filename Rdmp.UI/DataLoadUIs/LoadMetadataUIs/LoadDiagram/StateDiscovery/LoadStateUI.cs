@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using Rdmp.Core.Icons.IconProvision;
@@ -22,6 +23,8 @@ public partial class LoadStateUI : UserControl
     private Bitmap _unknown;
     private Bitmap _noLoadUnderway;
     private Bitmap _executingOrCrashed;
+
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public LoadState State { get; private set; }
 
     public LoadStateUI()

@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using Rdmp.Core.CommandExecution.AtomicCommands;
@@ -28,6 +29,7 @@ public partial class CreateNewCohortIdentificationConfigurationUI : RDMPForm
     private Size _smallSize = new(755, 140);
     private Size _bigSize = new(1368, 876);
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public CohortIdentificationConfiguration CohortIdentificationCriteriaCreatedIfAny { get; private set; }
 
     public CreateNewCohortIdentificationConfigurationUI(IActivateItems activator) : base(activator)

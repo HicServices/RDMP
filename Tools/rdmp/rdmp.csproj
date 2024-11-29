@@ -2,7 +2,6 @@
 	<PropertyGroup>
 		<ProjectGuid>{A6107DDC-8268-4902-A994-233B00480113}</ProjectGuid>
 		<OutputType>Exe</OutputType>
-		<TargetFramework>net8.0</TargetFramework>
 		<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 		<AssemblyTitle>rdmp</AssemblyTitle>

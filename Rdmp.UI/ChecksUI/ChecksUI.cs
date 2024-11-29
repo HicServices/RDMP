@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.ComponentModel;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
@@ -123,7 +124,10 @@ public partial class ChecksUI : UserControl, ICheckNotifier
             };
     }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public bool CheckingInProgress { get; private set; }
+
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public bool AllowsYesNoToAll { get; set; }
 
     private Timer _timer;

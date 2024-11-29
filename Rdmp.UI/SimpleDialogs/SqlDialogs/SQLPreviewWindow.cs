@@ -38,6 +38,7 @@ public partial class SQLPreviewWindow : Form
         btnOk.Select();
     }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public bool YesToAll { get; set; }
 
     private void btnOk_Click(object sender, EventArgs e)

@@ -17,6 +17,7 @@ using Rdmp.UI.ItemActivation;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using Rdmp.UI.TransparentHelpSystem;
 using Rdmp.UI.Tutorials;
+using System.ComponentModel;
 
 namespace Rdmp.UI.SimpleDialogs.Reports;
 
@@ -35,7 +36,9 @@ namespace Rdmp.UI.SimpleDialogs.Reports;
 /// </summary>
 public partial class GenerateTestDataUI : RDMPForm
 {
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public HelpWorkflow HelpWorkflow { get; private set; }
+
     private int? _seed;
 
     public GenerateTestDataUI(IActivateItems activator, ICommandExecution command) : base(activator)
