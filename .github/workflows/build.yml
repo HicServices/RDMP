@@ -18,6 +18,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - name: setup .NET
+        uses: actions/setup-dotnet@v4.1.0
       - name: Populate Databases.yaml
         shell: bash
         run: |
