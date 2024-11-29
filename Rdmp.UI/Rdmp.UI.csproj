@@ -61,6 +61,9 @@
 		<ProjectReference Include="..\Rdmp.Core\Rdmp.Core.csproj" />
 	</ItemGroup>
 	<ItemGroup>
+		<Compile Update="CatalogueSummary\DataQualityReporting\AreaChartUI.cs">
+		  <SubType>UserControl</SubType>
+		</Compile>
 		<Compile Update="ChecksUI\ChecksUI.cs">
 			<SubType>UserControl</SubType>
 		</Compile>
@@ -119,6 +122,7 @@
 		<Compile Update="LocationsMenu\Versioning\VersioningControlUI.cs">
 		  <SubType>UserControl</SubType>
 		</Compile>
+		<Compile Update="Overview\ViewCatalogueOverviewUI.cs" />
 		<Compile Update="PieCharts\CatalogueToDatasetLinkagePieChart.cs">
 			<SubType>UserControl</SubType>
 		</Compile>
@@ -187,6 +191,7 @@
 		<Compile Update="SimpleControls\ServerDatabaseTableSelector.Designer.cs">
 			<DependentUpon>ServerDatabaseTableSelector.cs</DependentUpon>
 		</Compile>
+		<Compile Update="SimpleDialogs\RedactCatalogueUI.cs" />
 		<Compile Update="SimpleDialogs\ServerDatabaseTableSelectorDialog.cs">
 			<SubType>Form</SubType>
 		</Compile>
@@ -239,6 +244,7 @@
 		<Compile Update="SimpleDialogs\WideMessageBox.Designer.cs">
 			<DependentUpon>WideMessageBox.cs</DependentUpon>
 		</Compile>
+		<Compile Update="SubComponents\RegexRedactionConfigurationUI.cs" />
 		<Compile Update="SuggestComboBox.cs">
 			<SubType>Component</SubType>
 		</Compile>

@@ -26,7 +26,8 @@ public class ChartLookAndFeelSetter
     /// <param name="chart"></param>
     /// <param name="dt"></param>
     /// <param name="yAxisTitle"></param>
-    public static void PopulateYearMonthChart(Chart chart, DataTable dt, string yAxisTitle)
+    /// <param name="skip"></param>
+    public static void PopulateYearMonthChart(Chart chart, DataTable dt, string yAxisTitle, int skip=3)
     {
         if (dt.Columns[0].ColumnName != "YearMonth")
             throw new ArgumentException(
@@ -93,7 +94,7 @@ public class ChartLookAndFeelSetter
 
         var cols = dt.Columns;
 
-        foreach (var col in cols.Cast<DataColumn>().Skip(3))
+        foreach (var col in cols.Cast<DataColumn>().Skip(skip))
         {
             var s = new Series();
             chart.Series.Add(s);
@@ -116,6 +117,12 @@ public class ChartLookAndFeelSetter
     /// <returns></returns>
     private static int GetOffset(string yearMonth)
     {
+        var matchYearDigit = Regex.Match(yearMonth, @"^\d+$");
+        if(matchYearDigit.Success)
+        {
+            return 0;
+        }
+
         var matchMonthName = Regex.Match(yearMonth, @"\d+-([A-Za-z]+)");
 
         if (matchMonthName.Success)
@@ -124,7 +131,7 @@ public class ChartLookAndFeelSetter
             return DateTime.ParseExact(monthName, "MMMM", CultureInfo.CurrentCulture).Month;
         }
 
-        var matchMonthDigit = Regex.Match(yearMonth, @"\d+-(\d+)");
+        var matchMonthDigit = Regex.Match(yearMonth, @"\d+-(\d+)(-(\d\d))?");
 
         return !matchMonthDigit.Success
             ? throw new Exception("Regex did not match expected YYYY-MM!")
