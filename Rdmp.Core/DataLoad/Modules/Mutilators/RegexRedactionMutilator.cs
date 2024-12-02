@@ -94,7 +94,7 @@ public class RegexRedactionMutilator : MatchingTablesMutilatorWithDataLoadJob
                 var sql = @$"
                     SELECT {column.GetRuntimeName()} {pkSeparator} {string.Join(", ", pkColumnInfos.Select(c => c.GetRuntimeName()))}
                     FROM {table.GetRuntimeName()}
-                    WHERE {column.GetRuntimeName()} LIKE '%{RedactionConfiguration.RegexPattern}%'
+                    WHERE {column.GetRuntimeName()} LIKE '%{RedactionConfiguration.RegexPattern}%' COLLATE Latin1_General_BIN
                     ";
                 var dt = new DataTable();
                 dt.BeginLoadData();
