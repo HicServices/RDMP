@@ -1,13 +1,13 @@
 <Project>
   <ItemGroup>
-    <PackageVersion Include="AWSSDK.S3" Version="3.7.407.1" />
-    <PackageVersion Include="AWSSDK.SecurityToken" Version="3.7.401.6" />
-    <PackageVersion Include="AWSSDK.SSO" Version="3.7.400.57" />
-    <PackageVersion Include="AWSSDK.SSOOIDC" Version="3.7.400.57" />
+    <PackageVersion Include="AWSSDK.S3" Version="3.7.408.1" />
+    <PackageVersion Include="AWSSDK.SecurityToken" Version="3.7.401.7" />
+    <PackageVersion Include="AWSSDK.SSO" Version="3.7.400.58" />
+    <PackageVersion Include="AWSSDK.SSOOIDC" Version="3.7.400.58" />
     <PackageVersion Include="CommandLineParser" Version="2.9.1" />
     <PackageVersion Include="Equ" Version="2.3.0" />
     <PackageVersion Include="ExcelNumberFormat" Version="1.1.0" />
-    <PackageVersion Include="FluentFTP" Version="51.1.0" />
+    <PackageVersion Include="FluentFTP" Version="52.0.0" />
     <PackageVersion Include="HIC.SynthEHR" Version="2.0.1" />
     <PackageVersion Include="HIC.FAnsiSql" Version="3.2.7" />
     <PackageVersion Include="LibArchive.Net" Version="0.1.5" />
