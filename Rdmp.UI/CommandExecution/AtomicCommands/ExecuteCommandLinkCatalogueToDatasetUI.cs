@@ -16,7 +16,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-public sealed class ExecuteCommandLinkCatalogueToDatasetUI : BasicUICommandExecution
+public sealed class ExecuteCommandLinkCatalogueToDatasetUI : BasicUICommandExecution, IAtomicCommand
 {
     private readonly Catalogue _catalogue;
     private Dataset _selectedDataset;

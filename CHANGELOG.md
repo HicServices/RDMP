@@ -1,29 +1,27 @@
-<<<<<<< HEAD
-
-
-
-
-
-||||||| 925afff47
-
-=======
->>>>>>> 637e86636063993b0156997bee867d2a7f5ed9ba
 # Changelog
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-<<<<<<< HEAD
-||||||| 925afff47
-=======
+## [8.4.0] - 2024-12-02
+
+- Add Ordering to Filters
+- [MSSQL ONLY] Add ability to perform Regex redactions on data loads and existing catalogues
+- Add overview page for Catalogues
+- Add RAW Table Date Column Override for Delta Loads
+- Fix Delta Load off by one issue
+- Update Migration strategy to account for all Primary Keys when moving from staging -> live
+- Fix UI issue with viewing cross-database SQL results
+- Add UI Steps to deprecate old cohorts when importing a cohort
+- Add instance setting to enable and disable Yes/No to all
+
 ## [8.3.1] - 2024-10-22
 
 - Improve Performance of regenerating problems with child providers
 - Update UI Tab opening Logic
 - Add Filter to Left-Hand Tree View
 
->>>>>>> 637e86636063993b0156997bee867d2a7f5ed9ba
 ## [8.3.0] - 2024-09-23
 
 - Add New Find & Replace, currently available via User Settings

@@ -50,6 +50,7 @@ The full configuration options are
 | Culture                                      | Optionally specify a custom date format                                                                                                                                                                                                                                                                                                                     |
 | Explicit Date Time Format                    | Optionally specify a specific datetime format    
 | Selected Columns                             | Optionally select which columns you wish to pull from the remote server (defaults to "*" )
+| RawTableDateColumn                           | Optionally give the date column in RAW a different name than in the select statement for delta loads. This may be due to awkward joins in a custom select query 
 
 ## Configuring the Remote Database Attacher
 The Remote Database Attacher has a number of configuration options the required fields are:

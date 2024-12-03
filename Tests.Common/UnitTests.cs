@@ -32,6 +32,7 @@ using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.Curation.Data.Remoting;
 using Rdmp.Core.Curation.Data.Spontaneous;
+using Rdmp.Core.Curation.DataHelper.RegexRedaction;
 using Rdmp.Core.Databases;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataRelease;
@@ -591,6 +592,20 @@ public class UnitTests
             return (T)(object)new Setting(repository.CatalogueRepository, "", "");
         }
 
+        if(typeof(T) == typeof(RegexRedaction))
+        {
+            return (T)(object)new RegexRedaction(repository.CatalogueRepository, 0, 0, "", "", 0, new Dictionary<ColumnInfo, string>());
+        }
+        if (typeof(T) == typeof(RegexRedactionConfiguration))
+        {
+            return (T)(object)new RegexRedactionConfiguration(repository.CatalogueRepository,"name",new System.Text.RegularExpressions.Regex(".*"),"T");
+        }
+        if (typeof(T) == typeof(RegexRedactionKey))
+        {
+            return (T)(object)new RegexRedactionKey(repository.CatalogueRepository,WhenIHaveA<RegexRedaction>(repository),WhenIHaveA<ColumnInfo>(repository),"PK");
+        }
+
+
         throw new TestCaseNotWrittenYetException(typeof(T));
     }
 
@@ -775,7 +790,7 @@ public class UnitTests
     /// Returns instances of all Types supported by <see cref="WhenIHaveA{T}()"/>
     /// </summary>
     /// <returns></returns>
-    public IEnumerable<DatabaseEntity> WhenIHaveAll()
+    protected IEnumerable<DatabaseEntity> WhenIHaveAll()
     {
         var methodWhenIHaveA = GetWhenIHaveAMethod();
         var repo = new object[] { Repository };
@@ -786,7 +801,6 @@ public class UnitTests
 
         foreach (var t in types)
         {
-            Console.Error.WriteLine("WhenIHaveAll: {0}", t.Name);
             //ensure that the method supports the Type
             yield return (DatabaseEntity)methodWhenIHaveA.MakeGenericMethod(t).Invoke(this, repo);
         }
