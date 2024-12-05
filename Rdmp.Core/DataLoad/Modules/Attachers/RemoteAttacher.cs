@@ -24,7 +24,7 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers;
 public class RemoteAttacher : Attacher, IPluginAttacher
 {
 
-    public RemoteAttacher() : base(true) { }
+    public RemoteAttacher() : base(false) { }
     [DemandsInitialization("How far back to pull data from")]
     public AttacherHistoricalDurations HistoricalFetchDuration { get; set; }
 
