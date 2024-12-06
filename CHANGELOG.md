@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [8.4.1] - Unreleased
 
-- Improve Overview Model Geenration Speed
+- Improve Overview Model Generation Speed
 
 ## [8.4.0] - 2024-12-02
 
