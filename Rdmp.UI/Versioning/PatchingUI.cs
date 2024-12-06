@@ -30,7 +30,6 @@ public partial class PatchingUI : Form
     private readonly DiscoveredDatabase _database;
     private readonly ITableRepository _repository;
 
-    //private bool _yesToAll;
     private IPatcher _patcher;
 
     private PatchingUI(DiscoveredDatabase database, ITableRepository repository, IPatcher patcher)
@@ -69,7 +68,7 @@ public partial class PatchingUI : Form
             var mds = new MasterDatabaseScriptExecutor(_database);
 
 
-            mds.PatchDatabase(_patcher, toMem, PreviewPatch,
+            mds.PatchDatabase(_patcher, toMem, (Patch p) => true,
                 () => false);
 
             //if it crashed during patching
@@ -106,24 +105,5 @@ public partial class PatchingUI : Form
     {
         if (Patch.IsPatchingRequired(database, patcher, out _, out _, out _) == Patch.PatchingState.Required)
             new PatchingUI(database, repository, patcher).ShowDialog();
-    }
-
-
-    private bool PreviewPatch(Patch patch)
-    {
-        return true;
-        //if (_yesToAll)
-        //    return true;
-
-        //var preview = new SQLPreviewWindow(patch.locationInAssembly, "The following SQL Patch will be run:",
-        //    patch.GetScriptBody());
-        //try
-        //{
-        //    return preview.ShowDialog() == DialogResult.OK;
-        //}
-        //finally
-        //{
-        //    _yesToAll = preview.YesToAll;
-        //}
     }
 }
