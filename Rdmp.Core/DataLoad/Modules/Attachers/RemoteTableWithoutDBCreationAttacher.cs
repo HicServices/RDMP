@@ -7,12 +7,13 @@
 
 namespace Rdmp.Core.DataLoad.Modules.Attachers;
 
+/// <summary>
+/// Data load component for loading tables with records read from a remote database server.  Runs the specified query (which can include a date parameter)
+/// and inserts the results of the query into RAW.
+/// This attcher does not create RAW if it does not exist. Another attacher will be required to generate the initial RAW database
+/// </summary>
 public class RemoteTableWithoutDBCreationAttacher: RemoteTableAttacher
 {
-    /// <summary>
-    /// Data load component for loading tables with records read from a remote database server.  Runs the specified query (which can include a date parameter)
-    /// and inserts the results of the query into RAW.
-    /// This attcher does not create RAW if it does not exist. Another attacher will be required to generate the initial RAW database
-    /// </summary>
+
     public RemoteTableWithoutDBCreationAttacher() : base(false) { }
 }
