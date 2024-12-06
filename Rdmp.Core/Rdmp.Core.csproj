@@ -257,11 +257,6 @@
 		<EmbeddedResource Include="Databases\CatalogueDatabase\up\078_AddLastLoadTimeToLoadMetadata.sql" />
 		<EmbeddedResource Include="Databases\CatalogueDatabase\up\084_AddLoadDirectorySplit.sql" />
 		<EmbeddedResource Include="Databases\CatalogueDatabase\up\085_AddTicketingReleaseStatuses.sql" />
-		<EmbeddedResource Include="Databases\CatalogueDatabase\up\090_test - Copy - Copy (2).sql" />
-		<EmbeddedResource Include="Databases\CatalogueDatabase\up\090_test - Copy - Copy (3).sql" />
-		<EmbeddedResource Include="Databases\CatalogueDatabase\up\090_test - Copy - Copy.sql" />
-		<EmbeddedResource Include="Databases\CatalogueDatabase\up\090_test - Copy.sql" />
-		<EmbeddedResource Include="Databases\CatalogueDatabase\up\089_test.sql" />
 		<EmbeddedResource Include="Databases\CatalogueDatabase\up\088_AddRegexRedactionConfiguration.sql" />
 		<EmbeddedResource Include="Databases\CatalogueDatabase\up\086_AddDataLoadPrefixOverride.sql" />
 		<EmbeddedResource Include="Databases\CatalogueDatabase\up\087_AddAggregateFilterOrdering.sql" />
