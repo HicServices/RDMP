@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using Rdmp.Core;
@@ -45,7 +46,6 @@ public partial class ViewCatalogueOverviewUI : ViewCatalogueOverviewUI_Design
 {
     private Catalogue _catalogue;
     private OverviewModel _overview;
-    private List<CatalogueItem> _dateColumns;
     private static readonly string[] frequencies = new[] { "Day", "Month", "Year" };
 
     public ViewCatalogueOverviewUI()
@@ -58,45 +58,16 @@ public partial class ViewCatalogueOverviewUI : ViewCatalogueOverviewUI_Design
         lblName.Text = _catalogue.Name;
         lblDescription.Text = _catalogue.Description;
 
-        var latestDataLoad = _overview.GetMostRecentDataLoad();
-        lblLastDataLoad.Text = latestDataLoad != null ? latestDataLoad.Rows[0][3].ToString() : "No Successful DataLoads";
-        var extractions = _overview.GetExtractions();
-        if (extractions.Any())
-        {
-            var latestExtractionDate = extractions.AsEnumerable().Select(r => r.DateOfExtraction).Distinct().Max();
-            lblLatestExtraction.Text = latestExtractionDate.ToString();
-        }
-        else
-        {
-            lblLatestExtraction.Text = "Catalogue has not been extracted";
-        }
-        try
-        {
-            var syntaxHelper = _catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.InternalDataProcessing, false)?.GetQuerySyntaxHelper();
-            var dateTypeString = syntaxHelper.TypeTranslater.GetSQLDBTypeForCSharpType(new TypeGuesser.DatabaseTypeRequest(typeof(DateTime)));
-
-            _dateColumns = _catalogue.CatalogueItems.Where(ci => ci.ColumnInfo.Data_type == dateTypeString).ToList();
-        }
-        catch
-        {
-            return;
-        }
-        cbTimeColumns.Items.Clear();
-        cbTimeColumns.Items.AddRange(_dateColumns.ToArray());
-        var pks = _dateColumns.Where(ci => ci.ColumnInfo.IsPrimaryKey).ToList();
-
-        if (pks.Any())
-        {
-            cbTimeColumns.SelectedIndex = _dateColumns.IndexOf(pks[0]);
-        }
-        else if (_dateColumns.Any())
-        {
-            cbTimeColumns.SelectedIndex = 0;
-        }
+        var latestDataLoad = _overview.GetLatestDataLoad();
+        lblLastDataLoad.Text = latestDataLoad ?? "No Successful DataLoads";
+        var extraction = _overview.GetLatestExtraction();
+        lblLatestExtraction.Text = extraction ?? "Catalogue has not been extracted";
         lblRecords.Text = _overview.GetNumberOfRecords().ToString();
-        var dates = _overview.GetStartEndDates(_dateColumns[cbTimeColumns.SelectedIndex].ColumnInfo, tbMainWhere.Text);
+        var dates = _overview.GetStartEndDates();
         lblDateRange.Text = $"{dates.Item1} - {dates.Item2}";
         lblPeople.Text = $"{_overview.GetNumberOfPeople()}";
+
+        //areaChart1.GenerateChart(dt, $"Records per {cbFrequency.SelectedItem}");
 
     }
 
@@ -126,8 +97,7 @@ public partial class ViewCatalogueOverviewUI : ViewCatalogueOverviewUI_Design
 
     private void cbTimeColumns_SelectedIndexChanged(object sender, EventArgs e)
     {
-        var dt = OverviewModel.GetCountsByDatePeriod(_dateColumns[cbTimeColumns.SelectedIndex].ColumnInfo, cbFrequency.SelectedItem.ToString(), tbMainWhere.Text);
-        areaChart1.GenerateChart(dt, $"Records per {cbFrequency.SelectedItem}");
+        UpdateCatalogueData();
     }
 
     public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
@@ -143,60 +113,27 @@ public partial class ViewCatalogueOverviewUI : ViewCatalogueOverviewUI_Design
 
     public override string GetTabName() => $"{_catalogue.Name} Overview";
 
-    private void lblLastDataLoad_Click(object sender, EventArgs e)
-    {
-
-    }
-
-    private void label2_Click(object sender, EventArgs e)
-    {
-
-    }
-
-    private void lblDescription_Click(object sender, EventArgs e)
-    {
-
-    }
-
-    private void lblLatestExtraction_Click(object sender, EventArgs e)
-    {
-
-    }
-
-    private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
-    {
-
-    }
-
-    private void areaChart1_Load(object sender, EventArgs e)
-    {
-
-    }
-
-    private void tbMainWhere_TextChanged(object sender, EventArgs e)
-    {
-    }
-
     private void btnSettings_Click(object sender, EventArgs e)
     {
         Activator.Activate<CatalogueUI, Catalogue>(_catalogue);
     }
 
-    private void button1_Click(object sender, EventArgs e)
-    {
-        _overview.Regen(tbMainWhere.Text);
-        lblRecords.Text = _overview.GetNumberOfRecords().ToString();
-        lblPeople.Text = _overview.GetNumberOfPeople().ToString();
-        var dates = _overview.GetStartEndDates(_dateColumns[cbTimeColumns.SelectedIndex].ColumnInfo, tbMainWhere.Text);
-        lblDateRange.Text = $"{dates.Item1} - {dates.Item2}";
-        lblPeople.Text = $"{_overview.GetNumberOfPeople()}";
-        var dt = OverviewModel.GetCountsByDatePeriod(_dateColumns[cbTimeColumns.SelectedIndex].ColumnInfo, cbFrequency.SelectedItem.ToString(), tbMainWhere.Text);
-        areaChart1.GenerateChart(dt, $"Records per {cbFrequency.SelectedItem}");
-    }
-
     private void label4_Click(object sender, EventArgs e)
     {
 
+    }
+
+    private void btnGenerate_Click(object sender, EventArgs e)
+    {
+        _overview.Generate();
+        UpdateCatalogueData();
+        //Task.Run(() =>
+        //{
+        //    _overview.Generate();
+        //}).ContinueWith((task) =>
+        //{
+        //    UpdateCatalogueData();
+        //}, TaskScheduler.FromCurrentSynchronizationContext());
     }
 }
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ViewCatalogueOverviewUI_Design, UserControl>))]

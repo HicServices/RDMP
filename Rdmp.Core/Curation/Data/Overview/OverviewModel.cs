@@ -4,11 +4,14 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using MongoDB.Driver;
 using Rdmp.Core.CommandExecution;
+using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataLoad.Triggers;
 using Rdmp.Core.DataViewing;
 using Rdmp.Core.Logging;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
@@ -17,6 +20,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Rdmp.Core.Curation.Data.Overview;
 
@@ -28,246 +32,287 @@ public class OverviewModel
 
     private readonly ICatalogue _catalogue;
     private readonly IBasicActivateItems _activator;
-
-    private DataTable _dataLoads;
-
-    private int _numberOfPeople;
-    private int _numberOfRecords;
+    private CatalogueOverview _catalogueOverview;
 
     public OverviewModel(IBasicActivateItems activator, ICatalogue catalogue)
     {
         _activator = activator;
         _catalogue = catalogue;
-        if (catalogue != null)
-        {
-            Regen("");
-        }
+        _catalogueOverview = activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<CatalogueOverview>("Catalogue_ID", catalogue.ID).FirstOrDefault();
     }
 
-    public void Regen(string whereClause)
+    public void Generate()
     {
-        DataTable dt = new();
-        bool hasExtractionIdentifier = true;
+        var recordCount = GetRecordCount();
+        var peopleCount = GetPeopleCount();
+        if (_catalogueOverview is null)
+        {
+            _catalogueOverview = new CatalogueOverview(_activator.RepositoryLocator.CatalogueRepository, _catalogue.ID, recordCount, peopleCount);
+        }
+        //data load date
+        _catalogueOverview.LastDataLoad = GetDataLoadDate();
+        //extraction date
+        _catalogueOverview.LastExtractionTime = GetExtractionTime();
+        //date range
+        var dates = GetDates();
+        _catalogueOverview.StartDate = dates.Item1;
+        _catalogueOverview.EndDate = dates.Item2;
+        _catalogueOverview.SaveToDatabase();
+
+        GetCountsByDate();
+        //todo generate graph data
+    }
+
+    private int GetRecordCount()
+    {
         var column = _catalogue.CatalogueItems.Where(ci => ci.ExtractionInformation.IsExtractionIdentifier).FirstOrDefault();
         if (column is null)
         {
             column = _catalogue.CatalogueItems.FirstOrDefault();
-            hasExtractionIdentifier = false;
         }
-        if (column is null) return;
+        if (column is null) return 0;
+        var discoveredColumn = column.ColumnInfo.Discover(DataAccessContext.InternalDataProcessing);
+        return discoveredColumn.Table.GetRowCount();
+    }
+
+    private int GetPeopleCount()
+    {
+        var column = _catalogue.CatalogueItems.Where(ci => ci.ExtractionInformation.IsExtractionIdentifier).FirstOrDefault();
+        if (column is null) return 0;
+        var discoveredColumn = column.ColumnInfo.Discover(DataAccessContext.InternalDataProcessing);
+        var qb = new QueryBuilder("DISTINCT", null, null);
+        var memRepo = new MemoryRepository();
+        qb.AddColumn(new ColumnInfoToIColumn(memRepo, column.ColumnInfo));
+        var server = discoveredColumn.Table.Database.Server;
+        using var con = server.GetConnection();
+        con.Open();
+        using var cmd = server.GetCommand($"SELECT count(*) from ({qb.SQL})as dt", con);
+        return int.Parse(cmd.ExecuteScalar().ToString());
+    }
+
+    private DateTime? GetDataLoadDate()
+    {
+        var column = _catalogue.CatalogueItems.Where(c => c.Name == SpecialFieldNames.ValidFrom).FirstOrDefault();
+        if (column is null) return null;
+        var discoveredColumn = column.ColumnInfo.Discover(DataAccessContext.InternalDataProcessing);
+        var qb = new QueryBuilder("DISTINCT", null, null);
+        var memRepo = new MemoryRepository();
+        qb.AddColumn(new ColumnInfoToIColumn(memRepo, column.ColumnInfo));
+        var server = discoveredColumn.Table.Database.Server;
+        using var con = server.GetConnection();
+        con.Open();
+        using var cmd = server.GetCommand(qb.SQL, con);
+        using var da = server.GetDataAdapter(cmd);
+        var dt = new DataTable();
+        da.Fill(dt);
+        var rows = dt.AsEnumerable().Where(r => !string.IsNullOrEmpty(r[0].ToString()));
+        if (!rows.Any()) return null;
+        return rows.Select(r => DateTime.Parse(r[0].ToString())).Max();
+    }
+
+    private DateTime? GetExtractionTime()
+    {
+        var datasets = _activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", _catalogue.ID).Select(d => d.ID);
+        var results = _activator.RepositoryLocator.DataExportRepository.GetAllObjects<CumulativeExtractionResults>().Where(result => datasets.Contains(result.ExtractableDataSet_ID)).ToList();
+        if (!results.Any()) return null;
+        return results.Select(r => r.DateOfExtraction).Max();
+
+    }
+
+
+    private Tuple<DateTime?, DateTime?> GetDates()
+    {
+        var column = _catalogue.CatalogueItems.Where(c => c.ColumnInfo.Data_type == "datetime2").FirstOrDefault();//temp
+        if (column == null) return null;
+        if (column is null) return null;
+        var discoveredColumn = column.ColumnInfo.Discover(DataAccessContext.InternalDataProcessing);
+        var qb = new QueryBuilder("DISTINCT", null, null);
+        var memRepo = new MemoryRepository();
+        qb.AddColumn(new ColumnInfoToIColumn(memRepo, column.ColumnInfo));
+        var server = discoveredColumn.Table.Database.Server;
+        using var con = server.GetConnection();
+        con.Open();
+        using var cmd = server.GetCommand(qb.SQL, con);
+        using var da = server.GetDataAdapter(cmd);
+        var dt = new DataTable();
+        da.Fill(dt);
+        var rows = dt.AsEnumerable().Where(r => !string.IsNullOrEmpty(r[0].ToString()));
+        if (!rows.Any()) return null;
+        var dateTimeRows = rows.Select(r => DateTime.Parse(r[0].ToString()));
+        var max = dateTimeRows.Max();
+        var min = dateTimeRows.Min();
+        return new Tuple<DateTime?, DateTime?>(min, max);
+    }
+    //public void Regen(string whereClause)
+    //{
+    //    DataTable dt = new();
+    //    bool hasExtractionIdentifier = true;
+    //    var column = _catalogue.CatalogueItems.Where(ci => ci.ExtractionInformation.IsExtractionIdentifier).FirstOrDefault();
+    //    if (column is null)
+    //    {
+    //        column = _catalogue.CatalogueItems.FirstOrDefault();
+    //        hasExtractionIdentifier = false;
+    //    }
+    //    if (column is null) return;
+    //    var discoveredColumn = column.ColumnInfo.Discover(DataAccessContext.InternalDataProcessing);
+    //    var server = discoveredColumn.Table.Database.Server;
+    //    using var con = server.GetConnection();
+    //    con.Open();
+    //    string populatedWhere = !string.IsNullOrWhiteSpace(whereClause) ? $"WHERE {whereClause}" : "";
+    //    var sql = $"SELECT {column.ColumnInfo.GetRuntimeName()} FROM {discoveredColumn.Table.GetRuntimeName()} {populatedWhere}";
+    //    using var cmd = server.GetCommand(sql, con);
+    //    cmd.CommandTimeout = 30000;
+    //    using var da = server.GetDataAdapter(cmd);
+    //    dt.BeginLoadData();
+    //    da.Fill(dt);
+    //    dt.EndLoadData();
+    //    con.Dispose();
+    //    _numberOfRecords = dt.Rows.Count;
+    //    _numberOfPeople = hasExtractionIdentifier ? dt.DefaultView.ToTable(true, column.ColumnInfo.GetRuntimeName()).Rows.Count : 0;
+    //    GetDataLoads();
+    //    dt.Dispose();
+    //}
+
+    private void GetCountsByDate()
+    {
+        var column = _catalogue.CatalogueItems.Where(c => c.ColumnInfo.Data_type == "datetime2").FirstOrDefault();//temp
+        var dateString = "yyyy-MM";
+        DataTable dt = new();
         var discoveredColumn = column.ColumnInfo.Discover(DataAccessContext.InternalDataProcessing);
         var server = discoveredColumn.Table.Database.Server;
         using var con = server.GetConnection();
         con.Open();
-        string populatedWhere = !string.IsNullOrWhiteSpace(whereClause) ? $"WHERE {whereClause}" : "";
-        var sql = $"SELECT {column.ColumnInfo.GetRuntimeName()} FROM {discoveredColumn.Table.GetRuntimeName()} {populatedWhere}";
-        using var cmd = server.GetCommand(sql, con);
-        cmd.CommandTimeout = 30000;
+        var repo = new MemoryCatalogueRepository();
+        var qb = new QueryBuilder(null, null);
+        qb.AddColumn(new ColumnInfoToIColumn(repo, column.ColumnInfo));
+        qb.AddCustomLine($"{column.ColumnInfo.Name} IS NOT NULL", FAnsi.Discovery.QuerySyntax.QueryComponent.WHERE);
+        var cmd = server.GetCommand(qb.SQL, con);
         using var da = server.GetDataAdapter(cmd);
         dt.BeginLoadData();
         da.Fill(dt);
         dt.EndLoadData();
         con.Dispose();
-        _numberOfRecords = dt.Rows.Count;
-        _numberOfPeople = hasExtractionIdentifier ? dt.DefaultView.ToTable(true, column.ColumnInfo.GetRuntimeName()).Rows.Count : 0;
-        GetDataLoads();
-        dt.Dispose();
+        Dictionary<string, int> counts = [];
+        foreach (var key in dt.AsEnumerable().Select(row => DateTime.Parse(row[0].ToString()).ToString(dateString)))
+        {
+            if (counts.TryGetValue(key, out var count))
+            {
+                counts[key]++;
+            }
+            else
+            {
+                counts[key] = 1;
+            }
+        }
+
+        //this is stupidly slow
+        foreach (CatalogueOverviewDataPoint dp in _activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<CatalogueOverviewDataPoint>("CatalogueOverview_ID", _catalogueOverview.ID).ToList())
+        {
+            dp.DeleteInDatabase();
+        }
+        foreach (var item in counts)
+        {
+            var dp = new CatalogueOverviewDataPoint(_activator.RepositoryLocator.CatalogueRepository, _catalogueOverview.ID, DateTime.Parse(item.Key), item.Value);
+            dp.SaveToDatabase();
+        }
     }
 
     public int GetNumberOfRecords()
     {
-        return _numberOfRecords;
+        return _catalogueOverview.NumberOfRecords;
     }
 
     public int GetNumberOfPeople()
     {
-        return _numberOfPeople;
+        return _catalogueOverview.NumberOfPeople;
     }
 
-    public Tuple<DateTime, DateTime> GetStartEndDates(ColumnInfo dateColumn, string whereClause)
+    public string GetLatestExtraction()
     {
-        DataTable dt = new();
+        return _catalogueOverview.LastExtractionTime != null ? _catalogueOverview.LastExtractionTime.ToString() : null;
+    }
 
-        var discoveredColumn = _catalogue.CatalogueItems.First().ColumnInfo.Discover(DataAccessContext.InternalDataProcessing);
-        var server = discoveredColumn.Table.Database.Server;
-        var populatedWhereClause = !string.IsNullOrWhiteSpace(whereClause) ? $"WHERE {whereClause}" : "";
-        using var con = server.GetConnection();
-        con.Open();
-        if (server.DatabaseType == FAnsi.DatabaseType.MicrosoftSQLServer)
-        {
-            var sql = $@"
-        select min({dateColumn.GetRuntimeName()}) as min, max({dateColumn.GetRuntimeName()}) as max
-        from
-        (select {dateColumn.GetRuntimeName()},
-        count(1) over (partition by year({dateColumn.GetRuntimeName()})) as occurs 
-        from {discoveredColumn.Table.GetRuntimeName()} {populatedWhereClause}) as t
-        where occurs >1
-        ";
+    public string GetLatestDataLoad()
+    {
+        return _catalogueOverview.LastDataLoad != null ? _catalogueOverview.LastDataLoad.ToString() : null;
+    }
 
-            using var cmd = server.GetCommand(sql, con);
-            cmd.CommandTimeout = 30000;
-            using var da = server.GetDataAdapter(cmd);
-            dt.BeginLoadData();
-            da.Fill(dt);
-            dt.EndLoadData();
-        }
-        else
-        {
-            var repo = new MemoryCatalogueRepository();
-            var qb = new QueryBuilder(null, null);
-            qb.AddColumn(new ColumnInfoToIColumn(repo, dateColumn));
-            qb.AddCustomLine($"{dateColumn.Name} IS NOT NULL", FAnsi.Discovery.QuerySyntax.QueryComponent.WHERE);
-            var cmd = server.GetCommand(qb.SQL, con);
-            using var da = server.GetDataAdapter(cmd);
-            dt.BeginLoadData();
-            da.Fill(dt);
-            var latest = dt.AsEnumerable()
-               .Max(r => r.Field<DateTime>(dateColumn.Name));
-            var earliest = dt.AsEnumerable()
-              .Min(r => r.Field<DateTime>(dateColumn.Name));
-            dt = new();
-            dt.Rows.Add([earliest, latest]);
-        }
-        con.Dispose();
-        return new Tuple<DateTime, DateTime>(DateTime.Parse(dt.Rows[0].ItemArray[0].ToString()), DateTime.Parse(dt.Rows[0].ItemArray[1].ToString()));
+    public Tuple<DateTime?, DateTime?> GetStartEndDates()
+    {
+        return new Tuple<DateTime?, DateTime?>(_catalogueOverview.StartDate, _catalogueOverview.EndDate);
     }
 
 
     public static DataTable GetCountsByDatePeriod(ColumnInfo dateColumn, string datePeriod, string optionalWhere = "")
     {
         DataTable dt = new();
-        if (!(new[] { "Day", "Month", "Year" }).Contains(datePeriod))
-        {
-            throw new Exception("Invalid Date period");
-        }
-        var discoveredColumn = dateColumn.Discover(DataAccessContext.InternalDataProcessing);
-        var server = discoveredColumn.Table.Database.Server;
-        using var con = server.GetConnection();
-        con.Open();
-        var dateString = "yyyy-MM";
-        switch (datePeriod)
-        {
-            case "Day":
-                dateString = "yyyy-MM-dd";
-                break;
-            case "Month":
-                dateString = "yyyy-MM";
-                break;
-            case "Year":
-                dateString = "yyyy";
-                break;
-        }
-        if (server.DatabaseType == FAnsi.DatabaseType.MicrosoftSQLServer)
-        {
-            var sql = @$"
-        SELECT format({dateColumn.GetRuntimeName()}, '{dateString}') as YearMonth, count(*) as '# Records'
-        FROM {discoveredColumn.Table.GetRuntimeName()}
-        WHERE {dateColumn.GetRuntimeName()} IS NOT NULL
-        {(optionalWhere != "" ? "AND" : "")} {optionalWhere.Replace('"', '\'')}
-        GROUP BY format({dateColumn.GetRuntimeName()}, '{dateString}')
-        ORDER BY 1
-        ";
+        //if (!(new[] { "Day", "Month", "Year" }).Contains(datePeriod))
+        //{
+        //    throw new Exception("Invalid Date period");
+        //}
+        //var discoveredColumn = dateColumn.Discover(DataAccessContext.InternalDataProcessing);
+        //var server = discoveredColumn.Table.Database.Server;
+        //using var con = server.GetConnection();
+        //con.Open();
+        //var dateString = "yyyy-MM";
+        //switch (datePeriod)
+        //{
+        //    case "Day":
+        //        dateString = "yyyy-MM-dd";
+        //        break;
+        //    case "Month":
+        //        dateString = "yyyy-MM";
+        //        break;
+        //    case "Year":
+        //        dateString = "yyyy";
+        //        break;
+        //}
+        //if (server.DatabaseType == FAnsi.DatabaseType.MicrosoftSQLServer)
+        //{
+        //    var sql = @$"
+        //SELECT format({dateColumn.GetRuntimeName()}, '{dateString}') as YearMonth, count(*) as '# Records'
+        //FROM {discoveredColumn.Table.GetRuntimeName()}
+        //WHERE {dateColumn.GetRuntimeName()} IS NOT NULL
+        //{(optionalWhere != "" ? "AND" : "")} {optionalWhere.Replace('"', '\'')}
+        //GROUP BY format({dateColumn.GetRuntimeName()}, '{dateString}')
+        //ORDER BY 1
+        //";
 
-            using var cmd = server.GetCommand(sql, con);
-            cmd.CommandTimeout = 30000;
-            using var da = server.GetDataAdapter(cmd);
-            dt.BeginLoadData();
-            da.Fill(dt);
-            dt.EndLoadData();
-        }
-        else
-        {
-            var repo = new MemoryCatalogueRepository();
-            var qb = new QueryBuilder(null, null);
-            qb.AddColumn(new ColumnInfoToIColumn(repo, dateColumn));
-            qb.AddCustomLine($"{dateColumn.Name} IS NOT NULL", FAnsi.Discovery.QuerySyntax.QueryComponent.WHERE);
-            var cmd = server.GetCommand(qb.SQL, con);
-            using var da = server.GetDataAdapter(cmd);
-            dt.BeginLoadData();
-            da.Fill(dt);
-            Dictionary<string, int> counts = [];
-            foreach (var key in dt.AsEnumerable().Select(row => DateTime.Parse(row.ItemArray[0].ToString()).ToString(dateString)))
-            {
-                counts[key]++;
-            }
-            dt = new DataTable();
-            foreach (var item in counts)
-            {
-                DataRow dr = dt.NewRow();
-                dr["YearMonth"] = item.Key;
-                dr["# Records"] = item.Value;
-                dt.Rows.Add(dr);
-            }
-            dt.EndLoadData();
+        //    using var cmd = server.GetCommand(sql, con);
+        //    cmd.CommandTimeout = 30000;
+        //    using var da = server.GetDataAdapter(cmd);
+        //    dt.BeginLoadData();
+        //    da.Fill(dt);
+        //    dt.EndLoadData();
+        //}
+        //else
+        //{
+        //    var repo = new MemoryCatalogueRepository();
+        //    var qb = new QueryBuilder(null, null);
+        //    qb.AddColumn(new ColumnInfoToIColumn(repo, dateColumn));
+        //    qb.AddCustomLine($"{dateColumn.Name} IS NOT NULL", FAnsi.Discovery.QuerySyntax.QueryComponent.WHERE);
+        //    var cmd = server.GetCommand(qb.SQL, con);
+        //    using var da = server.GetDataAdapter(cmd);
+        //    dt.BeginLoadData();
+        //    da.Fill(dt);
+        //    Dictionary<string, int> counts = [];
+        //    foreach (var key in dt.AsEnumerable().Select(row => DateTime.Parse(row.ItemArray[0].ToString()).ToString(dateString)))
+        //    {
+        //        counts[key]++;
+        //    }
+        //    dt = new DataTable();
+        //    foreach (var item in counts)
+        //    {
+        //        DataRow dr = dt.NewRow();
+        //        dr["YearMonth"] = item.Key;
+        //        dr["# Records"] = item.Value;
+        //        dt.Rows.Add(dr);
+        //    }
+        //    dt.EndLoadData();
 
-        }
-        con.Dispose();
+        //}
+        //con.Dispose();
         return dt;
-    }
-
-    private void GetDataLoads()
-    {
-        _dataLoads = new();
-        var repo = new MemoryCatalogueRepository();
-        var qb = new QueryBuilder(null, null);
-        var columnInfo = _catalogue.CatalogueItems.Where(c => c.Name == SpecialFieldNames.DataLoadRunID).Select(c => c.ColumnInfo).FirstOrDefault();
-        if (columnInfo != null)
-        {
-            qb.AddColumn(new ColumnInfoToIColumn(repo, columnInfo));
-            qb.AddCustomLine($"{columnInfo.Name} IS NOT NULL", FAnsi.Discovery.QuerySyntax.QueryComponent.WHERE);
-            var sql = qb.SQL;
-            var server = columnInfo.Discover(DataAccessContext.InternalDataProcessing).Table.Database.Server;
-            using var con = server.GetConnection();
-            con.Open();
-
-            using var cmd = server.GetCommand(sql, con);
-            cmd.CommandTimeout = 30000;
-            using var da = server.GetDataAdapter(cmd);
-            _dataLoads.BeginLoadData();
-            da.Fill(_dataLoads);
-            _dataLoads.EndLoadData();
-        }
-
-    }
-
-    public DataTable GetMostRecentDataLoad()
-    {
-        if (_dataLoads == null) GetDataLoads();
-        if (_dataLoads.Rows.Count == 0) return null;
-        var maxDataLoadId = _dataLoads.AsEnumerable().Select(r => int.Parse(r[0].ToString())).Distinct().Max();
-        var loggingServers = _activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<ExternalDatabaseServer>("CreatedByAssembly", "Rdmp.Core/Databases.LoggingDatabase");
-        var columnInfo = _catalogue.CatalogueItems.Where(c => c.Name == SpecialFieldNames.DataLoadRunID).Select(c => c.ColumnInfo).First();
-        var server = columnInfo.Discover(DataAccessContext.InternalDataProcessing).Table.Database.Server;
-
-        DataTable dt = new();
-        foreach (var loggingServer in loggingServers)
-        {
-            var logCollection = new ViewLogsCollection(loggingServer, new LogViewerFilter(LoggingTables.DataLoadRun));
-            var dataLoadRunSql = $"{logCollection.GetSql()} WHERE ID={maxDataLoadId}";
-            var logServer = loggingServer.Discover(DataAccessContext.InternalDataProcessing).Server;
-            using var loggingCon = logServer.GetConnection();
-            loggingCon.Open();
-            using var loggingCmd = logServer.GetCommand(dataLoadRunSql, loggingCon);
-            loggingCmd.CommandTimeout = 30000;
-            using var loggingDa = server.GetDataAdapter(loggingCmd);
-            dt.BeginLoadData();
-            loggingDa.Fill(dt);
-            dt.EndLoadData();
-            loggingCon.Dispose();
-            if (dt.Rows.Count > 0)
-            {
-                break;
-            }
-        }
-        return dt;
-    }
-
-    public List<CumulativeExtractionResults> GetExtractions()
-    {
-        var datasets = _activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", _catalogue.ID).Select(d => d.ID);
-        var results = _activator.RepositoryLocator.DataExportRepository.GetAllObjects<CumulativeExtractionResults>().Where(result => datasets.Contains(result.ExtractableDataSet_ID)).ToList();
-        return results;
-
     }
 
 }
