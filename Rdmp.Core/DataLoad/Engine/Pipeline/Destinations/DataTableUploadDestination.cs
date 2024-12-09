@@ -279,10 +279,11 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             _firstTime = false;
         }
 
-        if (IncludeTimeStamp && !_discoveredTable.DiscoverColumns().Where(c => c.GetRuntimeName() == _extractionTimeStamp).Any())
+        if (IncludeTimeStamp && _discoveredTable.DiscoverColumns().All(c => c.GetRuntimeName() != _extractionTimeStamp))
         {
             _discoveredTable.AddColumn(_extractionTimeStamp, new DatabaseTypeRequest(typeof(DateTime)), true, 30000);
         }
+
         if (IndexTables)
         {
             var indexes = UserDefinedIndexes.Count != 0 ? UserDefinedIndexes : pkColumns.Select(c => c.ColumnName);
@@ -353,11 +354,11 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                             // look up the original value and check we've not already extected the same value under a different release ID
                             var privateIdentifierField = _externalCohortTable.PrivateIdentifierField.Split('.').Last()[1..^1];//remove the "[]" from the identifier field
                             var releaseIdentifierField = _externalCohortTable.ReleaseIdentifierField.Split('.').Last()[1..^1];//remove the "[]" from the identifier field
-                            DiscoveredTable cohortTable = _externalCohortTable.DiscoverCohortTable();
-                            var lookupDT = cohortTable.GetDataTable();
+                            var cohortTable = _externalCohortTable.DiscoverCohortTable();
+                            using var lookupDT = cohortTable.GetDataTable();
                             var releaseIdIndex = lookupDT.Columns.IndexOf(releaseIdentifierField);
                             var privateIdIndex = lookupDT.Columns.IndexOf(privateIdentifierField);
-                            var foundRow = lookupDT.Rows.Cast<DataRow>().Where(r => r.ItemArray[releaseIdIndex].ToString() == row[pkCol.ColumnName].ToString()).FirstOrDefault();
+                            var foundRow = lookupDT.Rows.Cast<DataRow>().FirstOrDefault(r => r.ItemArray[releaseIdIndex].ToString() == row[pkCol.ColumnName].ToString());
                             if (foundRow is not null)
                             {
                                 var originalValue = foundRow.ItemArray[privateIdIndex];
@@ -667,9 +668,9 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                 _discoveredTable.CreatePrimaryKey(AlterTimeout, pkColumnsToCreate);
             }
         }
-        if (UseTrigger && _discoveredTable.DiscoverColumns().Where(col => col.IsPrimaryKey).Any()) //can't use triggers without a PK
-        {
 
+        if (UseTrigger && _discoveredTable.DiscoverColumns().Any(static col => col.IsPrimaryKey)) //can't use triggers without a PK
+        {
             var factory = new TriggerImplementerFactory(_database.Server.DatabaseType);
             var _triggerImplementer = factory.Create(_discoveredTable);
             var currentStatus = _triggerImplementer.GetTriggerStatus();

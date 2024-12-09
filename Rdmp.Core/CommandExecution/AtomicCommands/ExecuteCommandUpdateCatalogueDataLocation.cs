@@ -56,10 +56,10 @@ public class ExecuteCommandUpdateCatalogueDataLocation : BasicCommandExecution, 
 
             var discoveredColumns = _table.DiscoverColumns();
 
-            var foundColumn = discoveredColumns.AsEnumerable()
-                .Where(dc => dc.GetFullyQualifiedName().Contains(newColumn)).FirstOrDefault();
+            var foundColumn = discoveredColumns
+                .AsEnumerable().FirstOrDefault(dc => dc.GetFullyQualifiedName().Contains(newColumn));
             if (foundColumn is null) return $"Unable to find column '{newColumn}' in selected table";
-            if (foundColumn.DataType.ToString() != item.ColumnInfo.Data_type)
+            if (foundColumn.DataType?.ToString() != item.ColumnInfo.Data_type)
                 return
                     $"The data type of column '{newColumn}' is of type '{foundColumn.DataType}'. This does not match the current type of '{item.ColumnInfo.Data_type}'";
         }
