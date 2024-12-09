@@ -37,7 +37,7 @@ public class RemoteTableAttacher : RemoteAttacher
 {
     private const string FutureLoadMessage = "Cannot load data from the future";
 
-    public RemoteTableAttacher() : base()
+    public RemoteTableAttacher(bool requestsExternalDatabaseCreation=true) : base(requestsExternalDatabaseCreation)
     {
     }
 
