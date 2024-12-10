@@ -36,7 +36,7 @@ namespace Rdmp.Core.Curation.Data;
 
 /// <inheritdoc cref="ICatalogue"/>
 public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<CatalogueItem[]>,
-    IInjectKnown<CatalogueExtractabilityStatus>
+    IInjectKnown<CatalogueExtractabilityStatus>, IEquatable<Catalogue>
 {
     #region Database Properties
 
@@ -847,7 +847,20 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
         throw new Exception($"Cannot compare {GetType().Name} to {obj?.GetType().Name}");
     }
 
-    public new bool Equals(object obj) => obj is Catalogue c && (ReferenceEquals(this, c) || base.Equals(c));
+    public override bool Equals(object obj) => obj is Catalogue c && (ReferenceEquals(this, c) || Equals(c));
+
+    public bool Equals(Catalogue other)
+    {
+        if (other is null) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return _acronym == other._acronym && _name == other._name && _folder == other._folder && _description == other._description && Equals(_detailPageUrl, other._detailPageUrl) && _type == other._type && _periodicity == other._periodicity && _granularity == other._granularity && _geographicalCoverage == other._geographicalCoverage && _backgroundSummary == other._backgroundSummary && _searchKeywords == other._searchKeywords && _updateFreq == other._updateFreq && _updateSched == other._updateSched && _timeCoverage == other._timeCoverage && Nullable.Equals(_lastRevisionDate, other._lastRevisionDate) && _contactDetails == other._contactDetails && _resourceOwner == other._resourceOwner && _attributionCitation == other._attributionCitation && _accessOptions == other._accessOptions && _subjectNumbers == other._subjectNumbers && Equals(_apiAccessUrl, other._apiAccessUrl) && Equals(_browseUrl, other._browseUrl) && Equals(_bulkDownloadUrl, other._bulkDownloadUrl) && Equals(_queryToolUrl, other._queryToolUrl) && Equals(_sourceUrl, other._sourceUrl) && _countryOfOrigin == other._countryOfOrigin && _dataStandards == other._dataStandards && _administrativeContactName == other._administrativeContactName && _administrativeContactEmail == other._administrativeContactEmail && _administrativeContactTelephone == other._administrativeContactTelephone && _administrativeContactAddress == other._administrativeContactAddress && _explicitConsent == other._explicitConsent && _ethicsApprover == other._ethicsApprover && _sourceOfDataCollection == other._sourceOfDataCollection && _ticket == other._ticket && Nullable.Equals(_datasetStartDate, other._datasetStartDate) && _loggingDataTask == other._loggingDataTask && _validatorXml == other._validatorXml && _timeCoverageExtractionInformationID == other._timeCoverageExtractionInformationID && _pivotCategoryExtractionInformationID == other._pivotCategoryExtractionInformationID && _isDeprecated == other._isDeprecated && _isInternalDataset == other._isInternalDataset && _isColdStorageDataset == other._isColdStorageDataset && _liveLoggingServerID == other._liveLoggingServerID && Equals(_knownCatalogueItems, other._knownCatalogueItems) && Equals(_extractabilityStatus, other._extractabilityStatus) && base.Equals(other);
+    }
+
+    public override int GetHashCode() => HashCode.Combine(typeof(Catalogue), ID);
+
+    public static bool operator ==(Catalogue left, Catalogue right) => Equals(left, right);
+
+    public static bool operator !=(Catalogue left, Catalogue right) => !Equals(left, right);
 
     /// <summary>
     /// Checks that the Catalogue has a sensible Name (See <see cref="IsAcceptableName(string)"/>).  Then checks that there are no missing ColumnInfos
