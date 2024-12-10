@@ -206,10 +206,20 @@ public class OverviewModel
         }
 
         //this is stupidly slow
-        foreach (CatalogueOverviewDataPoint dp in _activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<CatalogueOverviewDataPoint>("CatalogueOverview_ID", _catalogueOverview.ID).ToList())
+        var x = _activator.RepositoryLocator.CatalogueRepository.GetType();
+        if (_activator.RepositoryLocator.CatalogueRepository.GetType() == typeof(CatalogueRepository))
         {
-            dp.DeleteInDatabase();
+            ((CatalogueRepository)_activator.RepositoryLocator.CatalogueRepository).Delete($"DELETE CatalogueOverviewDataPoint WHERE CatalogueOverview_ID = {_catalogueOverview.ID}");
         }
+        else
+        {
+            //very slow
+            foreach (CatalogueOverviewDataPoint dp in _activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<CatalogueOverviewDataPoint>("CatalogueOverview_ID", _catalogueOverview.ID).ToList())
+            {
+                dp.DeleteInDatabase();
+            }
+        }
+
         foreach (var item in counts)
         {
             var dp = new CatalogueOverviewDataPoint(_activator.RepositoryLocator.CatalogueRepository, _catalogueOverview.ID, DateTime.Parse(item.Key), item.Value);
