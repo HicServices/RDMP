@@ -35,10 +35,11 @@ public class ExecuteCommandRevertToHistoricalCohortVersion : BasicCommandExecuti
 
     public override void Execute()
     {
-        if (!_activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<CohortIdentificationConfiguration>("ClonedFrom_ID", _configuration.ID).Where(cic => cic.Version != null && cic.ID == _historicalConfiguration.ID).Any())
+        if (!_activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<CohortIdentificationConfiguration>("ClonedFrom_ID", _configuration.ID).Any(cic => cic.Version != null && cic.ID == _historicalConfiguration.ID))
         {
             throw new System.Exception("Historical configuration is not derived from this cohort configuration");
         }
+
         base.Execute();
         var clone = _historicalConfiguration.CloneIntoExistingConfiguration(ThrowImmediatelyCheckNotifier.Quiet, _configuration,false);
         Publish(clone);

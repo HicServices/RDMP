@@ -189,13 +189,6 @@ public class DelimitedFileSourceTests_ResolvedAccordingToStrategy : DelimitedFil
             "Other People To Investigate",
             "Dennis,Hes ok,35");
 
-        void Adjust(DelimitedFlatFileDataFlowSource a)
-        {
-            a.BadDataHandlingStrategy = strategy;
-            a.AttemptToResolveNewLinesInRecords = tryToResolve;
-            a.ThrowOnEmptyFiles = true;
-        }
-
         switch (strategy)
         {
             case BadDataHandlingStrategy.ThrowException:
@@ -216,6 +209,15 @@ public class DelimitedFileSourceTests_ResolvedAccordingToStrategy : DelimitedFil
             default:
                 throw new ArgumentOutOfRangeException(nameof(strategy));
         }
+
+        return;
+
+        void Adjust(DelimitedFlatFileDataFlowSource a)
+        {
+            a.BadDataHandlingStrategy = strategy;
+            a.AttemptToResolveNewLinesInRecords = tryToResolve;
+            a.ThrowOnEmptyFiles = true;
+        }
     }
 
     [TestCase(BadDataHandlingStrategy.DivertRows, true)]
@@ -228,13 +230,6 @@ public class DelimitedFileSourceTests_ResolvedAccordingToStrategy : DelimitedFil
             "Name,Description,Age",
             "Frank,Is the greatest,100",
             "Bob");
-
-        void Adjust(DelimitedFlatFileDataFlowSource a)
-        {
-            a.BadDataHandlingStrategy = strategy;
-            a.AttemptToResolveNewLinesInRecords = tryToResolve;
-            a.ThrowOnEmptyFiles = true;
-        }
 
         switch (strategy)
         {
@@ -255,6 +250,15 @@ public class DelimitedFileSourceTests_ResolvedAccordingToStrategy : DelimitedFil
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(strategy));
+        }
+
+        return;
+
+        void Adjust(DelimitedFlatFileDataFlowSource a)
+        {
+            a.BadDataHandlingStrategy = strategy;
+            a.AttemptToResolveNewLinesInRecords = tryToResolve;
+            a.ThrowOnEmptyFiles = true;
         }
     }
 

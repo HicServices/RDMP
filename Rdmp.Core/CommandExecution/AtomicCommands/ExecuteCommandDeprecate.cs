@@ -49,20 +49,18 @@ public class ExecuteCommandDeprecate : BasicCommandExecution
         {
             o.IsDeprecated = _desiredState;
             o.SaveToDatabase();
-            if (!_desiredState && o.GetType() == typeof(Catalogue))//false is not-depricated
+            if (!_desiredState && o is Catalogue catalogue) //false is not-deprecated
             {
-                var c = (Catalogue) o;
                 var replacedBy = _activeItems.RepositoryLocator.CatalogueRepository.GetExtendedProperties(ExtendedProperty.ReplacedBy);
-                var replacement = replacedBy.Where(rb => rb.ReferencedObjectID == c.ID).FirstOrDefault();
-                if(replacedBy != null)
-                    replacement.DeleteInDatabase();
+                var replacement = replacedBy.FirstOrDefault(rb => rb.ReferencedObjectID == catalogue.ID);
+                replacement?.DeleteInDatabase();
             }
         }
 
-       
 
         if (!BasicActivator.IsInteractive || _o.Length != 1 || _o[0] is not Catalogue || !_desiredState ||
             !BasicActivator.YesNo("Do you have a replacement Catalogue you want to link?", "Replacement")) return;
+
         var cmd = new ExecuteCommandReplacedBy(BasicActivator, _o[0], null)
         {
             PromptToPickReplacement = true
