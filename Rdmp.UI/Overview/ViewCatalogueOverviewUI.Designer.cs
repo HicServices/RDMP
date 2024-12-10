@@ -38,12 +38,12 @@ namespace Rdmp.UI.Overview
             btnSettings = new System.Windows.Forms.Button();
             lblDescription = new System.Windows.Forms.Label();
             lblName = new System.Windows.Forms.Label();
+            cbTimeColumns = new System.Windows.Forms.ComboBox();
             panel3 = new System.Windows.Forms.Panel();
             lblLatestExtraction = new System.Windows.Forms.Label();
             label2 = new System.Windows.Forms.Label();
             label1 = new System.Windows.Forms.Label();
             lblLastDataLoad = new System.Windows.Forms.Label();
-            cbTimeColumns = new System.Windows.Forms.ComboBox();
             panel2 = new System.Windows.Forms.Panel();
             panel7 = new System.Windows.Forms.Panel();
             label6 = new System.Windows.Forms.Label();
@@ -127,6 +127,15 @@ namespace Rdmp.UI.Overview
             lblName.TabIndex = 2;
             lblName.Text = "lblName";
             // 
+            // cbTimeColumns
+            // 
+            cbTimeColumns.FormattingEnabled = true;
+            cbTimeColumns.Location = new System.Drawing.Point(0, 3);
+            cbTimeColumns.Name = "cbTimeColumns";
+            cbTimeColumns.Size = new System.Drawing.Size(196, 23);
+            cbTimeColumns.TabIndex = 4;
+            cbTimeColumns.SelectedIndexChanged += cbTimeColumns_SelectedIndexChanged;
+            // 
             // panel3
             // 
             panel3.BackColor = System.Drawing.SystemColors.ControlDark;
@@ -180,15 +189,6 @@ namespace Rdmp.UI.Overview
             lblLastDataLoad.TabIndex = 1;
             lblLastDataLoad.Text = "label2";
             lblLastDataLoad.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // cbTimeColumns
-            // 
-            cbTimeColumns.FormattingEnabled = true;
-            cbTimeColumns.Location = new System.Drawing.Point(0, 3);
-            cbTimeColumns.Name = "cbTimeColumns";
-            cbTimeColumns.Size = new System.Drawing.Size(196, 23);
-            cbTimeColumns.TabIndex = 4;
-            cbTimeColumns.SelectedIndexChanged += cbTimeColumns_SelectedIndexChanged;
             // 
             // panel2
             // 
