@@ -143,35 +143,6 @@ public class OverviewModel
         var min = dateTimeRows.Min();
         return new Tuple<DateTime?, DateTime?>(min, max);
     }
-    //public void Regen(string whereClause)
-    //{
-    //    DataTable dt = new();
-    //    bool hasExtractionIdentifier = true;
-    //    var column = _catalogue.CatalogueItems.Where(ci => ci.ExtractionInformation.IsExtractionIdentifier).FirstOrDefault();
-    //    if (column is null)
-    //    {
-    //        column = _catalogue.CatalogueItems.FirstOrDefault();
-    //        hasExtractionIdentifier = false;
-    //    }
-    //    if (column is null) return;
-    //    var discoveredColumn = column.ColumnInfo.Discover(DataAccessContext.InternalDataProcessing);
-    //    var server = discoveredColumn.Table.Database.Server;
-    //    using var con = server.GetConnection();
-    //    con.Open();
-    //    string populatedWhere = !string.IsNullOrWhiteSpace(whereClause) ? $"WHERE {whereClause}" : "";
-    //    var sql = $"SELECT {column.ColumnInfo.GetRuntimeName()} FROM {discoveredColumn.Table.GetRuntimeName()} {populatedWhere}";
-    //    using var cmd = server.GetCommand(sql, con);
-    //    cmd.CommandTimeout = 30000;
-    //    using var da = server.GetDataAdapter(cmd);
-    //    dt.BeginLoadData();
-    //    da.Fill(dt);
-    //    dt.EndLoadData();
-    //    con.Dispose();
-    //    _numberOfRecords = dt.Rows.Count;
-    //    _numberOfPeople = hasExtractionIdentifier ? dt.DefaultView.ToTable(true, column.ColumnInfo.GetRuntimeName()).Rows.Count : 0;
-    //    GetDataLoads();
-    //    dt.Dispose();
-    //}
 
     private void GetCountsByDate()
     {
@@ -253,75 +224,17 @@ public class OverviewModel
     }
 
 
-    public static DataTable GetCountsByDatePeriod(ColumnInfo dateColumn, string datePeriod, string optionalWhere = "")
+    public DataTable GetCountsByDatePeriod()
     {
-        DataTable dt = new();
-        //if (!(new[] { "Day", "Month", "Year" }).Contains(datePeriod))
-        //{
-        //    throw new Exception("Invalid Date period");
-        //}
-        //var discoveredColumn = dateColumn.Discover(DataAccessContext.InternalDataProcessing);
-        //var server = discoveredColumn.Table.Database.Server;
-        //using var con = server.GetConnection();
-        //con.Open();
-        //var dateString = "yyyy-MM";
-        //switch (datePeriod)
-        //{
-        //    case "Day":
-        //        dateString = "yyyy-MM-dd";
-        //        break;
-        //    case "Month":
-        //        dateString = "yyyy-MM";
-        //        break;
-        //    case "Year":
-        //        dateString = "yyyy";
-        //        break;
-        //}
-        //if (server.DatabaseType == FAnsi.DatabaseType.MicrosoftSQLServer)
-        //{
-        //    var sql = @$"
-        //SELECT format({dateColumn.GetRuntimeName()}, '{dateString}') as YearMonth, count(*) as '# Records'
-        //FROM {discoveredColumn.Table.GetRuntimeName()}
-        //WHERE {dateColumn.GetRuntimeName()} IS NOT NULL
-        //{(optionalWhere != "" ? "AND" : "")} {optionalWhere.Replace('"', '\'')}
-        //GROUP BY format({dateColumn.GetRuntimeName()}, '{dateString}')
-        //ORDER BY 1
-        //";
+        var dt = new DataTable();
+        dt.Columns.Add("YearMonth");
+        dt.Columns.Add("# Records");
+        var counts = _activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<CatalogueOverviewDataPoint>("CatalogueOverview_ID", _catalogueOverview.ID).ToList().OrderBy(c =>c.Date);
+        foreach (var item in counts)
+        {
+            dt.Rows.Add([item.Date.ToString("yyyy-MM"),item.Count]);
+        }
 
-        //    using var cmd = server.GetCommand(sql, con);
-        //    cmd.CommandTimeout = 30000;
-        //    using var da = server.GetDataAdapter(cmd);
-        //    dt.BeginLoadData();
-        //    da.Fill(dt);
-        //    dt.EndLoadData();
-        //}
-        //else
-        //{
-        //    var repo = new MemoryCatalogueRepository();
-        //    var qb = new QueryBuilder(null, null);
-        //    qb.AddColumn(new ColumnInfoToIColumn(repo, dateColumn));
-        //    qb.AddCustomLine($"{dateColumn.Name} IS NOT NULL", FAnsi.Discovery.QuerySyntax.QueryComponent.WHERE);
-        //    var cmd = server.GetCommand(qb.SQL, con);
-        //    using var da = server.GetDataAdapter(cmd);
-        //    dt.BeginLoadData();
-        //    da.Fill(dt);
-        //    Dictionary<string, int> counts = [];
-        //    foreach (var key in dt.AsEnumerable().Select(row => DateTime.Parse(row.ItemArray[0].ToString()).ToString(dateString)))
-        //    {
-        //        counts[key]++;
-        //    }
-        //    dt = new DataTable();
-        //    foreach (var item in counts)
-        //    {
-        //        DataRow dr = dt.NewRow();
-        //        dr["YearMonth"] = item.Key;
-        //        dr["# Records"] = item.Value;
-        //        dt.Rows.Add(dr);
-        //    }
-        //    dt.EndLoadData();
-
-        //}
-        //con.Dispose();
         return dt;
     }
 

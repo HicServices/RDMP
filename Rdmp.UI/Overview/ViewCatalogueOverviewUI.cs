@@ -22,6 +22,7 @@ using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using Rdmp.UI.CatalogueSummary.DataQualityReporting;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.MainFormUITabs;
@@ -47,10 +48,17 @@ public partial class ViewCatalogueOverviewUI : ViewCatalogueOverviewUI_Design
     private Catalogue _catalogue;
     private OverviewModel _overview;
     private static readonly string[] frequencies = new[] { "Day", "Month", "Year" };
-
+    private AreaChartUI areaChartUI;
     public ViewCatalogueOverviewUI()
     {
         InitializeComponent();
+        areaChartUI = new AreaChartUI(OnTabChange);
+        areaChartUI.Location = new System.Drawing.Point(4, 0);
+        areaChartUI.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+        areaChartUI.Name = "areaChart1";
+        areaChartUI.Size = new System.Drawing.Size(1075, 400);
+        areaChartUI.TabIndex = 0;
+        splitContainer1.Panel2.Controls.Add(areaChartUI);
     }
 
     private void UpdateCatalogueData()
@@ -67,7 +75,7 @@ public partial class ViewCatalogueOverviewUI : ViewCatalogueOverviewUI_Design
         lblDateRange.Text = $"{dates.Item1} - {dates.Item2}";
         lblPeople.Text = $"{_overview.GetNumberOfPeople()}";
 
-        //areaChart1.GenerateChart(dt, $"Records per {cbFrequency.SelectedItem}");
+        areaChartUI.GenerateChart(_overview.GetCountsByDatePeriod(), $"Records per month");
 
     }
 
@@ -80,17 +88,11 @@ public partial class ViewCatalogueOverviewUI : ViewCatalogueOverviewUI_Design
     {
         if (tabIndex == 0)
         {
-            tbMainWhere.Visible = true;
-            lblWhere.Visible = true;
             cbTimeColumns.Visible = true;
-            lblTime.Visible = true;
         }
         else
-        {
-            tbMainWhere.Visible = false;
-            lblWhere.Visible = false;
+        { 
             cbTimeColumns.Visible = false;
-            lblTime.Visible = false;
         }
         return 1;
     }
@@ -105,9 +107,6 @@ public partial class ViewCatalogueOverviewUI : ViewCatalogueOverviewUI_Design
         base.SetDatabaseObject(activator, databaseObject);
         _catalogue = databaseObject;
         _overview = new OverviewModel(activator, _catalogue);
-        cbFrequency.Items.Clear();
-        cbFrequency.Items.AddRange(frequencies);
-        cbFrequency.SelectedIndex = 1;
         UpdateCatalogueData();
     }
 
@@ -125,15 +124,15 @@ public partial class ViewCatalogueOverviewUI : ViewCatalogueOverviewUI_Design
 
     private void btnGenerate_Click(object sender, EventArgs e)
     {
-        _overview.Generate();
-        UpdateCatalogueData();
-        //Task.Run(() =>
-        //{
-        //    _overview.Generate();
-        //}).ContinueWith((task) =>
-        //{
-        //    UpdateCatalogueData();
-        //}, TaskScheduler.FromCurrentSynchronizationContext());
+        //_overview.Generate();
+        //UpdateCatalogueData();
+        Task.Run(() =>
+        {
+            _overview.Generate();
+        }).ContinueWith((task) =>
+        {
+            UpdateCatalogueData();
+        }, TaskScheduler.FromCurrentSynchronizationContext());
     }
 }
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ViewCatalogueOverviewUI_Design, UserControl>))]
