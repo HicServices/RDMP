@@ -844,8 +844,10 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
             return -string.Compare(obj.ToString(), ToString(),
                 StringComparison.CurrentCulture); //sort alphabetically (reverse)
 
-        throw new Exception($"Cannot compare {GetType().Name} to {obj.GetType().Name}");
+        throw new Exception($"Cannot compare {GetType().Name} to {obj?.GetType().Name}");
     }
+
+    public new bool Equals(object obj) => obj is Catalogue c && (ReferenceEquals(this, c) || base.Equals(c));
 
     /// <summary>
     /// Checks that the Catalogue has a sensible Name (See <see cref="IsAcceptableName(string)"/>).  Then checks that there are no missing ColumnInfos

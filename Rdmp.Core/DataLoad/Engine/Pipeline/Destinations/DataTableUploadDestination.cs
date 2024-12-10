@@ -669,15 +669,15 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             }
         }
 
-        if (UseTrigger && _discoveredTable.DiscoverColumns().Any(static col => col.IsPrimaryKey)) //can't use triggers without a PK
+        if (UseTrigger && _discoveredTable?.DiscoverColumns().Any(static col => col.IsPrimaryKey) == true) //can't use triggers without a PK
         {
             var factory = new TriggerImplementerFactory(_database.Server.DatabaseType);
-            var _triggerImplementer = factory.Create(_discoveredTable);
-            var currentStatus = _triggerImplementer.GetTriggerStatus();
+            var triggerImplementer = factory.Create(_discoveredTable);
+            var currentStatus = triggerImplementer.GetTriggerStatus();
             if (currentStatus == TriggerStatus.Missing)
                 try
                 {
-                    _triggerImplementer.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
+                    triggerImplementer.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
                 }
                 catch (Exception e)
                 {
