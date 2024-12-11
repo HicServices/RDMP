@@ -8,7 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Build on and target .Net 9 rather than 8
 
-## [8.4.0] - Unreleased
+## [8.4.1] - 2024-12-10
+
+- Improve Overview Model Generation Speed
+- Add Remote Table Without DB Creation Attacher
+
+## [8.4.0] - 2024-12-02
 
 - Add Ordering to Filters
 - [MSSQL ONLY] Add ability to perform Regex redactions on data loads and existing catalogues

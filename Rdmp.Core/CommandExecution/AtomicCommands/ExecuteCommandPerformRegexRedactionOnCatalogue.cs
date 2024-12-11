@@ -77,7 +77,7 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
                     var cataloguePk = _cataloguePKs.FirstOrDefault(c => c.ColumnInfo.GetRuntimeName() == pk.GetRuntimeName());
                     qb.AddColumn(new ColumnInfoToIColumn(memoryRepo, cataloguePk.ColumnInfo));
                 }
-                qb.AddCustomLine($"{columnInfo.GetRuntimeName()} LIKE '%{_redactionConfiguration.RegexPattern}%'", QueryComponent.WHERE);
+                qb.AddCustomLine($"{columnInfo.GetRuntimeName()} LIKE '%{_redactionConfiguration.RegexPattern}%' COLLATE Latin1_General_BIN", QueryComponent.WHERE);
                 if (_readLimit is not null)
                 {
                     qb.TopX = (int)_readLimit;
