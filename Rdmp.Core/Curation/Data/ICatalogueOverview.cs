@@ -18,4 +18,6 @@ public interface ICatalogueOverview
     int NumberOfPeople { get; set; }
     DateTime? StartDate {  get; set; }
     DateTime? EndDate {  get; set; }
+
+    int DateColumn_ID { get; set; }
 }

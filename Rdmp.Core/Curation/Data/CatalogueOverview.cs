@@ -10,6 +10,7 @@ using Rdmp.Core.Repositories;
 using System.Data.Common;
 using Rdmp.Core.Curation.Data.Defaults;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 namespace Rdmp.Core.Curation.Data;
 
@@ -23,6 +24,7 @@ public class CatalogueOverview : DatabaseEntity, ICatalogueOverview
     private int _numberOfPeople;
     private DateTime? _startDate;
     private DateTime? _endDate;
+    private int _dateColumn;
 
 
     [Unique]
@@ -56,6 +58,13 @@ public class CatalogueOverview : DatabaseEntity, ICatalogueOverview
     }
 
     [DoNotImportDescriptions]
+    public int DateColumn_ID
+    {
+        get => _dateColumn;
+        set => SetField(ref _dateColumn, value);
+    }
+
+    [DoNotImportDescriptions]
     public int NumberOfPeople
     {
         get => _numberOfPeople;
@@ -86,17 +95,19 @@ public class CatalogueOverview : DatabaseEntity, ICatalogueOverview
         LastExtractionTime = !string.IsNullOrEmpty(r["LastExtractionTime"].ToString())? DateTime.Parse(r["LastExtractionTime"].ToString()) : null;
         NumberOfRecords = int.Parse(r["NumberOfRecords"].ToString());
         NumberOfPeople = int.Parse(r["NumberOfPeople"].ToString());
+        DateColumn_ID = int.Parse(r["DateColumn_ID"].ToString());
         StartDate = !string.IsNullOrEmpty(r["StartDate"].ToString())? DateTime.Parse(r["StartDate"].ToString()) : null;
         EndDate = !string.IsNullOrEmpty(r["EndDate"].ToString())? DateTime.Parse(r["EndDate"].ToString()) : null;
     }
 
-    public CatalogueOverview(ICatalogueRepository repository, int catalogueID, int numberOfRecords, int numberOfPeople)
+    public CatalogueOverview(ICatalogueRepository repository, int catalogueID, int numberOfRecords, int numberOfPeople, int dateColumnID)
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
             {
                 {"Catalogue_ID", catalogueID },
                 { "NumberOfRecords", numberOfRecords},
-                {"NumberOfPeople", numberOfPeople }
+                {"NumberOfPeople", numberOfPeople },
+                {"DateColumn_ID", dateColumnID }
             });
     }
 }

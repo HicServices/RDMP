@@ -41,26 +41,24 @@ public class OverviewModel
         _catalogueOverview = activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<CatalogueOverview>("Catalogue_ID", catalogue.ID).FirstOrDefault();
     }
 
-    public void Generate()
+    public void Generate(int dateColumn_ID)
     {
         var recordCount = GetRecordCount();
         var peopleCount = GetPeopleCount();
         if (_catalogueOverview is null)
         {
-            _catalogueOverview = new CatalogueOverview(_activator.RepositoryLocator.CatalogueRepository, _catalogue.ID, recordCount, peopleCount);
+            _catalogueOverview = new CatalogueOverview(_activator.RepositoryLocator.CatalogueRepository, _catalogue.ID, recordCount, peopleCount, dateColumn_ID);
         }
-        //data load date
         _catalogueOverview.LastDataLoad = GetDataLoadDate();
-        //extraction date
         _catalogueOverview.LastExtractionTime = GetExtractionTime();
-        //date range
+        _catalogueOverview.DateColumn_ID = dateColumn_ID;
         var dates = GetDates();
-        _catalogueOverview.StartDate = dates.Item1;
-        _catalogueOverview.EndDate = dates.Item2;
+        _catalogueOverview.StartDate = dates?.Item1;
+        _catalogueOverview.EndDate = dates?.Item2;
         _catalogueOverview.SaveToDatabase();
 
         GetCountsByDate();
-        //todo generate graph data
+        Console.WriteLine("W");
     }
 
     private int GetRecordCount()
@@ -122,7 +120,7 @@ public class OverviewModel
 
     private Tuple<DateTime?, DateTime?> GetDates()
     {
-        var column = _catalogue.CatalogueItems.Where(c => c.ColumnInfo.Data_type == "datetime2").FirstOrDefault();//temp
+        var column = _catalogue.CatalogueItems.Where(c => c.ID == _catalogueOverview.DateColumn_ID).FirstOrDefault();
         if (column == null) return null;
         if (column is null) return null;
         var discoveredColumn = column.ColumnInfo.Discover(DataAccessContext.InternalDataProcessing);
@@ -133,6 +131,7 @@ public class OverviewModel
         using var con = server.GetConnection();
         con.Open();
         using var cmd = server.GetCommand(qb.SQL, con);
+        cmd.CommandTimeout = 300;
         using var da = server.GetDataAdapter(cmd);
         var dt = new DataTable();
         da.Fill(dt);
@@ -146,7 +145,7 @@ public class OverviewModel
 
     private void GetCountsByDate()
     {
-        var column = _catalogue.CatalogueItems.Where(c => c.ColumnInfo.Data_type == "datetime2").FirstOrDefault();//temp
+        var column = _catalogue.CatalogueItems.Where(c => c.ID == _catalogueOverview.DateColumn_ID).FirstOrDefault();
         var dateString = "yyyy-MM";
         DataTable dt = new();
         var discoveredColumn = column.ColumnInfo.Discover(DataAccessContext.InternalDataProcessing);
@@ -176,11 +175,11 @@ public class OverviewModel
             }
         }
 
-        //this is stupidly slow
         var x = _activator.RepositoryLocator.CatalogueRepository.GetType();
         if (_activator.RepositoryLocator.CatalogueRepository.GetType() == typeof(CatalogueRepository))
         {
-            ((CatalogueRepository)_activator.RepositoryLocator.CatalogueRepository).Delete($"DELETE CatalogueOverviewDataPoint WHERE CatalogueOverview_ID = {_catalogueOverview.ID}");
+            //fast
+            ((CatalogueRepository)_activator.RepositoryLocator.CatalogueRepository).Delete($"DELETE CatalogueOverviewDataPoint WHERE CatalogueOverview_ID = {_catalogueOverview.ID}", null, false);
         }
         else
         {
@@ -200,39 +199,44 @@ public class OverviewModel
 
     public int GetNumberOfRecords()
     {
-        return _catalogueOverview.NumberOfRecords;
+        return _catalogueOverview != null ? _catalogueOverview.NumberOfRecords : 0;
     }
 
     public int GetNumberOfPeople()
     {
-        return _catalogueOverview.NumberOfPeople;
+        return _catalogueOverview != null ? _catalogueOverview.NumberOfPeople : 0;
     }
 
     public string GetLatestExtraction()
     {
-        return _catalogueOverview.LastExtractionTime != null ? _catalogueOverview.LastExtractionTime.ToString() : null;
+        return _catalogueOverview?.LastExtractionTime != null ? ((DateTime)_catalogueOverview.LastExtractionTime).ToString("dd/MM/yyyy") : null;
     }
 
     public string GetLatestDataLoad()
     {
-        return _catalogueOverview.LastDataLoad != null ? _catalogueOverview.LastDataLoad.ToString() : null;
+        return _catalogueOverview?.LastDataLoad != null ? ((DateTime)_catalogueOverview.LastDataLoad).ToString("dd/MM/yyyy") : null;
     }
 
     public Tuple<DateTime?, DateTime?> GetStartEndDates()
     {
-        return new Tuple<DateTime?, DateTime?>(_catalogueOverview.StartDate, _catalogueOverview.EndDate);
+        return new Tuple<DateTime?, DateTime?>(_catalogueOverview?.StartDate, _catalogueOverview?.EndDate);
     }
 
-
+    public int? GetDateColumn()
+    {
+        return _catalogueOverview != null ? _catalogueOverview.DateColumn_ID : null;
+    }
     public DataTable GetCountsByDatePeriod()
     {
+
         var dt = new DataTable();
         dt.Columns.Add("YearMonth");
         dt.Columns.Add("# Records");
-        var counts = _activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<CatalogueOverviewDataPoint>("CatalogueOverview_ID", _catalogueOverview.ID).ToList().OrderBy(c =>c.Date);
+        if (_catalogueOverview is null) return dt;
+        var counts = _activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<CatalogueOverviewDataPoint>("CatalogueOverview_ID", _catalogueOverview.ID).ToList().OrderBy(c => c.Date);
         foreach (var item in counts)
         {
-            dt.Rows.Add([item.Date.ToString("yyyy-MM"),item.Count]);
+            dt.Rows.Add([item.Date.ToString("yyyy-MM"), item.Count]);
         }
 
         return dt;

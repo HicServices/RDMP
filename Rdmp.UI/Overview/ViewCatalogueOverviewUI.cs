@@ -70,36 +70,50 @@ public partial class ViewCatalogueOverviewUI : ViewCatalogueOverviewUI_Design
         lblLastDataLoad.Text = latestDataLoad ?? "No Successful DataLoads";
         var extraction = _overview.GetLatestExtraction();
         lblLatestExtraction.Text = extraction ?? "Catalogue has not been extracted";
-        lblRecords.Text = _overview.GetNumberOfRecords().ToString();
+        lblRecords.Text = $"{_overview.GetNumberOfRecords().ToString()} Records";
         var dates = _overview.GetStartEndDates();
-        lblDateRange.Text = $"{dates.Item1} - {dates.Item2}";
-        lblPeople.Text = $"{_overview.GetNumberOfPeople()}";
+        var startDate = dates.Item1 != null ? ((DateTime)dates.Item1).ToString("dd/MM/yyyy") : null;
+        var endDate = dates.Item2 != null ? ((DateTime)dates.Item2).ToString("dd/MM/yyyy") : null;
+        if (startDate == null && endDate == null)
+        {
+            lblDateRange.Text = "No Dates Found";
+        }
+        else
+        {
+            lblDateRange.Text = $"{startDate} - {endDate}";
+        }
+        lblPeople.Text = $"{_overview.GetNumberOfPeople()} People";
 
+
+        //Task.Run(() =>
+        //{
+        //    areaChartUI.GenerateChart(_overview.GetCountsByDatePeriod(), $"Records per month");
+        //});
         areaChartUI.GenerateChart(_overview.GetCountsByDatePeriod(), $"Records per month");
 
-    }
+        var syntaxHelper = _catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.InternalDataProcessing, false)?.GetQuerySyntaxHelper();
+        var dateTypeString = syntaxHelper.TypeTranslater.GetSQLDBTypeForCSharpType(new TypeGuesser.DatabaseTypeRequest(typeof(DateTime)));
+        var dateColumns = _catalogue.CatalogueItems.Where(ci => ci.ColumnInfo.Data_type == dateTypeString).ToList();
 
-    private void cbFrequency_SelectedIndexChanged(object sender, EventArgs e)
-    {
-        UpdateCatalogueData();
+        if (cbTimeColumns.Items.Count == 0)
+        {
+            var x = dateColumns.ToList().ToArray();
+            cbTimeColumns.Items.AddRange(x);
+        }
+        if (_overview.GetDateColumn() != null)
+        {
+            cbTimeColumns.SelectedIndex = dateColumns.IndexOf(dateColumns.Where(ci => ci.ID == _overview.GetDateColumn()).FirstOrDefault());
+        }
+        else
+        {
+            cbTimeColumns.SelectedIndex = 0;
+        }
+
     }
 
     private int OnTabChange(int tabIndex)
     {
-        if (tabIndex == 0)
-        {
-            cbTimeColumns.Visible = true;
-        }
-        else
-        { 
-            cbTimeColumns.Visible = false;
-        }
         return 1;
-    }
-
-    private void cbTimeColumns_SelectedIndexChanged(object sender, EventArgs e)
-    {
-        UpdateCatalogueData();
     }
 
     public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
@@ -124,16 +138,17 @@ public partial class ViewCatalogueOverviewUI : ViewCatalogueOverviewUI_Design
 
     private void btnGenerate_Click(object sender, EventArgs e)
     {
-        //_overview.Generate();
+        //_overview.Generate(((CatalogueItem)cbTimeColumns.SelectedItem).ID);
         //UpdateCatalogueData();
         Task.Run(() =>
         {
-            _overview.Generate();
+            _overview.Generate(((CatalogueItem)cbTimeColumns.SelectedItem).ID);
         }).ContinueWith((task) =>
         {
             UpdateCatalogueData();
         }, TaskScheduler.FromCurrentSynchronizationContext());
     }
+
 }
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ViewCatalogueOverviewUI_Design, UserControl>))]
 public abstract class ViewCatalogueOverviewUI_Design : RDMPSingleDatabaseObjectControl<Catalogue>

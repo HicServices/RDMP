@@ -11,6 +11,7 @@ CREATE TABLE [dbo].[CatalogueOverview](
 	[LastExtractionTime] [datetime] NULL,
 	[NumberOfRecords] [int] NOT NULL,
 	[NumberOfPeople] [int] NOT NULL,
+	[DateColumn_ID] [int] NOT NULL,
 	[StartDate] [datetime] NULL,
 	[EndDate] [datetime] NULL,
 	CONSTRAINT FK_Catalogue_Overview_Catalogue FOREIGN KEY (Catalogue_ID) REFERENCES Catalogue(ID) ON DELETE CASCADE,
