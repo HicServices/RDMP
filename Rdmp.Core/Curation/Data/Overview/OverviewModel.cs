@@ -69,7 +69,7 @@ public class OverviewModel
         dt.EndLoadData();
         con.Dispose();
         _numberOfRecords = dt.Rows.Count;
-        _numberOfPeople = hasExtractionIdentifier ? dt.DefaultView.ToTable(true, column.ColumnInfo.GetRuntimeName()).Rows.Count : 0;
+        _numberOfPeople = hasExtractionIdentifier?dt.AsEnumerable().Select(r => r[column.ColumnInfo.GetRuntimeName()]).ToList().Distinct().Count():0;
         GetDataLoads();
         dt.Dispose();
     }
