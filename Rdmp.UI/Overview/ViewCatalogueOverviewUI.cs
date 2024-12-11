@@ -140,9 +140,10 @@ public partial class ViewCatalogueOverviewUI : ViewCatalogueOverviewUI_Design
     {
         //_overview.Generate(((CatalogueItem)cbTimeColumns.SelectedItem).ID);
         //UpdateCatalogueData();
+        var dateColumnID = ((CatalogueItem)cbTimeColumns.SelectedItem).ID;
         Task.Run(() =>
         {
-            _overview.Generate(((CatalogueItem)cbTimeColumns.SelectedItem).ID);
+            _overview.Generate(dateColumnID);
         }).ContinueWith((task) =>
         {
             UpdateCatalogueData();
