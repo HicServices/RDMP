@@ -17,3 +17,7 @@ updates:
     aws-sdk:
       patterns:
         - "AWSSDK.*"
+- package-ecosystem: "dotnet-sdk"
+  directory: "/"
+  schedule:
+    interval: weekly

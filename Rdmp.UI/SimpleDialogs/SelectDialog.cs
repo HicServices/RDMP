@@ -7,6 +7,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -73,11 +74,13 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
     /// </summary>
     public T Selected;
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public HashSet<T> MultiSelected { get; private set; }
 
     /// <summary>
     /// Hides the Type selection toggle buttons and forces results to only appear matching the given Type
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Type AlwaysFilterOn
     {
         get => _alwaysFilterOn;
@@ -93,6 +96,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         }
     }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public bool AllowMultiSelect
     {
         get => olv.MultiSelect;

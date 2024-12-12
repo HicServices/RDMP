@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data.Pipelines;
@@ -30,10 +31,16 @@ internal class PipelineComponentVisualisation : DataFlowComponentVisualisation
     private Pen _origFullPen;
     private Exception _exInitialization;
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public bool AllowDrag { get; set; }
+
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public bool AllowSelection { get; set; }
+
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public IPipelineComponent PipelineComponent { get; set; }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public bool IsSelected
     {
         get => _isSelected;
@@ -45,6 +52,7 @@ internal class PipelineComponentVisualisation : DataFlowComponentVisualisation
         }
     }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Exception ExInitialization
     {
         get => _exInitialization;

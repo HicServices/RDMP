@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using System.Windows.Forms;
 using FAnsi;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
@@ -17,6 +18,7 @@ public partial class DatabaseTypeUI : UserControl
     private DatabaseType _databaseType;
     public event EventHandler DatabaseTypeChanged;
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public DatabaseType DatabaseType
     {
         get => _databaseType;
