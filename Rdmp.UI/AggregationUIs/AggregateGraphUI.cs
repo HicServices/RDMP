@@ -64,10 +64,13 @@ public partial class AggregateGraphUI : AggregateGraph_Design
     /// the sensible decision is taken e.g. to not try to render.
     /// 
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public bool Silent { get; set; }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Scintilla QueryEditor { get; private set; }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public int Timeout
     {
         get => _timeoutControls.Timeout;
@@ -166,8 +169,13 @@ public partial class AggregateGraphUI : AggregateGraph_Design
         llCancel.Visible = false;
     }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Exception Exception { get; private set; }
+
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public bool Crashed { get; private set; }
+
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public bool Done { get; private set; }
 
     private Task _loadTask;
