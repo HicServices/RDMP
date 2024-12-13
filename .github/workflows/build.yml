@@ -85,6 +85,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - name: setup .NET
+        uses: actions/setup-dotnet@v4.1.0
       - name: Populate Databases.yaml
         shell: bash
         run: |
@@ -151,6 +153,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - name: setup .NET
+        uses: actions/setup-dotnet@v4.1.0
       - name: Determine RDMP build version
         id: version
         shell: bash
@@ -288,6 +292,8 @@ jobs:
         with:
           path: ${{ github.workspace }}/
           key: ${{ github.sha }}-your-cache-key-bundled
+      - name: setup .NET
+        uses: actions/setup-dotnet@v4.1.0
       - name: Determine RDMP build version
         id: version
         shell: bash
