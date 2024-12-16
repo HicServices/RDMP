@@ -37,25 +37,26 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
     private const string ShowAll = "Show All/Incompatible Pipelines";
     public bool showAll = false;
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public IPipeline Pipeline
     {
         get => _pipeline;
         set
         {
             _pipeline = value;
+            if (ddPipelines == null) return;
 
-            if (ddPipelines != null)
+            if (_extractionConfiguration is not null && value is not null)
             {
-                if (_extractionConfiguration is not null && value is not null)
-                {
-                    _extractionConfiguration.DefaultPipeline_ID = value.ID;
-                    _extractionConfiguration.SaveToDatabase();
-                }
-                ddPipelines.SelectedItem = value;
+                _extractionConfiguration.DefaultPipeline_ID = value.ID;
+                _extractionConfiguration.SaveToDatabase();
             }
+
+            ddPipelines.SelectedItem = value;
         }
     }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public override string Text
     {
         get => gbPrompt.Text;

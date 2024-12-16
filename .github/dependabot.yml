@@ -3,11 +3,11 @@ updates:
 - package-ecosystem: "github-actions"
   directory: "/"
   schedule:
-    interval: daily
+    interval: weekly
 - package-ecosystem: nuget
   directory: "/"
   schedule:
-    interval: daily
+    interval: weekly
   open-pull-requests-limit: 10
   target-branch: develop
   reviewers:
@@ -17,3 +17,7 @@ updates:
     aws-sdk:
       patterns:
         - "AWSSDK.*"
+- package-ecosystem: "dotnet-sdk"
+  directory: "/"
+  schedule:
+    interval: weekly

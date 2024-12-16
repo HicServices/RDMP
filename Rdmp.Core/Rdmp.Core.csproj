@@ -14,7 +14,6 @@
 		<PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
 		<description>Core package for plugin development</description>
 		<copyright>Copyright 2018-2019</copyright>
-		<TargetFramework>net8.0</TargetFramework>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
@@ -130,6 +129,7 @@
 		<None Remove="Databases\CatalogueDatabase\up\085_AddTicketingReleaseStatuses.sql" />
 		<None Remove="Databases\CatalogueDatabase\up\086_AddDataLoadPrefixOverride.sql" />
 		<None Remove="Databases\CatalogueDatabase\up\087_AddAggregateFilterOrdering.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\088_AddRegexRedactionConfiguration.sql" />
 		<None Remove="Databases\DataExportDatabase\runAfterCreateDatabase\CreateDataExportManager.sql" />
 		<None Remove="Databases\DataExportDatabase\up\001_AddUsernamePasswordFieldsToExternalCohortTable.sql" />
 		<None Remove="Databases\DataExportDatabase\up\002_FixServerAndDatabaseNameOnExternalCohort.sql" />
@@ -256,6 +256,7 @@
 		<EmbeddedResource Include="Databases\CatalogueDatabase\up\078_AddLastLoadTimeToLoadMetadata.sql" />
 		<EmbeddedResource Include="Databases\CatalogueDatabase\up\084_AddLoadDirectorySplit.sql" />
 		<EmbeddedResource Include="Databases\CatalogueDatabase\up\085_AddTicketingReleaseStatuses.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\088_AddRegexRedactionConfiguration.sql" />
 		<EmbeddedResource Include="Databases\CatalogueDatabase\up\086_AddDataLoadPrefixOverride.sql" />
 		<EmbeddedResource Include="Databases\CatalogueDatabase\up\087_AddAggregateFilterOrdering.sql" />
 		<EmbeddedResource Include="Databases\CatalogueDatabase\up\079_AddProcessTaskConfiguration.sql" />
@@ -325,6 +326,7 @@
 		<PackageReference Include="HIC.SynthEHR" />
 		<PackageReference Include="HIC.FAnsiSql" />
 		<PackageReference Include="LibArchive.Net" />
+		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" />
 		<PackageReference Include="Microsoft.SourceLink.GitHub">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -336,6 +338,7 @@
 		<PackageReference Include="SixLabors.ImageSharp" />
 		<PackageReference Include="SixLabors.ImageSharp.Drawing" />
 		<PackageReference Include="Spectre.Console" />
+		<PackageReference Include="System.Private.Uri" />
 		<PackageReference Include="System.Resources.Extensions" />
 		<PackageReference Include="SSH.NET" />
 		<PackageReference Include="Terminal.Gui" />
