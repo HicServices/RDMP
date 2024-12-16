@@ -15,6 +15,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using FAnsi.Discovery;
 using MongoDB.Driver;
+using NPOI.OpenXmlFormats.Spreadsheet;
 using NPOI.OpenXmlFormats.Vml;
 using NPOI.SS.Formula.Functions;
 using NPOI.Util;
@@ -235,6 +236,8 @@ public class CatalogueConstraintReport : DataQualityReport
                 var previousRowSates = previousEvaluation.RowStates;
                 var previousCategories = previousEvaluation.GetPivotCategoryValues().Where(c => c != "ALL");
 
+                //var AllStates = previousRowSates.Where(rs => rs.PivotCategory == "ALL");
+
                 var evaluation = new Evaluation(dqeRepository, _catalogue);
 
                 //new pivoutCategories coming in
@@ -276,6 +279,17 @@ public class CatalogueConstraintReport : DataQualityReport
                     results.TryGetValue(Consequence.Wrong, out int wrong);
                     results.TryGetValue(Consequence.InvalidatesRow, out int invalidatesRow);
                     evaluation.AddRowState((int)_dataLoadID, correct, mising, wrong, invalidatesRow, _catalogue.ValidatorXML, newCategory, con.Connection, con.Transaction);
+                    //if(!AllStates.Any(state => state.DataLoadRunID == (int)_dataLoadID))
+                    //{
+                    //    AllStates.Append(new RowState((int)_dataLoadID, correct, mising, wrong, invalidatesRow, _catalogue.ValidatorXML, "ALL"));
+                    //}
+                    //else
+                    //{
+                    //    var current = AllStates.Where(state => state.DataLoadRunID == (int)_dataLoadID).First();
+                    //    var newState = new RowState((int)_dataLoadID, correct+current.Correct, mising + current.Missing, wrong +current.Wrong, invalidatesRow+current.Invalid, _catalogue.ValidatorXML, "ALL");
+                    //    AllStates = AllStates.Where(state => state.DataLoadRunID != (int)_dataLoadID);
+                    //    AllStates.Append(newState);
+                    //}
                 }
                 if (existingIncomingPivotCategories.Any())
                 {
@@ -313,6 +327,27 @@ public class CatalogueConstraintReport : DataQualityReport
                             evaluation.AddRowState(loadId, _correct, _missing, _wrong, _invalidatesRow, _catalogue.ValidatorXML, updatedCategory, con.Connection, con.Transaction);
                         }
                     }
+                }
+                List<RowState> AllStates = new();
+                foreach (var rowState in evaluation.RowStates)
+                {
+                    if (!AllStates.Any(state => state.DataLoadRunID == rowState.DataLoadRunID))
+                    {
+                        AllStates.Add(new RowState(rowState.DataLoadRunID, rowState.Correct, rowState.Missing, rowState.Wrong, rowState.Invalid, _catalogue.ValidatorXML, "ALL"));
+                    }
+                    else
+                    {
+                        var current = AllStates.Where(state => state.DataLoadRunID == (int)_dataLoadID).First();
+                        var newState = new RowState(rowState.DataLoadRunID, rowState.Correct + current.Correct, rowState.Missing + current.Missing, rowState.Wrong + current.Wrong, rowState.Invalid + current.Invalid, _catalogue.ValidatorXML, "ALL");
+                        AllStates = AllStates.Where(state => state.DataLoadRunID != rowState.DataLoadRunID).ToList();
+                        AllStates.Add(newState);
+                    }
+                }
+                //todo need to remove from old ALL data loads and add for this data load
+                foreach (var state in AllStates)
+                {
+                    evaluation.AddRowState(state.DataLoadRunID, state.Correct, state.Missing, state.Wrong, state.Invalid, _catalogue.ValidatorXML, "ALL", con.Connection, con.Transaction);
+
                 }
 
                 //row state need to think about ALL & the various data load changes
