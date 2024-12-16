@@ -43,22 +43,21 @@ public class OverviewModel
 
     public void Generate(int dateColumn_ID)
     {
-        var recordCount = GetRecordCount();
-        var peopleCount = GetPeopleCount();
+        var recordCount = 1;// GetRecordCount();
+        var peopleCount = 1;// GetPeopleCount();
         if (_catalogueOverview is null)
         {
             _catalogueOverview = new CatalogueOverview(_activator.RepositoryLocator.CatalogueRepository, _catalogue.ID, recordCount, peopleCount, dateColumn_ID);
         }
-        _catalogueOverview.LastDataLoad = GetDataLoadDate();
-        _catalogueOverview.LastExtractionTime = GetExtractionTime();
-        _catalogueOverview.DateColumn_ID = dateColumn_ID;
-        var dates = GetDates();
-        _catalogueOverview.StartDate = dates?.Item1;
-        _catalogueOverview.EndDate = dates?.Item2;
+        //_catalogueOverview.LastDataLoad = GetDataLoadDate();
+        //_catalogueOverview.LastExtractionTime = GetExtractionTime();
+        //_catalogueOverview.DateColumn_ID = dateColumn_ID;
+        //var dates = GetDates();
+        //_catalogueOverview.StartDate = dates?.Item1;
+        //_catalogueOverview.EndDate = dates?.Item2;
         _catalogueOverview.SaveToDatabase();
 
         GetCountsByDate();
-        Console.WriteLine("W");
     }
 
     private int GetRecordCount()
@@ -120,26 +119,42 @@ public class OverviewModel
 
     private Tuple<DateTime?, DateTime?> GetDates()
     {
+        DateTime? min = null;
+        DateTime? max = null;
         var column = _catalogue.CatalogueItems.Where(c => c.ID == _catalogueOverview.DateColumn_ID).FirstOrDefault();
-        if (column == null) return null;
-        if (column is null) return null;
+        if (column == null) return new Tuple<DateTime?, DateTime?>(min, max); ;
         var discoveredColumn = column.ColumnInfo.Discover(DataAccessContext.InternalDataProcessing);
-        var qb = new QueryBuilder("DISTINCT", null, null);
-        var memRepo = new MemoryRepository();
-        qb.AddColumn(new ColumnInfoToIColumn(memRepo, column.ColumnInfo));
         var server = discoveredColumn.Table.Database.Server;
-        using var con = server.GetConnection();
-        con.Open();
-        using var cmd = server.GetCommand(qb.SQL, con);
-        cmd.CommandTimeout = 300;
-        using var da = server.GetDataAdapter(cmd);
-        var dt = new DataTable();
-        da.Fill(dt);
-        var rows = dt.AsEnumerable().Where(r => !string.IsNullOrEmpty(r[0].ToString()));
-        if (!rows.Any()) return null;
-        var dateTimeRows = rows.Select(r => DateTime.Parse(r[0].ToString()));
-        var max = dateTimeRows.Max();
-        var min = dateTimeRows.Min();
+        if (server.DatabaseType == FAnsi.DatabaseType.MicrosoftSQLServer)
+        {
+            var qb = new QueryBuilder(null, null, null);
+            var memRepo = new MemoryRepository();
+            qb.AddColumn(new ColumnInfoToIColumn(memRepo, column.ColumnInfo));
+            using var con = server.GetConnection();
+            con.Open();
+            using var cmd = server.GetCommand($"SELECT max({column.Name}) from {discoveredColumn.Table.GetRuntimeName()}", con);
+            max = DateTime.Parse((cmd.ExecuteScalar().ToString()));
+            using var cmd2 = server.GetCommand($"SELECT min({column.Name}) from {discoveredColumn.Table.GetRuntimeName()}", con);
+            min = DateTime.Parse((cmd2.ExecuteScalar().ToString()));
+        }
+        else
+        {
+            var qb = new QueryBuilder("DISTINCT", null, null);
+            var memRepo = new MemoryRepository();
+            qb.AddColumn(new ColumnInfoToIColumn(memRepo, column.ColumnInfo));
+            using var con = server.GetConnection();
+            con.Open();
+            using var cmd = server.GetCommand(qb.SQL, con);
+            cmd.CommandTimeout = 300;
+            using var da = server.GetDataAdapter(cmd);
+            var dt = new DataTable();
+            da.Fill(dt);
+            var rows = dt.AsEnumerable().Where(r => !string.IsNullOrEmpty(r[0].ToString()));
+            if (!rows.Any()) return new Tuple<DateTime?, DateTime?>(min, max);
+            var dateTimeRows = rows.Select(r => DateTime.Parse(r[0].ToString()));
+            max = dateTimeRows.Max();
+            min = dateTimeRows.Min();
+        }
         return new Tuple<DateTime?, DateTime?>(min, max);
     }
 
@@ -147,35 +162,64 @@ public class OverviewModel
     {
         var column = _catalogue.CatalogueItems.Where(c => c.ID == _catalogueOverview.DateColumn_ID).FirstOrDefault();
         var dateString = "yyyy-MM";
-        DataTable dt = new();
         var discoveredColumn = column.ColumnInfo.Discover(DataAccessContext.InternalDataProcessing);
         var server = discoveredColumn.Table.Database.Server;
         using var con = server.GetConnection();
         con.Open();
-        var repo = new MemoryCatalogueRepository();
-        var qb = new QueryBuilder(null, null);
-        qb.AddColumn(new ColumnInfoToIColumn(repo, column.ColumnInfo));
-        qb.AddCustomLine($"{column.ColumnInfo.Name} IS NOT NULL", FAnsi.Discovery.QuerySyntax.QueryComponent.WHERE);
-        var cmd = server.GetCommand(qb.SQL, con);
-        using var da = server.GetDataAdapter(cmd);
-        dt.BeginLoadData();
-        da.Fill(dt);
-        dt.EndLoadData();
-        con.Dispose();
-        Dictionary<string, int> counts = [];
-        foreach (var key in dt.AsEnumerable().Select(row => DateTime.Parse(row[0].ToString()).ToString(dateString)))
+        var counts = new DataTable();
+        if (server.DatabaseType == FAnsi.DatabaseType.MicrosoftSQLServer)
         {
-            if (counts.TryGetValue(key, out var count))
+
+            var sql = @$"
+                SELECT 
+
+                FORMAT({column.Name},'{dateString}'), count(FORMAT({column.Name},'{dateString}'))
+                FROM 
+                {discoveredColumn.Table.GetRuntimeName()}
+                WHERE
+                {column.Name} IS NOT NULL
+                Group by FORMAT({column.Name},'{dateString}')
+                ORDER BY FORMAT({column.Name},'{dateString}')";
+            var cmd = server.GetCommand(sql, con);
+            using var da = server.GetDataAdapter(cmd);
+            counts.BeginLoadData();
+            da.Fill(counts);
+            counts.EndLoadData();
+            con.Dispose();
+        }
+        else
+        {
+            //nonsql v slow
+            var repo = new MemoryCatalogueRepository();
+            var qb = new QueryBuilder(null, null);
+            qb.AddColumn(new ColumnInfoToIColumn(repo, column.ColumnInfo));
+            qb.AddCustomLine($"{column.ColumnInfo.Name} IS NOT NULL", FAnsi.Discovery.QuerySyntax.QueryComponent.WHERE);
+            var cmd = server.GetCommand(qb.SQL, con);
+            using var da = server.GetDataAdapter(cmd);
+            var dt = new DataTable();
+            dt.BeginLoadData();
+            da.Fill(dt);
+            dt.EndLoadData();
+            con.Dispose();
+            Dictionary<string, int> _counts = [];
+            foreach (var key in dt.AsEnumerable().Select(row => DateTime.Parse(row[0].ToString()).ToString(dateString)))
             {
-                counts[key]++;
+                if (_counts.TryGetValue(key, out var count))
+                {
+                    _counts[key]++;
+                }
+                else
+                {
+                    _counts[key] = 1;
+                }
             }
-            else
+            foreach (var item in _counts)
             {
-                counts[key] = 1;
+                DataRow dr = counts.NewRow();
+                dr[0] = item.Key;
+                dr[1] = item.Value;
             }
         }
-
-        var x = _activator.RepositoryLocator.CatalogueRepository.GetType();
         if (_activator.RepositoryLocator.CatalogueRepository.GetType() == typeof(CatalogueRepository))
         {
             //fast
@@ -190,9 +234,9 @@ public class OverviewModel
             }
         }
 
-        foreach (var item in counts)
+        foreach (var item in counts.AsEnumerable())
         {
-            var dp = new CatalogueOverviewDataPoint(_activator.RepositoryLocator.CatalogueRepository, _catalogueOverview.ID, DateTime.Parse(item.Key), item.Value);
+            var dp = new CatalogueOverviewDataPoint(_activator.RepositoryLocator.CatalogueRepository, _catalogueOverview.ID, DateTime.Parse(item[0].ToString()), (int)item[1]);
             dp.SaveToDatabase();
         }
     }
