@@ -1,9 +1,9 @@
 <Project>
   <ItemGroup>
-    <PackageVersion Include="AWSSDK.S3" Version="3.7.410.5" />
-    <PackageVersion Include="AWSSDK.SecurityToken" Version="3.7.401.12" />
-    <PackageVersion Include="AWSSDK.SSO" Version="3.7.400.63" />
-    <PackageVersion Include="AWSSDK.SSOOIDC" Version="3.7.400.63" />
+    <PackageVersion Include="AWSSDK.S3" Version="3.7.410.6" />
+    <PackageVersion Include="AWSSDK.SecurityToken" Version="3.7.401.13" />
+    <PackageVersion Include="AWSSDK.SSO" Version="3.7.400.64" />
+    <PackageVersion Include="AWSSDK.SSOOIDC" Version="3.7.400.64" />
     <PackageVersion Include="CommandLineParser" Version="2.9.1" />
     <PackageVersion Include="Equ" Version="2.3.0" />
     <PackageVersion Include="ExcelNumberFormat" Version="1.1.0" />
