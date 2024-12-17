@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 - Build on and target .Net 9 rather than 8
+- Fix issue with MEF constructing Remote Table Attachers
 
 ## [8.4.1] - 2024-12-10
 
