@@ -236,8 +236,6 @@ public class CatalogueConstraintReport : DataQualityReport
                 var previousRowSates = previousEvaluation.RowStates;
                 var previousCategories = previousEvaluation.GetPivotCategoryValues().Where(c => c != "ALL");
 
-                //var AllStates = previousRowSates.Where(rs => rs.PivotCategory == "ALL");
-
                 var evaluation = new Evaluation(dqeRepository, _catalogue);
 
                 //new pivoutCategories coming in
@@ -440,6 +438,38 @@ public class CatalogueConstraintReport : DataQualityReport
                     column.Commit(evaluation, "ALL", con.Connection, con.Transaction);
                 }
 
+                //* Periodicity States *//
+
+                //Unchanged
+                var x = newByPivotCategoryCubesOverTime;
+
+                var unchangedPivotCategories = previousRowSates.Where(rs => rs.PivotCategory != "ALL" && !existingIncomingPivotCategories.Contains(rs.PivotCategory) && !replacedPivotCategories.Contains(rs.PivotCategory)).Select(rs => rs.PivotCategory).Distinct(); foreach (var previousRowState in previousRowSates.Where(rs => rs.PivotCategory != "ALL" && !existingIncomingPivotCategories.Contains(rs.PivotCategory) && !replacedPivotCategories.Contains(rs.PivotCategory))) ;
+                foreach (var pivotCategory in unchangedPivotCategories)
+                {
+                    var previousPeriodicity = PeriodicityState.GetPeriodicityForDataTableForEvaluation(previousEvaluation, pivotCategory, false);
+                    foreach (var row in previousPeriodicity.AsEnumerable())
+                    {
+                        var countOfRecords = int.Parse(row[2].ToString());
+                        for (var i = 0; i < countOfRecords; i++) {
+                            newByPivotCategoryCubesOverTime.TryGetValue(pivotCategory, out var value);
+                            if(value is null)
+                            {
+                                newByPivotCategoryCubesOverTime[pivotCategory] = new PeriodicityCubesOverTime(pivotCategory);
+                            }
+                            Consequence.TryParse(row[3].ToString(), out Consequence consequence);
+                            var date = DateTime.Parse(row[1].ToString());
+
+                            newByPivotCategoryCubesOverTime[pivotCategory].IncrementHyperCube(date.Year, date.Month, consequence);
+                            newByPivotCategoryCubesOverTime["ALL"].IncrementHyperCube(date.Year, date.Month, consequence);
+                        }
+                    }
+                }
+                //what about the replacements?
+                //ADD all the new stuff
+                foreach (var v in newByPivotCategoryCubesOverTime.Values)
+                {
+                    v.CommitToDatabase(evaluation);
+                }
 
                 //var previousPeriodicity = PeriodicityState.GetPeriodicityForDataTableForEvaluation(previousEvaluation, false);
 
