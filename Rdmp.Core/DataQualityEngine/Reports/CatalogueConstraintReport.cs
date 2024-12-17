@@ -227,7 +227,7 @@ public class CatalogueConstraintReport : DataQualityReport
             var pivotColumn = c.PivotCategory_ExtractionInformation.ColumnInfo.GetRuntimeName();
             var timeColumn = c.TimeCoverage_ExtractionInformation.ColumnInfo.GetRuntimeName();
 
-            var incomingPivotCategories = rDT.AsEnumerable().Select(r => r[pivotColumn].ToString()).ToList();
+            var incomingPivotCategories = rDT.AsEnumerable().Select(r => r[pivotColumn].ToString()).ToList().Distinct();
 
             using (var con = dqeRepository.BeginNewTransactedConnection())
             {
@@ -312,7 +312,7 @@ public class CatalogueConstraintReport : DataQualityReport
                         foreach (var loadId in incomingState.RowsPassingValidationByDataLoadRunID.Keys)
                         {
                             incomingState.RowsPassingValidationByDataLoadRunID.TryGetValue(loadId, out int _correct);
-                            incomingState.WorstConsequencesByDataLoadRunID.TryGetValue((int)_dataLoadID, out Dictionary<Consequence, int> results);
+                            incomingState.WorstConsequencesByDataLoadRunID.TryGetValue(loadId, out Dictionary<Consequence, int> results);
                             results.TryGetValue(Consequence.Missing, out int _missing);
                             results.TryGetValue(Consequence.Wrong, out int _wrong);
                             results.TryGetValue(Consequence.InvalidatesRow, out int _invalidatesRow);
@@ -329,10 +329,13 @@ public class CatalogueConstraintReport : DataQualityReport
                     }
                     else
                     {
-                        var current = AllStates.Where(state => state.DataLoadRunID == (int)_dataLoadID).First();
-                        var newState = new RowState(rowState.DataLoadRunID, rowState.Correct + current.Correct, rowState.Missing + current.Missing, rowState.Wrong + current.Wrong, rowState.Invalid + current.Invalid, _catalogue.ValidatorXML, "ALL");
-                        AllStates = AllStates.Where(state => state.DataLoadRunID != rowState.DataLoadRunID).ToList();
-                        AllStates.Add(newState);
+                        var current = AllStates.Where(state => state.DataLoadRunID == (int)_dataLoadID).FirstOrDefault();
+                        if (current is not null)
+                        {
+                            var newState = new RowState(rowState.DataLoadRunID, rowState.Correct + current.Correct, rowState.Missing + current.Missing, rowState.Wrong + current.Wrong, rowState.Invalid + current.Invalid, _catalogue.ValidatorXML, "ALL");
+                            AllStates = AllStates.Where(state => state.DataLoadRunID != rowState.DataLoadRunID).ToList();
+                            AllStates.Add(newState);
+                        }
                     }
                 }
                 foreach (var state in AllStates)
