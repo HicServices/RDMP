@@ -441,7 +441,7 @@ public class CatalogueConstraintReport : DataQualityReport
                 //* Periodicity States *//
 
                 //Unchanged
-                var x = newByPivotCategoryCubesOverTime;
+                newByPivotCategoryCubesOverTime = new();//reset
 
                 var unchangedPivotCategories = previousRowSates.Where(rs => rs.PivotCategory != "ALL" && !existingIncomingPivotCategories.Contains(rs.PivotCategory) && !replacedPivotCategories.Contains(rs.PivotCategory)).Select(rs => rs.PivotCategory).Distinct(); foreach (var previousRowState in previousRowSates.Where(rs => rs.PivotCategory != "ALL" && !existingIncomingPivotCategories.Contains(rs.PivotCategory) && !replacedPivotCategories.Contains(rs.PivotCategory))) ;
                 foreach (var pivotCategory in unchangedPivotCategories)
@@ -450,21 +450,129 @@ public class CatalogueConstraintReport : DataQualityReport
                     foreach (var row in previousPeriodicity.AsEnumerable())
                     {
                         var countOfRecords = int.Parse(row[2].ToString());
-                        for (var i = 0; i < countOfRecords; i++) {
+                        for (var i = 0; i < countOfRecords; i++)
+                        {
                             newByPivotCategoryCubesOverTime.TryGetValue(pivotCategory, out var value);
-                            if(value is null)
+                            if (value is null)
                             {
                                 newByPivotCategoryCubesOverTime[pivotCategory] = new PeriodicityCubesOverTime(pivotCategory);
                             }
                             Consequence.TryParse(row[3].ToString(), out Consequence consequence);
                             var date = DateTime.Parse(row[1].ToString());
-
                             newByPivotCategoryCubesOverTime[pivotCategory].IncrementHyperCube(date.Year, date.Month, consequence);
+                            newByPivotCategoryCubesOverTime.TryGetValue("ALL", out value);
+                            if (value is null)
+                            {
+                                newByPivotCategoryCubesOverTime["ALL"] = new PeriodicityCubesOverTime("ALL");
+                            }
                             newByPivotCategoryCubesOverTime["ALL"].IncrementHyperCube(date.Year, date.Month, consequence);
                         }
                     }
                 }
                 //what about the replacements?
+                if (existingIncomingPivotCategories.Any())
+                {
+                    var updatedRowsDataTable = new DataTable();
+                    var qb = new QueryBuilder(null, "");
+
+                    using (var updateCon = _server.GetConnection())
+                    {
+                        updateCon.Open();
+                        qb.AddColumnRange(_catalogue.GetAllExtractionInformation(ExtractionCategory.Any));
+                        qb.AddCustomLine($"{pivotColumn} in ({string.Join(',', existingIncomingPivotCategories.Select(i => $"'{i}'"))})", FAnsi.Discovery.QuerySyntax.QueryComponent.WHERE);
+                        var cmd = _server.GetCommand(qb.SQL, updateCon);
+                        cmd.CommandTimeout = 500000;
+                        var adapter = _server.GetDataAdapter(cmd);
+                        updatedRowsDataTable.BeginLoadData();
+                        adapter.Fill(updatedRowsDataTable);
+                        updatedRowsDataTable.EndLoadData();
+                        updateCon.Close();
+                    }
+                    var updatedRowsReportBuilder = new ReportBuilder(c, _validator, _queryBuilder, _dataLoadRunFieldName, _containsDataLoadID, _timePeriodicityField, _pivotCategory, updatedRowsDataTable);
+                    updatedRowsReportBuilder.BuildReportInternals(cancellationToken, forker, dqeRepository);
+                    var cc = updatedRowsReportBuilder.GetByPivotCategoryCubesOverTime();
+                    foreach (var category in cc.Keys)
+                    { 
+                        var hyperCube = cc[category].GetHyperCube();
+                        foreach (var year in hyperCube.Keys)
+                        {
+                            var periodicityCubes = hyperCube[year];
+                            foreach (var month in periodicityCubes.Keys)
+                            {
+                                var cube = periodicityCubes[month];
+                                foreach (var consequence in Enum.GetValues(typeof(Consequence)).Cast<Consequence>().ToList())
+                                {
+                                    var state = cube.GetStateForConsequence(consequence);
+                                    for (var i = 0; i < state.CountOfRecords; i++)
+                                    {
+                                        newByPivotCategoryCubesOverTime.TryGetValue(category, out var value);
+                                        if (value is null)
+                                        {
+                                            newByPivotCategoryCubesOverTime[category] = new PeriodicityCubesOverTime(category);
+                                        }
+                                        newByPivotCategoryCubesOverTime[category].IncrementHyperCube(year, month, consequence);
+                                    }
+
+                                }
+                            }
+
+                        }
+                        //want to add this to newByPivotCategoryCubesOverTime 
+
+                    }
+                }
+                //foreach (var newCategory in newIncomingPivotCategories)
+                if (newIncomingPivotCategories.Any())
+                {
+                    var updatedRowsDataTable = new DataTable();
+                    var qb = new QueryBuilder(null, "");
+
+                    using (var updateCon = _server.GetConnection())
+                    {
+                        updateCon.Open();
+                        qb.AddColumnRange(_catalogue.GetAllExtractionInformation(ExtractionCategory.Any));
+                        qb.AddCustomLine($"{pivotColumn} in ({string.Join(',', newIncomingPivotCategories.Select(i => $"'{i}'"))})", FAnsi.Discovery.QuerySyntax.QueryComponent.WHERE);
+                        var cmd = _server.GetCommand(qb.SQL, updateCon);
+                        cmd.CommandTimeout = 500000;
+                        var adapter = _server.GetDataAdapter(cmd);
+                        updatedRowsDataTable.BeginLoadData();
+                        adapter.Fill(updatedRowsDataTable);
+                        updatedRowsDataTable.EndLoadData();
+                        updateCon.Close();
+                    }
+                    var updatedRowsReportBuilder = new ReportBuilder(c, _validator, _queryBuilder, _dataLoadRunFieldName, _containsDataLoadID, _timePeriodicityField, _pivotCategory, updatedRowsDataTable);
+                    updatedRowsReportBuilder.BuildReportInternals(cancellationToken, forker, dqeRepository);
+                    var cc = updatedRowsReportBuilder.GetByPivotCategoryCubesOverTime();
+                    foreach (var category in cc.Keys)
+                    {
+                        var hyperCube = cc[category].GetHyperCube();
+                        foreach (var year in hyperCube.Keys)
+                        {
+                            var periodicityCubes = hyperCube[year];
+                            foreach (var month in periodicityCubes.Keys)
+                            {
+                                var cube = periodicityCubes[month];
+                                foreach (var consequence in Enum.GetValues(typeof(Consequence)).Cast<Consequence>().ToList())
+                                {
+                                    var state = cube.GetStateForConsequence(consequence);
+                                    for (var i = 0; i < state.CountOfRecords; i++)
+                                    {
+                                        newByPivotCategoryCubesOverTime.TryGetValue(category, out var value);
+                                        if (value is null)
+                                        {
+                                            newByPivotCategoryCubesOverTime[category] = new PeriodicityCubesOverTime(category);
+                                        }
+                                        newByPivotCategoryCubesOverTime[category].IncrementHyperCube(year, month, consequence);
+                                    }
+
+                                }
+                            }
+
+                        }
+                        //want to add this to newByPivotCategoryCubesOverTime 
+
+                    }
+                }
                 //ADD all the new stuff
                 foreach (var v in newByPivotCategoryCubesOverTime.Values)
                 {

@@ -31,6 +31,11 @@ public class PeriodicityCubesOverTime
         _pivotCategory = pivotCategory;
     }
 
+    public Dictionary<int, Dictionary<int, PeriodicityCube>> GetHyperCube()
+    {
+        return hyperCube;
+    }
+
     public string GetPivotCategory()
     {
         return _pivotCategory;
