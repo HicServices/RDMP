@@ -39,7 +39,14 @@ public class AttacherRuntimeTask : RuntimeTask, IMEFRuntimeTask
             throw new ArgumentException(
                 $"Path is blank for ProcessTask '{task}' - it should be a class name of type {nameof(IAttacher)}");
 
-        Attacher = MEF.CreateA<IAttacher>(ProcessTask.Path, new object[] { ProcessTask.Path == typeof(RemoteTableWithoutDBCreationAttacher).ToString() ? false : true });
+        if (ProcessTask.Path == typeof(RemoteTableWithoutDBCreationAttacher).ToString())
+        {
+            Attacher = MEF.CreateA<IAttacher>(ProcessTask.Path);
+        }
+        else
+        {
+            Attacher = MEF.CreateA<IAttacher>(ProcessTask.Path, [true]);
+        }
         SetPropertiesForClass(RuntimeArguments, Attacher);
         Attacher.Initialize(args.StageSpecificArguments.RootDir, RuntimeArguments.StageSpecificArguments.DbInfo);
     }
