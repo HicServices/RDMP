@@ -11,6 +11,7 @@ using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.Attachers;
 using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments;
+using Rdmp.Core.DataLoad.Modules.Attachers;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
@@ -29,6 +30,8 @@ public class AttacherRuntimeTask : RuntimeTask, IMEFRuntimeTask
     public AttacherRuntimeTask(IProcessTask task, RuntimeArgumentCollection args)
         : base(task, args)
     {
+
+        //RequestsExternalDatabaseCreation
         //All attachers must be marked as mounting stages, and therefore we can pull out the RAW Server and Name
         var mountingStageArgs = args.StageSpecificArguments;
         if (mountingStageArgs.LoadStage != LoadStage.Mounting)
@@ -38,7 +41,7 @@ public class AttacherRuntimeTask : RuntimeTask, IMEFRuntimeTask
             throw new ArgumentException(
                 $"Path is blank for ProcessTask '{task}' - it should be a class name of type {nameof(IAttacher)}");
 
-        Attacher = MEF.CreateA<IAttacher>(ProcessTask.Path);
+        Attacher = MEF.CreateA<IAttacher>(ProcessTask.Path, new object[] { ProcessTask.Path == typeof(RemoteTableWithoutDBCreationAttacher).ToString()?false:true });
         SetPropertiesForClass(RuntimeArguments, Attacher);
         Attacher.Initialize(args.StageSpecificArguments.RootDir, RuntimeArguments.StageSpecificArguments.DbInfo);
     }
