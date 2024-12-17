@@ -329,7 +329,7 @@ public class CatalogueConstraintReport : DataQualityReport
                     }
                     else
                     {
-                        var current = AllStates.Where(state => state.DataLoadRunID == (int)_dataLoadID).FirstOrDefault();
+                        var current = AllStates.Where(state => state.DataLoadRunID == rowState.DataLoadRunID).FirstOrDefault();
                         if (current is not null)
                         {
                             var newState = new RowState(rowState.DataLoadRunID, rowState.Correct + current.Correct, rowState.Missing + current.Missing, rowState.Wrong + current.Wrong, rowState.Invalid + current.Invalid, _catalogue.ValidatorXML, "ALL");
