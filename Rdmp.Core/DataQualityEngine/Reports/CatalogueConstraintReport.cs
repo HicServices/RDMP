@@ -263,6 +263,8 @@ public class CatalogueConstraintReport : DataQualityReport
                 // existing pivot categories coming in
                 var existingIncomingPivotCategories = incomingPivotCategories.Where(c => previousCategories.Contains(c) && !replacedPivotCategories.Contains(c) && c != "ALL");
 
+
+                //* Row States *//
                 //unchanges categories
                 foreach (var previousRowState in previousRowSates.Where(rs => rs.PivotCategory != "ALL" && !existingIncomingPivotCategories.Contains(rs.PivotCategory) && !replacedPivotCategories.Contains(rs.PivotCategory)))
                 {
@@ -279,18 +281,8 @@ public class CatalogueConstraintReport : DataQualityReport
                     results.TryGetValue(Consequence.Wrong, out int wrong);
                     results.TryGetValue(Consequence.InvalidatesRow, out int invalidatesRow);
                     evaluation.AddRowState((int)_dataLoadID, correct, mising, wrong, invalidatesRow, _catalogue.ValidatorXML, newCategory, con.Connection, con.Transaction);
-                    //if(!AllStates.Any(state => state.DataLoadRunID == (int)_dataLoadID))
-                    //{
-                    //    AllStates.Append(new RowState((int)_dataLoadID, correct, mising, wrong, invalidatesRow, _catalogue.ValidatorXML, "ALL"));
-                    //}
-                    //else
-                    //{
-                    //    var current = AllStates.Where(state => state.DataLoadRunID == (int)_dataLoadID).First();
-                    //    var newState = new RowState((int)_dataLoadID, correct+current.Correct, mising + current.Missing, wrong +current.Wrong, invalidatesRow+current.Invalid, _catalogue.ValidatorXML, "ALL");
-                    //    AllStates = AllStates.Where(state => state.DataLoadRunID != (int)_dataLoadID);
-                    //    AllStates.Append(newState);
-                    //}
                 }
+                //Updates
                 if (existingIncomingPivotCategories.Any())
                 {
                     //existing row states with new entries
@@ -343,24 +335,110 @@ public class CatalogueConstraintReport : DataQualityReport
                         AllStates.Add(newState);
                     }
                 }
-                //todo need to remove from old ALL data loads and add for this data load
                 foreach (var state in AllStates)
                 {
                     evaluation.AddRowState(state.DataLoadRunID, state.Correct, state.Missing, state.Wrong, state.Invalid, _catalogue.ValidatorXML, "ALL", con.Connection, con.Transaction);
 
                 }
+                //* Column States *//
+                List<ColumnState> ColumnStates = [];
+                //unchanged 
+                foreach (var previousColumnState in previousColumnStates.Where(rs => rs.PivotCategory != "ALL" && !existingIncomingPivotCategories.Contains(rs.PivotCategory) && !replacedPivotCategories.Contains(rs.PivotCategory)))
+                {
+                    var cm = new ColumnState(previousColumnState.TargetProperty, previousColumnState.DataLoadRunID, previousColumnState.ItemValidatorXML)
+                    {
+                        CountCorrect = previousColumnState.CountCorrect,
+                        CountMissing = previousColumnState.CountMissing,
+                        CountWrong = previousColumnState.CountWrong,
+                        CountInvalidatesRow = previousColumnState.CountInvalidatesRow,
+                        CountDBNull = previousColumnState.CountDBNull
+                    };
+                    cm.Commit(evaluation, previousColumnState.PivotCategory, con.Connection, con.Transaction);
+                    ColumnStates.Add(cm);
+                }
+                //new stuff
+                foreach (var newCategory in newIncomingPivotCategories)
+                {
+                    newByPivotRowStatesOverDataLoadRunId.TryGetValue(newCategory, out DQEStateOverDataLoadRunId incomingState);
+                    incomingState.AllColumnStates.TryGetValue((int)_dataLoadID, out ColumnState[] columnStates);
+                    foreach (var columnState in columnStates)
+                    {
+                        columnState.Commit(evaluation, newCategory, con.Connection, con.Transaction);
+                        ColumnStates.Add(columnState);
+                    }
+                }
+                //updates
+                if (existingIncomingPivotCategories.Any())
+                {
+                    var updatedRowsDataTable = new DataTable();
+                    var qb = new QueryBuilder(null, "");
 
-                //row state need to think about ALL & the various data load changes
+                    using (var updateCon = _server.GetConnection())
+                    {
+                        updateCon.Open();
+                        qb.AddColumnRange(_catalogue.GetAllExtractionInformation(ExtractionCategory.Any));
+                        qb.AddCustomLine($"{pivotColumn} in ({string.Join(',', existingIncomingPivotCategories.Select(i => $"'{i}'"))})", FAnsi.Discovery.QuerySyntax.QueryComponent.WHERE);
+                        var cmd = _server.GetCommand(qb.SQL, updateCon);
+                        cmd.CommandTimeout = 500000;
+                        var adapter = _server.GetDataAdapter(cmd);
+                        updatedRowsDataTable.BeginLoadData();
+                        adapter.Fill(updatedRowsDataTable);
+                        updatedRowsDataTable.EndLoadData();
+                        updateCon.Close();
+                    }
+                    var updatedRowsReportBuilder = new ReportBuilder(c, _validator, _queryBuilder, _dataLoadRunFieldName, _containsDataLoadID, _timePeriodicityField, _pivotCategory, updatedRowsDataTable);
+                    updatedRowsReportBuilder.BuildReportInternals(cancellationToken, forker, dqeRepository);
+                    var updatedByPivotRowStatesOverDataLoadRunId = updatedRowsReportBuilder.GetByPivotRowStatesOverDataLoadRunId();
 
-
+                    foreach (var updatedCategory in existingIncomingPivotCategories)
+                    {
+                        updatedByPivotRowStatesOverDataLoadRunId.TryGetValue(updatedCategory, out DQEStateOverDataLoadRunId incomingState);
+                        foreach (var loadId in incomingState.RowsPassingValidationByDataLoadRunID.Keys)
+                        {
+                            incomingState.AllColumnStates.TryGetValue(loadId, out ColumnState[] columnStates);
+                            foreach (var columnState in columnStates)
+                            {
+                                columnState.Commit(evaluation, updatedCategory, con.Connection, con.Transaction);
+                                ColumnStates.Add(columnState);
+                            }
+                        }
+                    }
+                }
+                List<ColumnState> AllColumns = new();
+                foreach (var columnState in ColumnStates)
+                {
+                    if (!AllColumns.Any(state => state.DataLoadRunID == columnState.DataLoadRunID && state.TargetProperty == columnState.TargetProperty && state.PivotCategory == columnState.PivotCategory))
+                    {
+                        var cm = new ColumnState(columnState.TargetProperty, columnState.DataLoadRunID, columnState.ItemValidatorXML)
+                        {
+                            CountCorrect = columnState.CountCorrect,
+                            CountMissing = columnState.CountMissing,
+                            CountWrong = columnState.CountWrong,
+                            CountInvalidatesRow = columnState.CountInvalidatesRow,
+                            CountDBNull = columnState.CountDBNull
+                        };
+                        AllColumns.Add(cm);
+                    }
+                    else
+                    {
+                        var index = AllColumns.FindIndex(state => state.DataLoadRunID == columnState.DataLoadRunID && state.TargetProperty == columnState.TargetProperty && state.PivotCategory == columnState.PivotCategory);
+                        if (index != -1)
+                        {
+                            AllColumns[index].CountCorrect += columnState.CountCorrect;
+                            AllColumns[index].CountMissing += columnState.CountMissing;
+                            AllColumns[index].CountWrong += columnState.CountWrong;
+                            AllColumns[index].CountInvalidatesRow += columnState.CountInvalidatesRow;
+                            AllColumns[index].CountDBNull += columnState.CountDBNull;
+                        }
+                    }
+                }
+                foreach (var column in AllColumns)
+                {
+                    column.Commit(evaluation, "ALL", con.Connection, con.Transaction);
+                }
 
 
                 //var previousPeriodicity = PeriodicityState.GetPeriodicityForDataTableForEvaluation(previousEvaluation, false);
-
-
-
-                var cs = new ColumnState("chi", (int)_dataLoadID, _catalogue.ValidatorXML);
-                cs.Commit(evaluation, "c", con.Connection, con.Transaction);
 
                 dqeRepository.EndTransactedConnection(true);
 
