@@ -40,6 +40,9 @@ public class RemoteTableAttacher : RemoteAttacher
     public RemoteTableAttacher(bool requestsExternalDatabaseCreation=true) : base(requestsExternalDatabaseCreation)
     {
     }
+    public RemoteTableAttacher() : base(true)
+    {
+    }
 
     [DemandsInitialization(
         "The server to connect to (this replaces all other settings e.g. RemoteServer, RemoteDatabaseName etc")]
