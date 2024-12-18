@@ -318,7 +318,7 @@ public class MDFAttacherTests : DatabaseTests
         var testDir = workingDir.CreateSubdirectory("MDFAttacherTests_TestFactory");
         var loadDirectory = LoadDirectory.CreateDirectoryStructure(testDir, "TestFactory", true);
 
-        var attacher = MEF.CreateA<IAttacher>(typeof(MDFAttacher).FullName);
+        var attacher = MEF.CreateA<IAttacher>(typeof(MDFAttacher).FullName, [false]);
         try
         {
             attacher.Initialize(loadDirectory, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer));
