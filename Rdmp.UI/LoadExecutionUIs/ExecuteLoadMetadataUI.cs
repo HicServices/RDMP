@@ -77,12 +77,12 @@ public partial class ExecuteLoadMetadataUI : DatasetLoadControl_Design
 
         if (activator.IsInteractive)
         {
-            var ShowYestoAllNotoAlldataloadcheck = false;
-            var ShowYestoAllNotoAlldataloadcheckSetting = activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Setting>().Where(s => s.Key == "ToggleYestoAllNotoAlldataloadcheck").FirstOrDefault();
-            if (ShowYestoAllNotoAlldataloadcheckSetting is not null) ShowYestoAllNotoAlldataloadcheck = Convert.ToBoolean(ShowYestoAllNotoAlldataloadcheckSetting.Value);
-            checkAndExecuteUI1.AllowsYesNoToAll = ShowYestoAllNotoAlldataloadcheck;
-
+            var showYestoAllNotoAlldataloadcheck = false;
+            var showYestoAllNotoAlldataloadcheckSetting = activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Setting>().FirstOrDefault(static s => s.Key == "ToggleYestoAllNotoAlldataloadcheck");
+            if (showYestoAllNotoAlldataloadcheckSetting is not null) showYestoAllNotoAlldataloadcheck = Convert.ToBoolean(showYestoAllNotoAlldataloadcheckSetting.Value);
+            checkAndExecuteUI1.AllowsYesNoToAll = showYestoAllNotoAlldataloadcheck;
         }
+
         SetButtonStates(null, null);
 
         SetLoadProgressGroupBoxState();
