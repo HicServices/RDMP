@@ -22,7 +22,10 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation;
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<RDMPUserControl, UserControl>))]
 public abstract class RDMPUserControl : UserControl, IRDMPControl
 {
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public RDMPControlCommonFunctionality CommonFunctionality { get; private set; }
+
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public IActivateItems Activator { get; private set; }
 
     protected readonly bool VisualStudioDesignMode;

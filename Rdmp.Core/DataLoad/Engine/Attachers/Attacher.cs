@@ -64,6 +64,11 @@ public abstract class Attacher : IAttacher
         RequestsExternalDatabaseCreation = requestsExternalDatabaseCreation;
     }
 
+    protected Attacher()
+    {
+        RequestsExternalDatabaseCreation = true;
+    }
+
     public abstract void Check(ICheckNotifier notifier);
 
 
