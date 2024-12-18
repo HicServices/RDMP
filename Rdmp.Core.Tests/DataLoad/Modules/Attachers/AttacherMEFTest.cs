@@ -24,7 +24,7 @@ namespace Rdmp.Core.Tests.DataLoad.Modules.Attachers
             {
                 Assert.DoesNotThrow(() =>
                 {
-                    var attacher = MEF.CreateA<IAttacher>(path);
+                    MEF.CreateA<IAttacher>(path);
                 });
             }
         }
