@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -30,12 +31,22 @@ public partial class ConsequenceBar : UserControl
     public static Color HasValuesColor = Color.Black;
     public static Color IsNullColor = Color.LightGray;
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public double Correct { get; set; }
+
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public double Invalid { get; set; }
+
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public double Missing { get; set; }
+
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public double Wrong { get; set; }
+
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public double DBNull { get; set; }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public string Label { get; set; }
 
     protected override void OnPaintBackground(PaintEventArgs e)

@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
@@ -72,7 +73,11 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
 
     public ICatalogue CatalogueCreatedIfAny => _catalogue;
     public ITableInfo TableInfoCreated => _tableInfo;
+
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public DiscoveredTable TableCreated { get; set; }
+
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public string TargetFolder { get; set; }
 
     private BinderWithErrorProviderFactory _binder;

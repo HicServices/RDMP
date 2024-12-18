@@ -6,11 +6,13 @@
 
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Providers.Nodes;
+using System.ComponentModel;
 
 namespace Rdmp.UI.Menus;
 
 internal class DocumentationNodeMenu : RDMPContextMenuStrip
 {
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public DocumentationNode DocumentationNode { get; set; }
 
     public DocumentationNodeMenu(RDMPContextMenuStripArgs args, DocumentationNode documentationNode) : base(args,

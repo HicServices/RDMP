@@ -50,6 +50,7 @@ public partial class ExtractionFilterUI : ExtractionFilterUI_Design, ILifetimeSu
 
     private AutoCompleteProviderWin _autoCompleteProvider;
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public ISqlParameter[] GlobalFilterParameters { get; private set; }
 
     private Scintilla QueryEditor;
@@ -212,6 +213,7 @@ public partial class ExtractionFilterUI : ExtractionFilterUI_Design, ILifetimeSu
     /// <summary>
     /// Used for publishing IFilters created here back to the main Catalogue
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Catalogue Catalogue { get; set; }
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
