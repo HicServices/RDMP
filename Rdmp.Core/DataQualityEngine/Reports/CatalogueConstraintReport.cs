@@ -323,6 +323,13 @@ public class CatalogueConstraintReport : DataQualityReport
                             results.TryGetValue(Consequence.Wrong, out int _wrong);
                             results.TryGetValue(Consequence.InvalidatesRow, out int _invalidatesRow);
                             evaluation.AddRowState(loadId, _correct, _missing, _wrong, _invalidatesRow, _catalogue.ValidatorXML, updatedCategory, con.Connection, con.Transaction);
+
+                            incomingState.AllColumnStates.TryGetValue(loadId, out ColumnState[] columnStates);
+                            foreach (var columnState in columnStates)
+                            {
+                                columnState.Commit(evaluation, updatedCategory, con.Connection, con.Transaction);
+                                ColumnStates.Add(columnState);
+                            }
                         }
                     }
                 }
@@ -364,54 +371,6 @@ public class CatalogueConstraintReport : DataQualityReport
                     cm.Commit(evaluation, previousColumnState.PivotCategory, con.Connection, con.Transaction);
                     ColumnStates.Add(cm);
                 }
-                //new stuff
-                //foreach (var newCategory in newIncomingPivotCategories)
-                //{
-                //    newByPivotRowStatesOverDataLoadRunId.TryGetValue(newCategory, out DQEStateOverDataLoadRunId incomingState);
-                //    incomingState.AllColumnStates.TryGetValue((int)_dataLoadID, out ColumnState[] columnStates);
-                //    foreach (var columnState in columnStates)
-                //    {
-                //        columnState.Commit(evaluation, newCategory, con.Connection, con.Transaction);
-                //        ColumnStates.Add(columnState);
-                //    }
-                //}
-                //updates
-                if (existingIncomingPivotCategories.Any())
-                {
-                    var updatedRowsDataTable = new DataTable();
-                    var qb = new QueryBuilder(null, "");
-
-                    using (var updateCon = _server.GetConnection())
-                    {
-                        updateCon.Open();
-                        qb.AddColumnRange(_catalogue.GetAllExtractionInformation(ExtractionCategory.Any));
-                        qb.AddCustomLine($"{pivotColumn} in ({string.Join(',', existingIncomingPivotCategories.Select(i => $"'{i}'"))})", FAnsi.Discovery.QuerySyntax.QueryComponent.WHERE);
-                        var cmd = _server.GetCommand(qb.SQL, updateCon);
-                        cmd.CommandTimeout = 500000;
-                        var adapter = _server.GetDataAdapter(cmd);
-                        updatedRowsDataTable.BeginLoadData();
-                        adapter.Fill(updatedRowsDataTable);
-                        updatedRowsDataTable.EndLoadData();
-                        updateCon.Close();
-                    }
-                    var updatedRowsReportBuilder = new ReportBuilder(c, _validator, _queryBuilder, _dataLoadRunFieldName, _containsDataLoadID, _timePeriodicityField, _pivotCategory, updatedRowsDataTable);
-                    updatedRowsReportBuilder.BuildReportInternals(cancellationToken, forker, dqeRepository);
-                    var updatedByPivotRowStatesOverDataLoadRunId = updatedRowsReportBuilder.GetByPivotRowStatesOverDataLoadRunId();
-
-                    foreach (var updatedCategory in existingIncomingPivotCategories)
-                    {
-                        updatedByPivotRowStatesOverDataLoadRunId.TryGetValue(updatedCategory, out DQEStateOverDataLoadRunId incomingState);
-                        foreach (var loadId in incomingState.RowsPassingValidationByDataLoadRunID.Keys)
-                        {
-                            incomingState.AllColumnStates.TryGetValue(loadId, out ColumnState[] columnStates);
-                            foreach (var columnState in columnStates)
-                            {
-                                columnState.Commit(evaluation, updatedCategory, con.Connection, con.Transaction);
-                                ColumnStates.Add(columnState);
-                            }
-                        }
-                    }
-                }
                 List<ColumnState> AllColumns = new();
                 foreach (var columnState in ColumnStates)
                 {
@@ -451,27 +410,30 @@ public class CatalogueConstraintReport : DataQualityReport
                 newByPivotCategoryCubesOverTime = new();//reset
 
                 var unchangedPivotCategories = previousRowSates.Where(rs => rs.PivotCategory != "ALL" && !existingIncomingPivotCategories.Contains(rs.PivotCategory) && !replacedPivotCategories.Contains(rs.PivotCategory)).Select(rs => rs.PivotCategory).Distinct(); foreach (var previousRowState in previousRowSates.Where(rs => rs.PivotCategory != "ALL" && !existingIncomingPivotCategories.Contains(rs.PivotCategory) && !replacedPivotCategories.Contains(rs.PivotCategory))) ;
+                newByPivotCategoryCubesOverTime.TryGetValue("ALL", out var value);
+                if (value is null)
+                {
+                    newByPivotCategoryCubesOverTime["ALL"] = new PeriodicityCubesOverTime("ALL");
+                }
                 foreach (var pivotCategory in unchangedPivotCategories)
                 {
                     var previousPeriodicity = PeriodicityState.GetPeriodicityForDataTableForEvaluation(previousEvaluation, pivotCategory, false);
+                    newByPivotCategoryCubesOverTime.TryGetValue(pivotCategory, out value);
+                    if (value is null)
+                    {
+                        newByPivotCategoryCubesOverTime[pivotCategory] = new PeriodicityCubesOverTime(pivotCategory);
+                    }
+
                     foreach (var row in previousPeriodicity.AsEnumerable())
                     {
                         var countOfRecords = int.Parse(row[2].ToString());
                         for (var i = 0; i < countOfRecords; i++)
                         {
-                            newByPivotCategoryCubesOverTime.TryGetValue(pivotCategory, out var value);
-                            if (value is null)
-                            {
-                                newByPivotCategoryCubesOverTime[pivotCategory] = new PeriodicityCubesOverTime(pivotCategory);
-                            }
+
                             Consequence.TryParse(row[3].ToString(), out Consequence consequence);
                             var date = DateTime.Parse(row[1].ToString());
                             newByPivotCategoryCubesOverTime[pivotCategory].IncrementHyperCube(date.Year, date.Month, consequence);
-                            newByPivotCategoryCubesOverTime.TryGetValue("ALL", out value);
-                            if (value is null)
-                            {
-                                newByPivotCategoryCubesOverTime["ALL"] = new PeriodicityCubesOverTime("ALL");
-                            }
+
                             newByPivotCategoryCubesOverTime["ALL"].IncrementHyperCube(date.Year, date.Month, consequence);
                         }
                     }
@@ -512,7 +474,7 @@ public class CatalogueConstraintReport : DataQualityReport
                                     var state = cube.GetStateForConsequence(consequence);
                                     for (var i = 0; i < state.CountOfRecords; i++)
                                     {
-                                        newByPivotCategoryCubesOverTime.TryGetValue(category, out var value);
+                                        newByPivotCategoryCubesOverTime.TryGetValue(category, out value);
                                         if (value is null)
                                         {
                                             newByPivotCategoryCubesOverTime[category] = new PeriodicityCubesOverTime(category);
@@ -564,7 +526,7 @@ public class CatalogueConstraintReport : DataQualityReport
                                     var state = cube.GetStateForConsequence(consequence);
                                     for (var i = 0; i < state.CountOfRecords; i++)
                                     {
-                                        newByPivotCategoryCubesOverTime.TryGetValue(category, out var value);
+                                        newByPivotCategoryCubesOverTime.TryGetValue(category, out value);
                                         if (value is null)
                                         {
                                             newByPivotCategoryCubesOverTime[category] = new PeriodicityCubesOverTime(category);
