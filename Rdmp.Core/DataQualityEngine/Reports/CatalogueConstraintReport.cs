@@ -240,6 +240,7 @@ public class CatalogueConstraintReport : DataQualityReport
 
                 //new pivoutCategories coming in
                 var newIncomingPivotCategories = incomingPivotCategories.Where(c => !previousCategories.Contains(c));
+                List<ColumnState> ColumnStates = [];
 
 
                 var pivotColumnInfo = _catalogue.CatalogueItems.Where(ci => ci.Name == _pivotCategory).FirstOrDefault();
@@ -279,6 +280,13 @@ public class CatalogueConstraintReport : DataQualityReport
                     results.TryGetValue(Consequence.Wrong, out int wrong);
                     results.TryGetValue(Consequence.InvalidatesRow, out int invalidatesRow);
                     evaluation.AddRowState((int)_dataLoadID, correct, mising, wrong, invalidatesRow, _catalogue.ValidatorXML, newCategory, con.Connection, con.Transaction);
+
+                    incomingState.AllColumnStates.TryGetValue((int)_dataLoadID, out ColumnState[] columnStates);
+                    foreach (var columnState in columnStates)
+                    {
+                        columnState.Commit(evaluation, newCategory, con.Connection, con.Transaction);
+                        ColumnStates.Add(columnState);
+                    }
                 }
                 //Updates
                 if (existingIncomingPivotCategories.Any())
@@ -342,7 +350,6 @@ public class CatalogueConstraintReport : DataQualityReport
 
                 }
                 //* Column States *//
-                List<ColumnState> ColumnStates = [];
                 //unchanged 
                 foreach (var previousColumnState in previousColumnStates.Where(rs => rs.PivotCategory != "ALL" && !existingIncomingPivotCategories.Contains(rs.PivotCategory) && !replacedPivotCategories.Contains(rs.PivotCategory)))
                 {
@@ -358,16 +365,16 @@ public class CatalogueConstraintReport : DataQualityReport
                     ColumnStates.Add(cm);
                 }
                 //new stuff
-                foreach (var newCategory in newIncomingPivotCategories)
-                {
-                    newByPivotRowStatesOverDataLoadRunId.TryGetValue(newCategory, out DQEStateOverDataLoadRunId incomingState);
-                    incomingState.AllColumnStates.TryGetValue((int)_dataLoadID, out ColumnState[] columnStates);
-                    foreach (var columnState in columnStates)
-                    {
-                        columnState.Commit(evaluation, newCategory, con.Connection, con.Transaction);
-                        ColumnStates.Add(columnState);
-                    }
-                }
+                //foreach (var newCategory in newIncomingPivotCategories)
+                //{
+                //    newByPivotRowStatesOverDataLoadRunId.TryGetValue(newCategory, out DQEStateOverDataLoadRunId incomingState);
+                //    incomingState.AllColumnStates.TryGetValue((int)_dataLoadID, out ColumnState[] columnStates);
+                //    foreach (var columnState in columnStates)
+                //    {
+                //        columnState.Commit(evaluation, newCategory, con.Connection, con.Transaction);
+                //        ColumnStates.Add(columnState);
+                //    }
+                //}
                 //updates
                 if (existingIncomingPivotCategories.Any())
                 {
@@ -492,7 +499,7 @@ public class CatalogueConstraintReport : DataQualityReport
                     updatedRowsReportBuilder.BuildReportInternals(cancellationToken, forker, dqeRepository);
                     var cc = updatedRowsReportBuilder.GetByPivotCategoryCubesOverTime();
                     foreach (var category in cc.Keys)
-                    { 
+                    {
                         var hyperCube = cc[category].GetHyperCube();
                         foreach (var year in hyperCube.Keys)
                         {
