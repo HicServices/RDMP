@@ -186,6 +186,10 @@ public class CatalogueConstraintReport : DataQualityReport
         }
     }
 
+    //Notes
+    // this is technically more efficient than a full DQE, but ot's pretty rubbish for categories with updates as we recalculate for the whole category
+    //may be worth thinking about how we can keep existing records and modify/add to them depending on what's goin on
+
 
     public void UpdateReport(ICatalogue c, int dataLoadID, IDataLoadEventListener listener,
         CancellationToken cancellationToken)
