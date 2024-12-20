@@ -386,7 +386,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
 
         uiInstance.SetDatabaseObject(this, databaseObject);
 
-        if (insertIndex is not null)
+        if (insertIndex is not null && _mainDockPanel.ActivePane is not null)
         {
             _mainDockPanel.ActivePane.SetContentIndex(floatable, (int)insertIndex);
         }
