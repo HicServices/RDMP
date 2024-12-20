@@ -28,13 +28,6 @@ internal class DelimitedFileSourceTests_Unresolveable : DelimitedFileSourceTests
             "Frank,Is the greatest,100",
             "Frank,Is the greatest,100");
 
-        void Adjust(DelimitedFlatFileDataFlowSource a)
-        {
-            a.BadDataHandlingStrategy = strategy;
-            a.ThrowOnEmptyFiles = true;
-            a.IgnoreQuotes = false;
-        }
-
         switch (strategy)
         {
             case BadDataHandlingStrategy.ThrowException:
@@ -57,6 +50,15 @@ internal class DelimitedFileSourceTests_Unresolveable : DelimitedFileSourceTests
             default:
                 throw new ArgumentOutOfRangeException(nameof(strategy));
         }
+
+        return;
+
+        void Adjust(DelimitedFlatFileDataFlowSource a)
+        {
+            a.BadDataHandlingStrategy = strategy;
+            a.ThrowOnEmptyFiles = true;
+            a.IgnoreQuotes = false;
+        }
     }
 
     [Test]
@@ -70,15 +72,16 @@ internal class DelimitedFileSourceTests_Unresolveable : DelimitedFileSourceTests
             "Frank,Is the greatest,100",
             "Frank,Is the greatest,100");
 
+        var dt2 = RunGetChunk(file, Adjust);
+        Assert.That(dt2.Rows, Has.Count.EqualTo(5));
+        Assert.That(dt2.Rows[1]["Description"], Is.EqualTo("\"Is the greatest"));
+        return;
+
         static void Adjust(DelimitedFlatFileDataFlowSource a)
         {
             a.BadDataHandlingStrategy = BadDataHandlingStrategy.ThrowException;
             a.ThrowOnEmptyFiles = true;
             a.IgnoreQuotes = true;
         }
-
-        var dt2 = RunGetChunk(file, Adjust);
-        Assert.That(dt2.Rows, Has.Count.EqualTo(5));
-        Assert.That(dt2.Rows[1]["Description"], Is.EqualTo("\"Is the greatest"));
     }
 }

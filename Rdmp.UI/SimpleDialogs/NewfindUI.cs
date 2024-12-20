@@ -38,12 +38,12 @@ namespace Rdmp.UI.SimpleDialogs
 
         private readonly bool _showReplaceOptions = false;
 
-        private void SimulateClickForAutoFilter<T>()
+        private void SimulateClickForAutoFilter<T2>()
         {
-            var item = newFindToolStrip.Items.Find((typeof(T)).Name, false).FirstOrDefault();
-            if (item is not null)
-                item.PerformClick();
+            var item = newFindToolStrip.Items.Find(typeof(T2).Name, false).FirstOrDefault();
+            item?.PerformClick();
         }
+
         private void PresetFiltersBasedOnFocusItem(RDMPUserControl focusItem)
         {
             var focusItemType = focusItem.GetType();
