@@ -1,8 +1,5 @@
-﻿using NLog;
-using NPOI.POIFS.Properties;
-using NPOI.SS.Formula.Functions;
+﻿using NPOI.SS.Formula.Functions;
 using NUnit.Framework;
-using Org.BouncyCastle.Tls;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
@@ -20,33 +17,25 @@ using Rdmp.Core.DataLoad.Modules.Mutilators;
 using Rdmp.Core.DataLoad.Triggers;
 using Rdmp.Core.DataQualityEngine.Data;
 using Rdmp.Core.DataQualityEngine.Reports;
-using Rdmp.Core.Logging;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using Rdmp.Core.Tests.DataLoad.Engine.Integration;
-using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
-using Tests.Common;
-using static Org.BouncyCastle.Math.EC.ECCurve;
 
 namespace Rdmp.Core.Tests.DataQualityEngine
 {
     internal class DQEPartialUpdateTests : DataLoadEngineTestsBase
     {
 
-        string validatorXML = "<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<Validator xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\r\n  <ItemValidators>\r\n    <ItemValidator>\r\n      <PrimaryConstraint xsi:type=\"Chi\">\r\n        <Consequence>Wrong</Consequence>\r\n      </PrimaryConstraint>\r\n      <TargetProperty>chi</TargetProperty>\r\n      <SecondaryConstraints />\r\n    </ItemValidator>\r\n    <ItemValidator>\r\n      <TargetProperty>time</TargetProperty>\r\n      <SecondaryConstraints />\r\n    </ItemValidator>\r\n  </ItemValidators>\r\n</Validator>";
-        string fileLocation = Path.GetTempPath();
-        string fileName = "SteppedDQEPartialUpdates.csv";
+        readonly string validatorXML = "<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<Validator xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\r\n  <ItemValidators>\r\n    <ItemValidator>\r\n      <PrimaryConstraint xsi:type=\"Chi\">\r\n        <Consequence>Wrong</Consequence>\r\n      </PrimaryConstraint>\r\n      <TargetProperty>chi</TargetProperty>\r\n      <SecondaryConstraints />\r\n    </ItemValidator>\r\n    <ItemValidator>\r\n      <TargetProperty>time</TargetProperty>\r\n      <SecondaryConstraints />\r\n    </ItemValidator>\r\n  </ItemValidators>\r\n</Validator>";
+        readonly string fileLocation = Path.GetTempPath();
+        readonly string fileName = "SteppedDQEPartialUpdates.csv";
 
         [Test]
         public void SteppedDQEPartialUpdates()
@@ -63,7 +52,7 @@ namespace Rdmp.Core.Tests.DataQualityEngine
 
             var table = server.CreateTable("PartialToaDQE", dt);
             table.CreatePrimaryKey(table.DiscoverColumns().Where(c => c.GetRuntimeName() == "chi").ToArray());
-
+            dt.Dispose();
             var catalogue = new Catalogue(CatalogueRepository, "PartialToaDQE");
             var importer = new TableInfoImporter(CatalogueRepository, table);
             importer.DoImport(out var _tableInfo, out var _columnInfos);
@@ -93,7 +82,7 @@ namespace Rdmp.Core.Tests.DataQualityEngine
 
             var listener = new ToMemoryDataLoadEventListener(false);
             report.GenerateReport(catalogue, listener, source.Token);
-
+            source.Dispose();
             var lmd = new LoadMetadata(CatalogueRepository, "MyLoad");
             lmd.LocationOfForLoadingDirectory = Path.GetTempPath();
             lmd.LocationOfForArchivingDirectory = Path.GetTempPath();
@@ -144,7 +133,6 @@ namespace Rdmp.Core.Tests.DataQualityEngine
             dt.Rows.Add(new string[] { "1111111112", "A", "2024-11-01" });
             dt.Rows.Add(new string[] { "1111111113", "B", "2024-10-01" });
             SetupFile(dt);
-            
             PerformLoad(lmd, logManager);
             //end of first load
             report = new CatalogueConstraintReport(catalogue, SpecialFieldNames.DataLoadRunID)
@@ -296,10 +284,6 @@ namespace Rdmp.Core.Tests.DataQualityEngine
             evaluations = dqeRepository.GetAllObjectsWhere<Evaluation>("CatalogueID", catalogue.ID).ToList();//.Where(e => e.CatalogueID == catalogue.ID).ToList();
             Assert.That(evaluations.Count, Is.EqualTo(13));
             CompareEvaluations(evaluations[12], evaluations[11]);
-
-
-            Assert.That(true, Is.EqualTo(true));
-
         }
 
         private void SetupFile(DataTable dt)
@@ -318,6 +302,7 @@ namespace Rdmp.Core.Tests.DataQualityEngine
                 lines.Add(string.Join(',', row.ItemArray.Select(i => i.ToString())));
             }
             File.AppendAllLines(Path.Combine(fileLocation, fileName), lines);
+            dt.Dispose();
         }
 
         private void CompareEvaluations(Evaluation e1, Evaluation e2)

@@ -215,10 +215,8 @@ public class CatalogueConstraintReport : DataQualityReport
             var reportBuilder = new ReportBuilder(c, _validator, _queryBuilder, _dataLoadRunFieldName, _containsDataLoadID, _timePeriodicityField, _pivotCategory, rDT);
             reportBuilder.BuildReportInternals(cancellationToken, forker, dqeRepository);
             var newByPivotRowStatesOverDataLoadRunId = reportBuilder.GetByPivotRowStatesOverDataLoadRunId();
-            var newByPivotCategoryCubesOverTime = reportBuilder.GetByPivotCategoryCubesOverTime();
 
             var pivotColumn = c.PivotCategory_ExtractionInformation.ColumnInfo.GetRuntimeName();
-            var timeColumn = c.TimeCoverage_ExtractionInformation.ColumnInfo.GetRuntimeName();
 
             var incomingPivotCategories = rDT.AsEnumerable().Select(r => r[pivotColumn].ToString()).ToList().Distinct();
 
@@ -402,9 +400,9 @@ public class CatalogueConstraintReport : DataQualityReport
                 //* Periodicity States *//
 
                 //Unchanged
-                newByPivotCategoryCubesOverTime = [];//reset
+                Dictionary<string, PeriodicityCubesOverTime> newByPivotCategoryCubesOverTime = [];//reset
 
-                var unchangedPivotCategories = previousRowSates.Where(rs => rs.PivotCategory != "ALL" && !existingIncomingPivotCategories.Contains(rs.PivotCategory) && !replacedPivotCategories.Contains(rs.PivotCategory)).Select(rs => rs.PivotCategory).Distinct(); foreach (var previousRowState in previousRowSates.Where(rs => rs.PivotCategory != "ALL" && !existingIncomingPivotCategories.Contains(rs.PivotCategory) && !replacedPivotCategories.Contains(rs.PivotCategory))) ;
+                var unchangedPivotCategories = previousRowSates.Where(rs => rs.PivotCategory != "ALL" && !existingIncomingPivotCategories.Contains(rs.PivotCategory) && !replacedPivotCategories.Contains(rs.PivotCategory)).Select(rs => rs.PivotCategory).Distinct();
                 newByPivotCategoryCubesOverTime.TryGetValue("ALL", out var value);
                 if (value is null)
                 {

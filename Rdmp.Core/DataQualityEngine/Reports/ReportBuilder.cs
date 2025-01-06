@@ -32,10 +32,10 @@ public class ReportBuilder
     private readonly Validator _validator;
     private readonly bool _containsDataLoadID;
 
-    public static int MaximumPivotValues = 5000;
+    private static readonly int MaximumPivotValues = 5000;
 
-    private Dictionary<string, DQEStateOverDataLoadRunId> byPivotRowStatesOverDataLoadRunId = new();
-    private Dictionary<string, PeriodicityCubesOverTime> byPivotCategoryCubesOverTime = new();
+    private readonly Dictionary<string, DQEStateOverDataLoadRunId> byPivotRowStatesOverDataLoadRunId = [];
+    private readonly Dictionary<string, PeriodicityCubesOverTime> byPivotCategoryCubesOverTime = [];
 
     private readonly string _timePeriodicityField;
     private readonly string _pivotCategory;
