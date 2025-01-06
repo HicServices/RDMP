@@ -63,25 +63,11 @@ public partial class ViewCatalogueOverviewUI : ViewCatalogueOverviewUI_Design
         }
         lblPeople.Text = $"{_overview.GetNumberOfPeople()} People";
 
-        areaChartUI.GenerateChart(_overview.GetCountsByDatePeriod(), $"Records per month");
+        areaChartUI.GenerateChart(_overview.GetTableData(), $"Records per month");
 
         var syntaxHelper = _catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.InternalDataProcessing, false)?.GetQuerySyntaxHelper();
         var dateTypeString = syntaxHelper.TypeTranslater.GetSQLDBTypeForCSharpType(new TypeGuesser.DatabaseTypeRequest(typeof(DateTime)));
         var dateColumns = _catalogue.CatalogueItems.Where(ci => ci.ColumnInfo.Data_type == dateTypeString).ToList();
-
-        if (cbTimeColumns.Items.Count == 0)
-        {
-            var x = dateColumns.ToList().ToArray();
-            cbTimeColumns.Items.AddRange(x);
-        }
-        if (_overview.GetDateColumn() != null)
-        {
-            cbTimeColumns.SelectedIndex = dateColumns.IndexOf(dateColumns.Where(ci => ci.ID == _overview.GetDateColumn()).FirstOrDefault());
-        }
-        else
-        {
-            cbTimeColumns.SelectedIndex = 0;
-        }
 
     }
 
@@ -107,14 +93,14 @@ public partial class ViewCatalogueOverviewUI : ViewCatalogueOverviewUI_Design
 
     private void btnGenerate_Click(object sender, EventArgs e)
     {
-        var dateColumnID = ((CatalogueItem)cbTimeColumns.SelectedItem).ID;
-        Task.Run(() =>
-        {
-            _overview.Generate(dateColumnID);
-        }).ContinueWith((task) =>
-        {
-            UpdateCatalogueData();
-        }, TaskScheduler.FromCurrentSynchronizationContext());
+        //var dateColumnID = ((CatalogueItem)cbTimeColumns.SelectedItem).ID;
+        //Task.Run(() =>
+        //{
+        //    _overview.Generate(dateColumnID);
+        //}).ContinueWith((task) =>
+        //{
+        //    UpdateCatalogueData();
+        //}, TaskScheduler.FromCurrentSynchronizationContext());
     }
 
 }
