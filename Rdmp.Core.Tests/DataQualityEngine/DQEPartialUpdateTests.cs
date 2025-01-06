@@ -82,7 +82,6 @@ namespace Rdmp.Core.Tests.DataQualityEngine
 
             var listener = new ToMemoryDataLoadEventListener(false);
             report.GenerateReport(catalogue, listener, source.Token);
-            source.Dispose();
             var lmd = new LoadMetadata(CatalogueRepository, "MyLoad");
             lmd.LocationOfForLoadingDirectory = Path.GetTempPath();
             lmd.LocationOfForArchivingDirectory = Path.GetTempPath();
@@ -280,8 +279,8 @@ namespace Rdmp.Core.Tests.DataQualityEngine
 
             report.Check(ThrowImmediatelyCheckNotifier.Quiet);
             report.GenerateReport(catalogue, listener, source.Token);
-
-            evaluations = dqeRepository.GetAllObjectsWhere<Evaluation>("CatalogueID", catalogue.ID).ToList();//.Where(e => e.CatalogueID == catalogue.ID).ToList();
+            source.Dispose();
+            evaluations = dqeRepository.GetAllObjectsWhere<Evaluation>("CatalogueID", catalogue.ID).ToList();
             Assert.That(evaluations.Count, Is.EqualTo(13));
             CompareEvaluations(evaluations[12], evaluations[11]);
         }
