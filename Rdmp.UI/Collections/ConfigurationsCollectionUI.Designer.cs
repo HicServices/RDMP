@@ -32,13 +32,20 @@ namespace Rdmp.UI.Collections
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            this.tbFilter = new TextBox();
             this.tlvConfigurations = new BrightIdeasSoftware.TreeListView();
             this.olvName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            ((System.ComponentModel.ISupportInitialize)(this.tlvConfigurations)).BeginInit();
+            this.SuspendLayout();
+            components = new System.ComponentModel.Container();
+            tlvConfigurations = new BrightIdeasSoftware.TreeListView();
+            olvName = new BrightIdeasSoftware.OLVColumn();
+            tbFilter = new TextBox();
             tbFilter = new TextBox();
 
             ((System.ComponentModel.ISupportInitialize)(this.tlvConfigurations)).BeginInit();
             // 
-            // tlvDatasets
+            // tlvConfigurations
             // 
             this.tlvConfigurations.AllColumns.Add(this.olvName);
             this.tlvConfigurations.CellEditUseWholeCell = false;
@@ -62,7 +69,7 @@ namespace Rdmp.UI.Collections
             this.olvName.Text = "Name";
             this.olvName.MinimumWidth = 100;
             // 
-            // tbFilter
+            // DatasetsCollectionUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -72,11 +79,14 @@ namespace Rdmp.UI.Collections
             ((System.ComponentModel.ISupportInitialize)(this.tlvConfigurations)).EndInit();
             this.ResumeLayout(false);
             this.Text = "ConfigurationsCollection";
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             tbFilter.Dock = DockStyle.Bottom;
             tbFilter.Location = new System.Drawing.Point(0, 620);
             tbFilter.Name = "tbFilter";
             tbFilter.Size = new System.Drawing.Size(376, 23);
             tbFilter.TabIndex = 3;
+            PerformLayout();
         }
 
         #endregion

@@ -27,6 +27,7 @@ using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.Curation.Data.Datasets;
 using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Pipelines;
@@ -39,10 +40,12 @@ using Rdmp.Core.DataExport.DataRelease;
 using Rdmp.Core.DataExport.DataRelease.Audit;
 using Rdmp.Core.DataExport.DataRelease.Potential;
 using Rdmp.Core.DataLoad.Modules.DataFlowOperations;
+using Rdmp.Core.Datasets;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.Setting;
+using Spectre.Console;
 
 namespace Tests.Common;
 
@@ -592,17 +595,31 @@ public class UnitTests
             return (T)(object)new Setting(repository.CatalogueRepository, "", "");
         }
 
-        if(typeof(T) == typeof(RegexRedaction))
+        if (typeof(T) == typeof(RegexRedaction))
         {
             return (T)(object)new RegexRedaction(repository.CatalogueRepository, 0, 0, "", "", 0, new Dictionary<ColumnInfo, string>());
         }
         if (typeof(T) == typeof(RegexRedactionConfiguration))
         {
-            return (T)(object)new RegexRedactionConfiguration(repository.CatalogueRepository,"name",new System.Text.RegularExpressions.Regex(".*"),"T");
+            return (T)(object)new RegexRedactionConfiguration(repository.CatalogueRepository, "name", new System.Text.RegularExpressions.Regex(".*"), "T");
         }
         if (typeof(T) == typeof(RegexRedactionKey))
         {
-            return (T)(object)new RegexRedactionKey(repository.CatalogueRepository,WhenIHaveA<RegexRedaction>(repository),WhenIHaveA<ColumnInfo>(repository),"PK");
+            return (T)(object)new RegexRedactionKey(repository.CatalogueRepository, WhenIHaveA<RegexRedaction>(repository), WhenIHaveA<ColumnInfo>(repository), "PK");
+        }
+        if (typeof(T) == typeof(PluginDataset))
+        {
+            return (T)(object)new PluginDataset(repository,"Plugin Dataset");
+        }
+        if (typeof(T) == typeof(PureDataset))
+        {
+            return (T)(object)  new PureDataset(repository,"Pure Dataset");
+        }
+        if (typeof(T) == typeof(DatasetProviderConfiguration))
+        {
+            var creds = WhenIHaveA<DataAccessCredentials>(repository);
+            creds.SaveToDatabase();
+            return (T)(object)new DatasetProviderConfiguration(repository, "test configuration", "RDMP.Unkown.Provider", "google.com", creds.ID, "unknown");
         }
 
 

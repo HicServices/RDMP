@@ -72,7 +72,8 @@ public abstract class Argument : DatabaseEntity, IArgument
         typeof(CatalogueRepository),
 
         //user must be IDemandToUseAPipeline<T>
-        typeof(Pipeline)
+        typeof(Pipeline),
+        typeof(Datasets.Dataset)
     };
 
     #region Database Properties

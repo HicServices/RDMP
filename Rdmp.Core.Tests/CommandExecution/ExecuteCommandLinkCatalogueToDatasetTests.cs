@@ -34,7 +34,7 @@ internal class ExecuteCommandLinkCatalogueToDatasetTests : CommandCliTests
 
         var cmd = new ExecuteCommandCreateDataset(GetMockActivator(), "dataset");
         Assert.DoesNotThrow(cmd.Execute);
-        var founddataset = GetMockActivator().RepositoryLocator.CatalogueRepository.GetAllObjects<Core.Curation.Data.Dataset>().First();
+        var founddataset = GetMockActivator().RepositoryLocator.CatalogueRepository.GetAllObjects<Core.Curation.Data.Datasets.Dataset>().First();
         var foundCatalogue = GetMockActivator().RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>().First(static c => c.Name == "Dataset1");
         var linkCmd = new ExecuteCommandLinkCatalogueToDataset(GetMockActivator(), foundCatalogue, founddataset);
         Assert.DoesNotThrow(linkCmd.Execute);
@@ -72,7 +72,7 @@ internal class ExecuteCommandLinkCatalogueToDatasetTests : CommandCliTests
 
         var cmd = new ExecuteCommandCreateDataset(GetMockActivator(), "dataset");
         Assert.DoesNotThrow(cmd.Execute);
-        var founddataset = GetMockActivator().RepositoryLocator.CatalogueRepository.GetAllObjects<Core.Curation.Data.Dataset>().First();
+        var founddataset = GetMockActivator().RepositoryLocator.CatalogueRepository.GetAllObjects<Core.Curation.Data.Datasets.Dataset>().First();
         var foundCatalogue = GetMockActivator().RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>().First(c => c.Name == "Dataset1");
         var linkCmd = new ExecuteCommandLinkCatalogueToDataset(GetMockActivator(), foundCatalogue, founddataset, false);
         Assert.DoesNotThrow(linkCmd.Execute);
@@ -94,7 +94,7 @@ internal class ExecuteCommandLinkCatalogueToDatasetTests : CommandCliTests
     {
         var cmd = new ExecuteCommandCreateDataset(GetMockActivator(), "dataset");
         Assert.DoesNotThrow(cmd.Execute);
-        var founddataset = GetMockActivator().RepositoryLocator.CatalogueRepository.GetAllObjects<Core.Curation.Data.Dataset>().First();
+        var founddataset = GetMockActivator().RepositoryLocator.CatalogueRepository.GetAllObjects<Core.Curation.Data.Datasets.Dataset>().First();
         var linkCmd = new ExecuteCommandLinkCatalogueToDataset(GetMockActivator(), null, founddataset, false);
         Assert.Throws<ImpossibleCommandException>(linkCmd.Execute);
     }
@@ -104,7 +104,7 @@ internal class ExecuteCommandLinkCatalogueToDatasetTests : CommandCliTests
     {
         var cmd = new ExecuteCommandCreateDataset(GetMockActivator(), "dataset");
         Assert.DoesNotThrow(cmd.Execute);
-        var founddataset = GetMockActivator().RepositoryLocator.CatalogueRepository.GetAllObjects<Core.Curation.Data.Dataset>().First();
+        var founddataset = GetMockActivator().RepositoryLocator.CatalogueRepository.GetAllObjects<Core.Curation.Data.Datasets.Dataset>().First();
         var linkCmd = new ExecuteCommandLinkCatalogueToDataset(GetMockActivator(), new Catalogue(GetMockActivator().RepositoryLocator.CatalogueRepository,"catalogue"), null, false);
         Assert.Throws<ImpossibleCommandException>(linkCmd.Execute);
     }

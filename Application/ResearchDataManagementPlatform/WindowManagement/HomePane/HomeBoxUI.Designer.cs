@@ -28,118 +28,113 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(HomeBoxUI));
-            this.lblTitle = new System.Windows.Forms.Label();
-            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.btnNew = new System.Windows.Forms.ToolStripButton();
-            this.btnNewDropdown = new System.Windows.Forms.ToolStripDropDownButton();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.btnOpen = new System.Windows.Forms.ToolStripButton();
-            this.olvRecent = new BrightIdeasSoftware.TreeListView();
-            this.olvName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.toolStrip1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.olvRecent)).BeginInit();
-            this.SuspendLayout();
+            lblTitle = new System.Windows.Forms.Label();
+            toolStrip1 = new System.Windows.Forms.ToolStrip();
+            btnNew = new System.Windows.Forms.ToolStripButton();
+            btnNewDropdown = new System.Windows.Forms.ToolStripDropDownButton();
+            toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            btnOpen = new System.Windows.Forms.ToolStripButton();
+            olvRecent = new BrightIdeasSoftware.TreeListView();
+            olvName = new BrightIdeasSoftware.OLVColumn();
+            toolStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)olvRecent).BeginInit();
+            SuspendLayout();
             // 
             // lblTitle
             // 
-            this.lblTitle.AutoSize = true;
-            this.lblTitle.Dock = System.Windows.Forms.DockStyle.Top;
-            this.lblTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblTitle.ForeColor = System.Drawing.SystemColors.Desktop;
-            this.lblTitle.Location = new System.Drawing.Point(0, 0);
-            this.lblTitle.Name = "lblTitle";
-            this.lblTitle.Size = new System.Drawing.Size(71, 33);
-            this.lblTitle.TabIndex = 1;
-            this.lblTitle.Text = "Title";
+            lblTitle.AutoSize = true;
+            lblTitle.Dock = System.Windows.Forms.DockStyle.Top;
+            lblTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
+            lblTitle.ForeColor = System.Drawing.SystemColors.Desktop;
+            lblTitle.Location = new System.Drawing.Point(0, 0);
+            lblTitle.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            lblTitle.Name = "lblTitle";
+            lblTitle.Size = new System.Drawing.Size(71, 33);
+            lblTitle.TabIndex = 1;
+            lblTitle.Text = "Title";
             // 
             // toolStrip1
             // 
-            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.btnNew,
-            this.btnNewDropdown,
-            this.toolStripSeparator1,
-            this.btnOpen});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 33);
-            this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(480, 25);
-            this.toolStrip1.TabIndex = 2;
-            this.toolStrip1.Text = "toolStrip1";
+            toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { btnNew, btnNewDropdown, toolStripSeparator1, btnOpen });
+            toolStrip1.Location = new System.Drawing.Point(0, 33);
+            toolStrip1.Name = "toolStrip1";
+            toolStrip1.Size = new System.Drawing.Size(560, 25);
+            toolStrip1.TabIndex = 2;
+            toolStrip1.Text = "toolStrip1";
             // 
             // btnNew
             // 
-            this.btnNew.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnNew.Image = ((System.Drawing.Image)(resources.GetObject("btnNew.Image")));
-            this.btnNew.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnNew.Name = "btnNew";
-            this.btnNew.Size = new System.Drawing.Size(23, 22);
-            this.btnNew.Text = "toolStripButton1";
+            btnNew.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            btnNew.Image = (System.Drawing.Image)resources.GetObject("btnNew.Image");
+            btnNew.ImageTransparentColor = System.Drawing.Color.Magenta;
+            btnNew.Name = "btnNew";
+            btnNew.Size = new System.Drawing.Size(23, 22);
+            btnNew.Text = "toolStripButton1";
             // 
             // btnNewDropdown
             // 
-            this.btnNewDropdown.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnNewDropdown.Image = ((System.Drawing.Image)(resources.GetObject("btnNewDropdown.Image")));
-            this.btnNewDropdown.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnNewDropdown.Name = "btnNewDropdown";
-            this.btnNewDropdown.Size = new System.Drawing.Size(29, 22);
-            this.btnNewDropdown.Text = "newDropdown";
+            btnNewDropdown.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            btnNewDropdown.Image = (System.Drawing.Image)resources.GetObject("btnNewDropdown.Image");
+            btnNewDropdown.ImageTransparentColor = System.Drawing.Color.Magenta;
+            btnNewDropdown.Name = "btnNewDropdown";
+            btnNewDropdown.Size = new System.Drawing.Size(29, 22);
+            btnNewDropdown.Text = "newDropdown";
             // 
             // toolStripSeparator1
             // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            toolStripSeparator1.Name = "toolStripSeparator1";
+            toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
             // 
             // btnOpen
             // 
-            this.btnOpen.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnOpen.Image = ((System.Drawing.Image)(resources.GetObject("btnOpen.Image")));
-            this.btnOpen.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnOpen.Name = "btnOpen";
-            this.btnOpen.Size = new System.Drawing.Size(23, 22);
-            this.btnOpen.Text = "toolStripButton1";
+            btnOpen.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            btnOpen.Image = (System.Drawing.Image)resources.GetObject("btnOpen.Image");
+            btnOpen.ImageTransparentColor = System.Drawing.Color.Magenta;
+            btnOpen.Name = "btnOpen";
+            btnOpen.Size = new System.Drawing.Size(23, 22);
+            btnOpen.Text = "toolStripButton1";
             // 
             // olvRecent
             // 
-            this.olvRecent.AllColumns.Add(this.olvName);
-            this.olvRecent.CellEditUseWholeCell = false;
-            this.olvRecent.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.olvName});
-            this.olvRecent.Cursor = System.Windows.Forms.Cursors.Default;
-            this.olvRecent.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.olvRecent.FullRowSelect = true;
-            this.olvRecent.HideSelection = false;
-            this.olvRecent.Location = new System.Drawing.Point(0, 58);
-            this.olvRecent.Name = "olvRecent";
-            this.olvRecent.RowHeight = 19;
-            this.olvRecent.ShowGroups = false;
-            this.olvRecent.Size = new System.Drawing.Size(480, 441);
-            this.olvRecent.TabIndex = 3;
-            this.olvRecent.UseCompatibleStateImageBehavior = false;
-            this.olvRecent.View = System.Windows.Forms.View.Details;
-            this.olvRecent.VirtualMode = true;
+            olvRecent.AllColumns.Add(olvName);
+            olvRecent.CellEditUseWholeCell = false;
+            olvRecent.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { olvName });
+            olvRecent.Dock = System.Windows.Forms.DockStyle.Fill;
+            olvRecent.FullRowSelect = true;
+            olvRecent.Location = new System.Drawing.Point(0, 58);
+            olvRecent.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            olvRecent.Name = "olvRecent";
+            olvRecent.RowHeight = 19;
+            olvRecent.ShowGroups = false;
+            olvRecent.Size = new System.Drawing.Size(560, 518);
+            olvRecent.TabIndex = 3;
+            olvRecent.UseCompatibleStateImageBehavior = false;
+            olvRecent.View = System.Windows.Forms.View.Details;
+            olvRecent.VirtualMode = true;
             // 
             // olvName
             // 
-            this.olvName.FillsFreeSpace = true;
-            this.olvName.Groupable = false;
-            this.olvName.Text = "Recent";
+            olvName.FillsFreeSpace = true;
+            olvName.Groupable = false;
+            olvName.Text = "Recent";
             // 
             // HomeBoxUI
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.olvRecent);
-            this.Controls.Add(this.toolStrip1);
-            this.Controls.Add(this.lblTitle);
-            this.Name = "HomeBoxUI";
-            this.Size = new System.Drawing.Size(480, 499);
-            this.toolStrip1.ResumeLayout(false);
-            this.toolStrip1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.olvRecent)).EndInit();
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            Controls.Add(olvRecent);
+            Controls.Add(toolStrip1);
+            Controls.Add(lblTitle);
+            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            Name = "HomeBoxUI";
+            Size = new System.Drawing.Size(560, 576);
+            toolStrip1.ResumeLayout(false);
+            toolStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)olvRecent).EndInit();
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion

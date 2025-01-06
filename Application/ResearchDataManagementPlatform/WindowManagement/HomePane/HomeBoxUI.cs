@@ -11,6 +11,8 @@ using Rdmp.Core;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Datasets;
+using Rdmp.Core.Datasets;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.UI;
@@ -25,7 +27,7 @@ public partial class HomeBoxUI : UserControl
 {
     private IActivateItems _activator;
     private bool _doneSetup;
-    private Type _openType;
+    private System.Type _openType;
 
     private RDMPCollectionCommonFunctionality CommonTreeFunctionality { get; } = new();
 
@@ -35,7 +37,7 @@ public partial class HomeBoxUI : UserControl
         olvRecent.ItemActivate += OlvRecent_ItemActivate;
     }
 
-    public void SetUp(IActivateItems activator, string title, Type openType, AtomicCommandUIFactory factory,
+    public void SetUp(IActivateItems activator, string title, System.Type openType, AtomicCommandUIFactory factory,
         params IAtomicCommand[] newCommands)
     {
         _openType = openType;

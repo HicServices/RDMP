@@ -4,8 +4,10 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using Org.BouncyCastle.Asn1.X509.Qualified;
 using Rdmp.Core.CommandExecution;
-using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Datasets;
+using Rdmp.Core.Datasets;
 using Rdmp.Core.ReusableLibraryCode.Annotations;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SubComponents;
@@ -25,8 +27,17 @@ internal class
 
     public override void Activate(Dataset target)
     {
+        string PureAssembly = typeof(PureDatasetProvider).ToString();
+
+       if(target.Type == PureAssembly)
+        {
+            ItemActivator.Activate<PureDatasetConfigurationUI,Dataset>(target);
+            return;
+        }
+
         ItemActivator.Activate<DatasetConfigurationUI, Dataset>(target);
     }
+
 
     [CanBeNull]
     public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd,
