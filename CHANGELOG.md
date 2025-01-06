@@ -17,7 +17,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Improve Overview Model Generation Speed
 - Add Remote Table Without DB Creation Attacher
->>>>>>> 188afdb9501892f22bd66d56cb8d095c49a14fb0
 
 ## [8.4.0] - 2024-12-02
 
