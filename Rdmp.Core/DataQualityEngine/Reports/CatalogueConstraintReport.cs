@@ -239,7 +239,7 @@ public class CatalogueConstraintReport : DataQualityReport
                 var pivotColumnInfo = _catalogue.CatalogueItems.Where(ci => ci.Name == _pivotCategory).FirstOrDefault();
                 if (pivotColumnInfo is null) throw new Exception("Can't find column infor for pivot category");
                 var tableInfo = pivotColumnInfo.ColumnInfo.TableInfo;
-                
+
                 var dataDiffFetcher = new DiffDatabaseDataFetcher(2147483647, tableInfo, (int)_dataLoadID, commandTimeout != null ? (int)commandTimeout : 30);
                 dataDiffFetcher.FetchData(new AcceptAllCheckNotifier());
                 //pivot categories that have been replaces 100%?
@@ -433,7 +433,7 @@ public class CatalogueConstraintReport : DataQualityReport
                         }
                     }
                 }
-                //what about the replacements?
+                //replacements
                 if (existingIncomingPivotCategories.Any())
                 {
                     var updatedRowsDataTable = new DataTable();
