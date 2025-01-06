@@ -231,7 +231,7 @@ public class CatalogueConstraintReport : DataQualityReport
 
                 var evaluation = new Evaluation(dqeRepository, _catalogue);
 
-                //new pivoutCategories coming in
+                //new pivotCategories coming in
                 var newIncomingPivotCategories = incomingPivotCategories.Where(c => !previousCategories.Contains(c));
                 List<ColumnState> ColumnStates = [];
 
