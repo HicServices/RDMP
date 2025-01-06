@@ -22,7 +22,7 @@ namespace Rdmp.Core.DataLoad.Modules.Mutilators;
 /// </summary>
 public class RegexRedactionMutilator : MatchingTablesMutilatorWithDataLoadJob
 {
-    [DemandsInitialization("the regex redaction configuration to use")]
+    [DemandsInitialization("The regex redaction configuration to use")]
     public RegexRedactionConfiguration RedactionConfiguration { get; set; }
 
     [DemandsInitialization(
@@ -40,15 +40,16 @@ public class RegexRedactionMutilator : MatchingTablesMutilatorWithDataLoadJob
 
     private bool ColumnMatches(DiscoveredColumn column)
     {
-        if (OnlyColumns is not null && OnlyColumns.Length > 0)
-        {
-            return OnlyColumns.Select(c => c.GetRuntimeName()).Contains(column.GetRuntimeName());
-        }
         if (ColumnRegexPattern != null)
         {
             ColumnRegexPattern = new Regex(ColumnRegexPattern.ToString(), RegexOptions.IgnoreCase);
             return ColumnRegexPattern.IsMatch(column.GetRuntimeName());
         }
+        else if (OnlyColumns is not null && OnlyColumns.Length > 0)
+        {
+            return OnlyColumns.Select(c => c.GetRuntimeName()).Contains(column.GetRuntimeName());
+        }
+
         return false;
     }
 
@@ -69,7 +70,23 @@ public class RegexRedactionMutilator : MatchingTablesMutilatorWithDataLoadJob
             return;
         }
         var pkColumnInfos = cataloguePks.Select(c => c.ColumnInfo);
-        foreach (var column in columns.Where(c => !pkColumnInfos.Select(c => c.GetRuntimeName()).Contains(c.GetRuntimeName())))
+        //if you would match a pk
+        var matchedOnPk = false;
+        foreach (var column in columns.Where(c => pkColumnInfos.Select(c => c.GetRuntimeName()).Contains(c.GetRuntimeName())))
+        {
+            if (ColumnMatches(column))
+            {
+                matchedOnPk = true;
+                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Would match on column '{column.GetRuntimeName()}' but it is a primary key"));
+            }
+        }
+
+        var nonPKColumns = columns.Where(c => !pkColumnInfos.Select(c => c.GetRuntimeName()).Contains(c.GetRuntimeName()));
+        if(!nonPKColumns.Any() && matchedOnPk)
+        {
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Regex Redaction matched only Primary Key columns. They will not be redacted. Consider updating your configuration."));
+        }
+        foreach (var column in nonPKColumns)
         {
             if (ColumnMatches(column))
             {
@@ -77,7 +94,7 @@ public class RegexRedactionMutilator : MatchingTablesMutilatorWithDataLoadJob
                 var sql = @$"
                     SELECT {column.GetRuntimeName()} {pkSeparator} {string.Join(", ", pkColumnInfos.Select(c => c.GetRuntimeName()))}
                     FROM {table.GetRuntimeName()}
-                    WHERE {column.GetRuntimeName()} LIKE '%{RedactionConfiguration.RegexPattern}%'
+                    WHERE {column.GetRuntimeName()} LIKE '%{RedactionConfiguration.RegexPattern}%' COLLATE Latin1_General_BIN
                     ";
                 var dt = new DataTable();
                 dt.BeginLoadData();
@@ -89,14 +106,16 @@ public class RegexRedactionMutilator : MatchingTablesMutilatorWithDataLoadJob
                     using var da = table.Database.Server.GetDataAdapter(cmd);
                     da.Fill(dt);
                 }
+
                 dt.EndLoadData();
                 var redactionUpates = dt.Clone();
-                var columnInfo = relatedCatalogues.SelectMany(c => c.CatalogueItems).ToArray().Select(ci => ci.ColumnInfo).Where(ci => ci.GetRuntimeName() == column.GetRuntimeName()).FirstOrDefault();
+                var columnInfo = relatedCatalogues.SelectMany(static c => c.CatalogueItems).ToArray().Select(static ci => ci.ColumnInfo).FirstOrDefault(ci => ci.GetRuntimeName() == column.GetRuntimeName());
                 if (columnInfo is null)
                 {
                     job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Unable to find the related column info"));
                     return;
                 }
+
                 foreach (DataRow row in dt.Rows)
                 {
                     try
@@ -106,21 +125,23 @@ public class RegexRedactionMutilator : MatchingTablesMutilatorWithDataLoadJob
                     catch (Exception e)
                     {
                         job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, $"{e.Message}"));
-
                     }
                 }
+
                 job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Regex Redaction mutilator found {dt.Rows.Count} redactions."));
                 if (redactionsToSaveTable.Rows.Count == 0) return;
-                for (int i = 0; i < pksToSave.Rows.Count; i++)
+
+                for (var i = 0; i < pksToSave.Rows.Count; i++)
                 {
                     pksToSave.Rows[i]["ID"] = i + 1;
                 }
+
                 job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Creating Temporary tables"));
                 var t1 = table.Database.CreateTable(nameof(RegexRedactionHelper.Constants.pksToSave_Temp), pksToSave);
                 var t2 = table.Database.CreateTable(nameof(RegexRedactionHelper.Constants.redactionsToSaveTable_Temp), redactionsToSaveTable);
                 job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Saving Redactions"));
-                var _server = relatedCatalogues.First().GetDistinctLiveDatabaseServer(DataAccessContext.InternalDataProcessing, false);
-                RegexRedactionHelper.SaveRedactions(job.RepositoryLocator.CatalogueRepository, t1, t2, _server, Timeout * 1000);
+                var server = relatedCatalogues.First().GetDistinctLiveDatabaseServer(DataAccessContext.InternalDataProcessing, false);
+                RegexRedactionHelper.SaveRedactions(job.RepositoryLocator.CatalogueRepository, t1, t2, server, Timeout * 1000);
                 t1.Drop();
                 t2.Drop();
                 job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Performing join update"));

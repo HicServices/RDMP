@@ -16,16 +16,20 @@ namespace Rdmp.UI.SubComponents
     {
         public PureLink Link { get; }
 
-        public string linkUrl { get; set; }
-        public string linkDescription { get; set; }
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public string LinkUrl { get; set; }
+
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+
+        public string LinkDescription { get; set; }
         public PureDatasetLinkUI(PureLink link)
         {
             InitializeComponent();
             Link = link;
             tbLink.Text = link.Url;
-            linkUrl = link.Url;
+            LinkUrl = link.Url;
             tbDescription.Text = link.Description.En_GB;
-            linkDescription = link.Description.En_GB;
+            LinkDescription = link.Description.En_GB;
             tbLink.Width = TextRenderer.MeasureText(link.Url, tbLink.Font).Width;
             tbDescription.Width = TextRenderer.MeasureText(link.Description.En_GB, tbLink.Font).Width;
             tbDescription.Location = new Point(20 + tbLink.Width, tbDescription.Location.Y);
@@ -34,12 +38,12 @@ namespace Rdmp.UI.SubComponents
 
         private void tbDescription_TextChanged_1(object sender, EventArgs e)
         {
-            linkDescription = tbDescription.Text;
+            LinkDescription = tbDescription.Text;
         }
 
         private void tbLink_TextChanged_1(object sender, EventArgs e)
         {
-            linkUrl = tbLink.Text;
+            LinkUrl = tbLink.Text;
         }
     }
 }

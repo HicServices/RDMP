@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -43,6 +44,7 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
     /// and create <see cref="Commit"/> when changes are saved.  Using this field requires
     /// declaring yourself <see cref="ISaveableUI"/>
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public bool UseCommitSystem { get; set; } = false;
 
     /// <summary>
@@ -64,12 +66,15 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
     private IActivateItems _activator;
 
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public DatabaseEntity DatabaseObject { get; private set; }
+
     protected RDMPCollection AssociatedCollection = RDMPCollection.None;
 
     /// <summary>
     /// True if the hosted <see cref="DatabaseObject"/> <see cref="IMightBeReadOnly.ShouldBeReadOnly"/>.  This property is detected and update during SetDatabaseObject so use it only after this call has been made
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public bool ReadOnly { get; set; }
 
     protected RDMPSingleDatabaseObjectControl()

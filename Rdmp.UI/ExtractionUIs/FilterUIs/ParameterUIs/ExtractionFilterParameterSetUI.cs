@@ -27,6 +27,7 @@ public partial class ExtractionFilterParameterSetUI : ExtractionFilterParameterS
 {
     private ExtractionFilterParameterSet _extractionFilterParameterSet;
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public ExtractionFilterParameterSet ExtractionFilterParameterSet
     {
         get => _extractionFilterParameterSet;

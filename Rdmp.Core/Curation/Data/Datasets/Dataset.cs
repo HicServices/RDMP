@@ -15,7 +15,8 @@ using System.Diagnostics.CodeAnalysis;
 namespace Rdmp.Core.Curation.Data.Datasets;
 
 /// <inheritdoc cref="IDataset"/>
-public class Dataset : DatabaseEntity, IDataset, IHasFolder
+
+public class Dataset : DatabaseEntity, IDataset, IHasFolder 
 {
     private string _name;
     private string _digitalObjectIdentifier;

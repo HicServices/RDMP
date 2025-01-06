@@ -27,6 +27,7 @@ namespace Rdmp.UI.SimpleDialogs
 
             RegisterCheckbox(cbAutoSuggestProjectNumbers, "AutoSuggestProjectNumbers");
             RegisterCheckbox(cbCohortVersioningOnCommit, "PromptForVersionOnCohortCommit");
+            RegisterCheckbox(cbYesNoAll, "ToggleYestoAllNotoAlldataloadcheck");
             _loaded = true;
         }
 
@@ -57,14 +58,14 @@ namespace Rdmp.UI.SimpleDialogs
 
         private void RegisterCheckbox(CheckBox cb, string propertyName)
         {
-            var prop = _settings.Where(s => s.Key == propertyName).FirstOrDefault();
-            var value = false;
+            var prop = _settings.FirstOrDefault(s => s.Key == propertyName);
             if (prop is null)
             {
-                prop = new Setting(_activator.RepositoryLocator.CatalogueRepository,propertyName, Convert.ToString(false));
+                prop = new Setting(_activator.RepositoryLocator.CatalogueRepository, propertyName, Convert.ToString(false));
                 prop.SaveToDatabase();
             }
-            value = Convert.ToBoolean(prop.Value);
+
+            var value = Convert.ToBoolean(prop.Value);
             checkboxDictionary.Add(cb, prop);
 
             cb.Checked = value;
@@ -74,6 +75,11 @@ namespace Rdmp.UI.SimpleDialogs
 
             // add help
             AddTooltip(cb, propertyName);
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

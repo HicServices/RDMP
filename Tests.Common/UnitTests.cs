@@ -127,7 +127,7 @@ public class UnitTests
     public static T WhenIHaveA<T>(MemoryDataExportRepository repository) where T : DatabaseEntity
     {
         if (typeof(T) == typeof(Catalogue))
-            return (T)(object)Save(new Catalogue(repository, "Mycata"));
+            return Save(new Catalogue(repository, "Mycata")) as T;
 
 
         if (typeof(T) == typeof(ExtendedProperty))

@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.ComponentModel;
 using System.Windows.Forms;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TransparentHelpSystem;
@@ -20,12 +21,15 @@ public partial class HelpIcon : UserControl
     /// <summary>
     /// Returns the text that will be displayed when the user hovers over the control (this may be truncated if the text provided to <see cref="SetHelpText"/> was very long)
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public string HoverText { get; private set; }
 
     private string _title;
     private HelpWorkflow _workFlow;
     private string _originalHoverText;
     private ToolTip _tt;
+
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public bool SuppressClick { get; set; }
 
     public HelpIcon()

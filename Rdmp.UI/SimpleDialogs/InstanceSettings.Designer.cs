@@ -33,6 +33,7 @@
             instanceSettingsToolTips = new System.Windows.Forms.ToolTip(components);
             label1 = new System.Windows.Forms.Label();
             cbCohortVersioningOnCommit = new System.Windows.Forms.CheckBox();
+            cbYesNoAll = new System.Windows.Forms.CheckBox();
             SuspendLayout();
             // 
             // cbAutoSuggestProjectNumbers
@@ -60,16 +61,28 @@
             cbCohortVersioningOnCommit.AutoSize = true;
             cbCohortVersioningOnCommit.Location = new System.Drawing.Point(12, 65);
             cbCohortVersioningOnCommit.Name = "cbCohortVersioningOnCommit";
-            cbCohortVersioningOnCommit.Size = new System.Drawing.Size(364, 19);
+            cbCohortVersioningOnCommit.Size = new System.Drawing.Size(400, 19);
             cbCohortVersioningOnCommit.TabIndex = 3;
             cbCohortVersioningOnCommit.Text = "Prompt user to create a new version of the cohort before committing it";
             cbCohortVersioningOnCommit.UseVisualStyleBackColor = true;
+            // 
+            // cbYesNoAll
+            // 
+            cbYesNoAll.AutoSize = true;
+            cbYesNoAll.Location = new System.Drawing.Point(13, 90);
+            cbYesNoAll.Name = "cbYesNoAll";
+            cbYesNoAll.Size = new System.Drawing.Size(320, 19);
+            cbYesNoAll.TabIndex = 4;
+            cbYesNoAll.Text = "Show Yes to All and No to All option on data load check";
+            cbYesNoAll.UseVisualStyleBackColor = true;
+            cbYesNoAll.CheckedChanged += checkBox1_CheckedChanged;
             // 
             // InstanceSettings
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(800, 450);
+            Controls.Add(cbYesNoAll);
             Controls.Add(cbCohortVersioningOnCommit);
             Controls.Add(label1);
             Controls.Add(cbAutoSuggestProjectNumbers);
@@ -85,5 +98,6 @@
         private System.Windows.Forms.ToolTip instanceSettingsToolTips;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.CheckBox cbCohortVersioningOnCommit;
+        private System.Windows.Forms.CheckBox cbYesNoAll;
     }
 }

@@ -1,4 +1,6 @@
 ﻿using BrightIdeasSoftware;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.DataHelper.RegexRedaction;
 using System.Text.RegularExpressions;
 
 namespace Rdmp.UI.SimpleDialogs;
@@ -37,6 +39,8 @@ partial class RedactCatalogueUI
         folvFoundValue = new OLVColumn();
         folvReplacmentValue = new OLVColumn();
         folvRedactButton = new OLVColumn();
+        folvConfiguration = new OLVColumn();
+        folvColumn = new OLVColumn();
         label4 = new System.Windows.Forms.Label();
         tbMaxCount = new System.Windows.Forms.TextBox();
         btnRedact = new System.Windows.Forms.Button();
@@ -46,12 +50,14 @@ partial class RedactCatalogueUI
         label2 = new System.Windows.Forms.Label();
         tbCatalogueName = new System.Windows.Forms.TextBox();
         label1 = new System.Windows.Forms.Label();
+        btnRestoreAll = new System.Windows.Forms.Button();
         panel1.SuspendLayout();
         ((System.ComponentModel.ISupportInitialize)folv).BeginInit();
         SuspendLayout();
         // 
         // panel1
         // 
+        panel1.Controls.Add(btnRestoreAll);
         panel1.Controls.Add(btnNewRegex);
         panel1.Controls.Add(folv);
         panel1.Controls.Add(label4);
@@ -84,7 +90,9 @@ partial class RedactCatalogueUI
         folv.AllColumns.Add(folvFoundValue);
         folv.AllColumns.Add(folvReplacmentValue);
         folv.AllColumns.Add(folvRedactButton);
-        folv.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { folvFoundValue, folvReplacmentValue, folvRedactButton });
+        folv.AllColumns.Add(folvConfiguration);
+        folv.AllColumns.Add(folvColumn);
+        folv.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { folvColumn, folvFoundValue, folvReplacmentValue, folvRedactButton, folvConfiguration });
         folv.Location = new System.Drawing.Point(13, 201);
         folv.Name = "folv";
         folv.ShowGroups = false;
@@ -118,7 +126,33 @@ partial class RedactCatalogueUI
         folvRedactButton.MinimumWidth = 100;
         folvRedactButton.Text = "Restore";
         folvRedactButton.Width = 100;
-        folvRedactButton.AspectGetter = delegate { return "Restore"; };
+        folvRedactButton.AspectGetter = delegate (object rowObjct) { return "Restore"; };
+        // 
+        // folvConfiguration
+        // 
+        folvConfiguration.AspectGetter = delegate (object rowObject)
+        {
+            var redaction = (RegexRedaction)rowObject;
+            return _activator.RepositoryLocator.CatalogueRepository.GetObjectByID<RegexRedactionConfiguration>(redaction.RedactionConfiguration_ID).Name;
+        };
+        folvConfiguration.ButtonSizing = OLVColumn.ButtonSizingMode.CellBounds;
+        folvConfiguration.FillsFreeSpace = true;
+        folvConfiguration.MinimumWidth = 100;
+        folvConfiguration.Text = "Configuration";
+        folvConfiguration.Width = 100;
+        // 
+        // folvColumn
+        // 
+        folvColumn.AspectGetter = delegate (object rowObject)
+        {
+            var redaction = (RegexRedaction)rowObject;
+            return _activator.RepositoryLocator.CatalogueRepository.GetObjectByID<ColumnInfo>(redaction.ColumnInfo_ID).GetRuntimeName();
+        };
+        folvColumn.ButtonSizing = OLVColumn.ButtonSizingMode.CellBounds;
+        folvColumn.FillsFreeSpace = true;
+        folvColumn.MinimumWidth = 100;
+        folvColumn.Text = "Column";
+        folvColumn.Width = 100;
         // 
         // label4
         // 
@@ -197,6 +231,17 @@ partial class RedactCatalogueUI
         label1.TabIndex = 0;
         label1.Text = "Catalogue:";
         // 
+        // btnRestoreAll
+        // 
+        btnRestoreAll.Enabled = false;
+        btnRestoreAll.Location = new System.Drawing.Point(512, 168);
+        btnRestoreAll.Name = "btnRestoreAll";
+        btnRestoreAll.Size = new System.Drawing.Size(113, 23);
+        btnRestoreAll.TabIndex = 12;
+        btnRestoreAll.Text = "Restore All";
+        btnRestoreAll.UseVisualStyleBackColor = true;
+        btnRestoreAll.Click += btnRestoreAll_Click;
+        // 
         // RedactCatalogueUI
         // 
         AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -226,5 +271,8 @@ partial class RedactCatalogueUI
     private OLVColumn folvFoundValue;
     private OLVColumn folvReplacmentValue;
     private OLVColumn folvRedactButton;
+    private OLVColumn folvColumn;
+    private OLVColumn folvConfiguration;
     private System.Windows.Forms.Button btnNewRegex;
+    private System.Windows.Forms.Button btnRestoreAll;
 }

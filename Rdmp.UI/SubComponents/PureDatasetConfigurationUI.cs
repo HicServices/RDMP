@@ -125,11 +125,11 @@ public partial class PureDatasetConfigurationUI : DatsetConfigurationUI_Design, 
             foreach (var link in links)
             {
                 var original = _dataset.Links.Where(l => l.PureID == link.Link.PureID).First();
-                if (original.Url == link.linkUrl && link.linkDescription == original.Description.En_GB)
+                if (original.Url == link.LinkUrl && link.LinkDescription == original.Description.En_GB)
                 {
                     continue;
                 }
-                var pl = new PureLink(link.Link.PureID, link.linkUrl, link.Link.Alias, new ENGBWrapper(link.linkDescription), link.Link.LinkType);
+                var pl = new PureLink(link.Link.PureID, link.LinkUrl, link.Link.Alias, new ENGBWrapper(link.LinkDescription), link.Link.LinkType);
                 datasetUpdate.Links.Add(pl);
             }
             if (!datasetUpdate.Links.Any()) datasetUpdate.Links = null;

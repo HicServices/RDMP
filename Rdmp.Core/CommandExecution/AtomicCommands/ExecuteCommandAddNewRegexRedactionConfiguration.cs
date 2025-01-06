@@ -38,6 +38,7 @@ public class ExecuteCommandAddNewRegexRedactionConfiguration : BasicCommandExecu
         base.Execute();
         var config = new RegexRedactionConfiguration(_activator.RepositoryLocator.CatalogueRepository, _name, new Regex(_redactionPattern), _redactionString, _description);
         config.SaveToDatabase();
+        _activator.Publish(config);
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>

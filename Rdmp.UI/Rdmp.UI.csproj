@@ -14,12 +14,12 @@
 		<description>UI package for plugin development</description>
 		<copyright>Copyright 2018-2019</copyright>
 		<ProjectGuid>60721bce-e328-45cf-b6d2-b627364fbbfa</ProjectGuid>
-		<TargetFramework>net8.0-windows</TargetFramework>
+		<TargetFramework>$(TargetFramework)-windows</TargetFramework>
 		<Copyright>Copyright ©  2019</Copyright>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<EnableWindowsTargeting>true</EnableWindowsTargeting>
-		<NoWarn>1701;1702;CS1591;NU1701;CA1416</NoWarn>
+		<NoWarn>$(NoWarn)</NoWarn>
 
 		<GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
 		<DebugType>embedded</DebugType>
@@ -61,6 +61,9 @@
 		<ProjectReference Include="..\Rdmp.Core\Rdmp.Core.csproj" />
 	</ItemGroup>
 	<ItemGroup>
+		<Compile Update="CatalogueSummary\DataQualityReporting\AreaChartUI.cs">
+		  <SubType>UserControl</SubType>
+		</Compile>
 		<Compile Update="ChecksUI\ChecksUI.cs">
 			<SubType>UserControl</SubType>
 		</Compile>
@@ -119,6 +122,7 @@
 		<Compile Update="LocationsMenu\Versioning\VersioningControlUI.cs">
 		  <SubType>UserControl</SubType>
 		</Compile>
+		<Compile Update="Overview\ViewCatalogueOverviewUI.cs" />
 		<Compile Update="PieCharts\CatalogueToDatasetLinkagePieChart.cs">
 			<SubType>UserControl</SubType>
 		</Compile>
@@ -190,9 +194,7 @@
 		<Compile Update="SimpleControls\ServerDatabaseTableSelector.Designer.cs">
 			<DependentUpon>ServerDatabaseTableSelector.cs</DependentUpon>
 		</Compile>
-		<Compile Update="SimpleDialogs\RedactCatalogueUI.cs">
-		  <SubType>UserControl</SubType>
-		</Compile>
+		<Compile Update="SimpleDialogs\RedactCatalogueUI.cs" />
 		<Compile Update="SimpleDialogs\ServerDatabaseTableSelectorDialog.cs">
 			<SubType>Form</SubType>
 		</Compile>
