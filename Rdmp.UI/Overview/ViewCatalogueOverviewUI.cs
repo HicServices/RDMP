@@ -42,11 +42,22 @@ public partial class ViewCatalogueOverviewUI : ViewCatalogueOverviewUI_Design
 
     private void UpdateCatalogueData()
     {
+
+        if (!_overview.HasDQEEvaluation())
+        {
+            areaChartUI.Visible = false;
+            lblNoDQE.Visible = true;
+        }
+        else
+        {
+            areaChartUI.Visible = true;
+            lblNoDQE.Visible = false;
+        }
         lblName.Text = _catalogue.Name;
         lblDescription.Text = _catalogue.Description;
 
         var latestDataLoad = _overview.GetLatestDataLoad();
-        lblLastDataLoad.Text = latestDataLoad ?? "No Successful DataLoads";
+        lblLastDataLoad.Text = latestDataLoad ?? "No Successful Data Loads";
         var extraction = _overview.GetLatestExtraction();
         lblLatestExtraction.Text = extraction ?? "Catalogue has not been extracted";
         lblRecords.Text = $"{_overview.GetNumberOfRecords().ToString()} Records";
@@ -61,7 +72,6 @@ public partial class ViewCatalogueOverviewUI : ViewCatalogueOverviewUI_Design
         {
             lblDateRange.Text = $"{startDate} - {endDate}";
         }
-        lblPeople.Text = $"{_overview.GetNumberOfPeople()} People";
 
         areaChartUI.GenerateChart(_overview.GetTableData(), $"Records per month");
 
@@ -103,6 +113,10 @@ public partial class ViewCatalogueOverviewUI : ViewCatalogueOverviewUI_Design
         //}, TaskScheduler.FromCurrentSynchronizationContext());
     }
 
+    private void lblNoDQE_Click(object sender, EventArgs e)
+    {
+
+    }
 }
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ViewCatalogueOverviewUI_Design, UserControl>))]
 public abstract class ViewCatalogueOverviewUI_Design : RDMPSingleDatabaseObjectControl<Catalogue>
