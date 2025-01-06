@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.CommandExecution;
@@ -21,6 +22,7 @@ public partial class SelectIMapsDirectlyToDatabaseTableComboBox : UserControl
     public event EventHandler<EventArgs> SelectedItemChanged;
     private IActivateItems _activator;
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public IMapsDirectlyToDatabaseTable SelectedItem
     {
         get => suggestComboBox1.SelectedItem as IMapsDirectlyToDatabaseTable;

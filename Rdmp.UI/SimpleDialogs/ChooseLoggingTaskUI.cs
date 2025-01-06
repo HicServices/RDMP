@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
@@ -36,6 +37,7 @@ public partial class ChooseLoggingTaskUI : RDMPUserControl, ICheckNotifier
     private Catalogue _catalogue;
     private string expectedDatabaseTypeString = "HIC.Logging.Database";
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Catalogue Catalogue
     {
         get => _catalogue;

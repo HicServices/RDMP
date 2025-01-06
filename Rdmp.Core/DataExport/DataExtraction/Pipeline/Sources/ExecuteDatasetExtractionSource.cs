@@ -323,11 +323,12 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
         if (includesReleaseIdentifier)
             foreach (var idx in _extractionIdentifiersidx.Distinct().ToList())
             {
-                var sub = Request.ReleaseIdentifierSubstitutions.Where(s => s.Alias == chunk.Columns[idx].ColumnName).FirstOrDefault();
-                if (sub != null && sub.ColumnInfo.ExtractionInformations.FirstOrDefault() != null && sub.ColumnInfo.ExtractionInformations.FirstOrDefault().IsPrimaryKey)
+                var sub = Request.ReleaseIdentifierSubstitutions.FirstOrDefault(s => s.Alias == chunk.Columns[idx].ColumnName);
+                if (sub?.ColumnInfo.ExtractionInformations.FirstOrDefault()?.IsPrimaryKey == true)
                 {
                     pks.Add(chunk.Columns[idx]);
                 }
+
                 foreach (DataRow r in chunk.Rows)
                 {
                     if (r[idx] == DBNull.Value)
@@ -347,10 +348,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
             }
 
         _timeSpentCalculatingDISTINCT.Stop();
-        foreach (string name in Request.ColumnsToExtract.Where(c => ((ExtractableColumn)(c)).CatalogueExtractionInformation.IsPrimaryKey).Select(column => ((ExtractableColumn)column).CatalogueExtractionInformation.ToString()))
-        {
-            pks.Add(chunk.Columns[name]);
-        }
+        pks.AddRange(Request.ColumnsToExtract.Where(static c => ((ExtractableColumn)c).CatalogueExtractionInformation.IsPrimaryKey).Select(static column => ((ExtractableColumn)column).CatalogueExtractionInformation.ToString()).Select(name => chunk.Columns[name]));
         chunk.PrimaryKey = pks.ToArray();
 
         return chunk;

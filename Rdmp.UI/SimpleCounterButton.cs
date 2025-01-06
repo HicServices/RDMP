@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
@@ -19,6 +20,7 @@ public class SimpleCounterButton : ToolStripButton
 {
     private int? _count;
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public int? Count
     {
         get => _count;

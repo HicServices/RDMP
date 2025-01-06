@@ -35,8 +35,8 @@ using Rdmp.Core.Ticketing;
 namespace Rdmp.Core.Curation.Data;
 
 /// <inheritdoc cref="ICatalogue"/>
-public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<CatalogueItem[]>,
-    IInjectKnown<CatalogueExtractabilityStatus>
+public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<CatalogueItem[]>,
+    IInjectKnown<CatalogueExtractabilityStatus>, IEquatable<Catalogue>
 {
     #region Database Properties
 
@@ -844,8 +844,18 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
             return -string.Compare(obj.ToString(), ToString(),
                 StringComparison.CurrentCulture); //sort alphabetically (reverse)
 
-        throw new Exception($"Cannot compare {GetType().Name} to {obj.GetType().Name}");
+        throw new Exception($"Cannot compare {GetType().Name} to {obj?.GetType().Name}");
     }
+
+    public override bool Equals(object obj) => obj is Catalogue c && (ReferenceEquals(this, c) || Equals(c));
+
+    public bool Equals(Catalogue other) => base.Equals(other);
+
+    public override int GetHashCode() => base.GetHashCode();
+
+    public static bool operator ==(Catalogue left, Catalogue right) => Equals(left, right);
+
+    public static bool operator !=(Catalogue left, Catalogue right) => !Equals(left, right);
 
     /// <summary>
     /// Checks that the Catalogue has a sensible Name (See <see cref="IsAcceptableName(string)"/>).  Then checks that there are no missing ColumnInfos

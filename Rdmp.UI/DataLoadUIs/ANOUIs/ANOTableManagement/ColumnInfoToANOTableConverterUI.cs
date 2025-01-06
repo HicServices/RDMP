@@ -63,6 +63,7 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
     private ColumnInfo _columnInfo;
     private bool _yesToAll;
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public ColumnInfo ColumnInfo
     {
         get => _columnInfo;

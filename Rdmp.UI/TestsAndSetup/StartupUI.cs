@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -33,6 +34,7 @@ public partial class StartupUI : Form, ICheckNotifier
     /// <summary>
     /// True if we failed to reach the catalogue database
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public bool CouldNotReachTier1Database { get; private set; }
 
 
@@ -74,6 +76,7 @@ public partial class StartupUI : Form, ICheckNotifier
     }
 
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public bool DoNotContinue { get; set; }
 
     private void StartupDatabaseFound(object sender, PlatformDatabaseFoundEventArgs eventArgs)

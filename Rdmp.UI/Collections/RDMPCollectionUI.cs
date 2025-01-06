@@ -19,6 +19,7 @@ namespace Rdmp.UI.Collections;
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<RDMPCollectionUI, UserControl>))]
 public abstract class RDMPCollectionUI : RDMPCollectionUI_Design, IConsultableBeforeClosing
 {
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public RDMPCollectionCommonFunctionality CommonTreeFunctionality { get; private set; }
 
     protected RDMPCollectionUI()
