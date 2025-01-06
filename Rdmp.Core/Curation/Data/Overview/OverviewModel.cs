@@ -121,8 +121,13 @@ public class OverviewModel
     {
 
         var dt = new DataTable();
-        var repo = new DQERepository(_catalogue.CatalogueRepository);
-        _evaluation = repo.GetAllObjectsWhere<Evaluation>("CatalogueID", _catalogue.ID).LastOrDefault();
+        try
+        {
+            var repo = new DQERepository(_catalogue.CatalogueRepository);
+            _evaluation = repo.GetAllObjectsWhere<Evaluation>("CatalogueID", _catalogue.ID).LastOrDefault();
+        }catch(Exception) {
+            return dt;
+        }
         if (_evaluation != null)
         {
             dt = PeriodicityState.GetPeriodicityForDataTableForEvaluation(_evaluation, "ALL", true);

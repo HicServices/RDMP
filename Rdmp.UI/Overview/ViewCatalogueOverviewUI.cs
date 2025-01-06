@@ -74,11 +74,6 @@ public partial class ViewCatalogueOverviewUI : ViewCatalogueOverviewUI_Design
         }
 
         areaChartUI.GenerateChart(_overview.GetTableData(), $"Records per month");
-
-        var syntaxHelper = _catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.InternalDataProcessing, false)?.GetQuerySyntaxHelper();
-        var dateTypeString = syntaxHelper.TypeTranslater.GetSQLDBTypeForCSharpType(new TypeGuesser.DatabaseTypeRequest(typeof(DateTime)));
-        var dateColumns = _catalogue.CatalogueItems.Where(ci => ci.ColumnInfo.Data_type == dateTypeString).ToList();
-
     }
 
     private int OnTabChange(int tabIndex)

@@ -144,9 +144,9 @@ namespace Rdmp.UI.Overview
             panel4.BackColor = System.Drawing.SystemColors.Control;
             panel4.Controls.Add(pictureBox5);
             panel4.Controls.Add(lblLatestExtraction);
-            panel4.Location = new System.Drawing.Point(890, 6);
+            panel4.Location = new System.Drawing.Point(952, 6);
             panel4.Name = "panel4";
-            panel4.Size = new System.Drawing.Size(250, 39);
+            panel4.Size = new System.Drawing.Size(354, 39);
             panel4.TabIndex = 13;
             // 
             // pictureBox5
@@ -167,7 +167,7 @@ namespace Rdmp.UI.Overview
             lblLatestExtraction.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
             lblLatestExtraction.Location = new System.Drawing.Point(37, 4);
             lblLatestExtraction.Name = "lblLatestExtraction";
-            lblLatestExtraction.Size = new System.Drawing.Size(198, 28);
+            lblLatestExtraction.Size = new System.Drawing.Size(314, 28);
             lblLatestExtraction.TabIndex = 3;
             lblLatestExtraction.Text = "No Extractions";
             lblLatestExtraction.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -179,7 +179,7 @@ namespace Rdmp.UI.Overview
             panel3.Controls.Add(lblLastDataLoad);
             panel3.Location = new System.Drawing.Point(705, 6);
             panel3.Name = "panel3";
-            panel3.Size = new System.Drawing.Size(184, 38);
+            panel3.Size = new System.Drawing.Size(244, 38);
             panel3.TabIndex = 4;
             // 
             // pictureBox4
@@ -200,7 +200,7 @@ namespace Rdmp.UI.Overview
             lblLastDataLoad.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
             lblLastDataLoad.Location = new System.Drawing.Point(33, 5);
             lblLastDataLoad.Name = "lblLastDataLoad";
-            lblLastDataLoad.Size = new System.Drawing.Size(148, 31);
+            lblLastDataLoad.Size = new System.Drawing.Size(208, 31);
             lblLastDataLoad.TabIndex = 1;
             lblLastDataLoad.Text = "No Data Loads";
             lblLastDataLoad.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
