@@ -26,12 +26,19 @@ public partial class ConfigurationsCollectionUI : RDMPCollectionUI, ILifetimeSub
         return new IAtomicCommand[]
         {
             new ExecuteCommandCreateNewDatasetUI(_activator){
-                OverrideCommandName="Add New Dataset"
-            },
-            new ExecuteCommandAddNewRegexRedactionConfigurationUI(_activator)
-            {
-                OverrideCommandName="Add New Regex Redaction Configuration"
-            }
+     OverrideCommandName="Add New Dataset", SuggestedCategory="Datasets"
+ },
+ new ExecuteCommandImportExistingPureDatasetUI(_activator)
+ {
+     OverrideCommandName="Import Existing Pure Dataset", SuggestedCategory="Pure Datasets"
+ },
+ new ExecuteCommandCreateNewPureConfigurationUI(_activator){
+ OverrideCommandName="Create New Pure Configuration", SuggestedCategory="Pure Datasets"
+ },
+ new ExecuteCommandAddNewRegexRedactionConfigurationUI(_activator)
+ {
+     OverrideCommandName="Add New Regex Redaction Configuration", SuggestedCategory="Regex"
+ }
         };
     }
 
@@ -44,9 +51,10 @@ public partial class ConfigurationsCollectionUI : RDMPCollectionUI, ILifetimeSub
         CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = e => GetWhitespaceRightClickMenu();
         Activator.RefreshBus.EstablishLifetimeSubscription(this);
         tlvConfigurations.AddObject(Activator.CoreChildProvider.AllDatasetsNode);
+        tlvConfigurations.AddObject(Activator.CoreChildProvider.AllDatasetProviderConfigurationsNode);
         tlvConfigurations.AddObject(Activator.CoreChildProvider.AllRegexRedactionConfigurationsNode);
         tlvConfigurations.Refresh();
-        }
+    }
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {
