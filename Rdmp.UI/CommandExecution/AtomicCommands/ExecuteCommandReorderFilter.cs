@@ -37,12 +37,9 @@ public class ExecuteCommandReorderFilter : BasicUICommandExecution
     {
         var order = _target.Order;
 
-        var filters = _target.FilterContainer.GetFilters().Where(f => f is ConcreteFilter).Select(f => (ConcreteFilter)f).ToArray();
-        Array.Sort(
-           filters,
-            delegate (ConcreteFilter a, ConcreteFilter b) { return a.Order.CompareTo(b.Order); }
-        );
-        if (!filters.All(c => c.Order != order))
+        var filters = _target.FilterContainer.GetFilters().OfType<ConcreteFilter>().OrderBy(static f => f.Order).ToArray();
+        // Conflict? Create a space by moving earlier filters down one, later filters up one
+        if (filters.Any(c => c.Order == order))
         {
             foreach (var orderable in filters)
             {
@@ -55,6 +52,7 @@ public class ExecuteCommandReorderFilter : BasicUICommandExecution
                 ((ISaveable)orderable).SaveToDatabase();
             }
         }
+
         _source.Order = order;
         _source.SaveToDatabase();
         Publish(_target.FilterContainer);

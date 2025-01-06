@@ -4,7 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
@@ -16,48 +15,47 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandCloneExtractionConfiguration : BasicCommandExecution, IAtomicCommand
+public class ExecuteCommandCloneExtractionConfiguration : BasicCommandExecution
 {
     private readonly ExtractionConfiguration _extractionConfiguration;
     private readonly IBasicActivateItems _activeItems;
-    private readonly List<IExtractableDataSet> toRemove = [];
-    private readonly List<Catalogue> toAdd = [];
+    private readonly List<IExtractableDataSet> _toRemove = [];
+    private readonly List<Catalogue> _toAdd = [];
+
     private void CheckForDeprecatedCatalogues()
     {
-        if (_extractionConfiguration.SelectedDataSets.Any(sd => sd.GetCatalogue().IsDeprecated) && _activeItems.IsInteractive)
+        if (!_extractionConfiguration.SelectedDataSets.Any(static sd => sd.GetCatalogue().IsDeprecated) ||
+            !_activeItems.IsInteractive) return;
+        if (!YesNo(
+                "There are Deprecated catalogues in this Extraction Configuration. Would you like to replace them with their replacement (where available)?",
+                "Replace Deprecated Catalogues")) return;
+
+        var repo = _activeItems.RepositoryLocator.CatalogueRepository;
+        var deprecatedDatasets = _extractionConfiguration.SelectedDataSets.Where(static sd => sd.GetCatalogue().IsDeprecated).ToList();
+        var replacedBy = repo.GetExtendedProperties(ExtendedProperty.ReplacedBy).ToArray();
+        foreach (var ds in deprecatedDatasets)
         {
-            if (YesNo("There are Deprecated catalogues in this Extraction Configuration. Would you like to replace them with their replacement (where available)?", "Replace Deprecated Catalogues"))
+            var replacement = replacedBy.FirstOrDefault(rb => rb.ReferencedObjectID == ds.GetCatalogue().ID);
+            if (replacement is null) continue;
+
+            var replacementCatalogue = repo.GetObjectByID<Catalogue>(int.Parse(replacement.Value));
+            while (replacementCatalogue.IsDeprecated)
             {
-                var repo = _activeItems.RepositoryLocator.CatalogueRepository;
-                var DeprecatedDatasets = _extractionConfiguration.SelectedDataSets.Where(sd => sd.GetCatalogue().IsDeprecated).ToList();
-                var replacedBy = repo.GetExtendedProperties(ExtendedProperty.ReplacedBy);
-                foreach (ISelectedDataSets ds in DeprecatedDatasets)
+                var replacementCatalogueIsReplacedBy = replacedBy.FirstOrDefault(rb => rb.ReferencedObjectID == replacementCatalogue.ID);
+                if (replacementCatalogueIsReplacedBy is not null)
                 {
-                    var replacement = replacedBy.Where(rb => rb.ReferencedObjectID == ds.GetCatalogue().ID).FirstOrDefault();
-                    if (replacement is not null)
-                    {
-                        var replacementCatalogue = repo.GetObjectByID<Catalogue>(Int32.Parse(replacement.Value));
-                        while (replacementCatalogue.IsDeprecated)
-                        {
-                            var replacementCatalogueIsReplacedBy = replacedBy.Where(rb => rb.ReferencedObjectID == replacementCatalogue.ID).FirstOrDefault();
-                            if(replacementCatalogueIsReplacedBy is not null)
-                            {
-                                //have found further down the tree
-                                replacementCatalogue = repo.GetObjectByID<Catalogue>(Int32.Parse(replacementCatalogueIsReplacedBy.Value));
-                            }
-                            else
-                            {
-                                //there is no replacement
-                                break;
-                            }
-                        }
-                        toRemove.Add(ds.ExtractableDataSet);
-                        toAdd.Add(replacementCatalogue);
-                    }
+                    //have found further down the tree
+                    replacementCatalogue = repo.GetObjectByID<Catalogue>(int.Parse(replacementCatalogueIsReplacedBy.Value));
                 }
-
-
+                else
+                {
+                    //there is no replacement
+                    break;
+                }
             }
+
+            _toRemove.Add(ds.ExtractableDataSet);
+            _toAdd.Add(replacementCatalogue);
         }
     }
 
@@ -82,11 +80,12 @@ public class ExecuteCommandCloneExtractionConfiguration : BasicCommandExecution,
         CheckForDeprecatedCatalogues();
 
         var clone = _extractionConfiguration.DeepCloneWithNewIDs();
-        foreach (ExtractableDataSet ds in toRemove)
+        foreach (var ds in _toRemove.Cast<ExtractableDataSet>())
         {
             clone.RemoveDatasetFromConfiguration(ds);
         }
-        foreach (Catalogue c in toAdd)
+
+        foreach (var c in _toAdd)
         {
             //check if the eds already exis
             var eds = _activeItems.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", c.ID).FirstOrDefault();
@@ -95,8 +94,10 @@ public class ExecuteCommandCloneExtractionConfiguration : BasicCommandExecution,
                 eds = new ExtractableDataSet(_activeItems.RepositoryLocator.DataExportRepository, c);
                 eds.SaveToDatabase();
             }
+
             clone.AddDatasetToConfiguration(eds);
         }
+
         Publish((DatabaseEntity)clone.Project);
         Emphasise(clone);
     }
