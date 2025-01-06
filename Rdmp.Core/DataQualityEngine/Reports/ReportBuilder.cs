@@ -4,9 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.DataLoad.Triggers;
 using Rdmp.Core.DataQualityEngine.Reports.PeriodicityHelpers;
-using Rdmp.Core.Logging;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Progress;
@@ -18,9 +16,7 @@ using System.Data;
 using System.Data.Common;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Rdmp.Core.DataQualityEngine.Reports;
 
@@ -32,22 +28,22 @@ public class ReportBuilder
     private readonly string _dataLoadRunFieldName;
 
     //where the data is located
-    private QueryBuilder _queryBuilder;
-    private Validator _validator;
-    private bool _containsDataLoadID;
+    private readonly QueryBuilder _queryBuilder;
+    private readonly Validator _validator;
+    private readonly bool _containsDataLoadID;
 
     public static int MaximumPivotValues = 5000;
 
     private Dictionary<string, DQEStateOverDataLoadRunId> byPivotRowStatesOverDataLoadRunId = new();
     private Dictionary<string, PeriodicityCubesOverTime> byPivotCategoryCubesOverTime = new();
 
-    private string _timePeriodicityField;
-    private string _pivotCategory;
-    private ICatalogue _catalogue;
+    private readonly string _timePeriodicityField;
+    private readonly string _pivotCategory;
+    private readonly ICatalogue _catalogue;
     private bool _haveComplainedAboutNullCategories;
     private bool _haveComplainedAboutTrailingWhitespaces;
 
-    private DataTable _resultsDT = new();
+    private readonly DataTable _resultsDT = new();
     public ReportBuilder(ICatalogue catalogue, Validator validator, QueryBuilder queryBuilder, string dataLoadRunFieldName, bool containsDataLoadID, string timePeriodicityField, string pivotCategory, DbDataReader results)
     {
         _catalogue = catalogue;

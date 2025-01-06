@@ -1,4 +1,4 @@
-// Copyright (c) The University of Dundee 2018-2019
+// Copyright (c) The University of Dundee 2018-2025
 // This file is part of the Research Data Management Platform (RDMP).
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -8,18 +8,10 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Threading;
 using FAnsi.Discovery;
 using MongoDB.Driver;
-using NPOI.OpenXmlFormats.Spreadsheet;
-using NPOI.OpenXmlFormats.Vml;
-using NPOI.SS.Formula.Functions;
-using NPOI.Util;
-using Org.BouncyCastle.Security.Certificates;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.DataLoad.Triggers;
@@ -27,7 +19,6 @@ using Rdmp.Core.DataQualityEngine.Data;
 using Rdmp.Core.DataQualityEngine.Reports.PeriodicityHelpers;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Logging.Listeners;
-using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
@@ -36,7 +27,6 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 using Rdmp.Core.Validation;
 using Rdmp.Core.Validation.Constraints;
 using Rdmp.Core.Validation.Constraints.Secondary.Predictor;
-using static Terminal.Gui.Application;
 
 namespace Rdmp.Core.DataQualityEngine.Reports;
 
@@ -54,10 +44,8 @@ public class CatalogueConstraintReport : DataQualityReport
     private Validator _validator;
     private bool _containsDataLoadID;
 
-    public static int MaximumPivotValues = 5000;
-
-    private Dictionary<string, DQEStateOverDataLoadRunId> byPivotRowStatesOverDataLoadRunId = new();
-    private Dictionary<string, PeriodicityCubesOverTime> byPivotCategoryCubesOverTime = new();
+    private Dictionary<string, DQEStateOverDataLoadRunId> byPivotRowStatesOverDataLoadRunId = [];
+    private Dictionary<string, PeriodicityCubesOverTime> byPivotCategoryCubesOverTime = [];
 
     private IExternalDatabaseServer _loggingServer;
     private string _loggingTask;
@@ -191,7 +179,7 @@ public class CatalogueConstraintReport : DataQualityReport
     //may be worth thinking about how we can keep existing records and modify/add to them depending on what's goin on
 
 
-    public void UpdateReport(ICatalogue c, int dataLoadID, IDataLoadEventListener listener,
+    public void UpdateReport(ICatalogue c, int dataLoadID, int? commandTimeout, IDataLoadEventListener listener,
         CancellationToken cancellationToken)
     {
         _dataLoadID = dataLoadID;
@@ -216,7 +204,8 @@ public class CatalogueConstraintReport : DataQualityReport
                 if (_dataLoadID is not null)
                     qb.AddCustomLine($"{SpecialFieldNames.DataLoadRunID} = {_dataLoadID}", FAnsi.Discovery.QuerySyntax.QueryComponent.WHERE);
                 var cmd = _server.GetCommand(qb.SQL, con);
-                cmd.CommandTimeout = 500000;
+                if (commandTimeout is not null)
+                    cmd.CommandTimeout = (int)commandTimeout;
                 var adapter = _server.GetDataAdapter(cmd);
                 rDT.BeginLoadData();
                 adapter.Fill(rDT);
@@ -250,7 +239,8 @@ public class CatalogueConstraintReport : DataQualityReport
                 var pivotColumnInfo = _catalogue.CatalogueItems.Where(ci => ci.Name == _pivotCategory).FirstOrDefault();
                 if (pivotColumnInfo is null) throw new Exception("Can't find column infor for pivot category");
                 var tableInfo = pivotColumnInfo.ColumnInfo.TableInfo;
-                var dataDiffFetcher = new DiffDatabaseDataFetcher(10000000, tableInfo, (int)_dataLoadID, 50000);//todo update these numbers
+                
+                var dataDiffFetcher = new DiffDatabaseDataFetcher(2147483647, tableInfo, (int)_dataLoadID, commandTimeout != null ? (int)commandTimeout : 30);
                 dataDiffFetcher.FetchData(new AcceptAllCheckNotifier());
                 //pivot categories that have been replaces 100%?
                 var replacedPivotCategories = previousCategories.Where(c =>
@@ -305,7 +295,8 @@ public class CatalogueConstraintReport : DataQualityReport
                         qb.AddColumnRange(_catalogue.GetAllExtractionInformation(ExtractionCategory.Any));
                         qb.AddCustomLine($"{pivotColumn} in ({string.Join(',', existingIncomingPivotCategories.Select(i => $"'{i}'"))})", FAnsi.Discovery.QuerySyntax.QueryComponent.WHERE);
                         var cmd = _server.GetCommand(qb.SQL, updateCon);
-                        cmd.CommandTimeout = 500000;
+                        if (commandTimeout is not null)
+                            cmd.CommandTimeout = (int)commandTimeout;
                         var adapter = _server.GetDataAdapter(cmd);
                         updatedRowsDataTable.BeginLoadData();
                         adapter.Fill(updatedRowsDataTable);
@@ -337,7 +328,7 @@ public class CatalogueConstraintReport : DataQualityReport
                         }
                     }
                 }
-                List<RowState> AllStates = new();
+                List<RowState> AllStates = [];
                 foreach (var rowState in evaluation.RowStates)
                 {
                     if (!AllStates.Any(state => state.DataLoadRunID == rowState.DataLoadRunID))
@@ -375,7 +366,7 @@ public class CatalogueConstraintReport : DataQualityReport
                     cm.Commit(evaluation, previousColumnState.PivotCategory, con.Connection, con.Transaction);
                     ColumnStates.Add(cm);
                 }
-                List<ColumnState> AllColumns = new();
+                List<ColumnState> AllColumns = [];
                 foreach (var columnState in ColumnStates)
                 {
                     if (!AllColumns.Any(state => state.DataLoadRunID == columnState.DataLoadRunID && state.TargetProperty == columnState.TargetProperty && state.PivotCategory == columnState.PivotCategory))
@@ -411,7 +402,7 @@ public class CatalogueConstraintReport : DataQualityReport
                 //* Periodicity States *//
 
                 //Unchanged
-                newByPivotCategoryCubesOverTime = new();//reset
+                newByPivotCategoryCubesOverTime = [];//reset
 
                 var unchangedPivotCategories = previousRowSates.Where(rs => rs.PivotCategory != "ALL" && !existingIncomingPivotCategories.Contains(rs.PivotCategory) && !replacedPivotCategories.Contains(rs.PivotCategory)).Select(rs => rs.PivotCategory).Distinct(); foreach (var previousRowState in previousRowSates.Where(rs => rs.PivotCategory != "ALL" && !existingIncomingPivotCategories.Contains(rs.PivotCategory) && !replacedPivotCategories.Contains(rs.PivotCategory))) ;
                 newByPivotCategoryCubesOverTime.TryGetValue("ALL", out var value);
@@ -434,7 +425,7 @@ public class CatalogueConstraintReport : DataQualityReport
                         for (var i = 0; i < countOfRecords; i++)
                         {
 
-                            Consequence.TryParse(row[3].ToString(), out Consequence consequence);
+                            Enum.TryParse(row[3].ToString(), out Consequence consequence);
                             var date = DateTime.Parse(row[1].ToString());
                             newByPivotCategoryCubesOverTime[pivotCategory].IncrementHyperCube(date.Year, date.Month, consequence);
 
@@ -454,7 +445,8 @@ public class CatalogueConstraintReport : DataQualityReport
                         qb.AddColumnRange(_catalogue.GetAllExtractionInformation(ExtractionCategory.Any));
                         qb.AddCustomLine($"{pivotColumn} in ({string.Join(',', existingIncomingPivotCategories.Select(i => $"'{i}'"))})", FAnsi.Discovery.QuerySyntax.QueryComponent.WHERE);
                         var cmd = _server.GetCommand(qb.SQL, updateCon);
-                        cmd.CommandTimeout = 500000;
+                        if (commandTimeout is not null)
+                            cmd.CommandTimeout = (int)commandTimeout;
                         var adapter = _server.GetDataAdapter(cmd);
                         updatedRowsDataTable.BeginLoadData();
                         adapter.Fill(updatedRowsDataTable);
@@ -473,7 +465,7 @@ public class CatalogueConstraintReport : DataQualityReport
                             foreach (var month in periodicityCubes.Keys)
                             {
                                 var cube = periodicityCubes[month];
-                                foreach (var consequence in Enum.GetValues(typeof(Consequence)).Cast<Consequence>().ToList())
+                                foreach (var consequence in Enum.GetValues<Consequence>().Cast<Consequence>().ToList())
                                 {
                                     var state = cube.GetStateForConsequence(consequence);
                                     for (var i = 0; i < state.CountOfRecords; i++)
@@ -490,11 +482,8 @@ public class CatalogueConstraintReport : DataQualityReport
                             }
 
                         }
-                        //want to add this to newByPivotCategoryCubesOverTime 
-
                     }
                 }
-                //foreach (var newCategory in newIncomingPivotCategories)
                 if (newIncomingPivotCategories.Any())
                 {
                     var updatedRowsDataTable = new DataTable();
@@ -506,7 +495,8 @@ public class CatalogueConstraintReport : DataQualityReport
                         qb.AddColumnRange(_catalogue.GetAllExtractionInformation(ExtractionCategory.Any));
                         qb.AddCustomLine($"{pivotColumn} in ({string.Join(',', newIncomingPivotCategories.Select(i => $"'{i}'"))})", FAnsi.Discovery.QuerySyntax.QueryComponent.WHERE);
                         var cmd = _server.GetCommand(qb.SQL, updateCon);
-                        cmd.CommandTimeout = 500000;
+                        if (commandTimeout is not null)
+                            cmd.CommandTimeout = (int)commandTimeout;
                         var adapter = _server.GetDataAdapter(cmd);
                         updatedRowsDataTable.BeginLoadData();
                         adapter.Fill(updatedRowsDataTable);
@@ -542,18 +532,14 @@ public class CatalogueConstraintReport : DataQualityReport
                             }
 
                         }
-                        //want to add this to newByPivotCategoryCubesOverTime 
 
                     }
                 }
-                //ADD all the new stuff
+                //add all the new stuff
                 foreach (var v in newByPivotCategoryCubesOverTime.Values)
                 {
                     v.CommitToDatabase(evaluation);
                 }
-
-                //var previousPeriodicity = PeriodicityState.GetPeriodicityForDataTableForEvaluation(previousEvaluation, false);
-
                 dqeRepository.EndTransactedConnection(true);
 
             }

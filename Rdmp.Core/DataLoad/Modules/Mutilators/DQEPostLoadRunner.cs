@@ -27,6 +27,8 @@ namespace Rdmp.Core.DataLoad.Modules.Mutilators;
 public class DQEPostLoadRunner : IMutilateDataTables
 {
 
+    [DemandsInitialization("Timeout length for each query required to run the DQE update",defaultValue:50000)]
+    public int Timeout { get; set; }
     public void Check(ICheckNotifier notifier)
     {
     }
@@ -74,7 +76,8 @@ public class DQEPostLoadRunner : IMutilateDataTables
             {
                 Catalogue = catalogue.ID.ToString(),
                 DataLoadUpdateID = job.DataLoadInfo.ID.ToString(),
-                Command = CommandLineActivity.run
+                Command = CommandLineActivity.run,
+                CommandTimeout = Timeout
             };
             var runner = RunnerFactory.CreateRunner(new ThrowImmediatelyActivator(job.RepositoryLocator), options);
             runner.Run(job.RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, new AcceptAllCheckNotifier(),

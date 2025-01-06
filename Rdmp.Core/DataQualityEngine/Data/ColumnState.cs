@@ -133,8 +133,7 @@ public class ColumnState
     public void Commit(Evaluation evaluation, string pivotCategory, DbConnection con, DbTransaction transaction)
     {
         if (IsCommitted)
-            return;
-            //throw new NotSupportedException("ColumnState was already committed");
+            throw new NotSupportedException("ColumnState was already committed");
 
         var sql =
             $"INSERT INTO ColumnState(TargetProperty,DataLoadRunID,Evaluation_ID,CountCorrect,CountDBNull,ItemValidatorXML,CountMissing,CountWrong,CountInvalidatesRow,PivotCategory)VALUES({"@TargetProperty"},{DataLoadRunID},{evaluation.ID},{CountCorrect},{CountDBNull},@ItemValidatorXML,{CountMissing},{CountWrong},{CountInvalidatesRow},@PivotCategory)";

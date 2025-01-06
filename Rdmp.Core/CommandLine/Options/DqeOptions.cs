@@ -19,4 +19,7 @@ public class DqeOptions : RDMPCommandLineOptions
 
     [Option('d', "DataLoad", HelpText = "ID of the Data Load to run the DQE on. Adds new data to existing DQE results if they exist", Required = false)]
     public string DataLoadUpdateID { get; set; }
+
+    [Option('t', "Timeout", HelpText = "How long(in seconds) each internal SQL command should brun for before timing out")]
+    public int CommandTimeout { get; set; }
 }

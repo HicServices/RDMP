@@ -40,7 +40,7 @@ internal class DqeRunner : Runner
         {
             case CommandLineActivity.run:
                 if (dataLoadID is not null)
-                    report.UpdateReport(catalogue, (int)dataLoadID, listener, token.AbortToken);
+                    report.UpdateReport(catalogue, (int)dataLoadID, _options.CommandTimeout, listener, token.AbortToken);
                 else
                     report.GenerateReport(catalogue, listener, token.AbortToken);
                 return 0;
