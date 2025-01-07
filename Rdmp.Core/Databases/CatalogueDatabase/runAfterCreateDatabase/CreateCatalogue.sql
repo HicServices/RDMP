@@ -916,6 +916,9 @@ CREATE TABLE [dbo].Dataset(
 	[Folder] [nvarchar](1000) NOT NULL,
 	[DigitalObjectIdentifier] [varchar](256) NULL,
 	[Source] [varchar](256) NULL,
+	[Type] [varchar](256) NULL,
+	[Url] [varchar](256) NULL,
+	[Provider_ID] [int] NULL,
 	CONSTRAINT [PK_Dataset] PRIMARY KEY CLUSTERED
 (
 	[ID] ASC
@@ -1417,6 +1420,7 @@ GO
 --) ON [PRIMARY]
 --END
 --GO
+
 
 
 

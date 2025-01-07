@@ -28,12 +28,18 @@ internal class
     public override void Activate(Dataset target)
     {
         string PureAssembly = typeof(PureDatasetProvider).ToString();
-
-       if(target.Type == PureAssembly)
+        string HDRAssembly = typeof(HDRDatasetProvider).ToString();
+        if (target.Type == PureAssembly)
         {
             ItemActivator.Activate<PureDatasetConfigurationUI,Dataset>(target);
             return;
         }
+        if (target.Type == HDRAssembly)
+        {
+            ItemActivator.Activate<HDRDatasetConfigurationUI, Dataset>(target);
+            return;
+        }
+
 
         ItemActivator.Activate<DatasetConfigurationUI, Dataset>(target);
     }
