@@ -95,19 +95,6 @@ public partial class ViewCatalogueOverviewUI : ViewCatalogueOverviewUI_Design
     {
         Activator.Activate<CatalogueUI, Catalogue>(_catalogue);
     }
-
-    private void btnGenerate_Click(object sender, EventArgs e)
-    {
-        //var dateColumnID = ((CatalogueItem)cbTimeColumns.SelectedItem).ID;
-        //Task.Run(() =>
-        //{
-        //    _overview.Generate(dateColumnID);
-        //}).ContinueWith((task) =>
-        //{
-        //    UpdateCatalogueData();
-        //}, TaskScheduler.FromCurrentSynchronizationContext());
-    }
-
     private void lblNoDQE_Click(object sender, EventArgs e)
     {
 
