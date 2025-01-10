@@ -72,17 +72,6 @@ $c - Configuration Extraction Directory  (e.g. c:\MyProject\Extractions\Extr_16)
             notifier.OnCheckPerformed(new CheckEventArgs(
                 $"PerPatient is false but Pattern {Pattern} contains token $p.  This token will never be matched in MoveAll mode",
                 CheckResult.Fail));
-
-        try
-        {
-            notifier.OnCheckPerformed(new CheckEventArgs($"Output path is:{GetDestinationDirectory()}",
-                CheckResult.Success));
-        }
-        catch (Exception ex)
-        {
-            throw new Exception(
-                "Unable to to determine output directory from 'OutputDirectoryName'.  Perhaps pattern is bad", ex);
-        }
     }
 
     protected override void MoveFiles(ExtractGlobalsCommand command, IDataLoadEventListener listener,
@@ -124,7 +113,7 @@ $c - Configuration Extraction Directory  (e.g. c:\MyProject\Extractions\Extr_16)
         if (path.Contains("$p")) path = path.Replace("$p", _command.Project.ExtractionDirectory);
         if (path.Contains("$n")) path = path.Replace("$n", _command.Project.ProjectNumber.ToString());
 
-        if (path.Contains("$c"))
+        if (path.Contains("$c") )
             path = path.Replace("$c",
                 new ExtractionDirectory(_command.Project.ExtractionDirectory, _command.Configuration)
                     .ExtractionDirectoryInfo.FullName);
