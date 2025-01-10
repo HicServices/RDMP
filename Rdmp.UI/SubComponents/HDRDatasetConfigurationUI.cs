@@ -46,7 +46,7 @@ public partial class HDRDatasetConfigurationUI : DatsetConfigurationUI_Design, I
         tbName.Text = summary.title;
         tbAbstract.Text = summary.@abstract;
         tbContactPoint.Text = summary.contactPoint.ToString();
-        tbDOI.Text = summary.doiName.ToString();
+        tbDOI.Text = summary.doiName?.ToString();
         tbDescription.Text = summary.description;
         tbStartDate.Text = _dataset.data.versions.First().metadata.metadata.provenance.temporal.startDate;
         tbEndDate.Text = _dataset.data.versions.First().metadata.metadata.provenance.temporal.endDate;
@@ -74,50 +74,53 @@ public partial class HDRDatasetConfigurationUI : DatsetConfigurationUI_Design, I
 
     private void btnSave_Click(object sender, EventArgs e)
     {
-        //if (_activator.YesNo("Are you sure?", "Save Changes"))
-        //{
-        //    var datasetUpdate = new PureDataset();
-        //    _dataset.Title.En_GB = tbName.Text;
-        //    datasetUpdate.Title = _dataset.Title;
-        //    var datasetDescriptionTerm = "/dk/atira/pure/dataset/descriptions/datasetdescription";
-        //    var description = _dataset.Descriptions.Where(d => d.Term.URI == datasetDescriptionTerm).FirstOrDefault();
-        //    if (description is null)
-        //    {
-        //        //error
-        //        Console.WriteLine("No known description!");
-        //    }
-        //    else
-        //    {
-        //        description.Value = new ENGBWrapper(tbDescription.Text);
-        //        datasetUpdate.Descriptions = new List<PureDescription> { description };
-        //    }
-        //    if (!string.IsNullOrWhiteSpace(tbStartDate.Text))
-        //    {
-        //        _dataset.TemporalCoveragePeriod.StartDate = new PureDate(DateTime.Parse(tbStartDate.Text));
-        //    }
-        //    if (!string.IsNullOrWhiteSpace(tbTemporalEnd.Text))
-        //    {
-        //        _dataset.TemporalCoveragePeriod.EndDate = new PureDate(DateTime.Parse(tbTemporalEnd.Text));
-        //    }
-        //    if (!string.IsNullOrWhiteSpace(tbStartDate.Text) || !string.IsNullOrWhiteSpace(tbTemporalEnd.Text))
-        //        datasetUpdate.TemporalCoveragePeriod = _dataset.TemporalCoveragePeriod;
+        if (_activator.YesNo("Are you sure?", "Save Changes"))
+        {
+            var datasetUpdate = new HDRDataset();
+            var summary = _dataset.data.versions.First().metadata.metadata.summary;
+            _dataset.data.versions.First().metadata.metadata.summary.title = tbName.Text;
+            _dataset.data.versions.First().metadata.metadata.summary.@abstract = tbAbstract.Text;
+            //    _dataset.Title.En_GB = tbName.Text;
+            //    datasetUpdate.Title = _dataset.Title;
+            //    var datasetDescriptionTerm = "/dk/atira/pure/dataset/descriptions/datasetdescription";
+            //    var description = _dataset.Descriptions.Where(d => d.Term.URI == datasetDescriptionTerm).FirstOrDefault();
+            //    if (description is null)
+            //    {
+            //        //error
+            //        Console.WriteLine("No known description!");
+            //    }
+            //    else
+            //    {
+            //        description.Value = new ENGBWrapper(tbDescription.Text);
+            //        datasetUpdate.Descriptions = new List<PureDescription> { description };
+            //    }
+            //    if (!string.IsNullOrWhiteSpace(tbStartDate.Text))
+            //    {
+            //        _dataset.TemporalCoveragePeriod.StartDate = new PureDate(DateTime.Parse(tbStartDate.Text));
+            //    }
+            //    if (!string.IsNullOrWhiteSpace(tbTemporalEnd.Text))
+            //    {
+            //        _dataset.TemporalCoveragePeriod.EndDate = new PureDate(DateTime.Parse(tbTemporalEnd.Text));
+            //    }
+            //    if (!string.IsNullOrWhiteSpace(tbStartDate.Text) || !string.IsNullOrWhiteSpace(tbTemporalEnd.Text))
+            //        datasetUpdate.TemporalCoveragePeriod = _dataset.TemporalCoveragePeriod;
 
-        //    datasetUpdate.Links = new();
-        //    foreach (var link in links)
-        //    {
-        //        var original = _dataset.Links.Where(l => l.PureID == link.Link.PureID).First();
-        //        if (original.Url == link.LinkUrl && link.LinkDescription == original.Description.En_GB)
-        //        {
-        //            continue;
-        //        }
-        //        var pl = new PureLink(link.Link.PureID, link.LinkUrl, link.Link.Alias, new ENGBWrapper(link.LinkDescription), link.Link.LinkType);
-        //        datasetUpdate.Links.Add(pl);
-        //    }
-        //    if (!datasetUpdate.Links.Any()) datasetUpdate.Links = null;
-        //    _provider.Update(_dataset.UUID, datasetUpdate);
-        //    SetDatabaseObject(_activator, _dbObject);
-        //    _activator.Show("Successfully updated Pure dataset");
-        //}
+            //    datasetUpdate.Links = new();
+            //    foreach (var link in links)
+            //    {
+            //        var original = _dataset.Links.Where(l => l.PureID == link.Link.PureID).First();
+            //        if (original.Url == link.LinkUrl && link.LinkDescription == original.Description.En_GB)
+            //        {
+            //            continue;
+            //        }
+            //        var pl = new PureLink(link.Link.PureID, link.LinkUrl, link.Link.Alias, new ENGBWrapper(link.LinkDescription), link.Link.LinkType);
+            //        datasetUpdate.Links.Add(pl);
+            //    }
+            //    if (!datasetUpdate.Links.Any()) datasetUpdate.Links = null;
+                _provider.Update(_dataset.data.id.ToString(), datasetUpdate);
+                SetDatabaseObject(_activator, _dbObject);
+                _activator.Show("Successfully updated Pure dataset");
+        }
     }
 
     private void label4_Click(object sender, EventArgs e)

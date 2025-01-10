@@ -5,10 +5,12 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Datasets;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Rdmp.Core.Datasets
@@ -80,7 +82,28 @@ namespace Rdmp.Core.Datasets
 
         public override void Update(string uuid, PluginDataset datasetUpdates)
         {
-            throw new NotImplementedException();
+            var serializeOptions = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                WriteIndented = true
+            };
+
+            var options = new JsonWriterOptions
+            {
+                Indented = true
+            };
+
+            using var stream = new MemoryStream();
+            System.Text.Json.JsonSerializer.Serialize<HDRDataset>(stream, (HDRDataset)datasetUpdates, serializeOptions);
+            var jsonString = Encoding.UTF8.GetString(stream.ToArray());
+            var uri = $"{Configuration.Url}/v1/datasets/{uuid}";
+            var httpContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
+
+            var response = Task.Run(async () => await _client.PatchAsync(uri, httpContent)).Result;
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                throw new Exception("Error");
+            }
         }
     }
 }
