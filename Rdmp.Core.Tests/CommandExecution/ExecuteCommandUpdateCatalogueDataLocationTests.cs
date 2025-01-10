@@ -68,22 +68,22 @@ public class ExecuteCommandUpdateCatalogueDataLocationTests : DatabaseTests
         if (CatalogueRepository.GetAllObjects<Pipeline>().Length == 0)
             creator.CreatePipelines(new PlatformDatabaseCreationOptions());
 
-        var pipe = CatalogueRepository.GetAllObjects<Pipeline>().OrderByDescending(p => p.ID)
-            .FirstOrDefault(p => p.Name.Contains("BULK INSERT: CSV Import File (automated column-type detection)"));
+        var pipe = CatalogueRepository.GetAllObjects<Pipeline>().OrderByDescending(static p => p.ID)
+            .FirstOrDefault(static p => p.Name.Contains("BULK INSERT: CSV Import File (automated column-type detection)"));
         var cmd = new ExecuteCommandCreateNewCatalogueByImportingFile(new ThrowImmediatelyActivator(RepositoryLocator),
             info, "Column1", db, pipe, null);
         cmd.Execute();
         originalTableInfoID = RepositoryLocator.CatalogueRepository.GetAllObjects<CatalogueItem>().First().ColumnInfo
             .TableInfo_ID;
-        var column1 = RepositoryLocator.CatalogueRepository.GetAllObjects<CatalogueItem>()
-            .Where(c => c.Name == "Column1").First();
-        column1.ExtractionInformation.SelectSQL = column1.ExtractionInformation.SelectSQL + " as SOME_ALIAS";
+        var column1 = RepositoryLocator.CatalogueRepository
+            .GetAllObjects<CatalogueItem>().First(static c => c.Name == "Column1");
+        column1.ExtractionInformation.SelectSQL += " as SOME_ALIAS";
         column1.ExtractionInformation.SaveToDatabase();
     }
 
     private void CreateSecondaryCatalogue()
     {
-        var fileName = Path.GetTempPath() + Guid.NewGuid() + ".csv";
+        var fileName = $"{Path.GetTempPath()}{Guid.NewGuid()}.csv";
         using (var outputFile = new StreamWriter(fileName, true))
         {
             outputFile.WriteLine("Column,Other");
@@ -149,8 +149,8 @@ public class ExecuteCommandUpdateCatalogueDataLocationTests : DatabaseTests
     [Test]
     public void UpdateLocationCheckOK()
     {
-        goodCatalogueID = RepositoryLocator.CatalogueRepository.GetAllObjects<CatalogueItem>()
-            .Where(c => c.Name == "Column2").First().Catalogue_ID;
+        goodCatalogueID = RepositoryLocator.CatalogueRepository
+            .GetAllObjects<CatalogueItem>().First(static c => c.Name == "Column2").Catalogue_ID;
         var cmd = new ExecuteCommandUpdateCatalogueDataLocation(new ThrowImmediatelyActivator(RepositoryLocator),
             RepositoryLocator.CatalogueRepository.GetAllObjects<CatalogueItem>()
                 .Where(c => c.Catalogue_ID == goodCatalogueID).ToArray(), RemoteTable, null);
@@ -171,47 +171,53 @@ public class ExecuteCommandUpdateCatalogueDataLocationTests : DatabaseTests
     [Test]
     public void UpdateLocationExecuteNoCheck_OK()
     {
-        goodCatalogueID = RepositoryLocator.CatalogueRepository.GetAllObjects<CatalogueItem>()
-            .Where(c => c.Name == "Column2").First().Catalogue_ID;
+        goodCatalogueID = RepositoryLocator.CatalogueRepository
+            .GetAllObjects<CatalogueItem>().First(static c => c.Name == "Column2").Catalogue_ID;
         var cmd = new ExecuteCommandUpdateCatalogueDataLocation(new ThrowImmediatelyActivator(RepositoryLocator),
             RepositoryLocator.CatalogueRepository.GetAllObjects<CatalogueItem>()
                 .Where(c => c.Catalogue_ID == goodCatalogueID).ToArray(), RemoteTable, null);
         Assert.DoesNotThrow(() => cmd.Execute());
-        var ci = RepositoryLocator.CatalogueRepository.GetAllObjects<CatalogueItem>()
-            .Where(c => c.Name == "Column2" && c.Catalogue_ID == goodCatalogueID).First();
-        Assert.That(ci.ColumnInfo.Name, Is.EqualTo(RemoteTable.GetFullyQualifiedName() + ".[Column2]"));
-        Assert.That(ci.ExtractionInformation.SelectSQL, Is.EqualTo(RemoteTable.GetFullyQualifiedName() + ".[Column2]"));
-        Assert.That(ci.ColumnInfo.TableInfo_ID, Is.Not.EqualTo(originalTableInfoID));
+        var ci = RepositoryLocator.CatalogueRepository
+            .GetAllObjects<CatalogueItem>().First(c => c.Name == "Column2" && c.Catalogue_ID == goodCatalogueID);
+        Assert.Multiple(() =>
+        {
+            Assert.That(ci.ColumnInfo.Name, Is.EqualTo($"{RemoteTable.GetFullyQualifiedName()}.[Column2]"));
+            Assert.That(ci.ExtractionInformation.SelectSQL, Is.EqualTo($"{RemoteTable.GetFullyQualifiedName()}.[Column2]"));
+            Assert.That(ci.ColumnInfo.TableInfo_ID, Is.Not.EqualTo(originalTableInfoID));
+        });
     }
 
     [Test]
     public void UpdateLocationExecuteNoCheck_AliasCheck()
     {
-        goodCatalogueID = RepositoryLocator.CatalogueRepository.GetAllObjects<CatalogueItem>()
-            .Where(c => c.Name == "Column2").First().Catalogue_ID;
+        goodCatalogueID = RepositoryLocator.CatalogueRepository
+            .GetAllObjects<CatalogueItem>().First(static c => c.Name == "Column2").Catalogue_ID;
         var cmd = new ExecuteCommandUpdateCatalogueDataLocation(new ThrowImmediatelyActivator(RepositoryLocator),
             RepositoryLocator.CatalogueRepository.GetAllObjects<CatalogueItem>()
                 .Where(c => c.Catalogue_ID == goodCatalogueID).ToArray(), RemoteTable, null);
         Assert.DoesNotThrow(() => cmd.Execute());
-        var ci = RepositoryLocator.CatalogueRepository.GetAllObjects<CatalogueItem>()
-            .Where(c => c.Name == "Column1" && c.Catalogue_ID == goodCatalogueID).First();
+        var ci = RepositoryLocator.CatalogueRepository
+            .GetAllObjects<CatalogueItem>().First(c => c.Name == "Column1" && c.Catalogue_ID == goodCatalogueID);
         Assert.That(ci.ColumnInfo.Name, Is.EqualTo(RemoteTable.GetFullyQualifiedName() + ".[Column1]"));
-        var ei = RepositoryLocator.CatalogueRepository.GetAllObjects<ExtractionInformation>()
-            .Where(e => e.ID == ci.ExtractionInformation.ID).First();
-        Assert.That(ei.SelectSQL, Is.EqualTo(RemoteTable.GetFullyQualifiedName() + ".[Column1] as SOME_ALIAS"));
-        Assert.That(ci.ColumnInfo.TableInfo_ID, Is.Not.EqualTo(originalTableInfoID));
+        var ei = RepositoryLocator.CatalogueRepository
+            .GetAllObjects<ExtractionInformation>().First(e => e.ID == ci.ExtractionInformation.ID);
+        Assert.Multiple(() =>
+        {
+            Assert.That(ei.SelectSQL, Is.EqualTo(RemoteTable.GetFullyQualifiedName() + ".[Column1] as SOME_ALIAS"));
+            Assert.That(ci.ColumnInfo.TableInfo_ID, Is.Not.EqualTo(originalTableInfoID));
+        });
     }
 
     [Test]
     public void UpdateLocationWithMultipleExtractionIdentifiers()
     {
-        goodCatalogueID = RepositoryLocator.CatalogueRepository.GetAllObjects<CatalogueItem>()
-            .Where(c => c.Name == "Column2").First().Catalogue_ID;
-        var ci = RepositoryLocator.CatalogueRepository.GetAllObjects<CatalogueItem>()
-            .Where(c => c.Name == "Column2" && c.Catalogue_ID == goodCatalogueID).First();
+        goodCatalogueID = RepositoryLocator.CatalogueRepository
+            .GetAllObjects<CatalogueItem>().First(static c => c.Name == "Column2").Catalogue_ID;
+        var ci = RepositoryLocator.CatalogueRepository
+            .GetAllObjects<CatalogueItem>().First(c => c.Name == "Column2" && c.Catalogue_ID == goodCatalogueID);
 
-        var otherci = RepositoryLocator.CatalogueRepository.GetAllObjects<CatalogueItem>()
-            .Where(c => c.Name == "Column").First();
+        var otherci = RepositoryLocator.CatalogueRepository
+            .GetAllObjects<CatalogueItem>().First(static c => c.Name == "Column");
         var cmd1 = new ExecuteCommandAddNewCatalogueItem(new ThrowImmediatelyActivator(RepositoryLocator), ci.Catalogue,
             new List<ColumnInfo> { otherci.ColumnInfo }.ToArray());
         Assert.DoesNotThrow(() => cmd1.Execute());
@@ -221,9 +227,12 @@ public class ExecuteCommandUpdateCatalogueDataLocationTests : DatabaseTests
                 .Where(c => c.Catalogue_ID == goodCatalogueID && c.Name == "Column2").ToArray(), RemoteTable, null);
         Assert.DoesNotThrow(() => cmd.Execute());
         Assert.That(ci.ColumnInfo.Name, Is.EqualTo(RemoteTable.GetFullyQualifiedName() + ".[Column2]"));
-        var ei = RepositoryLocator.CatalogueRepository.GetAllObjects<ExtractionInformation>()
-            .Where(e => e.ID == ci.ExtractionInformation.ID).First();
-        Assert.That(ei.SelectSQL, Is.EqualTo(RemoteTable.GetFullyQualifiedName() + ".[Column2]"));
-        Assert.That(ci.ColumnInfo.TableInfo_ID, Is.Not.EqualTo(originalTableInfoID));
+        var ei = RepositoryLocator.CatalogueRepository
+            .GetAllObjects<ExtractionInformation>().First(e => e.ID == ci.ExtractionInformation.ID);
+        Assert.Multiple(() =>
+        {
+            Assert.That(ei.SelectSQL, Is.EqualTo($"{RemoteTable.GetFullyQualifiedName()}.[Column2]"));
+            Assert.That(ci.ColumnInfo.TableInfo_ID, Is.Not.EqualTo(originalTableInfoID));
+        });
     }
 }

@@ -21,7 +21,6 @@ namespace Rdmp.Core.Curation.Data.Overview;
 /// </summary>
 public class OverviewModel
 {
-
     private readonly ICatalogue _catalogue;
     private readonly IBasicActivateItems _activator;
     private Evaluation _evaluation;
@@ -98,6 +97,7 @@ public class OverviewModel
         return _dqeTable.AsEnumerable()
     .Sum(x => int.Parse(x["# Records"].ToString()));
     }
+        }
 
     public string GetLatestExtraction()
     {
@@ -130,9 +130,19 @@ public class OverviewModel
         }
         if (_evaluation != null)
         {
-            dt = PeriodicityState.GetPeriodicityForDataTableForEvaluation(_evaluation, "ALL", true);
-            dt.Columns.Add("# Records");
-            foreach (DataRow row in dt.Rows)
+            var logCollection = new ViewLogsCollection(loggingServer, new LogViewerFilter(LoggingTables.DataLoadRun));
+            var dataLoadRunSql = $"{logCollection.GetSql()} WHERE ID={maxDataLoadId}";
+            var logServer = loggingServer.Discover(DataAccessContext.InternalDataProcessing).Server;
+            using var loggingCon = logServer.GetConnection();
+            loggingCon.Open();
+            using var loggingCmd = logServer.GetCommand(dataLoadRunSql, loggingCon);
+            loggingCmd.CommandTimeout = 30000;
+            using var loggingDa = server.GetDataAdapter(loggingCmd);
+            dt.BeginLoadData();
+            loggingDa.Fill(dt);
+            dt.EndLoadData();
+            loggingCon.Dispose();
+            if (dt.Rows.Count > 0)
             {
                 row["# Records"] = int.Parse(row["Correct"].ToString()) + int.Parse(row["Wrong"].ToString()) + int.Parse(row["Missing"].ToString()) + int.Parse(row["InvalidatesRow"].ToString());
             }
@@ -143,6 +153,7 @@ public class OverviewModel
             dt.Columns.Remove("Missing");
             dt.Columns.Remove("InvalidatesRow");
         }
+
         return dt;
     }
 
