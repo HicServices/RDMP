@@ -113,7 +113,7 @@ $c - Configuration Extraction Directory  (e.g. c:\MyProject\Extractions\Extr_16)
         if (path.Contains("$p")) path = path.Replace("$p", _command.Project.ExtractionDirectory);
         if (path.Contains("$n")) path = path.Replace("$n", _command.Project.ProjectNumber.ToString());
 
-        if (path.Contains("$c") )
+        if (path.Contains("$c"))
             path = path.Replace("$c",
                 new ExtractionDirectory(_command.Project.ExtractionDirectory, _command.Configuration)
                     .ExtractionDirectoryInfo.FullName);
