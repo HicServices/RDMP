@@ -48,4 +48,7 @@ public interface IProcessTask : IRevertable, IArgumentHost, IOrderable, IDisable
     /// </summary>
 #nullable enable
     string? SerialisableConfiguration { get; }
+
+
+    int LoadMetadataVersion { get; }
 }

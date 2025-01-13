@@ -47,6 +47,8 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
 #nullable enable
     private string? _SerialisableConfiguration;
 #nullable disable
+    private int _loadMetadataVersion;
+
     /// <summary>
     /// The load the process task exists as part of
     /// </summary>
@@ -118,6 +120,9 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
         get => _SerialisableConfiguration;
         set => SetField(ref _SerialisableConfiguration, value);
     }
+
+
+    public int LoadMetadataVersion { get => _loadMetadataVersion; set => SetField(ref _loadMetadataVersion, value); }
 #nullable disable
 
     #endregion
@@ -158,7 +163,8 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
 
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            { "LoadMetadata_ID", parent.ID },
+            { "LoadMetadata_ID", parent.RootLoadMetadata_ID??parent.ID },
+            { "LoadMetadataVersion", parent.RootLoadMetadata_ID != null?parent.ID:0 },
             { "ProcessTaskType", ProcessTaskType.Executable.ToString() },
             { "LoadStage", stage },
             { "Name", $"New Process{Guid.NewGuid()}" },
@@ -180,7 +186,8 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
 
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            { "LoadMetadata_ID", parent.ID },
+             { "LoadMetadata_ID", parent.RootLoadMetadata_ID??parent.ID },
+            { "LoadMetadataVersion", parent.RootLoadMetadata_ID != null?parent.ID:0 },
             { "ProcessTaskType", ProcessTaskType.Executable.ToString() },
             { "LoadStage", stage },
             { "Name", $"New Process{Guid.NewGuid()}" },
@@ -200,7 +207,7 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
         Path = r["Path"] as string;
         Name = r["Name"] as string;
         Order = int.Parse(r["Order"].ToString());
-
+        LoadMetadataVersion = int.Parse(r["LoadMetadataVersion"].ToString());
         if (Enum.TryParse(r["ProcessTaskType"] as string, out ProcessTaskType processTaskType))
             ProcessTaskType = processTaskType;
         else
@@ -212,7 +219,7 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
             throw new Exception($"Could not parse LoadStage:{r["LoadStage"]}");
 
         IsDisabled = Convert.ToBoolean(r["IsDisabled"]);
-        if(r["SerialisableConfiguration"] is not null)
+        if (r["SerialisableConfiguration"] is not null)
             SerialisableConfiguration = r["SerialisableConfiguration"].ToString();
     }
 

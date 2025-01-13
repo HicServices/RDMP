@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
+using MongoDB.Driver;
 using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.ImportExport;
@@ -61,6 +62,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     private string _folder;
     private DateTime? _lastLoadTime;
     private bool _allowReservedPrefix;
+    private int? _rootLoadMetadata_ID;
 
     public string DefaultForLoadingPath = Path.Combine("Data", "ForLoading");
     public string DefaultForArchivingPath = Path.Combine("Data", "ForArchiving");
@@ -192,6 +194,9 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         set => SetField(ref _lastLoadTime, value);
     }
 
+    /// <inheritdoc/>
+    public int? RootLoadMetadata_ID { get => _rootLoadMetadata_ID; private set => SetField(ref _rootLoadMetadata_ID, value); }
+
     #endregion
 
 
@@ -231,16 +236,17 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="name"></param>
-    public LoadMetadata(ICatalogueRepository repository, string name = null)
+    /// <param name="rootLoadMetadata"></param>
+    public LoadMetadata(ICatalogueRepository repository, string name = null, LoadMetadata rootLoadMetadata = null)
     {
         name ??= $"NewLoadMetadata{Guid.NewGuid()}";
-
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
             { "Name", name },
             { "IgnoreTrigger", false /*todo could be system global default here*/ },
             { "Folder", FolderHelper.Root },
-            {"LastLoadTime", null }
+            {"LastLoadTime", null },
+            {"RootLoadMetadata_ID", rootLoadMetadata is null? null: rootLoadMetadata.ID }
         });
     }
 
@@ -261,6 +267,29 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         Folder = r["Folder"] as string ?? FolderHelper.Root;
         LastLoadTime = string.IsNullOrWhiteSpace(r["LastLoadTime"].ToString()) ? null : DateTime.Parse(r["LastLoadTime"].ToString());
         AllowReservedPrefix = ObjectToNullableBool(r["AllowReservedPrefix"]) ?? false;
+        RootLoadMetadata_ID = ObjectToNullableInt(r["RootLoadMetadata_ID"]);
+    }
+
+
+    public LoadMetadata Clone()
+    {
+        return new LoadMetadata()
+        {
+            LocationOfForLoadingDirectory = LocationOfForLoadingDirectory,
+            LocationOfForArchivingDirectory = LocationOfForArchivingDirectory,
+            LocationOfCacheDirectory = LocationOfCacheDirectory,
+            LocationOfExecutablesDirectory = LocationOfExecutablesDirectory,
+            AnonymisationEngineClass = AnonymisationEngineClass,
+            Name = Name,
+            Description = Description,
+            CacheArchiveType = CacheArchiveType,
+            AllowReservedPrefix = AllowReservedPrefix,
+            LastLoadTime = LastLoadTime,
+            OverrideRAWServer_ID = OverrideRAWServer_ID,
+            IgnoreTrigger = IgnoreTrigger,
+            Folder = Folder,
+            RootLoadMetadata_ID = RootLoadMetadata_ID != null?RootLoadMetadata_ID: this.ID
+        };
     }
 
     internal LoadMetadata(ShareManager shareManager, ShareDefinition shareDefinition) : base()
