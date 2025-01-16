@@ -87,6 +87,21 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
     private bool _isColdStorageDataset;
     private int? _liveLoggingServerID;
 
+    private string _shortDescription;
+    private string _dataType;
+    private string _dataSubtype;
+    private string _dataSource;
+    private string _dataSourceSetting;
+    private DateTime? _datasetReleaseDate;
+    private DateTime? _startDate;
+    private DateTime? _endDate;
+    private string _updateLag;
+    private string _juristiction;
+    private string _dataController;
+    private string _dataProcessor;
+    private string _controlledVocabulary;
+    private string _associatedPeople;
+
     private Lazy<CatalogueItem[]> _knownCatalogueItems;
 
 
@@ -487,6 +502,35 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
         get => _datasetStartDate;
         set => SetField(ref _datasetStartDate, value);
     }
+    /// <inheritdoc/>
+
+    public string ShortDescription { get => _shortDescription; set => SetField(ref _shortDescription,value); }
+    /// <inheritdoc/>
+    public string DataType { get => _dataType; set => SetField(ref _dataType, value); }
+    /// <inheritdoc/>
+    public string DataSubtype { get => _dataSubtype; set => SetField(ref _dataSubtype, value); }
+    /// <inheritdoc/>
+    public string DataSource { get => _dataSource; set => SetField(ref _dataSource, value); }
+    /// <inheritdoc/>
+    public string DataSourceSetting { get => _dataSourceSetting; set => SetField(ref _dataSourceSetting, value); }
+    /// <inheritdoc/>
+    public DateTime? DatasetReleaseDate { get => _datasetReleaseDate; set => SetField(ref _datasetReleaseDate, value); }
+    /// <inheritdoc/>
+    public DateTime? StartDate { get => _startDate; set => SetField(ref _startDate, value); }
+    /// <inheritdoc/>
+    public DateTime? EndDate { get => _endDate; set => SetField(ref _endDate, value); }
+    /// <inheritdoc/>
+    public string UpdateLag { get => _updateLag; set => SetField(ref _updateLag, value); }
+    /// <inheritdoc/>
+    public string Juristiction { get => _juristiction; set => SetField(ref _juristiction, value); }
+    /// <inheritdoc/>
+    public string DataController { get => _dataController; set => SetField(ref _dataController, value); }
+    /// <inheritdoc/>
+    public string DataProcessor { get => _dataProcessor; set => SetField(ref _dataProcessor, value); }
+    /// <inheritdoc/>
+    public string ControlledVocabulary { get => _controlledVocabulary; set => SetField(ref _controlledVocabulary, value); }
+    /// <inheritdoc/>
+    public string AssociatedPeople { get => _associatedPeople; set => SetField(ref _associatedPeople, value); }
 
     #endregion
 
@@ -530,7 +574,7 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
             ? null
             : Repository.GetObjectByID<ExtractionInformation>(PivotCategory_ExtractionInformation_ID.Value);
 
-    #endregion
+      #endregion
 
     #region Enums
 

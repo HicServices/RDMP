@@ -1,0 +1,65 @@
+﻿using MongoDB.Driver;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace Rdmp.UI.SimpleControls
+{
+    public partial class EditableLabelUI : UserControl
+    {
+        private string _value = "";
+        private string _title = "";
+
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public string TextValue
+        {
+            get => _value;
+            set
+            {
+                _value = value;
+                lblEditable.Text = _value;
+                pictureBox1.Location = new Point(lblEditable.Location.X + lblEditable.Width + 5, pictureBox1.Location.Y);
+                //pictureBox1.Location.X = lblEditable.Location.X + lblEditable.Width+5;
+            }
+        }
+
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public string Title
+        {
+            get => _title;
+            set
+            {
+                _title = value;
+                lblTitle.Text = _title;
+            }
+        }
+
+        public EditableLabelUI()
+        {
+            InitializeComponent();
+            tbEditable.Visible = false;
+            lblEditable.Visible = true;
+        }
+
+        private void tbEditable_Lostfocus(object sender, EventArgs e)
+        {
+            TextValue = tbEditable.Text;
+            tbEditable.Visible = false;
+            lblEditable.Visible = true;
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+            tbEditable.Text = TextValue;
+            lblEditable.Visible = false;
+            tbEditable.Visible = true;
+            tbEditable.Focus();
+        }
+    }
+}

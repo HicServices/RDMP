@@ -93,6 +93,8 @@ namespace Rdmp.UI.MainFormUITabs
             label25 = new Label();
             label3 = new Label();
             panel1 = new Panel();
+            lbDatasetslbl = new Label();
+            lbDatasets = new Label();
             tableLayoutPanel2 = new TableLayoutPanel();
             tbSourceOfDataCollection = new TextBox();
             tbEthicsApprover = new TextBox();
@@ -112,8 +114,9 @@ namespace Rdmp.UI.MainFormUITabs
             c_tbGeographicalCoverage = new TextBox();
             ticketingControl1 = new TicketingControlUI();
             errorProvider1 = new ErrorProvider(components);
-            lbDatasetslbl = new Label();
-            lbDatasets = new Label();
+            panel2 = new Panel();
+            editableCatalogueName = new SimpleControls.EditableLabelUI();
+            editableFolder = new SimpleControls.EditableLabelUI();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
@@ -122,6 +125,7 @@ namespace Rdmp.UI.MainFormUITabs
             flowLayoutPanel1.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)errorProvider1).BeginInit();
+            panel2.SuspendLayout();
             SuspendLayout();
             // 
             // tbDatasetStartDate
@@ -625,6 +629,7 @@ namespace Rdmp.UI.MainFormUITabs
             // 
             // splitContainer1.Panel1
             // 
+            splitContainer1.Panel1.Controls.Add(panel2);
             splitContainer1.Panel1.Controls.Add(tableLayoutPanel1);
             splitContainer1.Panel1MinSize = 200;
             // 
@@ -657,7 +662,7 @@ namespace Rdmp.UI.MainFormUITabs
             tableLayoutPanel1.Controls.Add(panel1, 1, 7);
             tableLayoutPanel1.Controls.Add(lbDatasetslbl, 0, 8);
             tableLayoutPanel1.Controls.Add(lbDatasets, 1, 8);
-            tableLayoutPanel1.Location = new System.Drawing.Point(3, 3);
+            tableLayoutPanel1.Location = new System.Drawing.Point(31, 179);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.Padding = new Padding(0, 0, 5, 0);
             tableLayoutPanel1.RowCount = 9;
@@ -827,6 +832,24 @@ namespace Rdmp.UI.MainFormUITabs
             panel1.Size = new System.Drawing.Size(366, 106);
             panel1.TabIndex = 153;
             // 
+            // lbDatasetslbl
+            // 
+            lbDatasetslbl.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            lbDatasetslbl.AutoSize = true;
+            lbDatasetslbl.Location = new System.Drawing.Point(72, 257);
+            lbDatasetslbl.Name = "lbDatasetslbl";
+            lbDatasetslbl.Size = new System.Drawing.Size(54, 15);
+            lbDatasetslbl.TabIndex = 160;
+            lbDatasetslbl.Text = "Datasets:";
+            // 
+            // lbDatasets
+            // 
+            lbDatasets.AutoSize = true;
+            lbDatasets.Location = new System.Drawing.Point(132, 257);
+            lbDatasets.Name = "lbDatasets";
+            lbDatasets.Size = new System.Drawing.Size(0, 15);
+            lbDatasets.TabIndex = 161;
+            // 
             // tableLayoutPanel2
             // 
             tableLayoutPanel2.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
@@ -928,7 +951,7 @@ namespace Rdmp.UI.MainFormUITabs
             tableLayoutPanel2.RowStyles.Add(new RowStyle());
             tableLayoutPanel2.RowStyles.Add(new RowStyle());
             tableLayoutPanel2.RowStyles.Add(new RowStyle());
-            tableLayoutPanel2.Size = new System.Drawing.Size(456, 1475);
+            tableLayoutPanel2.Size = new System.Drawing.Size(371, 1475);
             tableLayoutPanel2.TabIndex = 194;
             // 
             // tbSourceOfDataCollection
@@ -1119,29 +1142,33 @@ namespace Rdmp.UI.MainFormUITabs
             ticketingControl1.Name = "ticketingControl1";
             ticketingControl1.Size = new System.Drawing.Size(350, 57);
             ticketingControl1.TabIndex = 8;
-            ticketingControl1.TicketText = "";
             // 
             // errorProvider1
             // 
             errorProvider1.ContainerControl = this;
             // 
-            // lbDatasetslbl
+            // panel2
             // 
-            lbDatasetslbl.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            lbDatasetslbl.AutoSize = true;
-            lbDatasetslbl.Location = new System.Drawing.Point(72, 257);
-            lbDatasetslbl.Name = "lbDatasetslbl";
-            lbDatasetslbl.Size = new System.Drawing.Size(54, 15);
-            lbDatasetslbl.TabIndex = 160;
-            lbDatasetslbl.Text = "Datasets:";
+            panel2.Controls.Add(editableFolder);
+            panel2.Controls.Add(editableCatalogueName);
+            panel2.Location = new System.Drawing.Point(3, 3);
+            panel2.Name = "panel2";
+            panel2.Size = new System.Drawing.Size(541, 170);
+            panel2.TabIndex = 161;
             // 
-            // lbDatasets
+            // editableCatalogueName
             // 
-            lbDatasets.AutoSize = true;
-            lbDatasets.Location = new System.Drawing.Point(132, 257);
-            lbDatasets.Name = "lbDatasets";
-            lbDatasets.Size = new System.Drawing.Size(0, 15);
-            lbDatasets.TabIndex = 161;
+            editableCatalogueName.Location = new System.Drawing.Point(0, 0);
+            editableCatalogueName.Name = "editableCatalogueName";
+            editableCatalogueName.Size = new System.Drawing.Size(232, 50);
+            editableCatalogueName.TabIndex = 0;
+            // 
+            // editableFolder
+            // 
+            editableFolder.Location = new System.Drawing.Point(3, 56);
+            editableFolder.Name = "editableFolder";
+            editableFolder.Size = new System.Drawing.Size(232, 50);
+            editableFolder.TabIndex = 1;
             // 
             // CatalogueUI
             // 
@@ -1162,6 +1189,7 @@ namespace Rdmp.UI.MainFormUITabs
             tableLayoutPanel2.ResumeLayout(false);
             tableLayoutPanel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)errorProvider1).EndInit();
+            panel2.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -1248,5 +1276,8 @@ namespace Rdmp.UI.MainFormUITabs
         private TableLayoutPanel tableLayoutPanel2;
         private Label lbDatasetslbl;
         private Label lbDatasets;
+        private Panel panel2;
+        private SimpleControls.EditableLabelUI editableCatalogueName;
+        private SimpleControls.EditableLabelUI editableFolder;
     }
 }

@@ -140,7 +140,10 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
             lbDatasets.Visible = false;
             lbDatasetslbl.Visible = false;
         }
-
+        this.editableCatalogueName.TextValue = _catalogue.Name;
+        this.editableCatalogueName.Title = "Name";
+        this.editableFolder.TextValue = _catalogue.Folder;
+        this.editableFolder.Title = "Folder";
         RefreshUIFromDatabase();
     }
 
