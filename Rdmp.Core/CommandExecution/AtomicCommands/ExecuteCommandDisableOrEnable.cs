@@ -8,7 +8,9 @@ using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.ReusableLibraryCode;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
@@ -72,8 +74,18 @@ public class ExecuteCommandDisableOrEnable : BasicCommandExecution, IAtomicComma
 
         foreach (var d in _targets)
         {
-            d.IsDisabled = !d.IsDisabled;
-            d.SaveToDatabase();
+            var x = d.GetType();
+            if (d.GetType() == typeof(ProcessTask))
+            {
+                var newVersion = (IDisableable)((IVersionable)d).SaveNewVersion();
+                newVersion.IsDisabled = true;
+                newVersion.SaveToDatabase();
+            }
+            else
+            {
+                d.IsDisabled = !d.IsDisabled;
+                d.SaveToDatabase();
+            }
         }
 
         var toRefresh = _targets.FirstOrDefault();

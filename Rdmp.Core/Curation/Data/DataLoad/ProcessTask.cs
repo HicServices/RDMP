@@ -16,6 +16,7 @@ using Rdmp.Core.Curation.Data.Serialization;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Annotations;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 
@@ -47,7 +48,6 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
 #nullable enable
     private string? _SerialisableConfiguration;
 #nullable disable
-    private int _loadMetadataVersion;
 
     /// <summary>
     /// The load the process task exists as part of
@@ -122,7 +122,6 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
     }
 
 
-    public int LoadMetadataVersion { get => _loadMetadataVersion; set => SetField(ref _loadMetadataVersion, value); }
 #nullable disable
 
     #endregion
@@ -207,7 +206,6 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
         Path = r["Path"] as string;
         Name = r["Name"] as string;
         Order = int.Parse(r["Order"].ToString());
-        LoadMetadataVersion = int.Parse(r["LoadMetadataVersion"].ToString());
         if (Enum.TryParse(r["ProcessTaskType"] as string, out ProcessTaskType processTaskType))
             ProcessTaskType = processTaskType;
         else
@@ -449,5 +447,25 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
                                    $"Could not find a ProcessTaskArgument called '{parameterName}', have you called CreateArgumentsForClassIfNotExists<T> yet?");
         matchingArgument.SetValue(o);
         matchingArgument.SaveToDatabase();
+    }
+
+
+    public ProcessTask Clone(LoadMetadata lmd)
+    {
+        var pt = new ProcessTask(this.CatalogueRepository, lmd, this.LoadStage) {
+            ProcessTaskType = this.ProcessTaskType,
+            Order = this.Order,
+            IsDisabled = this.IsDisabled,
+            SerialisableConfiguration = this.SerialisableConfiguration,
+            Path = this.Path,
+            Name= this.Name,
+        };
+        pt.LoadMetadata_ID = lmd.ID;
+        pt.SaveToDatabase();
+        foreach(var pta in ProcessTaskArguments)
+        {
+            pta.ShallowClone(pt);
+        }
+        return pt;
     }
 }

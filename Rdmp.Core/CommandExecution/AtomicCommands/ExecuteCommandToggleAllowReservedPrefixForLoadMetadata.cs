@@ -24,6 +24,7 @@ public class ExecuteCommandToggleAllowReservedPrefixForLoadMetadata : BasicComma
     public override void Execute()
     {
         base.Execute();
+        _loadMetadata.Clone();
         _loadMetadata.AllowReservedPrefix = !_loadMetadata.AllowReservedPrefix;
         _loadMetadata.SaveToDatabase();
     }

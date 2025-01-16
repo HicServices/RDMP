@@ -998,8 +998,8 @@ public class CatalogueChildProvider : ICoreChildProvider
     private void AddChildren(LoadStageNode loadStageNode, DescendancyList descendancy)
     {
         var tasks = AllProcessTasks.Where(
-                p => p.LoadMetadata_ID == loadStageNode.LoadMetadata.ID && p.LoadStage == loadStageNode.LoadStage)
-            .OrderBy(o => o.Order).ToArray();
+               p => p.LoadMetadata_ID == loadStageNode.LoadMetadata.ID && p.LoadStage == loadStageNode.LoadStage)
+           .OrderBy(o => o.Order).ToArray();
 
         foreach (var processTask in tasks)
             AddChildren(processTask, descendancy.Add(processTask));

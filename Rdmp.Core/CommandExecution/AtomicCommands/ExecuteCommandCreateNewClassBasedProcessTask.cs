@@ -72,7 +72,7 @@ public class ExecuteCommandCreateNewClassBasedProcessTask : BasicCommandExecutio
             else
                 return;
         }
-
+        _loadMetadata.Clone();
         var newTask = new ProcessTask(BasicActivator.RepositoryLocator.CatalogueRepository, _loadMetadata, _loadStage)
         {
             Path = _type.FullName,
