@@ -3,7 +3,7 @@ using Rdmp.UI.Refreshing;
 
 namespace Rdmp.UI.Collections
 {
-    partial class CohortIdentificationCollectionUI : ILifetimeSubscriber
+    partial class CohortIdentificationCollectionUI
     {
         /// <summary> 
         /// Required designer variable.

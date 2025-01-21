@@ -80,6 +80,10 @@ public class RefreshBus
     private void RefreshSubscriptions(object sender, RefreshObjectEventArgs e)
     {
         var o = e.Object;
+        var x = o.GetType().ToString();
+        //todo
+        // there are a lof of subscriptions to the wrong type i.e. "dataset" not "rdmp.core.dataset" - fix those
+        //then check that they all update AS EXPECTED
         if (subscribers.TryGetValue(o.GetType().ToString(), out var subs))
         {
             foreach (var sub in subs)
@@ -102,9 +106,9 @@ public class RefreshBus
         {
             RefreshObject += RefreshSubscriptions;
         }
-        //RefreshObject += subscriber.RefreshBus_RefreshObject;
-        if (subs is null) subs = new List<IRefreshBusSubscriber>();
+        subs ??= [];
         subs.Add(subscriber);
+        subscribers[typeToWatch]=subs;
     }
 
     public void Unsubscribe(IRefreshBusSubscriber unsubscriber, string typeToWatch)
@@ -117,11 +121,8 @@ public class RefreshBus
 
         }
 
-        //RefreshObject -= unsubscriber.RefreshBus_RefreshObject;
-        if (subs is not null)
-        {
-            subs.Remove(unsubscriber);
-        }
+        subs?.Remove(unsubscriber);
+        subscribers[typeToWatch] = subs;
     }
 
 
@@ -135,10 +136,6 @@ public class RefreshBus
         {
             if (subs.Contains(subscriber)) return;
         }
-
-        ////ignore double requests for subscription
-        //if (subscribers.Contains(subscriber))
-        //return;
 
         if (c is not ContainerControl containerControl)
             throw new ArgumentOutOfRangeException(nameof(c));

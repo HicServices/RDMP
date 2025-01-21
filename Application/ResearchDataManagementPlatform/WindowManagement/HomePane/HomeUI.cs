@@ -12,6 +12,7 @@ using Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
@@ -39,9 +40,12 @@ public partial class HomeUI : RDMPUserControl, ILifetimeSubscriber
         InitializeComponent();
     }
 
-    private void BuildCommandLists()
+    private void BuildCommandLists(DatabaseEntity singularRefresh = null)
     {
-        boxCatalogue.SetUp(Activator, "Catalogue", typeof(Catalogue), _uiFactory,
+        var singularRefreshType = singularRefresh?.GetType();
+        if (singularRefreshType is null || singularRefreshType == typeof(Catalogue))
+        {
+            boxCatalogue.SetUp(Activator, "Catalogue", typeof(Catalogue), _uiFactory,
             new ExecuteCommandCreateNewCatalogueByImportingFileUI(_activator)
             {
                 OverrideCommandName = GlobalStrings.FromFile
@@ -50,10 +54,15 @@ public partial class HomeUI : RDMPUserControl, ILifetimeSubscriber
             {
                 OverrideCommandName = GlobalStrings.FromDatabase
             });
-        boxProject.SetUp(Activator, "Project", typeof(Project), _uiFactory,
+        }
+        if (singularRefreshType is null || singularRefreshType == typeof(Project))
+        {
+            boxProject.SetUp(Activator, "Project", typeof(Project), _uiFactory,
             new ExecuteCommandCreateNewDataExtractionProject(_activator));
-
-        boxCohort.SetUp(Activator, "Cohort Builder", typeof(CohortIdentificationConfiguration), _uiFactory,
+        }
+        if (singularRefreshType is null || singularRefreshType == typeof(CohortIdentificationConfiguration))
+        {
+            boxCohort.SetUp(Activator, "Cohort Builder", typeof(CohortIdentificationConfiguration), _uiFactory,
             new ExecuteCommandCreateNewCohortIdentificationConfiguration(_activator)
             {
                 OverrideCommandName = "Cohort Builder Query",
@@ -64,8 +73,12 @@ public partial class HomeUI : RDMPUserControl, ILifetimeSubscriber
                 OverrideCommandName = GlobalStrings.FromFile
             }
         );
-        boxDataLoad.SetUp(Activator, "Data Load", typeof(LoadMetadata), _uiFactory,
+        }
+        if (singularRefreshType is null || singularRefreshType == typeof(LoadMetadata))
+        {
+            boxDataLoad.SetUp(Activator, "Data Load", typeof(LoadMetadata), _uiFactory,
             new ExecuteCommandCreateNewLoadMetadata(_activator));
+        }
     }
 
     protected override void OnLoad(EventArgs e)
@@ -73,14 +86,16 @@ public partial class HomeUI : RDMPUserControl, ILifetimeSubscriber
         base.OnLoad(e);
 
         SetItemActivator(_activator);
-
+        _activator.RefreshBus.EstablishLifetimeSubscription(this, typeof(Catalogue).ToString());
+        _activator.RefreshBus.EstablishLifetimeSubscription(this, typeof(Project).ToString());
+        _activator.RefreshBus.EstablishLifetimeSubscription(this, typeof(CohortIdentificationConfiguration).ToString());
+        _activator.RefreshBus.EstablishLifetimeSubscription(this, typeof(LoadMetadata).ToString());
         BuildCommandLists();
-
-        //_activator.RefreshBus.EstablishLifetimeSubscription(this);
     }
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {
-        BuildCommandLists();
+
+        BuildCommandLists(e.Object);
     }
 }

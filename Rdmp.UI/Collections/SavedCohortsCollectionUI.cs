@@ -50,7 +50,7 @@ public partial class SavedCohortsCollectionUI : RDMPCollectionUI, ILifetimeSubsc
 
         SetupToolStrip();
 
-        //Activator.RefreshBus.EstablishLifetimeSubscription(this);
+        Activator.RefreshBus.EstablishLifetimeSubscription(this, RDMPCollection.SavedCohorts.ToString());//to test
 
         CommonTreeFunctionality.SetupColumnTracking(olvName, new Guid("6857032b-4b28-4f92-8b38-f532f11c7a44"));
         CommonTreeFunctionality.SetupColumnTracking(olvVersion, new Guid("637fcb62-8395-4b36-a5ce-76ed3194b4e0"));

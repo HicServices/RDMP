@@ -45,7 +45,6 @@ public partial class FavouritesCollectionUI : RDMPCollectionUI, ILifetimeSubscri
                 new ExecuteCommandAddFavourite(a),
                 new ExecuteCommandClearFavourites(a)
             };
-        //Activator.RefreshBus.EstablishLifetimeSubscription(this);
         Activator.RefreshBus.EstablishLifetimeSubscription(this, typeof(Favourite).ToString());
 
 
