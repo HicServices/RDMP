@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Windows.Forms;
 using Rdmp.UI.LocationsMenu.Ticketing;
 
 namespace Rdmp.UI.MainFormUITabs
@@ -194,6 +195,7 @@ namespace Rdmp.UI.MainFormUITabs
             tabControl1.SelectedIndex = 0;
             tabControl1.Size = new System.Drawing.Size(881, 923);
             tabControl1.TabIndex = 0;
+            tabControl1.SelectedIndexChanged += tabControl1_SelectedIndexChanged;
             // 
             // tabPage1
             // 

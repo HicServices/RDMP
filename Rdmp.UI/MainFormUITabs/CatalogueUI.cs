@@ -5,10 +5,12 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using NPOI.HSSF.Record.Chart;
 using Rdmp.Core;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
@@ -148,30 +150,15 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
         this.editableFolder.Title = "Folder";
         this.editableFolder.Icon = CatalogueIcons.CatalogueFolder.ImageToBitmap();
         RefreshUIFromDatabase();
+        
     }
 
     protected override void SetBindings(BinderWithErrorProviderFactory rules, Catalogue databaseObject)
     {
         base.SetBindings(rules, databaseObject);
+        tabControl1_SelectedIndexChanged(this.tabControl1, null);
 
-
-        Bind(tbAbstract, "Text", "ShortDescription", c => c.ShortDescription);
-        Bind(tbDescription, "Text", "Description", c => c.Description);
-        Bind(tbKeywords, "Text", "Search_keywords", c => c.Search_keywords);
-        Bind(tbDataSource,"Text","DataSource", c => c.DataSource);
-        Bind(tbDataSourceSetting, "Text", "DataSourceSetting", c => c.DataSourceSetting);
-        Bind(tbGeoCoverage, "Text", "Geographical_coverage", c => c.Geographical_coverage);
-        //Bind(dtpStart, "Value", "StartDate", c => c.StartDate);
-        //Bind(dtpEndDate, "Value", "EndDate", c => c.EndDate);
-        Bind(tbAccessContact, "Text", "Administrative_contact_email", c => c.Administrative_contact_email);
-        Bind(tbDataController, "Text", "DataController", c => c.DataController);
-        Bind(tbDataProcessor, "Text", "DataProcessor", c => c.DataProcessor);
-        Bind(tbJuristiction, "Text", "Juristiction", c => c.Juristiction);
-        Bind(tbPeople, "Text", "AssociatedPeople", c => c.AssociatedPeople);
-        Bind(tbDOI, "Text", "Doi", c => c.Doi);
-        Bind(tbInitialReleaseDate, "Text", "DatasetReleaseDate", c => c.DatasetReleaseDate);
-        Bind(tbUpdateLag, "Text", "UpdateLag", c => c.UpdateLag);
-
+        //--------------------------------
         //Bind(tbAcronym, "Text", "Acronym", c => c.Acronym);
         //Bind(tbName, "Text", "Name", c => c.Name);
         //Bind(c_tbID, "Text", "ID", c => c.ID);
@@ -308,6 +295,67 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
     {
 
     }
+
+    private List<int> setTabBindings = new();
+
+    private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        var tabControl = (TabControl)sender;
+        var selectedIndex = tabControl.SelectedIndex;
+        if (setTabBindings.Contains(selectedIndex)) return;
+        switch (selectedIndex)
+        {
+            case 0:
+                Bind(tbAbstract, "Text", "ShortDescription", c => c.ShortDescription);
+                Bind(tbDescription, "Text", "Description", c => c.Description);
+                break;
+            case 1:
+                Bind(tbKeywords, "Text", "Search_keywords", c => c.Search_keywords);
+                Bind(tbDataSource, "Text", "DataSource", c => c.DataSource);
+                Bind(tbDataSourceSetting, "Text", "DataSourceSetting", c => c.DataSourceSetting);
+                break;
+            case 2:
+                Bind(tbGeoCoverage, "Text", "Geographical_coverage", c => c.Geographical_coverage);
+                //Bind(dtpStart, "Value", "StartDate", c => c.StartDate);
+                //Bind(dtpEndDate, "Value", "EndDate", c => c.EndDate);
+                break;
+            case 3:
+                Bind(tbAccessContact, "Text", "Administrative_contact_email", c => c.Administrative_contact_email);
+                Bind(tbDataController, "Text", "DataController", c => c.DataController);
+                Bind(tbDataProcessor, "Text", "DataProcessor", c => c.DataProcessor);
+                Bind(tbJuristiction, "Text", "Juristiction", c => c.Juristiction);
+                break;
+            case 4:
+                Bind(tbPeople, "Text", "AssociatedPeople", c => c.AssociatedPeople);
+                Bind(tbDOI, "Text", "Doi", c => c.Doi);
+                break;
+            case 5:
+                Bind(tbInitialReleaseDate, "Text", "DatasetReleaseDate", c => c.DatasetReleaseDate);
+                Bind(tbUpdateLag, "Text", "UpdateLag", c => c.UpdateLag);
+                break;
+            default:
+                break;
+        }
+        setTabBindings.Add(selectedIndex);
+
+        //Bind(tbAbstract, "Text", "ShortDescription", c => c.ShortDescription);
+        //Bind(tbDescription, "Text", "Description", c => c.Description);
+        //Bind(tbKeywords, "Text", "Search_keywords", c => c.Search_keywords);
+        //Bind(tbDataSource, "Text", "DataSource", c => c.DataSource);
+        //Bind(tbDataSourceSetting, "Text", "DataSourceSetting", c => c.DataSourceSetting);
+        //Bind(tbGeoCoverage, "Text", "Geographical_coverage", c => c.Geographical_coverage);
+        ////Bind(dtpStart, "Value", "StartDate", c => c.StartDate);
+        ////Bind(dtpEndDate, "Value", "EndDate", c => c.EndDate);
+        //Bind(tbAccessContact, "Text", "Administrative_contact_email", c => c.Administrative_contact_email);
+        //Bind(tbDataController, "Text", "DataController", c => c.DataController);
+        //Bind(tbDataProcessor, "Text", "DataProcessor", c => c.DataProcessor);
+        //Bind(tbJuristiction, "Text", "Juristiction", c => c.Juristiction);
+        //Bind(tbPeople, "Text", "AssociatedPeople", c => c.AssociatedPeople);
+        //Bind(tbDOI, "Text", "Doi", c => c.Doi);
+        //Bind(tbInitialReleaseDate, "Text", "DatasetReleaseDate", c => c.DatasetReleaseDate);
+        //Bind(tbUpdateLag, "Text", "UpdateLag", c => c.UpdateLag);
+    }
+
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<CatalogueUI_Design, UserControl>))]
