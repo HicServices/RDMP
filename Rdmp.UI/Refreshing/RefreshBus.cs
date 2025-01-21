@@ -74,38 +74,71 @@ public class RefreshBus
         }
     }
 
-    private HashSet<IRefreshBusSubscriber> subscribers = new();
+    private Dictionary<string, List<IRefreshBusSubscriber>> subscribers = new();
 
-    public void Subscribe(IRefreshBusSubscriber subscriber)
+
+    private void RefreshSubscriptions(object sender, RefreshObjectEventArgs e)
     {
-        if (subscribers.Contains(subscriber))
-            throw new SubscriptionException(
-                $"You cannot subscribe to the RefreshBus more than once. Subscriber '{subscriber}' just attempted to register a second time its type was({subscriber.GetType().Name})");
-
-        RefreshObject += subscriber.RefreshBus_RefreshObject;
-
-        subscribers.Add(subscriber);
+        var o = e.Object;
+        if (subscribers.TryGetValue(o.GetType().ToString(), out var subs))
+        {
+            foreach (var sub in subs)
+            {
+                sub.RefreshBus_RefreshObject(sender, e);
+            }
+        }
     }
 
-    public void Unsubscribe(IRefreshBusSubscriber unsubscriber)
+    public void Subscribe(IRefreshBusSubscriber subscriber, string typeToWatch)
     {
-        if (!subscribers.Contains(unsubscriber))
-            throw new SubscriptionException(
-                $"You cannot unsubscribe from the RefreshBus if never subscribed in the first place. '{unsubscriber}' just attempted to unsubscribe when it wasn't subscribed in the first place its type was ({unsubscriber.GetType().Name})");
+        if (subscribers.TryGetValue(typeToWatch, out var subs))
+        {
+            if (subs.Contains(subscriber))
+                throw new SubscriptionException(
+                    $"You cannot subscribe to the RefreshBus more than once. Subscriber '{subscriber}' just attempted to register a second time its type was({subscriber.GetType().Name})");
+        }
 
-        RefreshObject -= unsubscriber.RefreshBus_RefreshObject;
-        subscribers.Remove(unsubscriber);
+        if (RefreshObject == null)
+        {
+            RefreshObject += RefreshSubscriptions;
+        }
+        //RefreshObject += subscriber.RefreshBus_RefreshObject;
+        if (subs is null) subs = new List<IRefreshBusSubscriber>();
+        subs.Add(subscriber);
     }
 
-    public void EstablishLifetimeSubscription(ILifetimeSubscriber c)
+    public void Unsubscribe(IRefreshBusSubscriber unsubscriber, string typeToWatch)
+    {
+        if (subscribers.TryGetValue(typeToWatch, out var subs))
+        {
+            if (!subs.Contains(unsubscriber))
+                throw new SubscriptionException(
+                    $"You cannot unsubscribe from the RefreshBus if never subscribed in the first place. '{unsubscriber}' just attempted to unsubscribe when it wasn't subscribed in the first place its type was ({unsubscriber.GetType().Name})");
+
+        }
+
+        //RefreshObject -= unsubscriber.RefreshBus_RefreshObject;
+        if (subs is not null)
+        {
+            subs.Remove(unsubscriber);
+        }
+    }
+
+
+    public void EstablishLifetimeSubscription(ILifetimeSubscriber c, string typeToWatch)
     {
         if (c is not IRefreshBusSubscriber subscriber)
             throw new ArgumentException("Control must be an IRefreshBusSubscriber to establish a lifetime subscription",
                 nameof(c));
 
-        //ignore double requests for subscription
-        if (subscribers.Contains(subscriber))
-            return;
+        if (subscribers.TryGetValue(typeToWatch, out var subs))
+        {
+            if (subs.Contains(subscriber)) return;
+        }
+
+        ////ignore double requests for subscription
+        //if (subscribers.Contains(subscriber))
+        //return;
 
         if (c is not ContainerControl containerControl)
             throw new ArgumentOutOfRangeException(nameof(c));
@@ -113,8 +146,8 @@ public class RefreshBus
         var parentForm = containerControl.ParentForm ?? throw new ArgumentException(
             "Control must have an established ParentForm, you should not attempt to establish a lifetime subscription until your control is loaded (i.e. don't call this in your constructor)",
             nameof(c));
-        Subscribe(subscriber);
-        parentForm.FormClosing += (s, e) => Unsubscribe(subscriber);
+        Subscribe(subscriber, typeToWatch);
+        parentForm.FormClosing += (s, e) => Unsubscribe(subscriber, typeToWatch);
     }
 
     private List<object> _selfDestructors = new();
@@ -160,7 +193,7 @@ public class RefreshBus
         _selfDestructors.Add(subscriber);
 
         //subscribe them now
-        Subscribe(subscriber);
+        Subscribe(subscriber, originalObject.GetType().ToString());
 
         var parentForm = user.ParentForm ?? throw new ArgumentException(
             "Control must have an established ParentForm, you should not attempt to establish a lifetime subscription until your control is loaded (i.e. don't call this in your constructor)",
@@ -169,7 +202,7 @@ public class RefreshBus
         //when their parent closes we unsubscribe them
         parentForm.FormClosed += (s, e) =>
         {
-            Unsubscribe(subscriber);
+            Unsubscribe(subscriber, originalObject.GetType().ToString());
             var toRemove = _selfDestructors.OfType<SelfDestructProtocol<T>>().Single(u => u.User == user);
             _selfDestructors.Remove(toRemove);
         };

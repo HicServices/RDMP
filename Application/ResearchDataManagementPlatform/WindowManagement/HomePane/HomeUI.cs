@@ -76,7 +76,7 @@ public partial class HomeUI : RDMPUserControl, ILifetimeSubscriber
 
         BuildCommandLists();
 
-        _activator.RefreshBus.EstablishLifetimeSubscription(this);
+        //_activator.RefreshBus.EstablishLifetimeSubscription(this);
     }
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)

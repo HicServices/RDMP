@@ -121,7 +121,8 @@ public partial class DataExportCollectionUI : RDMPCollectionUI, ILifetimeSubscri
 
         SetupToolStrip();
 
-        Activator.RefreshBus.EstablishLifetimeSubscription(this);
+        //Activator.RefreshBus.EstablishLifetimeSubscription(this);
+
     }
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)

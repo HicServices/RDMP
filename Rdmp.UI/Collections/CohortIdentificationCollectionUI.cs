@@ -98,7 +98,7 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
             new ExecuteCommandMergeCohortIdentificationConfigurations(a, null)
         };
 
-        Activator.RefreshBus.EstablishLifetimeSubscription(this);
+        //Activator.RefreshBus.EstablishLifetimeSubscription(this);
 
         var factory = new AtomicCommandUIFactory(activator);
 

@@ -180,7 +180,7 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
 
         if (_commonFunctionality == null)
         {
-            activator.RefreshBus.Subscribe(this);
+            //activator.RefreshBus.Subscribe(this);
             _commonFunctionality = new RDMPCollectionCommonFunctionality();
 
             _commonFunctionality.SetUp(RDMPCollection.Cohort, tlvCic, activator, olvNameCol, olvNameCol,

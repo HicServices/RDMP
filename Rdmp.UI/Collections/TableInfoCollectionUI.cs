@@ -111,7 +111,10 @@ public partial class TableInfoCollectionUI : RDMPCollectionUI, ILifetimeSubscrib
             new ExecuteCommandBulkImportTableInfos(a)
         };
 
-        Activator.RefreshBus.EstablishLifetimeSubscription(this);
+        //Activator.RefreshBus.EstablishLifetimeSubscription(this);
+        Activator.RefreshBus.EstablishLifetimeSubscription(this, typeof(DataAccessCredentials).ToString());
+        Activator.RefreshBus.EstablishLifetimeSubscription(this, typeof(Catalogue).ToString());
+        Activator.RefreshBus.EstablishLifetimeSubscription(this, typeof(TableInfo).ToString());
 
 
         tlvTableInfos.AddObject(Activator.CoreChildProvider.AllDashboardsNode);

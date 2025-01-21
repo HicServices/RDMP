@@ -399,7 +399,8 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design, ILifetimeSu
     {
         base.SetDatabaseObject(activator, databaseObject);
 
-        activator.RefreshBus.EstablishLifetimeSubscription(this);
+        //activator.RefreshBus.EstablishLifetimeSubscription(this);
+        activator.RefreshBus.EstablishLifetimeSubscription(this, typeof(ExtractionInformation).ToString());
 
         SelectedDataSet = databaseObject;
         _dataSet = SelectedDataSet.ExtractableDataSet;

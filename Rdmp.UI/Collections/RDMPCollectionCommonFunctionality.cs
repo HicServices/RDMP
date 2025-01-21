@@ -192,7 +192,7 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         Collection = collection;
         IsSetup = true;
         _activator = activator;
-        _activator.RefreshBus.Subscribe(this);
+        //_activator.RefreshBus.Subscribe(this);
 
         RepositoryLocator = _activator.RepositoryLocator;
         Filter = filter;
@@ -927,7 +927,7 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     {
         if (IsSetup)
         {
-            _activator.RefreshBus.Unsubscribe(this);
+            //_activator.RefreshBus.Unsubscribe(this);
             _activator.Emphasise -= _activator_Emphasise;
         }
     }

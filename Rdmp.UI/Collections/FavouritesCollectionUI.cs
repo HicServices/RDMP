@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.UI.CommandExecution.AtomicCommands;
@@ -44,7 +45,9 @@ public partial class FavouritesCollectionUI : RDMPCollectionUI, ILifetimeSubscri
                 new ExecuteCommandAddFavourite(a),
                 new ExecuteCommandClearFavourites(a)
             };
-        Activator.RefreshBus.EstablishLifetimeSubscription(this);
+        //Activator.RefreshBus.EstablishLifetimeSubscription(this);
+        Activator.RefreshBus.EstablishLifetimeSubscription(this, typeof(Favourite).ToString());
+
 
         RefreshFavourites();
 
