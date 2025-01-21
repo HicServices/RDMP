@@ -15,6 +15,7 @@ namespace Rdmp.UI.SimpleControls
     {
         private string _value = "";
         private string _title = "";
+        private Image _image;
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public string TextValue
@@ -37,6 +38,17 @@ namespace Rdmp.UI.SimpleControls
             {
                 _title = value;
                 lblTitle.Text = _title;
+            }
+        }
+
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public Image Icon
+        {
+            get => _image;
+            set
+            {
+                _image = value;
+                pbIcon.Image = _image;
             }
         }
 

@@ -101,7 +101,7 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
     private string _dataProcessor;
     private string _controlledVocabulary;
     private string _associatedPeople;
-
+    private string _doi;
     private Lazy<CatalogueItem[]> _knownCatalogueItems;
 
 
@@ -532,6 +532,8 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
     /// <inheritdoc/>
     public string AssociatedPeople { get => _associatedPeople; set => SetField(ref _associatedPeople, value); }
 
+    public string Doi { get => _doi; set => SetField(ref _doi, value); }
+
     #endregion
 
     #region Relationships
@@ -864,6 +866,15 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
         IsColdStorageDataset = (bool)r["IsColdStorageDataset"];
 
         Folder = r["Folder"].ToString();
+
+        DataSource = r["DataSource"].ToString();
+        DataSourceSetting = r["DataSourceSetting"].ToString();
+        StartDate = !string.IsNullOrEmpty(r["StartDate"].ToString())? DateTime.Parse(r["StartDate"].ToString()) :null;
+        EndDate = !string.IsNullOrEmpty(r["EndDate"].ToString())? DateTime.Parse(r["EndDate"].ToString()) : null;
+        DataController = r["DataController"].ToString();
+        DataProcessor = r["DataProcessor"].ToString();
+        Juristiction = r["Juristiction"].ToString();
+        Doi = r["Doi"].ToString();
 
         ClearAllInjections();
     }

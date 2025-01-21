@@ -117,7 +117,7 @@ public interface ICatalogue : IHasDependencies, IHasQuerySyntaxHelper, INamed, I
     string DataProcessor { get; set; }
     string ControlledVocabulary { get;set; }
     string AssociatedPeople { get; set; }
-
+    string Doi { get; set; }
 
     /// <summary>
     /// The alledged user specified date at which data began being collected.  For a more accurate answer you should run the DQE (See also DatasetTimespanCalculator)

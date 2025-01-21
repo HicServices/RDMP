@@ -16,8 +16,9 @@ UpdateLag [nvarchar](255),
 Juristiction [nvarchar](255),
 DataController [nvarchar](255),
 DataProcessor [nvarchar](255),
-ControllerVocabulary [nvarchar](MAX),
-AssociatedPeople [nvarchar](MAX)
+ControlledVocabulary [nvarchar](MAX),
+AssociatedPeople [nvarchar](MAX),
+Doi [nvarchar](50)
 END
 GO
 

@@ -33,13 +33,16 @@
             lblEditable = new System.Windows.Forms.Label();
             tbEditable = new System.Windows.Forms.TextBox();
             lblTitle = new System.Windows.Forms.Label();
+            pbIcon = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pbIcon).BeginInit();
             SuspendLayout();
             // 
             // pictureBox1
             // 
+            pictureBox1.Cursor = System.Windows.Forms.Cursors.Hand;
             pictureBox1.Image = (System.Drawing.Image)resources.GetObject("pictureBox1.Image");
-            pictureBox1.Location = new System.Drawing.Point(219, 30);
+            pictureBox1.Location = new System.Drawing.Point(235, 30);
             pictureBox1.Name = "pictureBox1";
             pictureBox1.Size = new System.Drawing.Size(19, 19);
             pictureBox1.TabIndex = 0;
@@ -49,7 +52,7 @@
             // lblEditable
             // 
             lblEditable.AutoSize = true;
-            lblEditable.Location = new System.Drawing.Point(15, 32);
+            lblEditable.Location = new System.Drawing.Point(31, 32);
             lblEditable.Name = "lblEditable";
             lblEditable.Size = new System.Drawing.Size(38, 15);
             lblEditable.TabIndex = 1;
@@ -57,7 +60,7 @@
             // 
             // tbEditable
             // 
-            tbEditable.Location = new System.Drawing.Point(15, 28);
+            tbEditable.Location = new System.Drawing.Point(31, 28);
             tbEditable.Name = "tbEditable";
             tbEditable.Size = new System.Drawing.Size(201, 23);
             tbEditable.TabIndex = 2;
@@ -67,15 +70,24 @@
             // 
             lblTitle.AutoSize = true;
             lblTitle.Font = new System.Drawing.Font("Segoe UI", 12F);
-            lblTitle.Location = new System.Drawing.Point(3, 3);
+            lblTitle.Location = new System.Drawing.Point(25, 3);
             lblTitle.Name = "lblTitle";
             lblTitle.Size = new System.Drawing.Size(0, 21);
             lblTitle.TabIndex = 3;
+            // 
+            // pbIcon
+            // 
+            pbIcon.Location = new System.Drawing.Point(0, 3);
+            pbIcon.Name = "pbIcon";
+            pbIcon.Size = new System.Drawing.Size(22, 22);
+            pbIcon.TabIndex = 4;
+            pbIcon.TabStop = false;
             // 
             // EditableLabelUI
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            Controls.Add(pbIcon);
             Controls.Add(lblTitle);
             Controls.Add(tbEditable);
             Controls.Add(lblEditable);
@@ -83,6 +95,7 @@
             Name = "EditableLabelUI";
             Size = new System.Drawing.Size(278, 59);
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pbIcon).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -93,5 +106,6 @@
         private System.Windows.Forms.Label lblEditable;
         private System.Windows.Forms.TextBox tbEditable;
         private System.Windows.Forms.Label lblTitle;
+        private System.Windows.Forms.PictureBox pbIcon;
     }
 }

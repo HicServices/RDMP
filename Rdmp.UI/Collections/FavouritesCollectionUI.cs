@@ -57,6 +57,7 @@ public partial class FavouritesCollectionUI : RDMPCollectionUI, ILifetimeSubscri
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {
+        //maybe this?
         RefreshFavourites();
     }
 

@@ -81,6 +81,8 @@ public partial class HomeUI : RDMPUserControl, ILifetimeSubscriber
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {
-        BuildCommandLists();
+
+        //todo what does this do?
+        //BuildCommandLists();
     }
 }
