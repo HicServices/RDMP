@@ -42,11 +42,14 @@ public class RDMPSingleControlTab : DockContent, IRefreshBusSubscriber
     /// </summary>
     /// <param name="refreshBus"></param>
     /// <param name="c"></param>
-    public RDMPSingleControlTab(RefreshBus refreshBus, Control c)
+    /// <param name="refreshObject"></param>
+    public RDMPSingleControlTab(RefreshBus refreshBus, Control c,string refreshObject=null)
     {
-        //TODO
-        //refreshBus.Subscribe(this);
-        //FormClosed += (s, e) => refreshBus.Unsubscribe(this);
+        if (refreshBus != null)
+        {
+            refreshBus.Subscribe(this, refreshObject);
+            FormClosed += (s, e) => refreshBus.Unsubscribe(this, refreshObject);
+        }
         Control = c;
     }
 

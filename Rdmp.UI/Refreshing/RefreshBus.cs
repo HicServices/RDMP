@@ -81,9 +81,13 @@ public class RefreshBus
     {
         var o = e.Object;
         var x = o.GetType().ToString();
-        //todo
-        // there are a lof of subscriptions to the wrong type i.e. "dataset" not "rdmp.core.dataset" - fix those
-        //then check that they all update AS EXPECTED
+        if (subscribers.TryGetValue("ALL", out var allSubs))
+        {
+            foreach (var sub in allSubs)
+            {
+                sub.RefreshBus_RefreshObject(sender, e);
+            }
+        }
         if (subscribers.TryGetValue(o.GetType().ToString(), out var subs))
         {
             foreach (var sub in subs)

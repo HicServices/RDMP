@@ -141,7 +141,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         };
         RefreshProblemProviders();
         //TODO
-        //RefreshBus.Subscribe(this);
+        RefreshBus.Subscribe(this,"ALL");
 
         // We can run subprocesses
         IsAbleToLaunchSubprocesses = true;
