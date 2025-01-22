@@ -51,7 +51,7 @@ namespace Rdmp.UI.MainFormUITabs
             label7 = new Label();
             tbDataSource = new TextBox();
             label6 = new Label();
-            comboBox3 = new ComboBox();
+            cb_datasetSubtype = new ComboBox();
             label5 = new Label();
             cb_datasetType = new ComboBox();
             label4 = new Label();
@@ -255,7 +255,7 @@ namespace Rdmp.UI.MainFormUITabs
             tabPage2.Controls.Add(label7);
             tabPage2.Controls.Add(tbDataSource);
             tabPage2.Controls.Add(label6);
-            tabPage2.Controls.Add(comboBox3);
+            tabPage2.Controls.Add(cb_datasetSubtype);
             tabPage2.Controls.Add(label5);
             tabPage2.Controls.Add(cb_datasetType);
             tabPage2.Controls.Add(label4);
@@ -310,13 +310,13 @@ namespace Rdmp.UI.MainFormUITabs
             label6.TabIndex = 7;
             label6.Text = "Dataset Subtype";
             // 
-            // comboBox3
+            // cb_datasetSubtype
             // 
-            comboBox3.FormattingEnabled = true;
-            comboBox3.Location = new System.Drawing.Point(6, 174);
-            comboBox3.Name = "comboBox3";
-            comboBox3.Size = new System.Drawing.Size(121, 23);
-            comboBox3.TabIndex = 6;
+            cb_datasetSubtype.FormattingEnabled = true;
+            cb_datasetSubtype.Location = new System.Drawing.Point(6, 174);
+            cb_datasetSubtype.Name = "cb_datasetSubtype";
+            cb_datasetSubtype.Size = new System.Drawing.Size(121, 23);
+            cb_datasetSubtype.TabIndex = 6;
             // 
             // label5
             // 
@@ -708,7 +708,7 @@ namespace Rdmp.UI.MainFormUITabs
         private Label label7;
         private TextBox tbDataSource;
         private Label label6;
-        private ComboBox comboBox3;
+        private ComboBox cb_datasetSubtype;
         private Label label5;
         private ComboBox cb_datasetType;
         private Label label4;

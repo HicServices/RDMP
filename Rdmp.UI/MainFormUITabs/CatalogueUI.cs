@@ -324,9 +324,11 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
                 }
                 cb_resourceType.DataSource = Enum.GetValues(typeof(Catalogue.CatalogueType));
                 cb_datasetType.DataSource = Enum.GetValues(typeof(Catalogue.DatasetType));
+                cb_datasetSubtype.DataSource = Enum.GetValues(typeof(Catalogue.DatasetSubType));
                 Bind(tbKeywords, "Text", "Search_keywords", c => c.Search_keywords);
                 Bind(cb_resourceType, "SelectedItem", "Type", c => c.Type);
                 Bind(cb_datasetType, "SelectedItem", "DataType", c => c.DataType);
+                Bind(cb_datasetSubtype, "SelectedItem", "DataSubtype", c => c.DataSubtype);
                 Bind(tbDataSource, "Text", "DataSource", c => c.DataSource);
                 Bind(tbDataSourceSetting, "Text", "DataSourceSetting", c => c.DataSourceSetting);
 
