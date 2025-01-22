@@ -14,7 +14,9 @@ using Rdmp.Core.CohortCreation;
 using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
+using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
@@ -181,7 +183,13 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
         if (_commonFunctionality == null)
         {
             activator.RefreshBus.Subscribe(this, typeof(CohortIdentificationConfiguration).ToString());
-            //todo this needs the full tree of the CIC
+            activator.RefreshBus.Subscribe(this, typeof(CohortAggregateContainer).ToString());
+            activator.RefreshBus.Subscribe(this, typeof(AggregateConfiguration).ToString());
+            activator.RefreshBus.Subscribe(this, typeof(AggregateFilterContainer).ToString());
+            activator.RefreshBus.Subscribe(this, typeof(AggregateFilter).ToString());
+            activator.RefreshBus.Subscribe(this, typeof(AggregateFilterParameter).ToString());
+            activator.RefreshBus.Subscribe(this, typeof(AggregateDimension).ToString());
+            activator.RefreshBus.Subscribe(this, typeof(JoinableCohortAggregateConfiguration).ToString());
             _commonFunctionality = new RDMPCollectionCommonFunctionality();
 
             _commonFunctionality.SetUp(RDMPCollection.Cohort, tlvCic, activator, olvNameCol, olvNameCol,

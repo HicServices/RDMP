@@ -140,7 +140,6 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
             new CatalogueProblemProvider()
         };
         RefreshProblemProviders();
-        //TODO
         RefreshBus.Subscribe(this,"ALL");
 
         // We can run subprocesses

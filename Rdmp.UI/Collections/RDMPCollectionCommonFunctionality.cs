@@ -16,6 +16,14 @@ using Rdmp.Core;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.Curation.Data.Dashboarding;
+using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.Curation.Data.Governance;
+using Rdmp.Core.Curation.Data.Pipelines;
+using Rdmp.Core.Curation.Data.Remoting;
+using Rdmp.Core.Curation.DataHelper.RegexRedaction;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Providers;
@@ -168,10 +176,10 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     /// <param name="renameableColumn">Nullable field for specifying which column supports renaming on F2</param>
     /// <param name="filter">Optional TextBox Filter</param>
     public void SetUp(RDMPCollection collection, TreeListView tree, IActivateItems activator, OLVColumn iconColumn,
-        OLVColumn renameableColumn,TextBox filter = null)
+        OLVColumn renameableColumn, TextBox filter = null)
     {
         SetUp(collection, tree, activator, iconColumn, renameableColumn,
-            new RDMPCollectionCommonFunctionalitySettings(),filter);
+            new RDMPCollectionCommonFunctionalitySettings(), filter);
     }
 
     /// <summary>
@@ -194,14 +202,46 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         _activator = activator;
         switch (collection)
         {
+            case RDMPCollection.Tables:
+                _activator.RefreshBus.Subscribe(this, typeof(ConnectionStringKeyword).ToString());
+                _activator.RefreshBus.Subscribe(this, typeof(ExternalDatabaseServer).ToString());
+                _activator.RefreshBus.Subscribe(this, typeof(DataAccessCredentials).ToString());
+                _activator.RefreshBus.Subscribe(this, typeof(DashboardLayout).ToString());
+                _activator.RefreshBus.Subscribe(this, typeof(Pipeline).ToString());
+                _activator.RefreshBus.Subscribe(this, typeof(StandardRegex).ToString());
+                _activator.RefreshBus.Subscribe(this, typeof(RemoteRDMP).ToString());
+                break;
             case RDMPCollection.Catalogue:
                 _activator.RefreshBus.Subscribe(this, typeof(Catalogue).ToString());
+                _activator.RefreshBus.Subscribe(this, typeof(GovernanceDocument).ToString());
+                _activator.RefreshBus.Subscribe(this, typeof(GovernancePeriod).ToString());
+                break;
+            case RDMPCollection.DataExport:
+                _activator.RefreshBus.Subscribe(this, typeof(Project).ToString());
+                break;
+            case RDMPCollection.SavedCohorts:
+                _activator.RefreshBus.Subscribe(this, typeof(ExternalCohortTable).ToString());
+                break;
+            case RDMPCollection.Favourites:
+                _activator.RefreshBus.Subscribe(this, typeof(Favourite).ToString());
+                break;
+            case RDMPCollection.Cohort:
+                _activator.RefreshBus.Subscribe(this, typeof(CohortIdentificationConfiguration).ToString());
+                break;
+            case RDMPCollection.DataLoad:
+                _activator.RefreshBus.Subscribe(this, typeof(LoadMetadata).ToString());
+                break;
+            case RDMPCollection.Datasets:
+                _activator.RefreshBus.Subscribe(this, typeof(Dataset).ToString());
+                break;
+            case RDMPCollection.Configurations:
+                _activator.RefreshBus.Subscribe(this, typeof(RegexRedaction).ToString());
+                _activator.RefreshBus.Subscribe(this, typeof(Dataset).ToString());
                 break;
             //todo the rest
             default:
                 break;
         }
-        //_activator.RefreshBus.Subscribe(this, collection.ToString());//todo check this is right
 
         RepositoryLocator = _activator.RepositoryLocator;
         Filter = filter;
@@ -213,14 +253,14 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         Tree.CellToolTip.InitialDelay = UserSettings.TooltipAppearDelay;
         Tree.CellToolTipShowing += (s, e) => Tree_CellToolTipShowing(activator, e);
 
-        if(Filter is not null)
+        if (Filter is not null)
         {
             Filter.TextChanged += HandleFilter;
             Filter.Text = FilterText;
             Filter.GotFocus += RemoveText;
             Filter.LostFocus += AddText;
         }
-      
+
 
         Tree.RevealAfterExpand = true;
 
@@ -332,7 +372,7 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     private void HandleFilter(object sender, EventArgs e)
     {
         var text = Filter.Text;
-        if(text == FilterText)
+        if (text == FilterText)
         {
             Tree.ModelFilter = TextMatchFilter.Contains(Tree, "");
             Tree.UseFiltering = true;

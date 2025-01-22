@@ -104,7 +104,7 @@ public class WindowFactory
 
     public DockContent Create(IActivateItems activator, Control control, string label, Image<Rgba32> image)
     {
-        DockContent content = new RDMPSingleControlTab(activator.RefreshBus, control);
+        DockContent content = new RDMPSingleControlTab(activator.RefreshBus, control,null);
 
         AddControlToDockContent(activator, control, content, label, image);
 

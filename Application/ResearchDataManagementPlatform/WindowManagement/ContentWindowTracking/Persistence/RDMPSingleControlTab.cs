@@ -32,8 +32,10 @@ public class RDMPSingleControlTab : DockContent, IRefreshBusSubscriber
 
     public const string BasicPrefix = "BASIC";
 
-    protected RDMPSingleControlTab(RefreshBus refreshBus)
+    protected RDMPSingleControlTab(RefreshBus refreshBus, string refreshObject)
     {
+        refreshBus.Subscribe(this, refreshObject);
+        FormClosed += (s, e) => refreshBus.Unsubscribe(this, refreshObject);
     }
 
     /// <summary>
@@ -43,13 +45,11 @@ public class RDMPSingleControlTab : DockContent, IRefreshBusSubscriber
     /// <param name="refreshBus"></param>
     /// <param name="c"></param>
     /// <param name="refreshObject"></param>
-    public RDMPSingleControlTab(RefreshBus refreshBus, Control c,string refreshObject=null)
+    public RDMPSingleControlTab(RefreshBus refreshBus, Control c, string refreshObject)
     {
-        if (refreshBus != null)
-        {
-            refreshBus.Subscribe(this, refreshObject);
-            FormClosed += (s, e) => refreshBus.Unsubscribe(this, refreshObject);
-        }
+        refreshBus.Subscribe(this, refreshObject);
+        FormClosed += (s, e) => refreshBus.Unsubscribe(this, refreshObject);
+
         Control = c;
     }
 
