@@ -111,7 +111,6 @@ public interface ICatalogue : IHasDependencies, IHasQuerySyntaxHelper, INamed, I
     DateTime? DatasetReleaseDate { get; set; }
     DateTime? StartDate { get; set; }
     DateTime? EndDate { get; set; }
-    string UpdateLag { get; set; }
     string Juristiction { get; set; }
     string DataController { get; set; }
     string DataProcessor { get; set; }

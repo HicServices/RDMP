@@ -10,6 +10,7 @@ using System.Data.Common;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Amazon.S3.Model;
 using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
@@ -51,7 +52,7 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
     private string _geographicalCoverage;
     private string _backgroundSummary;
     private string _searchKeywords;
-    private string _updateFreq;
+    private UpdateFrequencies _updateFreq;
     private string _updateSched;
     private string _timeCoverage;
     private DateTime? _lastRevisionDate;
@@ -95,7 +96,7 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
     private DateTime? _datasetReleaseDate;
     private DateTime? _startDate;
     private DateTime? _endDate;
-    private string _updateLag;
+    private UpdateLagTimes _updateLag;
     private string _juristiction;
     private string _dataController;
     private string _dataProcessor;
@@ -210,7 +211,7 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
     /// User specified free text field.  Not used for anything by RDMP.
     /// <seealso cref="Periodicity"/>
     /// </summary>
-    public string Update_freq
+    public UpdateFrequencies Update_freq
     {
         get => _updateFreq;
         set => SetField(ref _updateFreq, value);
@@ -504,7 +505,7 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
     }
     /// <inheritdoc/>
 
-    public string ShortDescription { get => _shortDescription; set => SetField(ref _shortDescription,value); }
+    public string ShortDescription { get => _shortDescription; set => SetField(ref _shortDescription, value); }
     /// <inheritdoc/>
     public string DataType { get => _dataType; set => SetField(ref _dataType, value); }
     /// <inheritdoc/>
@@ -520,7 +521,7 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
     /// <inheritdoc/>
     public DateTime? EndDate { get => _endDate; set => SetField(ref _endDate, value); }
     /// <inheritdoc/>
-    public string UpdateLag { get => _updateLag; set => SetField(ref _updateLag, value); }
+    public UpdateLagTimes UpdateLag { get => _updateLag; set => SetField(ref _updateLag, value); }
     /// <inheritdoc/>
     public string Juristiction { get => _juristiction; set => SetField(ref _juristiction, value); }
     /// <inheritdoc/>
@@ -576,7 +577,7 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
             ? null
             : Repository.GetObjectByID<ExtractionInformation>(PivotCategory_ExtractionInformation_ID.Value);
 
-      #endregion
+    #endregion
 
     #region Enums
 
@@ -754,6 +755,39 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
         Politics
     }
 
+    public enum DatasetSubType { }
+
+
+    public enum UpdateFrequencies
+    {
+        Static,
+        Irregular,
+        Continuous,
+        Biennial,
+        Annual,
+        Biannual,
+        Quarterly,
+        Bimonthly,
+        Monthly,
+        Biweekly,
+        Weekly,
+        TwiceWeekly,
+        Daily,
+        Other
+    }
+
+    public enum UpdateLagTimes
+    {
+        LessThanAWeek,
+        OneToTwoWeeks,
+        TwoToFourWeeks,
+        OneToTwoMonths,
+        TwoToSixMonths,
+        SixMonthsPlus,
+        Variable,
+        NotApplicable,
+        Other
+    }
     #endregion
 
     /// <summary>
@@ -868,7 +902,19 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
         Geographical_coverage = r["Geographical_coverage"].ToString();
         Background_summary = r["Background_summary"].ToString();
         Search_keywords = r["Search_keywords"].ToString();
-        Update_freq = r["Update_freq"].ToString();
+        var updateFreq = r["Update_freq"];
+        if (updateFreq == null || updateFreq == DBNull.Value)
+        {
+            Update_freq = UpdateFrequencies.Other;
+        }
+        else
+        {
+            if (Enum.TryParse(updateFreq.ToString(), true, out UpdateFrequencies updateFreqAsEnum))
+                Update_freq = updateFreqAsEnum;
+            else
+                throw new Exception(
+                    $" r[\"Update_freq\"] had value {updateFreq} which is not contained in Enum UpdateFrequencies");
+        }
         Update_sched = r["Update_sched"].ToString();
         Time_coverage = r["Time_coverage"].ToString();
         SubjectNumbers = r["SubjectNumbers"].ToString();
@@ -925,13 +971,28 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
         ShortDescription = r["ShortDescription"].ToString();
         DataSource = r["DataSource"].ToString();
         DataSourceSetting = r["DataSourceSetting"].ToString();
-        StartDate = !string.IsNullOrEmpty(r["StartDate"].ToString())? DateTime.Parse(r["StartDate"].ToString()) :null;
-        EndDate = !string.IsNullOrEmpty(r["EndDate"].ToString())? DateTime.Parse(r["EndDate"].ToString()) : null;
+        StartDate = !string.IsNullOrEmpty(r["StartDate"].ToString()) ? DateTime.Parse(r["StartDate"].ToString()) : null;
+        EndDate = !string.IsNullOrEmpty(r["EndDate"].ToString()) ? DateTime.Parse(r["EndDate"].ToString()) : null;
         DataController = r["DataController"].ToString();
         DataProcessor = r["DataProcessor"].ToString();
         Juristiction = r["Juristiction"].ToString();
+        AssociatedPeople = r["AssociatedPeople"].ToString();
+        ControlledVocabulary = r["ControlledVocabulary"].ToString();
         Doi = r["Doi"].ToString();
-
+        //UpdateLag = r["UpdateLag"].ToString();
+        var updateLag = r["UpdateLag"];
+        if (updateLag == null || updateLag == DBNull.Value)
+        {
+            UpdateLag = UpdateLagTimes.Other;
+        }
+        else
+        {
+            if (Enum.TryParse(updateLag.ToString(), true, out UpdateLagTimes updateLagAsEnum))
+                UpdateLag = updateLagAsEnum;
+            else
+                throw new Exception(
+                    $" r[\"UpdateLag\"] had value {updateLag} which is not contained in Enum UpdateLagTimes");
+        }
         ClearAllInjections();
     }
 

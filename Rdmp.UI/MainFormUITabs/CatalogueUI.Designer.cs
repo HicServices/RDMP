@@ -59,12 +59,14 @@ namespace Rdmp.UI.MainFormUITabs
             label3 = new Label();
             cb_resourceType = new ComboBox();
             tabPage3 = new TabPage();
+            btnEndDateClear = new Button();
+            btnStartDateClear = new Button();
             dtpEndDate = new DateTimePicker();
             dtpStart = new DateTimePicker();
             label12 = new Label();
             label11 = new Label();
             label10 = new Label();
-            comboBox4 = new ComboBox();
+            cb_granularity = new ComboBox();
             label9 = new Label();
             tbGeoCoverage = new TextBox();
             tabPage4 = new TabPage();
@@ -84,12 +86,13 @@ namespace Rdmp.UI.MainFormUITabs
             label17 = new Label();
             tbPeople = new TextBox();
             tabPage6 = new TabPage();
-            comboBox5 = new ComboBox();
+            dtpReleaseDate = new DateTimePicker();
+            cbUpdateLag = new ComboBox();
+            cb_updateFrequency = new ComboBox();
             label22 = new Label();
-            tbUpdateLag = new TextBox();
             label21 = new Label();
-            tbInitialReleaseDate = new TextBox();
             label20 = new Label();
+            btnReleaseDateClear = new Button();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
@@ -371,12 +374,14 @@ namespace Rdmp.UI.MainFormUITabs
             // tabPage3
             // 
             tabPage3.BackColor = System.Drawing.Color.WhiteSmoke;
+            tabPage3.Controls.Add(btnEndDateClear);
+            tabPage3.Controls.Add(btnStartDateClear);
             tabPage3.Controls.Add(dtpEndDate);
             tabPage3.Controls.Add(dtpStart);
             tabPage3.Controls.Add(label12);
             tabPage3.Controls.Add(label11);
             tabPage3.Controls.Add(label10);
-            tabPage3.Controls.Add(comboBox4);
+            tabPage3.Controls.Add(cb_granularity);
             tabPage3.Controls.Add(label9);
             tabPage3.Controls.Add(tbGeoCoverage);
             tabPage3.Location = new System.Drawing.Point(4, 24);
@@ -384,6 +389,26 @@ namespace Rdmp.UI.MainFormUITabs
             tabPage3.Size = new System.Drawing.Size(873, 895);
             tabPage3.TabIndex = 2;
             tabPage3.Text = "Geospacial & Temporal";
+            // 
+            // btnEndDateClear
+            // 
+            btnEndDateClear.Location = new System.Drawing.Point(220, 194);
+            btnEndDateClear.Name = "btnEndDateClear";
+            btnEndDateClear.Size = new System.Drawing.Size(75, 23);
+            btnEndDateClear.TabIndex = 25;
+            btnEndDateClear.Text = "Clear";
+            btnEndDateClear.UseVisualStyleBackColor = true;
+            btnEndDateClear.Click += btnEndDateClear_Click;
+            // 
+            // btnStartDateClear
+            // 
+            btnStartDateClear.Location = new System.Drawing.Point(220, 140);
+            btnStartDateClear.Name = "btnStartDateClear";
+            btnStartDateClear.Size = new System.Drawing.Size(75, 23);
+            btnStartDateClear.TabIndex = 24;
+            btnStartDateClear.Text = "Clear";
+            btnStartDateClear.UseVisualStyleBackColor = true;
+            btnStartDateClear.Click += btnStartDateClear_Click;
             // 
             // dtpEndDate
             // 
@@ -426,13 +451,13 @@ namespace Rdmp.UI.MainFormUITabs
             label10.TabIndex = 15;
             label10.Text = "Granularity";
             // 
-            // comboBox4
+            // cb_granularity
             // 
-            comboBox4.FormattingEnabled = true;
-            comboBox4.Location = new System.Drawing.Point(14, 86);
-            comboBox4.Name = "comboBox4";
-            comboBox4.Size = new System.Drawing.Size(121, 23);
-            comboBox4.TabIndex = 14;
+            cb_granularity.FormattingEnabled = true;
+            cb_granularity.Location = new System.Drawing.Point(14, 86);
+            cb_granularity.Name = "cb_granularity";
+            cb_granularity.Size = new System.Drawing.Size(121, 23);
+            cb_granularity.TabIndex = 14;
             // 
             // label9
             // 
@@ -597,11 +622,12 @@ namespace Rdmp.UI.MainFormUITabs
             // tabPage6
             // 
             tabPage6.BackColor = System.Drawing.Color.WhiteSmoke;
-            tabPage6.Controls.Add(comboBox5);
+            tabPage6.Controls.Add(btnReleaseDateClear);
+            tabPage6.Controls.Add(dtpReleaseDate);
+            tabPage6.Controls.Add(cbUpdateLag);
+            tabPage6.Controls.Add(cb_updateFrequency);
             tabPage6.Controls.Add(label22);
-            tabPage6.Controls.Add(tbUpdateLag);
             tabPage6.Controls.Add(label21);
-            tabPage6.Controls.Add(tbInitialReleaseDate);
             tabPage6.Controls.Add(label20);
             tabPage6.Location = new System.Drawing.Point(4, 24);
             tabPage6.Name = "tabPage6";
@@ -609,13 +635,30 @@ namespace Rdmp.UI.MainFormUITabs
             tabPage6.TabIndex = 5;
             tabPage6.Text = "Data Updates";
             // 
-            // comboBox5
+            // dtpReleaseDate
             // 
-            comboBox5.FormattingEnabled = true;
-            comboBox5.Location = new System.Drawing.Point(15, 30);
-            comboBox5.Name = "comboBox5";
-            comboBox5.Size = new System.Drawing.Size(121, 23);
-            comboBox5.TabIndex = 22;
+            dtpReleaseDate.Location = new System.Drawing.Point(15, 88);
+            dtpReleaseDate.Name = "dtpReleaseDate";
+            dtpReleaseDate.Size = new System.Drawing.Size(200, 23);
+            dtpReleaseDate.TabIndex = 24;
+            // 
+            // cbUpdateLag
+            // 
+            cbUpdateLag.FormattingEnabled = true;
+            cbUpdateLag.Location = new System.Drawing.Point(15, 142);
+            cbUpdateLag.Name = "cbUpdateLag";
+            cbUpdateLag.Size = new System.Drawing.Size(140, 23);
+            cbUpdateLag.TabIndex = 23;
+            cbUpdateLag.Format += FormatCB;
+            // 
+            // cb_updateFrequency
+            // 
+            cb_updateFrequency.FormattingEnabled = true;
+            cb_updateFrequency.Location = new System.Drawing.Point(15, 30);
+            cb_updateFrequency.Name = "cb_updateFrequency";
+            cb_updateFrequency.Size = new System.Drawing.Size(121, 23);
+            cb_updateFrequency.TabIndex = 22;
+            cb_updateFrequency.Format += FormatCB;
             // 
             // label22
             // 
@@ -626,13 +669,6 @@ namespace Rdmp.UI.MainFormUITabs
             label22.TabIndex = 21;
             label22.Text = "Update Lag";
             // 
-            // tbUpdateLag
-            // 
-            tbUpdateLag.Location = new System.Drawing.Point(15, 142);
-            tbUpdateLag.Name = "tbUpdateLag";
-            tbUpdateLag.Size = new System.Drawing.Size(366, 23);
-            tbUpdateLag.TabIndex = 20;
-            // 
             // label21
             // 
             label21.AutoSize = true;
@@ -642,13 +678,6 @@ namespace Rdmp.UI.MainFormUITabs
             label21.TabIndex = 19;
             label21.Text = "Initial Release Date";
             // 
-            // tbInitialReleaseDate
-            // 
-            tbInitialReleaseDate.Location = new System.Drawing.Point(15, 88);
-            tbInitialReleaseDate.Name = "tbInitialReleaseDate";
-            tbInitialReleaseDate.Size = new System.Drawing.Size(366, 23);
-            tbInitialReleaseDate.TabIndex = 18;
-            // 
             // label20
             // 
             label20.AutoSize = true;
@@ -657,6 +686,16 @@ namespace Rdmp.UI.MainFormUITabs
             label20.Size = new System.Drawing.Size(99, 15);
             label20.TabIndex = 17;
             label20.Text = "Update Fequency";
+            // 
+            // btnReleaseDateClear
+            // 
+            btnReleaseDateClear.Location = new System.Drawing.Point(221, 88);
+            btnReleaseDateClear.Name = "btnReleaseDateClear";
+            btnReleaseDateClear.Size = new System.Drawing.Size(75, 23);
+            btnReleaseDateClear.TabIndex = 25;
+            btnReleaseDateClear.Text = "Clear";
+            btnReleaseDateClear.UseVisualStyleBackColor = true;
+            btnReleaseDateClear.Click += btnReleaseDateClear_Click;
             // 
             // CatalogueUI
             // 
@@ -720,7 +759,7 @@ namespace Rdmp.UI.MainFormUITabs
         private Label label12;
         private Label label11;
         private Label label10;
-        private ComboBox comboBox4;
+        private ComboBox cb_granularity;
         private Label label9;
         private TextBox tbGeoCoverage;
         private Label label16;
@@ -737,14 +776,17 @@ namespace Rdmp.UI.MainFormUITabs
         private TextBox tbDOI;
         private Label label17;
         private TextBox tbPeople;
-        private ComboBox comboBox5;
+        private ComboBox cb_updateFrequency;
         private Label label22;
-        private TextBox tbUpdateLag;
         private Label label21;
-        private TextBox tbInitialReleaseDate;
         private Label label20;
         private TextBox tbAbstract;
         private DateTimePicker dtpStart;
         private DateTimePicker dtpEndDate;
+        private Button btnEndDateClear;
+        private Button btnStartDateClear;
+        private ComboBox cbUpdateLag;
+        private DateTimePicker dtpReleaseDate;
+        private Button btnReleaseDateClear;
     }
 }

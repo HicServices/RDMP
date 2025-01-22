@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using NPOI.HSSF.Record.Chart;
 using Rdmp.Core;
@@ -150,7 +151,7 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
         this.editableFolder.Title = "Folder";
         this.editableFolder.Icon = CatalogueIcons.CatalogueFolder.ImageToBitmap();
         RefreshUIFromDatabase();
-        
+
     }
 
     protected override void SetBindings(BinderWithErrorProviderFactory rules, Catalogue databaseObject)
@@ -298,6 +299,30 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
 
     private List<int> setTabBindings = new();
 
+    private void UpdateStartDate(object sender, EventArgs e)
+    {
+        dtpStart.ValueChanged -= UpdateStartDate;
+        _catalogue.StartDate = dtpStart.Value;
+        dtpStart.CustomFormat = "yyyy/MM/dd";
+        Bind(dtpStart, "Value", "StartDate", c => c.StartDate);
+    }
+
+    private void UpdateEndDate(object sender, EventArgs e)
+    {
+        dtpEndDate.ValueChanged -= UpdateEndDate;
+        _catalogue.EndDate = dtpEndDate.Value;
+        dtpEndDate.CustomFormat = "yyyy/MM/dd";
+        Bind(dtpEndDate, "Value", "EndDate", c => c.EndDate);
+    }
+
+    private void UpdateReleaseDate(object sender, EventArgs e)
+    {
+        dtpReleaseDate.ValueChanged -= UpdateReleaseDate;
+        _catalogue.DatasetReleaseDate = dtpReleaseDate.Value;
+        dtpReleaseDate.CustomFormat = "yyyy/MM/dd";
+        Bind(dtpReleaseDate, "Value", "DatasetReleaseDate", c => c.DatasetReleaseDate);
+    }
+
     private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
     {
         var tabControl = (TabControl)sender;
@@ -344,8 +369,28 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
                     item.Visible = false;
                 }
                 Bind(tbGeoCoverage, "Text", "Geographical_coverage", c => c.Geographical_coverage);
-                //Bind(dtpStart, "Value", "StartDate", c => c.StartDate);
-                //Bind(dtpEndDate, "Value", "EndDate", c => c.EndDate);
+                cb_granularity.DataSource = Enum.GetValues(typeof(Catalogue.CatalogueGranularity));
+                Bind(cb_granularity, "SelectedItem", "Granularity", c => c.Granularity);
+                dtpStart.Format = DateTimePickerFormat.Custom;
+                dtpStart.CustomFormat = _catalogue.StartDate != null ? "yyyy/MM/dd" : " ";
+                dtpEndDate.Format = DateTimePickerFormat.Custom;
+                dtpEndDate.CustomFormat = _catalogue.EndDate != null ? "yyyy/MM/dd" : " ";
+                if (_catalogue.StartDate != null)
+                {
+                    Bind(dtpStart, "Value", "StartDate", c => c.StartDate);
+                }
+                else
+                {
+                    dtpStart.ValueChanged += UpdateStartDate;
+                }
+                if (_catalogue.EndDate != null)
+                {
+                    Bind(dtpEndDate, "Value", "EndDate", c => c.EndDate);
+                }
+                else
+                {
+                    dtpEndDate.ValueChanged += UpdateEndDate;
+                }
                 foreach (Control item in tabPage3.Controls)
                 {
                     item.Visible = true;
@@ -371,6 +416,7 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
                     item.Visible = false;
                 }
                 Bind(tbPeople, "Text", "AssociatedPeople", c => c.AssociatedPeople);
+                Bind(tbControlledVocabulary, "Text", "ControlledVocabulary", c => c.ControlledVocabulary);
                 Bind(tbDOI, "Text", "Doi", c => c.Doi);
                 foreach (Control item in tabPage5.Controls)
                 {
@@ -382,8 +428,23 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
                 {
                     item.Visible = false;
                 }
-                Bind(tbInitialReleaseDate, "Text", "DatasetReleaseDate", c => c.DatasetReleaseDate);
-                Bind(tbUpdateLag, "Text", "UpdateLag", c => c.UpdateLag);
+
+                cb_updateFrequency.DataSource = Enum.GetValues(typeof(Catalogue.UpdateFrequencies));
+                cbUpdateLag.DataSource = Enum.GetValues(typeof(Catalogue.UpdateLagTimes));
+                //todo cb not being set correctly
+
+                Bind(cbUpdateLag, "SelectedItem", "UpdateLag", c => c.UpdateLag);
+                Bind(cb_updateFrequency, "SelectedItem", "Update_freq", c => c.Update_freq);
+                dtpReleaseDate.Format = DateTimePickerFormat.Custom;
+                dtpReleaseDate.CustomFormat = _catalogue.StartDate != null ? "yyyy/MM/dd" : " ";
+                if (_catalogue.DatasetReleaseDate != null)
+                {
+                    Bind(dtpReleaseDate, "Value", "DatasetReleaseDate", c => c.DatasetReleaseDate);
+                }
+                else
+                {
+                    dtpReleaseDate.ValueChanged += UpdateReleaseDate;
+                }
                 foreach (Control item in tabPage6.Controls)
                 {
                     item.Visible = true;
@@ -410,6 +471,51 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
         //Bind(tbDOI, "Text", "Doi", c => c.Doi);
         //Bind(tbInitialReleaseDate, "Text", "DatasetReleaseDate", c => c.DatasetReleaseDate);
         //Bind(tbUpdateLag, "Text", "UpdateLag", c => c.UpdateLag);
+    }
+
+    private void btnStartDateClear_Click(object sender, EventArgs e)
+    {
+        dtpStart.CustomFormat = " ";
+        dtpStart.DataBindings.Clear();
+        _catalogue.StartDate = null;
+        dtpStart.ValueChanged += UpdateStartDate;
+    }
+
+    private void btnEndDateClear_Click(object sender, EventArgs e)
+    {
+        dtpEndDate.CustomFormat = " ";
+        dtpEndDate.DataBindings.Clear();
+        _catalogue.EndDate = null;
+        dtpEndDate.ValueChanged += UpdateEndDate;
+    }
+
+    private void btnReleaseDateClear_Click(object sender, EventArgs e)
+    {
+        dtpReleaseDate.CustomFormat = " ";
+        dtpReleaseDate.DataBindings.Clear();
+        _catalogue.DatasetReleaseDate = null;
+        dtpReleaseDate.ValueChanged += UpdateReleaseDate;
+    }
+
+    string AddSpacesToSentence(string text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+            return "";
+        StringBuilder newText = new StringBuilder(text.Length * 2);
+        newText.Append(text[0]);
+        for (int i = 1; i < text.Length; i++)
+        {
+            if (char.IsUpper(text[i]) && text[i - 1] != ' ')
+                newText.Append(' ');
+            newText.Append(text[i]);
+        }
+        return newText.ToString();
+    }
+
+
+    private void FormatCB(object sender, ListControlConvertEventArgs e)
+    {
+        e.Value = AddSpacesToSentence(e.Value.ToString());
     }
 
 }
