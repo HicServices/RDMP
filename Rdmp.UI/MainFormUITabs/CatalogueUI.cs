@@ -306,32 +306,86 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
         switch (selectedIndex)
         {
             case 0:
+                foreach (Control item in tabPage1.Controls)
+                {
+                    item.Visible = false;
+                }
                 Bind(tbAbstract, "Text", "ShortDescription", c => c.ShortDescription);
                 Bind(tbDescription, "Text", "Description", c => c.Description);
+                foreach (Control item in tabPage1.Controls)
+                {
+                    item.Visible = true;
+                }
                 break;
             case 1:
+                foreach (Control item in tabPage2.Controls)
+                {
+                    item.Visible = false;
+                }
+                cb_resourceType.DataSource = Enum.GetValues(typeof(Catalogue.CatalogueType));
+                cb_datasetType.DataSource = Enum.GetValues(typeof(Catalogue.DatasetType));
                 Bind(tbKeywords, "Text", "Search_keywords", c => c.Search_keywords);
+                Bind(cb_resourceType, "SelectedItem", "Type", c => c.Type);
+                Bind(cb_datasetType, "SelectedItem", "DataType", c => c.DataType);
                 Bind(tbDataSource, "Text", "DataSource", c => c.DataSource);
                 Bind(tbDataSourceSetting, "Text", "DataSourceSetting", c => c.DataSourceSetting);
+
+
+                foreach (Control item in tabPage2.Controls)
+                {
+                    item.Visible = true;
+                }
                 break;
             case 2:
+                foreach (Control item in tabPage3.Controls)
+                {
+                    item.Visible = false;
+                }
                 Bind(tbGeoCoverage, "Text", "Geographical_coverage", c => c.Geographical_coverage);
                 //Bind(dtpStart, "Value", "StartDate", c => c.StartDate);
                 //Bind(dtpEndDate, "Value", "EndDate", c => c.EndDate);
+                foreach (Control item in tabPage3.Controls)
+                {
+                    item.Visible = true;
+                }
                 break;
             case 3:
+                foreach (Control item in tabPage4.Controls)
+                {
+                    item.Visible = false;
+                }
                 Bind(tbAccessContact, "Text", "Administrative_contact_email", c => c.Administrative_contact_email);
                 Bind(tbDataController, "Text", "DataController", c => c.DataController);
                 Bind(tbDataProcessor, "Text", "DataProcessor", c => c.DataProcessor);
                 Bind(tbJuristiction, "Text", "Juristiction", c => c.Juristiction);
+                foreach (Control item in tabPage4.Controls)
+                {
+                    item.Visible = true;
+                }
                 break;
             case 4:
+                foreach (Control item in tabPage5.Controls)
+                {
+                    item.Visible = false;
+                }
                 Bind(tbPeople, "Text", "AssociatedPeople", c => c.AssociatedPeople);
                 Bind(tbDOI, "Text", "Doi", c => c.Doi);
+                foreach (Control item in tabPage5.Controls)
+                {
+                    item.Visible = true;
+                }
                 break;
             case 5:
+                foreach (Control item in tabPage6.Controls)
+                {
+                    item.Visible = false;
+                }
                 Bind(tbInitialReleaseDate, "Text", "DatasetReleaseDate", c => c.DatasetReleaseDate);
                 Bind(tbUpdateLag, "Text", "UpdateLag", c => c.UpdateLag);
+                foreach (Control item in tabPage6.Controls)
+                {
+                    item.Visible = true;
+                }
                 break;
             default:
                 break;

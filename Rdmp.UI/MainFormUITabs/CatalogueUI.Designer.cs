@@ -53,11 +53,11 @@ namespace Rdmp.UI.MainFormUITabs
             label6 = new Label();
             comboBox3 = new ComboBox();
             label5 = new Label();
-            comboBox2 = new ComboBox();
+            cb_datasetType = new ComboBox();
             label4 = new Label();
             tbKeywords = new TextBox();
             label3 = new Label();
-            comboBox1 = new ComboBox();
+            cb_resourceType = new ComboBox();
             tabPage3 = new TabPage();
             dtpEndDate = new DateTimePicker();
             dtpStart = new DateTimePicker();
@@ -257,11 +257,11 @@ namespace Rdmp.UI.MainFormUITabs
             tabPage2.Controls.Add(label6);
             tabPage2.Controls.Add(comboBox3);
             tabPage2.Controls.Add(label5);
-            tabPage2.Controls.Add(comboBox2);
+            tabPage2.Controls.Add(cb_datasetType);
             tabPage2.Controls.Add(label4);
             tabPage2.Controls.Add(tbKeywords);
             tabPage2.Controls.Add(label3);
-            tabPage2.Controls.Add(comboBox1);
+            tabPage2.Controls.Add(cb_resourceType);
             tabPage2.Location = new System.Drawing.Point(4, 24);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
@@ -327,13 +327,13 @@ namespace Rdmp.UI.MainFormUITabs
             label5.TabIndex = 5;
             label5.Text = "Dataset Type";
             // 
-            // comboBox2
+            // cb_datasetType
             // 
-            comboBox2.FormattingEnabled = true;
-            comboBox2.Location = new System.Drawing.Point(6, 125);
-            comboBox2.Name = "comboBox2";
-            comboBox2.Size = new System.Drawing.Size(121, 23);
-            comboBox2.TabIndex = 4;
+            cb_datasetType.FormattingEnabled = true;
+            cb_datasetType.Location = new System.Drawing.Point(6, 125);
+            cb_datasetType.Name = "cb_datasetType";
+            cb_datasetType.Size = new System.Drawing.Size(121, 23);
+            cb_datasetType.TabIndex = 4;
             // 
             // label4
             // 
@@ -360,13 +360,13 @@ namespace Rdmp.UI.MainFormUITabs
             label3.TabIndex = 1;
             label3.Text = "Resource Type";
             // 
-            // comboBox1
+            // cb_resourceType
             // 
-            comboBox1.FormattingEnabled = true;
-            comboBox1.Location = new System.Drawing.Point(6, 27);
-            comboBox1.Name = "comboBox1";
-            comboBox1.Size = new System.Drawing.Size(121, 23);
-            comboBox1.TabIndex = 0;
+            cb_resourceType.FormattingEnabled = true;
+            cb_resourceType.Location = new System.Drawing.Point(6, 27);
+            cb_resourceType.Name = "cb_resourceType";
+            cb_resourceType.Size = new System.Drawing.Size(121, 23);
+            cb_resourceType.TabIndex = 0;
             // 
             // tabPage3
             // 
@@ -710,11 +710,11 @@ namespace Rdmp.UI.MainFormUITabs
         private Label label6;
         private ComboBox comboBox3;
         private Label label5;
-        private ComboBox comboBox2;
+        private ComboBox cb_datasetType;
         private Label label4;
         private TextBox tbKeywords;
         private Label label3;
-        private ComboBox comboBox1;
+        private ComboBox cb_resourceType;
         private Label label8;
         private TextBox tbDataSourceSetting;
         private Label label12;

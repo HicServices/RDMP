@@ -699,6 +699,61 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
         Clinic
     }
 
+    /// <summary>
+    /// Notional user declared type of data catalogue contains. Copied from the HDR Gateway
+    /// </summary>
+    public enum DatasetType
+    {
+        /// <summary>
+        ///  Includes any data related to mental health, cardiovascular, cancer, rare diseases, metabolic and endocrine, neurological, reproductive, maternity and neonatology, respiratory, immunity, musculoskeletal, vision, renal and urogenital, oral and gastrointestinal, cognitive function or hearing.
+        /// </summary>
+        HealthcareAndDisease,
+        /// <summary>
+        /// Includes any data related to treatment or interventions related to vaccines or which are preventative or therapeutic in nature.
+        /// </summary>
+        TreatmentsAndInterventions,
+        /// <summary>
+        /// Includes any data related to laboratory or other diagnostics.
+        /// </summary>
+        MeasurementsAndTests,
+        /// <summary>
+        /// Includes any data related to CT, MRI, PET, x-ray, ultrasound or pathology imaging.
+        /// </summary>
+        ImagingTypes,
+        /// <summary>
+        ///  Indicates whether the dataset relates to head, chest, arm abdomen or leg imaging.
+        /// </summary>
+        ImagingAreaOfTheBody,
+        /// <summary>
+        ///  Includes any data related to proteomics, transcriptomics, epigenomics, metabolomics, multiomics, metagenomics or genomics.
+        /// </summary>
+        Omics,
+        /// <summary>
+        ///  Includes any data related to education, crime and justice, ethnicity, housing, labour, ageing, economics, marital status, social support, deprivation, religion, occupation, finances or family circumstances.
+        /// </summary>
+        Socioeconomic,
+        /// <summary>
+        /// Includes any data related to smoking, physical activity, dietary habits or alcohol.
+        /// </summary>
+        Lifestyle,
+        /// <summary>
+        ///  Includes any data related to disease registries for research, national disease registries, audits, or birth and deaths records.
+        /// </summary>
+        Registry,
+        /// <summary>
+        ///  Includes any data related to the monitoring or study of environmental or energy factors or events.
+        /// </summary>
+        EnvironmentalAndEnergy,
+        /// <summary>
+        ///  Includes any data related to the study or application of information and communication.
+        /// </summary>
+        InformationAndCommunication,
+        /// <summary>
+        ///  Includes any data related to political views, activities, voting, etc.
+        /// </summary>
+        Politics
+    }
+
     #endregion
 
     /// <summary>
@@ -867,6 +922,7 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
 
         Folder = r["Folder"].ToString();
 
+        ShortDescription = r["ShortDescription"].ToString();
         DataSource = r["DataSource"].ToString();
         DataSourceSetting = r["DataSourceSetting"].ToString();
         StartDate = !string.IsNullOrEmpty(r["StartDate"].ToString())? DateTime.Parse(r["StartDate"].ToString()) :null;
