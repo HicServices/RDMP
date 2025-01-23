@@ -277,7 +277,7 @@ namespace Rdmp.UI.MainFormUITabs
             // 
             ddchipDatasetType.AutoScroll = true;
             ddchipDatasetType.AutoSize = true;
-            ddchipDatasetType.Location = new System.Drawing.Point(581, 16);
+            ddchipDatasetType.Location = new System.Drawing.Point(542, 56);
             ddchipDatasetType.MinimumSize = new System.Drawing.Size(100, 20);
             ddchipDatasetType.Name = "ddchipDatasetType";
             ddchipDatasetType.Size = new System.Drawing.Size(286, 83);
