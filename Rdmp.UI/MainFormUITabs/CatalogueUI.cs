@@ -355,7 +355,10 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
                 cb_resourceType.DataSource = Enum.GetValues(typeof(Catalogue.CatalogueType));
                 cb_datasetType.DataSource = Enum.GetValues(typeof(Catalogue.DatasetType));
                 cb_datasetSubtype.DataSource = Enum.GetValues(typeof(Catalogue.DatasetSubType));
-                Bind(tbKeywords, "Text", "Search_keywords", c => c.Search_keywords);
+
+                ddchipDatasetType.Options = Enum.GetNames(typeof(Catalogue.DatasetType));
+
+                Bind(ffcKeywords, "Value", "Search_keywords", c => c.Search_keywords);
                 Bind(cb_resourceType, "SelectedItem", "Type", c => c.Type);
                 Bind(cb_datasetType, "SelectedItem", "DataType", c => c.DataType);
                 Bind(cb_datasetSubtype, "SelectedItem", "DataSubtype", c => c.DataSubtype);
@@ -420,8 +423,8 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
                 {
                     item.Visible = false;
                 }
-                Bind(tbPeople, "Text", "AssociatedPeople", c => c.AssociatedPeople);
-                Bind(tbControlledVocabulary, "Text", "ControlledVocabulary", c => c.ControlledVocabulary);
+                Bind(ffcPeople, "Value", "AssociatedPeople", c => c.AssociatedPeople);
+                Bind(fftControlledVocab, "Value", "ControlledVocabulary", c => c.ControlledVocabulary);
                 Bind(tbDOI, "Text", "Doi", c => c.Doi);
                 foreach (Control item in tabPage5.Controls)
                 {
@@ -523,6 +526,20 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
         e.Value = AddSpacesToSentence(e.Value.ToString());
     }
 
+    private void label18_Click(object sender, EventArgs e)
+    {
+
+    }
+
+    private void tbDOI_TextChanged(object sender, EventArgs e)
+    {
+
+    }
+
+    private void groupBox1_Enter(object sender, EventArgs e)
+    {
+
+    }
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<CatalogueUI_Design, UserControl>))]
