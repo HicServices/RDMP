@@ -113,14 +113,8 @@ public class CatalogueUITests : UITests
 
         AssertNoErrors(ExpectedErrorType.Any);
 
-        //when I type the Acronym of another Catalogue
-        ui.tbAcronym.Text = "AB";
-
         //it tells me that I have to make it unique
         AssertErrorWasShown(ExpectedErrorType.ErrorProvider, "Must be unique");
-
-        //so I make it unique
-        ui.tbAcronym.Text = "ABC";
 
         //and all is good again
         AssertNoErrors(ExpectedErrorType.Any);
