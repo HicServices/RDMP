@@ -34,16 +34,16 @@
             // 
             // flowLayoutPanel1
             // 
-            flowLayoutPanel1.AutoScroll = true;
             flowLayoutPanel1.AutoSize = true;
             flowLayoutPanel1.Location = new System.Drawing.Point(0, 29);
-            flowLayoutPanel1.MaximumSize = new System.Drawing.Size(0, 80);
+            flowLayoutPanel1.MaximumSize = new System.Drawing.Size(400, 400);
             flowLayoutPanel1.Name = "flowLayoutPanel1";
             flowLayoutPanel1.Size = new System.Drawing.Size(283, 51);
             flowLayoutPanel1.TabIndex = 1;
             // 
             // comboBox1
             // 
+            comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             comboBox1.FormattingEnabled = true;
             comboBox1.Location = new System.Drawing.Point(0, 0);
             comboBox1.Name = "comboBox1";
@@ -55,14 +55,14 @@
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            AutoScroll = true;
             AutoSize = true;
             Controls.Add(comboBox1);
             Controls.Add(flowLayoutPanel1);
             Location = new System.Drawing.Point(0, 40);
+            MaximumSize = new System.Drawing.Size(400, 300);
             MinimumSize = new System.Drawing.Size(100, 20);
             Name = "DropdownOptionsChipDisplay";
-            Size = new System.Drawing.Size(286, 83);
+            Size = new System.Drawing.Size(303, 83);
             ResumeLayout(false);
             PerformLayout();
         }

@@ -353,15 +353,14 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
                     item.Visible = false;
                 }
                 cb_resourceType.DataSource = Enum.GetValues(typeof(Catalogue.CatalogueType));
-                cb_datasetType.DataSource = Enum.GetValues(typeof(Catalogue.DatasetType));
-                cb_datasetSubtype.DataSource = Enum.GetValues(typeof(Catalogue.DatasetSubType));
+                ddDatasetType.Options= Enum.GetNames(typeof(Catalogue.DatasetType));
+                ddDatasetSubtype.Options= Enum.GetNames(typeof(Catalogue.DatasetSubType));
 
-                ddchipDatasetType.Options = Enum.GetNames(typeof(Catalogue.DatasetType));
 
                 Bind(ffcKeywords, "Value", "Search_keywords", c => c.Search_keywords);
                 Bind(cb_resourceType, "SelectedItem", "Type", c => c.Type);
-                Bind(cb_datasetType, "SelectedItem", "DataType", c => c.DataType);
-                Bind(cb_datasetSubtype, "SelectedItem", "DataSubtype", c => c.DataSubtype);
+                Bind(ddDatasetType, "Value", "DataType", c => c.DataType);
+                Bind(ddDatasetSubtype, "Value", "DataSubtype", c => c.DataSubtype);
                 Bind(tbDataSource, "Text", "DataSource", c => c.DataSource);
                 Bind(tbDataSourceSetting, "Text", "DataSourceSetting", c => c.DataSourceSetting);
 
