@@ -33,9 +33,9 @@ namespace Rdmp.UI.MainFormUITabs
         private void InitializeComponent()
         {
             splitContainer1 = new SplitContainer();
-            checkBox3 = new CheckBox();
-            checkBox2 = new CheckBox();
-            checkBox1 = new CheckBox();
+            cbColdStorage = new CheckBox();
+            cbInternal = new CheckBox();
+            cbDeprecated = new CheckBox();
             editableFolder = new SimpleControls.EditableLabelUI();
             editableCatalogueName = new SimpleControls.EditableLabelUI();
             ticketingControl1 = new TicketingControlUI();
@@ -86,13 +86,13 @@ namespace Rdmp.UI.MainFormUITabs
             label17 = new Label();
             tbPeople = new TextBox();
             tabPage6 = new TabPage();
+            btnReleaseDateClear = new Button();
             dtpReleaseDate = new DateTimePicker();
             cbUpdateLag = new ComboBox();
             cb_updateFrequency = new ComboBox();
             label22 = new Label();
             label21 = new Label();
             label20 = new Label();
-            btnReleaseDateClear = new Button();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
@@ -115,9 +115,9 @@ namespace Rdmp.UI.MainFormUITabs
             // 
             // splitContainer1.Panel1
             // 
-            splitContainer1.Panel1.Controls.Add(checkBox3);
-            splitContainer1.Panel1.Controls.Add(checkBox2);
-            splitContainer1.Panel1.Controls.Add(checkBox1);
+            splitContainer1.Panel1.Controls.Add(cbColdStorage);
+            splitContainer1.Panel1.Controls.Add(cbInternal);
+            splitContainer1.Panel1.Controls.Add(cbDeprecated);
             splitContainer1.Panel1.Controls.Add(editableFolder);
             splitContainer1.Panel1.Controls.Add(editableCatalogueName);
             splitContainer1.Panel1.Controls.Add(ticketingControl1);
@@ -129,48 +129,48 @@ namespace Rdmp.UI.MainFormUITabs
             splitContainer1.SplitterDistance = 158;
             splitContainer1.TabIndex = 0;
             // 
-            // checkBox3
+            // cbColdStorage
             // 
-            checkBox3.AutoSize = true;
-            checkBox3.Location = new System.Drawing.Point(695, 75);
-            checkBox3.Name = "checkBox3";
-            checkBox3.Size = new System.Drawing.Size(94, 19);
-            checkBox3.TabIndex = 5;
-            checkBox3.Text = "Cold Storage";
-            checkBox3.UseVisualStyleBackColor = true;
+            cbColdStorage.AutoSize = true;
+            cbColdStorage.Location = new System.Drawing.Point(695, 75);
+            cbColdStorage.Name = "cbColdStorage";
+            cbColdStorage.Size = new System.Drawing.Size(94, 19);
+            cbColdStorage.TabIndex = 5;
+            cbColdStorage.Text = "Cold Storage";
+            cbColdStorage.UseVisualStyleBackColor = true;
             // 
-            // checkBox2
+            // cbInternal
             // 
-            checkBox2.AutoSize = true;
-            checkBox2.Location = new System.Drawing.Point(623, 74);
-            checkBox2.Name = "checkBox2";
-            checkBox2.Size = new System.Drawing.Size(66, 19);
-            checkBox2.TabIndex = 4;
-            checkBox2.Text = "Internal";
-            checkBox2.UseVisualStyleBackColor = true;
-            checkBox2.CheckedChanged += checkBox2_CheckedChanged;
+            cbInternal.AutoSize = true;
+            cbInternal.Location = new System.Drawing.Point(623, 74);
+            cbInternal.Name = "cbInternal";
+            cbInternal.Size = new System.Drawing.Size(66, 19);
+            cbInternal.TabIndex = 4;
+            cbInternal.Text = "Internal";
+            cbInternal.UseVisualStyleBackColor = true;
+            cbInternal.CheckedChanged += checkBox2_CheckedChanged;
             // 
-            // checkBox1
+            // cbDeprecated
             // 
-            checkBox1.AutoSize = true;
-            checkBox1.Location = new System.Drawing.Point(531, 73);
-            checkBox1.Name = "checkBox1";
-            checkBox1.Size = new System.Drawing.Size(86, 19);
-            checkBox1.TabIndex = 3;
-            checkBox1.Text = "Deprecated";
-            checkBox1.UseVisualStyleBackColor = true;
+            cbDeprecated.AutoSize = true;
+            cbDeprecated.Location = new System.Drawing.Point(531, 73);
+            cbDeprecated.Name = "cbDeprecated";
+            cbDeprecated.Size = new System.Drawing.Size(86, 19);
+            cbDeprecated.TabIndex = 3;
+            cbDeprecated.Text = "Deprecated";
+            cbDeprecated.UseVisualStyleBackColor = true;
             // 
             // editableFolder
             // 
             editableFolder.AutoValidate = AutoValidate.EnableAllowFocusChange;
-            editableFolder.Location = new System.Drawing.Point(9, 65);
+            editableFolder.Location = new System.Drawing.Point(11, 63);
             editableFolder.Name = "editableFolder";
             editableFolder.Size = new System.Drawing.Size(278, 48);
             editableFolder.TabIndex = 2;
             // 
             // editableCatalogueName
             // 
-            editableCatalogueName.Location = new System.Drawing.Point(9, 7);
+            editableCatalogueName.Location = new System.Drawing.Point(11, 5);
             editableCatalogueName.Name = "editableCatalogueName";
             editableCatalogueName.Size = new System.Drawing.Size(278, 59);
             editableCatalogueName.TabIndex = 1;
@@ -635,6 +635,16 @@ namespace Rdmp.UI.MainFormUITabs
             tabPage6.TabIndex = 5;
             tabPage6.Text = "Data Updates";
             // 
+            // btnReleaseDateClear
+            // 
+            btnReleaseDateClear.Location = new System.Drawing.Point(221, 88);
+            btnReleaseDateClear.Name = "btnReleaseDateClear";
+            btnReleaseDateClear.Size = new System.Drawing.Size(75, 23);
+            btnReleaseDateClear.TabIndex = 25;
+            btnReleaseDateClear.Text = "Clear";
+            btnReleaseDateClear.UseVisualStyleBackColor = true;
+            btnReleaseDateClear.Click += btnReleaseDateClear_Click;
+            // 
             // dtpReleaseDate
             // 
             dtpReleaseDate.Location = new System.Drawing.Point(15, 88);
@@ -687,16 +697,6 @@ namespace Rdmp.UI.MainFormUITabs
             label20.TabIndex = 17;
             label20.Text = "Update Fequency";
             // 
-            // btnReleaseDateClear
-            // 
-            btnReleaseDateClear.Location = new System.Drawing.Point(221, 88);
-            btnReleaseDateClear.Name = "btnReleaseDateClear";
-            btnReleaseDateClear.Size = new System.Drawing.Size(75, 23);
-            btnReleaseDateClear.TabIndex = 25;
-            btnReleaseDateClear.Text = "Clear";
-            btnReleaseDateClear.UseVisualStyleBackColor = true;
-            btnReleaseDateClear.Click += btnReleaseDateClear_Click;
-            // 
             // CatalogueUI
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -731,9 +731,9 @@ namespace Rdmp.UI.MainFormUITabs
         private TicketingControlUI ticketingControl1;
         private SimpleControls.EditableLabelUI editableFolder;
         private SimpleControls.EditableLabelUI editableCatalogueName;
-        private CheckBox checkBox3;
-        private CheckBox checkBox2;
-        private CheckBox checkBox1;
+        private CheckBox cbColdStorage;
+        private CheckBox cbInternal;
+        private CheckBox cbDeprecated;
         private TabControl tabControl1;
         private TabPage tabPage1;
         private TabPage tabPage2;

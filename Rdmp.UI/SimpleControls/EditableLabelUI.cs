@@ -26,7 +26,6 @@ namespace Rdmp.UI.SimpleControls
                 _value = value;
                 lblEditable.Text = _value;
                 pictureBox1.Location = new Point(lblEditable.Location.X + lblEditable.Width + 5, pictureBox1.Location.Y);
-                //pictureBox1.Location.X = lblEditable.Location.X + lblEditable.Width+5;
             }
         }
 
