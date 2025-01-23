@@ -41,59 +41,60 @@ namespace Rdmp.UI.MainFormUITabs
             ticketingControl1 = new TicketingControlUI();
             tabControl1 = new TabControl();
             tabPage1 = new TabPage();
-            label2 = new Label();
             tbDescription = new TextBox();
-            label1 = new Label();
             tbAbstract = new TextBox();
             tabPage2 = new TabPage();
             ddchipDatasetType = new SimpleControls.MultiSelectChips.DropdownOptionsChipDisplay();
             ffcKeywords = new SimpleControls.MultiSelectChips.FreeFormTextChipDisplay();
-            label8 = new Label();
             tbDataSourceSetting = new TextBox();
-            label7 = new Label();
             tbDataSource = new TextBox();
-            label6 = new Label();
             cb_datasetSubtype = new ComboBox();
-            label5 = new Label();
             cb_datasetType = new ComboBox();
-            label4 = new Label();
-            label3 = new Label();
             cb_resourceType = new ComboBox();
             tabPage3 = new TabPage();
             btnEndDateClear = new Button();
             btnStartDateClear = new Button();
             dtpEndDate = new DateTimePicker();
             dtpStart = new DateTimePicker();
-            label12 = new Label();
-            label11 = new Label();
-            label10 = new Label();
             cb_granularity = new ComboBox();
-            label9 = new Label();
             tbGeoCoverage = new TextBox();
             tabPage4 = new TabPage();
-            label16 = new Label();
             tbJuristiction = new TextBox();
-            label15 = new Label();
             tbDataProcessor = new TextBox();
-            label14 = new Label();
             tbDataController = new TextBox();
-            label13 = new Label();
             tbAccessContact = new TextBox();
             tabPage5 = new TabPage();
+            tableLayoutPanel1 = new TableLayoutPanel();
+            groupBox2 = new GroupBox();
             fftControlledVocab = new SimpleControls.MultiSelectChips.FreeFormTextChipDisplay();
+            groupBox1 = new GroupBox();
             ffcPeople = new SimpleControls.MultiSelectChips.FreeFormTextChipDisplay();
-            label19 = new Label();
-            label18 = new Label();
             tbDOI = new TextBox();
-            label17 = new Label();
             tabPage6 = new TabPage();
             btnReleaseDateClear = new Button();
             dtpReleaseDate = new DateTimePicker();
             cbUpdateLag = new ComboBox();
             cb_updateFrequency = new ComboBox();
-            label22 = new Label();
-            label21 = new Label();
-            label20 = new Label();
+            groupBox3 = new GroupBox();
+            groupBox4 = new GroupBox();
+            groupBox5 = new GroupBox();
+            groupBox6 = new GroupBox();
+            groupBox7 = new GroupBox();
+            groupBox8 = new GroupBox();
+            groupBox9 = new GroupBox();
+            groupBox10 = new GroupBox();
+            groupBox11 = new GroupBox();
+            groupBox12 = new GroupBox();
+            groupBox13 = new GroupBox();
+            groupBox14 = new GroupBox();
+            groupBox15 = new GroupBox();
+            groupBox16 = new GroupBox();
+            groupBox17 = new GroupBox();
+            groupBox18 = new GroupBox();
+            groupBox19 = new GroupBox();
+            groupBox20 = new GroupBox();
+            groupBox21 = new GroupBox();
+            groupBox22 = new GroupBox();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
@@ -104,7 +105,30 @@ namespace Rdmp.UI.MainFormUITabs
             tabPage3.SuspendLayout();
             tabPage4.SuspendLayout();
             tabPage5.SuspendLayout();
+            tableLayoutPanel1.SuspendLayout();
+            groupBox2.SuspendLayout();
+            groupBox1.SuspendLayout();
             tabPage6.SuspendLayout();
+            groupBox3.SuspendLayout();
+            groupBox4.SuspendLayout();
+            groupBox5.SuspendLayout();
+            groupBox6.SuspendLayout();
+            groupBox7.SuspendLayout();
+            groupBox8.SuspendLayout();
+            groupBox9.SuspendLayout();
+            groupBox10.SuspendLayout();
+            groupBox11.SuspendLayout();
+            groupBox12.SuspendLayout();
+            groupBox13.SuspendLayout();
+            groupBox14.SuspendLayout();
+            groupBox15.SuspendLayout();
+            groupBox16.SuspendLayout();
+            groupBox17.SuspendLayout();
+            groupBox18.SuspendLayout();
+            groupBox19.SuspendLayout();
+            groupBox20.SuspendLayout();
+            groupBox21.SuspendLayout();
+            groupBox22.SuspendLayout();
             SuspendLayout();
             // 
             // splitContainer1
@@ -204,69 +228,44 @@ namespace Rdmp.UI.MainFormUITabs
             // tabPage1
             // 
             tabPage1.BackColor = System.Drawing.Color.WhiteSmoke;
-            tabPage1.Controls.Add(label2);
-            tabPage1.Controls.Add(tbDescription);
-            tabPage1.Controls.Add(label1);
-            tabPage1.Controls.Add(tbAbstract);
+            tabPage1.Controls.Add(groupBox16);
+            tabPage1.Controls.Add(groupBox15);
             tabPage1.Location = new System.Drawing.Point(4, 24);
             tabPage1.Name = "tabPage1";
             tabPage1.Padding = new Padding(3);
             tabPage1.Size = new System.Drawing.Size(873, 895);
             tabPage1.TabIndex = 0;
             tabPage1.Text = "Descriptions";
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Location = new System.Drawing.Point(6, 143);
-            label2.Name = "label2";
-            label2.Size = new System.Drawing.Size(67, 15);
-            label2.TabIndex = 3;
-            label2.Text = "Description";
+            tabPage1.Click += tabPage1_Click;
             // 
             // tbDescription
             // 
-            tbDescription.Location = new System.Drawing.Point(6, 158);
+            tbDescription.Location = new System.Drawing.Point(6, 22);
             tbDescription.MaxLength = 250;
             tbDescription.Multiline = true;
             tbDescription.Name = "tbDescription";
-            tbDescription.Size = new System.Drawing.Size(861, 116);
+            tbDescription.Size = new System.Drawing.Size(851, 116);
             tbDescription.TabIndex = 2;
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new System.Drawing.Point(6, 3);
-            label1.Name = "label1";
-            label1.Size = new System.Drawing.Size(98, 15);
-            label1.TabIndex = 1;
-            label1.Text = "Short Description";
             // 
             // tbAbstract
             // 
-            tbAbstract.Location = new System.Drawing.Point(6, 18);
+            tbAbstract.Location = new System.Drawing.Point(6, 22);
             tbAbstract.MaxLength = 250;
             tbAbstract.Multiline = true;
             tbAbstract.Name = "tbAbstract";
-            tbAbstract.Size = new System.Drawing.Size(861, 116);
+            tbAbstract.Size = new System.Drawing.Size(851, 116);
             tbAbstract.TabIndex = 0;
             // 
             // tabPage2
             // 
             tabPage2.BackColor = System.Drawing.Color.WhiteSmoke;
+            tabPage2.Controls.Add(groupBox22);
+            tabPage2.Controls.Add(groupBox21);
+            tabPage2.Controls.Add(groupBox20);
+            tabPage2.Controls.Add(groupBox19);
+            tabPage2.Controls.Add(groupBox18);
+            tabPage2.Controls.Add(groupBox17);
             tabPage2.Controls.Add(ddchipDatasetType);
-            tabPage2.Controls.Add(ffcKeywords);
-            tabPage2.Controls.Add(label8);
-            tabPage2.Controls.Add(tbDataSourceSetting);
-            tabPage2.Controls.Add(label7);
-            tabPage2.Controls.Add(tbDataSource);
-            tabPage2.Controls.Add(label6);
-            tabPage2.Controls.Add(cb_datasetSubtype);
-            tabPage2.Controls.Add(label5);
-            tabPage2.Controls.Add(cb_datasetType);
-            tabPage2.Controls.Add(label4);
-            tabPage2.Controls.Add(label3);
-            tabPage2.Controls.Add(cb_resourceType);
             tabPage2.Location = new System.Drawing.Point(4, 24);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
@@ -278,7 +277,7 @@ namespace Rdmp.UI.MainFormUITabs
             // 
             ddchipDatasetType.AutoScroll = true;
             ddchipDatasetType.AutoSize = true;
-            ddchipDatasetType.Location = new System.Drawing.Point(431, 65);
+            ddchipDatasetType.Location = new System.Drawing.Point(581, 16);
             ddchipDatasetType.MinimumSize = new System.Drawing.Size(100, 20);
             ddchipDatasetType.Name = "ddchipDatasetType";
             ddchipDatasetType.Size = new System.Drawing.Size(286, 83);
@@ -288,101 +287,47 @@ namespace Rdmp.UI.MainFormUITabs
             // 
             ffcKeywords.AutoScroll = true;
             ffcKeywords.AutoSize = true;
-            ffcKeywords.Location = new System.Drawing.Point(7, 275);
+            ffcKeywords.Location = new System.Drawing.Point(6, 22);
             ffcKeywords.MaximumSize = new System.Drawing.Size(300, 0);
             ffcKeywords.MinimumSize = new System.Drawing.Size(100, 20);
             ffcKeywords.Name = "ffcKeywords";
             ffcKeywords.Size = new System.Drawing.Size(300, 53);
             ffcKeywords.TabIndex = 12;
             // 
-            // label8
-            // 
-            label8.AutoSize = true;
-            label8.Location = new System.Drawing.Point(6, 209);
-            label8.Name = "label8";
-            label8.Size = new System.Drawing.Size(110, 15);
-            label8.TabIndex = 11;
-            label8.Text = "Data Source Setting";
-            // 
             // tbDataSourceSetting
             // 
-            tbDataSourceSetting.Location = new System.Drawing.Point(6, 227);
+            tbDataSourceSetting.Location = new System.Drawing.Point(6, 22);
             tbDataSourceSetting.Name = "tbDataSourceSetting";
             tbDataSourceSetting.Size = new System.Drawing.Size(366, 23);
             tbDataSourceSetting.TabIndex = 10;
             // 
-            // label7
-            // 
-            label7.AutoSize = true;
-            label7.Location = new System.Drawing.Point(6, 158);
-            label7.Name = "label7";
-            label7.Size = new System.Drawing.Size(70, 15);
-            label7.TabIndex = 9;
-            label7.Text = "Data Source";
-            // 
             // tbDataSource
             // 
-            tbDataSource.Location = new System.Drawing.Point(6, 176);
+            tbDataSource.Location = new System.Drawing.Point(6, 22);
             tbDataSource.Name = "tbDataSource";
             tbDataSource.Size = new System.Drawing.Size(366, 23);
             tbDataSource.TabIndex = 8;
             // 
-            // label6
-            // 
-            label6.AutoSize = true;
-            label6.Location = new System.Drawing.Point(6, 107);
-            label6.Name = "label6";
-            label6.Size = new System.Drawing.Size(92, 15);
-            label6.TabIndex = 7;
-            label6.Text = "Dataset Subtype";
-            // 
             // cb_datasetSubtype
             // 
             cb_datasetSubtype.FormattingEnabled = true;
-            cb_datasetSubtype.Location = new System.Drawing.Point(6, 125);
+            cb_datasetSubtype.Location = new System.Drawing.Point(6, 19);
             cb_datasetSubtype.Name = "cb_datasetSubtype";
             cb_datasetSubtype.Size = new System.Drawing.Size(121, 23);
             cb_datasetSubtype.TabIndex = 6;
             // 
-            // label5
-            // 
-            label5.AutoSize = true;
-            label5.Location = new System.Drawing.Point(6, 58);
-            label5.Name = "label5";
-            label5.Size = new System.Drawing.Size(73, 15);
-            label5.TabIndex = 5;
-            label5.Text = "Dataset Type";
-            // 
             // cb_datasetType
             // 
             cb_datasetType.FormattingEnabled = true;
-            cb_datasetType.Location = new System.Drawing.Point(6, 76);
+            cb_datasetType.Location = new System.Drawing.Point(6, 22);
             cb_datasetType.Name = "cb_datasetType";
             cb_datasetType.Size = new System.Drawing.Size(121, 23);
             cb_datasetType.TabIndex = 4;
             // 
-            // label4
-            // 
-            label4.AutoSize = true;
-            label4.Location = new System.Drawing.Point(6, 257);
-            label4.Name = "label4";
-            label4.Size = new System.Drawing.Size(58, 15);
-            label4.TabIndex = 3;
-            label4.Text = "Keywords";
-            // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.Location = new System.Drawing.Point(6, 9);
-            label3.Name = "label3";
-            label3.Size = new System.Drawing.Size(82, 15);
-            label3.TabIndex = 1;
-            label3.Text = "Resource Type";
-            // 
             // cb_resourceType
             // 
             cb_resourceType.FormattingEnabled = true;
-            cb_resourceType.Location = new System.Drawing.Point(6, 27);
+            cb_resourceType.Location = new System.Drawing.Point(6, 22);
             cb_resourceType.Name = "cb_resourceType";
             cb_resourceType.Size = new System.Drawing.Size(121, 23);
             cb_resourceType.TabIndex = 0;
@@ -390,16 +335,10 @@ namespace Rdmp.UI.MainFormUITabs
             // tabPage3
             // 
             tabPage3.BackColor = System.Drawing.Color.WhiteSmoke;
-            tabPage3.Controls.Add(btnEndDateClear);
-            tabPage3.Controls.Add(btnStartDateClear);
-            tabPage3.Controls.Add(dtpEndDate);
-            tabPage3.Controls.Add(dtpStart);
-            tabPage3.Controls.Add(label12);
-            tabPage3.Controls.Add(label11);
-            tabPage3.Controls.Add(label10);
-            tabPage3.Controls.Add(cb_granularity);
-            tabPage3.Controls.Add(label9);
-            tabPage3.Controls.Add(tbGeoCoverage);
+            tabPage3.Controls.Add(groupBox14);
+            tabPage3.Controls.Add(groupBox13);
+            tabPage3.Controls.Add(groupBox12);
+            tabPage3.Controls.Add(groupBox11);
             tabPage3.Location = new System.Drawing.Point(4, 24);
             tabPage3.Name = "tabPage3";
             tabPage3.Size = new System.Drawing.Size(873, 895);
@@ -408,7 +347,7 @@ namespace Rdmp.UI.MainFormUITabs
             // 
             // btnEndDateClear
             // 
-            btnEndDateClear.Location = new System.Drawing.Point(220, 194);
+            btnEndDateClear.Location = new System.Drawing.Point(212, 22);
             btnEndDateClear.Name = "btnEndDateClear";
             btnEndDateClear.Size = new System.Drawing.Size(75, 23);
             btnEndDateClear.TabIndex = 25;
@@ -418,7 +357,7 @@ namespace Rdmp.UI.MainFormUITabs
             // 
             // btnStartDateClear
             // 
-            btnStartDateClear.Location = new System.Drawing.Point(220, 140);
+            btnStartDateClear.Location = new System.Drawing.Point(212, 16);
             btnStartDateClear.Name = "btnStartDateClear";
             btnStartDateClear.Size = new System.Drawing.Size(75, 23);
             btnStartDateClear.TabIndex = 24;
@@ -428,65 +367,29 @@ namespace Rdmp.UI.MainFormUITabs
             // 
             // dtpEndDate
             // 
-            dtpEndDate.Location = new System.Drawing.Point(14, 194);
+            dtpEndDate.Location = new System.Drawing.Point(6, 22);
             dtpEndDate.Name = "dtpEndDate";
             dtpEndDate.Size = new System.Drawing.Size(200, 23);
             dtpEndDate.TabIndex = 23;
             // 
             // dtpStart
             // 
-            dtpStart.Location = new System.Drawing.Point(14, 140);
+            dtpStart.Location = new System.Drawing.Point(6, 16);
             dtpStart.Name = "dtpStart";
             dtpStart.Size = new System.Drawing.Size(200, 23);
             dtpStart.TabIndex = 20;
             // 
-            // label12
-            // 
-            label12.AutoSize = true;
-            label12.Location = new System.Drawing.Point(14, 176);
-            label12.Name = "label12";
-            label12.Size = new System.Drawing.Size(54, 15);
-            label12.TabIndex = 19;
-            label12.Text = "End Date";
-            // 
-            // label11
-            // 
-            label11.AutoSize = true;
-            label11.Location = new System.Drawing.Point(14, 122);
-            label11.Name = "label11";
-            label11.Size = new System.Drawing.Size(58, 15);
-            label11.TabIndex = 17;
-            label11.Text = "Start Date";
-            // 
-            // label10
-            // 
-            label10.AutoSize = true;
-            label10.Location = new System.Drawing.Point(14, 68);
-            label10.Name = "label10";
-            label10.Size = new System.Drawing.Size(65, 15);
-            label10.TabIndex = 15;
-            label10.Text = "Granularity";
-            // 
             // cb_granularity
             // 
             cb_granularity.FormattingEnabled = true;
-            cb_granularity.Location = new System.Drawing.Point(14, 86);
+            cb_granularity.Location = new System.Drawing.Point(6, 22);
             cb_granularity.Name = "cb_granularity";
             cb_granularity.Size = new System.Drawing.Size(121, 23);
             cb_granularity.TabIndex = 14;
             // 
-            // label9
-            // 
-            label9.AutoSize = true;
-            label9.Location = new System.Drawing.Point(14, 17);
-            label9.Name = "label9";
-            label9.Size = new System.Drawing.Size(130, 15);
-            label9.TabIndex = 13;
-            label9.Text = "Geographical Coverage";
-            // 
             // tbGeoCoverage
             // 
-            tbGeoCoverage.Location = new System.Drawing.Point(14, 35);
+            tbGeoCoverage.Location = new System.Drawing.Point(8, 22);
             tbGeoCoverage.Name = "tbGeoCoverage";
             tbGeoCoverage.Size = new System.Drawing.Size(366, 23);
             tbGeoCoverage.TabIndex = 12;
@@ -494,80 +397,40 @@ namespace Rdmp.UI.MainFormUITabs
             // tabPage4
             // 
             tabPage4.BackColor = System.Drawing.Color.WhiteSmoke;
-            tabPage4.Controls.Add(label16);
-            tabPage4.Controls.Add(tbJuristiction);
-            tabPage4.Controls.Add(label15);
-            tabPage4.Controls.Add(tbDataProcessor);
-            tabPage4.Controls.Add(label14);
-            tabPage4.Controls.Add(tbDataController);
-            tabPage4.Controls.Add(label13);
-            tabPage4.Controls.Add(tbAccessContact);
+            tabPage4.Controls.Add(groupBox10);
+            tabPage4.Controls.Add(groupBox9);
+            tabPage4.Controls.Add(groupBox8);
+            tabPage4.Controls.Add(groupBox7);
             tabPage4.Location = new System.Drawing.Point(4, 24);
             tabPage4.Name = "tabPage4";
             tabPage4.Size = new System.Drawing.Size(873, 895);
             tabPage4.TabIndex = 3;
             tabPage4.Text = "Access";
             // 
-            // label16
-            // 
-            label16.AutoSize = true;
-            label16.Location = new System.Drawing.Point(15, 169);
-            label16.Name = "label16";
-            label16.Size = new System.Drawing.Size(64, 15);
-            label16.TabIndex = 21;
-            label16.Text = "Juristiction";
-            // 
             // tbJuristiction
             // 
-            tbJuristiction.Location = new System.Drawing.Point(15, 187);
+            tbJuristiction.Location = new System.Drawing.Point(6, 22);
             tbJuristiction.Name = "tbJuristiction";
             tbJuristiction.Size = new System.Drawing.Size(366, 23);
             tbJuristiction.TabIndex = 20;
             // 
-            // label15
-            // 
-            label15.AutoSize = true;
-            label15.Location = new System.Drawing.Point(15, 116);
-            label15.Name = "label15";
-            label15.Size = new System.Drawing.Size(85, 15);
-            label15.TabIndex = 19;
-            label15.Text = "Data Processor";
-            // 
             // tbDataProcessor
             // 
-            tbDataProcessor.Location = new System.Drawing.Point(15, 134);
+            tbDataProcessor.Location = new System.Drawing.Point(6, 22);
             tbDataProcessor.Name = "tbDataProcessor";
             tbDataProcessor.Size = new System.Drawing.Size(366, 23);
             tbDataProcessor.TabIndex = 18;
             // 
-            // label14
-            // 
-            label14.AutoSize = true;
-            label14.Location = new System.Drawing.Point(15, 66);
-            label14.Name = "label14";
-            label14.Size = new System.Drawing.Size(87, 15);
-            label14.TabIndex = 17;
-            label14.Text = "Data Controller";
-            // 
             // tbDataController
             // 
-            tbDataController.Location = new System.Drawing.Point(15, 84);
+            tbDataController.Location = new System.Drawing.Point(6, 22);
             tbDataController.Name = "tbDataController";
             tbDataController.Size = new System.Drawing.Size(366, 23);
             tbDataController.TabIndex = 16;
             // 
-            // label13
-            // 
-            label13.AutoSize = true;
-            label13.Location = new System.Drawing.Point(15, 10);
-            label13.Name = "label13";
-            label13.Size = new System.Drawing.Size(88, 15);
-            label13.TabIndex = 15;
-            label13.Text = "Access Contact";
-            // 
             // tbAccessContact
             // 
-            tbAccessContact.Location = new System.Drawing.Point(15, 28);
+            tbAccessContact.Location = new System.Drawing.Point(5, 19);
             tbAccessContact.Name = "tbAccessContact";
             tbAccessContact.Size = new System.Drawing.Size(366, 23);
             tbAccessContact.TabIndex = 14;
@@ -575,84 +438,86 @@ namespace Rdmp.UI.MainFormUITabs
             // tabPage5
             // 
             tabPage5.BackColor = System.Drawing.Color.WhiteSmoke;
-            tabPage5.Controls.Add(fftControlledVocab);
-            tabPage5.Controls.Add(ffcPeople);
-            tabPage5.Controls.Add(label19);
-            tabPage5.Controls.Add(label18);
-            tabPage5.Controls.Add(tbDOI);
-            tabPage5.Controls.Add(label17);
+            tabPage5.Controls.Add(groupBox3);
+            tabPage5.Controls.Add(tableLayoutPanel1);
             tabPage5.Location = new System.Drawing.Point(4, 24);
             tabPage5.Name = "tabPage5";
             tabPage5.Size = new System.Drawing.Size(873, 895);
             tabPage5.TabIndex = 4;
             tabPage5.Text = "Attribution";
             // 
+            // tableLayoutPanel1
+            // 
+            tableLayoutPanel1.AutoSize = true;
+            tableLayoutPanel1.ColumnCount = 1;
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel1.Controls.Add(groupBox2, 0, 0);
+            tableLayoutPanel1.Controls.Add(groupBox1, 0, 1);
+            tableLayoutPanel1.Location = new System.Drawing.Point(14, 71);
+            tableLayoutPanel1.Name = "tableLayoutPanel1";
+            tableLayoutPanel1.RowCount = 2;
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel1.Size = new System.Drawing.Size(318, 206);
+            tableLayoutPanel1.TabIndex = 26;
+            // 
+            // groupBox2
+            // 
+            groupBox2.AutoSize = true;
+            groupBox2.Controls.Add(fftControlledVocab);
+            groupBox2.Location = new System.Drawing.Point(3, 3);
+            groupBox2.Name = "groupBox2";
+            groupBox2.Size = new System.Drawing.Size(312, 70);
+            groupBox2.TabIndex = 25;
+            groupBox2.TabStop = false;
+            groupBox2.Text = "ControlledGroup";
+            // 
             // fftControlledVocab
             // 
             fftControlledVocab.AutoScroll = true;
             fftControlledVocab.AutoSize = true;
-            fftControlledVocab.Location = new System.Drawing.Point(14, 98);
+            fftControlledVocab.Location = new System.Drawing.Point(6, 22);
             fftControlledVocab.MaximumSize = new System.Drawing.Size(300, 0);
             fftControlledVocab.MinimumSize = new System.Drawing.Size(100, 20);
             fftControlledVocab.Name = "fftControlledVocab";
             fftControlledVocab.Size = new System.Drawing.Size(300, 26);
             fftControlledVocab.TabIndex = 23;
             // 
+            // groupBox1
+            // 
+            groupBox1.AutoSize = true;
+            groupBox1.Controls.Add(ffcPeople);
+            groupBox1.Location = new System.Drawing.Point(3, 106);
+            groupBox1.Name = "groupBox1";
+            groupBox1.Size = new System.Drawing.Size(312, 97);
+            groupBox1.TabIndex = 24;
+            groupBox1.TabStop = false;
+            groupBox1.Text = "People";
+            // 
             // ffcPeople
             // 
             ffcPeople.AutoScroll = true;
             ffcPeople.AutoSize = true;
-            ffcPeople.Location = new System.Drawing.Point(14, 195);
+            ffcPeople.Location = new System.Drawing.Point(6, 22);
             ffcPeople.MaximumSize = new System.Drawing.Size(300, 0);
             ffcPeople.MinimumSize = new System.Drawing.Size(100, 20);
             ffcPeople.Name = "ffcPeople";
             ffcPeople.Size = new System.Drawing.Size(300, 53);
             ffcPeople.TabIndex = 22;
             // 
-            // label19
-            // 
-            label19.AutoSize = true;
-            label19.Location = new System.Drawing.Point(14, 74);
-            label19.Name = "label19";
-            label19.Size = new System.Drawing.Size(124, 15);
-            label19.TabIndex = 21;
-            label19.Text = "Controlled Vocabulary";
-            // 
-            // label18
-            // 
-            label18.AutoSize = true;
-            label18.Location = new System.Drawing.Point(14, 15);
-            label18.Name = "label18";
-            label18.Size = new System.Drawing.Size(27, 15);
-            label18.TabIndex = 19;
-            label18.Text = "DOI";
-            // 
             // tbDOI
             // 
-            tbDOI.Location = new System.Drawing.Point(14, 33);
+            tbDOI.Location = new System.Drawing.Point(6, 22);
             tbDOI.Name = "tbDOI";
-            tbDOI.Size = new System.Drawing.Size(366, 23);
+            tbDOI.Size = new System.Drawing.Size(303, 23);
             tbDOI.TabIndex = 18;
-            // 
-            // label17
-            // 
-            label17.AutoSize = true;
-            label17.Location = new System.Drawing.Point(14, 177);
-            label17.Name = "label17";
-            label17.Size = new System.Drawing.Size(43, 15);
-            label17.TabIndex = 17;
-            label17.Text = "People";
             // 
             // tabPage6
             // 
             tabPage6.BackColor = System.Drawing.Color.WhiteSmoke;
-            tabPage6.Controls.Add(btnReleaseDateClear);
-            tabPage6.Controls.Add(dtpReleaseDate);
-            tabPage6.Controls.Add(cbUpdateLag);
-            tabPage6.Controls.Add(cb_updateFrequency);
-            tabPage6.Controls.Add(label22);
-            tabPage6.Controls.Add(label21);
-            tabPage6.Controls.Add(label20);
+            tabPage6.Controls.Add(groupBox6);
+            tabPage6.Controls.Add(groupBox5);
+            tabPage6.Controls.Add(groupBox4);
             tabPage6.Location = new System.Drawing.Point(4, 24);
             tabPage6.Name = "tabPage6";
             tabPage6.Size = new System.Drawing.Size(873, 895);
@@ -661,7 +526,7 @@ namespace Rdmp.UI.MainFormUITabs
             // 
             // btnReleaseDateClear
             // 
-            btnReleaseDateClear.Location = new System.Drawing.Point(221, 88);
+            btnReleaseDateClear.Location = new System.Drawing.Point(212, 22);
             btnReleaseDateClear.Name = "btnReleaseDateClear";
             btnReleaseDateClear.Size = new System.Drawing.Size(75, 23);
             btnReleaseDateClear.TabIndex = 25;
@@ -671,7 +536,7 @@ namespace Rdmp.UI.MainFormUITabs
             // 
             // dtpReleaseDate
             // 
-            dtpReleaseDate.Location = new System.Drawing.Point(15, 88);
+            dtpReleaseDate.Location = new System.Drawing.Point(6, 22);
             dtpReleaseDate.Name = "dtpReleaseDate";
             dtpReleaseDate.Size = new System.Drawing.Size(200, 23);
             dtpReleaseDate.TabIndex = 24;
@@ -679,7 +544,7 @@ namespace Rdmp.UI.MainFormUITabs
             // cbUpdateLag
             // 
             cbUpdateLag.FormattingEnabled = true;
-            cbUpdateLag.Location = new System.Drawing.Point(15, 142);
+            cbUpdateLag.Location = new System.Drawing.Point(6, 22);
             cbUpdateLag.Name = "cbUpdateLag";
             cbUpdateLag.Size = new System.Drawing.Size(140, 23);
             cbUpdateLag.TabIndex = 23;
@@ -688,38 +553,215 @@ namespace Rdmp.UI.MainFormUITabs
             // cb_updateFrequency
             // 
             cb_updateFrequency.FormattingEnabled = true;
-            cb_updateFrequency.Location = new System.Drawing.Point(15, 30);
+            cb_updateFrequency.Location = new System.Drawing.Point(6, 15);
             cb_updateFrequency.Name = "cb_updateFrequency";
             cb_updateFrequency.Size = new System.Drawing.Size(121, 23);
             cb_updateFrequency.TabIndex = 22;
             cb_updateFrequency.Format += FormatCB;
             // 
-            // label22
+            // groupBox3
             // 
-            label22.AutoSize = true;
-            label22.Location = new System.Drawing.Point(15, 124);
-            label22.Name = "label22";
-            label22.Size = new System.Drawing.Size(67, 15);
-            label22.TabIndex = 21;
-            label22.Text = "Update Lag";
+            groupBox3.Controls.Add(tbDOI);
+            groupBox3.Location = new System.Drawing.Point(14, 12);
+            groupBox3.Name = "groupBox3";
+            groupBox3.Size = new System.Drawing.Size(318, 56);
+            groupBox3.TabIndex = 27;
+            groupBox3.TabStop = false;
+            groupBox3.Text = "DOI";
             // 
-            // label21
+            // groupBox4
             // 
-            label21.AutoSize = true;
-            label21.Location = new System.Drawing.Point(15, 70);
-            label21.Name = "label21";
-            label21.Size = new System.Drawing.Size(105, 15);
-            label21.TabIndex = 19;
-            label21.Text = "Initial Release Date";
+            groupBox4.Controls.Add(cb_updateFrequency);
+            groupBox4.Location = new System.Drawing.Point(15, 19);
+            groupBox4.Name = "groupBox4";
+            groupBox4.Size = new System.Drawing.Size(137, 47);
+            groupBox4.TabIndex = 26;
+            groupBox4.TabStop = false;
+            groupBox4.Text = "Update Frequency";
             // 
-            // label20
+            // groupBox5
             // 
-            label20.AutoSize = true;
-            label20.Location = new System.Drawing.Point(15, 12);
-            label20.Name = "label20";
-            label20.Size = new System.Drawing.Size(99, 15);
-            label20.TabIndex = 17;
-            label20.Text = "Update Fequency";
+            groupBox5.Controls.Add(dtpReleaseDate);
+            groupBox5.Controls.Add(btnReleaseDateClear);
+            groupBox5.Location = new System.Drawing.Point(15, 72);
+            groupBox5.Name = "groupBox5";
+            groupBox5.Size = new System.Drawing.Size(293, 53);
+            groupBox5.TabIndex = 27;
+            groupBox5.TabStop = false;
+            groupBox5.Text = "Initial Release Date";
+            // 
+            // groupBox6
+            // 
+            groupBox6.Controls.Add(cbUpdateLag);
+            groupBox6.Location = new System.Drawing.Point(15, 131);
+            groupBox6.Name = "groupBox6";
+            groupBox6.Size = new System.Drawing.Size(155, 59);
+            groupBox6.TabIndex = 28;
+            groupBox6.TabStop = false;
+            groupBox6.Text = "Update Lag";
+            // 
+            // groupBox7
+            // 
+            groupBox7.Controls.Add(tbAccessContact);
+            groupBox7.Location = new System.Drawing.Point(15, 7);
+            groupBox7.Name = "groupBox7";
+            groupBox7.Size = new System.Drawing.Size(398, 56);
+            groupBox7.TabIndex = 22;
+            groupBox7.TabStop = false;
+            groupBox7.Text = "Access Contact";
+            // 
+            // groupBox8
+            // 
+            groupBox8.Controls.Add(tbDataController);
+            groupBox8.Location = new System.Drawing.Point(15, 69);
+            groupBox8.Name = "groupBox8";
+            groupBox8.Size = new System.Drawing.Size(398, 63);
+            groupBox8.TabIndex = 23;
+            groupBox8.TabStop = false;
+            groupBox8.Text = "Data Controller";
+            // 
+            // groupBox9
+            // 
+            groupBox9.Controls.Add(tbDataProcessor);
+            groupBox9.Location = new System.Drawing.Point(15, 138);
+            groupBox9.Name = "groupBox9";
+            groupBox9.Size = new System.Drawing.Size(398, 66);
+            groupBox9.TabIndex = 24;
+            groupBox9.TabStop = false;
+            groupBox9.Text = "Data Processor";
+            // 
+            // groupBox10
+            // 
+            groupBox10.Controls.Add(tbJuristiction);
+            groupBox10.Location = new System.Drawing.Point(15, 210);
+            groupBox10.Name = "groupBox10";
+            groupBox10.Size = new System.Drawing.Size(398, 72);
+            groupBox10.TabIndex = 25;
+            groupBox10.TabStop = false;
+            groupBox10.Text = "Juristiction";
+            // 
+            // groupBox11
+            // 
+            groupBox11.Controls.Add(tbGeoCoverage);
+            groupBox11.Location = new System.Drawing.Point(14, 10);
+            groupBox11.Name = "groupBox11";
+            groupBox11.Size = new System.Drawing.Size(393, 55);
+            groupBox11.TabIndex = 26;
+            groupBox11.TabStop = false;
+            groupBox11.Text = "Geographical Coverage";
+            // 
+            // groupBox12
+            // 
+            groupBox12.Controls.Add(cb_granularity);
+            groupBox12.Location = new System.Drawing.Point(14, 71);
+            groupBox12.Name = "groupBox12";
+            groupBox12.Size = new System.Drawing.Size(146, 62);
+            groupBox12.TabIndex = 27;
+            groupBox12.TabStop = false;
+            groupBox12.Text = "Granularity";
+            // 
+            // groupBox13
+            // 
+            groupBox13.Controls.Add(dtpStart);
+            groupBox13.Controls.Add(btnStartDateClear);
+            groupBox13.Location = new System.Drawing.Point(14, 139);
+            groupBox13.Name = "groupBox13";
+            groupBox13.Size = new System.Drawing.Size(296, 49);
+            groupBox13.TabIndex = 28;
+            groupBox13.TabStop = false;
+            groupBox13.Text = "Start Date";
+            // 
+            // groupBox14
+            // 
+            groupBox14.Controls.Add(dtpEndDate);
+            groupBox14.Controls.Add(btnEndDateClear);
+            groupBox14.Location = new System.Drawing.Point(14, 194);
+            groupBox14.Name = "groupBox14";
+            groupBox14.Size = new System.Drawing.Size(296, 62);
+            groupBox14.TabIndex = 29;
+            groupBox14.TabStop = false;
+            groupBox14.Text = "End Date";
+            // 
+            // groupBox15
+            // 
+            groupBox15.Controls.Add(tbAbstract);
+            groupBox15.Location = new System.Drawing.Point(7, 6);
+            groupBox15.Name = "groupBox15";
+            groupBox15.Size = new System.Drawing.Size(863, 155);
+            groupBox15.TabIndex = 4;
+            groupBox15.TabStop = false;
+            groupBox15.Text = "Short Description";
+            // 
+            // groupBox16
+            // 
+            groupBox16.Controls.Add(tbDescription);
+            groupBox16.Location = new System.Drawing.Point(7, 167);
+            groupBox16.Name = "groupBox16";
+            groupBox16.Size = new System.Drawing.Size(866, 165);
+            groupBox16.TabIndex = 5;
+            groupBox16.TabStop = false;
+            groupBox16.Text = "Description";
+            // 
+            // groupBox17
+            // 
+            groupBox17.Controls.Add(cb_resourceType);
+            groupBox17.Location = new System.Drawing.Point(7, 6);
+            groupBox17.Name = "groupBox17";
+            groupBox17.Size = new System.Drawing.Size(137, 58);
+            groupBox17.TabIndex = 14;
+            groupBox17.TabStop = false;
+            groupBox17.Text = "Resource Type";
+            // 
+            // groupBox18
+            // 
+            groupBox18.Controls.Add(cb_datasetType);
+            groupBox18.Location = new System.Drawing.Point(7, 70);
+            groupBox18.Name = "groupBox18";
+            groupBox18.Size = new System.Drawing.Size(365, 85);
+            groupBox18.TabIndex = 15;
+            groupBox18.TabStop = false;
+            groupBox18.Text = "Dataset Type";
+            // 
+            // groupBox19
+            // 
+            groupBox19.Controls.Add(cb_datasetSubtype);
+            groupBox19.Location = new System.Drawing.Point(7, 161);
+            groupBox19.Name = "groupBox19";
+            groupBox19.Size = new System.Drawing.Size(365, 82);
+            groupBox19.TabIndex = 16;
+            groupBox19.TabStop = false;
+            groupBox19.Text = "Dataset Subtype";
+            // 
+            // groupBox20
+            // 
+            groupBox20.Controls.Add(tbDataSource);
+            groupBox20.Location = new System.Drawing.Point(7, 249);
+            groupBox20.Name = "groupBox20";
+            groupBox20.Size = new System.Drawing.Size(407, 57);
+            groupBox20.TabIndex = 17;
+            groupBox20.TabStop = false;
+            groupBox20.Text = "Data Source";
+            // 
+            // groupBox21
+            // 
+            groupBox21.Controls.Add(tbDataSourceSetting);
+            groupBox21.Location = new System.Drawing.Point(7, 312);
+            groupBox21.Name = "groupBox21";
+            groupBox21.Size = new System.Drawing.Size(407, 71);
+            groupBox21.TabIndex = 18;
+            groupBox21.TabStop = false;
+            groupBox21.Text = "Data Source Setting";
+            // 
+            // groupBox22
+            // 
+            groupBox22.AutoSize = true;
+            groupBox22.Controls.Add(ffcKeywords);
+            groupBox22.Location = new System.Drawing.Point(7, 389);
+            groupBox22.Name = "groupBox22";
+            groupBox22.Size = new System.Drawing.Size(365, 115);
+            groupBox22.TabIndex = 19;
+            groupBox22.TabStop = false;
+            groupBox22.Text = "Keywords";
             // 
             // CatalogueUI
             // 
@@ -736,17 +778,50 @@ namespace Rdmp.UI.MainFormUITabs
             splitContainer1.ResumeLayout(false);
             tabControl1.ResumeLayout(false);
             tabPage1.ResumeLayout(false);
-            tabPage1.PerformLayout();
             tabPage2.ResumeLayout(false);
             tabPage2.PerformLayout();
             tabPage3.ResumeLayout(false);
-            tabPage3.PerformLayout();
             tabPage4.ResumeLayout(false);
-            tabPage4.PerformLayout();
             tabPage5.ResumeLayout(false);
             tabPage5.PerformLayout();
+            tableLayoutPanel1.ResumeLayout(false);
+            tableLayoutPanel1.PerformLayout();
+            groupBox2.ResumeLayout(false);
+            groupBox2.PerformLayout();
+            groupBox1.ResumeLayout(false);
+            groupBox1.PerformLayout();
             tabPage6.ResumeLayout(false);
-            tabPage6.PerformLayout();
+            groupBox3.ResumeLayout(false);
+            groupBox3.PerformLayout();
+            groupBox4.ResumeLayout(false);
+            groupBox5.ResumeLayout(false);
+            groupBox6.ResumeLayout(false);
+            groupBox7.ResumeLayout(false);
+            groupBox7.PerformLayout();
+            groupBox8.ResumeLayout(false);
+            groupBox8.PerformLayout();
+            groupBox9.ResumeLayout(false);
+            groupBox9.PerformLayout();
+            groupBox10.ResumeLayout(false);
+            groupBox10.PerformLayout();
+            groupBox11.ResumeLayout(false);
+            groupBox11.PerformLayout();
+            groupBox12.ResumeLayout(false);
+            groupBox13.ResumeLayout(false);
+            groupBox14.ResumeLayout(false);
+            groupBox15.ResumeLayout(false);
+            groupBox15.PerformLayout();
+            groupBox16.ResumeLayout(false);
+            groupBox16.PerformLayout();
+            groupBox17.ResumeLayout(false);
+            groupBox18.ResumeLayout(false);
+            groupBox19.ResumeLayout(false);
+            groupBox20.ResumeLayout(false);
+            groupBox20.PerformLayout();
+            groupBox21.ResumeLayout(false);
+            groupBox21.PerformLayout();
+            groupBox22.ResumeLayout(false);
+            groupBox22.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -765,42 +840,20 @@ namespace Rdmp.UI.MainFormUITabs
         private TabPage tabPage4;
         private TabPage tabPage5;
         private TabPage tabPage6;
-        private Label label1;
-        private Label label2;
         private TextBox tbDescription;
-        private Label label7;
         private TextBox tbDataSource;
-        private Label label6;
         private ComboBox cb_datasetSubtype;
-        private Label label5;
         private ComboBox cb_datasetType;
-        private Label label4;
-        private Label label3;
         private ComboBox cb_resourceType;
-        private Label label8;
         private TextBox tbDataSourceSetting;
-        private Label label12;
-        private Label label11;
-        private Label label10;
         private ComboBox cb_granularity;
-        private Label label9;
         private TextBox tbGeoCoverage;
-        private Label label16;
         private TextBox tbJuristiction;
-        private Label label15;
         private TextBox tbDataProcessor;
-        private Label label14;
         private TextBox tbDataController;
-        private Label label13;
         private TextBox tbAccessContact;
-        private Label label19;
-        private Label label18;
         private TextBox tbDOI;
-        private Label label17;
         private ComboBox cb_updateFrequency;
-        private Label label22;
-        private Label label21;
-        private Label label20;
         private TextBox tbAbstract;
         private DateTimePicker dtpStart;
         private DateTimePicker dtpEndDate;
@@ -813,5 +866,28 @@ namespace Rdmp.UI.MainFormUITabs
         private SimpleControls.MultiSelectChips.FreeFormTextChipDisplay ffcPeople;
         private SimpleControls.MultiSelectChips.DropdownOptionsChipDisplay ddchipDatasetType;
         private SimpleControls.MultiSelectChips.FreeFormTextChipDisplay fftControlledVocab;
+        private TableLayoutPanel tableLayoutPanel1;
+        private GroupBox groupBox2;
+        private GroupBox groupBox1;
+        private GroupBox groupBox3;
+        private GroupBox groupBox6;
+        private GroupBox groupBox5;
+        private GroupBox groupBox4;
+        private GroupBox groupBox8;
+        private GroupBox groupBox7;
+        private GroupBox groupBox10;
+        private GroupBox groupBox9;
+        private GroupBox groupBox14;
+        private GroupBox groupBox13;
+        private GroupBox groupBox12;
+        private GroupBox groupBox11;
+        private GroupBox groupBox16;
+        private GroupBox groupBox15;
+        private GroupBox groupBox22;
+        private GroupBox groupBox21;
+        private GroupBox groupBox20;
+        private GroupBox groupBox19;
+        private GroupBox groupBox18;
+        private GroupBox groupBox17;
     }
 }

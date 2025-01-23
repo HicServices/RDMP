@@ -540,6 +540,11 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
     {
 
     }
+
+    private void tabPage1_Click(object sender, EventArgs e)
+    {
+
+    }
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<CatalogueUI_Design, UserControl>))]
