@@ -823,6 +823,7 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
 
     public enum UpdateFrequencies
     {
+        Other,
         Static,
         Irregular,
         Continuous,
@@ -835,12 +836,12 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
         Biweekly,
         Weekly,
         TwiceWeekly,
-        Daily,
-        Other
+        Daily
     }
 
     public enum UpdateLagTimes
     {
+        Other,
         LessThanAWeek,
         OneToTwoWeeks,
         TwoToFourWeeks,
@@ -848,8 +849,7 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
         TwoToSixMonths,
         SixMonthsPlus,
         Variable,
-        NotApplicable,
-        Other
+        NotApplicable
     }
     #endregion
 
