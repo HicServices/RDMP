@@ -26,7 +26,7 @@ namespace Rdmp.UI.SimpleControls.MultiSelectChips
                 flowLayoutPanel1.Controls.Clear();
                 var splitValues = _value.Split(',');
                 comboBox1.Items.Clear();
-                foreach(var option in _options.Where(o => !splitValues.Contains(o)).ToList())
+                foreach (var option in _options.Where(o => !splitValues.Contains(o)).ToList())
                 {
                     comboBox1.Items.Add(option);
                 }
@@ -46,7 +46,7 @@ namespace Rdmp.UI.SimpleControls.MultiSelectChips
             {
                 _options = value;
                 comboBox1.Items.Clear();
-                foreach(var option in _options)
+                foreach (var option in _options)
                 {
                     comboBox1.Items.Add(option);
                 }
@@ -65,10 +65,10 @@ namespace Rdmp.UI.SimpleControls.MultiSelectChips
         }
 
 
-        public void comboBox1_TextChanged(object sender, EventArgs e)
+        public void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-                var value = comboBox1.SelectedItem as string;
-                Value = Value + $",{value}";
+            var value = comboBox1.SelectedItem as string;
+            Value = Value + $"{(Value.Length>0?",":"")}{value}";
         }
     }
 }

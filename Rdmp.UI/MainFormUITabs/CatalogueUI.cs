@@ -308,7 +308,7 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
     {
         dtpStart.ValueChanged -= UpdateStartDate;
         _catalogue.StartDate = dtpStart.Value;
-        dtpStart.CustomFormat = "yyyy/MM/dd";
+        dtpStart.CustomFormat = "dd/MM/yyyy";
         Bind(dtpStart, "Value", "StartDate", c => c.StartDate);
     }
 
@@ -316,7 +316,7 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
     {
         dtpEndDate.ValueChanged -= UpdateEndDate;
         _catalogue.EndDate = dtpEndDate.Value;
-        dtpEndDate.CustomFormat = "yyyy/MM/dd";
+        dtpEndDate.CustomFormat = "dd/MM/yyyy";
         Bind(dtpEndDate, "Value", "EndDate", c => c.EndDate);
     }
 
@@ -324,7 +324,7 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
     {
         dtpReleaseDate.ValueChanged -= UpdateReleaseDate;
         _catalogue.DatasetReleaseDate = dtpReleaseDate.Value;
-        dtpReleaseDate.CustomFormat = "yyyy/MM/dd";
+        dtpReleaseDate.CustomFormat = "dd/MM/yyyy";
         Bind(dtpReleaseDate, "Value", "DatasetReleaseDate", c => c.DatasetReleaseDate);
     }
 
@@ -379,9 +379,9 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
                 cb_granularity.DataSource = Enum.GetValues(typeof(Catalogue.CatalogueGranularity));
                 Bind(cb_granularity, "SelectedItem", "Granularity", c => c.Granularity);
                 dtpStart.Format = DateTimePickerFormat.Custom;
-                dtpStart.CustomFormat = _catalogue.StartDate != null ? "yyyy/MM/dd" : " ";
+                dtpStart.CustomFormat = _catalogue.StartDate != null ? "dd/MM/yyyy" : " ";
                 dtpEndDate.Format = DateTimePickerFormat.Custom;
-                dtpEndDate.CustomFormat = _catalogue.EndDate != null ? "yyyy/MM/dd" : " ";
+                dtpEndDate.CustomFormat = _catalogue.EndDate != null ? "dd/MM/yyyy" : " ";
                 if (_catalogue.StartDate != null)
                 {
                     Bind(dtpStart, "Value", "StartDate", c => c.StartDate);
@@ -443,7 +443,7 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
                 Bind(cbUpdateLag, "SelectedItem", "UpdateLag", c => c.UpdateLag);
                 Bind(cb_updateFrequency, "SelectedItem", "Update_freq", c => c.Update_freq);
                 dtpReleaseDate.Format = DateTimePickerFormat.Custom;
-                dtpReleaseDate.CustomFormat = _catalogue.StartDate != null ? "yyyy/MM/dd" : " ";
+                dtpReleaseDate.CustomFormat = _catalogue.DatasetReleaseDate != null ? "dd/MM/yyyy" : " ";
                 if (_catalogue.DatasetReleaseDate != null)
                 {
                     Bind(dtpReleaseDate, "Value", "DatasetReleaseDate", c => c.DatasetReleaseDate);
@@ -461,23 +461,6 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
                 break;
         }
         setTabBindings.Add(selectedIndex);
-
-        //Bind(tbAbstract, "Text", "ShortDescription", c => c.ShortDescription);
-        //Bind(tbDescription, "Text", "Description", c => c.Description);
-        //Bind(tbKeywords, "Text", "Search_keywords", c => c.Search_keywords);
-        //Bind(tbDataSource, "Text", "DataSource", c => c.DataSource);
-        //Bind(tbDataSourceSetting, "Text", "DataSourceSetting", c => c.DataSourceSetting);
-        //Bind(tbGeoCoverage, "Text", "Geographical_coverage", c => c.Geographical_coverage);
-        ////Bind(dtpStart, "Value", "StartDate", c => c.StartDate);
-        ////Bind(dtpEndDate, "Value", "EndDate", c => c.EndDate);
-        //Bind(tbAccessContact, "Text", "Administrative_contact_email", c => c.Administrative_contact_email);
-        //Bind(tbDataController, "Text", "DataController", c => c.DataController);
-        //Bind(tbDataProcessor, "Text", "DataProcessor", c => c.DataProcessor);
-        //Bind(tbJuristiction, "Text", "Juristiction", c => c.Juristiction);
-        //Bind(tbPeople, "Text", "AssociatedPeople", c => c.AssociatedPeople);
-        //Bind(tbDOI, "Text", "Doi", c => c.Doi);
-        //Bind(tbInitialReleaseDate, "Text", "DatasetReleaseDate", c => c.DatasetReleaseDate);
-        //Bind(tbUpdateLag, "Text", "UpdateLag", c => c.UpdateLag);
     }
 
     private void btnStartDateClear_Click(object sender, EventArgs e)

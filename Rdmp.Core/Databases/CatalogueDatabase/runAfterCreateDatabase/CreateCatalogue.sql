@@ -273,6 +273,21 @@ CREATE TABLE [dbo].[Catalogue](
 	[LiveLoggingServer_ID] [int] NULL,
 	[TestLoggingServer_ID] [int] NULL,
 	[SoftwareVersion] [nvarchar](50) NOT NULL,
+	[ShortDescription] [nvarchar](250) NULL,
+	[DataType] [nvarchar](255) NULL,
+	[DataSubType] [nvarchar](255) NULL,
+	[DataSource] [nvarchar](100) NULL,
+	[DataSourceSetting] [nvarchar](100) NULL,
+	[DatasetReleaseDate] [datetime] NULL,
+	[StartDate] [datetime] NULL,
+	[EndDate] [datetime] NULL,
+	[UpdateLag] [nvarchar](255) NULL,
+	[Juristiction] [nvarchar](255) NULL,
+	[DataController] [nvarchar](255) NULL,
+	[DataProcessor] [nvarchar](255) NULL,
+	[ControlledVocabulary] [nvarchar](MAX) NULL,
+	[AssociatedPeople] [nvarchar](MAX) NULL,
+	[Doi] [nvarchar](50) NULL
  CONSTRAINT [PK_Data_Catalogue] PRIMARY KEY CLUSTERED 
 (
 	[ID] ASC

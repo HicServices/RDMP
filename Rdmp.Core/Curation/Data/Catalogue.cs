@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Data.Common;
 using System.IO;
 using System.Linq;
@@ -755,7 +756,69 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
         Politics
     }
 
-    public enum DatasetSubType { }
+    public enum DatasetSubType {
+        NotApplicable,
+        BirthsAndDeaths,
+        NationalDiseaseRegistryAndAudits,
+        ResearchDiseaseRegistry,
+        Alcohol,
+        DietaryHabits,
+        PhysicalActivity,
+        FamilyCircumstance,
+        Finances,
+        Occupation,
+        Religion,
+        Deprivation,
+        SocialSupport,
+        MaritalStatus,
+        Economics,
+        Ageing,
+        Labour,
+        Housing,
+        Ethnicity,
+        CrimeAndJustice,
+        Education,
+        Lipidomics,
+        Genomics,
+        Metagenomics,
+        Metabolomics,
+        Epigenomics,
+        Transcriptomics,
+        Proteomics,
+        Leg,
+        Abdomen,
+        Arm,
+        MentalHealth,
+        Cardiovascular,
+        Cancer,
+        RareDiseases,
+        MetabolicAndEndocrine,
+        Neurological,
+        Reproductve,
+        MaternityAndNeonatology,
+        Chest,
+        Head,
+        Pathology,
+        Ultrasound,
+        XRay,
+        PET,
+        MRI,
+        CT,
+        CognitiveFunction,
+        Hearing,
+        Others,
+        Vaccines,
+        Preventative,
+        Theraputic,
+        Laboratory,
+        OtherDiagnosis,
+        Respiratory,
+        Immunity,
+        Musculoskeletal,
+        Vision,
+        RenalAndUrogenital,
+        OralAndGastrointestinal
+    }
 
 
     public enum UpdateFrequencies
@@ -973,13 +1036,15 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
         DataSourceSetting = r["DataSourceSetting"].ToString();
         StartDate = !string.IsNullOrEmpty(r["StartDate"].ToString()) ? DateTime.Parse(r["StartDate"].ToString()) : null;
         EndDate = !string.IsNullOrEmpty(r["EndDate"].ToString()) ? DateTime.Parse(r["EndDate"].ToString()) : null;
+        DatasetReleaseDate = !string.IsNullOrEmpty(r["DatasetReleaseDate"].ToString()) ? DateTime.Parse(r["DatasetReleaseDate"].ToString()) : null;
         DataController = r["DataController"].ToString();
         DataProcessor = r["DataProcessor"].ToString();
         Juristiction = r["Juristiction"].ToString();
         AssociatedPeople = r["AssociatedPeople"].ToString();
         ControlledVocabulary = r["ControlledVocabulary"].ToString();
+        DataType = r["DataType"].ToString();
+        DataSubtype = r["DataSubtype"].ToString();
         Doi = r["Doi"].ToString();
-        //UpdateLag = r["UpdateLag"].ToString();
         var updateLag = r["UpdateLag"];
         if (updateLag == null || updateLag == DBNull.Value)
         {

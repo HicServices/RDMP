@@ -49,7 +49,7 @@
             comboBox1.Name = "comboBox1";
             comboBox1.Size = new System.Drawing.Size(283, 23);
             comboBox1.TabIndex = 2;
-            comboBox1.TextChanged += comboBox1_TextChanged;
+            comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
             // 
             // DropdownOptionsChipDisplay
             // 

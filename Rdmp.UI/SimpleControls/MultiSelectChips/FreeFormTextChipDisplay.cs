@@ -48,7 +48,7 @@ namespace Rdmp.UI.SimpleControls.MultiSelectChips
             {
                 if (!_value.Split(',').Contains(textBox1.Text))
                 {
-                    Value = Value + $",{textBox1.Text.Trim()}";
+                    Value = Value + $"{(Value.Length>0?",":"")}{textBox1.Text.Trim()}";
                 }
                 textBox1.Text = "";
             }

@@ -417,7 +417,7 @@ namespace Rdmp.UI.MainFormUITabs
             groupBox17.Controls.Add(cb_resourceType);
             groupBox17.Location = new System.Drawing.Point(7, 6);
             groupBox17.Name = "groupBox17";
-            groupBox17.Size = new System.Drawing.Size(137, 58);
+            groupBox17.Size = new System.Drawing.Size(194, 58);
             groupBox17.TabIndex = 14;
             groupBox17.TabStop = false;
             groupBox17.Text = "Resource Type";
@@ -427,7 +427,7 @@ namespace Rdmp.UI.MainFormUITabs
             cb_resourceType.FormattingEnabled = true;
             cb_resourceType.Location = new System.Drawing.Point(6, 22);
             cb_resourceType.Name = "cb_resourceType";
-            cb_resourceType.Size = new System.Drawing.Size(121, 23);
+            cb_resourceType.Size = new System.Drawing.Size(182, 23);
             cb_resourceType.TabIndex = 0;
             // 
             // tabPage3
