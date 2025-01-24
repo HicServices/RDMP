@@ -41,6 +41,8 @@ namespace Rdmp.UI.MainFormUITabs
             ticketingControl1 = new TicketingControlUI();
             tabControl1 = new TabControl();
             tabPage1 = new TabPage();
+            groupBox23 = new GroupBox();
+            tbAcronym = new TextBox();
             groupBox16 = new GroupBox();
             tbDescription = new TextBox();
             groupBox15 = new GroupBox();
@@ -101,6 +103,7 @@ namespace Rdmp.UI.MainFormUITabs
             splitContainer1.SuspendLayout();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
+            groupBox23.SuspendLayout();
             groupBox16.SuspendLayout();
             groupBox15.SuspendLayout();
             tabPage2.SuspendLayout();
@@ -229,6 +232,7 @@ namespace Rdmp.UI.MainFormUITabs
             // tabPage1
             // 
             tabPage1.BackColor = System.Drawing.Color.WhiteSmoke;
+            tabPage1.Controls.Add(groupBox23);
             tabPage1.Controls.Add(groupBox16);
             tabPage1.Controls.Add(groupBox15);
             tabPage1.Location = new System.Drawing.Point(4, 24);
@@ -239,10 +243,27 @@ namespace Rdmp.UI.MainFormUITabs
             tabPage1.Text = "Descriptions";
             tabPage1.Click += tabPage1_Click;
             // 
+            // groupBox23
+            // 
+            groupBox23.Controls.Add(tbAcronym);
+            groupBox23.Location = new System.Drawing.Point(7, 6);
+            groupBox23.Name = "groupBox23";
+            groupBox23.Size = new System.Drawing.Size(231, 56);
+            groupBox23.TabIndex = 6;
+            groupBox23.TabStop = false;
+            groupBox23.Text = "Acronym";
+            // 
+            // tbAcronym
+            // 
+            tbAcronym.Location = new System.Drawing.Point(6, 22);
+            tbAcronym.Name = "tbAcronym";
+            tbAcronym.Size = new System.Drawing.Size(201, 23);
+            tbAcronym.TabIndex = 0;
+            // 
             // groupBox16
             // 
             groupBox16.Controls.Add(tbDescription);
-            groupBox16.Location = new System.Drawing.Point(7, 167);
+            groupBox16.Location = new System.Drawing.Point(7, 225);
             groupBox16.Name = "groupBox16";
             groupBox16.Size = new System.Drawing.Size(866, 165);
             groupBox16.TabIndex = 5;
@@ -261,7 +282,7 @@ namespace Rdmp.UI.MainFormUITabs
             // groupBox15
             // 
             groupBox15.Controls.Add(tbAbstract);
-            groupBox15.Location = new System.Drawing.Point(7, 6);
+            groupBox15.Location = new System.Drawing.Point(7, 64);
             groupBox15.Name = "groupBox15";
             groupBox15.Size = new System.Drawing.Size(863, 155);
             groupBox15.TabIndex = 4;
@@ -795,6 +816,8 @@ namespace Rdmp.UI.MainFormUITabs
             splitContainer1.ResumeLayout(false);
             tabControl1.ResumeLayout(false);
             tabPage1.ResumeLayout(false);
+            groupBox23.ResumeLayout(false);
+            groupBox23.PerformLayout();
             groupBox16.ResumeLayout(false);
             groupBox16.PerformLayout();
             groupBox15.ResumeLayout(false);
@@ -861,7 +884,7 @@ namespace Rdmp.UI.MainFormUITabs
         private TabPage tabPage4;
         private TabPage tabPage5;
         private TabPage tabPage6;
-        private TextBox tbDescription;
+        public TextBox tbDescription;
         private TextBox tbDataSource;
         private ComboBox cb_resourceType;
         private TextBox tbDataSourceSetting;
@@ -910,5 +933,7 @@ namespace Rdmp.UI.MainFormUITabs
         private SimpleControls.MultiSelectChips.DropdownOptionsChipDisplay ddDatasetSubtype;
         private SimpleControls.MultiSelectChips.DropdownOptionsChipDisplay ddDatasetType;
         private TableLayoutPanel tableLayoutPanel2;
+        private GroupBox groupBox23;
+        public TextBox tbAcronym;
     }
 }

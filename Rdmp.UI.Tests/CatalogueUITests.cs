@@ -26,7 +26,7 @@ public class CatalogueUITests : UITests
         Assert.That(cata.HasLocalChanges().Evaluation, Is.EqualTo(ChangeDescription.NoChanges));
 
         //but when I type text
-        ui._scintillaDescription.Text = "amagad zombies";
+        ui.tbDescription.Text = "amagad zombies";
 
         Assert.Multiple(() =>
         {
@@ -42,7 +42,7 @@ public class CatalogueUITests : UITests
         Assert.Multiple(() =>
         {
             //it should set the text editor back to blank
-            Assert.That(ui._scintillaDescription.Text, Is.EqualTo(""));
+            Assert.That(ui.tbDescription.Text, Is.EqualTo(""));
             //and clear my class property
             Assert.That(cata.Description, Is.EqualTo(null));
         });
@@ -51,7 +51,7 @@ public class CatalogueUITests : UITests
         saver.Redo();
         Assert.Multiple(() =>
         {
-            Assert.That(ui._scintillaDescription.Text, Is.EqualTo("amagad zombies"));
+            Assert.That(ui.tbDescription.Text, Is.EqualTo("amagad zombies"));
             Assert.That(cata.Description, Is.EqualTo("amagad zombies"));
         });
 
@@ -59,14 +59,14 @@ public class CatalogueUITests : UITests
         saver.Undo();
         Assert.Multiple(() =>
         {
-            Assert.That(ui._scintillaDescription.Text, Is.EqualTo(""));
+            Assert.That(ui.tbDescription.Text, Is.EqualTo(""));
             Assert.That(cata.Description, Is.EqualTo(null));
         });
 
         saver.Redo();
         Assert.Multiple(() =>
         {
-            Assert.That(ui._scintillaDescription.Text, Is.EqualTo("amagad zombies"));
+            Assert.That(ui.tbDescription.Text, Is.EqualTo("amagad zombies"));
             Assert.That(cata.Description, Is.EqualTo("amagad zombies"));
         });
 
@@ -113,8 +113,14 @@ public class CatalogueUITests : UITests
 
         AssertNoErrors(ExpectedErrorType.Any);
 
+        //when I type the Acronym of another Catalogue
+        ui.tbAcronym.Text = "AB";
+
         //it tells me that I have to make it unique
         AssertErrorWasShown(ExpectedErrorType.ErrorProvider, "Must be unique");
+
+        //so I make it unique
+        ui.tbAcronym.Text = "ABC";
 
         //and all is good again
         AssertNoErrors(ExpectedErrorType.Any);

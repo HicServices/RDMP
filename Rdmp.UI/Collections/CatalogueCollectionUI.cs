@@ -38,8 +38,6 @@ namespace Rdmp.UI.Collections;
 /// 
 /// <para>Pressing the Del key will prompt you to delete the selected item.</para>
 /// 
-/// <para>By default Deprecated, Internal and ColdStorage Catalogues do not appear, you can turn visibility of these on by selecting the relevant tick boxes.</para>
-/// 
 /// <para>Finally you can launch 'Checking' for every dataset, this will attempt to verify the extraction SQL you
 /// have configured for each dataset and to ensure that it runs and that at least 1 row of data is returned.  Checking all the datasets can take a while so runs asynchronously.</para>
 /// </summary>

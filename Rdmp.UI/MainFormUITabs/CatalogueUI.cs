@@ -51,10 +51,6 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
 
         AssociatedCollection = RDMPCollection.Catalogue;
 
-        //c_ddType.DataSource = Enum.GetValues(typeof(Catalogue.CatalogueType));
-        //c_ddPeriodicity.DataSource = Enum.GetValues(typeof(Catalogue.CataloguePeriodicity));
-        //c_ddGranularity.DataSource = Enum.GetValues(typeof(Catalogue.CatalogueGranularity));
-
         UseCommitSystem = true;
     }
 
@@ -340,6 +336,7 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
                 {
                     item.Visible = false;
                 }
+                Bind(tbAcronym, "Text", "Acronym", c => c.Acronym);
                 Bind(tbAbstract, "Text", "ShortDescription", c => c.ShortDescription);
                 Bind(tbDescription, "Text", "Description", c => c.Description);
                 foreach (Control item in tabPage1.Controls)

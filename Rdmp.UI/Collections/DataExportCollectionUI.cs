@@ -126,10 +126,7 @@ public partial class DataExportCollectionUI : RDMPCollectionUI, ILifetimeSubscri
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {
-        if (e.Object.GetType() == typeof(Project))
-        {
             SetupToolStrip();
-        }
     }
 
     private void SetupToolStrip()
