@@ -74,18 +74,8 @@ public class ExecuteCommandDisableOrEnable : BasicCommandExecution, IAtomicComma
 
         foreach (var d in _targets)
         {
-            var x = d.GetType();
-            if (d.GetType() == typeof(ProcessTask))
-            {
-                var newVersion = (IDisableable)((IVersionable)d).SaveNewVersion();
-                newVersion.IsDisabled = true;
-                newVersion.SaveToDatabase();
-            }
-            else
-            {
-                d.IsDisabled = !d.IsDisabled;
-                d.SaveToDatabase();
-            }
+            d.IsDisabled = !d.IsDisabled;
+            d.SaveToDatabase();
         }
 
         var toRefresh = _targets.FirstOrDefault();

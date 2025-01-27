@@ -292,6 +292,10 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         };
         lmd.SaveToDatabase();
         //link to catalogue
+        foreach(var catalogue in this.GetAllCatalogues())
+        {
+            lmd.LinkToCatalogue(catalogue);
+        }
         //process task
         var pts = CatalogueRepository.GetAllObjectsWhere<ProcessTask>("LoadMetadata_ID", this.ID);
         foreach(ProcessTask pt in pts)
@@ -510,6 +514,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     {
         var lmd = this.Clone();
         lmd.RootLoadMetadata_ID = this.RootLoadMetadata_ID != null ? this.RootLoadMetadata_ID : this.ID;
+        lmd.Name = $"{this.Name} - {DateTime.Now}";
         lmd.SaveToDatabase();
         return lmd;
     }

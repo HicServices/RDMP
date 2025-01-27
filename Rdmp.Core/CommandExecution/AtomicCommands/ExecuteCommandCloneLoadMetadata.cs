@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandCreateLoadMetadataVersion: BasicCommandExecution
+public class ExecuteCommandCloneLoadMetadata : BasicCommandExecution
 {
     private LoadMetadata _loadMetadata;
     private IBasicActivateItems _activator;
-    public ExecuteCommandCreateLoadMetadataVersion(IBasicActivateItems activator,[DemandsInitialization("The LoadMetadata to version")] LoadMetadata loadMetadata)
+    public ExecuteCommandCloneLoadMetadata(IBasicActivateItems activator,[DemandsInitialization("The LoadMetadata to clone")] LoadMetadata loadMetadata)
     {
 
         _loadMetadata = loadMetadata;
@@ -22,12 +22,10 @@ public class ExecuteCommandCreateLoadMetadataVersion: BasicCommandExecution
     public override void Execute()
     {
         base.Execute();
-        if(_loadMetadata.RootLoadMetadata_ID != null)
-        {
-            throw new Exception("Must Use Root LoadMetadata to create Version");
-        }
-        var lmd = _loadMetadata.SaveNewVersion();
+        var lmd = _loadMetadata.Clone();
+        lmd.Name = lmd.Name + " (Clone)";
         lmd.SaveToDatabase();
         _activator.Publish(lmd);
+
     }
 }

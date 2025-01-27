@@ -163,7 +163,6 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
             { "LoadMetadata_ID", parent.RootLoadMetadata_ID??parent.ID },
-            { "LoadMetadataVersion", parent.RootLoadMetadata_ID != null?parent.ID:0 },
             { "ProcessTaskType", ProcessTaskType.Executable.ToString() },
             { "LoadStage", stage },
             { "Name", $"New Process{Guid.NewGuid()}" },
@@ -186,7 +185,6 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
              { "LoadMetadata_ID", parent.RootLoadMetadata_ID??parent.ID },
-            { "LoadMetadataVersion", parent.RootLoadMetadata_ID != null?parent.ID:0 },
             { "ProcessTaskType", ProcessTaskType.Executable.ToString() },
             { "LoadStage", stage },
             { "Name", $"New Process{Guid.NewGuid()}" },

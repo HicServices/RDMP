@@ -397,7 +397,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         ReportProgress("Build Catalogue Folder Root");
 
-        LoadMetadataRootFolder = FolderHelper.BuildFolderTree(AllLoadMetadatas);
+        LoadMetadataRootFolder = FolderHelper.BuildFolderTree(AllLoadMetadatas.Where(lmd => lmd.RootLoadMetadata_ID is null).ToArray());
         AddChildren(LoadMetadataRootFolder, new DescendancyList(LoadMetadataRootFolder));
 
         CohortIdentificationConfigurationRootFolder =
@@ -856,7 +856,7 @@ public class CatalogueChildProvider : ICoreChildProvider
             AddChildren(child, descendancy.Add(child));
 
         //add loads in folder
-        foreach (var lmd in folder.ChildObjects) AddChildren(lmd, descendancy.Add(lmd));
+        foreach (var lmd in folder.ChildObjects.Where(lmd => lmd.RootLoadMetadata_ID == null).ToArray()) AddChildren(lmd, descendancy.Add(lmd));
         // Children are the folders + objects
         AddToDictionaries(new HashSet<object>(
                 folder.ChildFolders.Cast<object>()
@@ -928,6 +928,10 @@ public class CatalogueChildProvider : ICoreChildProvider
         var processTasksNode = new AllProcessTasksUsedByLoadMetadataNode(lmd);
         AddChildren(processTasksNode, descendancy.Add(processTasksNode));
         childObjects.Add(processTasksNode);
+
+        var versionsNode = new LoadMetadataVersionNode(lmd);
+        AddChildren(versionsNode, descendancy.Add(versionsNode));
+        childObjects.Add(versionsNode);
 
         childObjects.Add(new LoadDirectoryNode(lmd));
 
@@ -1015,6 +1019,12 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         if (args.Any())
             AddToDictionaries(new HashSet<object>(args), descendancy);
+    }
+
+    private void AddChildren(LoadMetadataVersionNode LoadMetadataVersionNode, DescendancyList descendancy)
+    {
+        LoadMetadataVersionNode.LoadMetadataVersions = AllLoadMetadatas.Where(lmd => lmd.RootLoadMetadata_ID == LoadMetadataVersionNode.LoadMetadata.ID).ToList();
+        AddToDictionaries(LoadMetadataVersionNode.LoadMetadataVersions.Cast<object>().ToHashSet(), descendancy);
     }
 
     private void AddChildren(AllCataloguesUsedByLoadMetadataNode allCataloguesUsedByLoadMetadataNode,
