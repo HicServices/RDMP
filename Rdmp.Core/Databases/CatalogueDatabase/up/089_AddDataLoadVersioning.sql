@@ -5,7 +5,7 @@
  BEGIN
   ALTER TABLE [dbo].[LoadMetadata]
   ADD RootLoadMetadata_ID [int] NULL,
-  CONSTRAINT [FK_LoadMetadataRootReference] FOREIGN KEY(RootLoadMetadata_ID) REFERENCES [dbo].[LoadMetadata](id) ON DELETE CASCADE
+  CONSTRAINT [FK_LoadMetadataRootReference] FOREIGN KEY(RootLoadMetadata_ID) REFERENCES [dbo].[LoadMetadata](id)
  END
 
 
