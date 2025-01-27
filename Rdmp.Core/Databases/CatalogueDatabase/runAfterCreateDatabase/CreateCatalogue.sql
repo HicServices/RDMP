@@ -943,6 +943,8 @@ ALTER TABLE [dbo].[ColumnInfo] ADD CONSTRAINT [FK_Column_Info_Dataset] FOREIGN K
 GO
 ALTER TABLE [dbo].[LoadMetadata] ADD LastLoadTime [datetime] NULL;
 GO
+ALTER TABLE [dbo].[LoadMetadata] ADD CONSTRAINT [FK_LoadMetadataRootReference] FOREIGN KEY(RootLoadMetadata_ID) REFERENCES [dbo].[LoadMetadata](id) ON DELETE CASCADE
+GO
 SET ANSI_PADDING OFF
 GO
 ALTER TABLE [dbo].[ANOTable] ADD  CONSTRAINT [DF_ANOTable_SoftwareVersion]  DEFAULT ([dbo].[GetSoftwareVersion]()) FOR [SoftwareVersion]

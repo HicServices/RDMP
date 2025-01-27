@@ -99,3 +99,4 @@ FK_Redaction_RedactionConfiguration_ID: Prevents you from deleting a redaction c
 FK_Redaction_ColumnInfo_ID: Prevents redactions from becoming orphaned from their associated catalogue columns
 FK_RedactionKey_Redaction_ID: Prevents redaction primary keys from being orphaned from the associated redaction
 FK_RedactionKey_ColumnInfo_ID:  Prevents redaction keys from becoming orphaned from their associated catalogue columns
+FK_LoadMetadataRootReference: Links versions of a load metadata back to the source load metadata
