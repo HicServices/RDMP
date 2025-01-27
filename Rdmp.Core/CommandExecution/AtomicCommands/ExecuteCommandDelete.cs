@@ -9,7 +9,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode;
 
@@ -48,7 +50,6 @@ public class ExecuteCommandDelete : BasicCommandExecution
         _allowDeleteMany = deleteMany;
         if (_deletables.Any(d => d is CohortAggregateContainer c && c.IsRootContainer()))
             SetImpossible("Cannot delete root containers");
-
         var reason = "";
 
         if (_deletables.Any(d => d is IMightBeReadOnly ro && ro.ShouldBeReadOnly(out reason)))

@@ -292,13 +292,13 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         };
         lmd.SaveToDatabase();
         //link to catalogue
-        foreach(var catalogue in this.GetAllCatalogues())
+        foreach (var catalogue in this.GetAllCatalogues())
         {
             lmd.LinkToCatalogue(catalogue);
         }
         //process task
         var pts = CatalogueRepository.GetAllObjectsWhere<ProcessTask>("LoadMetadata_ID", this.ID);
-        foreach(ProcessTask pt in pts)
+        foreach (ProcessTask pt in pts)
         {
             pt.Clone(lmd);
         }
@@ -329,9 +329,24 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     {
         var firstOrDefault = GetAllCatalogues().FirstOrDefault();
 
-        if (firstOrDefault != null)
+        if (firstOrDefault != null && this.RootLoadMetadata_ID == null)
             throw new Exception(
                 $"This load is used by {firstOrDefault.Name} so cannot be deleted (Disassociate it first)");
+
+        var versions = Repository.GetAllObjectsWhere<LoadMetadata>("RootLoadMetadata_ID", ID);
+        foreach (var version in versions)
+        {
+            version.DeleteInDatabase();
+        }
+        if (this.RootLoadMetadata_ID != null)
+        {
+            var catalogueLinkIDs = Repository.GetAllObjectsWhere<LoadMetadataCatalogueLinkage>("LoadMetadataID", ID);
+            foreach (var link in catalogueLinkIDs)
+            {
+                link.DeleteInDatabase();
+            }
+        }
+
 
         base.DeleteInDatabase();
     }
