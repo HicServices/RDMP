@@ -216,7 +216,7 @@ jobs:
 
 
       - name: Install Perl dependencies
-        uses: shogo82148/actions-setup-perl@v1.31.4
+        uses: shogo82148/actions-setup-perl@v1.32.0
         with:
           install-modules-with: cpanm
           install-modules: Archive::Zip Archive::Tar
