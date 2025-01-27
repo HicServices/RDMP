@@ -602,7 +602,7 @@ CREATE TABLE [dbo].[LoadMetadata](
 	[SoftwareVersion] [nvarchar](50) NOT NULL,
 	[AllowReservedPrefix] [bit] NOT NULL default 0,
 	[RootLoadMetadata_ID] [int] NULL,
-	CONSTRAINT [fk_loadMetadataRootReference] FOREIGN KEY([RootLoadMetadata_ID]) REFERENCES [dbo].[LoadMetadata](id),
+	CONSTRAINT [fk_loadMetadataRootReference] FOREIGN KEY([RootLoadMetadata_ID]) REFERENCES [dbo].[LoadMetadata](id) ON DELETE CASCADE,
  CONSTRAINT [PK_LoadMetadata] PRIMARY KEY CLUSTERED 
 (
 	[ID] ASC
@@ -942,8 +942,6 @@ GO
 ALTER TABLE [dbo].[ColumnInfo] ADD CONSTRAINT [FK_Column_Info_Dataset] FOREIGN KEY([Dataset_ID]) REFERENCES [dbo].[Dataset] ([ID]) ON DELETE CASCADE ON UPDATE CASCADE
 GO
 ALTER TABLE [dbo].[LoadMetadata] ADD LastLoadTime [datetime] NULL;
-GO
-ALTER TABLE [dbo].[LoadMetadata] ADD CONSTRAINT [FK_LoadMetadataRootReference] FOREIGN KEY(RootLoadMetadata_ID) REFERENCES [dbo].[LoadMetadata](id) ON DELETE CASCADE
 GO
 SET ANSI_PADDING OFF
 GO
