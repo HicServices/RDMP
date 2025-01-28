@@ -1,18 +1,14 @@
 ﻿using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Org.BouncyCastle.Pqc.Crypto.Lms;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandRestoreLoadMetadataVersion : BasicCommandExecution
 {
-    private LoadMetadata _loadMetadata;
-    private IBasicActivateItems _activator;
+    private readonly LoadMetadata _loadMetadata;
+    private readonly IBasicActivateItems _activator;
     public ExecuteCommandRestoreLoadMetadataVersion(IBasicActivateItems activator, [DemandsInitialization("The LoadMetadata to version")] LoadMetadata loadMetadata)
     {
 

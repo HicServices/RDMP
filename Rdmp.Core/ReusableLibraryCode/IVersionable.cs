@@ -11,8 +11,8 @@ internal interface IVersionable
 {
 
     /// <summary>
-    /// 
+    /// Interface to provide the SaveNewVersion function 
     /// </summary>
-    /// <returns></returns>
+    /// <returns>DatabaseEntity</returns>
     DatabaseEntity SaveNewVersion();
 }

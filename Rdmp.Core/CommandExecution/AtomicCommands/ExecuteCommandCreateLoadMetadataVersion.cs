@@ -1,17 +1,13 @@
 ﻿using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandCreateLoadMetadataVersion: BasicCommandExecution
 {
-    private LoadMetadata _loadMetadata;
-    private IBasicActivateItems _activator;
+    private readonly LoadMetadata _loadMetadata;
+    private readonly IBasicActivateItems _activator;
     public ExecuteCommandCreateLoadMetadataVersion(IBasicActivateItems activator,[DemandsInitialization("The LoadMetadata to version")] LoadMetadata loadMetadata)
     {
 
