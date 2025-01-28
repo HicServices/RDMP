@@ -8,9 +8,7 @@ using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
-using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
-using Rdmp.Core.ReusableLibraryCode;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
