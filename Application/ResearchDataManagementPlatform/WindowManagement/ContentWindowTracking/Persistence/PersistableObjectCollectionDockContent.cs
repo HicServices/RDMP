@@ -33,7 +33,7 @@ public class PersistableObjectCollectionDockContent : RDMPSingleControlTab
     public IPersistableObjectCollection Collection => _control.GetCollection();
 
     public PersistableObjectCollectionDockContent(IActivateItems activator, IObjectCollectionControl control,
-        IPersistableObjectCollection collection) : base(activator.RefreshBus)
+        IPersistableObjectCollection collection) : base(activator.RefreshBus, collection.GetType().ToString())
     {
         _control = control;
         Control = (Control)control;

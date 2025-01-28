@@ -73,7 +73,9 @@ public partial class LoadMetadataCollectionUI : RDMPCollectionUI, ILifetimeSubsc
     public override void SetItemActivator(IActivateItems activator)
     {
         base.SetItemActivator(activator);
-        Activator.RefreshBus.EstablishLifetimeSubscription(this);
+        Activator.RefreshBus.EstablishLifetimeSubscription(this, typeof(LoadMetadata).ToString());
+        Activator.RefreshBus.EstablishLifetimeSubscription(this, typeof(PermissionWindow).ToString());
+        Activator.RefreshBus.EstablishLifetimeSubscription(this, typeof(CacheProgress).ToString());
 
         CommonTreeFunctionality.SetUp(
             RDMPCollection.DataLoad,

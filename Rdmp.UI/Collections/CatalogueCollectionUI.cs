@@ -258,7 +258,20 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
             new ExecuteCommandAddNewGovernanceDocument(Activator, null) { Weight = 44.9f }
         };
 
-        Activator.RefreshBus.EstablishLifetimeSubscription(this);
+        Activator.RefreshBus.EstablishLifetimeSubscription(this, typeof(GovernancePeriod).ToString());
+        Activator.RefreshBus.EstablishLifetimeSubscription(this, typeof(GovernanceDocument).ToString());
+        Activator.RefreshBus.EstablishLifetimeSubscription(this, typeof(Catalogue).ToString());
+        Activator.RefreshBus.EstablishLifetimeSubscription(this, typeof(CatalogueItem).ToString());
+        Activator.RefreshBus.EstablishLifetimeSubscription(this, typeof(AggregateConfiguration).ToString());
+        Activator.RefreshBus.EstablishLifetimeSubscription(this, typeof(ColumnInfo).ToString());
+        Activator.RefreshBus.EstablishLifetimeSubscription(this, typeof(TableInfo).ToString());
+        Activator.RefreshBus.EstablishLifetimeSubscription(this, typeof(ExtractionFilter).ToString());
+        Activator.RefreshBus.EstablishLifetimeSubscription(this, typeof(ExtractionFilterParameter).ToString());
+        Activator.RefreshBus.EstablishLifetimeSubscription(this, typeof(ExtractionFilterParameterSet).ToString());
+        Activator.RefreshBus.EstablishLifetimeSubscription(this, typeof(ExtractionInformation).ToString());
+        Activator.RefreshBus.EstablishLifetimeSubscription(this, typeof(AggregateFilterContainer).ToString());
+        Activator.RefreshBus.EstablishLifetimeSubscription(this, typeof(AggregateFilter).ToString());
+        Activator.RefreshBus.EstablishLifetimeSubscription(this, typeof(AggregateFilterParameter).ToString());
 
         tlvCatalogues.AddObject(activator.CoreChildProvider.AllGovernanceNode);
         tlvCatalogues.AddObject(activator.CoreChildProvider.CatalogueRootFolder);

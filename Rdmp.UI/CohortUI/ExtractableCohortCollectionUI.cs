@@ -100,7 +100,8 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
         {
             if (!haveSubscribed)
             {
-                activator.RefreshBus.EstablishLifetimeSubscription(this);
+                activator.RefreshBus.EstablishLifetimeSubscription(this, typeof(ExtractableCohort).ToString());
+                activator.RefreshBus.EstablishLifetimeSubscription(this, typeof(ExternalCohortTable).ToString());
                 haveSubscribed = true;
             }
 

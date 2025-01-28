@@ -295,7 +295,7 @@ public class WindowManager
     /// </summary>
     public void PopHome()
     {
-        if (_home == null)
+        if (_home == null || _homeContent == null)
         {
             _home = new HomeUI(ActivateItems);
 

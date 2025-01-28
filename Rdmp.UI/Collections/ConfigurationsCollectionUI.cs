@@ -41,7 +41,9 @@ public partial class ConfigurationsCollectionUI : RDMPCollectionUI, ILifetimeSub
         CommonTreeFunctionality.SetUp(RDMPCollection.Configurations, tlvConfigurations, activator, olvName, olvName,
             new RDMPCollectionCommonFunctionalitySettings());
         CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = e => GetWhitespaceRightClickMenu();
-        Activator.RefreshBus.EstablishLifetimeSubscription(this);
+        Activator.RefreshBus.EstablishLifetimeSubscription(this, typeof(Dataset).ToString());
+        Activator.RefreshBus.EstablishLifetimeSubscription(this, typeof(RegexRedactionConfiguration).ToString());
+
         tlvConfigurations.AddObject(Activator.CoreChildProvider.AllDatasetsNode);
         tlvConfigurations.AddObject(Activator.CoreChildProvider.AllRegexRedactionConfigurationsNode);
         tlvConfigurations.Refresh();

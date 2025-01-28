@@ -12,6 +12,7 @@ using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
 using Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
@@ -121,7 +122,11 @@ public partial class DataExportCollectionUI : RDMPCollectionUI, ILifetimeSubscri
 
         SetupToolStrip();
 
-        Activator.RefreshBus.EstablishLifetimeSubscription(this);
+        Activator.RefreshBus.EstablishLifetimeSubscription(this, typeof(Project).ToString());
+        Activator.RefreshBus.EstablishLifetimeSubscription(this, typeof(CohortIdentificationConfiguration).ToString());
+        Activator.RefreshBus.EstablishLifetimeSubscription(this, typeof(Catalogue).ToString());
+        Activator.RefreshBus.EstablishLifetimeSubscription(this, typeof(ExternalCohortTable).ToString());
+
     }
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)

@@ -35,7 +35,7 @@ public class PersistableSingleDatabaseObjectDockContent : RDMPSingleControlTab
     public const string Prefix = "RDMPSingleDatabaseObjectControl";
 
     public PersistableSingleDatabaseObjectDockContent(IRDMPSingleDatabaseObjectControl control,
-        IMapsDirectlyToDatabaseTable databaseObject, RefreshBus refreshBus) : base(refreshBus)
+        IMapsDirectlyToDatabaseTable databaseObject, RefreshBus refreshBus) : base(refreshBus,databaseObject.GetType().ToString())
     {
         Control = (Control)control;
 

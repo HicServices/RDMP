@@ -27,7 +27,7 @@ namespace Rdmp.UI.Collections;
 /// INTERSECT, EXCEPT) for example Cohort Set 1 '3+ diabetes drug prescriptions' UNION 'hospital admissions for amputations'.  Cohort sets can be from the same or different data sets (as
 /// long as they have a common identifier).
 /// </summary>
-public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifetimeSubscriber
+public partial class CohortIdentificationCollectionUI : RDMPCollectionUI
 {
     private bool _firstTime = true;
 
@@ -98,8 +98,6 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
             new ExecuteCommandMergeCohortIdentificationConfigurations(a, null)
         };
 
-        Activator.RefreshBus.EstablishLifetimeSubscription(this);
-
         var factory = new AtomicCommandUIFactory(activator);
 
         CommonFunctionality.Add(
@@ -142,9 +140,6 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
             ? f.Name == FolderHelper.Root
             : root is AllOrphanAggregateConfigurationsNode or AllTemplateAggregateConfigurationsNode;
 
-    public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
-    {
-    }
 
     private string FrozenAspectGetter(object o) =>
         o is CohortIdentificationConfiguration cic ? cic.Frozen ? "Yes" : "No" : null;
