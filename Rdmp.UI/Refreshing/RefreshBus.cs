@@ -119,6 +119,7 @@ public class RefreshBus
     {
         if (subscribers.TryGetValue(typeToWatch, out var subs))
         {
+            if (subs is null) return;
             if (!subs.Contains(unsubscriber))
                 throw new SubscriptionException(
                     $"You cannot unsubscribe from the RefreshBus if never subscribed in the first place. '{unsubscriber}' just attempted to unsubscribe when it wasn't subscribed in the first place its type was ({unsubscriber.GetType().Name})");
