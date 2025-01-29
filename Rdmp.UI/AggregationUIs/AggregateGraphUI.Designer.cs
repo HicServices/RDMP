@@ -1,5 +1,6 @@
 ﻿using Rdmp.UI.ChecksUI;
 using Rdmp.UI.SimpleControls;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace Rdmp.UI.AggregationUIs
 {
@@ -31,7 +32,11 @@ namespace Rdmp.UI.AggregationUIs
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea6 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend6 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series6 = new System.Windows.Forms.DataVisualization.Charting.Series();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AggregateGraphUI));
+            chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             label1 = new System.Windows.Forms.Label();
             pbLoading = new System.Windows.Forms.PictureBox();
             tabControl1 = new System.Windows.Forms.TabControl();
@@ -53,6 +58,27 @@ namespace Rdmp.UI.AggregationUIs
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             tpHeatmap.SuspendLayout();
             SuspendLayout();
+            // 
+            // chart1
+            // 
+            chart1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
+            chartArea6.Name = "ChartArea1";
+            chart1.ChartAreas.Add(chartArea6);
+            legend6.Name = "Legend1";
+            chart1.Legends.Add(legend6);
+            chart1.Location = new System.Drawing.Point(0, 0);
+            chart1.Name = "chart1";
+            series6.ChartArea = "ChartArea1";
+            series6.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Area;
+            series6.Legend = "Legend1";
+            series6.MarkerSize = 1;
+            series6.Name = "Series1";
+            chart1.Series.Add(series6);
+            chart1.Size = new System.Drawing.Size(686, 432);
+            chart1.TabIndex = 0;
+            chart1.Text = "chart1";
             // 
             // label1
             // 
