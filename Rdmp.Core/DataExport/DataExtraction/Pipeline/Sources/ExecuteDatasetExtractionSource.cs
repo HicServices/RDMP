@@ -7,10 +7,12 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using FAnsi;
+using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
@@ -99,13 +101,18 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
     private DbDataCommandDataFlowSource _hostedSource;
 
+    private IExternalCohortTable _externalCohortTable;
+    private string _whereSQL;
+    private DbConnection _con;
+    private string _uuid;
     protected virtual void Initialize(ExtractDatasetCommand request)
     {
         Request = request;
 
         if (request == ExtractDatasetCommand.EmptyCommand)
             return;
-
+        _externalCohortTable = request.ExtractableCohort.ExternalCohortTable;
+        _whereSQL = request.ExtractableCohort.WhereSQL();
         _timeSpentValidating = new Stopwatch();
         _timeSpentCalculatingDISTINCT = new Stopwatch();
         _timeSpentBuckettingDates = new Stopwatch();
@@ -156,6 +163,32 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
     private RowPeeker _peeker = new();
 
+    private static Random random = new Random();
+
+    private static string RandomString(int length)
+    {
+        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        return new string(Enumerable.Repeat(chars, length)
+            .Select(s => s[random.Next(s.Length)]).ToArray());
+    }
+
+    private void CreateCohortTempTable(DbConnection con)
+    {
+        var db = _externalCohortTable.Discover();
+        _uuid = $"#{RandomString(24)}";
+        var sql = $"""
+            SELECT *
+            INTO {_uuid}
+            FROM(
+            SELECT * FROM {_externalCohortTable.TableName}
+            WHERE {_whereSQL}
+            ) as cohortTempTable
+        
+            """;
+        using var cmd = db.Server.GetCommand(sql, con);
+        cmd.ExecuteNonQuery();
+    }
+
     public virtual DataTable GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
         // we are in the Global Commands case, let's return an empty DataTable (not null)
@@ -185,15 +218,18 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
         if (_hostedSource == null)
         {
+            _con = DatabaseCommandHelper.GetConnection(Request.GetDistinctLiveDatabaseServer().Builder);
+            _con.Open();
+            CreateCohortTempTable(_con);
             StartAudit(Request.QueryBuilder.SQL);
 
             if (Request.DatasetBundle.DataSet.DisableExtraction)
                 throw new Exception(
                     $"Cannot extract {Request.DatasetBundle.DataSet} because DisableExtraction is set to true");
-            var x = GetCommandSQL(listener);
+
             _hostedSource = new DbDataCommandDataFlowSource(GetCommandSQL(listener),
                 $"ExecuteDatasetExtraction {Request.DatasetBundle.DataSet}",
-                Request.GetDistinctLiveDatabaseServer().Builder,
+               _con,
                 ExecutionTimeout)
             {
                 // If we are running in batches then always allow empty extractions
@@ -451,7 +487,10 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
             $"/*Decided on extraction SQL:*/{Environment.NewLine}{sql}"));
-
+        if(_uuid is not null)
+        {
+            sql = sql.Replace(_externalCohortTable.TableName, _uuid);
+        }
         return sql;
     }
 
