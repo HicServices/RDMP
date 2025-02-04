@@ -190,7 +190,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
             if (Request.DatasetBundle.DataSet.DisableExtraction)
                 throw new Exception(
                     $"Cannot extract {Request.DatasetBundle.DataSet} because DisableExtraction is set to true");
-
+            var x = GetCommandSQL(listener);
             _hostedSource = new DbDataCommandDataFlowSource(GetCommandSQL(listener),
                 $"ExecuteDatasetExtraction {Request.DatasetBundle.DataSet}",
                 Request.GetDistinctLiveDatabaseServer().Builder,

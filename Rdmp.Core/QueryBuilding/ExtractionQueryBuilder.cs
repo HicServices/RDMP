@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using FAnsi.Discovery.QuerySyntax;
+using Rdmp.Core.CohortCommitting;
 using Rdmp.Core.DataExport;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.Commands;
@@ -120,7 +121,8 @@ public class ExtractionQueryBuilder
 
         var externalCohortTable =
             _repository.GetObjectByID<ExternalCohortTable>(request.ExtractableCohort.ExternalCohortTable_ID);
-
+        //todo here is where we want to create a temp table
+        CreateCohortTempTable(externalCohortTable);
         if (request.ExtractableCohort != null)
         {
             //the JOIN with the cohort table:
@@ -140,6 +142,8 @@ public class ExtractionQueryBuilder
         request.QueryBuilder = queryBuilder;
         return queryBuilder;
     }
+
+    private void CreateCohortTempTable(ExternalCohortTable externalCohortTable) { }
 
     private void HandleBatching(ExtractDatasetCommand request, QueryBuilder queryBuilder,
         IQuerySyntaxHelper syntaxHelper)
