@@ -209,7 +209,7 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
         var extractionConfigurations = activator.RepositoryLocator.DataExportRepository.GetAllObjects<ExtractionConfiguration>().Where(ei => !ei.IsReleased && ei.Cohort_ID is not null && cohortIDs.Contains((int)ei.Cohort_ID));
         if (extractionConfigurations.Any() && activator.YesNo("""
 Would you like to replace all uses of a deprecated cohort in this project with this cohort?
-This will update all non-released Extraction configurations that use the now deprecated cohort to use the chort you have just created.
+This will update all non-released Extraction configurations that use the now deprecated cohort to use the cohort you have just created.
 """, "Replace Deprecated Cohorts"))
         {
             foreach (var config in extractionConfigurations)
