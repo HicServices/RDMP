@@ -12,8 +12,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using FAnsi;
-using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
+using MySqlConnector;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.Commands;
@@ -177,17 +177,44 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
     private void CreateCohortTempTable(DbConnection con, IDataLoadEventListener listener)
     {
-        var db = _externalCohortTable.Discover();
         _uuid = $"#{RandomString(24)}";
-        var sql = $"""
-            SELECT *
-            INTO {_uuid}
-            FROM(
-            SELECT * FROM {_externalCohortTable.TableName}
-            WHERE {_whereSQL}
-            ) as cohortTempTable
-        
-            """;
+        var sql = "";
+        var db = _externalCohortTable.Discover();
+        switch (db.Server.DatabaseType)
+        {
+            case DatabaseType.MicrosoftSQLServer:
+                sql = $"""
+                    SELECT *
+                    INTO {_uuid}
+                    FROM(
+                    SELECT * FROM {_externalCohortTable.TableName}
+                    WHERE {_whereSQL}
+                    ) as cohortTempTable
+                """;
+                break;
+            case DatabaseType.MySql:
+                sql = $"""
+                    CREATE TEMPORARY TABLE {_uuid} ENGINE=MEMORY
+                    as (SELECT * FROM {_externalCohortTable.TableName} WHERE {_whereSQL})
+                """;
+                break;
+            case DatabaseType.Oracle:
+                sql= $"""
+                    CREATE TEMPORARY TABLE {_uuid} SELECT * FROM {_externalCohortTable.TableName} WHERE {_whereSQL}
+                """;
+                break;
+            case DatabaseType.PostgreSql:
+                sql= $"""
+                    CREATE TEMP TABLE {_uuid} AS
+                    SELECT * FROM {_externalCohortTable.TableName} WHERE {_whereSQL}
+                """;
+                break;
+            default:
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, $"Unable to create temporary table for cohort. Original cohort table will be used"));
+                return;
+
+
+        }
         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"About to copy the cohort into a temporary table using the SQL: {sql}"));
 
         using var cmd = db.Server.GetCommand(sql, con);
