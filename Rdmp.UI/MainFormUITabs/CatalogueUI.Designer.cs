@@ -231,6 +231,7 @@ namespace Rdmp.UI.MainFormUITabs
             // 
             // tabPage1
             // 
+            tabPage1.AutoScroll = true;
             tabPage1.BackColor = System.Drawing.Color.WhiteSmoke;
             tabPage1.Controls.Add(groupBox23);
             tabPage1.Controls.Add(groupBox16);
@@ -300,6 +301,7 @@ namespace Rdmp.UI.MainFormUITabs
             // 
             // tabPage2
             // 
+            tabPage2.AutoScroll = true;
             tabPage2.BackColor = System.Drawing.Color.WhiteSmoke;
             tabPage2.Controls.Add(tableLayoutPanel2);
             tabPage2.Controls.Add(groupBox17);
@@ -453,6 +455,7 @@ namespace Rdmp.UI.MainFormUITabs
             // 
             // tabPage3
             // 
+            tabPage3.AutoScroll = true;
             tabPage3.BackColor = System.Drawing.Color.WhiteSmoke;
             tabPage3.Controls.Add(groupBox14);
             tabPage3.Controls.Add(groupBox13);
@@ -557,6 +560,7 @@ namespace Rdmp.UI.MainFormUITabs
             // 
             // tabPage4
             // 
+            tabPage4.AutoScroll = true;
             tabPage4.BackColor = System.Drawing.Color.WhiteSmoke;
             tabPage4.Controls.Add(groupBox10);
             tabPage4.Controls.Add(groupBox9);
@@ -638,6 +642,7 @@ namespace Rdmp.UI.MainFormUITabs
             // 
             // tabPage5
             // 
+            tabPage5.AutoScroll = true;
             tabPage5.BackColor = System.Drawing.Color.WhiteSmoke;
             tabPage5.Controls.Add(groupBox3);
             tabPage5.Controls.Add(tableLayoutPanel1);
@@ -725,6 +730,7 @@ namespace Rdmp.UI.MainFormUITabs
             // 
             // tabPage6
             // 
+            tabPage6.AutoScroll = true;
             tabPage6.BackColor = System.Drawing.Color.WhiteSmoke;
             tabPage6.Controls.Add(groupBox6);
             tabPage6.Controls.Add(groupBox5);
