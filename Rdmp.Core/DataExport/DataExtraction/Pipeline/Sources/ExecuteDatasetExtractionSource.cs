@@ -90,6 +90,9 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
         "Exclusion list.  A collection of Catalogues which will never be considered for HASH JOIN even when UseHashJoins is enabled.  Being on this list takes precedence for a Catalogue even if it is on UseHashJoinsForCatalogues.")]
     public Catalogue[] DoNotUseHashJoinsForCatalogues { get; set; }
 
+    [DemandsInitialization("When performing an extracton, copy the cohort into a temporary table to improve extraction speed", defaultValue: false)]
+    public bool UseTempTablesWhenExtractingCohort { get; set; }
+
 
     /// <summary>
     /// This is a dictionary containing all the CatalogueItems used in the query, the underlying datatype in the origin database and the
@@ -172,7 +175,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
             .Select(s => s[random.Next(s.Length)]).ToArray());
     }
 
-    private void CreateCohortTempTable(DbConnection con)
+    private void CreateCohortTempTable(DbConnection con, IDataLoadEventListener listener)
     {
         var db = _externalCohortTable.Discover();
         _uuid = $"#{RandomString(24)}";
@@ -185,8 +188,13 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
             ) as cohortTempTable
         
             """;
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"About to copy the cohort into a temporary table using the SQL: {sql}"));
+
         using var cmd = db.Server.GetCommand(sql, con);
+        cmd.CommandTimeout = ExecutionTimeout;
         cmd.ExecuteNonQuery();
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Cohort successfully copied to temporary table"));
+
     }
 
     public virtual DataTable GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
@@ -218,24 +226,31 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
         if (_hostedSource == null)
         {
-            _con = DatabaseCommandHelper.GetConnection(Request.GetDistinctLiveDatabaseServer().Builder);
-            _con.Open();
-            CreateCohortTempTable(_con);
-            StartAudit(Request.QueryBuilder.SQL);
+            if (UseTempTablesWhenExtractingCohort)
+            {
+                _con = DatabaseCommandHelper.GetConnection(Request.GetDistinctLiveDatabaseServer().Builder);
+                _con.Open();
+                CreateCohortTempTable(_con, listener);
+            }
+            var cmdSql = GetCommandSQL(listener);
+            StartAudit(cmdSql);
 
             if (Request.DatasetBundle.DataSet.DisableExtraction)
                 throw new Exception(
                     $"Cannot extract {Request.DatasetBundle.DataSet} because DisableExtraction is set to true");
 
-            _hostedSource = new DbDataCommandDataFlowSource(GetCommandSQL(listener),
+            _hostedSource = UseTempTablesWhenExtractingCohort ? new DbDataCommandDataFlowSource(cmdSql,
                 $"ExecuteDatasetExtraction {Request.DatasetBundle.DataSet}",
                _con,
+                ExecutionTimeout) : new DbDataCommandDataFlowSource(cmdSql,
+                $"ExecuteDatasetExtraction {Request.DatasetBundle.DataSet}",
+               Request.GetDistinctLiveDatabaseServer().Builder,
                 ExecutionTimeout)
-            {
-                // If we are running in batches then always allow empty extractions
-                AllowEmptyResultSets = AllowEmptyExtractions || Request.IsBatchResume,
-                BatchSize = BatchSize
-            };
+                {
+                    // If we are running in batches then always allow empty extractions
+                    AllowEmptyResultSets = AllowEmptyExtractions || Request.IsBatchResume,
+                    BatchSize = BatchSize
+                };
         }
 
         DataTable chunk = null;
@@ -487,7 +502,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
             $"/*Decided on extraction SQL:*/{Environment.NewLine}{sql}"));
-        if(_uuid is not null)
+        if (UseTempTablesWhenExtractingCohort && _uuid is not null)
         {
             sql = sql.Replace(_externalCohortTable.TableName, _uuid);
         }

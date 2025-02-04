@@ -124,12 +124,7 @@ public class ExtractionQueryBuilder
 
         var externalCohortTable =
             _repository.GetObjectByID<ExternalCohortTable>(request.ExtractableCohort.ExternalCohortTable_ID);
-        //todo here is where we want to create a temp table
 
-        //var db = externalCohortTable.Discover();
-        //var con = db.Server.GetConnection();
-        //con.Open();
-        //var tempTable = CreateCohortTempTable(externalCohortTable, request.ExtractableCohort.WhereSQL(),con.db);
         if (request.ExtractableCohort != null)
         {
             //the JOIN with the cohort table:
@@ -149,32 +144,6 @@ public class ExtractionQueryBuilder
         request.QueryBuilder = queryBuilder;
         return queryBuilder;
     }
-
-    //private static Random random = new Random();
-
-    //private static string RandomString(int length)
-    //{
-    //    const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    //    return new string(Enumerable.Repeat(chars, length)
-    //        .Select(s => s[random.Next(s.Length)]).ToArray());
-    //}
-
-    //private string CreateCohortTempTable(ExternalCohortTable externalCohortTable, string whereSQL,DbConnection con, DiscoveredDatabase db)
-    //{
-    //    var uuid = $"#{RandomString(24)}";
-    //    var sql = $"""
-    //        SELECT *
-    //        INTO {uuid}
-    //        FROM(
-    //        SELECT * FROM {externalCohortTable.TableName}
-    //        WHERE {whereSQL}
-    //        ) as cohortTempTable
-        
-    //        """;
-    //            using var cmd = db.Server.GetCommand(sql, con);
-    //    cmd.ExecuteNonQuery();
-    //    return uuid;
-    //}
 
     private void HandleBatching(ExtractDatasetCommand request, QueryBuilder queryBuilder,
         IQuerySyntaxHelper syntaxHelper)
