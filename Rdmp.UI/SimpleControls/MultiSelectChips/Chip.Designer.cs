@@ -59,12 +59,14 @@
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            AutoSize = true;
+            AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             BackColor = System.Drawing.SystemColors.ControlDark;
             BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             Controls.Add(btnClear);
             Controls.Add(lblText);
             Name = "Chip";
-            Size = new System.Drawing.Size(76, 24);
+            Size = new System.Drawing.Size(69, 25);
             ResumeLayout(false);
             PerformLayout();
         }

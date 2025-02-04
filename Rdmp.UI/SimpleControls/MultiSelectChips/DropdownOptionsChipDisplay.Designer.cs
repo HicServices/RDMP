@@ -62,7 +62,7 @@
             MaximumSize = new System.Drawing.Size(400, 300);
             MinimumSize = new System.Drawing.Size(100, 20);
             Name = "DropdownOptionsChipDisplay";
-            Size = new System.Drawing.Size(303, 83);
+            Size = new System.Drawing.Size(342, 117);
             ResumeLayout(false);
             PerformLayout();
         }

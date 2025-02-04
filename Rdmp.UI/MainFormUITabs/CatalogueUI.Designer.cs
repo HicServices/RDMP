@@ -330,7 +330,7 @@ namespace Rdmp.UI.MainFormUITabs
             tableLayoutPanel2.RowStyles.Add(new RowStyle());
             tableLayoutPanel2.RowStyles.Add(new RowStyle());
             tableLayoutPanel2.RowStyles.Add(new RowStyle());
-            tableLayoutPanel2.Size = new System.Drawing.Size(496, 513);
+            tableLayoutPanel2.Size = new System.Drawing.Size(843, 513);
             tableLayoutPanel2.TabIndex = 20;
             // 
             // groupBox18
@@ -339,7 +339,7 @@ namespace Rdmp.UI.MainFormUITabs
             groupBox18.Controls.Add(ddDatasetType);
             groupBox18.Location = new System.Drawing.Point(3, 3);
             groupBox18.Name = "groupBox18";
-            groupBox18.Size = new System.Drawing.Size(298, 126);
+            groupBox18.Size = new System.Drawing.Size(412, 126);
             groupBox18.TabIndex = 15;
             groupBox18.TabStop = false;
             groupBox18.Text = "Dataset Type";
@@ -352,7 +352,7 @@ namespace Rdmp.UI.MainFormUITabs
             ddDatasetType.MaximumSize = new System.Drawing.Size(400, 300);
             ddDatasetType.MinimumSize = new System.Drawing.Size(100, 20);
             ddDatasetType.Name = "ddDatasetType";
-            ddDatasetType.Size = new System.Drawing.Size(286, 83);
+            ddDatasetType.Size = new System.Drawing.Size(400, 83);
             ddDatasetType.TabIndex = 0;
             // 
             // groupBox22
@@ -383,7 +383,7 @@ namespace Rdmp.UI.MainFormUITabs
             groupBox19.Controls.Add(ddDatasetSubtype);
             groupBox19.Location = new System.Drawing.Point(3, 135);
             groupBox19.Name = "groupBox19";
-            groupBox19.Size = new System.Drawing.Size(298, 126);
+            groupBox19.Size = new System.Drawing.Size(412, 126);
             groupBox19.TabIndex = 16;
             groupBox19.TabStop = false;
             groupBox19.Text = "Dataset Subtype";
@@ -396,7 +396,7 @@ namespace Rdmp.UI.MainFormUITabs
             ddDatasetSubtype.MaximumSize = new System.Drawing.Size(400, 300);
             ddDatasetSubtype.MinimumSize = new System.Drawing.Size(100, 20);
             ddDatasetSubtype.Name = "ddDatasetSubtype";
-            ddDatasetSubtype.Size = new System.Drawing.Size(286, 83);
+            ddDatasetSubtype.Size = new System.Drawing.Size(400, 83);
             ddDatasetSubtype.TabIndex = 0;
             // 
             // groupBox21
