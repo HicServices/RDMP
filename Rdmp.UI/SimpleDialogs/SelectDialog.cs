@@ -50,7 +50,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
     private HashSet<string> _typeNames;
 
     private List<Type> showOnlyTypes = new();
-    private Dictionary<Type, List<string>> showOnlyEnums = new();
+    private readonly Dictionary<Type, List<string>> showOnlyEnums = new();
     private Type _alwaysFilterOn;
     private ToolStripTextBox _lblId;
     private readonly DialogArgs _args;
@@ -540,9 +540,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
                 case "CatalogueItem":
                     foreach(var k in _filtered.Keys)
                     {
-                        var t = k.GetType().Name;
                         showOnlyEnums.TryGetValue(k.GetType(), out var v1);
-                        var y = ((CatalogueItem)k).ExtractionInformation.ExtractionCategory.ToString();
                         if (showOnlyEnums.TryGetValue(k.GetType(),out var v) &&
                             (v.Count >0 &&!v.Contains(((CatalogueItem)k).ExtractionInformation.ExtractionCategory.ToString()))
 
