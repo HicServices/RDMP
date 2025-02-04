@@ -24,16 +24,16 @@ namespace Rdmp.UI.SimpleControls.MultiSelectChips
                 _value = value;
                 flowLayoutPanel1.Controls.Clear();
                 var splitValues = _value.Split(',');
-                foreach (var splitValue in splitValues) { 
-                    if(!string.IsNullOrWhiteSpace(splitValue))
-                        flowLayoutPanel1.Controls.Add(new Chip(splitValue, Remove));
+                foreach (var splitValue in splitValues.Where(sv => !string.IsNullOrWhiteSpace(sv)))
+                {
+                    flowLayoutPanel1.Controls.Add(new Chip(splitValue, Remove));
                 }
             }
         }
 
         private int Remove(string value)
         {
-            Value = string.Join(',',Value.Split(",").Where(v => v != value));
+            Value = string.Join(',', Value.Split(",").Where(v => v != value));
             return 1;
         }
 
@@ -48,7 +48,7 @@ namespace Rdmp.UI.SimpleControls.MultiSelectChips
             {
                 if (!_value.Split(',').Contains(textBox1.Text))
                 {
-                    Value = Value + $"{(Value.Length>0?",":"")}{textBox1.Text.Trim()}";
+                    Value = Value + $"{(Value.Length > 0 ? "," : "")}{textBox1.Text.Trim()}";
                 }
                 textBox1.Text = "";
             }

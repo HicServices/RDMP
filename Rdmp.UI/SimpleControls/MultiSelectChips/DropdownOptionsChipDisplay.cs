@@ -30,9 +30,8 @@ namespace Rdmp.UI.SimpleControls.MultiSelectChips
                 {
                     comboBox1.Items.Add(option);
                 }
-                foreach (var splitValue in splitValues)
+                foreach (var splitValue in splitValues.Where(sv => !string.IsNullOrWhiteSpace(sv)))
                 {
-                    if (!string.IsNullOrWhiteSpace(splitValue))
                         flowLayoutPanel1.Controls.Add(new Chip(splitValue, Remove));
                 }
             }

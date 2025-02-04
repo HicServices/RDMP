@@ -298,7 +298,7 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
 
     }
 
-    private List<int> setTabBindings = new();
+    private readonly List<int> setTabBindings = new();
 
     private void UpdateStartDate(object sender, EventArgs e)
     {

@@ -13,7 +13,7 @@ namespace Rdmp.UI.SimpleControls.MultiSelectChips
 {
     public partial class Chip : UserControl
     {
-        private Func<string,int> _clear;
+        private readonly Func<string,int> _clear;
         public Chip(string value, Func<string,int> clear)
         {
             InitializeComponent();
