@@ -6,12 +6,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data.Common;
 using System.Linq;
-using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
-using NPOI.SS.Formula.Functions;
-using Rdmp.Core.CohortCommitting;
 using Rdmp.Core.DataExport;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.Commands;
