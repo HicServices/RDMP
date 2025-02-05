@@ -35,6 +35,7 @@
             // flowLayoutPanel1
             // 
             flowLayoutPanel1.AutoSize = true;
+            flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             flowLayoutPanel1.Location = new System.Drawing.Point(0, 29);
             flowLayoutPanel1.MaximumSize = new System.Drawing.Size(400, 400);
             flowLayoutPanel1.Name = "flowLayoutPanel1";
