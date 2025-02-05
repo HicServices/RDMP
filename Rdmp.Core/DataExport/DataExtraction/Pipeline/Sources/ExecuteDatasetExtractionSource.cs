@@ -165,7 +165,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
     private RowPeeker _peeker = new();
 
-    private static Random random = new Random();
+    private static readonly Random random = new Random();
 
     private static string RandomString(int length)
     {
