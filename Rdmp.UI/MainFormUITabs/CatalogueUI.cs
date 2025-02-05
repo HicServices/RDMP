@@ -75,39 +75,6 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
             }
     }
 
-    //private void tbName_TextChanged(object sender, EventArgs e)
-    //{
-    //    if (!Catalogue.IsAcceptableName(tbName.Text, out var reasonInvalid))
-    //        errorProvider1.SetError(tbName, reasonInvalid);
-    //    else
-    //        errorProvider1.Clear();
-    //}
-
-    //private void ddExplicitConsent_SelectedIndexChanged(object sender, EventArgs e)
-    //{
-    //    if (ddExplicitConsent.Text.Equals("Yes"))
-    //        _catalogue.Explicit_consent = true;
-
-    //    if (ddExplicitConsent.Text.Equals("No"))
-    //        _catalogue.Explicit_consent = false;
-
-    //    if (string.IsNullOrWhiteSpace(ddExplicitConsent.Text))
-    //        _catalogue.Explicit_consent = null;
-    //}
-
-    //private void tbFolder_TextChanged(object sender, EventArgs e)
-    //{
-    //    try
-    //    {
-    //        _catalogue.Folder = tbFolder.Text;
-    //        tbFolder.ForeColor = Color.Black;
-    //    }
-    //    catch (Exception)
-    //    {
-    //        tbFolder.ForeColor = Color.Red;
-    //    }
-    //}
-
     public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
     {
         if (_scintillaDescription == null)
@@ -128,18 +95,6 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
             .Select(datasetId =>
                 _catalogue.CatalogueRepository.GetAllObjectsWhere<Dataset>("ID", datasetId).First())
             .Select(static ds => ds.Name).ToList();
-        //if (associatedDatasets.Count > 0)
-        //{
-        //    lbDatasets.Visible = true;
-        //    lbDatasetslbl.Visible = true;
-        //    var finalString = associatedDatasets.Count == 1 ? associatedDatasets[0] : string.Join(", ", associatedDatasets.ToArray(), 0, associatedDatasets.Count - 1) + " and " + associatedDatasets.LastOrDefault();
-        //    lbDatasets.Text = $"This catalogues contains data from the datasets:{finalString}";
-        //}
-        //else
-        //{
-        //    lbDatasets.Visible = false;
-        //    lbDatasetslbl.Visible = false;
-        //}
         this.editableCatalogueName.TextValue = _catalogue.Name;
         this.editableCatalogueName.Title = "Name";
         this.editableCatalogueName.Icon = CatalogueIcons.Catalogue.ImageToBitmap();
@@ -160,44 +115,6 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
         Bind(editableFolder, "TextValue", "Folder", c => c.Folder);
         tabControl1_SelectedIndexChanged(this.tabControl1, null);
 
-        //--------------------------------
-        //Bind(tbAcronym, "Text", "Acronym", c => c.Acronym);
-        //Bind(tbName, "Text", "Name", c => c.Name);
-        //Bind(c_tbID, "Text", "ID", c => c.ID);
-        //Bind(_scintillaDescription, "Text", "Description", c => c.Description);
-
-        //Bind(c_ddType, "SelectedItem", "Type", c => c.Type);
-        //Bind(c_ddGranularity, "SelectedItem", "Granularity", c => c.Granularity);
-        //Bind(c_ddPeriodicity, "SelectedItem", "Periodicity", c => c.Periodicity);
-
-        //Bind(cbColdStorage, "Checked", "IsColdStorageDataset", c => c.IsColdStorageDataset);
-        //Bind(cbDeprecated, "Checked", "IsDeprecated", c => c.IsDeprecated);
-        //Bind(cbInternal, "Checked", "IsInternalDataset", c => c.IsInternalDataset);
-
-        //Bind(c_tbGeographicalCoverage, "Text", "Geographical_coverage", c => c.Geographical_coverage);
-        //Bind(c_tbBackgroundSummary, "Text", "Background_summary", c => c.Background_summary);
-        //Bind(c_tbTopics, "Text", "Search_keywords", c => c.Search_keywords);
-        //Bind(c_tbUpdateFrequency, "Text", "Update_freq", c => c.Update_freq);
-        //Bind(c_tbUpdateSchedule, "Text", "Update_sched", c => c.Update_sched);
-        //Bind(c_tbTimeCoverage, "Text", "Time_coverage", c => c.Time_coverage);
-        //Bind(tbAdministrativeContactName, "Text", "Contact_details", c => c.Contact_details);
-        //Bind(c_tbResourceOwner, "Text", "Resource_owner", c => c.Resource_owner);
-        //Bind(c_tbAttributionCitation, "Text", "Attribution_citation", c => c.Attribution_citation);
-        //Bind(c_tbAccessOptions, "Text", "Access_options", c => c.Access_options);
-        //Bind(c_tbSubjectNumbers, "Text", "SubjectNumbers", c => c.SubjectNumbers);
-
-        //Bind(tbDataStandards, "Text", "Data_standards", c => c.Data_standards);
-        //Bind(tbAdministrativeContactName, "Text", "Administrative_contact_name", c => c.Administrative_contact_name);
-        //Bind(tbAdministrativeContactEmail, "Text", "Administrative_contact_email", c => c.Administrative_contact_email);
-        //Bind(tbAdministrativeContactTelephone, "Text", "Administrative_contact_telephone",
-        //    c => c.Administrative_contact_telephone);
-        //Bind(tbAdministrativeContactAddress, "Text", "Administrative_contact_address",
-        //    c => c.Administrative_contact_address);
-        //Bind(tbCountryOfOrigin, "Text", "Country_of_origin", c => c.Country_of_origin);
-        //Bind(tbEthicsApprover, "Text", "Ethics_approver", c => c.Ethics_approver);
-        //Bind(tbSourceOfDataCollection, "Text", "Source_of_data_collection", c => c.Source_of_data_collection);
-        //Bind(c_tbAttributionCitation, "Text", "Attribution_citation", c => c.Attribution_citation);
-        //Bind(c_tbAccessOptions, "Text", "Access_options", c => c.Access_options);
     }
 
     public override void SetItemActivator(IActivateItems activator)
@@ -222,35 +139,15 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
 
         ticketingControl1.TicketText = _catalogue.Ticket;
 
-        //tbFolder.Text = _catalogue.Folder;
-
-        //if (_catalogue.Explicit_consent == null)
-        //    ddExplicitConsent.Text = "";
-        //else if (_catalogue.Explicit_consent == true)
-        //    ddExplicitConsent.Text = "Yes";
-        //else
-        //    ddExplicitConsent.Text = "No";
-
-        //c_tbLastRevisionDate.Text = _catalogue.Last_revision_date.ToString();
-        //tbDatasetStartDate.Text = _catalogue.DatasetStartDate.ToString();
-
-        //c_tbAPIAccessURL.Text = _catalogue.API_access_URL != null ? _catalogue.API_access_URL.ToString() : "";
-        //c_tbBrowseUrl.Text = _catalogue.Browse_URL != null ? _catalogue.Browse_URL.ToString() : "";
-        //c_tbBulkDownloadUrl.Text = _catalogue.Bulk_Download_URL != null ? _catalogue.Bulk_Download_URL.ToString() : "";
-        //c_tbQueryToolUrl.Text = _catalogue.Query_tool_URL != null ? _catalogue.Query_tool_URL.ToString() : "";
-        //c_tbSourceUrl.Text = _catalogue.Source_URL != null ? _catalogue.Source_URL.ToString() : "";
-        //c_tbDetailPageURL.Text = _catalogue.Detail_Page_URL != null ? _catalogue.Detail_Page_URL.ToString() : "";
     }
 
 
     private void c_tbLastRevisionDate_TextChanged(object sender, EventArgs e)
     {
-        //SetDate(c_tbLastRevisionDate, v => _catalogue.Last_revision_date = v);
     }
 
     private void tbDatasetStartDate_TextChanged(object sender, EventArgs e)
     {
-        //SetDate(tbDatasetStartDate, v => _catalogue.DatasetStartDate = v);
     }
 
     private void c_tbDetailPageURL_TextChanged(object sender, EventArgs e)
@@ -435,7 +332,6 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
 
                 cb_updateFrequency.DataSource = Enum.GetValues(typeof(Catalogue.UpdateFrequencies));
                 cbUpdateLag.DataSource = Enum.GetValues(typeof(Catalogue.UpdateLagTimes));
-                //todo cb not being set correctly
 
                 Bind(cbUpdateLag, "SelectedItem", "UpdateLag", c => c.UpdateLag);
                 Bind(cb_updateFrequency, "SelectedItem", "Update_freq", c => c.Update_freq);
