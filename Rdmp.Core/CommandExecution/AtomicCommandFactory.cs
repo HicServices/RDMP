@@ -547,7 +547,12 @@ public class AtomicCommandFactory : CommandFactoryBase
             {
                 yield return new ExecuteCommandRestoreLoadMetadataVersion(_activator, lmd)
                 {
-                    OverrideCommandName = "Restore Version"};
+                    OverrideCommandName = "Restore Version"
+                };
+                yield return new ExecuteCommandCloneLoadMetadata(_activator, lmd)
+                {
+                    OverrideCommandName = "Clone Load Metadata"
+                };
             }
         }
 
