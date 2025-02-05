@@ -906,7 +906,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     #region Load Metadata
 
-    private void AddChildren(LoadMetadata lmd, DescendancyList descendancy)
+    private void AddChildren(LoadMetadata lmd, DescendancyList descendancy, bool includeSchedule = true, bool includeVersions = true)
     {
         var childObjects = new List<object>();
 
@@ -916,10 +916,12 @@ public class CatalogueChildProvider : ICoreChildProvider
             var usage = new OverrideRawServerNode(lmd, server);
             childObjects.Add(usage);
         }
-
-        var allSchedulesNode = new LoadMetadataScheduleNode(lmd);
-        AddChildren(allSchedulesNode, descendancy.Add(allSchedulesNode));
-        childObjects.Add(allSchedulesNode);
+        if (includeSchedule)
+        {
+            var allSchedulesNode = new LoadMetadataScheduleNode(lmd);
+            AddChildren(allSchedulesNode, descendancy.Add(allSchedulesNode));
+            childObjects.Add(allSchedulesNode);
+        }
 
         var allCataloguesNode = new AllCataloguesUsedByLoadMetadataNode(lmd);
         AddChildren(allCataloguesNode, descendancy.Add(allCataloguesNode));
@@ -929,9 +931,12 @@ public class CatalogueChildProvider : ICoreChildProvider
         AddChildren(processTasksNode, descendancy.Add(processTasksNode));
         childObjects.Add(processTasksNode);
 
-        var versionsNode = new LoadMetadataVersionNode(lmd);
-        AddChildren(versionsNode, descendancy.Add(versionsNode));
-        childObjects.Add(versionsNode);
+        if (includeVersions)
+        {
+            var versionsNode = new LoadMetadataVersionNode(lmd);
+            AddChildren(versionsNode, descendancy.Add(versionsNode));
+            childObjects.Add(versionsNode);
+        }
 
         childObjects.Add(new LoadDirectoryNode(lmd));
 
@@ -1024,7 +1029,16 @@ public class CatalogueChildProvider : ICoreChildProvider
     private void AddChildren(LoadMetadataVersionNode LoadMetadataVersionNode, DescendancyList descendancy)
     {
         LoadMetadataVersionNode.LoadMetadataVersions = AllLoadMetadatas.Where(lmd => lmd.RootLoadMetadata_ID == LoadMetadataVersionNode.LoadMetadata.ID).ToList();
-        AddToDictionaries(LoadMetadataVersionNode.LoadMetadataVersions.Cast<object>().ToHashSet(), descendancy);
+        //AddToDictionaries(LoadMetadataVersionNode.LoadMetadataVersions.Cast<object>().ToHashSet(), descendancy);
+        var childObjects = new List<object>();
+
+        foreach (var lmd in LoadMetadataVersionNode.LoadMetadataVersions)
+        {
+            AddChildren(lmd, descendancy.Add(lmd), false, false);
+            childObjects.Add(lmd);
+        }
+        AddToDictionaries(new HashSet<object>(childObjects), descendancy);
+
     }
 
     private void AddChildren(AllCataloguesUsedByLoadMetadataNode allCataloguesUsedByLoadMetadataNode,
