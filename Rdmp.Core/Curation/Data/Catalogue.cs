@@ -6,12 +6,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Data.Common;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Amazon.S3.Model;
 using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
