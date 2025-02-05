@@ -288,7 +288,6 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
             OverrideRAWServer_ID = OverrideRAWServer_ID,
             IgnoreTrigger = IgnoreTrigger,
             Folder = Folder,
-            //RootLoadMetadata_ID = this.ID
         };
         lmd.SaveToDatabase();
         //link to catalogue

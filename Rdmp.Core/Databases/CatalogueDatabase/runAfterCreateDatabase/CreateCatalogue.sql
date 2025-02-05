@@ -774,7 +774,6 @@ CREATE TABLE [dbo].[ProcessTask](
 	[SoftwareVersion] [nvarchar](50) NOT NULL,
 	[IsDisabled] [bit] NOT NULL,
 	[SerialisableConfiguration] [varchar](max),
-	[LoadMetadataVersion] [int],
  CONSTRAINT [PK_ProcessTask] PRIMARY KEY CLUSTERED 
 (
 	[ID] ASC
