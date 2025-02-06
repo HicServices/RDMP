@@ -38,7 +38,7 @@ public partial class HDRDatasetConfigurationUI : DatsetConfigurationUI_Design, I
         base.SetDatabaseObject(activator, databaseObject);
         _provider = new HDRDatasetProvider(activator, activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<DatasetProviderConfiguration>("ID", databaseObject.Provider_ID).First());
         _dataset = _provider.FetchHDRDataset(databaseObject);
-        var summary= _dataset.data.versions.First().metadata.metadata.summary;
+        var summary = _dataset.data.versions.First().metadata.metadata.summary;
         //if (_dataset.PortalURL is not null)
         //{
         //    btnViewOnHDR.Enabled = true;
@@ -76,10 +76,17 @@ public partial class HDRDatasetConfigurationUI : DatsetConfigurationUI_Design, I
     {
         if (_activator.YesNo("Are you sure?", "Save Changes"))
         {
-            var datasetUpdate = new HDRDataset();
+            var metadata = _dataset.data.versions.First().metadata;
             var summary = _dataset.data.versions.First().metadata.metadata.summary;
-            _dataset.data.versions.First().metadata.metadata.summary.title = tbName.Text;
-            _dataset.data.versions.First().metadata.metadata.summary.@abstract = tbAbstract.Text;
+            metadata.summary = summary;
+            if (_dataset.data.versions.First().metadata.metadata.summary.title != tbName.Text)
+            {
+                //todo
+            }
+            if (_dataset.data.versions.First().metadata.metadata.summary.@abstract != tbAbstract.Text)
+            {
+                metadata.summary.@abstract = tbAbstract.Text;
+            }
             //    _dataset.Title.En_GB = tbName.Text;
             //    datasetUpdate.Title = _dataset.Title;
             //    var datasetDescriptionTerm = "/dk/atira/pure/dataset/descriptions/datasetdescription";
@@ -117,9 +124,10 @@ public partial class HDRDatasetConfigurationUI : DatsetConfigurationUI_Design, I
             //        datasetUpdate.Links.Add(pl);
             //    }
             //    if (!datasetUpdate.Links.Any()) datasetUpdate.Links = null;
-                _provider.Update(_dataset.data.id.ToString(), datasetUpdate);
-                SetDatabaseObject(_activator, _dbObject);
-                _activator.Show("Successfully updated Pure dataset");
+            _dataset.data.metadata = metadata;
+            _provider.Update(_dataset.data.id.ToString(), _dataset);
+            SetDatabaseObject(_activator, _dbObject);
+            _activator.Show("Successfully updated Pure dataset");
         }
     }
 

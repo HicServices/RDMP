@@ -18,3 +18,13 @@ CONSTRAINT [PK_DatasetProviderConfiguration] PRIMARY KEY CLUSTERED
 ) ON [PRIMARY]
 END
 GO
+
+
+if not exists (select 1 from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='Dataset' and COLUMN_NAME='Type')
+BEGIN
+ALTER TABLE [dbo].[Dataset]
+ADD [Type] [varchar](256) NULL,
+	[Url] [varchar](256) NULL,
+	[Provider_ID] [int] NULL
+END
+GO

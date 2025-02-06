@@ -125,6 +125,8 @@ namespace Rdmp.Core.Datasets
         public List<Collection> collections { get; set; }
         public List<Version> versions { get; set; }
         public Team team { get; set; }
+
+        public Metadata metadata { get; set; }
     }
 
     public class DataCustodian

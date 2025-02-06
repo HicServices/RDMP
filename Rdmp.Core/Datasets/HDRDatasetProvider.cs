@@ -28,7 +28,6 @@ namespace Rdmp.Core.Datasets
         }
         public override void AddExistingDataset(string name, string url)
         {
-            //var uri = $"{Configuration.Url}/data-sets/{UrltoUUID(url)}";
             var response = Task.Run(async () => await _client.GetAsync(url)).Result;
             if (response.StatusCode == HttpStatusCode.OK)
             {
@@ -85,7 +84,8 @@ namespace Rdmp.Core.Datasets
             var serializeOptions = new JsonSerializerOptions
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                WriteIndented = true
+                WriteIndented = true,
+                DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
             };
 
             var options = new JsonWriterOptions
@@ -94,9 +94,16 @@ namespace Rdmp.Core.Datasets
             };
 
             using var stream = new MemoryStream();
-            System.Text.Json.JsonSerializer.Serialize<HDRDataset>(stream, (HDRDataset)datasetUpdates, serializeOptions);
+            var update = (HDRDataset)datasetUpdates;
+            var updateObj = new HDRUpdateObject() {
+                team_id = update.data.team_id,
+                user_id = update.data.user_id,
+                create_origin= update.data.create_origin,
+                metadata = update.data.versions.First().metadata
+            };
+            System.Text.Json.JsonSerializer.Serialize<Data>(stream, ((HDRDataset)datasetUpdates).data, serializeOptions);
             var jsonString = Encoding.UTF8.GetString(stream.ToArray());
-            var uri = $"{Configuration.Url}/v1/datasets/{uuid}";
+            var uri = $"{Configuration.Url}/v1/integrations/datasets/{uuid}";
             var httpContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
 
             var response = Task.Run(async () => await _client.PatchAsync(uri, httpContent)).Result;
@@ -105,5 +112,15 @@ namespace Rdmp.Core.Datasets
                 throw new Exception("Error");
             }
         }
+
+        private class HDRUpdateObject
+        {
+            public int team_id { get; set; }
+            public int user_id { get; set; }
+            public string create_origin { get; set; }
+            public  Metadata metadata { get; set; }
+        }
     }
+
+    
 }
