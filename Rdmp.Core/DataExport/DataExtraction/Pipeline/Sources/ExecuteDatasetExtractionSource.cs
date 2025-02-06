@@ -218,7 +218,14 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
         using var cmd = db.Server.GetCommand(sql, con);
         cmd.CommandTimeout = ExecutionTimeout;
-        cmd.ExecuteNonQuery();
+        try
+        {
+            cmd.ExecuteNonQuery();
+        }
+        catch (Exception ex) {
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, $"Unable to create temporary table for cohort. Original cohort table will be used",ex));
+            _uuid = null;
+        }
         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Cohort successfully copied to temporary table"));
 
     }
