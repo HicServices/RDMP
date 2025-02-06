@@ -97,6 +97,8 @@ namespace Rdmp.UI.MainFormUITabs
             btnReleaseDateClear = new Button();
             groupBox4 = new GroupBox();
             cb_updateFrequency = new ComboBox();
+            groupBox24 = new GroupBox();
+            cbPurpose = new ComboBox();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
@@ -133,6 +135,7 @@ namespace Rdmp.UI.MainFormUITabs
             groupBox6.SuspendLayout();
             groupBox5.SuspendLayout();
             groupBox4.SuspendLayout();
+            groupBox24.SuspendLayout();
             SuspendLayout();
             // 
             // splitContainer1
@@ -322,15 +325,17 @@ namespace Rdmp.UI.MainFormUITabs
             tableLayoutPanel2.Controls.Add(groupBox19, 0, 1);
             tableLayoutPanel2.Controls.Add(groupBox21, 0, 3);
             tableLayoutPanel2.Controls.Add(groupBox20, 0, 2);
+            tableLayoutPanel2.Controls.Add(groupBox24, 0, 5);
             tableLayoutPanel2.Location = new System.Drawing.Point(7, 70);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
-            tableLayoutPanel2.RowCount = 5;
+            tableLayoutPanel2.RowCount = 6;
             tableLayoutPanel2.RowStyles.Add(new RowStyle());
             tableLayoutPanel2.RowStyles.Add(new RowStyle());
             tableLayoutPanel2.RowStyles.Add(new RowStyle());
             tableLayoutPanel2.RowStyles.Add(new RowStyle());
             tableLayoutPanel2.RowStyles.Add(new RowStyle());
-            tableLayoutPanel2.Size = new System.Drawing.Size(843, 513);
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel2.Size = new System.Drawing.Size(843, 618);
             tableLayoutPanel2.TabIndex = 20;
             // 
             // groupBox18
@@ -807,6 +812,24 @@ namespace Rdmp.UI.MainFormUITabs
             cb_updateFrequency.TabIndex = 22;
             cb_updateFrequency.Format += FormatCB;
             // 
+            // groupBox24
+            // 
+            groupBox24.Controls.Add(cbPurpose);
+            groupBox24.Location = new System.Drawing.Point(3, 516);
+            groupBox24.Name = "groupBox24";
+            groupBox24.Size = new System.Drawing.Size(372, 83);
+            groupBox24.TabIndex = 20;
+            groupBox24.TabStop = false;
+            groupBox24.Text = "Purpose of Dataset";
+            // 
+            // cbPurpose
+            // 
+            cbPurpose.FormattingEnabled = true;
+            cbPurpose.Location = new System.Drawing.Point(6, 22);
+            cbPurpose.Name = "cbPurpose";
+            cbPurpose.Size = new System.Drawing.Size(182, 23);
+            cbPurpose.TabIndex = 1;
+            // 
             // CatalogueUI
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -872,6 +895,7 @@ namespace Rdmp.UI.MainFormUITabs
             groupBox6.ResumeLayout(false);
             groupBox5.ResumeLayout(false);
             groupBox4.ResumeLayout(false);
+            groupBox24.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -941,5 +965,7 @@ namespace Rdmp.UI.MainFormUITabs
         private TableLayoutPanel tableLayoutPanel2;
         private GroupBox groupBox23;
         public TextBox tbAcronym;
+        private GroupBox groupBox24;
+        private ComboBox cbPurpose;
     }
 }

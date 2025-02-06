@@ -247,12 +247,15 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
                     item.Visible = false;
                 }
                 cb_resourceType.DataSource = Enum.GetValues(typeof(Catalogue.CatalogueType));
-                ddDatasetType.Options= Enum.GetNames(typeof(Catalogue.DatasetType));
-                ddDatasetSubtype.Options= Enum.GetNames(typeof(Catalogue.DatasetSubType));
+                cbPurpose.DataSource = Enum.GetValues(typeof(Catalogue.DatasetPurpose));
+                //cbPurpose.Items.AddRange(Enum.GetValues(typeof(Catalogue.DatasetPurpose)));
+                ddDatasetType.Options = Enum.GetNames(typeof(Catalogue.DatasetType));
+                ddDatasetSubtype.Options = Enum.GetNames(typeof(Catalogue.DatasetSubType));
 
 
                 Bind(ffcKeywords, "Value", "Search_keywords", c => c.Search_keywords);
                 Bind(cb_resourceType, "SelectedItem", "Type", c => c.Type);
+                Bind(cbPurpose, "SelectedItem", "Purpose", c => c.Purpose);
                 Bind(ddDatasetType, "Value", "DataType", c => c.DataType);
                 Bind(ddDatasetSubtype, "Value", "DataSubtype", c => c.DataSubtype);
                 Bind(tbDataSource, "Text", "DataSource", c => c.DataSource);
@@ -417,6 +420,11 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
     }
 
     private void tabPage1_Click(object sender, EventArgs e)
+    {
+
+    }
+
+    private void freeFormTextChipDisplay1_Load(object sender, EventArgs e)
     {
 
     }

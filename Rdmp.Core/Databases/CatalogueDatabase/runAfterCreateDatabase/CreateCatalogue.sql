@@ -287,7 +287,8 @@ CREATE TABLE [dbo].[Catalogue](
 	[DataProcessor] [nvarchar](255) NULL,
 	[ControlledVocabulary] [nvarchar](MAX) NULL,
 	[AssociatedPeople] [nvarchar](MAX) NULL,
-	[Doi] [nvarchar](50) NULL
+	[Doi] [nvarchar](50) NULL,
+	[Purpose] [nvarchar](255) NULL
  CONSTRAINT [PK_Data_Catalogue] PRIMARY KEY CLUSTERED 
 (
 	[ID] ASC

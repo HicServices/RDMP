@@ -46,6 +46,7 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
     private string _description;
     private Uri _detailPageUrl;
     private CatalogueType _type;
+    private DatasetPurpose _purpose;
     private CataloguePeriodicity _periodicity;
     private CatalogueGranularity _granularity;
     private string _geographicalCoverage;
@@ -161,6 +162,15 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
     {
         get => _type;
         set => SetField(ref _type, value);
+    }
+
+    /// <summary>
+    /// User defined classification of the Type of dataset the Catalogue is e.g. Cohort, ResearchStudy etc
+    /// </summary>
+    public DatasetPurpose Purpose
+    {
+        get => _purpose;
+        set => SetField(ref _purpose, value);
     }
 
     /// <inheritdoc/>
@@ -849,6 +859,20 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
         Variable,
         NotApplicable
     }
+    
+    public enum DatasetPurpose
+    {
+        ResearchCohort,
+        Study,
+        DiseaseRegistry,
+        Trial,
+        Care,
+        Audit,
+        Administrative,
+        Finantial,
+        Statutory,
+        Other
+    }
     #endregion
 
     /// <summary>
@@ -929,6 +953,18 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
                 Type = typeAsEnum;
             else
                 throw new Exception($" r[\"Type\"] had value {type} which is not contained in Enum CatalogueType");
+        }
+        var purpose = r["Purpose"];
+        if (purpose == null || purpose == DBNull.Value)
+        {
+            Purpose = DatasetPurpose.Other;
+        }
+        else
+        {
+            if (Enum.TryParse(purpose.ToString(), true, out DatasetPurpose purposeAsEnum))
+                Purpose = purposeAsEnum;
+            else
+                throw new Exception($" r[\"Purpose\"] had value {purpose} which is not contained in Enum DatasetPurpose");
         }
 
         //Periodicity - with handling for invalid enum values listed in database
