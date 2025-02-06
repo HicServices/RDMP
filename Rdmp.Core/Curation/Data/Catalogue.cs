@@ -102,6 +102,7 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
     private string _dataProcessor;
     private string _controlledVocabulary;
     private string _associatedPeople;
+    private string _associatedMedia;
     private string _doi;
     private Lazy<CatalogueItem[]> _knownCatalogueItems;
 
@@ -541,6 +542,9 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
     public string ControlledVocabulary { get => _controlledVocabulary; set => SetField(ref _controlledVocabulary, value); }
     /// <inheritdoc/>
     public string AssociatedPeople { get => _associatedPeople; set => SetField(ref _associatedPeople, value); }
+    /// <inheritdoc/>
+
+    public string AssociatedMedia { get => _associatedMedia; set => SetField(ref _associatedMedia, value); }
 
     public string Doi { get => _doi; set => SetField(ref _doi, value); }
 
@@ -1075,6 +1079,7 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
         DataProcessor = r["DataProcessor"].ToString();
         Juristiction = r["Juristiction"].ToString();
         AssociatedPeople = r["AssociatedPeople"].ToString();
+        AssociatedMedia = r["AssociatedMedia"].ToString();
         ControlledVocabulary = r["ControlledVocabulary"].ToString();
         DataType = r["DataType"].ToString();
         DataSubtype = r["DataSubtype"].ToString();

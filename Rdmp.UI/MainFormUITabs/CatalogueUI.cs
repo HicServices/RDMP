@@ -248,7 +248,6 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
                 }
                 cb_resourceType.DataSource = Enum.GetValues(typeof(Catalogue.CatalogueType));
                 cbPurpose.DataSource = Enum.GetValues(typeof(Catalogue.DatasetPurpose));
-                //cbPurpose.Items.AddRange(Enum.GetValues(typeof(Catalogue.DatasetPurpose)));
                 ddDatasetType.Options = Enum.GetNames(typeof(Catalogue.DatasetType));
                 ddDatasetSubtype.Options = Enum.GetNames(typeof(Catalogue.DatasetSubType));
 
@@ -352,6 +351,10 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
                 {
                     item.Visible = true;
                 }
+                break;
+            case 6:
+                Bind(ffAssociatedMedia, "Value", "AssociatedMedia", c => c.AssociatedMedia);
+
                 break;
             default:
                 break;

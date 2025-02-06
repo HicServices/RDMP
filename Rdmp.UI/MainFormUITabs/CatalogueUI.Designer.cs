@@ -59,6 +59,8 @@ namespace Rdmp.UI.MainFormUITabs
             tbDataSourceSetting = new TextBox();
             groupBox20 = new GroupBox();
             tbDataSource = new TextBox();
+            groupBox24 = new GroupBox();
+            cbPurpose = new ComboBox();
             groupBox17 = new GroupBox();
             cb_resourceType = new ComboBox();
             tabPage3 = new TabPage();
@@ -97,8 +99,9 @@ namespace Rdmp.UI.MainFormUITabs
             btnReleaseDateClear = new Button();
             groupBox4 = new GroupBox();
             cb_updateFrequency = new ComboBox();
-            groupBox24 = new GroupBox();
-            cbPurpose = new ComboBox();
+            tabPage7 = new TabPage();
+            groupBox25 = new GroupBox();
+            ffAssociatedMedia = new SimpleControls.MultiSelectChips.FreeFormTextChipDisplay();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
@@ -115,6 +118,7 @@ namespace Rdmp.UI.MainFormUITabs
             groupBox19.SuspendLayout();
             groupBox21.SuspendLayout();
             groupBox20.SuspendLayout();
+            groupBox24.SuspendLayout();
             groupBox17.SuspendLayout();
             tabPage3.SuspendLayout();
             groupBox14.SuspendLayout();
@@ -135,7 +139,8 @@ namespace Rdmp.UI.MainFormUITabs
             groupBox6.SuspendLayout();
             groupBox5.SuspendLayout();
             groupBox4.SuspendLayout();
-            groupBox24.SuspendLayout();
+            tabPage7.SuspendLayout();
+            groupBox25.SuspendLayout();
             SuspendLayout();
             // 
             // splitContainer1
@@ -224,6 +229,7 @@ namespace Rdmp.UI.MainFormUITabs
             tabControl1.Controls.Add(tabPage4);
             tabControl1.Controls.Add(tabPage5);
             tabControl1.Controls.Add(tabPage6);
+            tabControl1.Controls.Add(tabPage7);
             tabControl1.Dock = DockStyle.Fill;
             tabControl1.Location = new System.Drawing.Point(0, 0);
             tabControl1.Name = "tabControl1";
@@ -439,6 +445,24 @@ namespace Rdmp.UI.MainFormUITabs
             tbDataSource.Name = "tbDataSource";
             tbDataSource.Size = new System.Drawing.Size(366, 23);
             tbDataSource.TabIndex = 8;
+            // 
+            // groupBox24
+            // 
+            groupBox24.Controls.Add(cbPurpose);
+            groupBox24.Location = new System.Drawing.Point(3, 516);
+            groupBox24.Name = "groupBox24";
+            groupBox24.Size = new System.Drawing.Size(372, 83);
+            groupBox24.TabIndex = 20;
+            groupBox24.TabStop = false;
+            groupBox24.Text = "Purpose of Dataset";
+            // 
+            // cbPurpose
+            // 
+            cbPurpose.FormattingEnabled = true;
+            cbPurpose.Location = new System.Drawing.Point(6, 22);
+            cbPurpose.Name = "cbPurpose";
+            cbPurpose.Size = new System.Drawing.Size(182, 23);
+            cbPurpose.TabIndex = 1;
             // 
             // groupBox17
             // 
@@ -812,23 +836,36 @@ namespace Rdmp.UI.MainFormUITabs
             cb_updateFrequency.TabIndex = 22;
             cb_updateFrequency.Format += FormatCB;
             // 
-            // groupBox24
+            // tabPage7
             // 
-            groupBox24.Controls.Add(cbPurpose);
-            groupBox24.Location = new System.Drawing.Point(3, 516);
-            groupBox24.Name = "groupBox24";
-            groupBox24.Size = new System.Drawing.Size(372, 83);
-            groupBox24.TabIndex = 20;
-            groupBox24.TabStop = false;
-            groupBox24.Text = "Purpose of Dataset";
+            tabPage7.BackColor = System.Drawing.Color.WhiteSmoke;
+            tabPage7.Controls.Add(groupBox25);
+            tabPage7.Location = new System.Drawing.Point(4, 24);
+            tabPage7.Name = "tabPage7";
+            tabPage7.Size = new System.Drawing.Size(873, 895);
+            tabPage7.TabIndex = 6;
+            tabPage7.Text = "Additional Info";
             // 
-            // cbPurpose
+            // groupBox25
             // 
-            cbPurpose.FormattingEnabled = true;
-            cbPurpose.Location = new System.Drawing.Point(6, 22);
-            cbPurpose.Name = "cbPurpose";
-            cbPurpose.Size = new System.Drawing.Size(182, 23);
-            cbPurpose.TabIndex = 1;
+            groupBox25.Controls.Add(ffAssociatedMedia);
+            groupBox25.Location = new System.Drawing.Point(7, 12);
+            groupBox25.Name = "groupBox25";
+            groupBox25.Size = new System.Drawing.Size(700, 217);
+            groupBox25.TabIndex = 0;
+            groupBox25.TabStop = false;
+            groupBox25.Text = "Associated Media";
+            // 
+            // ffAssociatedMedia
+            // 
+            ffAssociatedMedia.AutoScroll = true;
+            ffAssociatedMedia.AutoSize = true;
+            ffAssociatedMedia.Location = new System.Drawing.Point(6, 22);
+            ffAssociatedMedia.MaximumSize = new System.Drawing.Size(300, 0);
+            ffAssociatedMedia.MinimumSize = new System.Drawing.Size(100, 20);
+            ffAssociatedMedia.Name = "ffAssociatedMedia";
+            ffAssociatedMedia.Size = new System.Drawing.Size(300, 189);
+            ffAssociatedMedia.TabIndex = 0;
             // 
             // CatalogueUI
             // 
@@ -865,6 +902,7 @@ namespace Rdmp.UI.MainFormUITabs
             groupBox21.PerformLayout();
             groupBox20.ResumeLayout(false);
             groupBox20.PerformLayout();
+            groupBox24.ResumeLayout(false);
             groupBox17.ResumeLayout(false);
             tabPage3.ResumeLayout(false);
             groupBox14.ResumeLayout(false);
@@ -895,7 +933,9 @@ namespace Rdmp.UI.MainFormUITabs
             groupBox6.ResumeLayout(false);
             groupBox5.ResumeLayout(false);
             groupBox4.ResumeLayout(false);
-            groupBox24.ResumeLayout(false);
+            tabPage7.ResumeLayout(false);
+            groupBox25.ResumeLayout(false);
+            groupBox25.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -967,5 +1007,8 @@ namespace Rdmp.UI.MainFormUITabs
         public TextBox tbAcronym;
         private GroupBox groupBox24;
         private ComboBox cbPurpose;
+        private TabPage tabPage7;
+        private GroupBox groupBox25;
+        private SimpleControls.MultiSelectChips.FreeFormTextChipDisplay ffAssociatedMedia;
     }
 }

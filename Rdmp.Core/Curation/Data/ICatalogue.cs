@@ -116,6 +116,7 @@ public interface ICatalogue : IHasDependencies, IHasQuerySyntaxHelper, INamed, I
     string DataProcessor { get; set; }
     string ControlledVocabulary { get;set; }
     string AssociatedPeople { get; set; }
+    string AssociatedMedia{ get; set; }
     string Doi { get; set; }
 
     /// <summary>
