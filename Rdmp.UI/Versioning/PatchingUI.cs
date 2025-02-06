@@ -30,7 +30,6 @@ public partial class PatchingUI : Form
     private readonly DiscoveredDatabase _database;
     private readonly ITableRepository _repository;
 
-    private bool _yesToAll;
     private IPatcher _patcher;
 
     private PatchingUI(DiscoveredDatabase database, ITableRepository repository, IPatcher patcher)
@@ -38,9 +37,8 @@ public partial class PatchingUI : Form
         _database = database;
         _repository = repository;
         _patcher = patcher;
-
         InitializeComponent();
-
+        this.btnAttemptPatching.Enabled = false;
         if (LicenseManager.UsageMode == LicenseUsageMode.Designtime)
             return;
 
@@ -57,6 +55,8 @@ public partial class PatchingUI : Form
         {
             tbDatabase.Text = $"{_database.GetRuntimeName()}, Version:{repository.GetVersion()}";
         }
+        btnAttemptPatching_Click(null, null);
+
     }
 
     private void btnAttemptPatching_Click(object sender, EventArgs e)
@@ -68,8 +68,8 @@ public partial class PatchingUI : Form
             var mds = new MasterDatabaseScriptExecutor(_database);
 
 
-            mds.PatchDatabase(_patcher, toMem, PreviewPatch,
-                () => MessageBox.Show("Backup Database First", "Backup", MessageBoxButtons.YesNo) == DialogResult.Yes);
+            mds.PatchDatabase(_patcher, toMem, (Patch p) => true,
+                () => false);
 
             //if it crashed during patching
             if (toMem.GetWorst() == CheckResult.Fail)
@@ -92,7 +92,7 @@ public partial class PatchingUI : Form
 
             checksUI1.OnCheckPerformed(new CheckEventArgs("Patching Successful", CheckResult.Success, null));
 
-            if (MessageBox.Show("Application will now restart", "Close?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (MessageBox.Show("Application will now restart", "Restart Application", MessageBoxButtons.OK) == DialogResult.OK)
                 ApplicationRestarter.Restart();
         }
         catch (Exception exception)
@@ -105,23 +105,5 @@ public partial class PatchingUI : Form
     {
         if (Patch.IsPatchingRequired(database, patcher, out _, out _, out _) == Patch.PatchingState.Required)
             new PatchingUI(database, repository, patcher).ShowDialog();
-    }
-
-
-    private bool PreviewPatch(Patch patch)
-    {
-        if (_yesToAll)
-            return true;
-
-        var preview = new SQLPreviewWindow(patch.locationInAssembly, "The following SQL Patch will be run:",
-            patch.GetScriptBody());
-        try
-        {
-            return preview.ShowDialog() == DialogResult.OK;
-        }
-        finally
-        {
-            _yesToAll = preview.YesToAll;
-        }
     }
 }
