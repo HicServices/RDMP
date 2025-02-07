@@ -866,6 +866,7 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
     
     public enum DatasetPurpose
     {
+        Other,
         ResearchCohort,
         Study,
         DiseaseRegistry,
@@ -874,8 +875,7 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
         Audit,
         Administrative,
         Finantial,
-        Statutory,
-        Other
+        Statutory
     }
     #endregion
 
