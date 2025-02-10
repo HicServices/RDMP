@@ -236,6 +236,9 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
                 Bind(tbAcronym, "Text", "Acronym", c => c.Acronym);
                 Bind(tbAbstract, "Text", "ShortDescription", c => c.ShortDescription);
                 Bind(tbDescription, "Text", "Description", c => c.Description);
+                this.aiAcronym.TooltipText = CatalogueUIHelperText.Acronym;
+                this.aiShortDescription.TooltipText = CatalogueUIHelperText.ShortDescription;
+                this.aiDescription.TooltipText = CatalogueUIHelperText.Description;
                 foreach (Control item in tabPage1.Controls)
                 {
                     item.Visible = true;
@@ -259,8 +262,13 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
                 Bind(ddDatasetSubtype, "Value", "DataSubtype", c => c.DataSubtype);
                 Bind(tbDataSource, "Text", "DataSource", c => c.DataSource);
                 Bind(tbDataSourceSetting, "Text", "DataSourceSetting", c => c.DataSourceSetting);
-
-
+                this.aiKeywords.TooltipText = CatalogueUIHelperText.Keywords;
+                this.aiResourceType.TooltipText = CatalogueUIHelperText.ResourceType;
+                this.aiPurposeOfDataset.TooltipText = CatalogueUIHelperText.PurposeOfDataset;
+                this.aiDatasetType.TooltipText = CatalogueUIHelperText.DatasetType;
+                this.aiDatasetSubtype.TooltipText = CatalogueUIHelperText.DatasetSubtype;
+                this.aiDataSource.TooltipText = CatalogueUIHelperText.DataSource;
+                this.aiDataSourceSetting.TooltipText = CatalogueUIHelperText.DataSourceSetting;
                 foreach (Control item in tabPage2.Controls)
                 {
                     item.Visible = true;
@@ -294,6 +302,11 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
                 {
                     dtpEndDate.ValueChanged += UpdateEndDate;
                 }
+                this.aiGeographicalCoverage.TooltipText = CatalogueUIHelperText.GeographicalCoverage;
+                this.aiGranularity.TooltipText = CatalogueUIHelperText.Granularity;
+                this.aiStartDate.TooltipText = CatalogueUIHelperText.StartDate;
+                this.aiEndDate.TooltipText = CatalogueUIHelperText.EndDate;
+
                 foreach (Control item in tabPage3.Controls)
                 {
                     item.Visible = true;
@@ -308,6 +321,11 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
                 Bind(tbDataController, "Text", "DataController", c => c.DataController);
                 Bind(tbDataProcessor, "Text", "DataProcessor", c => c.DataProcessor);
                 Bind(tbJuristiction, "Text", "Juristiction", c => c.Juristiction);
+                this.aiAccessContact.TooltipText = CatalogueUIHelperText.AccessContact;
+                this.aiDataController.TooltipText = CatalogueUIHelperText.DataController;
+                this.aiDataProcessor.TooltipText = CatalogueUIHelperText.DataProcessor;
+                this.aiJuristiction.TooltipText = CatalogueUIHelperText.Juristiction;
+
                 foreach (Control item in tabPage4.Controls)
                 {
                     item.Visible = true;
@@ -321,6 +339,10 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
                 Bind(ffcPeople, "Value", "AssociatedPeople", c => c.AssociatedPeople);
                 Bind(fftControlledVocab, "Value", "ControlledVocabulary", c => c.ControlledVocabulary);
                 Bind(tbDOI, "Text", "Doi", c => c.Doi);
+                this.aiPeople.TooltipText = CatalogueUIHelperText.People;
+                this.aiControlledGroup.TooltipText = CatalogueUIHelperText.ControlledVocabulary;
+                this.aiDOI.TooltipText = CatalogueUIHelperText.DOI;
+
                 foreach (Control item in tabPage5.Controls)
                 {
                     item.Visible = true;
@@ -347,6 +369,9 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
                 {
                     dtpReleaseDate.ValueChanged += UpdateReleaseDate;
                 }
+                this.aiUpdateLag.TooltipText = CatalogueUIHelperText.UpdateLag;
+                this.aiUpdateFrequency.TooltipText = CatalogueUIHelperText.UpdateFrequency;
+                this.aiInitialReleaseDate.TooltipText = CatalogueUIHelperText.InitialReleaseDate;
                 foreach (Control item in tabPage6.Controls)
                 {
                     item.Visible = true;
@@ -354,7 +379,7 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
                 break;
             case 6:
                 Bind(ffAssociatedMedia, "Value", "AssociatedMedia", c => c.AssociatedMedia);
-
+                this.aiAssociatedMedia.TooltipText = CatalogueUIHelperText.AssociatedMedia;
                 break;
             default:
                 break;
