@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
+using Rdmp.Core.CatalogueAnalysisTools.Data;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.DataQualityEngine.Data;
 using Rdmp.UI.CatalogueSummary.DataQualityReporting.SubComponents;
@@ -60,6 +61,13 @@ public partial class TimePeriodicityChart : RDMPUserControl, IDataQualityReporti
         GenerateChart(evaluation, pivotCategoryValue);
     }
 
+
+    public void SelectEvaluation(CatalogueValidation evaluation, string pivotCategoryValue)
+    {
+        _pivotCategoryValue = pivotCategoryValue;
+        GenerateChart(evaluation, pivotCategoryValue);
+    }
+
     private void GenerateChart(Evaluation evaluation, string pivotCategoryValue)
     {
         _currentEvaluation = evaluation;
@@ -85,8 +93,43 @@ public partial class TimePeriodicityChart : RDMPUserControl, IDataQualityReporti
 
         chart1.DataBind();
         chart1.Visible = true;
+        if (_currentEvaluation is not null)
+        {
+            ReGenerateAnnotations();
+        }
+    }
 
-        ReGenerateAnnotations();
+    private void GenerateChart(CatalogueValidation evaluation, string pivotCategoryValue)
+    {
+        //_currentEvaluation = evaluation;
+
+        chart1.Visible = false;
+        var dt = evaluation.GenerateDataTable();
+
+        if (dt == null)
+        {
+            ClearGraph();
+            chart1.Visible = true;
+            return;
+        }
+
+        chart1.DataSource = dt;
+        dataGridView1.DataSource = dt;
+
+        chart1.Series.Clear();
+
+
+        if (dt.Rows.Count != 0)
+            ChartLookAndFeelSetter.PopulateYearMonthChart(chart1, dt, "Data Quality");
+
+        chart1.DataBind();
+        chart1.Visible = true;
+        label1.Visible = false;
+        label2.Visible = false;
+        cbShowGaps.Visible = false;
+        btnAnnotator.Visible = false;
+        btnPointer.Visible = false;
+        //ReGenerateAnnotations();
     }
 
     private void ReGenerateAnnotations()
@@ -243,6 +286,6 @@ public partial class TimePeriodicityChart : RDMPUserControl, IDataQualityReporti
 
     private void cbShowGaps_CheckedChanged(object sender, EventArgs e)
     {
-        if (chart1.DataSource != null) ReGenerateAnnotations();
+        if (_currentEvaluation is not null && chart1.DataSource != null) ReGenerateAnnotations();
     }
 }

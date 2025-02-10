@@ -39,8 +39,8 @@ namespace Rdmp.Core.CatalogueAnalysisTools.Data
 
 
         public ColumnInfo ColumnInfo { get => _columnInfo; private set => SetField(ref _columnInfo, value); }
-        public Contraints Contraint { get => _constraint; private set => SetField(ref _constraint, value); }
-        public ConstraintResults Result { get => _result; private set => SetField(ref _result, value); }
+        public Contraints Contraint { get => _constraint; set => SetField(ref _constraint, value); }
+        public ConstraintResults Result { get => _result; set => SetField(ref _result, value); }
 
         public PrimaryContraint(DQERepository repository, DbDataReader r): base(repository,r) {
             _DQERepository = repository;

@@ -53,10 +53,11 @@ internal class CatalogueMenu : RDMPContextMenuStrip
             OverrideCommandName = "New Lookup Table Relationship",
             Weight = -86.9f
         }, Keys.None, AtomicCommandFactory.Add);
+        Items.Add(new DQEMenuItem(_activator, catalogue));
 
         if (!isApiCall)
         {
-            Items.Add(new DQEMenuItem(_activator, catalogue));
+            Items.Add(new CatalogueAnalysisItem(_activator, catalogue));
 
             //create right click context menu
             Add(new ExecuteCommandViewCatalogueExtractionSqlUI(_activator)

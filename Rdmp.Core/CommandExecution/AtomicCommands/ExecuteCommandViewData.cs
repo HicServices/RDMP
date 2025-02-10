@@ -68,11 +68,11 @@ public class ExecuteCommandViewData : ExecuteCommandViewDataBase, IAtomicCommand
                 _collection = CreateCollection(ei);
                 break;
             case Catalogue cata:
-                var x = new CatalogueValidationTool(activator.RepositoryLocator.CatalogueRepository, cata,
-                    cata.CatalogueItems.Where(ci => ci.Name.Contains("SampleDate")).First().ColumnInfo,
-                    cata.CatalogueItems.Where(ci => ci.Name.Contains("SampleType")).First().ColumnInfo
-                    );
-                x.GenerateValidationReports();
+                //var x = new CatalogueValidationTool(activator.RepositoryLocator.CatalogueRepository, cata,
+                //    cata.CatalogueItems.Where(ci => ci.Name.Contains("SampleDate")).First().ColumnInfo,
+                //    cata.CatalogueItems.Where(ci => ci.Name.Contains("SampleType")).First().ColumnInfo
+                //    );
+                //x.GenerateValidationReports();
                 ThrowIfNotSimpleSelectViewType();
                 _collection = CreateCollection(cata);
                 break;
