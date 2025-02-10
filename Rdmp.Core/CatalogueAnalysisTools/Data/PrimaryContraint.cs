@@ -1,0 +1,68 @@
+﻿using Rdmp.Core.Curation.Data;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.Repositories;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.Common;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Rdmp.Core.CatalogueAnalysisTools.Data
+{
+
+    public class PrimaryContraint: DatabaseEntity
+    {
+
+        public enum Contraints 
+        {
+            ALPHA,
+            ALPHANUMERIC,
+            CHI,
+            DATE
+        }
+
+        public enum ConstraintResults
+        {
+            CORRECT,
+            WRONG,
+            MISSING,
+            INVALID
+        }
+
+
+        private DQERepository _DQERepository { get; set; }
+        private ColumnInfo _columnInfo;
+        private Contraints _constraint;
+        private ConstraintResults _result;
+
+
+        public ColumnInfo ColumnInfo { get => _columnInfo; private set => SetField(ref _columnInfo, value); }
+        public Contraints Contraint { get => _constraint; private set => SetField(ref _constraint, value); }
+        public ConstraintResults Result { get => _result; private set => SetField(ref _result, value); }
+
+        public PrimaryContraint(DQERepository repository, DbDataReader r): base(repository,r) {
+            _DQERepository = repository;
+            _columnInfo = _DQERepository.CatalogueRepository.GetObjectByID<ColumnInfo>(int.Parse(r["ColumnInfo_ID"].ToString()));
+            _constraint = (Contraints)int.Parse(r["Constraint"].ToString());
+            _result = (ConstraintResults)int.Parse(r["Result"].ToString());
+        }
+
+        public PrimaryContraint(DQERepository repository, ColumnInfo columnInfo, Contraints contraint, ConstraintResults result)
+        {
+            _DQERepository = repository;
+            _columnInfo = columnInfo;
+            _constraint = contraint;
+            _result = result;
+
+            _DQERepository.InsertAndHydrate(this,
+            new Dictionary<string, object>
+            {
+                { "ColumnInfo_ID", columnInfo.ID },
+                { "Constraint", (int)contraint},
+                { "Result", (int)result}
+            });
+        }
+    }
+}

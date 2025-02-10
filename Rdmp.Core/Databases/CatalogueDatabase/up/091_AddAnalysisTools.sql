@@ -1,0 +1,52 @@
+﻿--Version: 8.4.4
+--Description: Add configuration for regex redaction
+
+
+if not exists (select 1 from sys.tables where name = 'PrimaryContraint')
+BEGIN
+CREATE TABLE [dbo].[PrimaryContraint](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[ColumnInfo_ID] [int] NOT NULL UNIQUE,
+	[Constraint] [int] NOT NULL,
+	[Result] [int] NOT NULL,
+CONSTRAINT [PK_ColumnInfoPrimaryConstraint] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+END
+GO
+
+if not exists (select 1 from sys.tables where name = 'CatalogueValidation')
+BEGIN
+CREATE TABLE [dbo].[CatalogueValidation](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[Catalogue_ID] [int] NOT NULL,
+	[Date] [datetime] NOT NULL,
+CONSTRAINT [PK_CatalogueValidation] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+END
+GO
+
+
+if not exists (select 1 from sys.tables where name = 'CatalogueValidationResult')
+BEGIN
+CREATE TABLE [dbo].[CatalogueValidationResult](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[CatalogueValidation_ID] [int] NOT NULL,
+	[Date] [datetime] NOT NULL,
+	[Correct] [int] NOT NULL,
+	[Wrong] [int] NOT NULL,
+	[Missing] [int] NOT NULL,
+	[Invalid] [int] NOT NULL,
+	[PivotCategory] [varchar](255) NOT NULL,
+CONSTRAINT [PK_CatalogueValidationResult] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+END
+GO
