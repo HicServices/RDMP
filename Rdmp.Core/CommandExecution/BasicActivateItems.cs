@@ -544,6 +544,9 @@ public abstract class BasicActivateItems : IBasicActivateItems
         Show("Message", message);
     }
 
+    /// <inheritdoc/>
+    public abstract void ShowWarning(string message);
+
     public abstract void Show(string title, string message);
 
     /// <inheritdoc/>

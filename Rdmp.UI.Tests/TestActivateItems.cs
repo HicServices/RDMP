@@ -313,6 +313,11 @@ public class TestActivateItems : BasicActivateItems, IActivateItems, ITheme
     {
         throw new NotImplementedException();
     }
+
+    public override void ShowWarning(string message)
+    {
+        Show("Message", message);
+    }
 }
 
 public class TestActivateItemsResults : ICheckNotifier

@@ -388,4 +388,9 @@ internal class ConsoleGuiActivator : BasicActivateItems
     {
         throw new NotSupportedException();
     }
+
+    public override void ShowWarning(string message)
+    {
+        Show("Message", message);
+    }
 }
