@@ -274,7 +274,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
 
     public bool ShouldBeReadOnly(out string reason)
     {
-        if (Frozen)
+        if (Frozen && RootCohortAggregateContainer_ID is null)
         {
             reason = $"{Name} is Frozen";
             return true;

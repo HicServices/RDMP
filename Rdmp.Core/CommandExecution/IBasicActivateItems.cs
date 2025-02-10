@@ -337,10 +337,13 @@ public interface IBasicActivateItems
     bool Confirm(DialogArgs args);
 
     /// <summary>
-    /// Display the given message to the user (e.g. in a MessageBox or out into the Console)
+    /// Display the given message to the user (e.g. in a MessageBox or out into the Console) as a warning
     /// </summary>
     /// <param name="message"></param>
     void Show(string message);
+
+    void ShowWarning(string message);
+
 
     /// <summary>
     /// Display the given message to the user (e.g. in a MessageBox or out into the Console).  If provided <paramref name="title"/> may also be featured in the presentation

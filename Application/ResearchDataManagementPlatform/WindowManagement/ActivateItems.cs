@@ -12,6 +12,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.DataVisualization.Charting;
 using FAnsi.Discovery;
 using Rdmp.Core;
 using Rdmp.Core.CohortCommitting.Pipeline;
@@ -60,6 +61,7 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using Rdmp.UI.Theme;
 using Rdmp.UI.Versioning;
 using Rdmp.UI.Wizard;
+using Renci.SshNet.Messages;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.WindowArranging;
 using SixLabors.ImageSharp;
@@ -92,6 +94,18 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
     {
         if (databaseEntity is DatabaseEntity de)
             RefreshBus.Publish(this, new RefreshObjectEventArgs(de));
+    }
+
+    public override void ShowWarning(string message)
+    {
+        // if on wrong Thread
+        if (_mainDockPanel?.InvokeRequired ?? false)
+        {
+            _mainDockPanel.Invoke(() => ShowWarning(message));
+            return;
+        }
+
+        WideMessageBox.Show("Message", message, Environment.StackTrace, true, null, WideMessageBoxTheme.Warning);
     }
 
     public override void Show(string title, string message)
