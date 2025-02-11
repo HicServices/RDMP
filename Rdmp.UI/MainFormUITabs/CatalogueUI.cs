@@ -260,8 +260,11 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
                 Bind(tbAbstract, "Text", "ShortDescription", c => c.ShortDescription);
                 Bind(tbDescription, "Text", "Description", c => c.Description);
                 this.aiAcronym.TooltipText = CatalogueUIHelperText.Acronym;
+                this.aiAcronym.SetItemActivator(Activator);
                 this.aiShortDescription.TooltipText = CatalogueUIHelperText.ShortDescription;
+                this.aiShortDescription.SetItemActivator(Activator);
                 this.aiDescription.TooltipText = CatalogueUIHelperText.Description;
+                this.aiDescription.SetItemActivator(Activator);
                 foreach (Control item in tabPage1.Controls)
                 {
                     item.Visible = true;
@@ -289,12 +292,26 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
                 Bind(ddDataSource, "Value", "DataSource", c => c.DataSource);
                 Bind(ddDataSourceSetting, "Value", "DataSourceSetting", c => c.DataSourceSetting);
                 this.aiKeywords.TooltipText = CatalogueUIHelperText.Keywords;
+                this.aiKeywords.SetItemActivator(Activator);
+
                 this.aiResourceType.TooltipText = CatalogueUIHelperText.ResourceType;
+                this.aiResourceType.SetItemActivator(Activator);
+
                 this.aiPurposeOfDataset.TooltipText = CatalogueUIHelperText.PurposeOfDataset;
+                this.aiPurposeOfDataset.SetItemActivator(Activator);
+
                 this.aiDatasetType.TooltipText = CatalogueUIHelperText.DatasetType;
+                this.aiDatasetType.SetItemActivator(Activator);
+
                 this.aiDatasetSubtype.TooltipText = CatalogueUIHelperText.DatasetSubtype;
+                this.aiDatasetSubtype.SetItemActivator(Activator);
+
                 this.aiDataSource.TooltipText = CatalogueUIHelperText.DataSource;
+                this.aiDataSource.SetItemActivator(Activator);
+
                 this.aiDataSourceSetting.TooltipText = CatalogueUIHelperText.DataSourceSetting;
+                this.aiDataSourceSetting.SetItemActivator(Activator);
+
                 foreach (Control item in tabPage2.Controls)
                 {
                     item.Visible = true;
@@ -330,9 +347,17 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
                     dtpEndDate.ValueChanged += UpdateEndDate;
                 }
                 this.aiGeographicalCoverage.TooltipText = CatalogueUIHelperText.GeographicalCoverage;
+                this.aiGeographicalCoverage.SetItemActivator(Activator);
+
                 this.aiGranularity.TooltipText = CatalogueUIHelperText.Granularity;
+                this.aiGranularity.SetItemActivator(Activator);
+
                 this.aiStartDate.TooltipText = CatalogueUIHelperText.StartDate;
+                this.aiStartDate.SetItemActivator(Activator);
+
                 this.aiEndDate.TooltipText = CatalogueUIHelperText.EndDate;
+                this.aiEndDate.SetItemActivator(Activator);
+
 
                 foreach (Control item in tabPage3.Controls)
                 {
@@ -349,9 +374,17 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
                 Bind(tbDataProcessor, "Text", "DataProcessor", c => c.DataProcessor);
                 Bind(tbJuristiction, "Text", "Juristiction", c => c.Juristiction);
                 this.aiAccessContact.TooltipText = CatalogueUIHelperText.AccessContact;
+                this.aiAccessContact.SetItemActivator(Activator);
+
                 this.aiDataController.TooltipText = CatalogueUIHelperText.DataController;
+                this.aiDataController.SetItemActivator(Activator);
+
                 this.aiDataProcessor.TooltipText = CatalogueUIHelperText.DataProcessor;
+                this.aiDataProcessor.SetItemActivator(Activator);
+
                 this.aiJuristiction.TooltipText = CatalogueUIHelperText.Juristiction;
+                this.aiJuristiction.SetItemActivator(Activator);
+
 
                 foreach (Control item in tabPage4.Controls)
                 {
@@ -367,8 +400,14 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
                 Bind(fftControlledVocab, "Value", "ControlledVocabulary", c => c.ControlledVocabulary);
                 Bind(tbDOI, "Text", "Doi", c => c.Doi);
                 this.aiPeople.TooltipText = CatalogueUIHelperText.People;
+                this.aiPeople.SetItemActivator(Activator);
+
                 this.aiControlledGroup.TooltipText = CatalogueUIHelperText.ControlledVocabulary;
+                this.aiControlledGroup.SetItemActivator(Activator);
+
                 this.aiDOI.TooltipText = CatalogueUIHelperText.DOI;
+                this.aiDOI.SetItemActivator(Activator);
+
 
                 foreach (Control item in tabPage5.Controls)
                 {
@@ -398,8 +437,14 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
                     dtpReleaseDate.ValueChanged += UpdateReleaseDate;
                 }
                 this.aiUpdateLag.TooltipText = CatalogueUIHelperText.UpdateLag;
+                this.aiUpdateLag.SetItemActivator(Activator);
+
                 this.aiUpdateFrequency.TooltipText = CatalogueUIHelperText.UpdateFrequency;
+                this.aiUpdateFrequency.SetItemActivator(Activator);
+
                 this.aiInitialReleaseDate.TooltipText = CatalogueUIHelperText.InitialReleaseDate;
+                this.aiInitialReleaseDate.SetItemActivator(Activator);
+
                 foreach (Control item in tabPage6.Controls)
                 {
                     item.Visible = true;
@@ -408,6 +453,8 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
             case 6:
                 Bind(ffAssociatedMedia, "Value", "AssociatedMedia", c => c.AssociatedMedia);
                 this.aiAssociatedMedia.TooltipText = CatalogueUIHelperText.AssociatedMedia;
+                this.aiAssociatedMedia.SetItemActivator(Activator);
+
                 break;
             default:
                 break;

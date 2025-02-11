@@ -37,6 +37,7 @@
             // 
             // pictureBox1
             // 
+            pictureBox1.Cursor = System.Windows.Forms.Cursors.Hand;
             pictureBox1.ErrorImage = (System.Drawing.Image)resources.GetObject("pictureBox1.ErrorImage");
             pictureBox1.Image = (System.Drawing.Image)resources.GetObject("pictureBox1.Image");
             pictureBox1.InitialImage = (System.Drawing.Image)resources.GetObject("pictureBox1.InitialImage");
@@ -45,6 +46,7 @@
             pictureBox1.Size = new System.Drawing.Size(20, 20);
             pictureBox1.TabIndex = 0;
             pictureBox1.TabStop = false;
+            pictureBox1.Click += pictureBox1_Click;
             // 
             // AdditionalInfomation
             // 

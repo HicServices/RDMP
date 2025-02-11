@@ -1,4 +1,5 @@
 ﻿using MongoDB.Driver;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,7 +12,7 @@ using System.Windows.Forms;
 
 namespace Rdmp.UI.SimpleControls
 {
-    public partial class AdditionalInfomation : UserControl
+    public partial class AdditionalInfomation : RDMPUserControl
     {
         private string _text = null;
 
@@ -19,7 +20,8 @@ namespace Rdmp.UI.SimpleControls
         public string TooltipText
         {
             get => _text;
-            set {
+            set
+            {
                 _text = value;
                 this.toolTip1.SetToolTip(this.pictureBox1, this._text);
 
@@ -29,6 +31,11 @@ namespace Rdmp.UI.SimpleControls
         public AdditionalInfomation()
         {
             InitializeComponent();
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+            Activator.Show(_text);
         }
     }
 }

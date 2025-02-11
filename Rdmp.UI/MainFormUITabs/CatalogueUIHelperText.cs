@@ -45,7 +45,68 @@ namespace Rdmp.UI.MainFormUITabs
             Politics: Includes any data related to political views, activities, voting, etc.
             """;
         public static readonly string DatasetSubtype = """
-            HDR Have not populated this yet...
+            Mental health: 
+            Cardiovascular: 
+            Cancer: 
+            Rare diseases: 
+            Metabolic and endocrine: 
+            Neurological: 
+            Reproductive: 
+            Maternity and neonatology: 
+            Respiratory: 
+            Immunity: 
+            Musculoskeletal: 
+            Vision: 
+            Renal and urogenital: 
+            Oral and gastrointestinal: 
+            Cognitive function: 
+            Hearing: 
+            Others: 
+            Vaccines: 
+            Preventive: 
+            Therapeutic: 
+            Laboratory: 
+            Other diagnostics: 
+            CT: 
+            MRI: 
+            PET: 
+            X-ray: 
+            Ultrasound: 
+            Pathology: 
+            Head: 
+            Chest: 
+            Arm: 
+            Abdomen: 
+            Leg: 
+            Proteomics: 
+            Transcriptomics: 
+            Epigenomics: 
+            Metabolomics: 
+            Metagenomics: 
+            Genomics: 
+            Lipidomics: 
+            Education: 
+            Crime and justice: 
+            Ethnicity: 
+            Housing: 
+            Labour: 
+            Ageing : 
+            Economics: 
+            Marital status: 
+            Social support: 
+            Deprivation: 
+            Religion: 
+            Occupation: 
+            Finances: 
+            Family circumstance: 
+            Smoking: 
+            Physical activity: 
+            Dietary habits: 
+            Alcohol: 
+            Disease registry (research): 
+            National disease registries and audits: 
+            Births and deaths: 
+            Not applicable: 
             """;
         public static readonly string DataSource = """
             EPR: Data Extracted from Electronic Patient Record.
