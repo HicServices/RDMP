@@ -17,6 +17,8 @@ namespace Rdmp.Core.CatalogueAnalysisTools.Data
 
         private Catalogue _catalogue;
         private DateTime _date;
+        private int _timeColumnID;
+        private int _pivotCategoryID;
 
         public DataTable GenerateDataTable(string category="ALL")
         {
@@ -38,20 +40,30 @@ namespace Rdmp.Core.CatalogueAnalysisTools.Data
         public Catalogue Catalogue { get => _catalogue; private set => SetField(ref _catalogue, value); }
         public DateTime Date{ get => _date; private set => SetField(ref _date, value); }
 
+        //todo
+        public int TimeColumn_ID { get => _timeColumnID; set=> SetField(ref _timeColumnID,value); }
+
+        //todo
+        public int PivotColumn_ID { get =>_pivotCategoryID; set => SetField(ref _pivotCategoryID,value); }
+
         public CatalogueValidation(DQERepository repository, DbDataReader r) : base(repository, r)
         {
             _dqeRepositroy = repository;
             _catalogue = repository.CatalogueRepository.GetObjectByID<Catalogue>(int.Parse(r["Catalogue_ID"].ToString()));
             DateTime.TryParse(r["Date"].ToString(), out _date);
+            _timeColumnID = int.Parse(r["TimeColumn_ID"].ToString());
+            _pivotCategoryID = int.Parse(r["PivotColumn_ID"].ToString());
         }
-        public CatalogueValidation(DQERepository repository, Catalogue catalogue)
+        public CatalogueValidation(DQERepository repository, Catalogue catalogue, ColumnInfo timeColumn, ColumnInfo pivotColumn)
         {
             _dqeRepositroy = repository;
             repository.InsertAndHydrate(this,
             new Dictionary<string, object>
             {
                 { "Catalogue_ID", catalogue.ID },
-                { "Date", DateTime.Now}
+                { "Date", DateTime.Now},
+                {"TimeColumn_ID", timeColumn.ID },
+                {"PivotColumn_ID", pivotColumn.ID }
             });
         }
     }

@@ -23,6 +23,8 @@ CREATE TABLE [dbo].[CatalogueValidation](
 	[ID] [int] IDENTITY(1,1) NOT NULL,
 	[Catalogue_ID] [int] NOT NULL,
 	[Date] [datetime] NOT NULL,
+	[TimeColumn_ID] [int] NOT NULL,
+	[PivotColumn_ID] [int] NOT NULL,
 CONSTRAINT [PK_CatalogueValidation] PRIMARY KEY CLUSTERED 
 (
 	[ID] ASC

@@ -28,19 +28,27 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CatalogueAnalysisExecutionControlUI));
             tabControl1 = new System.Windows.Forms.TabControl();
             tabPage1 = new System.Windows.Forms.TabPage();
+            timePeriodicityChart1 = new CatalogueSummary.DataQualityReporting.TimePeriodicityChart();
             tabPage2 = new System.Windows.Forms.TabPage();
+            button1 = new System.Windows.Forms.Button();
+            groupBox3 = new System.Windows.Forms.GroupBox();
+            cbPivot = new System.Windows.Forms.ComboBox();
+            groupBox2 = new System.Windows.Forms.GroupBox();
+            cbTime = new System.Windows.Forms.ComboBox();
             groupBox1 = new System.Windows.Forms.GroupBox();
             btnSavePrimaryConstraints = new System.Windows.Forms.Button();
             primaryConstrainsTableLayout = new System.Windows.Forms.TableLayoutPanel();
             label3 = new System.Windows.Forms.Label();
             label2 = new System.Windows.Forms.Label();
             label1 = new System.Windows.Forms.Label();
-            timePeriodicityChart1 = new CatalogueSummary.DataQualityReporting.TimePeriodicityChart();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             tabPage2.SuspendLayout();
+            groupBox3.SuspendLayout();
+            groupBox2.SuspendLayout();
             groupBox1.SuspendLayout();
             primaryConstrainsTableLayout.SuspendLayout();
             SuspendLayout();
@@ -66,8 +74,19 @@
             tabPage1.Text = "Analysis";
             tabPage1.UseVisualStyleBackColor = true;
             // 
+            // timePeriodicityChart1
+            // 
+            timePeriodicityChart1.Location = new System.Drawing.Point(7, 6);
+            timePeriodicityChart1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            timePeriodicityChart1.Name = "timePeriodicityChart1";
+            timePeriodicityChart1.Size = new System.Drawing.Size(985, 450);
+            timePeriodicityChart1.TabIndex = 0;
+            // 
             // tabPage2
             // 
+            tabPage2.Controls.Add(button1);
+            tabPage2.Controls.Add(groupBox3);
+            tabPage2.Controls.Add(groupBox2);
             tabPage2.Controls.Add(groupBox1);
             tabPage2.Location = new System.Drawing.Point(4, 24);
             tabPage2.Name = "tabPage2";
@@ -77,6 +96,54 @@
             tabPage2.Text = "Configuration";
             tabPage2.UseVisualStyleBackColor = true;
             // 
+            // button1
+            // 
+            button1.Image = (System.Drawing.Image)resources.GetObject("button1.Image");
+            button1.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            button1.Location = new System.Drawing.Point(787, 3);
+            button1.Name = "button1";
+            button1.Size = new System.Drawing.Size(121, 42);
+            button1.TabIndex = 4;
+            button1.Text = "Run Validation";
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
+            // 
+            // groupBox3
+            // 
+            groupBox3.Controls.Add(cbPivot);
+            groupBox3.Location = new System.Drawing.Point(453, 61);
+            groupBox3.Name = "groupBox3";
+            groupBox3.Size = new System.Drawing.Size(334, 49);
+            groupBox3.TabIndex = 3;
+            groupBox3.TabStop = false;
+            groupBox3.Text = "Pivot Column";
+            // 
+            // cbPivot
+            // 
+            cbPivot.FormattingEnabled = true;
+            cbPivot.Location = new System.Drawing.Point(6, 19);
+            cbPivot.Name = "cbPivot";
+            cbPivot.Size = new System.Drawing.Size(322, 23);
+            cbPivot.TabIndex = 5;
+            // 
+            // groupBox2
+            // 
+            groupBox2.Controls.Add(cbTime);
+            groupBox2.Location = new System.Drawing.Point(453, 6);
+            groupBox2.Name = "groupBox2";
+            groupBox2.Size = new System.Drawing.Size(334, 49);
+            groupBox2.TabIndex = 2;
+            groupBox2.TabStop = false;
+            groupBox2.Text = "Time Column";
+            // 
+            // cbTime
+            // 
+            cbTime.FormattingEnabled = true;
+            cbTime.Location = new System.Drawing.Point(6, 19);
+            cbTime.Name = "cbTime";
+            cbTime.Size = new System.Drawing.Size(322, 23);
+            cbTime.TabIndex = 4;
+            // 
             // groupBox1
             // 
             groupBox1.AutoSize = true;
@@ -85,7 +152,7 @@
             groupBox1.Location = new System.Drawing.Point(6, 6);
             groupBox1.MinimumSize = new System.Drawing.Size(300, 100);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new System.Drawing.Size(300, 100);
+            groupBox1.Size = new System.Drawing.Size(441, 100);
             groupBox1.TabIndex = 1;
             groupBox1.TabStop = false;
             groupBox1.Text = "Primary Constraints";
@@ -95,7 +162,7 @@
             btnSavePrimaryConstraints.Dock = System.Windows.Forms.DockStyle.Bottom;
             btnSavePrimaryConstraints.Location = new System.Drawing.Point(3, 74);
             btnSavePrimaryConstraints.Name = "btnSavePrimaryConstraints";
-            btnSavePrimaryConstraints.Size = new System.Drawing.Size(294, 23);
+            btnSavePrimaryConstraints.Size = new System.Drawing.Size(435, 23);
             btnSavePrimaryConstraints.TabIndex = 2;
             btnSavePrimaryConstraints.Text = "Save";
             btnSavePrimaryConstraints.UseVisualStyleBackColor = true;
@@ -105,9 +172,9 @@
             // 
             primaryConstrainsTableLayout.AutoSize = true;
             primaryConstrainsTableLayout.ColumnCount = 3;
-            primaryConstrainsTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            primaryConstrainsTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            primaryConstrainsTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 125F));
+            primaryConstrainsTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            primaryConstrainsTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            primaryConstrainsTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             primaryConstrainsTableLayout.Controls.Add(label3, 2, 0);
             primaryConstrainsTableLayout.Controls.Add(label2, 1, 0);
             primaryConstrainsTableLayout.Controls.Add(label1, 0, 0);
@@ -117,7 +184,7 @@
             primaryConstrainsTableLayout.RowCount = 2;
             primaryConstrainsTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
             primaryConstrainsTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            primaryConstrainsTableLayout.Size = new System.Drawing.Size(294, 50);
+            primaryConstrainsTableLayout.Size = new System.Drawing.Size(435, 50);
             primaryConstrainsTableLayout.TabIndex = 0;
             primaryConstrainsTableLayout.Paint += primaryConstrainsTableLayout_Paint;
             // 
@@ -133,9 +200,9 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new System.Drawing.Point(87, 0);
+            label2.Location = new System.Drawing.Point(59, 0);
             label2.Name = "label2";
-            label2.Size = new System.Drawing.Size(62, 30);
+            label2.Size = new System.Drawing.Size(106, 15);
             label2.TabIndex = 3;
             label2.Text = "Primary Constraint";
             // 
@@ -149,14 +216,6 @@
             label1.Text = "Column";
             label1.Click += label1_Click;
             // 
-            // timePeriodicityChart1
-            // 
-            timePeriodicityChart1.Location = new System.Drawing.Point(7, 6);
-            timePeriodicityChart1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            timePeriodicityChart1.Name = "timePeriodicityChart1";
-            timePeriodicityChart1.Size = new System.Drawing.Size(985, 450);
-            timePeriodicityChart1.TabIndex = 0;
-            // 
             // CatalogueAnalysisExecutionControlUI
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -168,6 +227,8 @@
             tabPage1.ResumeLayout(false);
             tabPage2.ResumeLayout(false);
             tabPage2.PerformLayout();
+            groupBox3.ResumeLayout(false);
+            groupBox2.ResumeLayout(false);
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
             primaryConstrainsTableLayout.ResumeLayout(false);
@@ -187,5 +248,10 @@
         private System.Windows.Forms.Button btnSavePrimaryConstraints;
         private System.Windows.Forms.TabPage tabPage1;
         private CatalogueSummary.DataQualityReporting.TimePeriodicityChart timePeriodicityChart1;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.ComboBox cbPivot;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.ComboBox cbTime;
+        private System.Windows.Forms.Button button1;
     }
 }

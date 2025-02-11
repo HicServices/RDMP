@@ -1,4 +1,5 @@
-﻿using Rdmp.Core.CatalogueAnalysisTools.Data;
+﻿using Rdmp.Core.CatalogueAnalysisTools;
+using Rdmp.Core.CatalogueAnalysisTools.Data;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories;
 using Rdmp.UI.ItemActivation;
@@ -70,8 +71,23 @@ public partial class CatalogueAnalysisExecutionControlUI : CatalogueAnalysisExec
         SetupPrimaryConstrainsConfiguration();
         HandleValidationChart();
         timePeriodicityChart1.ClearGraph();
-        var evaluation = _dqeRepository.GetAllObjectsWhere<CatalogueValidation>("Catalogue_ID", _catalogue.ID).Last();
-        timePeriodicityChart1.SelectEvaluation(evaluation,"ALL");
+        var columnInfos = _catalogue.CatalogueItems.Select(ci => ci.ColumnInfo);
+        cbTime.Items.AddRange(columnInfos.ToArray());
+        cbPivot.Items.AddRange(columnInfos.ToArray());
+        var evaluations = _dqeRepository.GetAllObjectsWhere<CatalogueValidation>("Catalogue_ID", _catalogue.ID);
+        if (evaluations.Any())
+        {
+            var evaluation = evaluations?.Last();
+            timePeriodicityChart1.SelectEvaluation(evaluation, "ALL");
+            if (evaluation is not null)
+            {
+                cbTime.SelectedIndex = columnInfos.Select(ci => ci.ID).ToList().IndexOf(evaluation.TimeColumn_ID);
+                cbPivot.SelectedIndex = columnInfos.Select(ci => ci.ID).ToList().IndexOf(evaluation.PivotColumn_ID);
+            }
+        }
+
+       
+        
     }
 
 
@@ -102,14 +118,14 @@ public partial class CatalogueAnalysisExecutionControlUI : CatalogueAnalysisExec
     private void btnSavePrimaryConstraints_Click(object sender, EventArgs e)
     {
         var rowCount = primaryConstrainsTableLayout.RowCount;
-        foreach (var row in Enumerable.Range(1, rowCount-2))
+        foreach (var row in Enumerable.Range(1, rowCount - 2))
         {
-            var label = primaryConstrainsTableLayout.GetControlFromPosition(0, row+1);
+            var label = primaryConstrainsTableLayout.GetControlFromPosition(0, row + 1);
 
-            var y = primaryConstrainsTableLayout.GetControlFromPosition(1, row+1);
+            var y = primaryConstrainsTableLayout.GetControlFromPosition(1, row + 1);
 
-            var constraint = primaryConstrainsTableLayout.GetControlFromPosition(1, row+1) as ComboBox;
-            var result = primaryConstrainsTableLayout.GetControlFromPosition(2, row+1) as ComboBox;
+            var constraint = primaryConstrainsTableLayout.GetControlFromPosition(1, row + 1) as ComboBox;
+            var result = primaryConstrainsTableLayout.GetControlFromPosition(2, row + 1) as ComboBox;
             var existingEvaulation = _primaryConstraints.Where(pc => pc.ColumnInfo.GetRuntimeName() == label.Text).FirstOrDefault();
             if (existingEvaulation != null)
             {
@@ -119,7 +135,7 @@ public partial class CatalogueAnalysisExecutionControlUI : CatalogueAnalysisExec
             }
             else
             {
-                if(constraint.SelectedIndex >= 0 && result.SelectedIndex >=0)
+                if (constraint.SelectedIndex >= 0 && result.SelectedIndex >= 0)
                 {
                     var newEval = new PrimaryContraint(_dqeRepository,
                         _catalogue.CatalogueItems.Select(ci => ci.ColumnInfo).Where(ci => ci.GetRuntimeName() == label.Text).FirstOrDefault(),
@@ -128,10 +144,24 @@ public partial class CatalogueAnalysisExecutionControlUI : CatalogueAnalysisExec
                     );
                     newEval.SaveToDatabase();
                 }
-               //todo warn about not selecting both
+                //todo warn about not selecting both
             }
 
         }
+    }
+
+    private void button1_Click(object sender, EventArgs e)
+    {
+        if(cbPivot.SelectedItem is null || cbTime.SelectedItem is null)
+        {
+            throw new Exception("No time or pivot column selected");
+        }
+
+        var validation = new CatalogueValidationTool(Activator.RepositoryLocator.CatalogueRepository, _catalogue,
+           cbTime.SelectedItem as ColumnInfo,
+            cbPivot.SelectedItem as ColumnInfo
+            );
+        validation.GenerateValidationReports();
     }
 }
 

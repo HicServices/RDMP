@@ -85,7 +85,13 @@ public class CatalogueValidationTool
     private bool ValidConstraint(PrimaryConstraint pc, object value)
     {
         if (value is DBNull) return true;
-        return pc.Validate(value) ==null;
+        try
+        {
+            return pc.Validate(value) == null;
+        }
+        catch (Exception) {
+            return false;
+        }
     }
 
     private ResultObject EvaulateRow(DataRow row, ResultObject existingResultObject)
@@ -193,7 +199,7 @@ public class CatalogueValidationTool
 
     public void GenerateValidationReports()
     {
-        var catalogueValidation = new CatalogueValidation(_DQERepository, _catalogue);
+        var catalogueValidation = new CatalogueValidation(_DQERepository, _catalogue,_timeColumn,_pivotColumn);
         catalogueValidation.SaveToDatabase();
         GenerateReport(ALL,catalogueValidation);
         //todo for all values in pivot category
