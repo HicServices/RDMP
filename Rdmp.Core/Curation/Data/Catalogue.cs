@@ -877,6 +877,42 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
         Finantial,
         Statutory
     }
+
+    public enum DataSourceTypes {
+        EPR,
+        ElectronicSurvey,
+        LIMS,
+        PaperBased,
+        FreeTextNLP,
+        MachineLearning,
+        Other
+    }
+    public enum DataSourceSettingTypes
+    {
+        CohortStudyTrial,
+        Clinic,
+        PrimaryCareReferrals,
+        PrimaryCareClinic,
+        PrimaryCareOutOfHours,
+        SecondaryCareAccidentAndEmergency,
+        SecondaryCareOutpatients,
+        SecondaryCareInPateints,
+        SecondaryCareAmbulance,
+        SecondaryCareICU,
+        PrescribingCommunityPharmacy,
+        PateintReportOutcome,
+        Wearables,
+        LocalAuthority,
+        NationalGovernment,
+        Community,
+        Services,
+        Home,
+        Private,
+        SocialCareHealthcareAtHome,
+        SocialCareOthersocialData,
+        Census,
+        Other
+    }
     #endregion
 
     /// <summary>

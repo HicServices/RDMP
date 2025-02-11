@@ -62,11 +62,11 @@ namespace Rdmp.UI.MainFormUITabs
             aiDatasetSubtype = new SimpleControls.AdditionalInfomation();
             ddDatasetSubtype = new SimpleControls.MultiSelectChips.DropdownOptionsChipDisplay();
             groupBox21 = new GroupBox();
+            ddDataSourceSetting = new SimpleControls.MultiSelectChips.DropdownOptionsChipDisplay();
             aiDataSourceSetting = new SimpleControls.AdditionalInfomation();
-            tbDataSourceSetting = new TextBox();
             groupBox20 = new GroupBox();
+            ddDataSource = new SimpleControls.MultiSelectChips.DropdownOptionsChipDisplay();
             aiDataSource = new SimpleControls.AdditionalInfomation();
-            tbDataSource = new TextBox();
             groupBox24 = new GroupBox();
             aiPurposeOfDataset = new SimpleControls.AdditionalInfomation();
             cbPurpose = new ComboBox();
@@ -390,7 +390,7 @@ namespace Rdmp.UI.MainFormUITabs
             tableLayoutPanel2.RowStyles.Add(new RowStyle());
             tableLayoutPanel2.RowStyles.Add(new RowStyle());
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel2.Size = new System.Drawing.Size(843, 618);
+            tableLayoutPanel2.Size = new System.Drawing.Size(843, 759);
             tableLayoutPanel2.TabIndex = 20;
             // 
             // groupBox18
@@ -428,7 +428,7 @@ namespace Rdmp.UI.MainFormUITabs
             groupBox22.AutoSize = true;
             groupBox22.Controls.Add(aiKeywords);
             groupBox22.Controls.Add(ffcKeywords);
-            groupBox22.Location = new System.Drawing.Point(3, 413);
+            groupBox22.Location = new System.Drawing.Point(3, 533);
             groupBox22.Name = "groupBox22";
             groupBox22.Size = new System.Drawing.Size(312, 97);
             groupBox22.TabIndex = 19;
@@ -486,14 +486,24 @@ namespace Rdmp.UI.MainFormUITabs
             // groupBox21
             // 
             groupBox21.AutoSize = true;
+            groupBox21.Controls.Add(ddDataSourceSetting);
             groupBox21.Controls.Add(aiDataSourceSetting);
-            groupBox21.Controls.Add(tbDataSourceSetting);
-            groupBox21.Location = new System.Drawing.Point(3, 340);
+            groupBox21.Location = new System.Drawing.Point(3, 400);
             groupBox21.Name = "groupBox21";
-            groupBox21.Size = new System.Drawing.Size(378, 67);
+            groupBox21.Size = new System.Drawing.Size(412, 127);
             groupBox21.TabIndex = 18;
             groupBox21.TabStop = false;
             groupBox21.Text = "Data Source Setting";
+            // 
+            // ddDataSourceSetting
+            // 
+            ddDataSourceSetting.AutoSize = true;
+            ddDataSourceSetting.Location = new System.Drawing.Point(6, 22);
+            ddDataSourceSetting.MaximumSize = new System.Drawing.Size(400, 300);
+            ddDataSourceSetting.MinimumSize = new System.Drawing.Size(100, 20);
+            ddDataSourceSetting.Name = "ddDataSourceSetting";
+            ddDataSourceSetting.Size = new System.Drawing.Size(400, 83);
+            ddDataSourceSetting.TabIndex = 26;
             // 
             // aiDataSourceSetting
             // 
@@ -502,24 +512,27 @@ namespace Rdmp.UI.MainFormUITabs
             aiDataSourceSetting.Size = new System.Drawing.Size(20, 20);
             aiDataSourceSetting.TabIndex = 25;
             // 
-            // tbDataSourceSetting
-            // 
-            tbDataSourceSetting.Location = new System.Drawing.Point(6, 22);
-            tbDataSourceSetting.Name = "tbDataSourceSetting";
-            tbDataSourceSetting.Size = new System.Drawing.Size(366, 23);
-            tbDataSourceSetting.TabIndex = 10;
-            // 
             // groupBox20
             // 
             groupBox20.AutoSize = true;
+            groupBox20.Controls.Add(ddDataSource);
             groupBox20.Controls.Add(aiDataSource);
-            groupBox20.Controls.Add(tbDataSource);
             groupBox20.Location = new System.Drawing.Point(3, 267);
             groupBox20.Name = "groupBox20";
-            groupBox20.Size = new System.Drawing.Size(378, 67);
+            groupBox20.Size = new System.Drawing.Size(412, 127);
             groupBox20.TabIndex = 17;
             groupBox20.TabStop = false;
             groupBox20.Text = "Data Source";
+            // 
+            // ddDataSource
+            // 
+            ddDataSource.AutoSize = true;
+            ddDataSource.Location = new System.Drawing.Point(6, 22);
+            ddDataSource.MaximumSize = new System.Drawing.Size(400, 300);
+            ddDataSource.MinimumSize = new System.Drawing.Size(100, 20);
+            ddDataSource.Name = "ddDataSource";
+            ddDataSource.Size = new System.Drawing.Size(400, 83);
+            ddDataSource.TabIndex = 25;
             // 
             // aiDataSource
             // 
@@ -528,20 +541,13 @@ namespace Rdmp.UI.MainFormUITabs
             aiDataSource.Size = new System.Drawing.Size(20, 20);
             aiDataSource.TabIndex = 24;
             // 
-            // tbDataSource
-            // 
-            tbDataSource.Location = new System.Drawing.Point(6, 22);
-            tbDataSource.Name = "tbDataSource";
-            tbDataSource.Size = new System.Drawing.Size(366, 23);
-            tbDataSource.TabIndex = 8;
-            // 
             // groupBox24
             // 
             groupBox24.Controls.Add(aiPurposeOfDataset);
             groupBox24.Controls.Add(cbPurpose);
-            groupBox24.Location = new System.Drawing.Point(3, 516);
+            groupBox24.Location = new System.Drawing.Point(3, 636);
             groupBox24.Name = "groupBox24";
-            groupBox24.Size = new System.Drawing.Size(372, 83);
+            groupBox24.Size = new System.Drawing.Size(372, 100);
             groupBox24.TabIndex = 20;
             groupBox24.TabStop = false;
             groupBox24.Text = "Purpose of Dataset";
@@ -1180,9 +1186,7 @@ namespace Rdmp.UI.MainFormUITabs
         private TabPage tabPage5;
         private TabPage tabPage6;
         public TextBox tbDescription;
-        private TextBox tbDataSource;
         private ComboBox cb_resourceType;
-        private TextBox tbDataSourceSetting;
         private ComboBox cb_granularity;
         private TextBox tbGeoCoverage;
         private TextBox tbJuristiction;
@@ -1260,5 +1264,7 @@ namespace Rdmp.UI.MainFormUITabs
         private SimpleControls.AdditionalInfomation aiUpdateLag;
         private SimpleControls.AdditionalInfomation aiInitialReleaseDate;
         private SimpleControls.AdditionalInfomation aiAssociatedMedia;
+        private SimpleControls.MultiSelectChips.DropdownOptionsChipDisplay ddDataSourceSetting;
+        private SimpleControls.MultiSelectChips.DropdownOptionsChipDisplay ddDataSource;
     }
 }

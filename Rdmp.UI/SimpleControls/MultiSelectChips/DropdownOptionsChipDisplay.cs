@@ -15,6 +15,27 @@ namespace Rdmp.UI.SimpleControls.MultiSelectChips
         private string _value;
         private string[] _options;
 
+        private string AddSpacesToSentence(string text, bool preserveAcronyms)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+                return string.Empty;
+            StringBuilder newText = new StringBuilder(text.Length * 2);
+            newText.Append(text[0]);
+            for (int i = 1; i < text.Length; i++)
+            {
+                if (char.IsUpper(text[i]))
+                    if ((text[i - 1] != ' ' && !char.IsUpper(text[i - 1])) ||
+                        (preserveAcronyms && char.IsUpper(text[i - 1]) &&
+                         i < text.Length - 1 && !char.IsUpper(text[i + 1])))
+                        newText.Append(' ');
+                newText.Append(text[i]);
+            }
+            return newText.ToString();
+        }
+        private void comboBox1_Format(object sender, ListControlConvertEventArgs e)
+        {
+            e.Value = AddSpacesToSentence(e.ListItem.ToString(), true);
+        }
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public string Value
@@ -26,6 +47,7 @@ namespace Rdmp.UI.SimpleControls.MultiSelectChips
                 flowLayoutPanel1.Controls.Clear();
                 var splitValues = _value.Split(',');
                 comboBox1.Items.Clear();
+                comboBox1.Format += comboBox1_Format;
                 foreach (var option in _options.Where(o => !splitValues.Contains(o)).ToList())
                 {
                     comboBox1.Items.Add(option);

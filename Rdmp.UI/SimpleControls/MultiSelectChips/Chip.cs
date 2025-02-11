@@ -17,7 +17,7 @@ namespace Rdmp.UI.SimpleControls.MultiSelectChips
         public Chip(string value, Func<string,int> clear)
         {
             InitializeComponent();
-            lblText.Text = value;
+            lblText.Text = AddSpacesToSentence(value,true);
             btnClear.Location = new Point(lblText.Width + lblText.Location.X+5, btnClear.Location.Y);
             this.Size = new System.Drawing.Size(lblText.Width + lblText.Location.X + btnClear.Width+15, this.Size.Height);
             _clear = clear;
@@ -26,6 +26,24 @@ namespace Rdmp.UI.SimpleControls.MultiSelectChips
         private void btnClear_Click(object sender, EventArgs e)
         {
             _clear(lblText.Text);
+        }
+
+        private string AddSpacesToSentence(string text, bool preserveAcronyms)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+                return string.Empty;
+            StringBuilder newText = new StringBuilder(text.Length * 2);
+            newText.Append(text[0]);
+            for (int i = 1; i < text.Length; i++)
+            {
+                if (char.IsUpper(text[i]))
+                    if ((text[i - 1] != ' ' && !char.IsUpper(text[i - 1])) ||
+                        (preserveAcronyms && char.IsUpper(text[i - 1]) &&
+                         i < text.Length - 1 && !char.IsUpper(text[i + 1])))
+                        newText.Append(' ');
+                newText.Append(text[i]);
+            }
+            return newText.ToString();
         }
 
         private int radius = 20;

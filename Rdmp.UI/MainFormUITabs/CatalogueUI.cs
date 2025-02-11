@@ -54,6 +54,24 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
         UseCommitSystem = true;
     }
 
+    private string AddSpacesToSentence(string text, bool preserveAcronyms)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+            return string.Empty;
+        StringBuilder newText = new StringBuilder(text.Length * 2);
+        newText.Append(text[0]);
+        for (int i = 1; i < text.Length; i++)
+        {
+            if (char.IsUpper(text[i]))
+                if ((text[i - 1] != ' ' && !char.IsUpper(text[i - 1])) ||
+                    (preserveAcronyms && char.IsUpper(text[i - 1]) &&
+                     i < text.Length - 1 && !char.IsUpper(text[i + 1])))
+                    newText.Append(' ');
+            newText.Append(text[i]);
+        }
+        return newText.ToString();
+    }
+
     private void ticketingControl1_TicketTextChanged(object sender, EventArgs e)
     {
         if (_catalogue != null)
@@ -221,6 +239,11 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
         Bind(dtpReleaseDate, "Value", "DatasetReleaseDate", c => c.DatasetReleaseDate);
     }
 
+
+    private void comboBox1_Format(object sender, ListControlConvertEventArgs e)
+    {
+        e.Value = AddSpacesToSentence(e.ListItem.ToString(), true);
+    }
     private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
     {
         var tabControl = (TabControl)sender;
@@ -250,18 +273,21 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
                     item.Visible = false;
                 }
                 cb_resourceType.DataSource = Enum.GetValues(typeof(Catalogue.CatalogueType));
+                cb_resourceType.Format += comboBox1_Format;
                 cbPurpose.DataSource = Enum.GetValues(typeof(Catalogue.DatasetPurpose));
+                cbPurpose.Format += comboBox1_Format;
                 ddDatasetType.Options = Enum.GetNames(typeof(Catalogue.DatasetType));
                 ddDatasetSubtype.Options = Enum.GetNames(typeof(Catalogue.DatasetSubType));
-
+                ddDataSource.Options = Enum.GetNames(typeof(Catalogue.DataSourceTypes));
+                ddDataSourceSetting.Options = Enum.GetNames(typeof(Catalogue.DataSourceSettingTypes));
 
                 Bind(ffcKeywords, "Value", "Search_keywords", c => c.Search_keywords);
                 Bind(cb_resourceType, "SelectedItem", "Type", c => c.Type);
                 Bind(cbPurpose, "SelectedItem", "Purpose", c => c.Purpose);
                 Bind(ddDatasetType, "Value", "DataType", c => c.DataType);
                 Bind(ddDatasetSubtype, "Value", "DataSubtype", c => c.DataSubtype);
-                Bind(tbDataSource, "Text", "DataSource", c => c.DataSource);
-                Bind(tbDataSourceSetting, "Text", "DataSourceSetting", c => c.DataSourceSetting);
+                Bind(ddDataSource, "Value", "DataSource", c => c.DataSource);
+                Bind(ddDataSourceSetting, "Value", "DataSourceSetting", c => c.DataSourceSetting);
                 this.aiKeywords.TooltipText = CatalogueUIHelperText.Keywords;
                 this.aiResourceType.TooltipText = CatalogueUIHelperText.ResourceType;
                 this.aiPurposeOfDataset.TooltipText = CatalogueUIHelperText.PurposeOfDataset;
@@ -281,6 +307,7 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
                 }
                 Bind(tbGeoCoverage, "Text", "Geographical_coverage", c => c.Geographical_coverage);
                 cb_granularity.DataSource = Enum.GetValues(typeof(Catalogue.CatalogueGranularity));
+                cb_granularity.Format += comboBox1_Format;
                 Bind(cb_granularity, "SelectedItem", "Granularity", c => c.Granularity);
                 dtpStart.Format = DateTimePickerFormat.Custom;
                 dtpStart.CustomFormat = _catalogue.StartDate != null ? "dd/MM/yyyy" : " ";
@@ -355,8 +382,9 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
                 }
 
                 cb_updateFrequency.DataSource = Enum.GetValues(typeof(Catalogue.UpdateFrequencies));
+                cb_updateFrequency.Format += comboBox1_Format;
                 cbUpdateLag.DataSource = Enum.GetValues(typeof(Catalogue.UpdateLagTimes));
-
+                cbUpdateLag.Format += comboBox1_Format;
                 Bind(cbUpdateLag, "SelectedItem", "UpdateLag", c => c.UpdateLag);
                 Bind(cb_updateFrequency, "SelectedItem", "Update_freq", c => c.Update_freq);
                 dtpReleaseDate.Format = DateTimePickerFormat.Custom;
