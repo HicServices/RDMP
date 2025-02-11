@@ -12,7 +12,7 @@ using System.Windows.Forms;
 
 namespace Rdmp.UI.SimpleControls
 {
-    public partial class AdditionalInfomation : RDMPUserControl
+    public partial class AdditionalInfomationUI : RDMPUserControl
     {
         private string _text = null;
 
@@ -28,7 +28,7 @@ namespace Rdmp.UI.SimpleControls
             }
         }
 
-        public AdditionalInfomation()
+        public AdditionalInfomationUI()
         {
             InitializeComponent();
         }
