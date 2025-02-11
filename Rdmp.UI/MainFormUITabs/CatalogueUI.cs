@@ -62,11 +62,10 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
         newText.Append(text[0]);
         for (int i = 1; i < text.Length; i++)
         {
-            if (char.IsUpper(text[i]))
-                if ((text[i - 1] != ' ' && !char.IsUpper(text[i - 1])) ||
+            if (char.IsUpper(text[i]) && ((text[i - 1] != ' ' && !char.IsUpper(text[i - 1])) ||
                     (preserveAcronyms && char.IsUpper(text[i - 1]) &&
-                     i < text.Length - 1 && !char.IsUpper(text[i + 1])))
-                    newText.Append(' ');
+                     i < text.Length - 1 && !char.IsUpper(text[i + 1]))))
+                newText.Append(' ');
             newText.Append(text[i]);
         }
         return newText.ToString();
@@ -101,7 +100,6 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
             _scintillaDescription = f.Create(null, SyntaxLanguage.None, null, true, false, activator.CurrentDirectory);
             _scintillaDescription.Font = SystemFonts.DefaultFont;
             _scintillaDescription.WrapMode = WrapMode.Word;
-            //panel1.Controls.Add(_scintillaDescription);
         }
 
         base.SetDatabaseObject(activator, databaseObject);
