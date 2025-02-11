@@ -52,3 +52,34 @@ CONSTRAINT [PK_CatalogueValidationResult] PRIMARY KEY CLUSTERED
 ) ON [PRIMARY]
 END
 GO
+
+if not exists (select 1 from sys.tables where name = 'SecondaryConstraint')
+BEGIN
+CREATE TABLE [dbo].[SecondaryConstraint](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[ColumnInfo_ID] [int] NOT NULL,
+	[Constraint] [int] NOT NULL,
+	[Consequence] [int] NOT NULL,
+CONSTRAINT [PK_SecondaryConstraint] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+END
+GO
+
+if not exists (select 1 from sys.tables where name = 'SecondaryConstraintArgument')
+BEGIN
+CREATE TABLE [dbo].[SecondaryConstraint](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[SecondaryConstraint_ID] [int] NOT NULL,
+	[Key] [nvarchar](max) NOT NULL,
+	[Value] [nvarchar](max) NOT NULL,
+    FOREIGN KEY ([SecondaryConstraint_ID]) REFERENCES [dbo].[SecondaryConstraint_ID](ID) ON DELETE CASCADE,
+CONSTRAINT [PK_SecondaryConstraintArgument] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+END
+GO

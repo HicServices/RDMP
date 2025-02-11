@@ -49,18 +49,18 @@ namespace Rdmp.Core.CatalogueAnalysisTools.Data
             _result = (ConstraintResults)int.Parse(r["Result"].ToString());
         }
 
-        public PrimaryContraint(DQERepository repository, ColumnInfo columnInfo, Contraints contraint, ConstraintResults result)
+        public PrimaryContraint(DQERepository repository, ColumnInfo columnInfo, Contraints constraint, ConstraintResults result)
         {
             _DQERepository = repository;
             _columnInfo = columnInfo;
-            _constraint = contraint;
+            _constraint = constraint;
             _result = result;
 
             _DQERepository.InsertAndHydrate(this,
             new Dictionary<string, object>
             {
                 { "ColumnInfo_ID", columnInfo.ID },
-                { "Constraint", (int)contraint},
+                { "Constraint", (int)constraint},
                 { "Result", (int)result}
             });
         }

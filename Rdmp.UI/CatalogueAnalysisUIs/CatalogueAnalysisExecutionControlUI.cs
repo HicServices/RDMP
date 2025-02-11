@@ -23,6 +23,8 @@ public partial class CatalogueAnalysisExecutionControlUI : CatalogueAnalysisExec
     private Catalogue _catalogue;
     private DQERepository _dqeRepository;
     private List<PrimaryContraint> _primaryConstraints;
+
+    //private List<SecondaryConstraint> _secondaryConstraints;
     private void SetupPrimaryConstrainsConfiguration()
     {
         foreach (var ci in _catalogue.CatalogueItems.Select(ci => ci.ColumnInfo))
@@ -86,8 +88,8 @@ public partial class CatalogueAnalysisExecutionControlUI : CatalogueAnalysisExec
             }
         }
 
-       
-        
+
+
     }
 
 
@@ -152,7 +154,7 @@ public partial class CatalogueAnalysisExecutionControlUI : CatalogueAnalysisExec
 
     private void button1_Click(object sender, EventArgs e)
     {
-        if(cbPivot.SelectedItem is null || cbTime.SelectedItem is null)
+        if (cbPivot.SelectedItem is null || cbTime.SelectedItem is null)
         {
             throw new Exception("No time or pivot column selected");
         }
@@ -163,6 +165,41 @@ public partial class CatalogueAnalysisExecutionControlUI : CatalogueAnalysisExec
             );
         validation.GenerateValidationReports();
     }
+
+    private void label5_Click(object sender, EventArgs e)
+    {
+
+    }
+
+    private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)
+    {
+
+    }
+
+    private void AddSecondaryConstraint()
+    {
+        var columnsCb = new ComboBox();
+        columnsCb.Items.AddRange(_catalogue.CatalogueItems.Select(ci => ci.ColumnInfo).ToArray());
+
+        var constraintCb = new ComboBox();
+        constraintCb.Items.AddRange(Enum.GetNames(typeof(SecondaryConstraint.Constraints)).ToArray());
+
+        var consequencesCb = new ComboBox();
+        consequencesCb.Items.AddRange(Enum.GetNames(typeof(SecondaryConstraint.Consequences)).ToArray());
+
+        SecondaryConstrainsTableLayoutPanel.RowCount++;
+        SecondaryConstrainsTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F));
+        SecondaryConstrainsTableLayoutPanel.Controls.Add(columnsCb, 0, SecondaryConstrainsTableLayoutPanel.RowCount - 1);
+        SecondaryConstrainsTableLayoutPanel.Controls.Add(constraintCb, 1, SecondaryConstrainsTableLayoutPanel.RowCount - 1);
+        SecondaryConstrainsTableLayoutPanel.Controls.Add(consequencesCb, 1, SecondaryConstrainsTableLayoutPanel.RowCount - 1);
+    }
+
+    private void pictureBox1_Click(object sender, EventArgs e)
+    {
+        //_secondaryConstraints.Add(new SecondaryConstraint());
+        AddSecondaryConstraint();
+    }
+
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<CatalogueAnalysisExecutionControlUI_Design, UserControl>))]

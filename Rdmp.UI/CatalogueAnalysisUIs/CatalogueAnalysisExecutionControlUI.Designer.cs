@@ -33,6 +33,13 @@
             tabPage1 = new System.Windows.Forms.TabPage();
             timePeriodicityChart1 = new CatalogueSummary.DataQualityReporting.TimePeriodicityChart();
             tabPage2 = new System.Windows.Forms.TabPage();
+            groupBox4 = new System.Windows.Forms.GroupBox();
+            pictureBox1 = new System.Windows.Forms.PictureBox();
+            SecondaryConstrainsTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+            label7 = new System.Windows.Forms.Label();
+            label4 = new System.Windows.Forms.Label();
+            label5 = new System.Windows.Forms.Label();
+            label6 = new System.Windows.Forms.Label();
             button1 = new System.Windows.Forms.Button();
             groupBox3 = new System.Windows.Forms.GroupBox();
             cbPivot = new System.Windows.Forms.ComboBox();
@@ -44,9 +51,13 @@
             label3 = new System.Windows.Forms.Label();
             label2 = new System.Windows.Forms.Label();
             label1 = new System.Windows.Forms.Label();
+            button2 = new System.Windows.Forms.Button();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             tabPage2.SuspendLayout();
+            groupBox4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+            SecondaryConstrainsTableLayoutPanel.SuspendLayout();
             groupBox3.SuspendLayout();
             groupBox2.SuspendLayout();
             groupBox1.SuspendLayout();
@@ -84,6 +95,7 @@
             // 
             // tabPage2
             // 
+            tabPage2.Controls.Add(groupBox4);
             tabPage2.Controls.Add(button1);
             tabPage2.Controls.Add(groupBox3);
             tabPage2.Controls.Add(groupBox2);
@@ -96,11 +108,94 @@
             tabPage2.Text = "Configuration";
             tabPage2.UseVisualStyleBackColor = true;
             // 
+            // groupBox4
+            // 
+            groupBox4.AutoSize = true;
+            groupBox4.Controls.Add(button2);
+            groupBox4.Controls.Add(pictureBox1);
+            groupBox4.Controls.Add(SecondaryConstrainsTableLayoutPanel);
+            groupBox4.Location = new System.Drawing.Point(453, 6);
+            groupBox4.Name = "groupBox4";
+            groupBox4.Size = new System.Drawing.Size(431, 100);
+            groupBox4.TabIndex = 5;
+            groupBox4.TabStop = false;
+            groupBox4.Text = "Secondary Constraints";
+            // 
+            // pictureBox1
+            // 
+            pictureBox1.Cursor = System.Windows.Forms.Cursors.Hand;
+            pictureBox1.Image = (System.Drawing.Image)resources.GetObject("pictureBox1.Image");
+            pictureBox1.Location = new System.Drawing.Point(130, -1);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new System.Drawing.Size(22, 21);
+            pictureBox1.TabIndex = 6;
+            pictureBox1.TabStop = false;
+            pictureBox1.Click += pictureBox1_Click;
+            // 
+            // SecondaryConstrainsTableLayoutPanel
+            // 
+            SecondaryConstrainsTableLayoutPanel.AutoSize = true;
+            SecondaryConstrainsTableLayoutPanel.ColumnCount = 4;
+            SecondaryConstrainsTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            SecondaryConstrainsTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            SecondaryConstrainsTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            SecondaryConstrainsTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            SecondaryConstrainsTableLayoutPanel.Controls.Add(label7, 3, 0);
+            SecondaryConstrainsTableLayoutPanel.Controls.Add(label4, 2, 0);
+            SecondaryConstrainsTableLayoutPanel.Controls.Add(label5, 1, 0);
+            SecondaryConstrainsTableLayoutPanel.Controls.Add(label6, 0, 0);
+            SecondaryConstrainsTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Top;
+            SecondaryConstrainsTableLayoutPanel.Location = new System.Drawing.Point(3, 19);
+            SecondaryConstrainsTableLayoutPanel.Name = "SecondaryConstrainsTableLayoutPanel";
+            SecondaryConstrainsTableLayoutPanel.RowCount = 2;
+            SecondaryConstrainsTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
+            SecondaryConstrainsTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            SecondaryConstrainsTableLayoutPanel.Size = new System.Drawing.Size(425, 50);
+            SecondaryConstrainsTableLayoutPanel.TabIndex = 1;
+            SecondaryConstrainsTableLayoutPanel.Paint += tableLayoutPanel1_Paint;
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Location = new System.Drawing.Point(227, 0);
+            label7.Name = "label7";
+            label7.Size = new System.Drawing.Size(66, 15);
+            label7.TabIndex = 5;
+            label7.Text = "Arguments";
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Location = new System.Drawing.Point(127, 0);
+            label4.Name = "label4";
+            label4.Size = new System.Drawing.Size(94, 15);
+            label4.TabIndex = 4;
+            label4.Text = "Validation Result";
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Location = new System.Drawing.Point(59, 0);
+            label5.Name = "label5";
+            label5.Size = new System.Drawing.Size(62, 15);
+            label5.TabIndex = 3;
+            label5.Text = "Constraint";
+            label5.Click += label5_Click;
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Location = new System.Drawing.Point(3, 0);
+            label6.Name = "label6";
+            label6.Size = new System.Drawing.Size(50, 15);
+            label6.TabIndex = 2;
+            label6.Text = "Column";
+            // 
             // button1
             // 
             button1.Image = (System.Drawing.Image)resources.GetObject("button1.Image");
             button1.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            button1.Location = new System.Drawing.Point(787, 3);
+            button1.Location = new System.Drawing.Point(1103, 116);
             button1.Name = "button1";
             button1.Size = new System.Drawing.Size(121, 42);
             button1.TabIndex = 4;
@@ -111,7 +206,7 @@
             // groupBox3
             // 
             groupBox3.Controls.Add(cbPivot);
-            groupBox3.Location = new System.Drawing.Point(453, 61);
+            groupBox3.Location = new System.Drawing.Point(890, 61);
             groupBox3.Name = "groupBox3";
             groupBox3.Size = new System.Drawing.Size(334, 49);
             groupBox3.TabIndex = 3;
@@ -129,7 +224,7 @@
             // groupBox2
             // 
             groupBox2.Controls.Add(cbTime);
-            groupBox2.Location = new System.Drawing.Point(453, 6);
+            groupBox2.Location = new System.Drawing.Point(890, 6);
             groupBox2.Name = "groupBox2";
             groupBox2.Size = new System.Drawing.Size(334, 49);
             groupBox2.TabIndex = 2;
@@ -191,7 +286,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new System.Drawing.Point(171, 0);
+            label3.Location = new System.Drawing.Point(127, 0);
             label3.Name = "label3";
             label3.Size = new System.Drawing.Size(94, 15);
             label3.TabIndex = 4;
@@ -202,9 +297,9 @@
             label2.AutoSize = true;
             label2.Location = new System.Drawing.Point(59, 0);
             label2.Name = "label2";
-            label2.Size = new System.Drawing.Size(106, 15);
+            label2.Size = new System.Drawing.Size(62, 15);
             label2.TabIndex = 3;
-            label2.Text = "Primary Constraint";
+            label2.Text = "Constraint";
             // 
             // label1
             // 
@@ -215,6 +310,17 @@
             label1.TabIndex = 2;
             label1.Text = "Column";
             label1.Click += label1_Click;
+            // 
+            // button2
+            // 
+            button2.Dock = System.Windows.Forms.DockStyle.Bottom;
+            button2.Location = new System.Drawing.Point(3, 74);
+            button2.Name = "button2";
+            button2.Size = new System.Drawing.Size(425, 23);
+            button2.TabIndex = 7;
+            button2.Text = "Save";
+            button2.UseVisualStyleBackColor = true;
+            button2.Click += button2_Click;
             // 
             // CatalogueAnalysisExecutionControlUI
             // 
@@ -227,6 +333,11 @@
             tabPage1.ResumeLayout(false);
             tabPage2.ResumeLayout(false);
             tabPage2.PerformLayout();
+            groupBox4.ResumeLayout(false);
+            groupBox4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+            SecondaryConstrainsTableLayoutPanel.ResumeLayout(false);
+            SecondaryConstrainsTableLayoutPanel.PerformLayout();
             groupBox3.ResumeLayout(false);
             groupBox2.ResumeLayout(false);
             groupBox1.ResumeLayout(false);
@@ -253,5 +364,13 @@
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.ComboBox cbTime;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.TableLayoutPanel SecondaryConstrainsTableLayoutPanel;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.Button button2;
     }
 }
