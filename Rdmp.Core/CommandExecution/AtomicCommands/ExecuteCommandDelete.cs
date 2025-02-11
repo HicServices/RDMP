@@ -48,7 +48,6 @@ public class ExecuteCommandDelete : BasicCommandExecution
         _allowDeleteMany = deleteMany;
         if (_deletables.Any(d => d is CohortAggregateContainer c && c.IsRootContainer()))
             SetImpossible("Cannot delete root containers");
-
         var reason = "";
 
         if (_deletables.Any(d => d is IMightBeReadOnly ro && ro.ShouldBeReadOnly(out reason)))

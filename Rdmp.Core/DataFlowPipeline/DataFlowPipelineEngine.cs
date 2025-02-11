@@ -15,6 +15,7 @@ using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
+using Renci.SshNet.Messages;
 
 namespace Rdmp.Core.DataFlowPipeline;
 
@@ -96,11 +97,11 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
     private void UIAlert(string alert, IBasicActivateItems activator)
     {
         if (!activator.IsInteractive) return;
-
         new Thread(() =>
         {
             // run as a separate thread to not halt the UI
-            activator.Show(alert);
+            activator.ShowWarning(alert);
+
         })
         {
             IsBackground = true

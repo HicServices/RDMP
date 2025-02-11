@@ -10,9 +10,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Simplify DB Patching Interface
 - Fix issue with Simple File Extractor pipeline component checking
 - Update Catalogue metadata options
+- Add Load Metadata versioning
 - Fix application restart not closing all windows
 - Improve cohort deprecation override test
 - Add Filters for CatalogueItems to Dashboard graphs
+- Add ability to use cohort temp table during extractions
+- Fix bug where cohort configuration versions could not be deleted
+- Extraction UI alerts are now marked as warnings as opposed to information
 
 ## [8.4.2] - 2024-12-18
 

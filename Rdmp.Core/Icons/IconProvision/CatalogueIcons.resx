@@ -262,6 +262,9 @@
   <data name="CatalogueFolder" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\CatalogueFolder.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="LoadMetadataVersionNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\CatalogueFolder.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="CatalogueItem" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\CatalogueItem.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>

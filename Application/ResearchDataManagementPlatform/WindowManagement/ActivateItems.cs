@@ -94,6 +94,18 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
             RefreshBus.Publish(this, new RefreshObjectEventArgs(de));
     }
 
+    public override void ShowWarning(string message)
+    {
+        // if on wrong Thread
+        if (_mainDockPanel?.InvokeRequired ?? false)
+        {
+            _mainDockPanel.Invoke(() => ShowWarning(message));
+            return;
+        }
+
+        WideMessageBox.Show("Message", message, Environment.StackTrace, true, null, WideMessageBoxTheme.Warning);
+    }
+
     public override void Show(string title, string message)
     {
         // if on wrong Thread

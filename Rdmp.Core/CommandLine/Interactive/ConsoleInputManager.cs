@@ -57,6 +57,11 @@ public class ConsoleInputManager : BasicActivateItems
         Console.WriteLine(message);
     }
 
+    public override void ShowWarning(string message)
+    {
+        Console.WriteLine(message);
+    }
+
     public override bool TypeText(DialogArgs args, int maxLength, string initialText, out string text,
         bool requireSaneHeaderText)
     {

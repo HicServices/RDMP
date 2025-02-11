@@ -45,6 +45,11 @@ public interface ILoadMetadata : INamed, ILoggedActivityRootObject
     /// </summary>
     string LocationOfCacheDirectory { get; set; }
 
+    /// <summary>
+    /// The ID of the base Load Metadata that is version is based on
+    /// </summary>
+    int? RootLoadMetadata_ID { get; }
+
 
     /// <summary>
     /// Set to true to ignore the requirement for live tables to need the backup archive trigger
