@@ -91,8 +91,8 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
     private string _shortDescription;
     private string _dataType;
     private string _dataSubtype;
-    private string _dataSource;
-    private string _dataSourceSetting;
+    private DataSourceTypes _dataSource;
+    private DataSourceSettingTypes _dataSourceSetting;
     private DateTime? _datasetReleaseDate;
     private DateTime? _startDate;
     private DateTime? _endDate;
@@ -521,9 +521,9 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
     /// <inheritdoc/>
     public string DataSubtype { get => _dataSubtype; set => SetField(ref _dataSubtype, value); }
     /// <inheritdoc/>
-    public string DataSource { get => _dataSource; set => SetField(ref _dataSource, value); }
+    public DataSourceTypes DataSource { get => _dataSource; set => SetField(ref _dataSource, value); }
     /// <inheritdoc/>
-    public string DataSourceSetting { get => _dataSourceSetting; set => SetField(ref _dataSourceSetting, value); }
+    public DataSourceSettingTypes DataSourceSetting { get => _dataSourceSetting; set => SetField(ref _dataSourceSetting, value); }
     /// <inheritdoc/>
     public DateTime? DatasetReleaseDate { get => _datasetReleaseDate; set => SetField(ref _datasetReleaseDate, value); }
     /// <inheritdoc/>
@@ -768,7 +768,8 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
         Politics
     }
 
-    public enum DatasetSubType {
+    public enum DatasetSubType
+    {
         NotApplicable,
         BirthsAndDeaths,
         NationalDiseaseRegistryAndAudits,
@@ -863,7 +864,7 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
         Variable,
         NotApplicable
     }
-    
+
     public enum DatasetPurpose
     {
         Other,
@@ -878,7 +879,8 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
         Statutory
     }
 
-    public enum DataSourceTypes {
+    public enum DataSourceTypes
+    {
         EPR,
         ElectronicSurvey,
         LIMS,
@@ -1106,8 +1108,32 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
         Folder = r["Folder"].ToString();
 
         ShortDescription = r["ShortDescription"].ToString();
-        DataSource = r["DataSource"].ToString();
-        DataSourceSetting = r["DataSourceSetting"].ToString();
+        var dataSource = r["DataSource"];
+        if (dataSource == null || dataSource == DBNull.Value)
+        {
+            DataSource = DataSourceTypes.Other;
+        }
+        else
+        {
+            if (Enum.TryParse(dataSource.ToString(), true, out DataSourceTypes dataSourceasEnum))
+                DataSource = dataSourceasEnum;
+            else
+                throw new Exception(
+                    $" r[\"DataSource\"] had value {dataSource} which is not contained in Enum DataSourceTypes");
+        }
+        var dataSourceSetting = r["DataSourceSetting"];
+        if (dataSourceSetting == null || dataSourceSetting == DBNull.Value)
+        {
+            DataSourceSetting = DataSourceSettingTypes.Other;
+        }
+        else
+        {
+            if (Enum.TryParse(dataSourceSetting.ToString(), true, out DataSourceSettingTypes dataSourceasEnum))
+                DataSourceSetting = dataSourceasEnum;
+            else
+                throw new Exception(
+                    $" r[\"DataSourceSetting\"] had value {dataSourceSetting} which is not contained in Enum DataSourceSettingTypes");
+        }
         StartDate = !string.IsNullOrEmpty(r["StartDate"].ToString()) ? DateTime.Parse(r["StartDate"].ToString()) : null;
         EndDate = !string.IsNullOrEmpty(r["EndDate"].ToString()) ? DateTime.Parse(r["EndDate"].ToString()) : null;
         DatasetReleaseDate = !string.IsNullOrEmpty(r["DatasetReleaseDate"].ToString()) ? DateTime.Parse(r["DatasetReleaseDate"].ToString()) : null;
