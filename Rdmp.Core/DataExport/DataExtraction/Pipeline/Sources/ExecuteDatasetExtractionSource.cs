@@ -52,7 +52,7 @@ public class ExecuteDatasetExtractionSource : IPluginDataFlowSource<DataTable>, 
     public ExtractionTimeValidator ExtractionTimeValidator { get; protected set; }
     public Exception ValidationFailureException { get; protected set; }
 
-    //public HashSet<object> UniqueReleaseIdentifiersEncountered { get; set; }
+    public HashSet<object> UniqueReleaseIdentifiersEncountered { get; set; }
 
     public ExtractionTimeTimeCoverageAggregator ExtractionTimeTimeCoverageAggregator { get; set; }
 
@@ -128,7 +128,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
         foreach (var substitution in Request.ReleaseIdentifierSubstitutions)
             _extractionIdentifiersidx.Add(substitution.GetRuntimeName());
 
-        //UniqueReleaseIdentifiersEncountered = new HashSet<object>();
+        UniqueReleaseIdentifiersEncountered = new HashSet<object>();
 
         _catalogue = request.Catalogue;
 
