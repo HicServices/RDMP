@@ -49,6 +49,17 @@ public class DbDataCommandDataFlowSource : IDbDataCommandDataFlowSource
         BatchSize = 10000;
     }
 
+    public DbDataCommandDataFlowSource(string sql, string taskBeingPerformed, DbConnection con,
+        int timeout)
+    {
+        Sql = sql;
+        _taskBeingPerformed = taskBeingPerformed;
+        _con = con;
+        _timeout = timeout;
+
+        BatchSize = 10000;
+    }
+
     private int _numberOfColumns;
 
     private bool _firstChunk = true;
@@ -59,8 +70,11 @@ public class DbDataCommandDataFlowSource : IDbDataCommandDataFlowSource
     {
         if (_reader == null)
         {
-            _con = DatabaseCommandHelper.GetConnection(_builder);
-            _con.Open();
+            _con = _con == null ? DatabaseCommandHelper.GetConnection(_builder) : _con;
+            if (_con != null && _con.State == ConnectionState.Closed)
+            {
+                _con.Open();
+            }
 
             job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
                 $"Running SQL:{Environment.NewLine}{Sql}"));
@@ -209,11 +223,13 @@ public class DbDataCommandDataFlowSource : IDbDataCommandDataFlowSource
     public DataTable TryGetPreview()
     {
         var chunk = new DataTable();
-        using var con = DatabaseCommandHelper.GetConnection(_builder);
-        con.Open();
-        using var da = DatabaseCommandHelper.GetDataAdapter(DatabaseCommandHelper.GetCommand(Sql, con));
+        _con = _con == null ? DatabaseCommandHelper.GetConnection(_builder) : _con;
+        if (_con != null && _con.State == ConnectionState.Closed)
+        {
+            _con.Open();
+        }
+        using var da = DatabaseCommandHelper.GetDataAdapter(DatabaseCommandHelper.GetCommand(Sql, _con));
         var read = da.Fill(0, 100, chunk);
-
         return read == 0 ? null : chunk;
     }
 }

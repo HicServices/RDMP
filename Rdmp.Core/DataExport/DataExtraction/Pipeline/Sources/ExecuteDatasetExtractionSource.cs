@@ -1,4 +1,4 @@
-// Copyright (c) The University of Dundee 2018-2019
+// Copyright (c) The University of Dundee 2018-2025
 // This file is part of the Research Data Management Platform (RDMP).
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -88,6 +89,9 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
         "Exclusion list.  A collection of Catalogues which will never be considered for HASH JOIN even when UseHashJoins is enabled.  Being on this list takes precedence for a Catalogue even if it is on UseHashJoinsForCatalogues.")]
     public Catalogue[] DoNotUseHashJoinsForCatalogues { get; set; }
 
+    [DemandsInitialization("When performing an extracton, copy the cohort into a temporary table to improve extraction speed", defaultValue: false)]
+    public bool UseTempTablesWhenExtractingCohort { get; set; }
+
 
     /// <summary>
     /// This is a dictionary containing all the CatalogueItems used in the query, the underlying datatype in the origin database and the
@@ -99,13 +103,18 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
     private DbDataCommandDataFlowSource _hostedSource;
 
+    private IExternalCohortTable _externalCohortTable;
+    private string _whereSQL;
+    private DbConnection _con;
+    private string _uuid;
     protected virtual void Initialize(ExtractDatasetCommand request)
     {
         Request = request;
 
         if (request == ExtractDatasetCommand.EmptyCommand)
             return;
-
+        _externalCohortTable = request.ExtractableCohort.ExternalCohortTable;
+        _whereSQL = request.ExtractableCohort.WhereSQL();
         _timeSpentValidating = new Stopwatch();
         _timeSpentCalculatingDISTINCT = new Stopwatch();
         _timeSpentBuckettingDates = new Stopwatch();
@@ -156,6 +165,72 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
     private RowPeeker _peeker = new();
 
+    private static readonly Random random = new Random();
+
+    private static string RandomString(int length)
+    {
+        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        return new string(Enumerable.Repeat(chars, length)
+            .Select(s => s[random.Next(s.Length)]).ToArray());
+    }
+
+    private void CreateCohortTempTable(DbConnection con, IDataLoadEventListener listener)
+    {
+        _uuid = $"#{RandomString(24)}";
+        var sql = "";
+        var db = _externalCohortTable.Discover();
+        switch (db.Server.DatabaseType)
+        {
+            case DatabaseType.MicrosoftSQLServer:
+                sql = $"""
+                    SELECT *
+                    INTO {_uuid}
+                    FROM(
+                    SELECT * FROM {_externalCohortTable.TableName}
+                    WHERE {_whereSQL}
+                    ) as cohortTempTable
+                """;
+                break;
+            case DatabaseType.MySql:
+                sql = $"""
+                    CREATE TEMPORARY TABLE {_uuid} ENGINE=MEMORY
+                    as (SELECT * FROM {_externalCohortTable.TableName} WHERE {_whereSQL})
+                """;
+                break;
+            case DatabaseType.Oracle:
+                sql = $"""
+                    CREATE TEMPORARY TABLE {_uuid} SELECT * FROM {_externalCohortTable.TableName} WHERE {_whereSQL}
+                """;
+                break;
+            case DatabaseType.PostgreSql:
+                sql = $"""
+                    CREATE TEMP TABLE {_uuid} AS
+                    SELECT * FROM {_externalCohortTable.TableName} WHERE {_whereSQL}
+                """;
+                break;
+            default:
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, $"Unable to create temporary table for cohort. Original cohort table will be used"));
+                return;
+
+
+        }
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"About to copy the cohort into a temporary table using the SQL: {sql}"));
+
+        using var cmd = db.Server.GetCommand(sql, con);
+        cmd.CommandTimeout = ExecutionTimeout;
+        try
+        {
+            cmd.ExecuteNonQuery();
+        }
+        catch (Exception ex)
+        {
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, $"Unable to create temporary table for cohort. Original cohort table will be used", ex));
+            _uuid = null;
+        }
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Cohort successfully copied to temporary table"));
+
+    }
+
     public virtual DataTable GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
         // we are in the Global Commands case, let's return an empty DataTable (not null)
@@ -185,15 +260,26 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
         if (_hostedSource == null)
         {
-            StartAudit(Request.QueryBuilder.SQL);
+            if (UseTempTablesWhenExtractingCohort)
+            {
+                _con = DatabaseCommandHelper.GetConnection(Request.GetDistinctLiveDatabaseServer().Builder);
+                _con.Open();
+                CreateCohortTempTable(_con, listener);
+            }
+            var cmdSql = GetCommandSQL(listener);
+            StartAudit(cmdSql);
 
             if (Request.DatasetBundle.DataSet.DisableExtraction)
                 throw new Exception(
                     $"Cannot extract {Request.DatasetBundle.DataSet} because DisableExtraction is set to true");
 
-            _hostedSource = new DbDataCommandDataFlowSource(GetCommandSQL(listener),
+            _hostedSource = UseTempTablesWhenExtractingCohort ? new DbDataCommandDataFlowSource(cmdSql,
                 $"ExecuteDatasetExtraction {Request.DatasetBundle.DataSet}",
-                Request.GetDistinctLiveDatabaseServer().Builder,
+               _con,
+                ExecutionTimeout)
+            { BatchSize = BatchSize } : new DbDataCommandDataFlowSource(cmdSql,
+                $"ExecuteDatasetExtraction {Request.DatasetBundle.DataSet}",
+               Request.GetDistinctLiveDatabaseServer().Builder,
                 ExecutionTimeout)
             {
                 // If we are running in batches then always allow empty extractions
@@ -256,10 +342,10 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
         if (chunk == null)
         {
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
-                $"Data exhausted after reading {_rowsRead} rows of data ({UniqueReleaseIdentifiersEncountered.Count} unique release identifiers seen)"));
-            if (Request != null)
-                Request.CumulativeExtractionResults.DistinctReleaseIdentifiersEncountered =
-                    Request.IsBatchResume ? -1 : UniqueReleaseIdentifiersEncountered.Count;
+                $"Data exhausted after reading {_rowsRead} rows of data"));
+            //if (Request != null)
+            //    Request.CumulativeExtractionResults.DistinctReleaseIdentifiersEncountered =
+            //        Request.IsBatchResume ? -1 : UniqueReleaseIdentifiersEncountered.Count;
             return null;
         }
 
@@ -323,11 +409,12 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
         if (includesReleaseIdentifier)
             foreach (var idx in _extractionIdentifiersidx.Distinct().ToList())
             {
-                var sub = Request.ReleaseIdentifierSubstitutions.Where(s => s.Alias == chunk.Columns[idx].ColumnName).FirstOrDefault();
-                if (sub != null && sub.ColumnInfo.ExtractionInformations.FirstOrDefault() != null && sub.ColumnInfo.ExtractionInformations.FirstOrDefault().IsPrimaryKey)
+                var sub = Request.ReleaseIdentifierSubstitutions.FirstOrDefault(s => s.Alias == chunk.Columns[idx].ColumnName);
+                if (sub?.ColumnInfo.ExtractionInformations.FirstOrDefault()?.IsPrimaryKey == true)
                 {
                     pks.Add(chunk.Columns[idx]);
                 }
+
                 foreach (DataRow r in chunk.Rows)
                 {
                     if (r[idx] == DBNull.Value)
@@ -337,20 +424,17 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
                         else
                             continue; //there are multiple extraction identifiers thats fine if one or two are null
 
-                    UniqueReleaseIdentifiersEncountered.Add(r[idx]);
+                    //UniqueReleaseIdentifiersEncountered.Add(r[idx]);
                 }
 
-                listener.OnProgress(this,
-                    new ProgressEventArgs("Calculating Distinct Release Identifiers",
-                        new ProgressMeasurement(UniqueReleaseIdentifiersEncountered.Count, ProgressType.Records),
-                        _timeSpentCalculatingDISTINCT.Elapsed));
+                //listener.OnProgress(this,
+                //    new ProgressEventArgs("Calculating Distinct Release Identifiers",
+                //        new ProgressMeasurement(UniqueReleaseIdentifiersEncountered.Count, ProgressType.Records),
+                //        _timeSpentCalculatingDISTINCT.Elapsed));
             }
 
         _timeSpentCalculatingDISTINCT.Stop();
-        foreach (string name in Request.ColumnsToExtract.Where(c => ((ExtractableColumn)(c)).CatalogueExtractionInformation.IsPrimaryKey).Select(column => ((ExtractableColumn)column).CatalogueExtractionInformation.ToString()))
-        {
-            pks.Add(chunk.Columns[name]);
-        }
+        pks.AddRange(Request.ColumnsToExtract.Where(static c => ((ExtractableColumn)c).CatalogueExtractionInformation.IsPrimaryKey).Select(static column => ((ExtractableColumn)column).CatalogueExtractionInformation.ToString()).Select(name => chunk.Columns[name]));
         chunk.PrimaryKey = pks.ToArray();
 
         return chunk;
@@ -453,7 +537,10 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
             $"/*Decided on extraction SQL:*/{Environment.NewLine}{sql}"));
-
+        if (UseTempTablesWhenExtractingCohort && _uuid is not null)
+        {
+            sql = sql.Replace(_externalCohortTable.TableName, _uuid);
+        }
         return sql;
     }
 
