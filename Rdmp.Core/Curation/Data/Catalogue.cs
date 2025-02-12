@@ -881,13 +881,13 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
 
     public enum DataSourceTypes
     {
+        Other,
         EPR,
         ElectronicSurvey,
         LIMS,
         PaperBased,
         FreeTextNLP,
         MachineLearning,
-        Other
     }
     public enum DataSourceSettingTypes
     {
