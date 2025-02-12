@@ -198,12 +198,12 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
                 """;
                 break;
             case DatabaseType.Oracle:
-                sql= $"""
+                sql = $"""
                     CREATE TEMPORARY TABLE {_uuid} SELECT * FROM {_externalCohortTable.TableName} WHERE {_whereSQL}
                 """;
                 break;
             case DatabaseType.PostgreSql:
-                sql= $"""
+                sql = $"""
                     CREATE TEMP TABLE {_uuid} AS
                     SELECT * FROM {_externalCohortTable.TableName} WHERE {_whereSQL}
                 """;
@@ -222,8 +222,9 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
         {
             cmd.ExecuteNonQuery();
         }
-        catch (Exception ex) {
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, $"Unable to create temporary table for cohort. Original cohort table will be used",ex));
+        catch (Exception ex)
+        {
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, $"Unable to create temporary table for cohort. Original cohort table will be used", ex));
             _uuid = null;
         }
         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Cohort successfully copied to temporary table"));
@@ -275,7 +276,12 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
             _hostedSource = UseTempTablesWhenExtractingCohort ? new DbDataCommandDataFlowSource(cmdSql,
                 $"ExecuteDatasetExtraction {Request.DatasetBundle.DataSet}",
                _con,
-                ExecutionTimeout) : new DbDataCommandDataFlowSource(cmdSql,
+                ExecutionTimeout)
+            {
+                AllowEmptyResultSets = AllowEmptyExtractions || Request.IsBatchResume,
+                BatchSize = BatchSize
+            }
+                : new DbDataCommandDataFlowSource(cmdSql,
                 $"ExecuteDatasetExtraction {Request.DatasetBundle.DataSet}",
                Request.GetDistinctLiveDatabaseServer().Builder,
                 ExecutionTimeout)

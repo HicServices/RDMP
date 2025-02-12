@@ -891,6 +891,7 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
     }
     public enum DataSourceSettingTypes
     {
+        Other,
         CohortStudyTrial,
         Clinic,
         PrimaryCareReferrals,
@@ -912,8 +913,7 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
         Private,
         SocialCareHealthcareAtHome,
         SocialCareOthersocialData,
-        Census,
-        Other
+        Census
     }
     #endregion
 
