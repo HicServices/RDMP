@@ -85,7 +85,7 @@ namespace Rdmp.Core.Datasets
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 WriteIndented = true,
-                DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+                //DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
             };
 
             var options = new JsonWriterOptions
@@ -101,7 +101,7 @@ namespace Rdmp.Core.Datasets
                 create_origin= update.data.create_origin,
                 metadata = update.data.versions.First().metadata
             };
-            System.Text.Json.JsonSerializer.Serialize<Data>(stream, ((HDRDataset)datasetUpdates).data, serializeOptions);
+            System.Text.Json.JsonSerializer.Serialize<HDRDatasetPatch>(stream, (new HDRDatasetPatch((HDRDataset)datasetUpdates)), serializeOptions);
             var jsonString = Encoding.UTF8.GetString(stream.ToArray());
             var uri = $"{Configuration.Url}/v1/integrations/datasets/{uuid}";
             var httpContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
