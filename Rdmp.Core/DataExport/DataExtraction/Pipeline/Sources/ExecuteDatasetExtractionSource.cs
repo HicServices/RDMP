@@ -52,7 +52,7 @@ public class ExecuteDatasetExtractionSource : IPluginDataFlowSource<DataTable>, 
     public ExtractionTimeValidator ExtractionTimeValidator { get; protected set; }
     public Exception ValidationFailureException { get; protected set; }
 
-    public HashSet<object> UniqueReleaseIdentifiersEncountered { get; set; }
+    //public HashSet<object> UniqueReleaseIdentifiersEncountered { get; set; }
 
     public ExtractionTimeTimeCoverageAggregator ExtractionTimeTimeCoverageAggregator { get; set; }
 
@@ -128,7 +128,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
         foreach (var substitution in Request.ReleaseIdentifierSubstitutions)
             _extractionIdentifiersidx.Add(substitution.GetRuntimeName());
 
-        UniqueReleaseIdentifiersEncountered = new HashSet<object>();
+        //UniqueReleaseIdentifiersEncountered = new HashSet<object>();
 
         _catalogue = request.Catalogue;
 
@@ -275,7 +275,8 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
             _hostedSource = UseTempTablesWhenExtractingCohort ? new DbDataCommandDataFlowSource(cmdSql,
                 $"ExecuteDatasetExtraction {Request.DatasetBundle.DataSet}",
                _con,
-                ExecutionTimeout) : new DbDataCommandDataFlowSource(cmdSql,
+                ExecutionTimeout)
+            { BatchSize = BatchSize} : new DbDataCommandDataFlowSource(cmdSql,
                 $"ExecuteDatasetExtraction {Request.DatasetBundle.DataSet}",
                Request.GetDistinctLiveDatabaseServer().Builder,
                 ExecutionTimeout)
@@ -340,10 +341,10 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
         if (chunk == null)
         {
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
-                $"Data exhausted after reading {_rowsRead} rows of data ({UniqueReleaseIdentifiersEncountered.Count} unique release identifiers seen)"));
-            if (Request != null)
-                Request.CumulativeExtractionResults.DistinctReleaseIdentifiersEncountered =
-                    Request.IsBatchResume ? -1 : UniqueReleaseIdentifiersEncountered.Count;
+                $"Data exhausted after reading {_rowsRead} rows of data"));
+            //if (Request != null)
+            //    Request.CumulativeExtractionResults.DistinctReleaseIdentifiersEncountered =
+            //        Request.IsBatchResume ? -1 : UniqueReleaseIdentifiersEncountered.Count;
             return null;
         }
 
@@ -422,13 +423,13 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
                         else
                             continue; //there are multiple extraction identifiers thats fine if one or two are null
 
-                    UniqueReleaseIdentifiersEncountered.Add(r[idx]);
+                    //UniqueReleaseIdentifiersEncountered.Add(r[idx]);
                 }
 
-                listener.OnProgress(this,
-                    new ProgressEventArgs("Calculating Distinct Release Identifiers",
-                        new ProgressMeasurement(UniqueReleaseIdentifiersEncountered.Count, ProgressType.Records),
-                        _timeSpentCalculatingDISTINCT.Elapsed));
+                //listener.OnProgress(this,
+                //    new ProgressEventArgs("Calculating Distinct Release Identifiers",
+                //        new ProgressMeasurement(UniqueReleaseIdentifiersEncountered.Count, ProgressType.Records),
+                //        _timeSpentCalculatingDISTINCT.Elapsed));
             }
 
         _timeSpentCalculatingDISTINCT.Stop();
