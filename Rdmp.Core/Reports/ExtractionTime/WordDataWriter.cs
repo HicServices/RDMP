@@ -109,7 +109,7 @@ public class WordDataWriter : DocXHelper
             SetTableCell(t, rownum, 1,
                 request.IsBatchResume
                     ? "unknown (batching was used)"
-                    : Executer.Source.UniqueReleaseIdentifiersEncountered.Count.ToString());
+                    : "todo");//Executer.Source.UniqueReleaseIdentifiersEncountered.Count.ToString());
             rownum++;
 
             SetTableCell(t, rownum, 0, "Dataset Line Count");
