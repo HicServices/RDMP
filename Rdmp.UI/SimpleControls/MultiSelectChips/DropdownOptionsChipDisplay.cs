@@ -42,18 +42,21 @@ namespace Rdmp.UI.SimpleControls.MultiSelectChips
             get => _value;
             set
             {
-                _value = value;
-                flowLayoutPanel1.Controls.Clear();
-                var splitValues = _value.Split(',');
-                comboBox1.Items.Clear();
-                comboBox1.Format += comboBox1_Format;
-                foreach (var option in _options.Where(o => !splitValues.Contains(o)).ToList())
+                if (_value != value)
                 {
-                    comboBox1.Items.Add(option);
-                }
-                foreach (var splitValue in splitValues.Where(sv => !string.IsNullOrWhiteSpace(sv)))
-                {
+                    _value = value;
+                    flowLayoutPanel1.Controls.Clear();
+                    var splitValues = _value.Split(',');
+                    comboBox1.Items.Clear();
+                    comboBox1.Format += comboBox1_Format;
+                    foreach (var option in _options.Where(o => !splitValues.Contains(o)).ToList())
+                    {
+                        comboBox1.Items.Add(option);
+                    }
+                    foreach (var splitValue in splitValues.Where(sv => !string.IsNullOrWhiteSpace(sv)))
+                    {
                         flowLayoutPanel1.Controls.Add(new Chip(splitValue, Remove));
+                    }
                 }
             }
         }
@@ -75,7 +78,8 @@ namespace Rdmp.UI.SimpleControls.MultiSelectChips
 
         private int Remove(string value)
         {
-            Value = string.Join(',', Value.Split(",").Where(v => v != value));
+            var valueToReplace = value.Replace(" ", "");
+            Value = string.Join(',', Value.Split(",").Where(v => v != valueToReplace));
             return 1;
         }
 
