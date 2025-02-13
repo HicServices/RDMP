@@ -74,24 +74,15 @@ public partial class SelectColumnUI : RDMPUserControl
         olvIncluded.AspectGetter = rowObject => _includedColumns.Contains(rowObject) ? "Included" : "Not Included";
 
 
-        olvGroupBy.AspectGetter = rowObject =>
+        olvGroupBy.AspectGetter = static rowObject =>
         {
-            var ad = rowObject as AggregateDimension;
-            if(ad != null)
+            return rowObject switch
             {
-                return ((AggregateDimension)rowObject).GroupBy;
-            }
-            var ei = rowObject as ExtractionInformation;
-            if (ei != null)
-            {
-                return ((ExtractionInformation)rowObject).GroupBy;
-            }
-            var acc = rowObject as AggregateCountColumn;
-            if (acc != null)
-            {
-                return ((AggregateCountColumn)rowObject).GroupBy;
-            }
-            return null;
+                AggregateDimension ad => ad.GroupBy,
+                ExtractionInformation ei => ei.GroupBy,
+                AggregateCountColumn acc => acc.GroupBy,
+                _ => null
+            };
         };
 
         olvSelectColumns.AlwaysGroupByColumn = olvIncluded;
@@ -101,25 +92,20 @@ public partial class SelectColumnUI : RDMPUserControl
         olvSelectColumns.CellEditFinished += CellEditFinished;
 
 
-        olvSelectColumns.SubItemChecking += (object sender, SubItemCheckingEventArgs args) =>
+        olvSelectColumns.SubItemChecking += (object _, SubItemCheckingEventArgs args) =>
         {
-            if (args.Column == olvGroupBy)
+            if (args.Column != olvGroupBy) return;
+
+            switch (args.RowObject)
             {
-                var ad = args.RowObject as AggregateDimension;
-                if (ad != null)
-                {
+                case AggregateDimension ad:
                     ad.GroupBy = !ad.GroupBy;
                     ad.SaveToDatabase();
                     return;
-                }
-                var ei = args.RowObject as ExtractionInformation;
-                if (ei != null )
-                {
+                case ExtractionInformation ei:
                     ei.GroupBy = !ei.GroupBy;
                     ei.SaveToDatabase();
                     return;
-                }
-
             }
         };
 
