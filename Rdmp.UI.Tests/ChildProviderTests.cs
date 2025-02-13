@@ -58,10 +58,11 @@ internal class ChildProviderTests : UITests
     public void TestUpTo()
     {
         string[] skip =
-        {
+        [
             "AllAggregateContainers", "_dataExportFilterManager", "dataExportRepository", "WriteLock",
-            "_oProjectNumberToCohortsDictionary", "_errorsCheckNotifier", "ProgressStopwatch","CohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations"
-        };
+            "_oProjectNumberToCohortsDictionaryLock", "_oProjectNumberToCohortsDictionary", "_errorsCheckNotifier", "ProgressStopwatch","CohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations"
+        ];
+        var skips = skip.ToHashSet();
 
         // We have 2 providers and want to suck all the data out of one into the other
         var cp1 = new DataExportChildProvider(RepositoryLocator, null, ThrowImmediatelyCheckNotifier.Quiet, null);
@@ -70,7 +71,7 @@ internal class ChildProviderTests : UITests
         //to start with let's make sure all fields and properties are different on the two classes except where we expect them to be the same
         const BindingFlags bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
 
-        foreach (var prop in typeof(DataExportChildProvider).GetProperties().Where(p => !skip.Contains(p.Name)))
+        foreach (var prop in typeof(DataExportChildProvider).GetProperties().Where(p => !skips.Contains(p.Name)))
         {
             var val1 = prop.GetValue(cp1);
             var val2 = prop.GetValue(cp2);
