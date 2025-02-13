@@ -38,11 +38,11 @@ namespace Rdmp.UI.Logging;
 /// </summary>
 public class LoggingTabUI : LoggingTab_Design
 {
-    private ToolStripTextBox tbContentFilter = new();
-    private ToolStripLabel label1 = new("Filter:");
-    private ToolStripLabel label2 = new("Top:");
-    private ToolStripTextBox tbTop = new() { Text = "10000" };
-    private ToolStripButton cbPreferNewer = new("Newest") { CheckOnClick = true, Checked = true };
+    private readonly ToolStripTextBox tbContentFilter = new();
+    private readonly ToolStripLabel label1 = new("Filter:");
+    private readonly ToolStripLabel label2 = new("Top:");
+    private readonly ToolStripTextBox tbTop = new() { Text = "10000" };
+    private readonly ToolStripButton cbPreferNewer = new("Newest") { CheckOnClick = true, Checked = true };
 
     private Label lblCurrentFilter;
     private PictureBox pbRemoveFilter;
@@ -170,9 +170,10 @@ public class LoggingTabUI : LoggingTab_Design
     private static void AddFreeTextSearchColumn(DataTable dt)
     {
         var dcRowString = dt.Columns.Add("_RowString", typeof(string));
+        var sb = new StringBuilder();
         foreach (DataRow dataRow in dt.Rows)
         {
-            var sb = new StringBuilder();
+            sb.Clear();
             for (var i = 0; i < dt.Columns.Count - 1; i++)
             {
                 sb.Append(dataRow[i]);
@@ -217,7 +218,7 @@ public class LoggingTabUI : LoggingTab_Design
         // 
         // pbRemoveFilter
         // 
-        pbRemoveFilter.Anchor = (AnchorStyles)(AnchorStyles.Top | AnchorStyles.Right);
+        pbRemoveFilter.Anchor = AnchorStyles.Top | AnchorStyles.Right;
         pbRemoveFilter.BackColor = Color.Goldenrod;
         pbRemoveFilter.Image = (Image)resources.GetObject("pbRemoveFilter.Image");
         pbRemoveFilter.Location = new Point(820, 3);
@@ -230,8 +231,8 @@ public class LoggingTabUI : LoggingTab_Design
         // 
         // lblCurrentFilter
         // 
-        lblCurrentFilter.Anchor = (AnchorStyles)(AnchorStyles.Top | AnchorStyles.Left
-                                                                  | AnchorStyles.Right);
+        lblCurrentFilter.Anchor = AnchorStyles.Top | AnchorStyles.Left
+                                                   | AnchorStyles.Right;
         lblCurrentFilter.BackColor = Color.Goldenrod;
         lblCurrentFilter.ForeColor = SystemColors.ControlLightLight;
         lblCurrentFilter.Location = new Point(3, 3);
@@ -307,7 +308,7 @@ public class LoggingTabUI : LoggingTab_Design
         //push the old filter
         _navigationTrack?.Append(Filter);
         if (_back != null)
-            _back.Enabled = _navigationTrack.CanBack();
+            _back.Enabled = _navigationTrack?.CanBack() == true;
 
         if (filter.IsEmpty)
         {

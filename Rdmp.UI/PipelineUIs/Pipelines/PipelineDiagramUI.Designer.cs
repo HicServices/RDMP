@@ -1,6 +1,6 @@
 ﻿namespace Rdmp.UI.PipelineUIs.Pipelines
 {
-    partial class PipelineDiagramUI
+    sealed partial class PipelineDiagramUI
     {
         /// <summary> 
         /// Required designer variable.

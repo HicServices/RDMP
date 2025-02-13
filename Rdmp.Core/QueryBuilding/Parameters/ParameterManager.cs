@@ -459,8 +459,7 @@ public class ParameterManager
     public void RemoveParameter(ISqlParameter deletable)
     {
         foreach (var parameters in ParametersFoundSoFarInQueryGeneration.Values)
-            if (parameters.Contains(deletable))
-                parameters.Remove(deletable);
+            parameters.Remove(deletable);
     }
 
     /// <summary>

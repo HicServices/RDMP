@@ -24,7 +24,7 @@ public partial class ConfigurePipelineUI : Form
     private readonly IPipeline _pipeline;
     private readonly IPipelineUseCase _useCase;
 
-    private PipelineWorkAreaUI _workArea;
+    private readonly PipelineWorkAreaUI _workArea;
 
     public ConfigurePipelineUI(IActivateItems activator, IPipeline pipeline, IPipelineUseCase useCase,
         ICatalogueRepository repository)
@@ -46,13 +46,10 @@ public partial class ConfigurePipelineUI : Form
 
     protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
     {
-        if (keyData == (Keys.Control | Keys.W))
-        {
-            Close();
-            return true;
-        }
+        if (keyData != (Keys.Control | Keys.W)) return base.ProcessCmdKey(ref msg, keyData);
 
-        return base.ProcessCmdKey(ref msg, keyData);
+        Close();
+        return true;
     }
 
 
@@ -67,10 +64,9 @@ public partial class ConfigurePipelineUI : Form
         if (string.IsNullOrWhiteSpace(tbName.Text))
             tbName.Text = "NoName";
 
-        if (tbName.Text.StartsWith("TO DO:") || tbName.Text.Equals("NoName"))
-            tbName.ForeColor = Color.Red;
-        else
-            tbName.ForeColor = Color.Black;
+        tbName.ForeColor = tbName.Text.StartsWith("TO DO:", StringComparison.Ordinal) || tbName.Text.Equals("NoName")
+            ? Color.Red
+            : Color.Black;
 
         try
         {

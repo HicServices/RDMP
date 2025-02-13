@@ -256,10 +256,12 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design, ILifetimeSu
         foreach (var ec in allExtractableColumns)
         {
             if (ec.CatalogueExtractionInformation_ID == null) continue;
+
             var eiDict = Activator.CoreChildProvider.AllExtractionInformationsDictionary;
             var ciDict = Activator.CoreChildProvider.AllCatalogueItemsDictionary;
 
             if (!eiDict.TryGetValue(ec.CatalogueExtractionInformation_ID.Value, out var ei)) continue;
+
             ec.InjectKnown(ei);
             ec.InjectKnown(ei.ColumnInfo);
 
@@ -754,11 +756,11 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design, ILifetimeSu
         ObjectListView tree;
         var senderTb = (TextBox)sender;
 
-        if (sender == tbSearchAvailable)
+        if (ReferenceEquals(sender, tbSearchAvailable))
             tree = olvAvailable;
-        else if (sender == tbSearchSelected)
+        else if (ReferenceEquals(sender, tbSearchSelected))
             tree = olvSelected;
-        else if (sender == tbSearchTables)
+        else if (ReferenceEquals(sender, tbSearchTables))
             tree = olvJoin;
         else
             throw new Exception($"Unexpected sender {sender}");
@@ -782,12 +784,11 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design, ILifetimeSu
         //if an ExtractionInformation is being refreshed
         if (e.Object is ExtractionInformation ei)
             //We should clear any old cached values for this ExtractionInformation amongst selected column
-            foreach (var c in olvSelected.Objects.OfType<ExtractableColumn>().ToArray())
-                if (c.CatalogueExtractionInformation_ID == ei.ID)
-                {
-                    c.InjectKnown(ei);
-                    olvSelected.RefreshObject(c);
-                }
+            foreach (var c in olvSelected.Objects.OfType<ExtractableColumn>().Where(c => c.CatalogueExtractionInformation_ID == ei.ID).ToArray())
+            {
+                c.InjectKnown(ei);
+                olvSelected.RefreshObject(c);
+            }
 
         UpdateJoins();
     }

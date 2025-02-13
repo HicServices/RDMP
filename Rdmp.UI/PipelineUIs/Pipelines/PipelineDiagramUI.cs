@@ -31,7 +31,7 @@ public delegate void PipelineComponentSelectedHandler(object sender, IPipelineCo
 /// you are selecting an IPipeline you will see the diagram rendered readonly.  If you are editing  (See PipelineWorkAreaUI and ConfigurePipelineUI) then you will be able to select
 /// and drag and drop in new components to make an IPipeline configuration.  On such a dialog you can also select a component to change the components arguments (See ArgumentCollection).
 /// </summary>
-public partial class PipelineDiagramUI : UserControl
+public sealed partial class PipelineDiagramUI : UserControl
 {
     private IPipeline _pipeline;
 
@@ -41,7 +41,7 @@ public partial class PipelineDiagramUI : UserControl
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public bool AllowReOrdering { get; set; }
 
-    private RAGSmiley pipelineSmiley = new();
+    private readonly RAGSmiley pipelineSmiley = new();
 
     public IPipelineComponent SelectedComponent;
     public event PipelineComponentSelectedHandler SelectedComponentChanged;
@@ -49,7 +49,7 @@ public partial class PipelineDiagramUI : UserControl
     private IPipelineUseCase _useCase;
     private DataFlowPipelineEngineFactory _pipelineFactory;
 
-    private ToolStripMenuItem _deleteSelectedMenuItem;
+    private readonly ToolStripMenuItem _deleteSelectedMenuItem;
     private readonly IActivateItems _activator;
 
     public PipelineDiagramUI(IActivateItems activator)
@@ -77,30 +77,29 @@ public partial class PipelineDiagramUI : UserControl
 
     private void DeleteSelectedComponent(object sender, EventArgs e)
     {
-        if (SelectedComponent != null)
-            if (MessageBox.Show($"Do you want to delete {SelectedComponent.Class}?", "Confirm Delete",
-                    MessageBoxButtons.YesNo) == DialogResult.Yes)
-            {
-                //if they are deleting the destination
-                if (SelectedComponent.ID == _pipeline.DestinationPipelineComponent_ID)
-                {
-                    _pipeline.DestinationPipelineComponent_ID = null;
-                    _pipeline.SaveToDatabase();
-                }
+        if (SelectedComponent == null || MessageBox.Show($"Do you want to delete {SelectedComponent.Class}?",
+                "Confirm Delete",
+                MessageBoxButtons.YesNo) != DialogResult.Yes) return;
 
-                //if they are deleting the source
-                if (SelectedComponent.ID == _pipeline.SourcePipelineComponent_ID)
-                {
-                    _pipeline.SourcePipelineComponent_ID = null;
-                    _pipeline.SaveToDatabase();
-                }
+        //if they are deleting the destination
+        if (SelectedComponent.ID == _pipeline.DestinationPipelineComponent_ID)
+        {
+            _pipeline.DestinationPipelineComponent_ID = null;
+            _pipeline.SaveToDatabase();
+        }
 
-                SelectedComponent.DeleteInDatabase();
-                RefreshUIFromDatabase();
+        //if they are deleting the source
+        if (SelectedComponent.ID == _pipeline.SourcePipelineComponent_ID)
+        {
+            _pipeline.SourcePipelineComponent_ID = null;
+            _pipeline.SaveToDatabase();
+        }
 
-                SelectedComponent = null;
-                _deleteSelectedMenuItem.Enabled = false;
-            }
+        SelectedComponent.DeleteInDatabase();
+        RefreshUIFromDatabase();
+
+        SelectedComponent = null;
+        _deleteSelectedMenuItem.Enabled = false;
     }
 
 
@@ -343,10 +342,11 @@ public partial class PipelineDiagramUI : UserControl
         var obj = GetAdvertisedObjectFromDragOperation(arg);
 
         //if they are dragging a new component
-        if (obj != null)
-            //of the correct role and the source/destination is empty
-            if (sender.Value == null && obj.GetRole() == sender.GetRole())
-                return DragDropEffects.Move;
+        if (obj == null) return DragDropEffects.None;
+
+        //of the correct role and the source/destination is empty
+        if (sender.Value == null && obj.GetRole() == sender.GetRole())
+            return DragDropEffects.Move;
 
         return DragDropEffects.None;
     }
