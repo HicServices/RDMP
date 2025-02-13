@@ -14,7 +14,7 @@
 
 A Cohort is a collection of unique person identifiers which can be linked against datasets during an extraction.  This namespace covers the creation of queries that identify lists of patients (based on inclusion / exclusion criteria).
 
-See [CohortComitting](../CohortCommitting/Readme.md) for committing (saving) a final list of patients (or for generating cohorts directly from a file etc).
+See [CohortComitting](../CohortCommitting/CohortCommitting.md) for committing (saving) a final list of patients (or for generating cohorts directly from a file etc).
 
 Cohorts are always created by performing set operations and/or joins on distinct patients (determined by the selected [IsExtractionIdentifier] column in the dataset(s))
 
