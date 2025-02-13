@@ -37,7 +37,6 @@ internal class NightmareDatasets(IRDMPPlatformRepositoryServiceLocator repos, Di
     private readonly BucketList<TableInfo> Tables = new ();
     private int _tablesCount;
 
-    private BucketList<ColumnInfo> _columns = new();
     private int _columnsCount;
 
     /// <summary>
@@ -86,29 +85,28 @@ internal class NightmareDatasets(IRDMPPlatformRepositoryServiceLocator repos, Di
                 var ci = new CatalogueItem(repos.CatalogueRepository, cata, col.Name);
 
                 // = 60%  of columns are extractable
-                if (r.Next(10) < 6)
+                if (r.Next(10) >= 6) continue;
+
+                var ei = new ExtractionInformation(repos.CatalogueRepository, ci, col, col.Name)
                 {
-                    var ei = new ExtractionInformation(repos.CatalogueRepository, ci, col, col.Name)
-                    {
-                        ExtractionCategory = extractionCategories.GetRandom(r)
-                    };
+                    ExtractionCategory = extractionCategories.GetRandom(r)
+                };
 
-                    if (first)
-                    {
-                        hasExtractionIdentifier = r.Next(2) == 0;
+                if (first)
+                {
+                    hasExtractionIdentifier = r.Next(2) == 0;
 
-                        // make the first field the linkage identifier
-                        // if we are doing that
-                        if (hasExtractionIdentifier)
-                        {
-                            ei.IsExtractionIdentifier = true;
-                            ei.ExtractionCategory = ExtractionCategory.Core;
-                            ei.SaveToDatabase();
-                        }
+                    // make the first field the linkage identifier
+                    // if we are doing that
+                    if (hasExtractionIdentifier)
+                    {
+                        ei.IsExtractionIdentifier = true;
+                        ei.ExtractionCategory = ExtractionCategory.Core;
+                        ei.SaveToDatabase();
                     }
-
-                    first = false;
                 }
+
+                first = false;
             }
 
             // half of the Catalogues have IsExtractionIdentifier
@@ -122,7 +120,7 @@ internal class NightmareDatasets(IRDMPPlatformRepositoryServiceLocator repos, Di
 
         // There are 500 tables associated with Catalogues
         // but also 250 tables that are not linked to any Catalogues
-        for (var i = 0; i < 250 * Factor; i++) CreateTable();
+        for (var i = 0; i < 250 * Factor; i++) _ = CreateTable();
 
         // open a connection to the cohort db for creating external cohorts
         using var con = ect.Discover().Server.GetManagedConnection();
