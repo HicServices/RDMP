@@ -49,8 +49,8 @@ public class ProcessTaskChecks : ICheckable
 
 
         var created = RuntimeTaskFactory.Create(processTask, dictionary.LoadArgs[processTask.LoadStage]);
-        if (created is DataProviderRuntimeTask)
-            ((DataProviderRuntimeTask)created).SetActivator(_activator);
+        if (created is DataProviderRuntimeTask task)
+            task.SetActivator(_activator);
         created.Check(notifier);
     }
 

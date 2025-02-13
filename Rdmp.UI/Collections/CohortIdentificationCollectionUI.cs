@@ -74,9 +74,9 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
 
         tlvCohortIdentificationConfigurations.CanExpandGetter = delegate (object x)
         {
-            if (x is CohortIdentificationConfiguration)
+            if (x is CohortIdentificationConfiguration configuration)
             {
-                return ((CohortIdentificationConfiguration)x).GetVersions().Count > 0;
+                return configuration.GetVersions().Count > 0;
             }
 
             return Activator.CoreChildProvider.GetChildren(x).Length > 0;
@@ -84,11 +84,11 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
 
         tlvCohortIdentificationConfigurations.ChildrenGetter = delegate (object x)
         {
-            if (x is CohortIdentificationConfiguration)
+            if (x is CohortIdentificationConfiguration cic)
             {
-                CohortIdentificationConfiguration cic = (CohortIdentificationConfiguration)x;
                 return cic.GetVersions();
             }
+
             return Activator.CoreChildProvider.GetChildren(x);
         };
 

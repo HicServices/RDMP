@@ -113,19 +113,21 @@ public class ReleaseRunner : ManyRunner
         if (_pipeline == null)
         {
             checkNotifier.OnCheckPerformed(new CheckEventArgs("No Pipeline has been picked", CheckResult.Fail));
-            return Array.Empty<ICheckable>();
+            return [];
         }
 
         var useCase = GetReleaseUseCase(checkNotifier);
         if (useCase != null)
         {
             var engine = useCase.GetEngine(_pipeline, ThrowImmediatelyDataLoadEventListener.Quiet);
-            if (engine.DestinationObject is IInteractiveCheckable)
+            if (engine.DestinationObject is IInteractiveCheckable checkable)
             {
-                ((IInteractiveCheckable)engine.DestinationObject).SetActivator(_activator);
+                checkable.SetActivator(_activator);
             }
+
             toReturn.Add(engine);
         }
+
         return toReturn.ToArray();
     }
 

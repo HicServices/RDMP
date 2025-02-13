@@ -32,9 +32,8 @@ internal class ProposeExecutionWhenTargetIsConcreteFilter : RDMPCommandExecution
         return cmd switch
         {
             FilterCombineable sourceFilterCommand =>
-            !sourceFilterCommand.Filter.Equals(targetFilter) && sourceFilterCommand.Filter is ConcreteFilter && sourceFilterCommand.Filter.FilterContainer_ID == targetFilter.FilterContainer_ID ?
-                new ExecuteCommandReorderFilter(ItemActivator, (ConcreteFilter)sourceFilterCommand.Filter, targetFilter, insertOption)
-                : null,
+                !sourceFilterCommand.Filter.Equals(targetFilter) && sourceFilterCommand.Filter is ConcreteFilter filter && sourceFilterCommand.Filter.FilterContainer_ID == targetFilter.FilterContainer_ID ? new ExecuteCommandReorderFilter(ItemActivator, filter, targetFilter, insertOption)
+                    : null,
             _ => null
         };
     }
