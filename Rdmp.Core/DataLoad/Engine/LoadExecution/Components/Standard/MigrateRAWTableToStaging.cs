@@ -55,7 +55,7 @@ public class MigrateRAWTableToStaging : DataLoadComponent
                                             PipelineUsage.LogsToTableLoadInfo);
 
         //where we are coming from (source)
-        var sourceConvention = LoadBubble.Raw;
+        const LoadBubble sourceConvention = LoadBubble.Raw;
         var sourceDatabase = _databaseConfiguration.DeployInfo[sourceConvention];
         var sourceTableName = _tableInfo.GetRuntimeName(sourceConvention, _databaseConfiguration.DatabaseNamer);
 
@@ -78,7 +78,7 @@ public class MigrateRAWTableToStaging : DataLoadComponent
 
         // where we are going to (destination)
         // ignore any columns that are marked for discard
-        var destinationConvention = LoadBubble.Staging;
+        const LoadBubble destinationConvention = LoadBubble.Staging;
         var destinationDatabase = _databaseConfiguration.DeployInfo[LoadBubble.Staging];
         var destinationTableName =
             _tableInfo.GetRuntimeName(destinationConvention, _databaseConfiguration.DatabaseNamer);

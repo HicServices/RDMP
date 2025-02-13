@@ -10,6 +10,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using NPOI.XWPF.UserModel;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
@@ -51,7 +52,7 @@ public class WordDataWriter : DocXHelper
                 $"{GetType().FullName} only supports destinations which are {typeof(ExecuteDatasetExtractionFlatFileDestination).FullName}");
     }
 
-    private static readonly object OLockOnWordUsage = new();
+    private static readonly Lock OLockOnWordUsage = new();
     private readonly IExecuteDatasetExtractionDestination _destination;
 
 

@@ -30,7 +30,7 @@ public abstract class ManyRunner : Runner
     /// <summary>
     /// Lock for all operations that read or write to <see cref="_checksDictionary"/>.  Use it if you want to enumerate / read the results
     /// </summary>
-    private readonly object _oLock = new();
+    private readonly Lock _oLock = new();
 
     protected ManyRunner(ConcurrentRDMPCommandLineOptions options)
     {

@@ -435,8 +435,8 @@ public partial class WideMessageBox : Form
         var graphics = c.CreateGraphics();
         var measureString = graphics.MeasureString(c.Text, c.Font);
 
-        var minimumWidth = 400;
-        var minimumHeight = 150;
+        const int minimumWidth = 400;
+        const int minimumHeight = 150;
 
         var maxSize = Screen.GetBounds(c);
         maxSize.Height = Math.Min(maxSize.Height, 800);

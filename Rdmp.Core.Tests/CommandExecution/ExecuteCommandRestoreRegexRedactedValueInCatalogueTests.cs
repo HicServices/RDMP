@@ -46,19 +46,18 @@ public class ExecuteCommandRestoreRegexRedactedValueInCatalogueTests: DatabaseTe
             var ei = new ExtractionInformation(CatalogueRepository, ci, columnInfo, "");
             ei.SaveToDatabase();
         }
+
         return (catalogue, _columnInfos);
     }
 
-    private DataTable Retrieve(DiscoveredDatabase db)
+    private static DataTable Retrieve(DiscoveredDatabase db)
     {
-        var retrieveSQL = @"select [Condition2] from [RedactionTest]";
+        const string retrieveSQL = @"select [Condition2] from [RedactionTest]";
         var dt = new DataTable();
         dt.BeginLoadData();
-        using (var fetchCmd = db.Server.GetCommand(retrieveSQL, db.Server.GetConnection()))
-        {
-            using var da = db.Server.GetDataAdapter(fetchCmd);
-            da.Fill(dt);
-        }
+        using var fetchCmd = db.Server.GetCommand(retrieveSQL, db.Server.GetConnection());
+        using var da = db.Server.GetDataAdapter(fetchCmd);
+        da.Fill(dt);
         return dt;
     }
 

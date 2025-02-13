@@ -7,6 +7,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
@@ -55,9 +56,9 @@ public class CheckColumnProvider
         }
 
         //reset the dictionary
-        lock (ocheckResultsDictionaryLock)
+        lock (_ocheckResultsDictionaryLock)
         {
-            checkResultsDictionary = new Dictionary<ICheckable, CheckResult>();
+            _checkResultsDictionary = new Dictionary<ICheckable, CheckResult>();
         }
 
         checkingTask = new Task(() =>
@@ -68,9 +69,9 @@ public class CheckColumnProvider
                 var notifier = new ToMemoryCheckNotifier();
                 checkable.Check(notifier);
 
-                lock (ocheckResultsDictionaryLock)
+                lock (_ocheckResultsDictionaryLock)
                 {
-                    checkResultsDictionary.Add(checkable, notifier.GetWorst());
+                    _checkResultsDictionary.Add(checkable, notifier.GetWorst());
                 }
             }
         });
@@ -100,14 +101,14 @@ public class CheckColumnProvider
         }
     }
 
-    private object ocheckResultsDictionaryLock = new();
-    private Dictionary<ICheckable, CheckResult> checkResultsDictionary = new();
+    private readonly Lock _ocheckResultsDictionaryLock = new();
+    private Dictionary<ICheckable, CheckResult> _checkResultsDictionary = new();
 
     public void RecordWorst(ICheckable o, CheckResult result)
     {
-        lock (checkResultsDictionary)
+        lock (_checkResultsDictionary)
         {
-            checkResultsDictionary[o] = result;
+            _checkResultsDictionary[o] = result;
 
             if (_tree.IndexOf(o) != -1)
                 _tree.RefreshObject(o);
@@ -121,9 +122,9 @@ public class CheckColumnProvider
         if (rowobject is not ICheckable checkable)
             return null;
 
-        lock (ocheckResultsDictionaryLock)
+        lock (_ocheckResultsDictionaryLock)
         {
-            if (checkResultsDictionary.TryGetValue(checkable, out var value))
+            if (_checkResultsDictionary.TryGetValue(checkable, out var value))
                 return _iconProvider.GetImage(value).ImageToBitmap();
         }
 

@@ -54,7 +54,7 @@ public class ChartLookAndFeelSetter
         chart.ChartAreas[0].AxisY.TitleForeColor = Color.DarkGray;
         chart.ChartAreas[0].AxisY.LabelStyle.ForeColor = Color.DarkGray;
 
-        var rowsPerYear = 12;
+        const int rowsPerYear = 12;
         var datasetLifespanInYears = dt.Rows.Count / rowsPerYear;
 
         if (dt.Rows.Count == 0)

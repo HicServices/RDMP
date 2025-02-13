@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.Combining;
@@ -25,9 +26,9 @@ namespace Rdmp.UI.CommandExecution;
 public class RDMPCommandExecutionFactory : ICommandExecutionFactory
 {
     private readonly IActivateItems _activator;
-    private Dictionary<ICombineToMakeCommand, Dictionary<CachedDropTarget, ICommandExecution>> _cachedAnswers = new();
-    private object oLockCachedAnswers = new();
-    private List<ICommandExecutionProposal> _proposers = new();
+    private readonly Dictionary<ICombineToMakeCommand, Dictionary<CachedDropTarget, ICommandExecution>> _cachedAnswers = new();
+    private readonly Lock _oLockCachedAnswers = new();
+    private readonly List<ICommandExecutionProposal> _proposers = [];
 
     public RDMPCommandExecutionFactory(IActivateItems activator)
     {
@@ -49,7 +50,7 @@ public class RDMPCommandExecutionFactory : ICommandExecutionFactory
     public ICommandExecution Create(ICombineToMakeCommand cmd, object targetModel,
         InsertOption insertOption = InsertOption.Default)
     {
-        lock (oLockCachedAnswers)
+        lock (_oLockCachedAnswers)
         {
             var proposition = new CachedDropTarget(targetModel, insertOption);
 

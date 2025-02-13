@@ -119,21 +119,19 @@ internal class DataExportPropertyManager : IDataExportPropertyManager
 
     private void RefreshCache()
     {
-        var repo = (TableRepository)_repository;
-        using (var con = repo.GetConnection())
-        {
-            using var cmd = DatabaseCommandHelper.GetCommand("SELECT * from [ConfigurationProperties]",
-                con.Connection, con.Transaction);
-            using var reader = cmd.ExecuteReader();
-            _cacheDictionary.Clear();
+        TableRepository repo = _repository;
+        using var con = repo.GetConnection();
+        using var cmd = DatabaseCommandHelper.GetCommand("SELECT * from [ConfigurationProperties]",
+            con.Connection, con.Transaction);
+        using var reader = cmd.ExecuteReader();
+        _cacheDictionary.Clear();
 
-            //get cache of all answers
-            while (reader.Read())
-            {
-                var val = reader["Value"] as string;
-                _cacheDictionary.AddOrUpdate(reader["Property"].ToString(),
-                    val, (k, o) => val);
-            }
+        //get cache of all answers
+        while (reader.Read())
+        {
+            var val = reader["Value"] as string;
+            _cacheDictionary.AddOrUpdate(reader["Property"].ToString(),
+                val, (k, o) => val);
         }
 
         _cacheOutOfDate = false;

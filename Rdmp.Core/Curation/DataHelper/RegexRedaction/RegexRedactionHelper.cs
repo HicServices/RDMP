@@ -58,19 +58,17 @@ namespace Rdmp.Core.Curation.DataHelper.RegexRedaction
         public static string ConvertPotentialDateTimeObject(string value, string currentColumnType)
         {
             var matchValue = $"'{value}'";
-            if (currentColumnType == "datetime2" || currentColumnType == "datetime")
-            {
-                var x = DateTime.Parse(value);
-                var format = "yyyy-MM-dd HH:mm:ss:fff";
-                matchValue = $"'{x.ToString(format)}'";
-            }
+            if (currentColumnType is not ("datetime2" or "datetime")) return matchValue;
+
+            var x = DateTime.Parse(value);
+            const string format = "yyyy-MM-dd HH:mm:ss:fff";
+            matchValue = $"'{x.ToString(format)}'";
             return matchValue;
         }
 
-        public static string GetRedactionValue(string value, ColumnInfo column, DataRow m, List<CatalogueItem> _cataloguePKs, RegexRedactionConfiguration _redactionConfiguration, DataTable redactionsToSaveTable, DataTable pksToSave, DataTable redactionUpates)
+        private static string GetRedactionValue(string value, ColumnInfo column, DataRow m, List<CatalogueItem> _cataloguePKs, RegexRedactionConfiguration _redactionConfiguration, DataTable redactionsToSaveTable, DataTable pksToSave, DataTable redactionUpates)
         {
-
-            Dictionary<ColumnInfo, string> pkLookup = Enumerable.Range(0, _cataloguePKs.Count).ToDictionary(i => _cataloguePKs[i].ColumnInfo, i => m[i + 1].ToString());
+            var pkLookup = Enumerable.Range(0, _cataloguePKs.Count).ToDictionary(i => _cataloguePKs[i].ColumnInfo, i => m[i + 1].ToString());
             var matches = Regex.Matches(value, _redactionConfiguration.RegexPattern);
             var offset = 0;
             foreach (var match in matches)

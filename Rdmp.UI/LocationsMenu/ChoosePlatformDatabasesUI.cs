@@ -394,19 +394,23 @@ public partial class ChoosePlatformDatabasesUI : Form
                     // Load the stream
                     var yaml = new YamlStream();
                     yaml.Load(reader);
-                    var docs = yaml.Documents.First().AllNodes.Select(n => n.ToString());
+                    var docs = yaml.Documents.First().AllNodes.Select(static n => n.ToString()).ToList();
                     string catalogueConnectionString = null;
                     string dataExportConnectionString = null;
-                    foreach (var item in docs.Select((value, i) => new { i, value }))
+                    foreach (var item in docs.Select(static (value, i) => new { i, value }))
                     {
-                        var value = item.value;
-
-                        if (value == "CatalogueConnectionString") catalogueConnectionString = docs.ToList()[item.i + 1];
-                        if (value == "DataExportConnectionString") dataExportConnectionString = docs.ToList()[item.i + 1];
+                        switch (item.value)
+                        {
+                            case "CatalogueConnectionString":
+                                catalogueConnectionString = docs[item.i + 1];
+                                break;
+                            case "DataExportConnectionString":
+                                dataExportConnectionString = docs[item.i + 1];
+                                break;
+                        }
                     }
                     if (catalogueConnectionString != null) tbCatalogueConnectionString.Text = catalogueConnectionString;
                     if (dataExportConnectionString != null) tbDataExportManagerConnectionString.Text = dataExportConnectionString;
-
                 }
             }
             catch (Exception)
@@ -415,8 +419,7 @@ public partial class ChoosePlatformDatabasesUI : Form
                 tbCatalogueConnectionString.Text = null;
                 tbDataExportManagerConnectionString.Text = null;
             }
-
-        };
+        }
     }
 
     private void btnBrowseForCatalogue_Click(object sender, EventArgs e)

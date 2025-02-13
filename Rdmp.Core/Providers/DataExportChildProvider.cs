@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using FAnsi.Discovery;
 using Rdmp.Core.Caching.Pipeline;
@@ -72,7 +73,7 @@ public class DataExportChildProvider : CatalogueChildProvider
         new();
 
 
-    private readonly object _oProjectNumberToCohortsDictionary = new();
+    private readonly Lock _oProjectNumberToCohortsDictionaryLock = new();
     public Dictionary<int, List<ExtractableCohort>> ProjectNumberToCohortsDictionary = new();
 
     public ProjectCohortIdentificationConfigurationAssociation[] AllProjectAssociatedCics;
@@ -592,7 +593,7 @@ public class DataExportChildProvider : CatalogueChildProvider
                         //tell the cohort about the data
                         c.InjectKnown(externalData);
 
-                        lock (_oProjectNumberToCohortsDictionary)
+                        lock (_oProjectNumberToCohortsDictionaryLock)
                         {
                             //for performance also keep a dictionary of project number => compatible cohorts
                             if (!ProjectNumberToCohortsDictionary.ContainsKey(externalData.ExternalProjectNumber))

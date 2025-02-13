@@ -31,15 +31,17 @@ namespace Rdmp.Core.Tests.CommandExecution
             };
             pt1.SaveToDatabase();
 
-            pt1.CreateArgumentsForClassIfNotExists(typeof(AnySeparatorFileAttacher));
-            var pta = pt1.ProcessTaskArguments.Single(pt => pt.Name == "Separator");
+            pt1.CreateArgumentsForClassIfNotExists<AnySeparatorFileAttacher>();
+            var pta = pt1.ProcessTaskArguments.Single(static pt => pt.Name == "Separator");
             pta.SetValue(",");
             pta.SaveToDatabase();
-            LoadMetadata clonedLmd;
-            clonedLmd = lmd1.Clone();
-            Assert.That(clonedLmd.ProcessTasks.Count(), Is.EqualTo(1));
-            Assert.That(clonedLmd.Description, Is.EqualTo(lmd1.Description));
-            Assert.That(clonedLmd.ProcessTasks.First().ProcessTaskArguments.First().Value, Is.EqualTo(lmd1.ProcessTasks.First().ProcessTaskArguments.First().Value));
+            var clonedLmd = lmd1.Clone();
+            Assert.Multiple(() =>
+            {
+                Assert.That(clonedLmd.ProcessTasks.Count(), Is.EqualTo(1));
+                Assert.That(clonedLmd.Description, Is.EqualTo(lmd1.Description));
+                Assert.That(clonedLmd.ProcessTasks.First().ProcessTaskArguments.First().Value, Is.EqualTo(lmd1.ProcessTasks.First().ProcessTaskArguments.First().Value));
+            });
         }
     }
 }

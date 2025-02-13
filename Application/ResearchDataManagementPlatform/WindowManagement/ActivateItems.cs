@@ -387,11 +387,11 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         var floatable = WindowFactory.Create(this, RefreshBus, uiInstance, tabImage, databaseObject);
 
         int? insertIndex = null;
-        var panel = _mainDockPanel.Panes.Where(p => p.IsActiveDocumentPane).SingleOrDefault();
+        var panel = _mainDockPanel.Panes.SingleOrDefault(static p => p.IsActiveDocumentPane);
         if (panel is not null)
         {
             var contents = panel.Contents;
-            insertIndex = contents.IndexOf(panel.ActiveContent)+1;
+            insertIndex = contents.IndexOf(panel.ActiveContent) + 1;
         }
 
         floatable.Show(_mainDockPanel, DockState.Document);

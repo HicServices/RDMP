@@ -899,7 +899,7 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
                     $"Found {extractionInformations.Length} ExtractionInformation(s), preparing to validate SQL with QueryBuilder",
                     CheckResult.Success));
 
-            var accessContext = DataAccessContext.InternalDataProcessing;
+            const DataAccessContext accessContext = DataAccessContext.InternalDataProcessing;
 
             try
             {

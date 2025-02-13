@@ -275,23 +275,24 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
 
     private static void MorphBinaryColumns(DataTable table)
     {
-        var targetNames = table.Columns.Cast<DataColumn>()
-            .Where(col => col.DataType.Equals(typeof(byte[])))
-            .Select(col => col.ColumnName).ToList();
-        foreach (var colName in targetNames)
+        var dataColumns = table.Columns.Cast<DataColumn>()
+            .Where(static col => col.DataType == typeof(byte[]))
+            .ToList();
+        foreach (var column in dataColumns)
         {
             // add new column and put it where the old column was
-            var tmpName = "new";
-            table.Columns.Add(new DataColumn(tmpName, typeof(string)));
-            table.Columns[tmpName].SetOrdinal(table.Columns[colName].Ordinal);
+            const string tmpName = "new";
+            var newCol = new DataColumn(tmpName, typeof(string));
+            table.Columns.Add(newCol);
+            newCol.SetOrdinal(column.Ordinal);
 
             // fill in values in new column for every row
             foreach (DataRow row in table.Rows)
-                row[tmpName] = $"0x{string.Join("", ((byte[])row[colName]).Select(b => b.ToString("X2")).ToArray())}";
+                row[newCol] = $"0x{string.Join("", ((byte[])row[column]).Select(static b => b.ToString("X2")).ToArray())}";
 
             // cleanup
-            table.Columns.Remove(colName);
-            table.Columns[tmpName].ColumnName = colName;
+            table.Columns.Remove(column);
+            newCol.ColumnName = column.ColumnName;
         }
     }
 

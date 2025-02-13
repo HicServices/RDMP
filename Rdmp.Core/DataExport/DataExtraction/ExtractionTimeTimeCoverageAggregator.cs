@@ -164,7 +164,7 @@ public partial class ExtractionTimeTimeCoverageAggregator
     private void ExtendBucketsToEncompas(DateTime key)
     {
         var addCount = 0;
-        var somethingHasGoneWrongIfAddedThisManyBuckets = 100000;
+        const int somethingHasGoneWrongIfAddedThisManyBuckets = 100000;
 
         if (Buckets.Keys.Max() < key)
         {

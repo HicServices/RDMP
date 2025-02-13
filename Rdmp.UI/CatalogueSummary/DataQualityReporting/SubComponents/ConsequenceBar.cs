@@ -106,16 +106,15 @@ public partial class ConsequenceBar : UserControl
         e.Graphics.FillRectangle(bWrong, new Rectangle(missingRightPoint, 0, wrongWidth, heightOfNullsBarStart));
         e.Graphics.FillRectangle(bInvalid, new Rectangle(wrongRightPoint, 0, invalidWidth, heightOfNullsBarStart));
 
-        if (!string.IsNullOrWhiteSpace(Label))
-        {
-            var rect = e.Graphics.MeasureString(Label, Font);
+        if (string.IsNullOrWhiteSpace(Label)) return;
 
-            var textX = 0;
-            var textY = 2;
+        var rect = e.Graphics.MeasureString(Label, Font);
 
-            e.Graphics.FillRectangle(Brushes.LightGray, textX, textY, rect.Width, rect.Height);
-            e.Graphics.DrawString(Label, Font, Brushes.Black, textX, textY);
-        }
+        const int textX = 0;
+        const int textY = 2;
+
+        e.Graphics.FillRectangle(Brushes.LightGray, textX, textY, rect.Width, rect.Height);
+        e.Graphics.DrawString(Label, Font, Brushes.Black, textX, textY);
     }
 
     public void GenerateToolTip()

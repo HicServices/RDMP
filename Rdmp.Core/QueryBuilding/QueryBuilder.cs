@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
@@ -30,14 +31,14 @@ namespace Rdmp.Core.QueryBuilding;
 public class QueryBuilder : ISqlQueryBuilder
 {
     private readonly ITableInfo[] _forceJoinsToTheseTables;
-    private readonly object oSQLLock = new();
+    private readonly Lock _oSQLLock = new();
 
     /// <inheritdoc/>
     public string SQL
     {
         get
         {
-            lock (oSQLLock)
+            lock (_oSQLLock)
             {
                 if (SQLOutOfDate)
                     RegenerateSQL();

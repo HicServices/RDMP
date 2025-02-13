@@ -40,7 +40,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
     private readonly AttributePropertyFinder<UsefulPropertyAttribute> _usefulPropertyFinder;
 
     private const int MaxMatches = 500;
-    private object oMatches = new();
+    private readonly Lock _oMatches = new();
 
     private Task _lastFetchTask;
     private CancellationTokenSource _lastCancellationToken;
@@ -333,7 +333,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         if (rowObject is not IMapsDirectlyToDatabaseTable m)
             return null;
 
-        lock (oMatches)
+        lock (_oMatches)
         {
             if (_searchables?.TryGetValue(m, out var searchable) != true) return null;
 
@@ -349,7 +349,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         if (rowObject is not IMapsDirectlyToDatabaseTable m)
             return null;
 
-        lock (oMatches)
+        lock (_oMatches)
         {
             if (_searchables?.TryGetValue(m, out var descendancy) == true)
                 return descendancy != null
@@ -565,7 +565,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
             return;
         }
 
-        lock (oMatches)
+        lock (_oMatches)
         {
             _tempMatches = SearchablesMatchScorer.ShortList(scores, MaxMatches, _activator);
         }
@@ -665,7 +665,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
     {
         var button = (ToolStripButton)sender;
 
-        var togglingType = (Type)button.Tag; ;
+        var togglingType = (Type)button.Tag;
 
         if (button.Checked)
             if (showOnlyEnums.TryGetValue(togglingType, out var value))
@@ -726,7 +726,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
                             return;
 
                         if (s.IsCompleted)
-                            lock (oMatches)
+                            lock (_oMatches)
                             {
                                 // updates the list
                                 _matches = _tempMatches;
@@ -745,7 +745,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
     public object GetNthObject(int n)
     {
-        lock (oMatches)
+        lock (_oMatches)
         {
             return n >= _objectsToDisplay.Count ? null : _objectsToDisplay[n];
         }
@@ -754,7 +754,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
     public int GetObjectCount()
     {
-        lock (oMatches)
+        lock (_oMatches)
         {
             // regenerate the _toDisplayList because the state has changed
             if (stateChanged)

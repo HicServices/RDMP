@@ -35,16 +35,18 @@ namespace Rdmp.Core.Tests.CommandExecution
             };
             pt1.SaveToDatabase();
 
-            pt1.CreateArgumentsForClassIfNotExists(typeof(AnySeparatorFileAttacher));
-            var pta = pt1.ProcessTaskArguments.Single(pt => pt.Name == "Separator");
+            pt1.CreateArgumentsForClassIfNotExists<AnySeparatorFileAttacher>();
+            var pta = pt1.ProcessTaskArguments.Single(static pt => pt.Name == "Separator");
             pta.SetValue(",");
             pta.SaveToDatabase();
-            LoadMetadata clonedLmd;
-            clonedLmd = (LoadMetadata)lmd1.SaveNewVersion();
-            Assert.That(clonedLmd.ProcessTasks.Count(), Is.EqualTo(1));
-            Assert.That(clonedLmd.RootLoadMetadata_ID, Is.EqualTo(lmd1.ID));
-            Assert.That(clonedLmd.Description, Is.EqualTo(lmd1.Description));
-            Assert.That(clonedLmd.ProcessTasks.First().ProcessTaskArguments.First().Value, Is.EqualTo(lmd1.ProcessTasks.First().ProcessTaskArguments.First().Value));
+            var clonedLmd = (LoadMetadata)lmd1.SaveNewVersion();
+            Assert.Multiple(() =>
+            {
+                Assert.That(clonedLmd.ProcessTasks.Count(), Is.EqualTo(1));
+                Assert.That(clonedLmd.RootLoadMetadata_ID, Is.EqualTo(lmd1.ID));
+                Assert.That(clonedLmd.Description, Is.EqualTo(lmd1.Description));
+                Assert.That(clonedLmd.ProcessTasks.First().ProcessTaskArguments.First().Value, Is.EqualTo(lmd1.ProcessTasks.First().ProcessTaskArguments.First().Value));
+            });
             pt1.DeleteInDatabase();
             var fetchedlmd = CatalogueRepository.GetObjectByID<LoadMetadata>(lmd1.ID);
             Assert.That(fetchedlmd.ProcessTasks.Count(), Is.EqualTo(0));

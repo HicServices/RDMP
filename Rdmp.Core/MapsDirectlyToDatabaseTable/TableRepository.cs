@@ -36,8 +36,8 @@ public abstract class TableRepository : ITableRepository
     protected DbConnectionStringBuilder _connectionStringBuilder;
     public IObscureDependencyFinder ObscureDependencyFinder { get; set; }
 
-    private static object _oLockUpdateCommands = new();
-    private UpdateCommandStore _updateCommandStore = new();
+    private static readonly Lock OLockUpdateCommands = new();
+    private readonly UpdateCommandStore _updateCommandStore = new();
     public bool SupportsCommits => true;
 
     //'accessors'
@@ -77,7 +77,7 @@ public abstract class TableRepository : ITableRepository
             _logger.Debug(
                 $"Deleted,{oTableWrapperObject.GetType().Name},{oTableWrapperObject.ID},{oTableWrapperObject}");
 
-        lock (_oLockUpdateCommands)
+        lock (OLockUpdateCommands)
         {
             //if the repository has obscure dependencies
             ObscureDependencyFinder
@@ -131,7 +131,7 @@ public abstract class TableRepository : ITableRepository
             _logger.Debug(
                 $"Save,{oTableWrapperObject.GetType().Name},{oTableWrapperObject.ID},{c.Property},{c.DatabaseValue},{c.LocalValue}");
 
-        lock (_oLockUpdateCommands)
+        lock (OLockUpdateCommands)
         {
             using var managedConnection = GetConnection();
             var cmd = GetUpdateCommandFromStore(oTableWrapperObject.GetType(), managedConnection);
@@ -667,9 +667,9 @@ public abstract class TableRepository : ITableRepository
         Inserting?.Invoke(this, new IMapsDirectlyToDatabaseTableEventArgs(toCreate));
     }
 
-    private object ongoingConnectionsLock = new();
-    private readonly Dictionary<Thread, IManagedConnection> ongoingConnections = new();
-    private readonly Dictionary<Thread, IManagedTransaction> ongoingTransactions = new();
+    private readonly Lock _ongoingConnectionsLock = new();
+    private readonly Dictionary<Thread, IManagedConnection> _ongoingConnections = new();
+    private readonly Dictionary<Thread, IManagedTransaction> _ongoingTransactions = new();
 
 
     public IManagedConnection GetConnection()
@@ -695,7 +695,7 @@ public abstract class TableRepository : ITableRepository
         ongoingConnection = DiscoveredServer.GetManagedConnection(ongoingTransaction);
 
         //record as the active connection on this thread
-        ongoingConnections[Thread.CurrentThread] = ongoingConnection;
+        _ongoingConnections[Thread.CurrentThread] = ongoingConnection;
 
         return ongoingConnection;
     }
@@ -703,15 +703,15 @@ public abstract class TableRepository : ITableRepository
     private void GetOngoingActivitiesFromThreadsDictionary(out IManagedConnection ongoingConnection,
         out IManagedTransaction ongoingTransaction)
     {
-        lock (ongoingConnectionsLock)
+        lock (_ongoingConnectionsLock)
         {
             //see if Thread dictionary has it
-            if (!ongoingConnections.TryGetValue(Thread.CurrentThread, out ongoingConnection))
-                ongoingConnections.Add(Thread.CurrentThread, null);
+            if (!_ongoingConnections.TryGetValue(Thread.CurrentThread, out ongoingConnection))
+                _ongoingConnections.Add(Thread.CurrentThread, null);
 
             //see if Thread dictionary has it
-            if (!ongoingTransactions.TryGetValue(Thread.CurrentThread, out ongoingTransaction))
-                ongoingTransactions.Add(Thread.CurrentThread, null);
+            if (!_ongoingTransactions.TryGetValue(Thread.CurrentThread, out ongoingTransaction))
+                _ongoingTransactions.Add(Thread.CurrentThread, null);
         }
     }
 
@@ -725,9 +725,9 @@ public abstract class TableRepository : ITableRepository
 
         var toReturn = DiscoveredServer.BeginNewTransactedConnection();
         ongoingTransaction = toReturn.ManagedTransaction;
-        ongoingTransactions[Thread.CurrentThread] = ongoingTransaction;
+        _ongoingTransactions[Thread.CurrentThread] = ongoingTransaction;
 
-        ongoingConnections[Thread.CurrentThread] = toReturn;
+        _ongoingConnections[Thread.CurrentThread] = toReturn;
         if (DiscoveredServer.DatabaseType == DatabaseType.MicrosoftSQLServer)
         {
             using var cmd = toReturn.Connection.CreateCommand();
@@ -756,14 +756,14 @@ public abstract class TableRepository : ITableRepository
         else
             ongoingTransaction.AbandonAndCloseConnection();
 
-        ongoingConnections[Thread.CurrentThread] = null;
-        ongoingTransactions[Thread.CurrentThread] = null;
+        _ongoingConnections[Thread.CurrentThread] = null;
+        _ongoingTransactions[Thread.CurrentThread] = null;
     }
 
 
     public void ClearUpdateCommandCache()
     {
-        lock (_oLockUpdateCommands)
+        lock (OLockUpdateCommands)
         {
             _updateCommandStore.Clear();
         }
@@ -773,8 +773,8 @@ public abstract class TableRepository : ITableRepository
 
     public DateTime? ObjectToNullableDateTime(object o) => o == null || o == DBNull.Value ? null : (DateTime)o;
 
-    private Dictionary<Type, bool> _knownSupportedTypes = new();
-    private object oLockKnownTypes = new();
+    private readonly Dictionary<Type, bool> _knownSupportedTypes = new();
+    private readonly Lock _oLockKnownTypes = new();
 
     public bool SupportsObjectType(Type type)
     {
@@ -782,7 +782,7 @@ public abstract class TableRepository : ITableRepository
             throw new NotSupportedException(
                 "This method can only be passed Types derived from IMapsDirectlyToDatabaseTable");
 
-        lock (oLockKnownTypes)
+        lock (_oLockKnownTypes)
         {
             if (!_knownSupportedTypes.ContainsKey(type))
                 _knownSupportedTypes.Add(type, DiscoveredServer.GetCurrentDatabase().ExpectTable(type.Name).Exists());

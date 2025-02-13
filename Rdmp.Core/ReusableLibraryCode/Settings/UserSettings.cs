@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using FAnsi.Discovery;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 
@@ -550,7 +551,7 @@ public static class UserSettings
 
     public static Tuple<string, bool> GetLastColumnSortForCollection(Guid controlGuid)
     {
-        lock (_oLockUserSettings)
+        lock (OLockUserSettings)
         {
             var value = AppSettings.GetValueOrDefault($"LastColumnSort_{controlGuid:N}", null);
 
@@ -575,11 +576,11 @@ public static class UserSettings
         return null;
     }
 
-    private static object _oLockUserSettings = new();
+    private static readonly Lock OLockUserSettings = new();
 
     public static void SetLastColumnSortForCollection(Guid controlGuid, string columnName, bool ascending)
     {
-        lock (_oLockUserSettings)
+        lock (OLockUserSettings)
         {
             AppSettings.AddOrUpdateValue($"LastColumnSort_{controlGuid:N}", $"{columnName}#!#{ascending}");
         }
@@ -603,7 +604,7 @@ public static class UserSettings
     /// <param name="splitterDistance"></param>
     public static void SetSplitterDistance(Guid controlGuid, int splitterDistance)
     {
-        lock (_oLockUserSettings)
+        lock (OLockUserSettings)
         {
             AppSettings.AddOrUpdateValue($"SplitterDistance_{controlGuid:N}", splitterDistance);
         }

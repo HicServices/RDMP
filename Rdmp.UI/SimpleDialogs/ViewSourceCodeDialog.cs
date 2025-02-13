@@ -11,6 +11,7 @@ using System.Drawing;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Threading;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using Rdmp.UI.ScintillaHelper;
@@ -27,13 +28,13 @@ public partial class ViewSourceCodeDialog : Form
 {
     private readonly Scintilla _queryEditor;
 
-    private static readonly HashSet<FileInfo> SupplementalSourceZipFiles = new();
-    private static readonly object oSupplementalSourceZipFilesLock = new();
+    private static readonly HashSet<FileInfo> SupplementalSourceZipFiles = [];
+    private static readonly Lock OSupplementalSourceZipFilesLock = new();
     private const string MainSourceCodeRepo = "SourceCodeForSelfAwareness.zip";
 
     public static void AddSupplementalSourceZipFile(FileInfo f)
     {
-        lock (oSupplementalSourceZipFilesLock)
+        lock (OSupplementalSourceZipFilesLock)
         {
             SupplementalSourceZipFiles.Add(f);
         }
@@ -66,7 +67,7 @@ public partial class ViewSourceCodeDialog : Form
 
     private void LoadSourceCode(string toFind, int lineNumber, Color highlightColor)
     {
-        lock (oSupplementalSourceZipFilesLock)
+        lock (OSupplementalSourceZipFilesLock)
         {
             var readToEnd = GetSourceForFile(toFind);
 

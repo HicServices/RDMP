@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
+using System.Threading;
 
 namespace Rdmp.Core.ReusableLibraryCode.Checks;
 
@@ -18,7 +19,7 @@ public class ToMemoryCheckNotifier : ICheckNotifier
     private readonly ICheckNotifier _childToPassEventsTo;
     public List<CheckEventArgs> Messages { get; } = new();
 
-    private readonly object _lockList = new();
+    private readonly Lock _lockList = new();
 
     private CheckResult _worst = CheckResult.Success;
 
@@ -31,7 +32,6 @@ public class ToMemoryCheckNotifier : ICheckNotifier
     public ToMemoryCheckNotifier(ICheckNotifier childToPassEventsTo)
     {
         _childToPassEventsTo = childToPassEventsTo;
-        Messages = new List<CheckEventArgs>();
     }
 
     public ToMemoryCheckNotifier()
@@ -40,22 +40,16 @@ public class ToMemoryCheckNotifier : ICheckNotifier
 
     public bool OnCheckPerformed(CheckEventArgs args)
     {
-        var fix = false;
-        if (_childToPassEventsTo != null)
-        {
-            fix = _childToPassEventsTo.OnCheckPerformed(args);
+        var fix = _childToPassEventsTo?.OnCheckPerformed(args) == true;
 
-            //if child accepted the fix
-            if (fix && !string.IsNullOrWhiteSpace(args.ProposedFix) && args.Result == CheckResult.Fail)
-                args.Result = CheckResult.Warning;
-        }
+        //if child accepted the fix that reduces a Fail to a Warning
+        if (fix && !string.IsNullOrWhiteSpace(args.ProposedFix) && args.Result == CheckResult.Fail)
+            args.Result = CheckResult.Warning;
 
-        lock (_lockList)
-        {
-            if (args.Result > _worst)
-                _worst = args.Result;
-            Messages.Add(args);
-        }
+        if (args.Result > _worst)
+            _worst = args.Result;
+
+        lock (_lockList) Messages.Add(args);
 
         return fix;
     }

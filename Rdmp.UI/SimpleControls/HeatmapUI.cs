@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows.Forms;
 using Rdmp.Core.ReusableLibraryCode.Settings;
 using Rdmp.UI.SimpleDialogs;
@@ -70,7 +71,7 @@ public partial class HeatmapUI : UserControl
 
     private double _currentLabelsWidth;
 
-    private object oDataTableLock = new();
+    private readonly Lock _oDataTableLock = new();
 
     public HeatmapUI()
     {
@@ -109,7 +110,7 @@ public partial class HeatmapUI : UserControl
             }
         }
 
-        lock (oDataTableLock)
+        lock (_oDataTableLock)
         {
             _dataTable = dataTable;
 
@@ -184,7 +185,7 @@ public partial class HeatmapUI : UserControl
         _lastHoverTickCount = Environment.TickCount;
         object value = null;
 
-        lock (oDataTableLock)
+        lock (_oDataTableLock)
         {
             value = GetValueFromClientPosition(pos);
         }
@@ -241,7 +242,7 @@ public partial class HeatmapUI : UserControl
             return;
         try
         {
-            lock (oDataTableLock)
+            lock (_oDataTableLock)
             {
                 //draw background
                 e.Graphics.FillRectangle(Brushes.White, new Rectangle(0, 0, Width, Height));
@@ -400,7 +401,7 @@ public partial class HeatmapUI : UserControl
 
     public void Clear()
     {
-        lock (oDataTableLock)
+        lock (_oDataTableLock)
         {
             _dataTable = null;
         }

@@ -49,7 +49,7 @@ public class RelationshipAttribute : Attribute
 
     #region Equality Members
 
-    protected bool Equals(RelationshipAttribute other) => base.Equals(other) && Equals(Cref, other.Cref) &&
+    protected bool Equals(RelationshipAttribute other) => base.Equals(other) && Cref == other.Cref &&
                                                           string.Equals(PropertyName, other.PropertyName);
 
     public override bool Equals(object obj)

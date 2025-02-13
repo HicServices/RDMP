@@ -6,6 +6,7 @@
 
 using System;
 using System.Drawing;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace Rdmp.UI.SimpleDialogs;
@@ -16,16 +17,16 @@ namespace Rdmp.UI.SimpleDialogs;
 [TechnicalUI]
 public class YesNoYesToAllDialog : WideMessageBox
 {
-    private bool YesToAllClicked;
-    private bool NoToAllClicked;
-    private object lockShowDialog = new();
+    private bool _yesToAllClicked;
+    private bool _noToAllClicked;
+    private readonly Lock _lockShowDialog = new();
 
 
     private FlowLayoutPanel p = new();
-    private Button btnYes = new() { Text = "Yes" };
-    private Button btnYesToAll = new() { Text = "Yes To All" };
-    private Button btnNo = new() { Text = "No" };
-    private Button btnNoToAll = new() { Text = "No To All" };
+    private readonly Button _btnYes = new() { Text = "Yes" };
+    private readonly Button _btnYesToAll = new() { Text = "Yes To All" };
+    private readonly Button _btnNo = new() { Text = "No" };
+    private readonly Button _btnNoToAll = new() { Text = "No To All" };
 
     /// <summary>
     /// The number of pixels to allow outside of the text width when auto sizing buttons
@@ -39,10 +40,10 @@ public class YesNoYesToAllDialog : WideMessageBox
 
     private YesNoYesToAllDialog(WideMessageBoxArgs wideMessageBoxArgs) : base(wideMessageBoxArgs)
     {
-        AddButton(btnYes);
-        AddButton(btnYesToAll);
-        AddButton(btnNo);
-        AddButton(btnNoToAll);
+        AddButton(_btnYes);
+        AddButton(_btnYesToAll);
+        AddButton(_btnNo);
+        AddButton(_btnNoToAll);
 
         p.Dock = DockStyle.Fill;
 
@@ -64,9 +65,9 @@ public class YesNoYesToAllDialog : WideMessageBox
 
     private new DialogResult ShowDialog()
     {
-        if (YesToAllClicked)
+        if (_yesToAllClicked)
             return DialogResult.Yes;
-        if (NoToAllClicked)
+        if (_noToAllClicked)
             return DialogResult.No;
 
         return InvokeRequired ? Invoke(ShowDialog) : base.ShowDialog();
@@ -81,7 +82,7 @@ public class YesNoYesToAllDialog : WideMessageBox
         Args.Message = message;
         Setup(Args);
 
-        lock (lockShowDialog)
+        lock (_lockShowDialog)
         {
             return ShowDialog();
         }
@@ -89,22 +90,22 @@ public class YesNoYesToAllDialog : WideMessageBox
 
     private void btn_Click(object sender, EventArgs e)
     {
-        if (sender == btnYes)
+        if (sender == _btnYes)
         {
             DialogResult = DialogResult.Yes;
         }
-        else if (sender == btnNo)
+        else if (sender == _btnNo)
         {
             DialogResult = DialogResult.No;
         }
-        else if (sender == btnYesToAll)
+        else if (sender == _btnYesToAll)
         {
-            YesToAllClicked = true;
+            _yesToAllClicked = true;
             DialogResult = DialogResult.Yes;
         }
-        else if (sender == btnNoToAll)
+        else if (sender == _btnNoToAll)
         {
-            NoToAllClicked = true;
+            _noToAllClicked = true;
             DialogResult = DialogResult.No;
         }
 

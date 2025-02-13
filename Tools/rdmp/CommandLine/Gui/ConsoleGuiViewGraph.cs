@@ -274,7 +274,7 @@ internal class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
     {
         var numberOfBars = dt.Columns.Count - 1;
         var colors = GetColors(numberOfBars).ToArray();
-        var mediumStiple = '\u2592';
+        const char mediumStiple = '\u2592';
         graphView.GraphColor = Driver.MakeAttribute(Color.White, Color.Black);
 
         // Configure legend

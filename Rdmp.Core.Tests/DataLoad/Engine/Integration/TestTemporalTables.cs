@@ -7,6 +7,7 @@
 using System.Data;
 using System.IO;
 using System.Linq;
+using FAnsi;
 using NUnit.Framework;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
@@ -48,7 +49,7 @@ INSERT INTO Employee(EmployeeID,Name,Position,Department,Address,AnnualSalary) V
     [TestCase(false)]
     public void TestTemporalTable(bool ignoreWithGlobalPattern)
     {
-        var dbtype = FAnsi.DatabaseType.MicrosoftSQLServer;
+        const DatabaseType dbtype = FAnsi.DatabaseType.MicrosoftSQLServer;
         var db = GetCleanedServer(dbtype);
 
         using (var con = db.Server.GetConnection())

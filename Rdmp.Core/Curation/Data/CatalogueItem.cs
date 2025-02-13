@@ -336,12 +336,12 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
             GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
         //Assign all source property to target object 's properties
-        foreach (var property in propertyInfo)
-            //Check whether property can be written to
-            if (property.CanWrite && !property.Name.Equals("ID") && !property.Name.Equals("Catalogue_ID"))
-                if (property.PropertyType.IsValueType || property.PropertyType.IsEnum ||
-                    property.PropertyType.Equals(typeof(string)))
-                    property.SetValue(clone, property.GetValue(this, null), null);
+        foreach (var property in propertyInfo
+                     .Where(static property =>
+                         (property.CanWrite && !property.Name.Equals("ID") && !property.Name.Equals("Catalogue_ID")) &&
+                         (property.PropertyType.IsValueType || property.PropertyType.IsEnum ||
+                          property.PropertyType == typeof(string))))
+            property.SetValue(clone, property.GetValue(this, null), null);
 
         clone.SaveToDatabase();
 

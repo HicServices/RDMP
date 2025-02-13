@@ -7,19 +7,20 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 public static class NewObjectPool
 {
-    private static Scope CurrentScope;
-    private static object currentScopeLock = new();
+    private static Scope _currentScope;
+    private static readonly Lock currentScopeLock = new();
 
     public static void Add(IMapsDirectlyToDatabaseTable toCreate)
     {
         lock (currentScopeLock)
         {
-            CurrentScope?.Objects.Add(toCreate);
+            _currentScope?.Objects.Add(toCreate);
         }
     }
 
@@ -37,7 +38,7 @@ public static class NewObjectPool
             //prevent multiple enumeration
             var fromArray = from.ToArray();
 
-            return CurrentScope?.Objects.AsEnumerable().Reverse().FirstOrDefault(fromArray.Contains);
+            return _currentScope?.Objects.LastOrDefault(fromArray.Contains);
         }
     }
 
@@ -51,9 +52,9 @@ public static class NewObjectPool
     {
         lock (currentScopeLock)
         {
-            return CurrentScope != null
+            return _currentScope != null
                 ? throw new Exception("An existing session is already underway")
-                : (IDisposable)(CurrentScope = new Scope());
+                : (IDisposable)(_currentScope = new Scope());
         }
     }
 
@@ -61,11 +62,11 @@ public static class NewObjectPool
     {
         lock (currentScopeLock)
         {
-            CurrentScope = null;
+            _currentScope = null;
         }
     }
 
-    private class Scope : IDisposable
+    private sealed class Scope : IDisposable
     {
         public List<IMapsDirectlyToDatabaseTable> Objects { get; set; } = new();
 

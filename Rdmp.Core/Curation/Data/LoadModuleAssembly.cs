@@ -117,17 +117,14 @@ public sealed class LoadModuleAssembly
     /// <returns></returns>
     internal static IEnumerable<string> PluginFiles()
     {
-        if (Directory.EnumerateFiles(AppDomain.CurrentDomain.BaseDirectory, "*.rdmp").Count() > 0)
-        {
-            //use the modern .RDMP plugins
-            var plugins = HandlePluginVersioning();
-            return plugins.Values.ToArray();
-
-        }
-        return File.Exists(PluginsList)
-            ? File.ReadAllLines(PluginsList)
-                .Select(static name => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, name))
-            : Directory.EnumerateFiles(AppDomain.CurrentDomain.BaseDirectory, "*.nupkg");
+        if (!Directory.EnumerateFiles(AppDomain.CurrentDomain.BaseDirectory, "*.rdmp").Any())
+            return File.Exists(PluginsList)
+                ? File.ReadAllLines(PluginsList)
+                    .Select(static name => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, name))
+                : Directory.EnumerateFiles(AppDomain.CurrentDomain.BaseDirectory, "*.nupkg");
+        //use the modern .RDMP plugins
+        var plugins = HandlePluginVersioning();
+        return plugins.Values.ToArray();
     }
 
     /// <summary>

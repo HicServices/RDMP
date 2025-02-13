@@ -465,7 +465,7 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         if (Tree.Parent == null || collection == RDMPCollection.None)
             return;
 
-        var indicatorHeight = BackColorProvider.IndicatorBarSuggestedHeight;
+        const int indicatorHeight = BackColorProvider.IndicatorBarSuggestedHeight;
 
         var ctrl = new Control
         {

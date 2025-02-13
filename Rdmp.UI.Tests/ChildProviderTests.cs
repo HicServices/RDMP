@@ -68,7 +68,7 @@ internal class ChildProviderTests : UITests
         var cp2 = new DataExportChildProvider(RepositoryLocator, null, ThrowImmediatelyCheckNotifier.Quiet, null);
 
         //to start with let's make sure all fields and properties are different on the two classes except where we expect them to be the same
-        var bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
+        const BindingFlags bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
 
         foreach (var prop in typeof(DataExportChildProvider).GetProperties().Where(p => !skip.Contains(p.Name)))
         {

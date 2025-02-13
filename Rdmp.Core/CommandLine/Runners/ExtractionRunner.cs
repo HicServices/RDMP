@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.Curation.Data;
@@ -40,7 +41,7 @@ public class ExtractionRunner : ManyRunner
     private ExtractGlobalsCommand _globalsCommand;
     private Pipeline _pipeline;
     private LogManager _logManager;
-    private object _oLock = new();
+    private readonly Lock _oLock = new();
     public Dictionary<ISelectedDataSets, ExtractCommand> ExtractCommands { get; private set; }
 
     public ExtractionRunner(IBasicActivateItems activator, ExtractionOptions extractionOpts) : base(extractionOpts)

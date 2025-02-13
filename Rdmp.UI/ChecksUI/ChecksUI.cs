@@ -202,12 +202,12 @@ public partial class ChecksUI : UserControl, ICheckNotifier
         return shouldApplyFix;
     }
 
-    private object olockYesNoToAll = new();
+    private readonly Lock _olockYesNoToAll = new();
 
     private bool DoesUserWantToApplyFix(CheckEventArgs args)
     {
         if (InvokeRequired)
-            lock (olockYesNoToAll)
+            lock (_olockYesNoToAll)
             {
                 return Invoke(() => DoesUserWantToApplyFix(args));
             }

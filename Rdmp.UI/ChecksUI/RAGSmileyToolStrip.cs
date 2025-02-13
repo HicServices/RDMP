@@ -7,11 +7,13 @@
 using System;
 using System.Drawing;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.UI.SimpleDialogs;
+using Timer = System.Windows.Forms.Timer;
 
 namespace Rdmp.UI.ChecksUI;
 
@@ -84,7 +86,7 @@ public sealed class RAGSmileyToolStrip : ToolStripButton, IRAGSmiley
 
     private ToMemoryCheckNotifier memoryCheckNotifier = new();
     private Task _checkTask;
-    private readonly object _oTaskLock = new();
+    private readonly Lock _oTaskLock = new();
     private readonly Timer _timer;
 
     protected override void OnClick(EventArgs e)

@@ -21,7 +21,7 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations;
 /// Trigger implementer for that creates archive triggers on tables.  This is a prerequisite for the RDMP DLE and ensures that
 /// when updates in a load replace live records the old state is persisted.
 /// </summary>
-public abstract class TriggerImplementer : ITriggerImplementer
+public abstract partial class TriggerImplementer : ITriggerImplementer
 {
     protected readonly bool _createDataLoadRunIdAlso;
 
@@ -144,10 +144,10 @@ public abstract class TriggerImplementer : ITriggerImplementer
         createTableSQL = createTableSQL.Replace(toReplaceTableName,
             $"CREATE TABLE {_archiveTable.GetFullyQualifiedName()}");
 
-        var toRemoveIdentities = "IDENTITY\\(\\d+,\\d+\\)";
+        const string toRemoveIdentities = "IDENTITY\\(\\d+,\\d+\\)";
 
         //drop identity bit
-        createTableSQL = Regex.Replace(createTableSQL, toRemoveIdentities, "");
+        createTableSQL = RemoveIdentities().Replace(createTableSQL, "");
 
         return createTableSQL;
     }
@@ -206,7 +206,11 @@ public abstract class TriggerImplementer : ITriggerImplementer
         if (t1.Equals(t2, StringComparison.CurrentCultureIgnoreCase))
             return true;
 
-        return t1.ToLower().Contains("identity") &&
-               t1.ToLower().Replace("identity", "").Trim().Equals(t2.ToLower().Trim());
+        return t1.Contains("identity", StringComparison.OrdinalIgnoreCase) &&
+               t1.Replace("identity", "", StringComparison.OrdinalIgnoreCase).Trim()
+                   .Equals(t2.Trim(), StringComparison.OrdinalIgnoreCase);
     }
+
+    [GeneratedRegex(@"IDENTITY\(\d+,\d+\)")]
+    private static partial Regex RemoveIdentities();
 }

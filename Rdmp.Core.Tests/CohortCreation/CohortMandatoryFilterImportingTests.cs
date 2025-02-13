@@ -92,7 +92,7 @@ public class CohortMandatoryFilterImportingTests : CohortIdentificationTests
     [TestCase(false)]
     public void ImportCatalogueWithSingleFilterThatHasAParameter(bool createAGlobalOverrideBeforeHand)
     {
-        var parameterSQL = "DECLARE @dragonCount as varchar(100)";
+        const string parameterSQL = "DECLARE @dragonCount as varchar(100)";
 
         var filter = new ExtractionFilter(CatalogueRepository, "MyMandatoryFilter", testData.extractionInformations[0])
         {

@@ -142,8 +142,8 @@ public abstract class FlatFileAttacher : Attacher, IPluginAttacher
         con.Open();
 
         //now we will read data out of the file in batches
-        var batchNumber = 1;
-        var maxBatchSize = 10000;
+        const int batchNumber = 1;
+        const int maxBatchSize = 10000;
         var recordsCreatedSoFar = 0;
 
         try

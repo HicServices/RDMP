@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Threading;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using Rdmp.Core.Icons.IconProvision;
@@ -17,6 +18,7 @@ using Rdmp.Core.ReusableLibraryCode.Settings;
 using Rdmp.UI.Collections;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.Theme;
+using Timer = System.Windows.Forms.Timer;
 
 namespace Rdmp.UI.Progress;
 
@@ -151,9 +153,9 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
     }
 
     private readonly Dictionary<object, HashSet<string>> _jobsReceivedFromSender = new();
-    private readonly object _oProgressQueueLock = new();
+    private readonly Lock _oProgressQueueLock = new();
     private readonly Dictionary<string, QueuedProgressMessage> _progressQueue = new();
-    private readonly object _oNotifyQueLock = new();
+    private readonly Lock _oNotifyQueLock = new();
     private readonly List<ProgressUIEntry> _notificationQueue = new();
 
     public void Progress(object sender, ProgressEventArgs args)

@@ -17,7 +17,7 @@ using WeifenLuo.WinFormsUI.Docking;
 namespace ResearchDataManagementPlatform.WindowManagement.WindowArranging;
 
 /// <inheritdoc/>
-public class WindowArranger : IArrangeWindows
+public partial class WindowArranger : IArrangeWindows
 {
     private readonly IActivateItems _activator;
     private readonly WindowManager _windowManager;
@@ -57,10 +57,12 @@ public class WindowArranger : IArrangeWindows
 
     private static bool AreBasicallyTheSameLayout(string oldXml, string newXml)
     {
-        var patStripActive = @"Active.*=[""\-\d]*";
-        oldXml = Regex.Replace(oldXml, patStripActive, "");
-        newXml = Regex.Replace(newXml, patStripActive, "");
+        oldXml = StripActive().Replace(oldXml, "");
+        newXml = StripActive().Replace(newXml, "");
 
-        return oldXml.Equals(newXml, StringComparison.CurrentCultureIgnoreCase);
+        return oldXml.Equals(newXml, StringComparison.OrdinalIgnoreCase);
     }
+
+    [GeneratedRegex(@"Active.*=[""\-\d]*")]
+    private static partial Regex StripActive();
 }

@@ -87,6 +87,8 @@ public class DocXHelper
 
             if (fontSize != -1)
                 run.FontSize = fontSize;
+
+            first = false;
         }
     }
 

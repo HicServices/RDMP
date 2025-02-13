@@ -8,23 +8,24 @@ using System;
 using System.IO;
 using System.IO.IsolatedStorage;
 using System.Linq;
+using System.Threading;
 
 namespace Rdmp.Core.ReusableLibraryCode.Settings;
 
 internal sealed class RDMPApplicationSettings
 {
-    private readonly IsolatedStorageFile store;
-    private readonly object locker = new();
+    private readonly IsolatedStorageFile _store;
+    private readonly Lock _locker = new();
 
     public RDMPApplicationSettings()
     {
         try
         {
-            store = IsolatedStorageFile.GetUserStoreForApplication();
+            _store = IsolatedStorageFile.GetUserStoreForApplication();
         }
         catch (Exception)
         {
-            store = IsolatedStorageFile.GetUserStoreForAssembly();
+            _store = IsolatedStorageFile.GetUserStoreForAssembly();
         }
     }
 
@@ -62,7 +63,7 @@ internal sealed class RDMPApplicationSettings
             type != typeof(long) &&
             type != typeof(byte)) throw new ArgumentException($"Value of type {type.Name} is not supported.");
 
-        lock (locker)
+        lock (_locker)
         {
             string str;
 
@@ -82,14 +83,14 @@ internal sealed class RDMPApplicationSettings
 
             string oldValue = null;
 
-            if (store.FileExists(key))
+            if (_store.FileExists(key))
             {
-                using var stream = store.OpenFile(key, FileMode.Open);
+                using var stream = _store.OpenFile(key, FileMode.Open);
                 using var sr = new StreamReader(stream);
                 oldValue = sr.ReadToEnd();
             }
 
-            using (var stream = store.OpenFile(key, FileMode.Create, FileAccess.Write))
+            using (var stream = _store.OpenFile(key, FileMode.Create, FileAccess.Write))
             {
                 using var sw = new StreamWriter(stream);
                 sw.Write(str);
@@ -109,16 +110,16 @@ internal sealed class RDMPApplicationSettings
     private T GetValueOrDefaultInternal<T>(string key, T defaultValue = default)
     {
         object value = null;
-        lock (locker)
+        lock (_locker)
         {
             try
             {
                 string str = null;
 
                 // If the key exists, retrieve the value.
-                if (store.FileExists(key))
+                if (_store.FileExists(key))
                 {
-                    using var stream = store.OpenFile(key, FileMode.Open);
+                    using var stream = _store.OpenFile(key, FileMode.Open);
                     using var sr = new StreamReader(stream);
                     str = sr.ReadToEnd();
                 }
@@ -216,8 +217,8 @@ internal sealed class RDMPApplicationSettings
     /// <param name="key">Key to remove</param>
     public void Remove(string key)
     {
-        if (store.FileExists(key))
-            store.DeleteFile(key);
+        if (_store.FileExists(key))
+            _store.DeleteFile(key);
     }
 
     /// <summary>
@@ -227,7 +228,7 @@ internal sealed class RDMPApplicationSettings
     {
         try
         {
-            foreach (var file in store.GetFileNames()) store.DeleteFile(file);
+            foreach (var file in _store.GetFileNames()) _store.DeleteFile(file);
         }
         catch (Exception ex)
         {
@@ -240,7 +241,7 @@ internal sealed class RDMPApplicationSettings
     /// </summary>
     /// <param name="key">Key to check</param>
     /// <returns>True if contains key, else false</returns>
-    public bool Contains(string key) => store.FileExists(key);
+    public bool Contains(string key) => _store.FileExists(key);
 
     #region GetValueOrDefault
 

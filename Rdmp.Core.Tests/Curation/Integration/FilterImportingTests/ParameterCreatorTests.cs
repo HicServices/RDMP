@@ -182,40 +182,42 @@ b=@b", "@a", "@cthulhu", @"a=@cthulhu
 b=@b")]
         public void ReplaceParametersSQL(string haystack, string needle, string replacement, string expectedOutput)
         {
-                var output = ParameterCreator.RenameParameterInSQL(haystack, needle, replacement);
-        Assert.That(output, Is.EqualTo(expectedOutput));
+            var output = ParameterCreator.RenameParameterInSQL(haystack, needle, replacement);
+            Assert.That(output, Is.EqualTo(expectedOutput));
         }
 
         [Test]
         public void SequentialReplacementSQL()
         {
-                var haystack =
-                    @"/*Paracetamol*/
-[test]..[prescribing].[approved_name] LIKE @drugName
-OR
-/*Ketamine*/
-[test]..[prescribing].[approved_name] LIKE @drugName2
-OR
-/*Approved Name Like*/
-[test]..[prescribing].[approved_name] LIKE @drugName3";
+            const string haystack = """
+                                    /*Paracetamol*/
+                                    [test]..[prescribing].[approved_name] LIKE @drugName
+                                    OR
+                                    /*Ketamine*/
+                                    [test]..[prescribing].[approved_name] LIKE @drugName2
+                                    OR
+                                    /*Approved Name Like*/
+                                    [test]..[prescribing].[approved_name] LIKE @drugName3
+                                    """;
 
 
-                var newString = ParameterCreator.RenameParameterInSQL(haystack, "@drugName", "@drugName_2");
-                newString = ParameterCreator.RenameParameterInSQL(newString, "@drugName2", "@drugName2_2");
-                newString = ParameterCreator.RenameParameterInSQL(newString, "@drugName3", "@drugName3_2");
+            var newString = ParameterCreator.RenameParameterInSQL(haystack, "@drugName", "@drugName_2");
+            newString = ParameterCreator.RenameParameterInSQL(newString, "@drugName2", "@drugName2_2");
+            newString = ParameterCreator.RenameParameterInSQL(newString, "@drugName3", "@drugName3_2");
 
 
-                var expectedoutput =
-                    @"/*Paracetamol*/
-[test]..[prescribing].[approved_name] LIKE @drugName_2
-OR
-/*Ketamine*/
-[test]..[prescribing].[approved_name] LIKE @drugName2_2
-OR
-/*Approved Name Like*/
-[test]..[prescribing].[approved_name] LIKE @drugName3_2";
+            const string expectedoutput = """
+                                          /*Paracetamol*/
+                                          [test]..[prescribing].[approved_name] LIKE @drugName_2
+                                          OR
+                                          /*Ketamine*/
+                                          [test]..[prescribing].[approved_name] LIKE @drugName2_2
+                                          OR
+                                          /*Approved Name Like*/
+                                          [test]..[prescribing].[approved_name] LIKE @drugName3_2
+                                          """;
 
 
-        Assert.That(newString, Is.EqualTo(expectedoutput));
+            Assert.That(newString, Is.EqualTo(expectedoutput));
         }
 }

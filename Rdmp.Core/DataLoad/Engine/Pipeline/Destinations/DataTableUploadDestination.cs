@@ -114,9 +114,9 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
     public List<DatabaseColumnRequest> ExplicitTypes { get; set; }
 
     private bool _firstTime = true;
-    private HashSet<string> _primaryKey = new(StringComparer.CurrentCultureIgnoreCase);
+    private readonly HashSet<string> _primaryKey = new(StringComparer.CurrentCultureIgnoreCase);
     private DiscoveredTable _discoveredTable;
-    private readonly string _extractionTimeStamp = "extraction_timestamp";
+    private const string ExtractionTimeStamp = "extraction_timestamp";
 
     private readonly IExternalCohortTable _externalCohortTable;
 
@@ -156,19 +156,19 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             if (pkName == releaseIdentifierField)
             {
                 //going to have to look up the previous relaseID to match
-                DiscoveredTable cohortTable = _externalCohortTable.DiscoverCohortTable();
+                var cohortTable = _externalCohortTable.DiscoverCohortTable();
                 using var lookupDT = cohortTable.GetDataTable();
                 var releaseIdIndex = lookupDT.Columns.IndexOf(releaseIdentifierField);
                 var privateIdIndex = lookupDT.Columns.IndexOf(privateIdentifierField);
-                var foundRow = lookupDT.Rows.Cast<DataRow>().Where(r => r.ItemArray[releaseIdIndex].ToString() == value.ToString()).LastOrDefault();
+                var foundRow = lookupDT.Rows.Cast<DataRow>().LastOrDefault(r => r.ItemArray[releaseIdIndex].ToString() == value.ToString());
                 if (foundRow is not null)
                 {
                     var originalValue = foundRow.ItemArray[privateIdIndex];
-                    var existingIDsforReleaseID = lookupDT.Rows.Cast<DataRow>().Where(r => r.ItemArray[privateIdIndex].ToString() == originalValue.ToString()).Select(s => s.ItemArray[releaseIdIndex].ToString());
-                    if (existingIDsforReleaseID.Count() > 0)
+                    var existingIDsforReleaseID = lookupDT.Rows.Cast<DataRow>().Where(r => r.ItemArray[privateIdIndex].ToString() == originalValue.ToString()).Select(s => s.ItemArray[releaseIdIndex].ToString()).ToList();
+                    if (existingIDsforReleaseID.Count != 0)
                     {
                         //we don't know what the current release ID is ( there may be ones from multiple cohorts)
-                        var ids = existingIDsforReleaseID.Select(id => $"'{id}'");
+                        var ids = existingIDsforReleaseID.Select(static id => $"'{id}'");
                         return $"{pkName} in ({string.Join(',', ids)})";
                     }
                 }
@@ -279,9 +279,9 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             _firstTime = false;
         }
 
-        if (IncludeTimeStamp && _discoveredTable.DiscoverColumns().All(c => c.GetRuntimeName() != _extractionTimeStamp))
+        if (IncludeTimeStamp && _discoveredTable.DiscoverColumns().All(c => c.GetRuntimeName() != ExtractionTimeStamp))
         {
-            _discoveredTable.AddColumn(_extractionTimeStamp, new DatabaseTypeRequest(typeof(DateTime)), true, 30000);
+            _discoveredTable.AddColumn(ExtractionTimeStamp, new DatabaseTypeRequest(typeof(DateTime)), true, 30000);
         }
 
         if (IndexTables)
@@ -489,10 +489,10 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
     private void AddTimeStampToExtractionData(DataTable toProcess)
     {
         var timeStamp = DateTime.Now;
-        toProcess.Columns.Add(_extractionTimeStamp);
+        toProcess.Columns.Add(ExtractionTimeStamp);
         foreach (DataRow row in toProcess.Rows)
         {
-            row[_extractionTimeStamp] = timeStamp;
+            row[ExtractionTimeStamp] = timeStamp;
         }
     }
 
@@ -536,7 +536,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
         //see if any have changed
         foreach (DataColumn column in toProcess.Columns)
         {
-            if (column.ColumnName == _extractionTimeStamp && IncludeTimeStamp)
+            if (column.ColumnName == ExtractionTimeStamp && IncludeTimeStamp)
             {
                 continue; //skip internally generated columns
             }

@@ -9,6 +9,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands.Automation;
@@ -21,19 +22,20 @@ namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows;
 
 internal class RunEngineWindow<T> : Window, IListDataSource where T : RDMPCommandLineOptions
 {
-    private Process process;
-    private ListView _results;
+    private Process _process;
+    private readonly ListView _results;
     protected readonly IBasicActivateItems BasicActivator;
-    private readonly Func<T> commandGetter;
+    private readonly Func<T> _commandGetter;
 
-    private object lockList = new();
-    private List<string> consoleOutput = new();
-    private ColorScheme _red;
-    private ColorScheme _yellow;
-    private ColorScheme _white;
+    private readonly Lock _lockList = new();
+    private readonly List<string> _consoleOutput = [];
+    private readonly ColorScheme _red;
+    private readonly ColorScheme _yellow;
+    private readonly ColorScheme _white;
 
-    public int Count => consoleOutput.Count;
-    public int Length => consoleOutput.Count;
+    public int Count { get; private set; }
+
+    public int Length => Count;
 
     public RunEngineWindow(IBasicActivateItems activator, Func<T> commandGetter)
     {
@@ -70,32 +72,32 @@ internal class RunEngineWindow<T> : Window, IListDataSource where T : RDMPComman
         _results.KeyPress += Results_KeyPress;
 
         BasicActivator = activator;
-        this.commandGetter = commandGetter;
+        this._commandGetter = commandGetter;
     }
 
     private void Results_KeyPress(KeyEventEventArgs obj)
     {
-        if (obj.KeyEvent.Key == Key.Enter && _results.HasFocus)
+        if (obj.KeyEvent.Key != Key.Enter || !_results.HasFocus) return;
+
+        var listIdx = _results.SelectedItem;
+        var list = _results.Source.ToList();
+
+        if (listIdx < list.Count)
         {
-            var listIdx = _results.SelectedItem;
-            var list = _results.Source.ToList();
-
-            if (listIdx < list.Count)
-            {
-                var selected = list[listIdx];
-                BasicActivator.Show(selected.ToString());
-            }
-
-            obj.Handled = true;
+            var selected = list[listIdx];
+            BasicActivator.Show(selected.ToString());
         }
+
+        obj.Handled = true;
     }
 
     private void ClearOutput()
     {
-        lock (lockList)
+        lock (_lockList)
         {
             _results.SelectedItem = 0;
-            consoleOutput.Clear();
+            _consoleOutput.Clear();
+            Count = 0;
             _results.SetNeedsDisplay();
         }
     }
@@ -104,7 +106,7 @@ internal class RunEngineWindow<T> : Window, IListDataSource where T : RDMPComman
     {
         try
         {
-            process?.Kill();
+            _process?.Kill();
         }
         catch (Exception ex)
         {
@@ -116,7 +118,7 @@ internal class RunEngineWindow<T> : Window, IListDataSource where T : RDMPComman
     {
         try
         {
-            var opts = commandGetter();
+            var opts = _commandGetter();
             opts.Command = CommandLineActivity.run;
 
             AdjustCommand(opts, opts.Command);
@@ -141,7 +143,7 @@ internal class RunEngineWindow<T> : Window, IListDataSource where T : RDMPComman
     {
         try
         {
-            var opts = commandGetter();
+            var opts = _commandGetter();
             opts.Command = CommandLineActivity.check;
 
             AdjustCommand(opts, opts.Command);
@@ -176,7 +178,7 @@ internal class RunEngineWindow<T> : Window, IListDataSource where T : RDMPComman
         var cmd = new ExecuteCommandGenerateRunCommand(BasicActivator, commandGetter);
         var args = cmd.GetCommandText(true);
 
-        process = new Process
+        _process = new Process
         {
             StartInfo = new ProcessStartInfo
             {
@@ -190,15 +192,16 @@ internal class RunEngineWindow<T> : Window, IListDataSource where T : RDMPComman
 
         Task.Run(() =>
         {
-            process.Start();
+            _process.Start();
 
-            while (!process.StandardOutput.EndOfStream)
+            while (!_process.StandardOutput.EndOfStream)
             {
-                var line = process.StandardOutput.ReadLine().Trim();
+                var line = _process.StandardOutput.ReadLine().Trim();
 
-                lock (lockList)
+                lock (_lockList)
                 {
-                    consoleOutput.Insert(0, line);
+                    _consoleOutput.Insert(0, line);
+                    Count++;
                     Application.MainLoop.Invoke(() => _results.SetNeedsDisplay());
                 }
             }
@@ -208,11 +211,11 @@ internal class RunEngineWindow<T> : Window, IListDataSource where T : RDMPComman
     public void Render(ListView container, ConsoleDriver driver, bool selected, int item, int col, int line, int width,
         int start = 0)
     {
-        lock (lockList)
+        lock (_lockList)
         {
-            if (item >= consoleOutput.Count) return;
+            if (item >= Count) return;
 
-            var str = consoleOutput[item];
+            var str = _consoleOutput[item];
 
             str = str.Length > width ? str[..width] : str.PadRight(width, ' ');
 
@@ -237,5 +240,9 @@ internal class RunEngineWindow<T> : Window, IListDataSource where T : RDMPComman
     {
     }
 
-    public IList ToList() => consoleOutput;
+    public IList ToList()
+    {
+        lock (_lockList)
+            return _consoleOutput.AsReadOnly();
+    }
 }

@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
@@ -36,7 +37,7 @@ public class YamlRepository : MemoryDataExportRepository
 
     public DirectoryInfo Directory { get; }
 
-    private object lockFs = new();
+    private readonly Lock lockFs = new();
 
     public YamlRepository(DirectoryInfo dir)
     {

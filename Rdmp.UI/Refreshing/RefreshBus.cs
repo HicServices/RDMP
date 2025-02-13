@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Providers;
@@ -34,7 +35,7 @@ public class RefreshBus
 
     public ICoreChildProvider ChildProvider { get; set; }
 
-    private object oPublishLock = new();
+    private readonly Lock _oPublishLock = new();
 
     public void Publish(object sender, RefreshObjectEventArgs e)
     {
@@ -42,7 +43,7 @@ public class RefreshBus
             throw new SubscriptionException(
                 $"Refresh Publish Cascade error.  Subscriber {sender} just attempted a publish during an existing publish execution, cyclic inception publishing is not allowed, you cannot respond to a refresh callback by issuing more refresh publishes");
 
-        lock (oPublishLock)
+        lock (_oPublishLock)
         {
             BeforePublish?.Invoke(sender, e);
 

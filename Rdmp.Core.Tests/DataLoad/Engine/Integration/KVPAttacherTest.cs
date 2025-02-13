@@ -45,18 +45,22 @@ public class KVPAttacherTest : DatabaseTests
         var parentDir = workingDir.CreateSubdirectory("KVPAttacherTestProjectDirectory");
         var projectDir = LoadDirectory.CreateDirectoryStructure(parentDir, "KVPAttacherTest", true);
 
-        var filepk = "kvpTestFilePK.csv";
-        var filepk2 = "kvpTestFilePK2.csv";
-        var fileNoPk = "kvpTestFile_NoPK.csv";
+        const string filepk = "kvpTestFilePK.csv";
+        const string filepk2 = "kvpTestFilePK2.csv";
+        const string fileNoPk = "kvpTestFile_NoPK.csv";
 
         if (testCase is KVPAttacherTestCase.OneFileWithPrimaryKey or KVPAttacherTestCase.TwoFilesWithPrimaryKey)
             CopyToBin(projectDir, filepk);
 
-        if (testCase == KVPAttacherTestCase.TwoFilesWithPrimaryKey)
-            CopyToBin(projectDir, filepk2);
-
-        if (testCase == KVPAttacherTestCase.OneFileWithoutPrimaryKey)
-            CopyToBin(projectDir, fileNoPk);
+        switch (testCase)
+        {
+            case KVPAttacherTestCase.TwoFilesWithPrimaryKey:
+                CopyToBin(projectDir, filepk2);
+                break;
+            case KVPAttacherTestCase.OneFileWithoutPrimaryKey:
+                CopyToBin(projectDir, fileNoPk);
+                break;
+        }
 
         if (tbl.Exists())
             tbl.Drop();

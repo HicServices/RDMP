@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
+using System.Threading;
 using System.Windows.Forms;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
@@ -17,6 +18,7 @@ using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.DashboardTabs.Construction;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleControls;
+using Timer = System.Windows.Forms.Timer;
 
 namespace Rdmp.UI.Raceway;
 
@@ -61,7 +63,7 @@ public partial class RacewayRenderAreaUI : UserControl, INotifyMeOfEditState
         Invalidate();
     }
 
-    private object oPeriodicityDictionaryLock = new();
+    private readonly Lock _oPeriodicityDictionaryLock = new();
 
     private bool _ignoreRowCounts;
     private bool _isEditModeOn;
@@ -89,7 +91,7 @@ public partial class RacewayRenderAreaUI : UserControl, INotifyMeOfEditState
         _activator = activator;
         _buckets = buckets;
         _ignoreRowCounts = ignoreRows;
-        lock (oPeriodicityDictionaryLock)
+        lock (_oPeriodicityDictionaryLock)
         {
             _periodicityDictionary = periodicityDictionary;
         }
@@ -129,7 +131,7 @@ public partial class RacewayRenderAreaUI : UserControl, INotifyMeOfEditState
 
         foreach (var kvp in rectDeleteButtons.Where(r => r.Key.Contains(e.Location)).ToList())
             if (RequestDeletion != null)
-                lock (oPeriodicityDictionaryLock)
+                lock (_oPeriodicityDictionaryLock)
                 {
                     RequestDeletion(kvp.Value);
                     //stop rendering this Catalogue
@@ -275,7 +277,7 @@ public partial class RacewayRenderAreaUI : UserControl, INotifyMeOfEditState
 
 
         //draw the tracks
-        lock (oPeriodicityDictionaryLock)
+        lock (_oPeriodicityDictionaryLock)
         {
             var eachRaceLaneHasThisMuchYSpace = Math.Max(MinimumRowHeight,
                 Math.Min(MaximumRaceLaneRenderSpace, (float)Height / (_periodicityDictionary.Count + 1)));
@@ -384,7 +386,7 @@ public partial class RacewayRenderAreaUI : UserControl, INotifyMeOfEditState
 
                 if (hoverLabel != null)
                 {
-                    float labelPadding = 3;
+                    const float labelPadding = 3;
                     var labelSize = e.Graphics.MeasureString(hoverLabel, Font);
                     var valueSize = e.Graphics.MeasureString(hoverValue, Font);
 

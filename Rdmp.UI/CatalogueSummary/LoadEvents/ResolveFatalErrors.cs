@@ -57,13 +57,13 @@ public partial class ResolveFatalErrors : RDMPForm
 
     private void btnSaveAndClose_Click(object sender, EventArgs e)
     {
-        var newState = DataLoadInfo.FatalErrorStates.Resolved;
+        const DataLoadInfo.FatalErrorStates newState = DataLoadInfo.FatalErrorStates.Resolved;
 
         if (string.IsNullOrEmpty(Explanation.Text))
             Explanation.Text = "No Explanation";
 
         //resolve it in the database
-        _logManager.ResolveFatalErrors(_toResolve.Select(f => f.ID).ToArray(), newState, Explanation.Text);
+        _logManager.ResolveFatalErrors(_toResolve.Select(static f => f.ID).ToArray(), newState, Explanation.Text);
 
         //resolve it in memory
         foreach (var error in _toResolve)

@@ -122,7 +122,7 @@ public class AliasHandler : IPluginDataFlowComponent<DataTable>
 
     public void Check(ICheckNotifier notifier)
     {
-        var timeout = 5;
+        const int timeout = 5;
         try
         {
             var result = GenerateAliasTable(timeout);
@@ -130,7 +130,7 @@ public class AliasHandler : IPluginDataFlowComponent<DataTable>
         }
         catch (Exception e)
         {
-            var isTimeout = e.Message.ToLower().Contains("timeout");
+            var isTimeout = e?.Message.Contains("timeout", StringComparison.OrdinalIgnoreCase) == true;
             notifier.OnCheckPerformed(new CheckEventArgs($"Failed to generate alias table after {timeout}s",
                 isTimeout ? CheckResult.Warning : CheckResult.Fail, e));
         }

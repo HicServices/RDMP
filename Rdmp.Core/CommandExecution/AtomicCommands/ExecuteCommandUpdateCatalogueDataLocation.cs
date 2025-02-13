@@ -18,7 +18,7 @@ public class ExecuteCommandUpdateCatalogueDataLocation : BasicCommandExecution, 
     private readonly CatalogueItem[] _selectedCatalogueItems;
     private readonly string _catalogueMapping;
 
-    public readonly string CatalogueMappingIdentifier = "$column";
+    private const string CatalogueMappingIdentifier = "$column";
 
     private bool _checksPassed;
 

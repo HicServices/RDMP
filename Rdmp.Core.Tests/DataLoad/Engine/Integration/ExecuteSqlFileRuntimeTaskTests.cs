@@ -122,7 +122,7 @@ internal class ExecuteSqlFileRuntimeTaskTests : DatabaseTests
 
         Import(tbl, out var ti, out var cols);
 
-        var sql = @"UPDATE {T:0} Set {C:0} = 1";
+        const string sql = @"UPDATE {T:0} Set {C:0} = 1";
 
         var dir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),
             "ExecuteSqlFileRuntimeTaskTests", true);
@@ -175,7 +175,7 @@ internal class ExecuteSqlFileRuntimeTaskTests : DatabaseTests
 
         var tbl = db.CreateTable("Fish", dt);
 
-        var tableName = "AAAAAAA";
+        const string tableName = "AAAAAAA";
 
         Import(tbl, out var ti, out var cols);
 

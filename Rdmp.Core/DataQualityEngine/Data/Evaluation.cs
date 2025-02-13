@@ -178,9 +178,9 @@ public class Evaluation : DatabaseEntity
 
 
         //get all the column level data
-        using var cmdGetColumnStates = DatabaseCommandHelper.GetCommand(
-            $"select * from ColumnState WHERE ColumnState.Evaluation_ID = {ID}",
-            con.Connection, con.Transaction);
+        using (var cmdGetColumnStates = DatabaseCommandHelper.GetCommand(
+                   $"select * from ColumnState WHERE ColumnState.Evaluation_ID = {ID}",
+                   con.Connection, con.Transaction))
         {
             using var r2 = cmdGetColumnStates.ExecuteReader();
             var colStates = new List<ColumnState>();

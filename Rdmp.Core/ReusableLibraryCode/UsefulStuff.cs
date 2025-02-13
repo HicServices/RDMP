@@ -212,6 +212,7 @@ public static partial class UsefulStuff
 
             if (retryCount-- > 0)
                 return HashFile(filename, retryCount); //try it again (recursively)
+
             throw;
         }
     }
@@ -247,8 +248,7 @@ public static partial class UsefulStuff
     {
         return string.IsNullOrWhiteSpace(value)
             ? value
-            : Path.GetInvalidFileNameChars().Aggregate(value,
-                (current, invalidFileNameChar) => current.Replace(invalidFileNameChar.ToString(), ""));
+            : Path.GetInvalidFileNameChars().Aggregate(value, static (current, invalidFileNameChar) => current.Replace(invalidFileNameChar.ToString(), ""));
     }
 
 
@@ -450,7 +450,7 @@ public static partial class UsefulStuff
         // {0:D6} is the same length as its own description
         // {1:D10} is 3 characters longer than its own description, so +3
         // {2} on the end adds 3, so the overall prefix length is constant
-        var template = "Version:1.0\r\nStartHTML:{0:D6}\r\nEndHTML:{1:D10}\r\n{2}";
+        const string template = "Version:1.0\r\nStartHTML:{0:D6}\r\nEndHTML:{1:D10}\r\n{2}";
         return string.Format(
             template,
             template.Length,
@@ -503,19 +503,18 @@ public static partial class UsefulStuff
         return
             string.Join(newline ?? Environment.NewLine,
                 Regex.Split(input, $@"(.{{1,{maxLen}}})(?:\s|$)")
-                    .Where(x => x.Length > 0)
-                    .Select(x => x.Trim()));
+                    .Where(static x => x.Length > 0)
+                    .Select(static x => x.Trim()));
     }
 
 
     public static void ConfirmContentsOfDirectoryAreTheSame(DirectoryInfo first, DirectoryInfo other)
     {
-        if (first.EnumerateFiles().Count() != other.EnumerateFiles().Count())
-            throw new Exception(
-                $"found different number of files in Globals directory {first.FullName} and {other.FullName}");
-
         var filesInFirst = first.EnumerateFiles().ToArray();
         var filesInOther = other.EnumerateFiles().ToArray();
+        if (filesInFirst.Length != filesInOther.Length)
+            throw new Exception(
+                $"found different number of files in Globals directory {first.FullName} and {other.FullName}");
 
         for (var i = 0; i < filesInFirst.Length; i++)
         {

@@ -6,6 +6,7 @@
 
 using System;
 using System.IO;
+using System.Threading;
 using Terminal.Gui;
 using YamlDotNet.Serialization;
 using Attribute = Terminal.Gui.Attribute;
@@ -20,14 +21,14 @@ namespace Rdmp.Core.CommandLine;
 /// </summary>
 public class ColorSettings
 {
-    private static object oLockInstance = new();
+    private static readonly Lock OLockInstance = new();
     private static ColorSettings _instance;
 
     public static ColorSettings Instance
     {
         get
         {
-            lock (oLockInstance)
+            lock (OLockInstance)
             {
                 // if not first time, return existing value
                 if (_instance != null) return _instance;

@@ -162,7 +162,7 @@ public class HICPipelineTests : DatabaseTests
         {
             _server = server;
 
-            var databaseToLoadName = "HICPipelineTests";
+            const string databaseToLoadName = "HICPipelineTests";
 
             // Create the databases
             server.ExpectDatabase(databaseToLoadName).Create(true);

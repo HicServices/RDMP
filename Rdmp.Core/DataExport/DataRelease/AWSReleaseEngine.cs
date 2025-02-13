@@ -43,9 +43,8 @@ public class AWSReleaseEngine : ReleaseEngine
 
     public override void DoRelease(Dictionary<IExtractionConfiguration, List<ReleasePotential>> toRelease, Dictionary<IExtractionConfiguration, ReleaseEnvironmentPotential> environments, bool isPatch)
     {
-
         ConfigurationsToRelease = toRelease;
-        string contentsFileName = "contents.txt";
+        const string contentsFileName = "contents.txt";
         var auditFilePath = Path.Combine(Path.GetTempPath(), contentsFileName);
         using (var sw = PrepareAuditFile(auditFilePath))
         {

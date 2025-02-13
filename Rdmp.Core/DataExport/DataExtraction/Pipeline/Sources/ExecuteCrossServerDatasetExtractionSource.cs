@@ -70,7 +70,7 @@ public class ExecuteCrossServerDatasetExtractionSource : ExecuteDatasetExtractio
     private bool _doNotMigrate;
 
     private string _tablename;
-    private object _tableName = new();
+    private readonly Lock _tableNameLock = new();
 
     public override string HackExtractionSQL(string sql, IDataLoadEventListener listener)
     {
@@ -146,7 +146,7 @@ public class ExecuteCrossServerDatasetExtractionSource : ExecuteDatasetExtractio
 
     private string GetTableName()
     {
-        lock (_tableName)
+        lock (_tableNameLock)
         {
             if (_tablename != null)
                 return _tablename;

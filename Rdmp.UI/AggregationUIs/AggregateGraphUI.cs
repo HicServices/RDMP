@@ -292,7 +292,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
             if (endDateOverride != null)
                 builder.AxisEndDateOverride = endDateOverride;
 
-            var dateColumnName = "joinDt";
+            const string dateColumnName = "joinDt";
             if (isRefresh)
             {
                 //wipe out data from dt that is between these dates
@@ -936,7 +936,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
     private void btnRefreshData_Click(object sender, EventArgs e)
     {
         var axis = AggregateConfiguration.GetAxisIfAny();
-        var getDateString = "GETDATE()";
+        const string getDateString = "GETDATE()";
         var startDate = axis.StartDate == getDateString ? "" : axis.StartDate;
         var endDate = axis.EndDate == getDateString ? "" : axis.EndDate;
         var dialog = new AggregateGraphDateSelector(startDate, endDate);

@@ -124,7 +124,7 @@ public class MDFAttacherTests : DatabaseTests
             File.WriteAllText(mdf, "fish");
             File.WriteAllText(ldf, "fish");
 
-            var serverDatabasePath = @"H:/Program Files/Microsoft SQL Server/MSSQL13.SQLEXPRESS/MSSQL/DATA/";
+            const string serverDatabasePath = @"H:/Program Files/Microsoft SQL Server/MSSQL13.SQLEXPRESS/MSSQL/DATA/";
             var locations = new MdfFileAttachLocations(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),
                 serverDatabasePath, null);
 
@@ -234,7 +234,7 @@ public class MDFAttacherTests : DatabaseTests
             File.WriteAllText(mdf, "fish");
             File.WriteAllText(ldf, "fish");
 
-            var serverDatabasePath = @"H:/Program Files/Microsoft SQL Server/MSSQL13.SQLEXPRESS/MSSQL/DATA/";
+            const string serverDatabasePath = @"H:/Program Files/Microsoft SQL Server/MSSQL13.SQLEXPRESS/MSSQL/DATA/";
             var locations = new MdfFileAttachLocations(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),
                 serverDatabasePath, @"//MyDbServer1/Share/Database");
 

@@ -178,7 +178,7 @@ internal class CatalogueLoadChecks : ICheckable
         //live is the current data load's (possibly overridden server/database)
         var tableInfoSynchronizer = new TableInfoSynchronizer(tableInfo);
 
-        var problemList = "";
+        const string problemList = "";
 
         //synchronize but refuse to apply all fixes, problems are instead added to problemList
         if (tableInfoSynchronizer.Synchronize(notifier))

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
+using System.Threading;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using Rdmp.Core;
@@ -94,7 +95,7 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
     private void lbDesiredOrder_KeyUp(object sender, KeyEventArgs e)
     {
         if (e.KeyCode == Keys.Delete)
-            lock (oDrawLock)
+            lock (_oDrawLock)
             {
                 var toDelete = lbDesiredOrder.SelectedIndices.Cast<int>().OrderByDescending(i => i).ToArray();
 
@@ -104,7 +105,7 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
                 RecomputeOrderAndHighlight();
             }
         else if (e.KeyCode == Keys.V && e.Control)
-            lock (oDrawLock)
+            lock (_oDrawLock)
             {
                 lbDesiredOrder.Items.AddRange(UsefulStuff
                     .GetArrayOfColumnNamesFromStringPastedInByUser(Clipboard.GetText()).ToArray());
@@ -220,7 +221,7 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
 
     private void lbCurrentOrder_DrawItem(object sender, DrawItemEventArgs e)
     {
-        lock (oDrawLock)
+        lock (_oDrawLock)
         {
             var listBox = sender as ListBox;
 
@@ -258,12 +259,12 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
         }
     }
 
-    private object oDrawLock = new();
+    private readonly Lock _oDrawLock = new();
 
 
     private void lbDesiredOrder_DrawItem(object sender, DrawItemEventArgs e)
     {
-        lock (oDrawLock)
+        lock (_oDrawLock)
         {
             if (e.Index == -1)
                 return;

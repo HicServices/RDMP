@@ -35,14 +35,14 @@ namespace Rdmp.Core.QueryBuilding;
 public class CohortQueryBuilder
 {
     private ICoreChildProvider _childProvider;
-    private object oSQLLock = new();
+    private readonly Lock _oSQLLock = new();
     private string _sql;
 
     public string SQL
     {
         get
         {
-            lock (oSQLLock)
+            lock (_oSQLLock)
             {
                 if (SQLOutOfDate)
                     RegenerateSQL();

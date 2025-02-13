@@ -136,7 +136,7 @@ public class ColumnState
             throw new NotSupportedException("ColumnState was already committed");
 
         var sql =
-            $"INSERT INTO ColumnState(TargetProperty,DataLoadRunID,Evaluation_ID,CountCorrect,CountDBNull,ItemValidatorXML,CountMissing,CountWrong,CountInvalidatesRow,PivotCategory)VALUES({"@TargetProperty"},{DataLoadRunID},{evaluation.ID},{CountCorrect},{CountDBNull},@ItemValidatorXML,{CountMissing},{CountWrong},{CountInvalidatesRow},@PivotCategory)";
+            $"INSERT INTO ColumnState(TargetProperty,DataLoadRunID,Evaluation_ID,CountCorrect,CountDBNull,ItemValidatorXML,CountMissing,CountWrong,CountInvalidatesRow,PivotCategory)VALUES(@TargetProperty,{DataLoadRunID},{evaluation.ID},{CountCorrect},{CountDBNull},@ItemValidatorXML,{CountMissing},{CountWrong},{CountInvalidatesRow},@PivotCategory)";
 
         using (var cmd = DatabaseCommandHelper.GetCommand(sql, con, transaction))
         {

@@ -40,7 +40,7 @@ public class CatalogueConstraintReportTests : TestsRequiringAnExtractionConfigur
     [TestCaseSource(typeof(All), nameof(All.DatabaseTypesWithBoolFlags))]
     public void ValidateBulkTestData(DatabaseType dbType, bool testCancellingValidationEarly)
     {
-        var numberOfRecordsToGenerate = 10000;
+        const int numberOfRecordsToGenerate = 10000;
         var startTime = DateTime.Now;
 
         var testData = new BulkTestsData(CatalogueRepository, GetCleanedServer(DatabaseType.MicrosoftSQLServer),

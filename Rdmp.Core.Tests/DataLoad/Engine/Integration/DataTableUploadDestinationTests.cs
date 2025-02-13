@@ -48,11 +48,10 @@ public class DataTableUploadDestinationTests : DatabaseTests
         destination.ProcessPipelineData(dt1, toConsole, token);
         var ex = Assert.Throws<Exception>(() => destination.ProcessPipelineData(dt2, toConsole, token));
 
-        var expectedText =
-            "BulkInsert failed on data row 1 the complaint was about source column <<name>> which had value <<BigFish>> destination data type was <<varchar(4)>>";
+        const string expectedText = "BulkInsert failed on data row 1 the complaint was about source column <<name>> which had value <<BigFish>> destination data type was <<varchar(4)>>";
 
-        Assert.That(ex.InnerException, Is.Not.Null);
-        Assert.That(ex.InnerException.Message, Does.Contain(expectedText));
+        Assert.That(ex?.InnerException, Is.Not.Null);
+        Assert.That(ex?.InnerException?.Message, Does.Contain(expectedText));
 
         destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, ex);
     }
@@ -171,15 +170,17 @@ public class DataTableUploadDestinationTests : DatabaseTests
         if (tbl.Exists())
             tbl.Drop();
 
-        var sql = @"CREATE TABLE DroppedColumnsTable (
-name varchar(50),
-color varchar(50),
-age varchar(50)
-)
+        const string sql = """
+                           CREATE TABLE DroppedColumnsTable (
+                           name varchar(50),
+                           color varchar(50),
+                           age varchar(50)
+                           )
 
-ALTER TABLE DroppedColumnsTable Drop column color
-ALTER TABLE DroppedColumnsTable add color varchar(1)
-";
+                           ALTER TABLE DroppedColumnsTable Drop column color
+                           ALTER TABLE DroppedColumnsTable add color varchar(1)
+
+                           """;
 
         Console.Write($"About to execute:{sql}");
 
@@ -187,7 +188,8 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         using (var con = db.Server.GetConnection())
         {
             con.Open();
-            db.Server.GetCommand(sql, con).ExecuteNonQuery();
+            using var cmd = db.Server.GetCommand(sql, con);
+            cmd.ExecuteNonQuery();
         }
 
         //the bulk insert is
@@ -1626,7 +1628,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             dt1.Columns.Add("other", typeof(string));
             dt1.Rows.Add(new[] { "Fish", "Friend" });
             dt1.PrimaryKey = new[] { dt1.Columns[0] };
-            dt1.TableName = "DataTableUploadDestinationTests"; ;
+            dt1.TableName = "DataTableUploadDestinationTests";
             Assert.Throws<Exception>(()=>destination.ProcessPipelineData(dt1, toConsole, token));
             destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
         }
@@ -1673,7 +1675,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             dt1.Columns.Add("other", typeof(string));
             dt1.Rows.Add(new[] { "Fish", "Friend" });
             dt1.PrimaryKey = new[] { dt1.Columns[0] };
-            dt1.TableName = "DataTableUploadDestinationTests"; ;
+            dt1.TableName = "DataTableUploadDestinationTests";
             destination.ProcessPipelineData(dt1, toConsole, token);
             destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
         }
@@ -1775,7 +1777,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             dt1.Columns.Add("other", typeof(string));
             dt1.Rows.Add(new[] { "Fish", "Enemy" });
             dt1.PrimaryKey = new[] { dt1.Columns[0] };
-            dt1.TableName = "DataTableUploadDestinationTests"; ;
+            dt1.TableName = "DataTableUploadDestinationTests";
             destination.ProcessPipelineData(dt1, toConsole, token);
             destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
         }
@@ -1830,7 +1832,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             dt1.Columns.Add("other", typeof(string));
             dt1.Rows.Add(new[] { "Fish" });
             dt1.PrimaryKey = new[] { dt1.Columns[0] };
-            dt1.TableName = "DataTableUploadDestinationTests"; ;
+            dt1.TableName = "DataTableUploadDestinationTests";
             destination.ProcessPipelineData(dt1, toConsole, token);
             destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
         }

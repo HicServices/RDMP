@@ -11,6 +11,7 @@ using System.Data.Common;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Xml;
 using System.Xml.Serialization;
 using Rdmp.Core.Repositories;
@@ -205,12 +206,12 @@ public class Validator
         return sb.ToString();
     }
 
-    private static readonly object _oLockExtraTypes = new();
+    private static readonly Lock OLockExtraTypes = new();
     private static List<Type> _extraTypes;
 
     private static List<Type> RefreshExtraTypes()
     {
-        lock (_oLockExtraTypes)
+        lock (OLockExtraTypes)
         {
             return AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes()).Where(
                 //type is
@@ -231,7 +232,7 @@ public class Validator
 
     public static List<Type> GetExtraTypes()
     {
-        lock (_oLockExtraTypes)
+        lock (OLockExtraTypes)
         {
             return _extraTypes ??= RefreshExtraTypes();
         }

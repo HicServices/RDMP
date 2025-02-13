@@ -126,12 +126,14 @@ public class CachedAggregateConfigurationResultsManagerTests : QueryCachingDatab
         //If this unit test suddenly starts failing you might have changed the value of CachedAggregateConfigurationResultsManager.CachingPrefix (see sql variable below and make it match the const - the unit test is divorced because why would you want to change that eh!, 'Cached:' is very clear)
 
         //this is a cache fetch request that we are trying to inception recache
-        var sql = @"/*Cached:cic_65_People in DMPTestCatalogue*/
-	select * from [cache]..[IndexedExtractionIdentifierList_AggregateConfiguration217]";
+        const string sql = """
+                           /*Cached:cic_65_People in DMPTestCatalogue*/
+                           	select * from [cache]..[IndexedExtractionIdentifierList_AggregateConfiguration217]
+                           """;
 
         var ex = Assert.Throws<NotSupportedException>(() =>
             _manager.CommitResults(new CacheCommitIdentifierList(_config, sql, dt, _myColSpecification, 30)));
-        Assert.That(ex.Message, Does.Contain("This is referred to as Inception Caching and isn't allowed"));
+        Assert.That(ex?.Message, Does.Contain("This is referred to as Inception Caching and isn't allowed"));
     }
 
     [Test]

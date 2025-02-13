@@ -185,7 +185,7 @@ public class ParameterCreator
     public static string RenameParameterInSQL(string haystack, string parameterName, string parameterNameReplacement)
     {
         //Does a zero matching look ahead for anything that isn't a legal parameter name e.g. "@bob)" will match the bracket but will not replace the bracket since the match is zero width
-        var regexBoundary = @"(?=[^A-Za-z0-9_#@$])";
+        const string regexBoundary = @"(?=[^A-Za-z0-9_#@$])";
 
         var patternNeedle = Regex.Escape(parameterName);
 

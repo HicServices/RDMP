@@ -36,7 +36,7 @@ public sealed class DataLoadInfo : IDataLoadInfo
 
     public DiscoveredServer DatabaseSettings { get; }
 
-    private readonly object _oLock = new();
+    private readonly Lock _oLock = new();
     private Thread _logThread = null;
     private BlockingCollection<LogEntry> _logQueue = null;
     private readonly object _logWaiter = new();

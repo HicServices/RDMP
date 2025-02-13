@@ -56,7 +56,7 @@ internal class FatalErrorLoggingTest : DatabaseTests
     [Test]
     public void MD5Test()
     {
-        var fileContents = "TestStringThatCouldBeSomethingInAFile";
+        const string fileContents = "TestStringThatCouldBeSomethingInAFile";
         byte[] hashAsBytes;
 
         using var memory = new MemoryStream();

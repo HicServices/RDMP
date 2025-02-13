@@ -62,7 +62,7 @@ public class PasswordEncryptionKeyLocationTests : DatabaseTests
     [Test]
     public void Encrypt()
     {
-        var value = "MyPieceOfText";
+        const string value = "MyPieceOfText";
 
         Console.WriteLine($"String is:{value}");
 

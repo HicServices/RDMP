@@ -107,8 +107,8 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
         agg1.SaveToDatabase();
 
         var CohortDatabaseName = TestDatabaseNames.GetConsistentName("CohortDatabase");
-        var cohortTableName = "Cohort";
-        var definitionTableName = "CohortDefinition";
+        const string cohortTableName = "Cohort";
+        const string definitionTableName = "CohortDefinition";
         var ExternalCohortTableNameInCatalogue = "CohortTests";
         const string ReleaseIdentifierFieldName = "ReleaseId";
         const string DefinitionTableForeignKeyField = "cohortDefinition_id";
@@ -334,9 +334,9 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
         agg1.SaveToDatabase();
 
         var CohortDatabaseName = TestDatabaseNames.GetConsistentName("CohortDatabase");
-        var cohortTableName = "Cohort";
-        var definitionTableName = "CohortDefinition";
-        var ExternalCohortTableNameInCatalogue = "CohortTests";
+        const string cohortTableName = "Cohort";
+        const string definitionTableName = "CohortDefinition";
+        const string ExternalCohortTableNameInCatalogue = "CohortTests";
         const string ReleaseIdentifierFieldName = "ReleaseId";
         const string DefinitionTableForeignKeyField = "cohortDefinition_id";
         var _cohortDatabase = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(CohortDatabaseName);
@@ -596,9 +596,9 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
         agg1.SaveToDatabase();
 
         var CohortDatabaseName = TestDatabaseNames.GetConsistentName("CohortDatabase");
-        var cohortTableName = "Cohort";
-        var definitionTableName = "CohortDefinition";
-        var ExternalCohortTableNameInCatalogue = "CohortTests";
+        const string cohortTableName = "Cohort";
+        const string definitionTableName = "CohortDefinition";
+        const string ExternalCohortTableNameInCatalogue = "CohortTests";
         const string ReleaseIdentifierFieldName = "ReleaseId";
         const string DefinitionTableForeignKeyField = "cohortDefinition_id";
         var _cohortDatabase = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(CohortDatabaseName);
@@ -1120,9 +1120,9 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
         agg1.SaveToDatabase();
 
         var CohortDatabaseName = TestDatabaseNames.GetConsistentName("CohortDatabase");
-        var cohortTableName = "Cohort";
-        var definitionTableName = "CohortDefinition";
-        var ExternalCohortTableNameInCatalogue = "CohortTests";
+        const string cohortTableName = "Cohort";
+        const string definitionTableName = "CohortDefinition";
+        const string ExternalCohortTableNameInCatalogue = "CohortTests";
         const string ReleaseIdentifierFieldName = "ReleaseId";
         const string DefinitionTableForeignKeyField = "cohortDefinition_id";
         var _cohortDatabase = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(CohortDatabaseName);

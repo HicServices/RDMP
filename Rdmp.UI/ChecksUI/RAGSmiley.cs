@@ -8,10 +8,12 @@ using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.UI.SimpleDialogs;
+using Timer = System.Windows.Forms.Timer;
 
 namespace Rdmp.UI.ChecksUI;
 
@@ -154,8 +156,8 @@ public partial class RAGSmiley : UserControl, IRAGSmiley
 
     private ToMemoryCheckNotifier memoryCheckNotifier = new();
     private Task _checkTask;
-    private object oTaskLock = new();
-    private Timer _timer;
+    private readonly Lock _oTaskLock = new();
+    private readonly Timer _timer;
     private CheckResult _state;
     private Exception _exception;
 
@@ -218,7 +220,7 @@ public partial class RAGSmiley : UserControl, IRAGSmiley
 
     public void StartChecking(ICheckable checkable)
     {
-        lock (oTaskLock)
+        lock (_oTaskLock)
         {
             //if there is already a Task and it has not completed
             if (_checkTask is { IsCompleted: false })
