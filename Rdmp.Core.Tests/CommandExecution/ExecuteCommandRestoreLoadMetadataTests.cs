@@ -1,14 +1,10 @@
 ﻿using NUnit.Framework;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Repositories;
 using Tests.Common;
 using Rdmp.Core.DataLoad.Modules.Attachers;
-using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using System.Linq;
 using Rdmp.Core.CommandExecution.AtomicCommands;
-using Rdmp.Core.CommandLine.Interactive;
-using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.CommandExecution;
 
 namespace Rdmp.Core.Tests.CommandExecution

@@ -4,7 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using NPOI.SS.Formula.Functions;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -12,10 +11,11 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using Match = System.Text.RegularExpressions.Match;
 
 namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation;
 
-internal class DocumentationCrossExaminationTest
+internal partial class DocumentationCrossExaminationTest
 {
     private readonly DirectoryInfo _slndir;
 
@@ -334,7 +334,7 @@ internal class DocumentationCrossExaminationTest
                         fileCommentTokens.Add(file, new HashSet<string>());
 
                     //its a comment extract all pascal case words
-                    foreach (Match word in Regex.Matches(line, @"\b([A-Z]\w+){2,}"))
+                    foreach (Match word in PascalCased().Matches(line))
                         fileCommentTokens[file].Add(word.Value);
                 }
                 else
@@ -548,4 +548,7 @@ internal class DocumentationCrossExaminationTest
             File.AppendAllLines(mdFile, suggestedLinks.Values.Distinct());
         }
     }
+
+    [GeneratedRegex(@"\b([A-Z]\w+){2,}")]
+    private static partial Regex PascalCased();
 }

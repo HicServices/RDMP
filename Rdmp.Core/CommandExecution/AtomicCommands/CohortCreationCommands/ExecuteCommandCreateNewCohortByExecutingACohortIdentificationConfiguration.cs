@@ -14,7 +14,6 @@ using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
-using Rdmp.Core.Setting;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 

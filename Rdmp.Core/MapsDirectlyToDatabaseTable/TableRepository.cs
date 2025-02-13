@@ -23,7 +23,6 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
-using static Terminal.Gui.MainLoop;
 
 namespace Rdmp.Core.MapsDirectlyToDatabaseTable;
 

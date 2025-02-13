@@ -1,17 +1,11 @@
 ﻿using Rdmp.Core.Curation.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Rdmp.Core.ReusableLibraryCode;
 
 internal interface IVersionable
 {
-
     /// <summary>
-    /// Interface to provide the SaveNewVersion function 
+    /// Interface to provide the SaveNewVersion function
     /// </summary>
     /// <returns>DatabaseEntity</returns>
     DatabaseEntity SaveNewVersion();

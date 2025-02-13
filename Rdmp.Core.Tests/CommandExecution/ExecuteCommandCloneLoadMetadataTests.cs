@@ -1,17 +1,14 @@
 ﻿using NUnit.Framework;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Repositories;
 using Tests.Common;
 using Rdmp.Core.DataLoad.Modules.Attachers;
-using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using System.Linq;
 
 namespace Rdmp.Core.Tests.CommandExecution
 {
-    public class ExecuteCommandCloneLoadMetadataTests: DatabaseTests
+    public class ExecuteCommandCloneLoadMetadataTests : DatabaseTests
     {
-
         [Test]
         public void TestCloneLoadMetadata()
         {
