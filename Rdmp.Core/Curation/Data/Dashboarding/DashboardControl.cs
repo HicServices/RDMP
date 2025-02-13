@@ -16,7 +16,7 @@ namespace Rdmp.Core.Curation.Data.Dashboarding;
 /// Records position and Type of an IDashboardableControl on a DashboardLayout.  The lifecycle goes:
 /// 1. Control instance created (must have a blank constructor)
 /// 2. ConstructEmptyCollection called on instance of control
-/// 3. Step2 collection Hydrated witht he PersistenceString (which can be null/empty)
+/// 3. Step2 collection Hydrated with the PersistenceString (which can be null/empty)
 /// 4. Step2 collection given the Objects referenced by ObjectsUsed
 /// 5. Control instance given the Hydrated collection with SetCollection method
 /// </summary>

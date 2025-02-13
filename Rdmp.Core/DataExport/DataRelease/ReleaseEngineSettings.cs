@@ -14,7 +14,7 @@ namespace Rdmp.Core.DataExport.DataRelease;
 /// </summary>
 public class ReleaseEngineSettings : ICheckable
 {
-    [DemandsInitialization("Delete the released files from the origin location if release is succesful",
+    [DemandsInitialization("Delete the released files from the origin location if release is successful",
         DefaultValue = true)]
     public bool DeleteFilesOnSuccess { get; set; }
 

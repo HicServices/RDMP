@@ -54,7 +54,7 @@ public class ExtractionTimeValidator
         foreach (DataRow r in dt.Rows)
         {
             //additive validation results, Results is a class that wraps DictionaryOfFailure which is an array of columns and each element is another array of consequences (with a row count for each consequence)
-            //think of it like a 2D array with X columns and Y consquences and a number in each box which is how many values in that column failed validation with that consequence
+            //think of it like a 2D array with X columns and Y consequences and a number in each box which is how many values in that column failed validation with that consequence
             Results = Validator.ValidateVerboseAdditive(r, Results, out var consequenceOnLastRowProcessed);
 
 
@@ -68,7 +68,7 @@ public class ExtractionTimeValidator
     {
         var toDiscard = new List<ItemValidator>();
 
-        //discard any item validators that don't exist in our colmn collection (from schema) - These are likely just columns that are not used during validation
+        //discard any item validators that don't exist in our column collection (from schema) - These are likely just columns that are not used during validation
         foreach (var iv in Validator.ItemValidators)
             if (!dt.Columns.Contains(iv.TargetProperty)) //if target property is not in the column collection
             {

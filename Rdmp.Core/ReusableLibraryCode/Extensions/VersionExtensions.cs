@@ -11,7 +11,7 @@ namespace Rdmp.Core.ReusableLibraryCode.Extensions;
 public static class VersionExtensions
 {
     /// <summary>
-    /// Returns true if the two versions are idential up to the significant parts specified
+    /// Returns true if the two versions are identical up to the significant parts specified
     /// </summary>
     /// <param name="version">The version which depends on <paramref name="other"/> (can include short version e.g. "3.0" will have -1 for Build) </param>
     /// <param name="other">The full version</param>

@@ -405,9 +405,9 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
         return menuItem;
     }
 
-    private static void ViewCrashMessage(ICompileable compileable)
+    private static void ViewCrashMessage(ICompileable compilable)
     {
-        ExceptionViewer.Show(compileable.CrashMessage);
+        ExceptionViewer.Show(compilable.CrashMessage);
     }
 
     private void cbKnownVersions_SelectedIndexChanged(object sender, EventArgs e)

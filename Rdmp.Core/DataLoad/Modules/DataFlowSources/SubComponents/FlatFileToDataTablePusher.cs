@@ -199,7 +199,7 @@ public class FlatFileToDataTablePusher
         //Create a composite row
         var newCells = new List<string>(lineToPush.Cells);
 
-        //track what we are Reading incase it doesn't work
+        //track what we are Reading in case it doesn't work
         var allPeekedLines = new List<FlatFileLine>();
 
         do

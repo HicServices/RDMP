@@ -77,11 +77,11 @@ public static class FolderHelper
             else
             {
                 // these objects are in a subdirectory of us.  Find the next subdirectory name
-                // bearing in mind we may be at '\' and be seing '\dog\cat\fish' as the next
+                // bearing in mind we may be at '\' and be seeing '\dog\cat\fish' as the next
                 var idx = g.Key.IndexOf(currentBranchFullName, StringComparison.CurrentCultureIgnoreCase) +
                           currentBranchFullName.Length;
 
-                // if we have objects that do not live under this full path thats a problem
+                // if we have objects that do not live under this full path that's a problem
                 // or its also a problem if we found a full match to the end of the string
                 // this branch deals with sub folders and that would mean the current group
                 // are not in any subfolders

@@ -64,7 +64,7 @@ public class CatalogueTests : UnitTests
                 catalogue.SaveToDatabase();
             }
 
-        //find it again and see if its name has changed - then delete it so we don't polute the db
+        //find it again and see if its name has changed - then delete it so we don't pollute the db
         var catasAfter = Repository.GetAllObjects<Catalogue>().ToArray();
 
         foreach (var catalogue in catasAfter)
@@ -126,7 +126,7 @@ public class CatalogueTests : UnitTests
             }
 
 
-        //find it again and see if it has changed - then delete it so we don't polute the db
+        //find it again and see if it has changed - then delete it so we don't pollute the db
         var catasAfter = Repository.GetAllObjects<Catalogue>().ToArray();
 
         foreach (var catalogue in catasAfter)

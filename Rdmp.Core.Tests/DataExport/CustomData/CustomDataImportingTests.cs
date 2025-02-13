@@ -266,7 +266,7 @@ public class CustomDataImportingTests : TestsRequiringAnExtractionConfiguration
         engine.Destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
 
         //batches are 1 record each so
-        Assert.AreEqual(numberOfBatches, listener.LastProgressRecieivedByTaskName["Comitting rows to cohort 99_unitTestDataForCohort_V1fish"].Progress.Value);
+        Assert.AreEqual(numberOfBatches, listener.LastProgressRecieivedByTaskName["Committing rows to cohort 99_unitTestDataForCohort_V1fish"].Progress.Value);
 
         var customTableNames = _extractableCohort.GetCustomTableNames().ToArray();
         Console.WriteLine("Found the following custom tables:");

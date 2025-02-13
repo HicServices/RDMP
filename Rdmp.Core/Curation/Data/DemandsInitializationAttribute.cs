@@ -48,7 +48,7 @@ public class DemandsInitializationAttribute : Attribute
 
     /// <summary>
     /// If the property being decorated is System.Type e.g. <code>public Type OperationType {get;set;}</code>.  Then this specifies which Types the user can
-    /// select (anything derrived from this Type).  This lets you have the user pick a strategy for your plugin as long as the strategies have blank/compatible
+    /// select (anything derived from this Type).  This lets you have the user pick a strategy for your plugin as long as the strategies have blank/compatible
     /// constructors.  You will have to decide how best to instantiate this Type yourself at runtime.
     /// </summary>
     public Type TypeOf { get; set; }

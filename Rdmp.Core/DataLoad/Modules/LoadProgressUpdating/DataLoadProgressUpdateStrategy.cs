@@ -7,7 +7,7 @@
 namespace Rdmp.Core.DataLoad.Modules.LoadProgressUpdating;
 
 /// <summary>
-/// Approaches user/system can use to determine what Date to update a LoadProgress to after a succesful data load (See UpdateProgressIfLoadsuccessful for
+/// Approaches user/system can use to determine what Date to update a LoadProgress to after a successful data load (See UpdateProgressIfLoadsuccessful for
 /// description of why this is non trivial).
 /// </summary>
 public enum DataLoadProgressUpdateStrategy
@@ -29,7 +29,7 @@ public enum DataLoadProgressUpdateStrategy
     ExecuteScalarSQLInLIVE,
 
     /// <summary>
-    /// Do not update the DataLoadProgress at all after succesfully load.  This might result in repeatedly loading the same batch of dates over and
+    /// Do not update the DataLoadProgress at all after successfully load.  This might result in repeatedly loading the same batch of dates over and
     /// over if you are running an IterativeScheduledDataLoadProcess
     /// </summary>
     DoNothing

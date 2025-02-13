@@ -265,7 +265,7 @@ public class DitaCatalogueExtractor : ICheckable
 
 
     /// <summary>
-    /// Checks whether the dita file generation is likely to work e.g. that all datasets have unique acronymns etc
+    /// Checks whether the dita file generation is likely to work e.g. that all datasets have unique acronyms etc
     /// </summary>
     /// <param name="notifier"></param>
     public void Check(ICheckNotifier notifier)

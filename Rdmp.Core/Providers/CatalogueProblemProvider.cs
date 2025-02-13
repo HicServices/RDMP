@@ -92,7 +92,7 @@ public class CatalogueProblemProvider : ProblemProvider
         if (AnyTableSqlParameter.HasProhibitedName(parameter))
             return "Parameter name is a reserved name for the RDMP software";
 
-        // if parameter has no value thats a problem
+        // if parameter has no value that's a problem
         if (string.IsNullOrWhiteSpace(parameter.Value) || parameter.Value == AnyTableSqlParameter.DefaultValue)
         {
             // unless it has ExtractionFilterParameterSets defined on it

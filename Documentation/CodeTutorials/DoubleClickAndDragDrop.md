@@ -11,7 +11,7 @@ Both 'drag and drop' and 'double click' tie directly to the 'Command' pattern RD
 
 Drag and drop and double clicking (called activation) is a core part of the RDMP API and is handled through the class `RDMPCommandExecutionProposal<T>` on a `Type` basis.  Each object that supports activation and/or drop must have an associated instance of `RDMPCommandExecutionProposal<T>` called `ProposeExecutionWhenTargetIs<SomeClass>`.  
 
-This derrived class will decide what tab/window/custom action to show when `Activate` happens either as part of double click or as part of `ExecuteCommandActivate` (e.g. from a right click menu) or a call to `BasicUICommandExecution.Activate` and decide what `ICommandExecution` is executed when a given object/collection is dropped on it.
+This derived class will decide what tab/window/custom action to show when `Activate` happens either as part of double click or as part of `ExecuteCommandActivate` (e.g. from a right click menu) or a call to `BasicUICommandExecution.Activate` and decide what `ICommandExecution` is executed when a given object/collection is dropped on it.
 
 ![ExampleMenu](Images/DoubleClickAndDragDrop/DropExample.png) 
 _Example of dragging a [Catalogue] onto an ExtractionConfiguration_

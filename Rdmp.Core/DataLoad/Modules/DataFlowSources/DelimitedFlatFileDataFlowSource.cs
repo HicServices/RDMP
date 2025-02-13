@@ -47,7 +47,7 @@ public class DelimitedFlatFileDataFlowSource : IPluginDataFlowSource<DataTable>,
         "Forces specific headers to be interpreted for columns, this is a string that will effectively be appended to the front of the file when it is read.  WARNING: Use this argument only when the file does not have any headers (Note that you must use the appropriate separator for your file)";
 
     public const string ForceHeadersReplacesFirstLineInFile_Description =
-        "Only used when ForceHeaders is specified, if true then the line will replace the first line of the file.  If left as false (default) then the line will be appended to the file.  Use true if you want to replace existing headers in the file and false if hte file doesn't have any headers in it at all.";
+        "Only used when ForceHeaders is specified, if true then the line will replace the first line of the file.  If left as false (default) then the line will be appended to the file.  Use true if you want to replace existing headers in the file and false if the file doesn't have any headers in it at all.";
 
     public const string IgnoreQuotes_DemandDescription =
         "True if the parser should treat double quotes as normal characters";
@@ -174,7 +174,7 @@ This will not help you avoid bad data as the full file structure must still be r
     public FlatFileToDataTablePusher DataPusher { get; private set; }
 
     /// <summary>
-    /// things we know we definetly cannot load!
+    /// things we know we definitely cannot load!
     /// </summary>
     private string[] _prohibitedExtensions =
     {
@@ -250,7 +250,7 @@ This will not help you avoid bad data as the full file structure must still be r
                                 $"You set StronglyTypeInputBatchSize to {batchSizeToLoad} this may be too small!",
                                 null));
 
-                    //user want's to strongly type input with a custom batch size
+                    //user wants to strongly type input with a custom batch size
                     rowsRead = IterativelyBatchLoadDataIntoDataTable(_workingTable, batchSizeToLoad);
                 }
                 else
@@ -283,11 +283,11 @@ This will not help you avoid bad data as the full file structure must still be r
             if (rowsRead == 0)
                 return null; //we are done
 
-            //rows were read so return a copy of the DataTable, because we will continually reload the same DataTable schema throughout the file we don't want to give up our reference to good headers incase someone mutlates it
+            //rows were read so return a copy of the DataTable, because we will continually reload the same DataTable schema throughout the file we don't want to give up our reference to good headers in case someone mutlates it
             var copy = _workingTable.Copy();
 
-            foreach (var unamed in Headers.UnamedColumns)
-                copy.Columns.Remove(unamed.ColumnName);
+            foreach (var unnamed in Headers.UnamedColumns)
+                copy.Columns.Remove(unnamed.ColumnName);
 
             return copy;
         }

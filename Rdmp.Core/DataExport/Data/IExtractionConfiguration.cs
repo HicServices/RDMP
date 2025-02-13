@@ -78,7 +78,7 @@ public interface IExtractionConfiguration : INamed, IHasDependencies, IMightBeRe
     string Description { get; set; }
 
     /// <summary>
-    /// True if the configuration has been succesfully extracted and the artifacts have been released to the end researchers.  When true the configuration
+    /// True if the configuration has been successfully extracted and the artifacts have been released to the end researchers.  When true the configuration
     /// should be treated as immutable.  If the user wants to make further changes the recommended course of action is to clone a new copy of it.
     /// </summary>
     bool IsReleased { get; set; }

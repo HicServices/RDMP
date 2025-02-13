@@ -18,7 +18,7 @@
 	* [Unclosed quotes](#unclosed-quotes)
 	
 ## Background
-CSV stands for 'Comma Separated Values'.  A CSV file is created by writting a text document in which the cells of the table are separated by a comma.  Here is an example CSV file:
+CSV stands for 'Comma Separated Values'.  A CSV file is created by writing a text document in which the cells of the table are separated by a comma.  Here is an example CSV file:
 
 ```
 CHI,StudyID,Date
@@ -26,15 +26,15 @@ CHI,StudyID,Date
 0101010102,6,2001-01-05
 ```
 
-CSV files usually end in the extension `.csv`.  Sometimes an alternate separator will be used e.g. pipe `|` or tab `\t`.  There is an [official ruleset](https://tools.ietf.org/html/rfc4180) for writting CSV files, this covers escaping, newlines etc.  However this ruleset is often not correctly implemented by data suppliers.  RDMP therefore supports the loading of corrupt/invalid CSV files.
+CSV files usually end in the extension `.csv`.  Sometimes an alternate separator will be used e.g. pipe `|` or tab `\t`.  There is an [official ruleset](https://tools.ietf.org/html/rfc4180) for writing CSV files, this covers escaping, newlines etc.  However this ruleset is often not correctly implemented by data suppliers.  RDMP therefore supports the loading of corrupt/invalid CSV files.
 
 The class that handles processing delimited files (CSV, TSV etc) is `DelimitedFlatFileDataFlowSource`.  This class is responsible for turning the CSV file into a series of `System.DataTable` chunks for upload to the database.
 
 ## Scalability
-CSV processing is done iteratively and streamed into the database in chunks.  This has been tested with datasets of 800 million records without issue.  Chunk size is determined by `MaxBatchSize`, optionally the initial batch can be larger `StronglyTypeInputBatchSize` to streamline [Type descisions](https://github.com/HicServices/FAnsiSql/blob/master/Documentation/TypeTranslation.md) e.g. when sending data to a `DataTableUploadDestination`. 
+CSV processing is done iteratively and streamed into the database in chunks.  This has been tested with datasets of 800 million records without issue.  Chunk size is determined by `MaxBatchSize`, optionally the initial batch can be larger `StronglyTypeInputBatchSize` to streamline [Type decisions](https://github.com/HicServices/FAnsiSql/blob/master/Documentation/TypeTranslation.md) e.g. when sending data to a `DataTableUploadDestination`. 
 
 ## Type Determination
-Type decisions [are handled seperately](https://github.com/HicServices/FAnsiSql/blob/master/Documentation/TypeTranslation.md) after the `System.DataTable` has been produced in memory from the CSV file.
+Type decisions [are handled separately](https://github.com/HicServices/FAnsiSql/blob/master/Documentation/TypeTranslation.md) after the `System.DataTable` has been produced in memory from the CSV file.
 
 ## Corrupt Files
 RDMP is able to detect and cope with some common problems with delimited (e.g. CSV) files.  These situations can be classified as 'Resolved Automatically', 'Resolved Accordly' and 'Unresolveable'
@@ -93,7 +93,7 @@ CHI ,StudyID,Date,,
 _TrailingNulls_InHeader_
 
 ### Empty Columns
-Sometimes a CSV file will have an entirely null column in the middle.  This can occur if you open a CSV in excel and insert a row or you have two 'tables' side by side in the CSV with a blank line separator.  In this situation RDMP will expect the unamed column to be null/empty for all cells and it will ignore it.
+Sometimes a CSV file will have an entirely null column in the middle.  This can occur if you open a CSV in excel and insert a row or you have two 'tables' side by side in the CSV with a blank line separator.  In this situation RDMP will expect the unnamed column to be null/empty for all cells and it will ignore it.
 
 ```
 CHI ,,StudyID,Date
@@ -152,7 +152,7 @@ You can attempt to solve the problem of too few cells on a row by setting `Attem
 
 ![FlowChart](Images/CSVHandling/TooFewCellsFlow.png) 
 
-This is a conservative approach in which the process is abandonned as soon as:
+This is a conservative approach in which the process is abandoned as soon as:
 * A valid length row is read during the process (all work is discarded and processing resumes from this record)
 * Too many cells are read (all work is discarded and processing resumes from the last record read)
 
@@ -202,7 +202,7 @@ _BadCSV_ForceHeaders_NoReplace_
 ## Unresolveable
 
 ### Unclosed Quotes
-The CSV standard allows you to escape the separator charcter, newlines etc by using quotes.  If your file contains an unclosed quote then the entire rest of the file will be in error:
+The CSV standard allows you to escape the separator character, newlines etc by using quotes.  If your file contains an unclosed quote then the entire rest of the file will be in error:
 
 ```
 Name,Description,Age

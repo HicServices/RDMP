@@ -16,7 +16,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad;
 
 /// <summary>
 /// Entrypoint to the loading metadata for one or more Catalogues. This includes name, description, scheduled start dates etc.  A <see cref="LoadMetadata"/>
-/// contains at least one <see cref="ProcessTask"/> which is an ETL step e.g. Unzip files called *.zip / Dowload all files from FTP server X.
+/// contains at least one <see cref="ProcessTask"/> which is an ETL step e.g. Unzip files called *.zip / Download all files from FTP server X.
 /// </summary>
 public interface ILoadMetadata : INamed, ILoggedActivityRootObject
 {

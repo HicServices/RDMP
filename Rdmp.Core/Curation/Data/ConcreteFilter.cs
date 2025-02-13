@@ -112,7 +112,7 @@ public abstract class ConcreteFilter : DatabaseEntity, IFilter, ICheckable, IOrd
     public abstract ColumnInfo GetColumnInfoIfExists();
 
     /// <summary>
-    /// When overriden in a derrived class, creates an <see cref="IFilterFactory"/> which can be used to create new correctly typed <see cref="ISqlParameter"/> for use with
+    /// When overridden in a derived class, creates an <see cref="IFilterFactory"/> which can be used to create new correctly typed <see cref="ISqlParameter"/> for use with
     /// the current <see cref="IFilter"/>
     /// </summary>
     /// <remarks>Most IFilter implementations require their own specific type of IContainer, ISqlParameter etc and they only work with those concrete classes.  Therefore the

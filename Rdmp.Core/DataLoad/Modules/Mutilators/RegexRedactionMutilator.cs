@@ -65,7 +65,7 @@ public class RegexRedactionMutilator : MatchingTablesMutilatorWithDataLoadJob
         _discoveredPKColumns = columns.Where(c => cataloguePks.Select(cpk => cpk.Name).Contains(c.GetRuntimeName())).ToArray();
         if (_discoveredPKColumns.Length == 0)
         {
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "No Primary Keys found. Redaction cannot be perfomed without a primary key."));
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "No Primary Keys found. Redaction cannot be performed without a primary key."));
             //Don't want to fail the data load, but just let the user know
             return;
         }

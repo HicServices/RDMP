@@ -115,7 +115,7 @@ public class LoadDiagramColumnNode : Node, ICombineableSource, IHasLoadDiagramSt
             LoadDiagramState.Different or LoadDiagramState.Anticipated or LoadDiagramState.Found => _bubble switch
             {
                 LoadBubble.Raw =>
-                    "A Column that will be created in the RAW bubble when the load is run, this will not have any constraints (not nulls, referential integrity ect)",
+                    "A Column that will be created in the RAW bubble when the load is run, this will not have any constraints (not nulls, referential integrity etc)",
                 LoadBubble.Staging =>
                     "A Column that will be created in the STAGING bubble when the load is run, this will have normal constraints that match LIVE",
                 _ => "A Column that is involved in the load (based on the Catalogues associated with the load)"

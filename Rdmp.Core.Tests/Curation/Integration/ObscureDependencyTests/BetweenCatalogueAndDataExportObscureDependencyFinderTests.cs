@@ -48,7 +48,7 @@ public class BetweenCatalogueAndDataExportObscureDependencyFinderTests : Databas
 
         Assert.Multiple(() =>
         {
-            //both objects still exist in memory of course but we should be able to see they have disapeared
+            //both objects still exist in memory of course but we should be able to see they have disappeared
             Assert.That(dataset.HasLocalChanges().Evaluation, Is.EqualTo(ChangeDescription.DatabaseCopyWasDeleted));
             Assert.That(cata.HasLocalChanges().Evaluation, Is.EqualTo(ChangeDescription.DatabaseCopyWasDeleted));
         });

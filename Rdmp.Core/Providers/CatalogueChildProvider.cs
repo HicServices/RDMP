@@ -72,7 +72,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 	public SupportingDocument[] AllSupportingDocuments { get; set; }
 	public SupportingSQLTable[] AllSupportingSQL { get; set; }
 
-	//tells you the imediate children of a given node.  Do not add to this directly instead add using AddToDictionaries unless you want the Key to be an 'on the sly' no known descendency child
+	//tells you the immediate children of a given node.  Do not add to this directly instead add using AddToDictionaries unless you want the Key to be an 'on the sly' no known descendency child
 	private ConcurrentDictionary<object, HashSet<object>> _childDictionary = new();
 
 	//This is the reverse of _childDictionary in some ways.  _childDictionary tells you the immediate children while
@@ -1459,7 +1459,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 		//get the discarded columns in this table
 		var discardedCols = new HashSet<object>(AllPreLoadDiscardedColumns.Where(c => c.TableInfo_ID == tableInfo.ID));
 
-		//tell the column who thier parent is so they don't need to look up the database
+		//tell the column who their parent is so they don't need to look up the database
 		foreach (PreLoadDiscardedColumn discardedCol in discardedCols)
 			discardedCol.InjectKnown(tableInfo);
 

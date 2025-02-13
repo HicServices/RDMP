@@ -18,7 +18,7 @@ public class ExecuteCommandRestoreLoadMetadataVersion : BasicCommandExecution
 
     public override void Execute()
     {
-        if (_activator.IsInteractive && !_activator.YesNo("Replace root Load Metadata with this configuration?", "Resotre Load Metadata Version")) return;
+        if (_activator.IsInteractive && !_activator.YesNo("Replace root Load Metadata with this configuration?", "Restore Load Metadata Version")) return;
         base.Execute();
         if (_loadMetadata.RootLoadMetadata_ID is null)
         {

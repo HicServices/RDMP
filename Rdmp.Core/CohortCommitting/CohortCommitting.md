@@ -1,4 +1,4 @@
-﻿# Cohort Comitting
+﻿# Cohort Committing
 
 A Cohort is a collection of unique person identifiers which can be linked against datasets during an extraction.  This namespace covers saving a list of identifiers into a cohort database.
 

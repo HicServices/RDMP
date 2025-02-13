@@ -60,7 +60,7 @@ public class CohortSummaryAggregateGraphObjectCollection : PersistableObjectColl
     }
 
     /// <summary>
-    /// Overload that does the operation on a container with (WhereExtractionIdentifiersIn - the only permissable option)
+    /// Overload that does the operation on a container with (WhereExtractionIdentifiersIn - the only permissible option)
     /// </summary>
     /// <param name="container"></param>
     /// <param name="graph"></param>

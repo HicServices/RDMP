@@ -82,7 +82,7 @@ public class ExecuteCommandCloneCohortIdentificationConfiguration : BasicCommand
         if (CloneCreatedIfAny != null && _version is not null)
         {
             CloneCreatedIfAny.Version = _version;
-            //If no name is provided, use the existing name, but repalce the "(Clone) with the version number"
+            //If no name is provided, use the existing name, but replace the "(Clone) with the version number"
             if(CloneCreatedIfAny.Version != null)
                 CloneCreatedIfAny.Name = _name ?? $"{CloneCreatedIfAny.Name[..^7]}:{CloneCreatedIfAny.Version}";
             if (_version is not null)

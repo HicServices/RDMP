@@ -31,7 +31,7 @@ public abstract class RDMPCommandExecutionProposal<T> : ICommandExecutionProposa
     /// has at least one patient identifier column.</param>
     /// 
     /// <param name="target"> The object the cursor is currently hovering over </param>
-    /// <param name="insertOption">Whether the cursor is above or below or ontop of your object (if the collection the object is in supports it)</param>
+    /// <param name="insertOption">Whether the cursor is above or below or on top of your object (if the collection the object is in supports it)</param>
     /// <returns></returns>
     public abstract ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, T target,
         InsertOption insertOption = InsertOption.Default);

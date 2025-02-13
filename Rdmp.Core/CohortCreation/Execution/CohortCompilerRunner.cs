@@ -34,7 +34,7 @@ public class CohortCompilerRunner
 
     /// <summary>
     /// The root container is always added to the task list but you could skip subcontainer totals if all you care about is the final total for the cohort
-    /// and you don't have a dependant UI etc.  Setting false will add all joinables, subqueries etc and the root container (final answer for who is in cohort)
+    /// and you don't have a dependent UI etc.  Setting false will add all joinables, subqueries etc and the root container (final answer for who is in cohort)
     /// but not the other subcontainers (if there were any in the first place!).  Defaults to true.
     /// </summary>
     public bool RunSubcontainers { get; set; }
