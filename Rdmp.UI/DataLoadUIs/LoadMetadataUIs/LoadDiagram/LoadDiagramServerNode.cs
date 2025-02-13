@@ -37,7 +37,6 @@ public class LoadDiagramServerNode : TableInfoServerNode, IKnowWhatIAm, IOrderab
     {
         _bubble = bubble;
         _database = database;
-        var config1 = config;
         var serverName = database.Server.Name;
 
         _description = bubble switch
@@ -73,9 +72,9 @@ public class LoadDiagramServerNode : TableInfoServerNode, IKnowWhatIAm, IOrderab
         //if it is live yield all the lookups
         if (_bubble == LoadBubble.Live)
             foreach (var kvp in _liveDatabaseDictionary)
-                Children.Add(new LoadDiagramDatabaseNode(_bubble, kvp.Key, kvp.Value, config1));
+                Children.Add(new LoadDiagramDatabaseNode(_bubble, kvp.Key, kvp.Value, config));
         else
-            Children.Add(new LoadDiagramDatabaseNode(_bubble, _database, loadTables, config1));
+            Children.Add(new LoadDiagramDatabaseNode(_bubble, _database, loadTables, config));
     }
 
     public IEnumerable<LoadDiagramDatabaseNode> GetChildren() => Children;

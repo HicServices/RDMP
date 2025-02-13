@@ -61,22 +61,16 @@ IPipelineRequirement<Project>, IPipelineRequirement<ReleaseData>, IInteractiveCh
 
     public void Abort(IDataLoadEventListener listener)
     {
-
         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "This component cannot Abort!"));
-
     }
 
     private void StoreInteractiveConfig(string value, string fileName)
     {
         var file = Path.Combine(Path.GetTempPath(), fileName);
-        if (File.Exists(file))
-        {
-            File.Delete(file);
-        }
-        using (StreamWriter outputFile = new StreamWriter(file))
-        {
-            outputFile.Write(value);
-        }
+        if (File.Exists(file)) File.Delete(file);
+
+        using var outputFile = new StreamWriter(file);
+        outputFile.Write(value);
     }
 
 
@@ -88,18 +82,21 @@ IPipelineRequirement<Project>, IPipelineRequirement<ReleaseData>, IInteractiveCh
             AWS_Region = File.ReadAllText(file);
             File.Delete(file);
         }
+
         file = Path.Combine(Path.GetTempPath(), "RDMP_AWS_PROFILE.txt");
         if (File.Exists(file))
         {
             AWS_Profile = File.ReadAllText(file);
             File.Delete(file);
         }
+
         file = Path.Combine(Path.GetTempPath(), "RDMP_AWS_BUCKET_NAME.txt");
         if (File.Exists(file))
         {
             BucketName = File.ReadAllText(file);
             File.Delete(file);
         }
+
         file = Path.Combine(Path.GetTempPath(), "RDMP_AWS_BUCKET_FOLDER.txt");
         if (File.Exists(file))
         {
@@ -116,8 +113,8 @@ IPipelineRequirement<Project>, IPipelineRequirement<ReleaseData>, IInteractiveCh
             _activator.TypeText("Set AWS Region", "What AWS region is your bucket in?", 128, AWS_Region, out var newRegion, false);
             AWS_Region = newRegion;
             StoreInteractiveConfig(AWS_Region, "RDMP_AWS_REGION.txt");
-
         }
+
         if (string.IsNullOrWhiteSpace(AWS_Region))
         {
             notifier.OnCheckPerformed(new CheckEventArgs("No AWS Region Specified.", CheckResult.Fail));

@@ -18,12 +18,12 @@ using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.CommandLine.DatabaseCreation;
 
-internal class NightmareDatasets : DataGenerator
+internal class NightmareDatasets(IRDMPPlatformRepositoryServiceLocator repos, DiscoveredDatabase db)
+    : DataGenerator(new Random(123))
 {
-    private IRDMPPlatformRepositoryServiceLocator _repos;
-    private string _serverName;
-    private string _databaseNameWrapped;
-    private string _databaseNameRuntime;
+    private readonly string _serverName = db.Server.Name;
+    private readonly string _databaseNameWrapped = db.GetWrappedName();
+    private readonly string _databaseNameRuntime = db.GetRuntimeName();
 
     /// <summary>
     /// Defaults to 1, set to 2 to double the amount of objects generated.
@@ -31,23 +31,14 @@ internal class NightmareDatasets : DataGenerator
     /// </summary>
     public int Factor = 1;
 
-    public NightmareDatasets(IRDMPPlatformRepositoryServiceLocator repos, DiscoveredDatabase db) : base(new Random(123))
-    {
-        _repos = repos;
-        var db1 = db;
-        _serverName = db1.Server.Name;
-        _databaseNameWrapped = db1.GetWrappedName();
-        _databaseNameRuntime = db1.GetRuntimeName();
-    }
+    private readonly BucketList<Catalogue> Catalogues = new ();
+    private readonly BucketList<ExtractableDataSet> ExtractableDatasets = new ();
+    private readonly BucketList<Project> Projects = new ();
+    private readonly BucketList<TableInfo> Tables = new ();
+    private int _tablesCount;
 
-    private BucketList<Catalogue> Catalogues = new ();
-    private BucketList<ExtractableDataSet> ExtractableDatasets = new ();
-    private BucketList<Project> Projects = new ();
-    private BucketList<TableInfo> Tables = new ();
-    private int TablesCount;
-
-    private BucketList<ColumnInfo> Columns = new();
-    private int ColumnsCount;
+    private BucketList<ColumnInfo> _columns = new();
+    private int _columnsCount;
 
     /// <summary>
     /// <para>Generates a lot of metadata in the RDMP platform databases.  This is for testing
@@ -60,12 +51,14 @@ internal class NightmareDatasets : DataGenerator
     {
         // how likely is a given ExtractionInformation to be each of these
         // categories
-        var extractionCategories = new BucketList<ExtractionCategory>();
-        extractionCategories.Add(100, ExtractionCategory.Core);
-        extractionCategories.Add(10, ExtractionCategory.Internal);
-        extractionCategories.Add(5, ExtractionCategory.Supplemental);
-        extractionCategories.Add(10, ExtractionCategory.SpecialApprovalRequired);
-        extractionCategories.Add(4, ExtractionCategory.Deprecated);
+        var extractionCategories = new BucketList<ExtractionCategory>
+        {
+            { 100, ExtractionCategory.Core },
+            { 10, ExtractionCategory.Internal },
+            { 5, ExtractionCategory.Supplemental },
+            { 10, ExtractionCategory.SpecialApprovalRequired },
+            { 4, ExtractionCategory.Deprecated }
+        };
 
         var extractionDir = Path.GetTempPath();
 
@@ -73,7 +66,7 @@ internal class NightmareDatasets : DataGenerator
         // Based on DLS figures see: https://github.com/HicServices/RDMP/issues/1224
         for (var i = 0; i < 500 * Factor; i++)
         {
-            var cata = new Catalogue(_repos.CatalogueRepository, $"Catalogue {GetRandomGPCode(r)}")
+            var cata = new Catalogue(repos.CatalogueRepository, $"Catalogue {GetRandomGPCode(r)}")
             {
                 Description = GetRandomSentence(r)
             };
@@ -90,12 +83,12 @@ internal class NightmareDatasets : DataGenerator
 
             foreach (var col in CreateTable())
             {
-                var ci = new CatalogueItem(_repos.CatalogueRepository, cata, col.Name);
+                var ci = new CatalogueItem(repos.CatalogueRepository, cata, col.Name);
 
                 // = 60%  of columns are extractable
                 if (r.Next(10) < 6)
                 {
-                    var ei = new ExtractionInformation(_repos.CatalogueRepository, ci, col, col.Name)
+                    var ei = new ExtractionInformation(repos.CatalogueRepository, ci, col, col.Name)
                     {
                         ExtractionCategory = extractionCategories.GetRandom(r)
                     };
@@ -122,7 +115,7 @@ internal class NightmareDatasets : DataGenerator
             // but let's make only 75% of those extractable datasets
             if (r.Next(5) > 0 && hasExtractionIdentifier)
             {
-                var eds = new ExtractableDataSet(_repos.DataExportRepository, cata);
+                var eds = new ExtractableDataSet(repos.DataExportRepository, cata);
                 ExtractableDatasets.Add(1, eds);
             }
         }
@@ -137,7 +130,7 @@ internal class NightmareDatasets : DataGenerator
         for (var i = 0; i < 200 * Factor; i++)
         {
             // each project
-            var p = new Project(_repos.DataExportRepository, $"Project {i}")
+            var p = new Project(repos.DataExportRepository, $"Project {i}")
             {
                 ProjectNumber = r.Next(50) == 0 ? 5 : i, // it's ok for some projects to have the same number
                 ExtractionDirectory = extractionDir
@@ -150,7 +143,7 @@ internal class NightmareDatasets : DataGenerator
 
             for (var c = 0; c < numberOfConfigs; c++)
             {
-                var config = new ExtractionConfiguration(_repos.DataExportRepository, p,
+                var config = new ExtractionConfiguration(repos.DataExportRepository, p,
                     $"Extraction {GetRandomGPCode(r)}");
                 if (r.Next(2) == 0)
                     config.RequestTicket = GetRandomGPCode(r); // some have request tickets
@@ -167,12 +160,12 @@ internal class NightmareDatasets : DataGenerator
 
                     var request = new CohortCreationRequest(p,
                         new CohortDefinition(null, "Created by NightmareDatasets", 1, p.ProjectNumber.Value, ect),
-                        _repos.DataExportRepository,
+                        repos.DataExportRepository,
                         $"Nightmare dreamed on {DateTime.Now}");
 
                     request.PushToServer(con);
 
-                    var cohort = new ExtractableCohort(_repos.DataExportRepository, ect,
+                    var cohort = new ExtractableCohort(repos.DataExportRepository, ect,
                         request.NewCohortDefinition.ID.Value);
                     config.Cohort_ID = cohort.ID;
                     config.SaveToDatabase();
@@ -196,7 +189,7 @@ internal class NightmareDatasets : DataGenerator
                     // 5% have subcontainers
                     if (r.Next(20) == 0)
                     {
-                        var subContainer = new FilterContainer(_repos.DataExportRepository);
+                        var subContainer = new FilterContainer(repos.DataExportRepository);
                         sds.RootFilterContainer.AddChild(subContainer);
                         AddExtractionFiltersTo(subContainer);
                     }
@@ -207,12 +200,12 @@ internal class NightmareDatasets : DataGenerator
         // 200 cics
         for (var i = 0; i < 200 * Factor; i++)
         {
-            var cic = new CohortIdentificationConfiguration(_repos.CatalogueRepository,
+            var cic = new CohortIdentificationConfiguration(repos.CatalogueRepository,
                 $"Cohort Query {GetRandomGPCode(r)}");
 
             // 25% of cics are associated with a specific project
             if (r.Next(4) == 0)
-                _ = new ProjectCohortIdentificationConfigurationAssociation(_repos.DataExportRepository,
+                _ = new ProjectCohortIdentificationConfigurationAssociation(repos.DataExportRepository,
                     Projects.GetRandom(r), cic);
         }
     }
@@ -222,7 +215,7 @@ internal class NightmareDatasets : DataGenerator
         var numberOfFilters = GetGaussianInt(0, 2);
         for (var f = 0; f < numberOfFilters; f++)
         {
-            var filter = new DeployedExtractionFilter(_repos.DataExportRepository,
+            var filter = new DeployedExtractionFilter(repos.DataExportRepository,
                 $"Filter {Guid.NewGuid()}", null)
             {
                 WhereSQL = "ColX > 0"
@@ -238,7 +231,7 @@ internal class NightmareDatasets : DataGenerator
         // 762 tables
         // 18415 columns
         // = average of 24 columns per table
-        var ti = new TableInfo(_repos.CatalogueRepository, $"[MyDb].[Table{TablesCount++}]");
+        var ti = new TableInfo(repos.CatalogueRepository, $"[MyDb].[Table{_tablesCount++}]");
 
         // let's not set the server name on 1 in 20 so we get all those
         // horrible null references out in the open
@@ -260,7 +253,7 @@ internal class NightmareDatasets : DataGenerator
 
         var numberOfColumns = GetGaussianInt(1, 48);
         for (var j = 0; j < numberOfColumns; j++)
-            yield return new ColumnInfo(_repos.CatalogueRepository, $"MyCol{ColumnsCount++}", "varchar(10)", ti);
+            yield return new ColumnInfo(repos.CatalogueRepository, $"MyCol{_columnsCount++}", "varchar(10)", ti);
     }
 
     // we are not actually interested in these methods, just want to use GetGaussian etc

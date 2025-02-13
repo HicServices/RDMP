@@ -1435,15 +1435,14 @@ public class DataTableUploadDestinationTests : DatabaseTests
             destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, ex);
             throw;
         }
-        using (var con = db.Server.GetConnection())
-        {
-            con.Open();
-            DbCommand cmd = db.Server.GetCommand("select * from sys.indexes where name = 'CreateIndex_OK'", con);
-            var r = cmd.ExecuteReader();
-            Assert.That(r.HasRows);
-            r.Read();
-            Assert.That(r["name"], Is.EqualTo("CreateIndex_OK"));
-        }
+
+        using var con = db.Server.GetConnection();
+        con.Open();
+        using var cmd = db.Server.GetCommand("select * from sys.indexes where name = 'CreateIndex_OK'", con);
+        var r = cmd.ExecuteReader();
+        Assert.That(r.HasRows);
+        r.Read();
+        Assert.That(r["name"], Is.EqualTo("CreateIndex_OK"));
     }
 
     [Test]
@@ -1475,13 +1474,12 @@ public class DataTableUploadDestinationTests : DatabaseTests
             destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, ex);
             throw;
         }
-        using (var con = db.Server.GetConnection())
-        {
-            con.Open();
-            DbCommand cmd = db.Server.GetCommand("select * from sys.indexes where name = 'CreateIndex_OK'", con);
-            var r = cmd.ExecuteReader();
-            Assert.That(r.HasRows, Is.EqualTo(false));
-        }
+
+        using var con = db.Server.GetConnection();
+        con.Open();
+        using var cmd = db.Server.GetCommand("select * from sys.indexes where name = 'CreateIndex_OK'", con);
+        var r = cmd.ExecuteReader();
+        Assert.That(r.HasRows, Is.EqualTo(false));
     }
 
     [Test]
@@ -1514,16 +1512,18 @@ public class DataTableUploadDestinationTests : DatabaseTests
             destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, ex);
             throw;
         }
-        using (var con = db.Server.GetConnection())
+
+        using var con = db.Server.GetConnection();
+        con.Open();
+        using var cmd = db.Server.GetCommand("select * from sys.indexes where name = 'CreateIndex_OK'", con);
+        var r = cmd.ExecuteReader();
+        Assert.That(r.HasRows);
+        r.Read();
+        Assert.Multiple(() =>
         {
-            con.Open();
-            DbCommand cmd = db.Server.GetCommand("select * from sys.indexes where name = 'CreateIndex_OK'", con);
-            var r = cmd.ExecuteReader();
-            Assert.That(r.HasRows);
-            r.Read();
             Assert.That(r["name"], Is.EqualTo("CreateIndex_OK"));
-            Assert.That(r.Read(), Is.EqualTo(false));//only 1 row
-        }
+            Assert.That(r.Read(), Is.EqualTo(false)); //only 1 row
+        });
     }
 
     [Test]

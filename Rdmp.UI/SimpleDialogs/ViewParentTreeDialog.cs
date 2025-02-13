@@ -27,10 +27,7 @@ namespace Rdmp.UI.SimpleDialogs
             _tree = tree;
             _activator = activator;
             InitializeComponent();
-            this.tlv.CanExpandGetter = delegate (object x)
-            {
-                return tree.IndexOf(x) < tree.Count() - 1;
-            };
+            this.tlv.CanExpandGetter = x => tree.IndexOf(x) < tree.Count - 1;
             this.tlv.ChildrenGetter = delegate (object x)
             {
                 var item = tree[tree.IndexOf(x) + 1];

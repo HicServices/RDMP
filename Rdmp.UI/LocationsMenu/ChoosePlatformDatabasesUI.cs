@@ -384,41 +384,39 @@ public partial class ChoosePlatformDatabasesUI : Form
     {
         using var fb = new OpenFileDialog();
         var result = fb.ShowDialog();
-        if (result == DialogResult.OK)
+        if (result != DialogResult.OK) return;
+
+        try
         {
-            try
+            var location = new DirectoryInfo(fb.FileName);
+            using var reader = new StreamReader(location.FullName);
+            // Load the stream
+            var yaml = new YamlStream();
+            yaml.Load(reader);
+            var docs = yaml.Documents.First().AllNodes.Select(static n => n.ToString()).ToList();
+            string catalogueConnectionString = null;
+            string dataExportConnectionString = null;
+            foreach (var item in docs.Select(static (value, i) => new { i, value }))
             {
-                var location = new DirectoryInfo(fb.FileName);
-                using (var reader = new StreamReader(location.FullName))
+                switch (item.value)
                 {
-                    // Load the stream
-                    var yaml = new YamlStream();
-                    yaml.Load(reader);
-                    var docs = yaml.Documents.First().AllNodes.Select(static n => n.ToString()).ToList();
-                    string catalogueConnectionString = null;
-                    string dataExportConnectionString = null;
-                    foreach (var item in docs.Select(static (value, i) => new { i, value }))
-                    {
-                        switch (item.value)
-                        {
-                            case "CatalogueConnectionString":
-                                catalogueConnectionString = docs[item.i + 1];
-                                break;
-                            case "DataExportConnectionString":
-                                dataExportConnectionString = docs[item.i + 1];
-                                break;
-                        }
-                    }
-                    if (catalogueConnectionString != null) tbCatalogueConnectionString.Text = catalogueConnectionString;
-                    if (dataExportConnectionString != null) tbDataExportManagerConnectionString.Text = dataExportConnectionString;
+                    case "CatalogueConnectionString":
+                        catalogueConnectionString = docs[item.i + 1];
+                        break;
+                    case "DataExportConnectionString":
+                        dataExportConnectionString = docs[item.i + 1];
+                        break;
                 }
             }
-            catch (Exception)
-            {
-                //Unable to parse yaml file
-                tbCatalogueConnectionString.Text = null;
-                tbDataExportManagerConnectionString.Text = null;
-            }
+
+            if (catalogueConnectionString != null) tbCatalogueConnectionString.Text = catalogueConnectionString;
+            if (dataExportConnectionString != null) tbDataExportManagerConnectionString.Text = dataExportConnectionString;
+        }
+        catch (Exception)
+        {
+            //Unable to parse yaml file
+            tbCatalogueConnectionString.Text = null;
+            tbDataExportManagerConnectionString.Text = null;
         }
     }
 

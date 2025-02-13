@@ -432,8 +432,6 @@ public partial class AggregateGraphUI : AggregateGraph_Design
         //last column is always the X axis, then for each column before it add a series with Y values coming from that column
         for (var i = 0; i < _dt.Columns.Count - 1; i++)
         {
-            var index = i;
-
             if (!haveSetSource)
             {
                 try
@@ -589,27 +587,27 @@ public partial class AggregateGraphUI : AggregateGraph_Design
             chart1.ChartAreas[0].AxisY.LabelStyle.Format = "{0:#,#}";
 
             //avoid buffer overrun
-            if (index > chart1.Series.Count - 1)
+            if (i > chart1.Series.Count - 1)
                 chart1.Series.Add(new Series());
 
             chart1.ChartAreas[0].AxisX.ScaleView.Zoomable = true;
             chart1.ChartAreas[0].CursorX.AutoScroll = true;
             chart1.ChartAreas[0].CursorX.IsUserSelectionEnabled = true;
 
-            chart1.Series[index].XValueMember = _dt.Columns[0].ColumnName;
-            chart1.Series[index].YValueMembers = _dt.Columns[index + 1].ColumnName;
+            chart1.Series[i].XValueMember = _dt.Columns[0].ColumnName;
+            chart1.Series[i].YValueMembers = _dt.Columns[i + 1].ColumnName;
 
             if (axis != null)
             {
-                chart1.Series[index].ChartType = SeriesChartType.Line;
+                chart1.Series[i].ChartType = SeriesChartType.Line;
 
                 //alternate in rotating style the various lines on the graph
-                chart1.Series[index].BorderDashStyle = _styleList[index % _styleList.Length];
-                chart1.Series[index].BorderWidth = 2;
+                chart1.Series[i].BorderDashStyle = _styleList[i % _styleList.Length];
+                chart1.Series[i].BorderWidth = 2;
             }
             else
             {
-                chart1.Series[index].ChartType = SeriesChartType.Column;
+                chart1.Series[i].ChartType = SeriesChartType.Column;
 
 
                 if (_dt.Columns[0].DataType == typeof(decimal) || _dt.Columns[0].DataType == typeof(int))
@@ -625,7 +623,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
             }
 
             //name series based on column 3 or the aggregate name
-            chart1.Series[index].Name = _dt.Columns[index + 1].ColumnName;
+            chart1.Series[i].Name = _dt.Columns[i + 1].ColumnName;
         }
 
         //don't show legend if there's only one series

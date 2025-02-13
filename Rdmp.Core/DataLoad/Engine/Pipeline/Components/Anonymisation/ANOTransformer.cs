@@ -154,14 +154,10 @@ public class ANOTransformer
                 }
             }
 
-            var substituteForANOIdentifiersProc = SubstitutionStoredProcedure;
-
-            using var cmdSubstituteIdentifiers = new SqlCommand(substituteForANOIdentifiersProc, con)
-            {
-                CommandType = CommandType.StoredProcedure,
-                CommandTimeout = 500,
-                Transaction = transaction
-            };
+            using var cmdSubstituteIdentifiers = new SqlCommand(SubstitutionStoredProcedure, con);
+            cmdSubstituteIdentifiers.CommandType = CommandType.StoredProcedure;
+            cmdSubstituteIdentifiers.CommandTimeout = 500;
+            cmdSubstituteIdentifiers.Transaction = transaction;
 
             cmdSubstituteIdentifiers.Parameters.Add("@batch", SqlDbType.Structured);
             cmdSubstituteIdentifiers.Parameters.Add("@tableName", SqlDbType.VarChar, 500);

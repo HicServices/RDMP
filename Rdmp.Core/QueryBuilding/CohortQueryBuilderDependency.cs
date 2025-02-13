@@ -84,30 +84,28 @@ public class CohortQueryBuilderDependency
         JoinableCohortAggregateConfigurationUse patientIndexTableIfAny, ICoreChildProvider childProvider,
         IReadOnlyCollection<IPluginCohortCompiler> pluginCohortCompilers)
     {
-        var childProvider1 = childProvider;
         _pluginCohortCompilers = pluginCohortCompilers;
         CohortSet = cohortSet;
         PatientIndexTableIfAny = patientIndexTableIfAny;
 
         //record the IsExtractionIdentifier column for the log (helps with debugging count issues)
-        var eis = cohortSet?.AggregateDimensions?.Where(d => d.IsExtractionIdentifier).ToArray();
+        var eis = cohortSet?.AggregateDimensions?.Where(static d => d.IsExtractionIdentifier).ToArray();
 
         //Multiple IsExtractionIdentifier columns is a big problem but it's handled elsewhere
         if (eis is { Length: 1 })
             ExtractionIdentifierColumn = eis[0];
 
-        if (PatientIndexTableIfAny != null)
-        {
-            var join = childProvider1.AllJoinables.SingleOrDefault(j =>
-                           j.ID == PatientIndexTableIfAny.JoinableCohortAggregateConfiguration_ID) ??
-                       throw new Exception("ICoreChildProvider did not know about the provided patient index table");
-            JoinedTo = childProvider1.AllAggregateConfigurations.SingleOrDefault(ac =>
-                ac.ID == join.AggregateConfiguration_ID);
+        if (PatientIndexTableIfAny == null) return;
 
-            if (JoinedTo == null)
-                throw new Exception(
-                    "ICoreChildProvider did not know about the provided patient index table AggregateConfiguration");
-        }
+        var join = childProvider.AllJoinables.SingleOrDefault(j =>
+                       j.ID == PatientIndexTableIfAny.JoinableCohortAggregateConfiguration_ID) ??
+                   throw new Exception("ICoreChildProvider did not know about the provided patient index table");
+        JoinedTo = childProvider.AllAggregateConfigurations.SingleOrDefault(ac =>
+            ac.ID == join.AggregateConfiguration_ID);
+
+        if (JoinedTo == null)
+            throw new Exception(
+                "ICoreChildProvider did not know about the provided patient index table AggregateConfiguration");
     }
 
     public override string ToString() =>

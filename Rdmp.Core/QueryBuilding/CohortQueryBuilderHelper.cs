@@ -126,9 +126,8 @@ public class CohortQueryBuilderHelper
         var builderSqlWithoutParameters = builder.SQL;
 
         //get the SQL from the builder (for the current configuration) - without parameters
-        var currentBlock = builderSqlWithoutParameters;
 
-        var toReturn = new CohortQueryBuilderDependencySql(currentBlock, builder.ParameterManager);
+        var toReturn = new CohortQueryBuilderDependencySql(builderSqlWithoutParameters, builder.ParameterManager);
 
         if (args.JoinSql != null) toReturn.ParametersUsed.MergeWithoutRename(args.JoinSql.ParametersUsed);
 

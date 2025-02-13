@@ -108,12 +108,9 @@ public class ExecuteCommandUpdateCatalogueDataLocation : BasicCommandExecution, 
 
     private TableInfo TableIsAlreadyKnown()
     {
-        return _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<TableInfo>().Where(ti =>
-        {
-            return ti.Name == _table.GetFullyQualifiedName() &&
-                   ti.Server == _table.Database.Server.Name &&
-                   ti.Database == _table.Database.GetRuntimeName();
-        }).FirstOrDefault();
+        return _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<TableInfo>().FirstOrDefault(ti => ti.Name == _table.GetFullyQualifiedName() &&
+            ti.Server == _table.Database.Server.Name &&
+            ti.Database == _table.Database.GetRuntimeName());
     }
 
 

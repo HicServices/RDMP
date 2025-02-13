@@ -364,13 +364,11 @@ public partial class RacewayRenderAreaUI : UserControl, INotifyMeOfEditState
                         var heightOfBarToDraw = eachRaceLaneHasThisMuchYSpace * thicknessRatio;
                         var emptyYSpace = eachRaceLaneHasThisMuchYSpace - heightOfBarToDraw;
 
-                        var widthOfBarToDraw = eachBucketHasThisManyPixelsOfX;
-
-                        var rectToFill = new RectangleF(i * widthOfBarToDraw, startDrawingLaneAtY + emptyYSpace,
-                            widthOfBarToDraw, heightOfBarToDraw);
+                        var rectToFill = new RectangleF(i * eachBucketHasThisManyPixelsOfX, startDrawingLaneAtY + emptyYSpace,
+                            eachBucketHasThisManyPixelsOfX, heightOfBarToDraw);
                         e.Graphics.FillRectangle(brush, rectToFill);
 
-                        var fullRectHitbox = new RectangleF(rectToFill.X, startDrawingLaneAtY, widthOfBarToDraw,
+                        var fullRectHitbox = new RectangleF(rectToFill.X, startDrawingLaneAtY, eachBucketHasThisManyPixelsOfX,
                             eachRaceLaneHasThisMuchYSpace);
                         if (fullRectHitbox.Contains(mousePosition))
                         {

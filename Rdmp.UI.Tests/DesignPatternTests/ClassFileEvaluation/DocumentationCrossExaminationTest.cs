@@ -476,7 +476,6 @@ internal class DocumentationCrossExaminationTest
         var lineNumber = 0;
 
         var allLines = File.ReadAllLines(mdFile);
-        var allLinesRevised = allLines;
 
         var suggestedLinks = new Dictionary<string, string>();
 
@@ -492,57 +491,59 @@ internal class DocumentationCrossExaminationTest
                 continue;
 
             //don't complain about keywords in code blocks
-            if (line.TrimStart().StartsWith("```") || line.TrimStart().StartsWith("> ```"))
+            var trimmed = line.TrimStart();
+            if (trimmed.StartsWith("```", StringComparison.Ordinal) || trimmed.StartsWith("> ```", StringComparison.Ordinal))
                 inCodeBlock = !inCodeBlock;
 
-            if (!inCodeBlock)
-                foreach (Match match in rWords.Matches(line))
-                    if (glossaryHeaders.Contains(match.Value))
+            if (inCodeBlock) continue;
+
+            foreach (Match match in rWords.Matches(line))
+                if (glossaryHeaders.Contains(match.Value))
+                {
+                    //It's already got a link on it e.g. [DBMS] or it's "UNION - sometext"
+                    if (match.Index - 1 > 0
+                        &&
+                        (line[match.Index - 1] == '[' || line[match.Index - 1] == '"'))
+                        continue;
+
+
+                    var path1 = new Uri(mdFile);
+                    var path2 = new Uri(glossaryPath);
+                    var diff = path1.MakeRelativeUri(path2);
+                    var relPath = diff.OriginalString;
+
+                    if (!relPath.StartsWith('.'))
+                        relPath = $"./{relPath}";
+
+                    var suggestedLine = $"[{match.Value}]: {relPath}#{match.Value}";
+                    var markdownLink = $"[{match.Value}]({relPath}#{match.Value})";
+
+                    //if it has spaces on either side
+                    if (line[Math.Max(0, match.Index - 1)] == ' ' && line[
+                                                                      Math.Min(line.Length - 1,
+                                                                          match.Index + match.Length)] == ' '
+                                                                  //don't mess with lines that contain an image
+                                                                  && !line.Contains("!["))
+                        allLines[lineNumber - 1] = line.Replace($" {match.Value} ", $" [{match.Value}] ");
+
+                    //also if we have a name like `Catalogue` it should probably be [Catalogue] instead so it works as a link
+                    allLines[lineNumber - 1] = line.Replace($"`{match.Value}`", $"[{match.Value}]");
+
+                    //if it is a novel occurrence
+                    if (!allLines.Contains(suggestedLine) && !suggestedLinks.ContainsValue(suggestedLine) && !allLines.Contains(markdownLink) && !suggestedLinks.ContainsValue(markdownLink))
                     {
-                        //It's already got a link on it e.g. [DBMS] or it's "UNION - sometext"
-                        if (match.Index - 1 > 0
-                            &&
-                            (line[match.Index - 1] == '[' || line[match.Index - 1] == '"'))
-                            continue;
-
-
-                        var path1 = new Uri(mdFile);
-                        var path2 = new Uri(glossaryPath);
-                        var diff = path1.MakeRelativeUri(path2);
-                        var relPath = diff.OriginalString;
-
-                        if (!relPath.StartsWith("."))
-                            relPath = $"./{relPath}";
-
-                        var suggestedLine = $"[{match.Value}]: {relPath}#{match.Value}";
-                        var markdownLink = $"[{match.Value}]({relPath}#{match.Value})";
-
-                        //if it has spaces on either side
-                        if (line[Math.Max(0, match.Index - 1)] == ' ' && line[
-                                                                          Math.Min(line.Length - 1,
-                                                                              match.Index + match.Length)] == ' '
-                                                                      //don't mess with lines that contain an image
-                                                                      && !line.Contains("!["))
-                            allLinesRevised[lineNumber - 1] = line.Replace($" {match.Value} ", $" [{match.Value}] ");
-
-                        //also if we have a name like `Catalogue` it should probably be [Catalogue] instead so it works as a link
-                        allLinesRevised[lineNumber - 1] = line.Replace($"`{match.Value}`", $"[{match.Value}]");
-
-                        //if it is a novel occurrence
-                        if (!allLines.Contains(suggestedLine) && !suggestedLinks.ContainsValue(suggestedLine) && !allLines.Contains(markdownLink) && !suggestedLinks.ContainsValue(markdownLink))
-                        {
-                            suggestedLinks.Add(match.Value, suggestedLine);
-                            problems.Add(
-                                $"Glossary term should be link in {mdFile} line number {lineNumber}.  Term is {match.Value}.  Suggested link line is:\"{suggestedLine}\"");
-                        }
+                        suggestedLinks.Add(match.Value, suggestedLine);
+                        problems.Add(
+                            $"Glossary term should be link in {mdFile} line number {lineNumber}.  Term is {match.Value}.  Suggested link line is:\"{suggestedLine}\"");
                     }
+                }
         }
 
         // ReSharper disable once RedundantLogicalConditionalExpressionOperand
         // ReSharper disable once ConditionIsAlwaysTrueOrFalse
         if (suggestedLinks.Any() && ReWriteMarkdownToReferenceGlossary)
         {
-            File.WriteAllLines(mdFile, allLinesRevised);
+            File.WriteAllLines(mdFile, allLines);
 
             File.AppendAllText(mdFile, Environment.NewLine);
             File.AppendAllLines(mdFile, suggestedLinks.Values.Distinct());
