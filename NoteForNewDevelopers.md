@@ -14,7 +14,7 @@ Here are things you should know about RDMP!
 1. [Existing Plugins](#existing-plugins)
 
 ## Other Docs
-All technical and repo specific documentation are stored in markdown (`.md` format).  Below is a list of docs in the repo.  There is also a Confluence website which stores [documentation on how to perform common user tasks](https://hic-docs.atlassian.net/wiki/spaces/RDMPDOCUME/overview?homepageId=196610)
+All technical and repo specific documentation are stored in markdown (`.md` format).  Below is a list of docs in the repo.  There is also a Confluence website which stores [documentation on how to perform common user tasks](https://hicservices.atlassian.net/wiki/spaces/RDMPDOCUME/overview?homepageId=196610)
 
 **Code Tutorials**
 - [Overview of RDMP Windows Client GUI application](./Documentation/CodeTutorials/UserInterfaceOverview.md)
