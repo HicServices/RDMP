@@ -1108,24 +1108,8 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
         Folder = r["Folder"].ToString();
 
         ShortDescription = r["ShortDescription"].ToString();
-        var dataSource = r["DataSource"];
-        if (dataSource == null || dataSource == DBNull.Value)
-        {
-            DataSource = $"{DataSourceTypes.Other}";
-        }
-        else
-        {
-            DataSource = r["DataSource"].ToString();
-        }
-        var dataSourceSetting = r["DataSourceSetting"];
-        if (dataSourceSetting == null || dataSourceSetting == DBNull.Value)
-        {
-            DataSourceSetting = $"{DataSourceSettingTypes.Other}";
-        }
-        else
-        {
-            DataSourceSetting = r["DataSourceSetting"].ToString();
-        }
+        DataSource = r["DataSource"].ToString();
+        DataSourceSetting = r["DataSourceSetting"].ToString();
         StartDate = !string.IsNullOrEmpty(r["StartDate"].ToString()) ? DateTime.Parse(r["StartDate"].ToString()) : null;
         EndDate = !string.IsNullOrEmpty(r["EndDate"].ToString()) ? DateTime.Parse(r["EndDate"].ToString()) : null;
         DatasetReleaseDate = !string.IsNullOrEmpty(r["DatasetReleaseDate"].ToString()) ? DateTime.Parse(r["DatasetReleaseDate"].ToString()) : null;
