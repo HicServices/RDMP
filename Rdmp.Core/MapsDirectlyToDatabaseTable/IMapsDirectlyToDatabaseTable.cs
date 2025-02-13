@@ -40,6 +40,6 @@ public interface IMapsDirectlyToDatabaseTable : IDeleteable, INotifyPropertyChan
     //use MapsDirectlyToDatabaseTableRepository to fully utilise this interface
 
     //ensure you have a the same class name as the table name DIRECTLY
-    //ensure you have a constructor that initializes your object when passed a DbDataReader (paramter value) and DbCommand (how to update yourself)
+    //ensure you have a constructor that initializes your object when passed a DbDataReader (parameter value) and DbCommand (how to update yourself)
     //these two things are required for MapsDirectlyToDatabaseTable.GetAllObjects and MapsDirectlyToDatabaseTable.GetObjectByID
 }

@@ -68,7 +68,7 @@ public abstract class RuntimeTask : DataLoadComponent, IRuntimeTask, ICheckable
             if (initialization != null)
                 try
                 {
-                    //get the approrpriate value from arguments
+                    //get the appropriate value from arguments
                     var value = args.GetCustomArgumentValue(propertyInfo.Name);
 
                     //use reflection to set the value

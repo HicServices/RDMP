@@ -286,7 +286,7 @@ public sealed class DataLoadInfo : IDataLoadInfo
         using var con = DatabaseSettings.GetConnection();
         con.Open();
 
-        //look up the fatal error ID (get hte name of the Enum so that we can refactor if nessesary without breaking the code looking for a constant string)
+        //look up the fatal error ID (get the name of the Enum so that we can refactor if necessary without breaking the code looking for a constant string)
         var initialErrorStatus = Enum.GetName(typeof(FatalErrorStates), FatalErrorStates.Outstanding);
 
 

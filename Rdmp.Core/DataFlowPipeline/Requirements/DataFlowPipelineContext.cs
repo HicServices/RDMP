@@ -24,7 +24,7 @@ namespace Rdmp.Core.DataFlowPipeline.Requirements;
 /// with DataFlowPipelineContextFactory but really you should only be doing this if you are building a new IPipelineUseCase.  If you are trying to run an IPipeline that
 /// is used elsewhere in RDMP then you need to find the IPipelineUseCase that matches the job you are trying to achieve.</para>
 /// 
-/// <para>DataFlowPipelineContext is symantically similar to IPipelineUseCase, the difference is that the context only contains low level rules about what is compatible while
+/// <para>DataFlowPipelineContext is semantically similar to IPipelineUseCase, the difference is that the context only contains low level rules about what is compatible while
 /// the IPipelineUseCase also has the specific objects that will be used for initialization, fixed source instances etc (as well the context).</para>
 /// </summary>
 /// <typeparam name="T"></typeparam>
@@ -98,7 +98,7 @@ public class DataFlowPipelineContext<T> : IDataFlowPipelineContext
             }
 
 
-        //if there are any forbidden types further up the inheritance heirarchy than t reject it
+        //if there are any forbidden types further up the inheritance hierarchy than t reject it
         foreach (var forbiddenType in CannotHave)
         {
             if (forbiddenType.IsAssignableFrom(t))

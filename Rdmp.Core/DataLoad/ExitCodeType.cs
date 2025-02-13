@@ -12,7 +12,7 @@ namespace Rdmp.Core.DataLoad;
 public enum ExitCodeType
 {
     /// <summary>
-    /// The load was succesful, there should be new/updated rows in the live database
+    /// The load was successful, there should be new/updated rows in the live database
     /// </summary>
     Success,
 

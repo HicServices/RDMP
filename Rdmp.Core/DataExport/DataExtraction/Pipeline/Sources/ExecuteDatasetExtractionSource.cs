@@ -420,7 +420,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
                             throw new Exception(
                                 $"Null release identifier found in extract of dataset {Request.DatasetBundle.DataSet}");
                         else
-                            continue; //there are multiple extraction identifiers thats fine if one or two are null
+                            continue; //there are multiple extraction identifiers that's fine if one or two are null
 
                     UniqueReleaseIdentifiersEncountered.Add(r[idx]);
                 }
@@ -550,7 +550,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
         if (dbms == null || dbms.Value != DatabaseType.MicrosoftSQLServer)
             return false;
 
-        // this Catalogue is explicilty marked as never hash join? i.e. its on the exclusion list
+        // this Catalogue is explicitly marked as never hash join? i.e. its on the exclusion list
         if (DoNotUseHashJoinsForCatalogues?.Contains(Request.Catalogue) ?? false)
             return false;
 

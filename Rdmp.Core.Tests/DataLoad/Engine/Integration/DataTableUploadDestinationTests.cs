@@ -1279,10 +1279,10 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
     }
 
     /// <summary>
-    /// Tests the systems ability to change live table datatypes during bulk insert to accomodate novel data
+    /// Tests the systems ability to change live table datatypes during bulk insert to accommodate novel data
     /// 
     /// <para>This test set passes v1 in the first batch which determines the initial Type of the database table.  Then v2 is passed in the next batch
-    /// which will (in most cases) require an ALTER of the live table to accomodate the wider datatype.</para>
+    /// which will (in most cases) require an ALTER of the live table to accommodate the wider datatype.</para>
     /// </summary>
     /// <param name="dbType">The DBMS to test</param>
     /// <param name="v1">The row value to send in batch 1</param>

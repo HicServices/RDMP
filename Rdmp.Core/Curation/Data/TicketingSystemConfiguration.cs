@@ -20,7 +20,7 @@ namespace Rdmp.Core.Curation.Data;
 /// such as JIRA.  This ticketing system is used to record ticket numbers of a variety of objects (e.g. SupportingDocuments, extraction projects etc) and allows them
 /// to accrue man hours without compromising your current workflow.
 /// 
-/// <para>In addition to tying objects to your ticketing system, the ticketing system will also be consulted about wheter data extraction projects are good to go or should
+/// <para>In addition to tying objects to your ticketing system, the ticketing system will also be consulted about whether data extraction projects are good to go or should
 /// not be released (e.g. do not release project X until it has been paid for / signed off by the governancer).  The exact implementation of this is mostly left to the
 /// ticketing class you write.</para>
 /// 

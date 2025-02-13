@@ -36,8 +36,8 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs;
 /// filter does, including any peculiarities and that you robustly test the SQL in the implementation to make sure it actually works.</para>
 /// 
 /// <para>To write the actual implementation type into the SQL prompt (omitting the 'WHERE' keyword).  For example you could create a Filter called 'Active Records Only' with a description
-/// 'This filter throws out all records which have expired because a clinician has deleted them or the patient has withdrawn consent' and implmenetation SQL of 'MyTable.IActive=1'. Make
-/// sure to fully specify the names of columns in your WHERE SQL incase the filter is used as part of a join across multiple tables with columns that contain the same name (e.g. it might
+/// 'This filter throws out all records which have expired because a clinician has deleted them or the patient has withdrawn consent' and implementation SQL of 'MyTable.IActive=1'. Make
+/// sure to fully specify the names of columns in your WHERE SQL in case the filter is used as part of a join across multiple tables with columns that contain the same name (e.g. it might
 /// be that many other tables also include a field called IsActive).  Make sure you fully explore your dataset before finalising your filter and consider edge cases e.g. what does it mean
 /// when IsActive is null? are there any values above 1? and if so what does that mean?</para>
 /// 

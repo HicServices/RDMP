@@ -35,7 +35,7 @@ public class ObjectConstructor
     /// <returns></returns>
     public static object Construct(Type t) => GetUsingBlankConstructor(t);
 
-    #region permissable constructor signatures for use with this class
+    #region permissible constructor signatures for use with this class
 
     /// <summary>
     /// Constructs a new instance of Type t using the default constructor or one that takes an IRDMPPlatformRepositoryServiceLocator (or any derived class)

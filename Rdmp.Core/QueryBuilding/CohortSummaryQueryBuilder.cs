@@ -220,7 +220,7 @@ public class CohortSummaryQueryBuilder
         var cohortQueryBuilder = GetBuilder();
         cohortQueryBuilder.CacheServer = cachingServer;
 
-        //It is comming direct from the cache so we don't need to output any parameters... the only ones that would appear are the globals anyway and those are not needed since cache
+        //It is coming direct from the cache so we don't need to output any parameters... the only ones that would appear are the globals anyway and those are not needed since cache
         cohortQueryBuilder.DoNotWriteOutParameters = true;
         //the basic cohort SQL select chi from dataset where ....
         var cohortSql = cohortQueryBuilder.SQL;

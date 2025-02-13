@@ -147,7 +147,7 @@ public class ExecuteCommandRestoreRegexRedactedValueInCatalogueTests: DatabaseTe
         Assert.That(redactions.Length, Is.EqualTo(2));
         Assert.That(redactions[0].StartingIndex, Is.EqualTo(4));
         Assert.That(redactions[1].StartingIndex, Is.EqualTo(12));
-        //resore the second one
+        //restore the second one
         var revert = new ExecuteCommandRestoreRegexRedactedValueInCatalogue(activator, redactions[1]);
         Assert.DoesNotThrow(() => revert.Execute());
         var foundRedaction = CatalogueRepository.GetAllObjectsWhere<RegexRedaction>("RedactionConfiguration_ID", regexConfiguration.ID).ToList();
@@ -155,7 +155,7 @@ public class ExecuteCommandRestoreRegexRedactedValueInCatalogueTests: DatabaseTe
         dt = Retrieve(db);
         Assert.That(dt.Rows.Count, Is.EqualTo(1));
         Assert.That(dt.Rows[0].ItemArray[0], Is.EqualTo("1234<DB>1234TEST1234"));
-        //resore the first one
+        //restore the first one
         revert = new ExecuteCommandRestoreRegexRedactedValueInCatalogue(activator, redactions[0]);
         Assert.DoesNotThrow(() => revert.Execute());
         foundRedaction = CatalogueRepository.GetAllObjectsWhere<RegexRedaction>("RedactionConfiguration_ID", regexConfiguration.ID).ToList();

@@ -117,14 +117,14 @@ public class TestActivateItems : BasicActivateItems, IActivateItems, ITheme
         return t;
     }
 
-    public override bool DeleteWithConfirmation(IDeleteable deleteable)
+    public override bool DeleteWithConfirmation(IDeleteable deletable)
     {
-        if (deleteable is DatabaseEntity d && !d.Exists())
+        if (deletable is DatabaseEntity d && !d.Exists())
             throw new Exception("Attempt made to delete an object which didn't exist");
 
-        base.DeleteWithConfirmation(deleteable);
+        base.DeleteWithConfirmation(deletable);
 
-        RefreshBus.Publish(this, new RefreshObjectEventArgs((DatabaseEntity)deleteable));
+        RefreshBus.Publish(this, new RefreshObjectEventArgs((DatabaseEntity)deletable));
         return true;
     }
 

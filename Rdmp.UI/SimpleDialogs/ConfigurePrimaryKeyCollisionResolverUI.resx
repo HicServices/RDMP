@@ -118,6 +118,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="label1.Text" xml:space="preserve">
-    <value>Primary key conflicts often occurr when data is loaded.  This is resolved by rating non primary key columns for quality and discarding the lower scoring rows.  This dialog lets you choose the order in which columns are prioritised when making the decision which rows to discard.</value>
+    <value>Primary key conflicts often occur when data is loaded.  This is resolved by rating non primary key columns for quality and discarding the lower scoring rows.  This dialog lets you choose the order in which columns are prioritised when making the decision which rows to discard.</value>
   </data>
 </root>

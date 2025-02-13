@@ -256,7 +256,7 @@ namespace Rdmp.UI.SimpleDialogs
                 }
                 if (!_showReplaceOptions)
                 {
-                    //the edit values dissapear when we close the dialog, so keep them around when we're in replace mode
+                    //the edit values disappear when we close the dialog, so keep them around when we're in replace mode
                     DialogResult = DialogResult.OK;
                     Close();
                 }

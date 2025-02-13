@@ -140,7 +140,7 @@ public abstract class TableRepository : ITableRepository
 
             cmd.Connection = managedConnection.Connection;
 
-            //change the transaction of the update comand to the specified transaction but only long enough to run it
+            //change the transaction of the update command to the specified transaction but only long enough to run it
             var transactionBefore = cmd.Transaction;
             cmd.Transaction = managedConnection.Transaction;
 
@@ -210,7 +210,7 @@ public abstract class TableRepository : ITableRepository
     }
 
     /// <summary>
-    /// Get's all the objects of type T that have the parent 'parent' (which will be interrogated by its ID).  Note that for this to work the type T must have a property which is EXACTLY the Parent objects name with _ID afterwards
+    /// Gets all the objects of type T that have the parent 'parent' (which will be interrogated by its ID).  Note that for this to work the type T must have a property which is EXACTLY the Parent objects name with _ID afterwards
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="parent"></param>
@@ -511,7 +511,7 @@ public abstract class TableRepository : ITableRepository
     /// a field which is named whatever your value in parameter columnWithObjectID is.  If you hate life you can pass a dbNullSubstition (which must also be of type
     /// T) in which case whenever a record in the result set is found with a DBNull in it, the substitute appears in the returned list instead.
     /// 
-    /// <para>IMPORTANT: Order is NOT PERSERVED by this method so don't bother trying to sneak an Order by command into your select query </para>
+    /// <para>IMPORTANT: Order is NOT PRESERVED by this method so don't bother trying to sneak an Order by command into your select query </para>
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="selectQuery"></param>

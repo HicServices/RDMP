@@ -18,7 +18,7 @@ using TypeGuesser;
 namespace Rdmp.Core.Curation.ANOEngineering;
 
 /// <summary>
-/// Records all ANO descisions made about a single ColumnInfo (e.g. whether to ANO it, Drop it, Dillute it etc)
+/// Records all ANO decisions made about a single ColumnInfo (e.g. whether to ANO it, Drop it, Dillute it etc)
 /// </summary>
 public class ColumnInfoANOPlan : ICheckable
 {

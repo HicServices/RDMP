@@ -24,7 +24,7 @@ using Rdmp.UI.TransparentHelpSystem;
 namespace Rdmp.UI.SimpleControls;
 
 /// <summary>
-/// Enables the launching of one of the core RDMP engines (<see cref="RDMPCommandLineOptions"/>) either as a detatched process or as a hosted process (where the
+/// Enables the launching of one of the core RDMP engines (<see cref="RDMPCommandLineOptions"/>) either as a detached process or as a hosted process (where the
 /// UI will show the checking/executing progress messages).  This class ensures that the behaviour is the same between console run rdmp and the UI applications.
 /// </summary>
 public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClosing
@@ -41,7 +41,7 @@ public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClos
 
     /// <summary>
     /// Called every time the execution of the runner completes (does not get called if the runner was detached - running
-    /// in a seperate process).
+    /// in a separate process).
     /// </summary>
     public event EventHandler<ExecutionEventArgs> ExecutionFinished;
 

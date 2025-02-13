@@ -73,7 +73,7 @@ public abstract class RDMPCommandLineOptions
     public bool SkipPatching { get; set; }
 
     /// <summary>
-    /// If <see cref="ConnectionStringsFile"/> was specified and that file existed and was succesfully loaded
+    /// If <see cref="ConnectionStringsFile"/> was specified and that file existed and was successfully loaded
     /// using <see cref="PopulateConnectionStringsFromYamlIfMissing"/> then this property will store the
     /// file used including name and description
     /// </summary>

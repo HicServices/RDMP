@@ -25,7 +25,7 @@ public class CohortQueryBuilderHelper
 {
     /// <summary>
     /// Returns the SQL you need to include in your nested query (in UNION / EXCEPT / INTERSECT).  This does not include parameter declarations (which
-    /// would appear at the very top) and includes rename operations dependant on what has been written out before by (tracked by <see cref="ParameterManager"/>).
+    /// would appear at the very top) and includes rename operations dependent on what has been written out before by (tracked by <see cref="ParameterManager"/>).
     ///
     /// <para>Use <paramref name="args"/> for the original un renamed / including parameter declarations e.g. to test for cache hits</para>
     /// </summary>

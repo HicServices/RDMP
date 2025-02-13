@@ -59,7 +59,7 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
 
     /// <summary>
     /// The public network share of the Data path where the physical database files are stored if applicable.  Sharing your database directory on the network is a
-    /// terrible idea (don't do it).  You can use this to automate detatching and shipping an MDF to your researchers e.g. MsSqlReleaseSource
+    /// terrible idea (don't do it).  You can use this to automate detaching and shipping an MDF to your researchers e.g. MsSqlReleaseSource
     /// </summary>
     public string MappedDataPath
     {
