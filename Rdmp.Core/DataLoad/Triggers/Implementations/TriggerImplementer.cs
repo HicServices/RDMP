@@ -144,8 +144,6 @@ public abstract partial class TriggerImplementer : ITriggerImplementer
         createTableSQL = createTableSQL.Replace(toReplaceTableName,
             $"CREATE TABLE {_archiveTable.GetFullyQualifiedName()}");
 
-        const string toRemoveIdentities = "IDENTITY\\(\\d+,\\d+\\)";
-
         //drop identity bit
         createTableSQL = RemoveIdentities().Replace(createTableSQL, "");
 
