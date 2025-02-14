@@ -35,10 +35,10 @@ public partial class RedactCatalogueUI : RedactCatalogueUI_Design
     public RedactCatalogueUI()
     {
         InitializeComponent();
-        this.comboBox1.Items.Clear();
+        comboBox1.Items.Clear();
         AssociatedCollection = RDMPCollection.Tables;
-        this.folv.ButtonClick += Restore;
-        this.btnNewRegex.Click += HandleNewRegex;
+        folv.ButtonClick += Restore;
+        btnNewRegex.Click += HandleNewRegex;
 
     }
 
@@ -90,7 +90,7 @@ public partial class RedactCatalogueUI : RedactCatalogueUI_Design
         _activator = activator;
         _catalogue = databaseObject;
         var regexConfigurations = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<RegexRedactionConfiguration>().ToArray();
-        this.comboBox1.Items.Clear();
+        comboBox1.Items.Clear();
         comboBox1.Items.AddRange(regexConfigurations);
         comboBox1.DisplayMember = "Name";
         RefreshTable();

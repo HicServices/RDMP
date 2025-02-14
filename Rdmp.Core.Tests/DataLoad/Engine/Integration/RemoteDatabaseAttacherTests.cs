@@ -63,7 +63,7 @@ public class RemoteDatabaseAttacherTests : DatabaseTests
         lm.CreateNewLoggingTaskIfNotExists("amagad");
         var dli = lm.CreateDataLoadInfo("amagad", "p", "a", "", true);
 
-        var job = NSubstitute.Substitute.For<IDataLoadJob>();
+        var job = Substitute.For<IDataLoadJob>();
         job.RegularTablesToLoad.Returns(new List<ITableInfo> { ti });
         job.LookupTablesToLoad.Returns(new List<ITableInfo>());
         job.DataLoadInfo.Returns(dli);
@@ -227,7 +227,7 @@ public class RemoteDatabaseAttacherTests : DatabaseTests
         lm.CreateNewLoggingTaskIfNotExists("amagad");
         var dli = lm.CreateDataLoadInfo("amagad", "p", "a", "", true);
 
-        var job = NSubstitute.Substitute.For<IDataLoadJob>();
+        var job = Substitute.For<IDataLoadJob>();
         job.RegularTablesToLoad.Returns(new List<ITableInfo> { ti });
         job.LookupTablesToLoad.Returns(new List<ITableInfo>());
         job.DataLoadInfo.Returns(dli);

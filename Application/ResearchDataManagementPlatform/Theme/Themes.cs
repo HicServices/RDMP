@@ -13,7 +13,7 @@ using WeifenLuo.WinFormsUI.Docking;
 namespace ResearchDataManagementPlatform.Theme;
 
 //These classes should not be moved.  They are referenced by name in UserSettingsFileUI and UserSettings
-[System.ComponentModel.DesignerCategory("")]
+[DesignerCategory("")]
 public class MyVS2015BlueTheme : VS2015BlueTheme, ITheme
 {
     private ThemeExtender _extender;

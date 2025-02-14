@@ -272,7 +272,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
 
     public LoadMetadata Clone()
     {
-        var lmd = new LoadMetadata(CatalogueRepository, this.Name)
+        var lmd = new LoadMetadata(CatalogueRepository, Name)
         {
             LocationOfForLoadingDirectory = LocationOfForLoadingDirectory,
             LocationOfForArchivingDirectory = LocationOfForArchivingDirectory,
@@ -290,12 +290,12 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         };
         lmd.SaveToDatabase();
         //link to catalogue
-        foreach (var catalogue in this.GetAllCatalogues())
+        foreach (var catalogue in GetAllCatalogues())
         {
             lmd.LinkToCatalogue(catalogue);
         }
         //process task
-        var pts = CatalogueRepository.GetAllObjectsWhere<ProcessTask>("LoadMetadata_ID", this.ID);
+        var pts = CatalogueRepository.GetAllObjectsWhere<ProcessTask>("LoadMetadata_ID", ID);
         foreach (ProcessTask pt in pts)
         {
             pt.Clone(lmd);
@@ -316,7 +316,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
 
     public void UnlinkFromCatalogue(ICatalogue catalogue)
     {
-        foreach (var l in CatalogueRepository.GetAllObjects<LoadMetadataCatalogueLinkage>().Where(link => link.CatalogueID == catalogue.ID && link.LoadMetadataID == this.ID))
+        foreach (var l in CatalogueRepository.GetAllObjects<LoadMetadataCatalogueLinkage>().Where(link => link.CatalogueID == catalogue.ID && link.LoadMetadataID == ID))
         {
             l.DeleteInDatabase();
         }
@@ -327,7 +327,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     {
         var firstOrDefault = GetAllCatalogues().FirstOrDefault();
 
-        if (firstOrDefault != null && this.RootLoadMetadata_ID == null)
+        if (firstOrDefault != null && RootLoadMetadata_ID == null)
             throw new Exception(
                 $"This load is used by {firstOrDefault.Name} so cannot be deleted (Disassociate it first)");
 
@@ -336,7 +336,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         {
             version.DeleteInDatabase();
         }
-        if (this.RootLoadMetadata_ID != null)
+        if (RootLoadMetadata_ID != null)
         {
             var catalogueLinkIDs = Repository.GetAllObjectsWhere<LoadMetadataCatalogueLinkage>("LoadMetadataID", ID);
             foreach (var link in catalogueLinkIDs)
@@ -525,9 +525,9 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     /// <inheritdoc/>
     public DatabaseEntity SaveNewVersion()
     {
-        var lmd = this.Clone();
-        lmd.RootLoadMetadata_ID = this.RootLoadMetadata_ID != null ? this.RootLoadMetadata_ID : this.ID;
-        lmd.Name = $"{this.Name} - {DateTime.Now}";
+        var lmd = Clone();
+        lmd.RootLoadMetadata_ID = RootLoadMetadata_ID != null ? RootLoadMetadata_ID : ID;
+        lmd.Name = $"{Name} - {DateTime.Now}";
         lmd.SaveToDatabase();
         return lmd;
     }

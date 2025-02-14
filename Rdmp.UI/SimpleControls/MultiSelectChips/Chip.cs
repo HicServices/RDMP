@@ -14,7 +14,7 @@ namespace Rdmp.UI.SimpleControls.MultiSelectChips
             InitializeComponent();
             lblText.Text = AddSpacesToSentence(value, true);
             btnClear.Location = new Point(lblText.Width + lblText.Location.X + 5, btnClear.Location.Y);
-            this.Size = new System.Drawing.Size(lblText.Width + lblText.Location.X + btnClear.Width + 15, this.Size.Height);
+            Size = new Size(lblText.Width + lblText.Location.X + btnClear.Width + 15, Size.Height);
             _clear = clear;
         }
 
@@ -48,7 +48,7 @@ namespace Rdmp.UI.SimpleControls.MultiSelectChips
             set
             {
                 radius = value;
-                this.RecreateRegion();
+                RecreateRegion();
             }
         }
 
@@ -60,15 +60,15 @@ namespace Rdmp.UI.SimpleControls.MultiSelectChips
         {
             var bounds = ClientRectangle;
 
-            this.Region = Region.FromHrgn(CreateRoundRectRgn(bounds.Left, bounds.Top,
+            Region = Region.FromHrgn(CreateRoundRectRgn(bounds.Left, bounds.Top,
                 bounds.Right, bounds.Bottom, Radius, radius));
-            this.Invalidate();
+            Invalidate();
         }
 
         protected override void OnSizeChanged(EventArgs e)
         {
             base.OnSizeChanged(e);
-            this.RecreateRegion();
+            RecreateRegion();
         }
     }
 }

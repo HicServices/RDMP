@@ -15,7 +15,7 @@ namespace Rdmp.UI.SimpleControls
             set
             {
                 _text = value;
-                this.toolTip1.SetToolTip(this.pictureBox1, this._text);
+                toolTip1.SetToolTip(pictureBox1, _text);
 
             }
         }

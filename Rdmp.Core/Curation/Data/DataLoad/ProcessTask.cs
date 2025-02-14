@@ -449,13 +449,13 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
 
     public ProcessTask Clone(LoadMetadata lmd)
     {
-        var pt = new ProcessTask(this.CatalogueRepository, lmd, this.LoadStage) {
-            ProcessTaskType = this.ProcessTaskType,
-            Order = this.Order,
-            IsDisabled = this.IsDisabled,
-            SerialisableConfiguration = this.SerialisableConfiguration,
-            Path = this.Path,
-            Name= this.Name,
+        var pt = new ProcessTask(CatalogueRepository, lmd, LoadStage) {
+            ProcessTaskType = ProcessTaskType,
+            Order = Order,
+            IsDisabled = IsDisabled,
+            SerialisableConfiguration = SerialisableConfiguration,
+            Path = Path,
+            Name= Name,
         };
         pt.LoadMetadata_ID = lmd.ID;
         pt.SaveToDatabase();

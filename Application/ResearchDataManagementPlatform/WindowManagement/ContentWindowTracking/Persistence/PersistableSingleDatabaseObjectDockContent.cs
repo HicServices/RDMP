@@ -25,7 +25,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.
 /// software the Tab can be reloaded and displayed.  Persistence involves storing this Tab type, the Control type being hosted by the Tab (a RDMPSingleDatabaseObjectControl) and the object
 /// ID , object Type and Repository (DataExport or Catalogue) of the T object currently held in the RDMPSingleDatabaseObjectControl.
 /// </summary>
-[System.ComponentModel.DesignerCategory("")]
+[DesignerCategory("")]
 [TechnicalUI]
 public class PersistableSingleDatabaseObjectDockContent : RDMPSingleControlTab
 {
