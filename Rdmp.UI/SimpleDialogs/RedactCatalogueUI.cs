@@ -77,7 +77,7 @@ public partial class RedactCatalogueUI : RedactCatalogueUI_Design
 
     public void Restore(object sender, CellClickEventArgs e)
     {
-        Debug.WriteLine(String.Format("Button clicked: ({0}, {1}, {2})", e.RowIndex, e.SubItem, e.Model));
+        Debug.WriteLine($"Button clicked: ({e.RowIndex}, {e.SubItem}, {e.Model})");
         var redaction = (e.Model as RegexRedaction);
         Restore(redaction);
     }
