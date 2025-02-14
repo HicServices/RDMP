@@ -170,17 +170,14 @@ public class SessionCollectionUI : RDMPUserControl, IObjectCollectionControl, IC
     {
         olvTree = new BrightIdeasSoftware.TreeListView();
         olvName = new BrightIdeasSoftware.OLVColumn();
-        ((System.ComponentModel.ISupportInitialize)olvTree).BeginInit();
+        ((ISupportInitialize)olvTree).BeginInit();
         SuspendLayout();
         // 
         // olvRecent
         // 
         olvTree.AllColumns.Add(olvName);
         olvTree.CellEditUseWholeCell = false;
-        olvTree.Columns.AddRange(new ColumnHeader[]
-        {
-            olvName
-        });
+        olvTree.Columns.AddRange(olvName);
         olvTree.Cursor = Cursors.Default;
         olvTree.Dock = DockStyle.Fill;
         olvTree.FullRowSelect = true;

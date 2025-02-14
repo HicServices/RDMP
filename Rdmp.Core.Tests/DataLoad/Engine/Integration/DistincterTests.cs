@@ -47,8 +47,8 @@ public class DistincterTests : DatabaseTests
         {
             var randInt = r.Next(int.MaxValue);
 
-            dt.Rows.Add(new object[] { randInt, randInt, randInt, randInt, randInt });
-            dt.Rows.Add(new object[] { randInt, randInt, randInt, randInt, randInt });
+            dt.Rows.Add(randInt, randInt, randInt, randInt, randInt);
+            dt.Rows.Add(randInt, randInt, randInt, randInt, randInt);
         }
 
         dt.EndLoadData();
@@ -106,8 +106,8 @@ public class DistincterTests : DatabaseTests
         {
             var randInt = r.Next(int.MaxValue);
 
-            dt.Rows.Add(new object[] { randInt, randInt, randInt, randInt, randInt });
-            dt.Rows.Add(new object[] { randInt, randInt, randInt, randInt, randInt + 1 });
+            dt.Rows.Add(randInt, randInt, randInt, randInt, randInt);
+            dt.Rows.Add(randInt, randInt, randInt, randInt, randInt + 1);
         }
 
         dt.EndLoadData();

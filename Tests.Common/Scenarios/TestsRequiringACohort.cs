@@ -187,8 +187,8 @@ GO
             dt.Columns.Add("SuperSecretThing");
             dt.Columns.Add("PrivateID");
 
-            dt.Rows.Add(new[] { "monkeys can all secretly fly", "Priv_12345" });
-            dt.Rows.Add(new[] { "the wizard of OZ was a man behind a machine", "Priv_wtf11" });
+            dt.Rows.Add("monkeys can all secretly fly", "Priv_12345");
+            dt.Rows.Add("the wizard of OZ was a man behind a machine", "Priv_wtf11");
 
             CustomTable = _cohortDatabase.CreateTable("custTable99", dt);
         }

@@ -292,8 +292,7 @@ public class SelectedDataSetsChecker : ICheckable
         }
         catch (Exception ex)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs(ErrorCodes.NoSqlAuditedForExtractionProgress, ex,
-                new object[] { progress }));
+            notifier.OnCheckPerformed(new CheckEventArgs(ErrorCodes.NoSqlAuditedForExtractionProgress, ex, progress));
             return;
         }
 

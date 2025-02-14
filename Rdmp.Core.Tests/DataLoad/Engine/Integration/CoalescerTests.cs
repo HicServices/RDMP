@@ -47,34 +47,34 @@ public class CoalescerTests : DatabaseTests
             var randInt = r.Next(250);
             var randCompleteness = r.Next(4);
 
-            dt.Rows.Add(new object[] { randInt, randInt, randInt, randInt, randInt });
-            dt.Rows.Add(new object[] { randInt, DBNull.Value, DBNull.Value, DBNull.Value, randInt });
-            dt.Rows.Add(new object[] { randInt, DBNull.Value, DBNull.Value, randInt, DBNull.Value });
-            dt.Rows.Add(new object[] { randInt, DBNull.Value, DBNull.Value, randInt, randInt });
+            dt.Rows.Add(randInt, randInt, randInt, randInt, randInt);
+            dt.Rows.Add(randInt, DBNull.Value, DBNull.Value, DBNull.Value, randInt);
+            dt.Rows.Add(randInt, DBNull.Value, DBNull.Value, randInt, DBNull.Value);
+            dt.Rows.Add(randInt, DBNull.Value, DBNull.Value, randInt, randInt);
 
             if (randCompleteness >= 1)
             {
-                dt.Rows.Add(new object[] { randInt, DBNull.Value, randInt, DBNull.Value, DBNull.Value });
-                dt.Rows.Add(new object[] { randInt, DBNull.Value, randInt, DBNull.Value, randInt });
-                dt.Rows.Add(new object[] { randInt, DBNull.Value, randInt, randInt, DBNull.Value });
-                dt.Rows.Add(new object[] { randInt, DBNull.Value, randInt, randInt, randInt });
+                dt.Rows.Add(randInt, DBNull.Value, randInt, DBNull.Value, DBNull.Value);
+                dt.Rows.Add(randInt, DBNull.Value, randInt, DBNull.Value, randInt);
+                dt.Rows.Add(randInt, DBNull.Value, randInt, randInt, DBNull.Value);
+                dt.Rows.Add(randInt, DBNull.Value, randInt, randInt, randInt);
             }
 
             if (randCompleteness >= 2)
             {
-                dt.Rows.Add(new object[] { randInt, randInt, DBNull.Value, DBNull.Value, DBNull.Value });
-                dt.Rows.Add(new object[] { randInt, randInt, DBNull.Value, DBNull.Value, randInt });
-                dt.Rows.Add(new object[] { randInt, randInt, DBNull.Value, randInt, DBNull.Value });
-                dt.Rows.Add(new object[] { randInt, randInt, DBNull.Value, randInt, randInt });
+                dt.Rows.Add(randInt, randInt, DBNull.Value, DBNull.Value, DBNull.Value);
+                dt.Rows.Add(randInt, randInt, DBNull.Value, DBNull.Value, randInt);
+                dt.Rows.Add(randInt, randInt, DBNull.Value, randInt, DBNull.Value);
+                dt.Rows.Add(randInt, randInt, DBNull.Value, randInt, randInt);
             }
 
 
             if (randCompleteness >= 3)
             {
-                dt.Rows.Add(new object[] { randInt, randInt, randInt, DBNull.Value, DBNull.Value });
-                dt.Rows.Add(new object[] { randInt, randInt, randInt, DBNull.Value, randInt });
-                dt.Rows.Add(new object[] { randInt, randInt, randInt, randInt, DBNull.Value });
-                dt.Rows.Add(new object[] { randInt, DBNull.Value, DBNull.Value, DBNull.Value, DBNull.Value });
+                dt.Rows.Add(randInt, randInt, randInt, DBNull.Value, DBNull.Value);
+                dt.Rows.Add(randInt, randInt, randInt, DBNull.Value, randInt);
+                dt.Rows.Add(randInt, randInt, randInt, randInt, DBNull.Value);
+                dt.Rows.Add(randInt, DBNull.Value, DBNull.Value, DBNull.Value, DBNull.Value);
             }
         }
 

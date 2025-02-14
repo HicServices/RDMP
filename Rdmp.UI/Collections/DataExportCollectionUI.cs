@@ -156,30 +156,16 @@ public partial class DataExportCollectionUI : RDMPCollectionUI, ILifetimeSubscri
         CommonFunctionality.Add(_refresh);
 
         CommonFunctionality.Add(new ExecuteCommandCreateNewCohortIdentificationConfiguration(Activator)
-        { PromptToPickAProject = true }, "Cohort Builder Query", null, NewMenu);
+            { PromptToPickAProject = true }, "Cohort Builder Query", null, NewMenu);
 
         var uiFactory = new AtomicCommandUIFactory(Activator);
         var cohortSubmenu = new ToolStripMenuItem("Cohort");
-        cohortSubmenu.DropDownItems.AddRange(
-            new[]
-            {
-                // from cic
-                uiFactory.CreateMenuItem(
-                    new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(Activator, null)
-                        { OverrideCommandName = "From Cohort Builder Query" }),
-
-                // from file
-                uiFactory.CreateMenuItem(new ExecuteCommandCreateNewCohortFromFile(Activator, null)
-                    { OverrideCommandName = "From File" }),
-
-                // from catalogue
-                uiFactory.CreateMenuItem(new ExecuteCommandCreateNewCohortFromCatalogue(Activator, (Catalogue)null)
-                    { OverrideCommandName = "From Catalogue" }),
-
-                // from table
-                uiFactory.CreateMenuItem(new ExecuteCommandCreateNewCohortFromTable(Activator, null)
-                    { OverrideCommandName = "From Table" })
-            });
+        cohortSubmenu.DropDownItems.AddRange(uiFactory.CreateMenuItem(
+            new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(Activator, null)
+                { OverrideCommandName = "From Cohort Builder Query" }), uiFactory.CreateMenuItem(new ExecuteCommandCreateNewCohortFromFile(Activator, null)
+            { OverrideCommandName = "From File" }), uiFactory.CreateMenuItem(new ExecuteCommandCreateNewCohortFromCatalogue(Activator, (Catalogue)null)
+            { OverrideCommandName = "From Catalogue" }), uiFactory.CreateMenuItem(new ExecuteCommandCreateNewCohortFromTable(Activator, null)
+            { OverrideCommandName = "From Table" }));
         CommonFunctionality.Add(cohortSubmenu, NewMenu);
         CommonFunctionality.Add(new ToolStripSeparator(), NewMenu);
 

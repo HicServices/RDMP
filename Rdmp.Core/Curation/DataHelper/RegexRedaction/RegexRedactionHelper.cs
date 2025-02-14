@@ -82,6 +82,7 @@ namespace Rdmp.Core.Curation.DataHelper.RegexRedaction
                 {
                     throw new Exception($"Redaction string '{_redactionConfiguration.RedactionString}' is longer than found match '{foundMatch}'.");
                 }
+
                 if (lengthDiff > 0)
                 {
                     var start = (int)Math.Floor(lengthDiff / 2);
@@ -89,12 +90,14 @@ namespace Rdmp.Core.Curation.DataHelper.RegexRedaction
                     replacementValue = replacementValue.PadLeft(start + replacementValue.Length, '<');
                     replacementValue = replacementValue.PadRight(end + replacementValue.Length, '>');
                 }
+
                 value = value[..startingIndex] + replacementValue + value[(startingIndex + foundMatch.Length)..];
-                redactionsToSaveTable.Rows.Add([_redactionConfiguration.ID, column.ID, startingIndex, replacementValue, foundMatch]);
+                redactionsToSaveTable.Rows.Add(_redactionConfiguration.ID, column.ID, startingIndex, replacementValue, foundMatch);
                 foreach (var pk in pkLookup)
                 {
-                    pksToSave.Rows.Add([redactionUpates.Rows.Count + offset, pk.Key.ID, pk.Value]);
+                    pksToSave.Rows.Add(redactionUpates.Rows.Count + offset, pk.Key.ID, pk.Value);
                 }
+
                 offset++;
             }
 

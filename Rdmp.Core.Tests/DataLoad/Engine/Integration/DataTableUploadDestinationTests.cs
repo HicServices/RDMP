@@ -36,12 +36,12 @@ public class DataTableUploadDestinationTests : DatabaseTests
 
         var dt1 = new DataTable();
         dt1.Columns.Add("name", typeof(string));
-        dt1.Rows.Add(new[] { "Fish" });
+        dt1.Rows.Add("Fish");
         dt1.TableName = "DataTableUploadDestinationTests";
 
         var dt2 = new DataTable();
         dt2.Columns.Add("name", typeof(string));
-        dt2.Rows.Add(new[] { "BigFish" });
+        dt2.Rows.Add("BigFish");
         dt2.TableName = "DataTableUploadDestinationTests";
 
         destination.ProcessPipelineData(dt1, toConsole, token);
@@ -275,12 +275,12 @@ public class DataTableUploadDestinationTests : DatabaseTests
 
         var dt1 = new DataTable();
         dt1.Columns.Add("name", typeof(string));
-        dt1.Rows.Add(new[] { "Fish" });
+        dt1.Rows.Add("Fish");
         dt1.TableName = "DataTableUploadDestinationTests";
 
         var dt2 = new DataTable();
         dt2.Columns.Add("name", typeof(string));
-        dt2.Rows.Add(new[] { "BigFish" });
+        dt2.Rows.Add("BigFish");
         dt2.TableName = "DataTableUploadDestinationTests";
 
         destination.ProcessPipelineData(dt1, toConsole, token);
@@ -309,11 +309,11 @@ public class DataTableUploadDestinationTests : DatabaseTests
 
         var dt1 = new DataTable();
         dt1.Columns.Add("mynum", typeof(double));
-        dt1.Rows.Add(new object[] { 1 });
-        dt1.Rows.Add(new object[] { 5 });
-        dt1.Rows.Add(new object[] { 15 });
-        dt1.Rows.Add(new object[] { 2.5 });
-        dt1.Rows.Add(new object[] { 5 });
+        dt1.Rows.Add(1);
+        dt1.Rows.Add(5);
+        dt1.Rows.Add(15);
+        dt1.Rows.Add(2.5);
+        dt1.Rows.Add(5);
 
         dt1.TableName = "DataTableUploadDestinationTests";
 
@@ -343,7 +343,7 @@ public class DataTableUploadDestinationTests : DatabaseTests
 
         var dt1 = new DataTable();
         dt1.Columns.Add("mycol");
-        dt1.Rows.Add(new[] { batch1Value });
+        dt1.Rows.Add(batch1Value);
 
         dt1.TableName = "DataTableUploadDestinationTests";
         try
@@ -352,7 +352,7 @@ public class DataTableUploadDestinationTests : DatabaseTests
 
             var dt2 = new DataTable();
             dt2.Columns.Add("mycol");
-            dt2.Rows.Add(new object[] { batch2Value });
+            dt2.Rows.Add(batch2Value);
 
             destination.ProcessPipelineData(dt2, toConsole, token);
             destination.Dispose(toConsole, null);
@@ -380,7 +380,7 @@ public class DataTableUploadDestinationTests : DatabaseTests
 
         var dt1 = new DataTable();
         dt1.Columns.Add("mycol");
-        dt1.Rows.Add(new[] { batch1Value });
+        dt1.Rows.Add(batch1Value);
 
         dt1.TableName = "DataTableUploadDestinationTests";
         try
@@ -390,7 +390,7 @@ public class DataTableUploadDestinationTests : DatabaseTests
 
             var dt2 = new DataTable();
             dt2.Columns.Add("mycol");
-            dt2.Rows.Add(new object[] { batch2Value });
+            dt2.Rows.Add(batch2Value);
 
             destination.ProcessPipelineData(dt2, toConsole, token);
             destination.Dispose(toConsole, null);
@@ -423,7 +423,7 @@ public class DataTableUploadDestinationTests : DatabaseTests
 
         var dt1 = new DataTable();
         dt1.Columns.Add("myText");
-        dt1.Rows.Add(new object[] { longBitOfText });
+        dt1.Rows.Add(longBitOfText);
 
 
         dt1.TableName = "DataTableUploadDestinationTests";
@@ -455,17 +455,17 @@ public class DataTableUploadDestinationTests : DatabaseTests
 
         var dt1 = new DataTable();
         dt1.Columns.Add("mynum", typeof(string));
-        dt1.Rows.Add(new[] { "1.51" });
+        dt1.Rows.Add("1.51");
         dt1.TableName = "DataTableUploadDestinationTests";
 
         var dt2 = new DataTable();
         dt2.Columns.Add("mynum", typeof(string));
-        dt2.Rows.Add(new[] { negative ? "-999.99" : "999.99" });
-        dt2.Rows.Add(new[] { "00000.00000" });
-        dt2.Rows.Add(new[] { "0" });
+        dt2.Rows.Add(negative ? "-999.99" : "999.99");
+        dt2.Rows.Add("00000.00000");
+        dt2.Rows.Add("0");
         dt2.Rows.Add(new string[] { null });
-        dt2.Rows.Add(new[] { "" });
-        dt2.Rows.Add(new[] { DBNull.Value });
+        dt2.Rows.Add("");
+        dt2.Rows.Add(DBNull.Value);
         dt2.TableName = "DataTableUploadDestinationTests";
 
         destination.ProcessPipelineData(dt1, toConsole, token);
@@ -523,7 +523,7 @@ public class DataTableUploadDestinationTests : DatabaseTests
         dt1.Columns.Add("myCol", typeof(string));
 
         foreach (var rowValue in rowValues)
-            dt1.Rows.Add(new[] { rowValue });
+            dt1.Rows.Add(rowValue);
 
         dt1.TableName = "DataTableUploadDestinationTests";
 
@@ -566,10 +566,10 @@ public class DataTableUploadDestinationTests : DatabaseTests
 
         var dt1 = new DataTable();
         dt1.Columns.Add("mynum", typeof(string));
-        dt1.Rows.Add(new[] { "0.000742548000424313" });
+        dt1.Rows.Add("0.000742548000424313");
 
         if (sendTheZero)
-            dt1.Rows.Add(new[] { "0" });
+            dt1.Rows.Add("0");
 
         dt1.TableName = "DataTableUploadDestinationTests";
 
@@ -780,7 +780,7 @@ public class DataTableUploadDestinationTests : DatabaseTests
         dt1.Columns.Add("col4", typeof(byte));
         dt1.Columns.Add("col5", typeof(byte[]));
 
-        dt1.Rows.Add(new object[] { 0.425, 0.451, true, (byte)2, new byte[] { 0x5, 0xA } });
+        dt1.Rows.Add(0.425, 0.451, true, (byte)2, new byte[] { 0x5, 0xA });
 
 
         dt1.TableName = "DataTableUploadDestinationTests";
@@ -821,12 +821,12 @@ public class DataTableUploadDestinationTests : DatabaseTests
 
         var dt1 = new DataTable();
         dt1.Columns.Add("mynum", typeof(string));
-        dt1.Rows.Add(new[] { "true" });
+        dt1.Rows.Add("true");
         dt1.TableName = "DataTableUploadDestinationTests";
 
         var dt2 = new DataTable();
         dt2.Columns.Add("mynum", typeof(string));
-        dt2.Rows.Add(new[] { "999" });
+        dt2.Rows.Add("999");
         dt2.TableName = "DataTableUploadDestinationTests";
 
         destination.ProcessPipelineData(dt1, toConsole, token);
@@ -869,7 +869,7 @@ public class DataTableUploadDestinationTests : DatabaseTests
         var now = DateTime.Now;
         now = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
 
-        dt.Rows.Add(new object[] { "Anhoy there \"mates\"", "999", "2001-01-01", now, null });
+        dt.Rows.Add("Anhoy there \"mates\"", "999", "2001-01-01", now, null);
         dt.TableName = "DataTableUploadDestinationTests";
 
         destination.ProcessPipelineData(dt, toConsole, token);
@@ -918,12 +918,12 @@ public class DataTableUploadDestinationTests : DatabaseTests
 
         var dt1 = new DataTable();
         dt1.Columns.Add("mynum", typeof(string));
-        dt1.Rows.Add(new[] { "true" });
+        dt1.Rows.Add("true");
         dt1.TableName = "DataTableUploadDestinationTests";
 
         var dt2 = new DataTable();
         dt2.Columns.Add("mynum", typeof(string));
-        dt2.Rows.Add(new[] { "999" });
+        dt2.Rows.Add("999");
         dt2.TableName = "DataTableUploadDestinationTests";
 
         destination.ProcessPipelineData(dt1, toConsole, token);
@@ -972,7 +972,7 @@ public class DataTableUploadDestinationTests : DatabaseTests
                 //upload a single row
                 var dtAlreadyThereData = new DataTable();
                 dtAlreadyThereData.Columns.Add("Name");
-                dtAlreadyThereData.Rows.Add(new[] { "Bob" });
+                dtAlreadyThereData.Rows.Add("Bob");
 
                 using var bulk = tbl.BeginBulkInsert();
                 bulk.Upload(dtAlreadyThereData);
@@ -988,9 +988,9 @@ public class DataTableUploadDestinationTests : DatabaseTests
             //create the simulated chunk that will be dispatched
             var dt = new DataTable("TestDestinationAlreadyExistingIsOk");
             dt.Columns.Add("Name");
-            dt.Rows.Add(new[] { "Bob" });
-            dt.Rows.Add(new[] { "Frank" });
-            dt.Rows.Add(new[] { "I've got a lovely bunch of coconuts" });
+            dt.Rows.Add("Bob");
+            dt.Rows.Add("Frank");
+            dt.Rows.Add("I've got a lovely bunch of coconuts");
 
             var listener = ThrowImmediatelyDataLoadEventListener.Quiet;
 
@@ -1076,7 +1076,7 @@ public class DataTableUploadDestinationTests : DatabaseTests
             var dtAlreadyThereData = new DataTable();
             dtAlreadyThereData.Columns.Add("Name");
             dtAlreadyThereData.Columns.Add("Age");
-            dtAlreadyThereData.Rows.Add(new object[] { "Bob", 5 });
+            dtAlreadyThereData.Rows.Add("Bob", 5);
 
             using (var bulk = tbl.BeginBulkInsert())
             {
@@ -1093,9 +1093,9 @@ public class DataTableUploadDestinationTests : DatabaseTests
             //create the simulated chunk that will be dispatched
             var dt = new DataTable("TestDestinationAlreadyExisting_ColumnSubset");
             dt.Columns.Add("Name");
-            dt.Rows.Add(new[] { "Bob" });
-            dt.Rows.Add(new[] { "Frank" });
-            dt.Rows.Add(new[] { "I've got a lovely bunch of coconuts" });
+            dt.Rows.Add("Bob");
+            dt.Rows.Add("Frank");
+            dt.Rows.Add("I've got a lovely bunch of coconuts");
 
             var listener = ThrowImmediatelyDataLoadEventListener.Quiet;
 
@@ -1240,7 +1240,7 @@ public class DataTableUploadDestinationTests : DatabaseTests
         var dt1 = new DataTable();
         dt1.Columns.Add("TestedCol", typeof(string));
         dt1.Columns.Add("OtherCol", typeof(string));
-        dt1.Rows.Add(new[] { giveNullValuesOnly ? null : "true", "1.51" });
+        dt1.Rows.Add(giveNullValuesOnly ? null : "true", "1.51");
 
         dt1.TableName = "DataTableUploadDestinationTests";
 
@@ -1248,7 +1248,7 @@ public class DataTableUploadDestinationTests : DatabaseTests
         dt2.Columns.Add("TestedCol", typeof(string));
         dt2.Columns.Add("OtherCol", typeof(string));
 
-        dt2.Rows.Add(new[] { "2001-01-01", "999.99" });
+        dt2.Rows.Add("2001-01-01", "999.99");
 
         dt2.TableName = "DataTableUploadDestinationTests";
 
@@ -1314,7 +1314,7 @@ public class DataTableUploadDestinationTests : DatabaseTests
 
         var dt1 = new DataTable();
         dt1.Columns.Add("TestedCol", typeof(string));
-        dt1.Rows.Add(new[] { v1 });
+        dt1.Rows.Add(v1);
 
         if (v1 != null && v2 != null)
             dt1.PrimaryKey = dt1.Columns.Cast<DataColumn>().ToArray();
@@ -1324,7 +1324,7 @@ public class DataTableUploadDestinationTests : DatabaseTests
         var dt2 = new DataTable();
         dt2.Columns.Add("TestedCol", typeof(string));
 
-        dt2.Rows.Add(new[] { v2 });
+        dt2.Rows.Add(v2);
         dt2.TableName = "DataTableUploadDestinationTests";
 
         var tt = db.Server.GetQuerySyntaxHelper().TypeTranslater;
@@ -1376,13 +1376,13 @@ public class DataTableUploadDestinationTests : DatabaseTests
 
         var dt1 = new DataTable();
         dt1.Columns.Add("FloatCol", typeof(string));
-        dt1.Rows.Add(new[] { "1.51" });
+        dt1.Rows.Add("1.51");
 
         dt1.TableName = "DataTableUploadDestinationTests";
 
         var dt2 = new DataTable();
         dt2.Columns.Add("FloatCol", typeof(string));
-        dt2.Rows.Add(new[] { "99.9999" });
+        dt2.Rows.Add("99.9999");
 
         dt2.TableName = "DataTableUploadDestinationTests";
 
@@ -1422,7 +1422,7 @@ public class DataTableUploadDestinationTests : DatabaseTests
 
         var dt1 = new DataTable();
         dt1.Columns.Add("name", typeof(string));
-        dt1.Rows.Add(new[] { "Fish" });
+        dt1.Rows.Add("Fish");
         dt1.TableName = "DataTableUploadDestinationTests";
         try
         {
@@ -1460,7 +1460,7 @@ public class DataTableUploadDestinationTests : DatabaseTests
 
         var dt1 = new DataTable();
         dt1.Columns.Add("name", typeof(string));
-        dt1.Rows.Add(new[] { "Fish" });
+        dt1.Rows.Add("Fish");
         dt1.TableName = "DataTableUploadDestinationTests";
 
         try
@@ -1498,7 +1498,7 @@ public class DataTableUploadDestinationTests : DatabaseTests
 
         var dt1 = new DataTable();
         dt1.Columns.Add("name", typeof(string));
-        dt1.Rows.Add(new[] { "Fish" });
+        dt1.Rows.Add("Fish");
         dt1.TableName = "DataTableUploadDestinationTests";
         try
         {
@@ -1540,7 +1540,7 @@ public class DataTableUploadDestinationTests : DatabaseTests
 
         var dt1 = new DataTable();
         dt1.Columns.Add("name", typeof(string));
-        dt1.Rows.Add(new[] { "Fish" });
+        dt1.Rows.Add("Fish");
         dt1.TableName = "DataTableUploadDestinationTests";
         try
         {
@@ -1575,7 +1575,7 @@ public class DataTableUploadDestinationTests : DatabaseTests
 
         var dt1 = new DataTable();
         dt1.Columns.Add("name", typeof(string));
-        dt1.Rows.Add(new[] { "Fish" });
+        dt1.Rows.Add("Fish");
         dt1.PrimaryKey = new[] { dt1.Columns[0] };
         dt1.TableName = "DataTableUploadDestinationTests";
         try
@@ -1615,7 +1615,7 @@ public class DataTableUploadDestinationTests : DatabaseTests
         var dt1 = new DataTable();
         dt1.Columns.Add("name", typeof(string));
         dt1.Columns.Add("other", typeof(string));
-        dt1.Rows.Add(new[] { "Fish", "Friend" });
+        dt1.Rows.Add("Fish", "Friend");
         dt1.PrimaryKey = new[] { dt1.Columns[0] };
         dt1.TableName = "DataTableUploadDestinationTests";
         try
@@ -1625,7 +1625,7 @@ public class DataTableUploadDestinationTests : DatabaseTests
             dt1 = new DataTable();
             dt1.Columns.Add("name", typeof(string));
             dt1.Columns.Add("other", typeof(string));
-            dt1.Rows.Add(new[] { "Fish", "Friend" });
+            dt1.Rows.Add("Fish", "Friend");
             dt1.PrimaryKey = new[] { dt1.Columns[0] };
             dt1.TableName = "DataTableUploadDestinationTests";
             Assert.Throws<Exception>(()=>destination.ProcessPipelineData(dt1, toConsole, token));
@@ -1662,7 +1662,7 @@ public class DataTableUploadDestinationTests : DatabaseTests
         var dt1 = new DataTable();
         dt1.Columns.Add("name", typeof(string));
         dt1.Columns.Add("other", typeof(string));
-        dt1.Rows.Add(new[] { "Fish", "Friend" });
+        dt1.Rows.Add("Fish", "Friend");
         dt1.PrimaryKey = new[] { dt1.Columns[0] };
         dt1.TableName = "DataTableUploadDestinationTests";
         try
@@ -1672,7 +1672,7 @@ public class DataTableUploadDestinationTests : DatabaseTests
             dt1 = new DataTable();
             dt1.Columns.Add("name", typeof(string));
             dt1.Columns.Add("other", typeof(string));
-            dt1.Rows.Add(new[] { "Fish", "Friend" });
+            dt1.Rows.Add("Fish", "Friend");
             dt1.PrimaryKey = new[] { dt1.Columns[0] };
             dt1.TableName = "DataTableUploadDestinationTests";
             destination.ProcessPipelineData(dt1, toConsole, token);
@@ -1708,7 +1708,7 @@ public class DataTableUploadDestinationTests : DatabaseTests
         var dt1 = new DataTable();
         dt1.Columns.Add("name", typeof(string));
         dt1.Columns.Add("other", typeof(string));
-        dt1.Rows.Add(new[] { "Fish", "Friend" });
+        dt1.Rows.Add("Fish", "Friend");
         dt1.PrimaryKey = new[] { dt1.Columns[0] };
         dt1.TableName = "DataTableUploadDestinationTests";
         try
@@ -1724,7 +1724,7 @@ public class DataTableUploadDestinationTests : DatabaseTests
         dt1 = new DataTable();
         dt1.Columns.Add("name", typeof(string));
         dt1.Columns.Add("other", typeof(string));
-        dt1.Rows.Add(new[] { "Fish", "Enemy" });
+        dt1.Rows.Add("Fish", "Enemy");
         dt1.PrimaryKey = new[] { dt1.Columns[0] };
         dt1.TableName = "DataTableUploadDestinationTests";
         destination = new DataTableUploadDestination
@@ -1764,7 +1764,7 @@ public class DataTableUploadDestinationTests : DatabaseTests
         var dt1 = new DataTable();
         dt1.Columns.Add("name", typeof(string));
         dt1.Columns.Add("other", typeof(string));
-        dt1.Rows.Add(new[] { "Fish", "Friend" });
+        dt1.Rows.Add("Fish", "Friend");
         dt1.PrimaryKey = new[] { dt1.Columns[0] };
         dt1.TableName = "DataTableUploadDestinationTests";
         try
@@ -1774,7 +1774,7 @@ public class DataTableUploadDestinationTests : DatabaseTests
             dt1 = new DataTable();
             dt1.Columns.Add("name", typeof(string));
             dt1.Columns.Add("other", typeof(string));
-            dt1.Rows.Add(new[] { "Fish", "Enemy" });
+            dt1.Rows.Add("Fish", "Enemy");
             dt1.PrimaryKey = new[] { dt1.Columns[0] };
             dt1.TableName = "DataTableUploadDestinationTests";
             destination.ProcessPipelineData(dt1, toConsole, token);
@@ -1819,7 +1819,7 @@ public class DataTableUploadDestinationTests : DatabaseTests
         var dt1 = new DataTable();
         dt1.Columns.Add("name", typeof(string));
         dt1.Columns.Add("other", typeof(string));
-        dt1.Rows.Add(new[] { "Fish", "Friend" });
+        dt1.Rows.Add("Fish", "Friend");
         dt1.PrimaryKey = new[] { dt1.Columns[0] };
         dt1.TableName = "DataTableUploadDestinationTests";
         try
@@ -1829,7 +1829,7 @@ public class DataTableUploadDestinationTests : DatabaseTests
             dt1 = new DataTable();
             dt1.Columns.Add("name", typeof(string));
             dt1.Columns.Add("other", typeof(string));
-            dt1.Rows.Add(new[] { "Fish" });
+            dt1.Rows.Add("Fish");
             dt1.PrimaryKey = new[] { dt1.Columns[0] };
             dt1.TableName = "DataTableUploadDestinationTests";
             destination.ProcessPipelineData(dt1, toConsole, token);

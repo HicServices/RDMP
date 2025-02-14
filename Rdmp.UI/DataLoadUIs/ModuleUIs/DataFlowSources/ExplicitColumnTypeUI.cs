@@ -23,14 +23,7 @@ public partial class ExplicitColumnTypeUI : UserControl
     {
         InitializeComponent();
 
-        ddType.Items.AddRange(
-            new[]
-            {
-                typeof(string),
-                typeof(double),
-                typeof(bool),
-                typeof(DateTime)
-            });
+        ddType.Items.AddRange(typeof(string), typeof(double), typeof(bool), typeof(DateTime));
 
         textBox1.Text = name;
         ddType.SelectedItem = t;

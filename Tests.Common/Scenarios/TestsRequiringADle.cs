@@ -56,12 +56,7 @@ public class TestsRequiringADle : TestsRequiringA
         Clear(LoadDirectory);
 
         LiveTable = CreateDataset<Demography>(Database, 500, 5000, new Random(190));
-        LiveTable.CreatePrimaryKey(new DiscoveredColumn[]
-        {
-            LiveTable.DiscoverColumn("chi"),
-            LiveTable.DiscoverColumn("dtCreated"),
-            LiveTable.DiscoverColumn("hb_extract")
-        });
+        LiveTable.CreatePrimaryKey(LiveTable.DiscoverColumn("chi"), LiveTable.DiscoverColumn("dtCreated"), LiveTable.DiscoverColumn("hb_extract"));
 
         TestCatalogue = Import(LiveTable);
         RowsBefore = 5000;

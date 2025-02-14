@@ -45,7 +45,7 @@ public class LoadFiles : CompositeDataLoadComponent
                 if (!((LoadDirectory)job.LoadDirectory).AllSubdirectoriesExist())
                 {
                     job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,
-                            $"One or more of the Load Metadata directories does not exist. Check the following locations exits: {string.Join(", ", [job.LoadDirectory.ForLoading.FullName, job.LoadDirectory.ForArchiving.FullName, job.LoadDirectory.Cache.FullName, job.LoadDirectory.ExecutablesPath.FullName])}"));
+                            $"One or more of the Load Metadata directories does not exist. Check the following locations exits: {string.Join(", ", job.LoadDirectory.ForLoading.FullName, job.LoadDirectory.ForArchiving.FullName, job.LoadDirectory.Cache.FullName, job.LoadDirectory.ExecutablesPath.FullName)}"));
                     return ExitCodeType.Error;
                 }
                 else if (job.LoadDirectory.ForLoading.EnumerateFileSystemInfos().Any())

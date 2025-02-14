@@ -67,8 +67,7 @@ public partial class PatchingUI : Form
             var mds = new MasterDatabaseScriptExecutor(_database);
 
 
-            mds.PatchDatabase(_patcher, toMem, (Patch p) => true,
-                () => false);
+            mds.PatchDatabase(_patcher, toMem, static _ => true, static () => false);
 
             //if it crashed during patching
             if (toMem.GetWorst() == CheckResult.Fail)

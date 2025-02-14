@@ -36,7 +36,9 @@ public class RegexRedactionMutilator : MatchingTablesMutilatorWithDataLoadJob
 
     private DiscoveredColumn[] _discoveredPKColumns;
 
-    public RegexRedactionMutilator() : base([LoadStage.AdjustRaw, LoadStage.AdjustStaging]) { }
+    public RegexRedactionMutilator() : base(LoadStage.AdjustRaw, LoadStage.AdjustStaging)
+    {
+    }
 
     private bool ColumnMatches(DiscoveredColumn column)
     {

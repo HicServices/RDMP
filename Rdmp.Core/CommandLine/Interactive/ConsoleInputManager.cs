@@ -147,8 +147,7 @@ public class ConsoleInputManager : BasicActivateItems
     public override IMapsDirectlyToDatabaseTable[] SelectMany(DialogArgs args, Type arrayElementType,
         IMapsDirectlyToDatabaseTable[] availableObjects)
     {
-        var value = ReadLineWithAuto(args, new PickObjectBase[]
-            { new PickObjectByID(this), new PickObjectByName(this) });
+        var value = ReadLineWithAuto(args, new PickObjectByID(this), new PickObjectByName(this));
 
         var unavailable = value.DatabaseEntities.Except(availableObjects).ToArray();
 
@@ -230,8 +229,7 @@ public class ConsoleInputManager : BasicActivateItems
 
         Console.Write(args.EntryLabel);
 
-        var value = ReadLineWithAuto(args, new PickObjectBase[]
-            { new PickObjectByID(this), new PickObjectByName(this) });
+        var value = ReadLineWithAuto(args, new PickObjectByID(this), new PickObjectByName(this));
 
         var chosen = value.DatabaseEntities?.SingleOrDefault();
 

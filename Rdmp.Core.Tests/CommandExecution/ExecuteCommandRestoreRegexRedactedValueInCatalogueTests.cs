@@ -66,13 +66,13 @@ public class ExecuteCommandRestoreRegexRedactedValueInCatalogueTests: DatabaseTe
     {
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
         var dt = GetRedactionTestDataTable();
-        dt.Rows.Add(new object[] { DateTime.Now, '1', "1234TEST1234" });
-        (Catalogue catalogue, ColumnInfo[] _columnInfos) = CreateTable(db, dt);
-       
+        dt.Rows.Add(DateTime.Now, '1', "1234TEST1234");
+        var (catalogue, columnInfos) = CreateTable(db, dt);
+
         var activator = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet);
         var regexConfiguration = new RegexRedactionConfiguration(CatalogueRepository, "TestReplacer", new Regex("TEST"), "GG", "Replace TEST with GG");
         regexConfiguration.SaveToDatabase();
-        var cmd = new ExecuteCommandPerformRegexRedactionOnCatalogue(activator, catalogue, regexConfiguration, _columnInfos.Where(c => c.GetRuntimeName() == "Condition2").ToList());
+        var cmd = new ExecuteCommandPerformRegexRedactionOnCatalogue(activator, catalogue, regexConfiguration, columnInfos.Where(c => c.GetRuntimeName() == "Condition2").ToList());
         Assert.DoesNotThrow(() => cmd.Execute());
         dt = Retrieve(db);
         Assert.That(dt.Rows.Count, Is.EqualTo(1));
@@ -91,8 +91,8 @@ public class ExecuteCommandRestoreRegexRedactedValueInCatalogueTests: DatabaseTe
     {
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
         var dt = GetRedactionTestDataTable();
-        dt.Rows.Add(new object[] { DateTime.Now, '1', "1234TEST1234" });
-        (Catalogue catalogue, ColumnInfo[] _columnInfos) = CreateTable(db, dt);
+        dt.Rows.Add(DateTime.Now, '1', "1234TEST1234");
+        (var catalogue, var _columnInfos) = CreateTable(db, dt);
 
         var activator = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet);
         var regexConfiguration = new RegexRedactionConfiguration(CatalogueRepository, "TestReplacer", new Regex("TEST"), "GG", "Replace TEST with GG");
@@ -131,8 +131,8 @@ public class ExecuteCommandRestoreRegexRedactedValueInCatalogueTests: DatabaseTe
     {
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
         var dt = GetRedactionTestDataTable();
-        dt.Rows.Add(new object[] { DateTime.Now, '1', "1234TEST1234TEST1234" });
-        (Catalogue catalogue, ColumnInfo[] _columnInfos) = CreateTable(db, dt);
+        dt.Rows.Add(DateTime.Now, '1', "1234TEST1234TEST1234");
+        (var catalogue, var _columnInfos) = CreateTable(db, dt);
 
         var activator = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet);
         var regexConfiguration = new RegexRedactionConfiguration(CatalogueRepository, "TestReplacer", new Regex("TEST"), "DB", "Replace TEST with DB");

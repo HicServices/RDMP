@@ -100,8 +100,8 @@ public class CustomDataImportingTests : TestsRequiringAnExtractionConfiguration
             dt.Columns.Add("Name");
             dt.Columns.Add("DateOfBirth");
 
-            dt.Rows.Add(new object[] { "Priv_12345", "Bob", "2001-01-01" });
-            dt.Rows.Add(new object[] { "Priv_wtf11", "Frank", "2001-10-29" });
+            dt.Rows.Add("Priv_12345", "Bob", "2001-01-01");
+            dt.Rows.Add("Priv_wtf11", "Frank", "2001-10-29");
             blk.Upload(dt);
         }
 
@@ -179,8 +179,8 @@ public class CustomDataImportingTests : TestsRequiringAnExtractionConfiguration
             dt.Columns.Add("Name");
             dt.Columns.Add("DateOfBirth");
 
-            dt.Rows.Add(new object[] { "Priv_12345", "Bob", "2001-01-01" });
-            dt.Rows.Add(new object[] { "Priv_wtf11", "Frank", "2001-10-29" });
+            dt.Rows.Add("Priv_12345", "Bob", "2001-01-01");
+            dt.Rows.Add("Priv_wtf11", "Frank", "2001-10-29");
             blk.Upload(dt);
         }
 

@@ -159,10 +159,10 @@ public class ParameterManager
                                    throw new QueryBuildingException(exceptionMessage);
 
             //problem was from a user one from their Catalogue Database, tell them the ProblemObject as well
-            throw new QueryBuildingException(exceptionMessage, new[] { asConcreteObject });
+            throw new QueryBuildingException(exceptionMessage, asConcreteObject);
         }
 
-        return toReturn.Select(t => t.Parameter);
+        return toReturn.Select(static t => t.Parameter);
     }
 
     /// <summary>
@@ -319,8 +319,7 @@ public class ParameterManager
                     else
                         //there's an override with the same name but different datatypes (that's a problem)
                         throw new QueryBuildingException(
-                            $"Parameter {parameterToImport} has the same name as an existing parameter with a global override but differing declarations (normally we would handle with a rename but we can't because of the overriding global)",
-                            new object[] { existing, parameterToImport, overridingGlobal });
+                            $"Parameter {parameterToImport} has the same name as an existing parameter with a global override but differing declarations (normally we would handle with a rename but we can't because of the overriding global)", existing, parameterToImport, overridingGlobal);
 
                 //one already exists so we will have to do a parameter rename
 

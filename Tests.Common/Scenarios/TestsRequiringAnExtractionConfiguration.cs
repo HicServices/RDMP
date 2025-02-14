@@ -134,7 +134,7 @@ public class TestsRequiringAnExtractionConfiguration : TestsRequiringACohort
         dt.Columns.Add("Name");
         dt.Columns.Add("DateOfBirth");
 
-        dt.Rows.Add(new object[] { _cohortKeysGenerated.Keys.First(), "Dave", "2001-01-01" });
+        dt.Rows.Add(_cohortKeysGenerated.Keys.First(), "Dave", "2001-01-01");
 
         var tbl = Database.CreateTable("TestTable", dt,
             new[] { new DatabaseColumnRequest("Name", new DatabaseTypeRequest(typeof(string), 50)) });

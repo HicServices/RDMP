@@ -244,7 +244,7 @@ END
         columnsInArchive = sqlUsedToCreateArchiveTableSQL[startExtractingColumnsAt..];
 
         //trim off excess crud at the end
-        columnsInArchive = columnsInArchive.Trim(new[] { ')', '\r', '\n' });
+        columnsInArchive = columnsInArchive.Trim(')', '\r', '\n');
 
         var sqlToRun = string.Format("CREATE FUNCTION [" + _schema + "].[{0}_Legacy]",
             QuerySyntaxHelper.MakeHeaderNameSensible(_table.GetRuntimeName()));

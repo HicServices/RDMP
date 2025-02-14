@@ -73,7 +73,7 @@ public class TriggerTests : DatabaseTests
     {
         CreateTable(dbType);
 
-        _table.CreatePrimaryKey(new[] { _table.DiscoverColumn("name") });
+        _table.CreatePrimaryKey(_table.DiscoverColumn("name"));
         GetImplementer().CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
 
         Assert.Multiple(() =>

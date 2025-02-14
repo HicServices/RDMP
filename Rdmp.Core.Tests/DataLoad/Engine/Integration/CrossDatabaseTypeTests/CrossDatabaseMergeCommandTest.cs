@@ -44,11 +44,11 @@ public class CrossDatabaseMergeCommandTest : FromToDatabaseTests
         dt.Columns.Add("Postcode", typeof(string));
 
         //Data in live awaiting toTbl be updated
-        dt.Rows.Add(new object[] { "Dave", 18, "DD3 1AB" });
-        dt.Rows.Add(new object[] { "Dave", 25, "DD1 1XS" });
-        dt.Rows.Add(new object[] { "Mango", 32, DBNull.Value });
-        dt.Rows.Add(new object[] { "Filli", 32, "DD3 78L" });
-        dt.Rows.Add(new object[] { "Mandrake", 32, DBNull.Value });
+        dt.Rows.Add("Dave", 18, "DD3 1AB");
+        dt.Rows.Add("Dave", 25, "DD1 1XS");
+        dt.Rows.Add("Mango", 32, DBNull.Value);
+        dt.Rows.Add("Filli", 32, "DD3 78L");
+        dt.Rows.Add("Mandrake", 32, DBNull.Value);
 
         dt.PrimaryKey = new[] { colName, colAge };
 
@@ -64,12 +64,12 @@ public class CrossDatabaseMergeCommandTest : FromToDatabaseTests
         dt.Rows.Clear();
 
         //new data being loaded
-        dt.Rows.Add(new object[] { "Dave", 25, "DD1 1PS" }); //update toTbl change postcode toTbl "DD1 1PS"
-        dt.Rows.Add(new object[] { "Chutney", 32, DBNull.Value }); //new insert Chutney
-        dt.Rows.Add(new object[] { "Mango", 32, DBNull.Value }); //ignored because already present in dataset
-        dt.Rows.Add(new object[] { "Filli", 32, DBNull.Value }); //update from "DD3 78L" null
-        dt.Rows.Add(new object[] { "Mandrake", 32, "DD1 1PS" }); //update from null toTbl "DD1 1PS"
-        dt.Rows.Add(new object[] { "Mandrake", 31, "DD1 1PS" }); // insert because Age is unique (and part of pk)
+        dt.Rows.Add("Dave", 25, "DD1 1PS"); //update toTbl change postcode toTbl "DD1 1PS"
+        dt.Rows.Add("Chutney", 32, DBNull.Value); //new insert Chutney
+        dt.Rows.Add("Mango", 32, DBNull.Value); //ignored because already present in dataset
+        dt.Rows.Add("Filli", 32, DBNull.Value); //update from "DD3 78L" null
+        dt.Rows.Add("Mandrake", 32, "DD1 1PS"); //update from null toTbl "DD1 1PS"
+        dt.Rows.Add("Mandrake", 31, "DD1 1PS"); // insert because Age is unique (and part of pk)
 
         var fromTbl = From.CreateTable($"{DatabaseName}_ToTable_STAGING", dt);
 

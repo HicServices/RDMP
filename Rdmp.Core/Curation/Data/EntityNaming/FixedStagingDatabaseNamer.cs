@@ -44,12 +44,12 @@ public class FixedStagingDatabaseNamer : SuffixBasedNamer
     /// </summary>
     /// <param name="s"></param>
     /// <returns></returns>
-    protected static string EnsureValueIsNotWrapped(string s)
+    private static string EnsureValueIsNotWrapped(string s)
     {
         if (s == null)
             return null;
 
-        var toReturn = s.Trim(new char[] { '[', ']', '`', '"' });
+        var toReturn = s.Trim('[', ']', '`', '"');
 
         return toReturn.Contains('[') ||
                toReturn.Contains(']') ||

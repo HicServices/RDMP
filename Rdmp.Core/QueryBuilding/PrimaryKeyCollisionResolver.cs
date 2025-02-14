@@ -135,7 +135,7 @@ WHERE DuplicateCount > 1";
         sql += tableNameInRAW + Environment.NewLine;
         sql +=
             $"group by {pks.Aggregate("", (s, n) => $"{s}{_querySyntaxHelper.EnsureWrapped(n.GetRuntimeName(LoadStage.AdjustRaw))},")}{Environment.NewLine}";
-        sql = sql.TrimEnd(new[] { ',', '\r', '\n' }) + Environment.NewLine;
+        sql = sql.TrimEnd(',', '\r', '\n') + Environment.NewLine;
         sql += $"having count(*) > 1{Environment.NewLine}";
         sql += $") then 1 else 0 end{Environment.NewLine}";
 

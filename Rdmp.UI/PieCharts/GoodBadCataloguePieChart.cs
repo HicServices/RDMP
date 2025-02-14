@@ -143,8 +143,8 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
             dt.Columns.Add("Count");
             dt.Columns.Add("State");
 
-            dt.Rows.Add(new object[] { countNotPopulated, $"Missing ({countNotPopulated})" });
-            dt.Rows.Add(new object[] { countPopulated, $"Populated ({countPopulated})" });
+            dt.Rows.Add(countNotPopulated, $"Missing ({countNotPopulated})");
+            dt.Rows.Add(countPopulated, $"Populated ({countPopulated})");
 
             chart1.Series[0].XValueMember = dt.Columns[1].ColumnName;
             chart1.Series[0].YValueMembers = dt.Columns[0].ColumnName;

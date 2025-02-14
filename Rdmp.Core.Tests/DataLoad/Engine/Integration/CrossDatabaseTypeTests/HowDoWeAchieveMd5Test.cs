@@ -20,7 +20,7 @@ internal class HowDoWeAchieveMd5Test : DatabaseTests
     {
         var dt = new DataTable();
         dt.Columns.Add("F");
-        dt.Rows.Add(new[] { "Fish" });
+        dt.Rows.Add("Fish");
 
         var db = GetCleanedServer(type);
         var tbl = db.CreateTable("MD5Test", dt);
@@ -50,7 +50,7 @@ internal class HowDoWeAchieveMd5Test : DatabaseTests
     {
         var dt = new DataTable();
         dt.Columns.Add("F");
-        dt.Rows.Add(new[] { "2001-01-01" });
+        dt.Rows.Add("2001-01-01");
 
         var db = GetCleanedServer(type);
         var tbl = db.CreateTable("MD5Test", dt);

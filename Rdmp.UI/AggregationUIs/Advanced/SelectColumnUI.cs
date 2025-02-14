@@ -92,7 +92,7 @@ public partial class SelectColumnUI : RDMPUserControl
         olvSelectColumns.CellEditFinished += CellEditFinished;
 
 
-        olvSelectColumns.SubItemChecking += (object _, SubItemCheckingEventArgs args) =>
+        olvSelectColumns.SubItemChecking += (_, args) =>
         {
             if (args.Column != olvGroupBy) return;
 

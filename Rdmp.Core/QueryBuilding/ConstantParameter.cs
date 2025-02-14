@@ -108,7 +108,7 @@ public class ConstantParameter : ISqlParameter
             throw new Exception($"Value line did not start with SET:{sql}");
 
         var valueLineSplit = valueLine.Split(new[] { '=' });
-        var value = valueLineSplit[1].TrimEnd(new[] { ';', '\r' });
+        var value = valueLineSplit[1].TrimEnd(';', '\r');
 
         return new ConstantParameter(declaration.Trim(), value.Trim(), comment, syntaxHelper);
     }

@@ -65,7 +65,7 @@ public class PatientIdentifierColumnSource : IPluginDataFlowSource<DataTable>,
 
         using var r = cmd.ExecuteReader();
         while (r.Read())
-            dt.Rows.Add(new[] { r[colName] });
+            dt.Rows.Add(r[colName]);
 
         dt.EndLoadData();
         return dt;

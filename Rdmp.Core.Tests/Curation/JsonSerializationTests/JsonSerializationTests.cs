@@ -37,7 +37,7 @@ public class JsonSerializationTests : DatabaseTests
 
         var asString = JsonConvert.SerializeObject(mySerializeable, dbConverter, lazyConverter);
         var mySerializeableAfter = (MySerializeableTestClass)JsonConvert.DeserializeObject(asString,
-            typeof(MySerializeableTestClass), new JsonConverter[] { dbConverter, lazyConverter });
+            typeof(MySerializeableTestClass), dbConverter, lazyConverter);
 
         Assert.That(mySerializeableAfter, Is.Not.SameAs(mySerializeable));
         Assert.That(mySerializeableAfter.SelectedCatalogue, Is.EqualTo(mySerializeable.SelectedCatalogue));

@@ -207,8 +207,8 @@ public partial class DataLoadsGraph : RDMPUserControl, IDashboardableControl
                 dt.Columns.Add("Category");
                 dt.Columns.Add("NumberOfDataLoadsAtStatus");
 
-                dt.Rows.Add(new object[] { "Manual Successful", countManualLoadsuccessful });
-                dt.Rows.Add(new object[] { "Manual Fail", countManualLoadFailure });
+                dt.Rows.Add("Manual Successful", countManualLoadsuccessful);
+                dt.Rows.Add("Manual Fail", countManualLoadFailure);
 
 
                 Invoke(new MethodInvoker(() =>

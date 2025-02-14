@@ -159,7 +159,7 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
         dt.Columns.Add("Name");
         dt.Columns.Add("Description");
 
-        dt.Rows.Add(new object[] { "Dave", "Is a maniac" });
+        dt.Rows.Add("Dave", "Is a maniac");
 
         var tbl = Database.CreateTable("SimpleJoin", dt,
             new[]
@@ -190,7 +190,7 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
         dt.Columns.Add("Name");
         dt.Columns.Add("Description");
 
-        dt.Rows.Add(new object[] { "Dave", "Is a maniac" });
+        dt.Rows.Add("Dave", "Is a maniac");
 
         var tbl = Database.CreateTable("SimpleLookup", dt,
             new[] { new DatabaseColumnRequest("Name", new DatabaseTypeRequest(typeof(string), 50)) });
@@ -221,7 +221,7 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
             dt.PrimaryKey =
                 dt.Columns.Cast<DataColumn>().Where(col => pkColumnInfos.Contains(col.ColumnName)).ToArray();
 
-        dt.Rows.Add(new object[] { _cohortKeysGenerated.Keys.First(), "Dave", "2001-01-01" });
+        dt.Rows.Add(_cohortKeysGenerated.Keys.First(), "Dave", "2001-01-01");
 
         var tbl = Database.CreateTable(testTableName,
             dt,

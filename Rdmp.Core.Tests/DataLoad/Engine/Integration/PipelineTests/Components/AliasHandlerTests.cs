@@ -72,7 +72,7 @@ public class AliasHandlerTests : DatabaseTests
     {
         var dt = new DataTable();
         dt.Columns.Add("cannonballer"); //not the same as the expected input column name
-        dt.Rows.Add(new object[] { "yes" });
+        dt.Rows.Add("yes");
 
         var ex = Assert.Throws<KeyNotFoundException>(() =>
             _handler.ProcessPipelineData(dt, ThrowImmediatelyDataLoadEventListener.Quiet,
@@ -94,7 +94,7 @@ public class AliasHandlerTests : DatabaseTests
 
         var dt = new DataTable();
         dt.Columns.Add("input");
-        dt.Rows.Add(new object[] { "candle" });
+        dt.Rows.Add("candle");
 
         var ex = Assert.Throws<AliasTableFetchException>(() =>
             _handler.ProcessPipelineData(dt, ThrowImmediatelyDataLoadEventListener.Quiet,
@@ -116,8 +116,8 @@ public class AliasHandlerTests : DatabaseTests
         dt.Columns.Add("input");
         dt.Columns.Add("value");
 
-        dt.Rows.Add(new object[] { "dave", 100 });
-        dt.Rows.Add(new object[] { "frank", 100 });
+        dt.Rows.Add("dave", 100);
+        dt.Rows.Add("frank", 100);
 
         var ex = Assert.Throws<AliasTableFetchException>(() =>
             _handler.ProcessPipelineData(dt, ThrowImmediatelyDataLoadEventListener.Quiet,
@@ -133,8 +133,8 @@ public class AliasHandlerTests : DatabaseTests
         dt.Columns.Add("input");
         dt.Columns.Add("value");
 
-        dt.Rows.Add(new object[] { "dave", 100 });
-        dt.Rows.Add(new object[] { "frank", 100 });
+        dt.Rows.Add("dave", 100);
+        dt.Rows.Add("frank", 100);
 
         var result = _handler.ProcessPipelineData(dt, ThrowImmediatelyDataLoadEventListener.Quiet,
             new GracefulCancellationToken());
@@ -149,7 +149,7 @@ public class AliasHandlerTests : DatabaseTests
         var dt = new DataTable();
         dt.Columns.Add("input");
 
-        dt.Rows.Add(new object[] { "paul" });
+        dt.Rows.Add("paul");
         Assert.Throws<AliasException>(() =>
             _handler.ProcessPipelineData(dt, ThrowImmediatelyDataLoadEventListener.Quiet,
                 new GracefulCancellationToken()));
@@ -166,9 +166,9 @@ public class AliasHandlerTests : DatabaseTests
         dt.Columns.Add("input");
         dt.Columns.Add("value2", typeof(int));
 
-        dt.Rows.Add(new object[] { 99, "dave", 100 });
-        dt.Rows.Add(new object[] { 199, "frank", 200 });
-        dt.Rows.Add(new object[] { 299, "freddie", 300 }); //has a two name alias
+        dt.Rows.Add(99, "dave", 100);
+        dt.Rows.Add(199, "frank", 200);
+        dt.Rows.Add(299, "freddie", 300); //has a two name alias
 
         var result = _handler.ProcessPipelineData(dt, ThrowImmediatelyDataLoadEventListener.Quiet,
             new GracefulCancellationToken());
@@ -197,9 +197,9 @@ public class AliasHandlerTests : DatabaseTests
         dt.Columns.Add("input");
         dt.Columns.Add("value2", typeof(int));
 
-        dt.Rows.Add(new object[] { 99, "pepey", 100 }); //has a three name alias
-        dt.Rows.Add(new object[] { 199, "frank", 200 });
-        dt.Rows.Add(new object[] { 299, "anderson", 300 });
+        dt.Rows.Add(99, "pepey", 100); //has a three name alias
+        dt.Rows.Add(199, "frank", 200);
+        dt.Rows.Add(299, "anderson", 300);
 
         var result = _handler.ProcessPipelineData(dt, ThrowImmediatelyDataLoadEventListener.Quiet,
             new GracefulCancellationToken());

@@ -175,12 +175,12 @@ INSERT INTO DiluteToBitFlagTests VALUES ({insert})", con).ExecuteNonQuery();
     {
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
 
-        var dt = new DataTable();
+        using var dt = new DataTable();
         dt.Columns.Add("Bob");
-        dt.Rows.Add(new[] { "Fish" });
+        dt.Rows.Add("Fish");
 
         var tbl = db.CreateTable("DilutionNamerTest", dt);
-        Import(tbl, out var ti, out var cols);
+        Import(tbl, out var ti, out _);
 
         tbl.Rename("AAAA");
         var namer = RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(db, "AAAA");

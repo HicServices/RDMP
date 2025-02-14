@@ -111,7 +111,7 @@ public class ANOTransformer
             if (discardNulls && (o == null || o == DBNull.Value))
                 continue;
 
-            table.Rows.Add(new[] { r[column.ColumnName] });
+            table.Rows.Add(r[column.ColumnName]);
         }
 
         table.EndLoadData();

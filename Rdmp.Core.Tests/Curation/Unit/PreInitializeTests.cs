@@ -65,8 +65,8 @@ public class PreInitializeTests
     {
         var fishUser = new SpecificFishUser();
         var ex = Assert.Throws<Exception>(() =>
-            context.PreInitialize(ThrowImmediatelyDataLoadEventListener.Quiet, fishUser, Array.Empty<object>()));
-        Assert.That(ex.Message, Does.Contain("The following expected types were not passed to PreInitialize:Fish"));
+            context.PreInitialize(ThrowImmediatelyDataLoadEventListener.Quiet, fishUser));
+        Assert.That(ex?.Message, Does.Contain("The following expected types were not passed to PreInitialize:Fish"));
     }
 
     [Test]

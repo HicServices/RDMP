@@ -235,7 +235,7 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
                 if (!handledByFlood)
                     if (!progress.Rows.Contains(args.TaskDescription))
                     {
-                        progress.Rows.Add(new object[] { args.TaskDescription, args.Progress.Value, label });
+                        progress.Rows.Add(args.TaskDescription, args.Progress.Value, label);
                     }
                     else
                     {
@@ -332,7 +332,7 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
             progress.Rows.Find(floodJob)["Count"] =
                 Convert.ToInt32(progress.Rows.Find(floodJob)["Count"]) + progressAmountToAdd;
         else
-            progress.Rows.Add(new object[] { floodJob, startAtProgressAmount + progressAmountToAdd, label });
+            progress.Rows.Add(floodJob, startAtProgressAmount + progressAmountToAdd, label);
     }
 
     private void olvProgressEvents_ItemActivate(object sender, EventArgs e)

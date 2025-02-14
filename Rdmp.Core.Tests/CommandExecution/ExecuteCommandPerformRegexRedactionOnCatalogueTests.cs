@@ -104,8 +104,8 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogueTests : DatabaseTests
     [Test]
     public void Redaction_BasicRedactionTest()
     {
-        _dt.Rows.Add(new object[] { DateTime.Now, '1', "1234TEST1234" });
-        _dt.Rows.Add(new object[] { DateTime.Now, '2', "1234TEST1234" });
+        _dt.Rows.Add(DateTime.Now, '1', "1234TEST1234");
+        _dt.Rows.Add(DateTime.Now, '2', "1234TEST1234");
         (_catalogue, var columnInfos) = CreateTable(_db, _dt);
 
         var regexConfiguration = new RegexRedactionConfiguration(CatalogueRepository, "TestReplacer", new Regex("TEST"), "GG", "Replace TEST with GG");
@@ -125,8 +125,8 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogueTests : DatabaseTests
     [Test]
     public void Redaction_BasicRedactionTestWithLimit()
     {
-        _dt.Rows.Add(new object[] { DateTime.Now, '1', "1234TEST1234" });
-        _dt.Rows.Add(new object[] { DateTime.Parse("10-10-2010"), '2', "1234TEST1234" });
+        _dt.Rows.Add(DateTime.Now, '1', "1234TEST1234");
+        _dt.Rows.Add(DateTime.Parse("10-10-2010"), '2', "1234TEST1234");
         (_catalogue, var columnInfos) = CreateTable(_db, _dt, new[] { true, true, false });
 
         var regexConfiguration = new RegexRedactionConfiguration(CatalogueRepository, "TestReplacer", new Regex("TEST"), "GG", "Replace TEST with GG");
@@ -146,7 +146,7 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogueTests : DatabaseTests
     [Test]
     public void Redaction_OddStringLength()
     {
-        _dt.Rows.Add(new object[] { DateTime.Now, '1', "1234TESTT1234" });
+        _dt.Rows.Add(DateTime.Now, '1', "1234TESTT1234");
         (_catalogue, var columnInfos) = CreateTable(_db, _dt);
         var regexConfiguration = new RegexRedactionConfiguration(CatalogueRepository, "TestReplacer", new Regex("TESTT"), "GG", "Replace TEST with GG");
         regexConfiguration.SaveToDatabase();
@@ -160,7 +160,7 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogueTests : DatabaseTests
     [Test]
     public void Redaction_RedactionTooLong()
     {
-        _dt.Rows.Add(new object[] { DateTime.Now, '1', "1234TEST1234" });
+        _dt.Rows.Add(DateTime.Now, '1', "1234TEST1234");
         var (catalogue, columnInfos) = CreateTable(_db, _dt);
         var regexConfiguration = new RegexRedactionConfiguration(CatalogueRepository, "TestReplacer", new Regex("TEST"), "FARTOOLONG", "Replace TEST with GG");
         regexConfiguration.SaveToDatabase();
@@ -172,7 +172,7 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogueTests : DatabaseTests
     [Test]
     public void Redaction_RedactAPK()
     {
-        _dt.Rows.Add(new object[] { DateTime.Now, '1', "1234TEST1234" });
+        _dt.Rows.Add(DateTime.Now, '1', "1234TEST1234");
         (_catalogue, var columnInfos) = CreateTable(_db, _dt, new[] { true,true,true});
         var regexConfiguration = new RegexRedactionConfiguration(CatalogueRepository, "TestReplacer", new Regex("TEST"), "GG", "Replace TEST with GG");
         regexConfiguration.SaveToDatabase();
@@ -186,7 +186,7 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogueTests : DatabaseTests
     [Test]
     public void Redaction_NoPKS()
     {
-        _dt.Rows.Add(new object[] { DateTime.Now, '1', "1234TEST1234" });
+        _dt.Rows.Add(DateTime.Now, '1', "1234TEST1234");
         (_catalogue, var columnInfos) = CreateTable(_db, _dt, new[] { false, false, false });
         var regexConfiguration = new RegexRedactionConfiguration(CatalogueRepository, "TestReplacer", new Regex("TEST"), "GG", "Replace TEST with GG");
         regexConfiguration.SaveToDatabase();
@@ -198,7 +198,7 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogueTests : DatabaseTests
     [Test]
     public void Redaction_MultipleInOneCell()
     {
-        _dt.Rows.Add(new object[] { DateTime.Now, '1', "1234TEST1234TEST1234" });
+        _dt.Rows.Add(DateTime.Now, '1', "1234TEST1234TEST1234");
         (_catalogue, var columnInfos) = CreateTable(_db, _dt);
         var regexConfiguration = new RegexRedactionConfiguration(CatalogueRepository, "TestReplacer", new Regex("TEST"), "DB", "Replace TEST with GG");
         regexConfiguration.SaveToDatabase();

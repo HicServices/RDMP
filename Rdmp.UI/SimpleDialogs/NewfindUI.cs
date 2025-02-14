@@ -229,7 +229,7 @@ namespace Rdmp.UI.SimpleDialogs
 
             if (cbRegex.Checked)
             {
-                folv.ModelFilter = new CompositeAllFilter(new List<IModelFilter>() { TextMatchFilter.Regex(folv, new[] { tbFind.Text }), catalogueFilter, aggregateFilter });
+                folv.ModelFilter = new CompositeAllFilter(new List<IModelFilter>() { TextMatchFilter.Regex(folv, tbFind.Text), catalogueFilter, aggregateFilter });
             }
             else
             {

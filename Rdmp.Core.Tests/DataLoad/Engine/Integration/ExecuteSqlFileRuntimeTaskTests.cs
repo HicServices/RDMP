@@ -35,7 +35,7 @@ internal class ExecuteSqlFileRuntimeTaskTests : DatabaseTests
     {
         var dt = new DataTable();
         dt.Columns.Add("Lawl");
-        dt.Rows.Add(new object[] { 2 });
+        dt.Rows.Add(2);
 
         var db = GetCleanedServer(dbType);
 
@@ -71,7 +71,7 @@ internal class ExecuteSqlFileRuntimeTaskTests : DatabaseTests
     {
         var dt = new DataTable();
         dt.Columns.Add("Lawl");
-        dt.Rows.Add(new object[] { 2 });
+        dt.Rows.Add(2);
 
         var db = GetCleanedServer(dbType);
 
@@ -114,7 +114,7 @@ internal class ExecuteSqlFileRuntimeTaskTests : DatabaseTests
     {
         var dt = new DataTable();
         dt.Columns.Add("Lawl");
-        dt.Rows.Add(new object[] { 2 });
+        dt.Rows.Add(2);
 
         var db = GetCleanedServer(dbType);
 
@@ -169,7 +169,7 @@ internal class ExecuteSqlFileRuntimeTaskTests : DatabaseTests
     {
         var dt = new DataTable();
         dt.Columns.Add("Lawl");
-        dt.Rows.Add(new object[] { 2 });
+        dt.Rows.Add(2);
 
         var db = GetCleanedServer(dbType);
 

@@ -159,13 +159,13 @@ public class IdentifierDumper : IHasRuntimeName, IDisposeAfterDataLoad, ICheckab
         mergeSql += $"{GetRuntimeName()} AS dest {Environment.NewLine}";
         mergeSql += $"USING {GetStagingRuntimeName()} AS source {Environment.NewLine}";
         mergeSql += $"ON  ({Environment.NewLine}";
-        mergeSql = pks.Aggregate(mergeSql, (s, n) => $"{s} source.[{n}]=dest.[{n}] AND")
-            .TrimEnd(new[] { 'A', 'N', 'D', ' ' }) + Environment.NewLine;
+        mergeSql = pks.Aggregate(mergeSql, static (s, n) => $"{s} source.[{n}]=dest.[{n}] AND")
+            .TrimEnd('A', 'N', 'D', ' ') + Environment.NewLine;
         mergeSql += $") WHEN NOT MATCHED BY TARGET THEN INSERT ({Environment.NewLine}";
-        mergeSql = allColumns.Aggregate(mergeSql, (s, n) => $"{s}[{n}],").TrimEnd(new[] { ',', ' ' }) +
+        mergeSql = allColumns.Aggregate(mergeSql, static (s, n) => $"{s}[{n}],").TrimEnd(',', ' ') +
                    Environment.NewLine;
         mergeSql += $") VALUES ({Environment.NewLine}";
-        mergeSql = allColumns.Aggregate(mergeSql, (s, n) => $"{s} source.[{n}],").TrimEnd(new[] { ',', ' ' }) +
+        mergeSql = allColumns.Aggregate(mergeSql, static (s, n) => $"{s} source.[{n}],").TrimEnd(',', ' ') +
                    Environment.NewLine;
         mergeSql += $");{Environment.NewLine}";
 
@@ -182,17 +182,17 @@ public class IdentifierDumper : IHasRuntimeName, IDisposeAfterDataLoad, ICheckab
         updateSql += $"ON ( {Environment.NewLine}";
         updateSql += $"/*Primary Keys JOIN*/{Environment.NewLine}";
         updateSql = pks.Aggregate(updateSql, (s, n) => $"{s} stag.[{n}]=prod.[{n}] AND")
-            .TrimEnd(new[] { 'A', 'N', 'D', ' ' }) + Environment.NewLine;
+            .TrimEnd('A', 'N', 'D', ' ') + Environment.NewLine;
         updateSql += $") WHERE{Environment.NewLine}";
         updateSql += $"/*Primary Keys not null*/{Environment.NewLine}";
         updateSql = pks.Aggregate(updateSql, (s, n) => $"{s} stag.[{n}] IS NOT NULL AND")
-            .TrimEnd(new[] { 'A', 'N', 'D', ' ' }) + Environment.NewLine;
+            .TrimEnd('A', 'N', 'D', ' ') + Environment.NewLine;
         updateSql += $"AND EXISTS (SELECT {Environment.NewLine}";
         updateSql += $"/*All columns in stag*/{Environment.NewLine}";
-        updateSql = allColumns.Aggregate(updateSql, (s, n) => $"{s} stag.[{n}],").TrimEnd(new[] { ',', ' ' }) +
+        updateSql = allColumns.Aggregate(updateSql, (s, n) => $"{s} stag.[{n}],").TrimEnd(',', ' ') +
                     Environment.NewLine;
         updateSql += $"EXCEPT SELECT{Environment.NewLine}";
-        updateSql = allColumns.Aggregate(updateSql, (s, n) => $"{s} prod.[{n}],").TrimEnd(new[] { ',', ' ' }) +
+        updateSql = allColumns.Aggregate(updateSql, (s, n) => $"{s} prod.[{n}],").TrimEnd(',', ' ') +
                     Environment.NewLine;
         updateSql += $")){Environment.NewLine}";
 
@@ -205,7 +205,7 @@ public class IdentifierDumper : IHasRuntimeName, IDisposeAfterDataLoad, ICheckab
         updateSql += $"INNER JOIN ToUpdate ON {Environment.NewLine}";
         updateSql += $"({Environment.NewLine}";
         updateSql = pks.Aggregate(updateSql, (s, n) => $"{s} prod.[{n}]=ToUpdate.[{n}] AND")
-            .TrimEnd(new[] { 'A', 'N', 'D', ' ' }) + Environment.NewLine;
+            .TrimEnd('A', 'N', 'D', ' ') + Environment.NewLine;
         updateSql += $"){Environment.NewLine}";
 
         using (var updateCommand = _dumpDatabase.Server.GetCommand(updateSql, con))
@@ -373,7 +373,7 @@ public class IdentifierDumper : IHasRuntimeName, IDisposeAfterDataLoad, ICheckab
             var runtimeName = columnInfo.GetRuntimeName(LoadStage.AdjustRaw);
             var dataType = columnInfo.GetRuntimeDataType(LoadStage.AdjustRaw);
 
-            pks.Rows.Add(new object[] { runtimeName, dataType });
+            pks.Rows.Add(runtimeName, dataType);
         }
 
         var dumpColumns = new DataTable();
@@ -390,7 +390,7 @@ public class IdentifierDumper : IHasRuntimeName, IDisposeAfterDataLoad, ICheckab
                 throw new Exception(
                     $"{discardedColumn.GetType().Name} called {discardedColumn.RuntimeColumnName} does not have an assigned type");
 
-            dumpColumns.Rows.Add(new object[] { discardedColumn.RuntimeColumnName, discardedColumn.SqlDataType });
+            dumpColumns.Rows.Add(discardedColumn.RuntimeColumnName, discardedColumn.SqlDataType);
         }
 
 
