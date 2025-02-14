@@ -88,10 +88,10 @@ RDMP features a viewer which renders the By Date and By Column tables as graphs.
 
 
 ## Plugin Constraints
-You can write new validation rules by inheriting from `HIC.Common.Validation.Constraints.Secondary.PluginSecondaryConstraint`.  Implement the Validate method returning null if validation passed or a `ValidationFailure` if it didn't.  Public properties will be rendered as CheckBoxes, TextBoxes etc.
+You can write new validation rules by inheriting from `HIC.Common.Validation.Constraints.Secondary.SecondaryConstraint`.  Implement the Validate method returning null if validation passed or a `ValidationFailure` if it didn't.  Public properties will be rendered as CheckBoxes, TextBoxes etc.
 
 ```csharp
-public class NoFishConstraint : PluginSecondaryConstraint
+public class NoFishConstraint : SecondaryConstraint
 {
 	//Will be exposed in user interface
 	public bool IgnoreCaps { get; set; }
