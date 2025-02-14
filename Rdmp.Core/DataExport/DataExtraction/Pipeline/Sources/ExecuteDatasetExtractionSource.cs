@@ -209,7 +209,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
                 """;
                 break;
             default:
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, $"Unable to create temporary table for cohort. Original cohort table will be used"));
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Unable to create temporary table for cohort. Original cohort table will be used"));
                 return;
 
 
@@ -223,10 +223,10 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
             cmd.ExecuteNonQuery();
         }
         catch (Exception ex) {
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, $"Unable to create temporary table for cohort. Original cohort table will be used",ex));
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Unable to create temporary table for cohort. Original cohort table will be used",ex));
             _uuid = null;
         }
-        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Cohort successfully copied to temporary table"));
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Cohort successfully copied to temporary table"));
 
     }
 

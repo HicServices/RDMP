@@ -272,7 +272,7 @@ public class GoToCommandFactory : CommandFactoryBase
             if (catalogue.LoadMetadatas().Length == 0)
             {
                 yield return new ExecuteCommandShow(_activator, null, typeof(LoadMetadata))
-                { OverrideCommandName = $"No Data Load", OverrideIcon = GetImage(RDMPConcept.LoadMetadata) };
+                { OverrideCommandName = "No Data Load", OverrideIcon = GetImage(RDMPConcept.LoadMetadata) };
             }
 
 

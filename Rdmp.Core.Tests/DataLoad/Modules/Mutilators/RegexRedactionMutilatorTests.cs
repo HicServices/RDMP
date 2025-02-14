@@ -38,7 +38,7 @@ internal class RegexRedactionMutilatorTests : DataLoadEngineTestsBase
         if (raw.Exists())
             raw.Drop();
 
-        var dleStaging = db.Server.ExpectDatabase($"DLE_STAGING");
+        var dleStaging = db.Server.ExpectDatabase("DLE_STAGING");
         if (!dleStaging.Exists())
             db.Server.CreateDatabase("DLE_STAGING");
 
@@ -145,7 +145,7 @@ MrMurder,2001-01-01,Yella");
         if (raw.Exists())
             raw.Drop();
 
-        var dleStaging = db.Server.ExpectDatabase($"DLE_STAGING");
+        var dleStaging = db.Server.ExpectDatabase("DLE_STAGING");
         if (!dleStaging.Exists())
             db.Server.CreateDatabase("DLE_STAGING");
 
@@ -252,7 +252,7 @@ MrMurder,2001-01-01,Yella");
         if (raw.Exists())
             raw.Drop();
 
-        var dleStaging = db.Server.ExpectDatabase($"DLE_STAGING");
+        var dleStaging = db.Server.ExpectDatabase("DLE_STAGING");
         if (!dleStaging.Exists())
             db.Server.CreateDatabase("DLE_STAGING");
 
@@ -347,7 +347,7 @@ MrMurder,2001-01-01,Yella");
         if (raw.Exists())
             raw.Drop();
 
-        var dleStaging = db.Server.ExpectDatabase($"DLE_STAGING");
+        var dleStaging = db.Server.ExpectDatabase("DLE_STAGING");
         if (!dleStaging.Exists())
             db.Server.CreateDatabase("DLE_STAGING");
 
@@ -442,7 +442,7 @@ MrMurder,2001-01-01,Yella");
         if (raw.Exists())
             raw.Drop();
 
-        var dleStaging = db.Server.ExpectDatabase($"DLE_STAGING");
+        var dleStaging = db.Server.ExpectDatabase("DLE_STAGING");
         if (!dleStaging.Exists())
             db.Server.CreateDatabase("DLE_STAGING");
 
@@ -537,7 +537,7 @@ MrMurder,2001-01-01,Yella");
         if (raw.Exists())
             raw.Drop();
 
-        var dleStaging = db.Server.ExpectDatabase($"DLE_STAGING");
+        var dleStaging = db.Server.ExpectDatabase("DLE_STAGING");
         if (!dleStaging.Exists())
             db.Server.CreateDatabase("DLE_STAGING");
 
@@ -648,7 +648,7 @@ MrMurder,2001-01-01,YellaUUUYella");
         if (raw.Exists())
             raw.Drop();
 
-        var dleStaging = db.Server.ExpectDatabase($"DLE_STAGING");
+        var dleStaging = db.Server.ExpectDatabase("DLE_STAGING");
         if (!dleStaging.Exists())
             db.Server.CreateDatabase("DLE_STAGING");
 
@@ -702,9 +702,11 @@ MrMurder,2001-01-01,YellaUUUYella");
 
         File.WriteAllText(
             Path.Combine(projectDirectory.ForLoading.FullName, "LoadMe.csv"),
-            @$"Name,DateOfBirth,FavouriteColour
-MrMurder,2001-01-01,Yella
-");
+            """
+            Name,DateOfBirth,FavouriteColour
+            MrMurder,2001-01-01,Yella
+
+            """);
 
         var data = Enumerable.Repeat("name,2001-01-01,amber", 1000000).ToArray();
 
