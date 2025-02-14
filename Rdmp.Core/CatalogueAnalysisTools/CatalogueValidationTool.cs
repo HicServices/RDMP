@@ -1,6 +1,7 @@
 ﻿using Amazon.Runtime;
 using NPOI.SS.Formula.Functions;
 using Org.BouncyCastle.Bcpg.OpenPgp;
+using Org.BouncyCastle.Crypto;
 using Rdmp.Core.CatalogueAnalysisTools.Data;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources;
@@ -50,10 +51,10 @@ public class CatalogueValidationTool
 
     private class ResultObject
     {
-        public int Correct=0;
-        public int Wrong=0;
-        public int Missing=0;
-        public int Invalid=0;
+        public int Correct = 0;
+        public int Wrong = 0;
+        public int Missing = 0;
+        public int Invalid = 0;
 
 
         public void Increment(string attribute)
@@ -89,7 +90,8 @@ public class CatalogueValidationTool
         {
             return pc.Validate(value) == null;
         }
-        catch (Exception) {
+        catch (Exception)
+        {
             return false;
         }
     }
@@ -150,7 +152,7 @@ public class CatalogueValidationTool
                         }
                         else
                         {
-                            var newValue = new ResultObject() {};
+                            var newValue = new ResultObject() { };
                             _results[pivotCategory][key] = EvaulateRow(row, newValue);
                         }
                     }
@@ -190,18 +192,42 @@ public class CatalogueValidationTool
             dataChunk = GetChunk(flowSource, pivotColumnValue);
         }
         flowSource.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
-        foreach (var key in _results[pivotColumnValue].Keys) {
+        foreach (var key in _results[pivotColumnValue].Keys)
+        {
             var result = new CatalogueValidationResult(_DQERepository, catalogueValidation, DateTime.Parse(key), pivotColumnValue, _results[pivotColumnValue][key].Correct, _results[pivotColumnValue][key].Wrong, _results[pivotColumnValue][key].Missing, _results[pivotColumnValue][key].Invalid);
             result.SaveToDatabase();
         }
     }
 
 
+    private List<string> GetPivotColumnValues()
+    {
+        var server = _catalogue.GetDistinctLiveDatabaseServer(ReusableLibraryCode.DataAccess.DataAccessContext.InternalDataProcessing, false);
+        var con = server.GetConnection();
+        con.Open();
+        var repo = new MemoryCatalogueRepository();
+        var qb = new QueryBuilder("DISTINCT", null);
+        qb.AddColumn(new ColumnInfoToIColumn(repo, _pivotColumn));
+        var cmd = server.GetCommand(qb.SQL, con);
+        using var da = server.GetDataAdapter(cmd);
+        var dt = new DataTable();
+        dt.BeginLoadData();
+        da.Fill(dt);
+        con.Close();
+        return dt.AsEnumerable().Select(r => r.ItemArray[0].ToString()).ToList();
+
+    }
+
     public void GenerateValidationReports()
     {
-        var catalogueValidation = new CatalogueValidation(_DQERepository, _catalogue,_timeColumn,_pivotColumn);
+        var catalogueValidation = new CatalogueValidation(_DQERepository, _catalogue, _timeColumn, _pivotColumn);
         catalogueValidation.SaveToDatabase();
-        GenerateReport(ALL,catalogueValidation);
+        GenerateReport(ALL, catalogueValidation);
+        var pivotValues = GetPivotColumnValues();
+        foreach (var pivotColumnValue in pivotValues)
+        {
+            GenerateReport(pivotColumnValue, catalogueValidation);
+        }
         //todo for all values in pivot category
     }
 }

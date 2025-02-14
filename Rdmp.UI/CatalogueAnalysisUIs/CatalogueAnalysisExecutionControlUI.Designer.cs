@@ -34,6 +34,7 @@
             timePeriodicityChart1 = new CatalogueSummary.DataQualityReporting.TimePeriodicityChart();
             tabPage2 = new System.Windows.Forms.TabPage();
             groupBox4 = new System.Windows.Forms.GroupBox();
+            button2 = new System.Windows.Forms.Button();
             pictureBox1 = new System.Windows.Forms.PictureBox();
             SecondaryConstrainsTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             label7 = new System.Windows.Forms.Label();
@@ -51,7 +52,6 @@
             label3 = new System.Windows.Forms.Label();
             label2 = new System.Windows.Forms.Label();
             label1 = new System.Windows.Forms.Label();
-            button2 = new System.Windows.Forms.Button();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             tabPage2.SuspendLayout();
@@ -114,12 +114,23 @@
             groupBox4.Controls.Add(button2);
             groupBox4.Controls.Add(pictureBox1);
             groupBox4.Controls.Add(SecondaryConstrainsTableLayoutPanel);
-            groupBox4.Location = new System.Drawing.Point(453, 6);
+            groupBox4.Location = new System.Drawing.Point(453, 61);
             groupBox4.Name = "groupBox4";
             groupBox4.Size = new System.Drawing.Size(431, 100);
             groupBox4.TabIndex = 5;
             groupBox4.TabStop = false;
             groupBox4.Text = "Secondary Constraints";
+            // 
+            // button2
+            // 
+            button2.Dock = System.Windows.Forms.DockStyle.Bottom;
+            button2.Location = new System.Drawing.Point(3, 74);
+            button2.Name = "button2";
+            button2.Size = new System.Drawing.Size(425, 23);
+            button2.TabIndex = 7;
+            button2.Text = "Save";
+            button2.UseVisualStyleBackColor = true;
+            button2.Click += button2_Click;
             // 
             // pictureBox1
             // 
@@ -195,7 +206,7 @@
             // 
             button1.Image = (System.Drawing.Image)resources.GetObject("button1.Image");
             button1.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            button1.Location = new System.Drawing.Point(1103, 116);
+            button1.Location = new System.Drawing.Point(1103, 5);
             button1.Name = "button1";
             button1.Size = new System.Drawing.Size(121, 42);
             button1.TabIndex = 4;
@@ -206,7 +217,7 @@
             // groupBox3
             // 
             groupBox3.Controls.Add(cbPivot);
-            groupBox3.Location = new System.Drawing.Point(890, 61);
+            groupBox3.Location = new System.Drawing.Point(346, 6);
             groupBox3.Name = "groupBox3";
             groupBox3.Size = new System.Drawing.Size(334, 49);
             groupBox3.TabIndex = 3;
@@ -224,7 +235,7 @@
             // groupBox2
             // 
             groupBox2.Controls.Add(cbTime);
-            groupBox2.Location = new System.Drawing.Point(890, 6);
+            groupBox2.Location = new System.Drawing.Point(6, 5);
             groupBox2.Name = "groupBox2";
             groupBox2.Size = new System.Drawing.Size(334, 49);
             groupBox2.TabIndex = 2;
@@ -244,7 +255,7 @@
             groupBox1.AutoSize = true;
             groupBox1.Controls.Add(btnSavePrimaryConstraints);
             groupBox1.Controls.Add(primaryConstrainsTableLayout);
-            groupBox1.Location = new System.Drawing.Point(6, 6);
+            groupBox1.Location = new System.Drawing.Point(6, 60);
             groupBox1.MinimumSize = new System.Drawing.Size(300, 100);
             groupBox1.Name = "groupBox1";
             groupBox1.Size = new System.Drawing.Size(441, 100);
@@ -266,7 +277,8 @@
             // primaryConstrainsTableLayout
             // 
             primaryConstrainsTableLayout.AutoSize = true;
-            primaryConstrainsTableLayout.ColumnCount = 3;
+            primaryConstrainsTableLayout.ColumnCount = 4;
+            primaryConstrainsTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             primaryConstrainsTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             primaryConstrainsTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             primaryConstrainsTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
@@ -310,17 +322,6 @@
             label1.TabIndex = 2;
             label1.Text = "Column";
             label1.Click += label1_Click;
-            // 
-            // button2
-            // 
-            button2.Dock = System.Windows.Forms.DockStyle.Bottom;
-            button2.Location = new System.Drawing.Point(3, 74);
-            button2.Name = "button2";
-            button2.Size = new System.Drawing.Size(425, 23);
-            button2.TabIndex = 7;
-            button2.Text = "Save";
-            button2.UseVisualStyleBackColor = true;
-            button2.Click += button2_Click;
             // 
             // CatalogueAnalysisExecutionControlUI
             // 

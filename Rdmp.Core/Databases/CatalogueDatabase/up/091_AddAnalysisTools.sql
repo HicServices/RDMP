@@ -70,12 +70,12 @@ GO
 
 if not exists (select 1 from sys.tables where name = 'SecondaryConstraintArgument')
 BEGIN
-CREATE TABLE [dbo].[SecondaryConstraint](
+CREATE TABLE [dbo].[SecondaryConstraintArgument](
 	[ID] [int] IDENTITY(1,1) NOT NULL,
 	[SecondaryConstraint_ID] [int] NOT NULL,
 	[Key] [nvarchar](max) NOT NULL,
 	[Value] [nvarchar](max) NOT NULL,
-    FOREIGN KEY ([SecondaryConstraint_ID]) REFERENCES [dbo].[SecondaryConstraint_ID](ID) ON DELETE CASCADE,
+    FOREIGN KEY ([SecondaryConstraint_ID]) REFERENCES [dbo].[SecondaryConstraint](ID) ON DELETE CASCADE,
 CONSTRAINT [PK_SecondaryConstraintArgument] PRIMARY KEY CLUSTERED 
 (
 	[ID] ASC

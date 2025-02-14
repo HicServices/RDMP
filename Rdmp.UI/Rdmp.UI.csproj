@@ -35,6 +35,9 @@
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 	<ItemGroup>
+	  <EmbeddedResource Remove="SimpleDialogs\SelectDialog.resx" />
+	</ItemGroup>
+	<ItemGroup>
 		<None Remove="en_GB.aff" />
 		<None Remove="en_GB.dic" />
 	</ItemGroup>
@@ -441,5 +444,8 @@
 	</ItemGroup>
 	<ItemGroup>
 		<Folder Include="PluginChildProvision\" />
+	</ItemGroup>
+	<ItemGroup>
+	  <None Include="SimpleDialogs\SelectDialog.resx" />
 	</ItemGroup>
 </Project>

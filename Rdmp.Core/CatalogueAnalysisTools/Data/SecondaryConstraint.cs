@@ -16,11 +16,11 @@ namespace Rdmp.Core.CatalogueAnalysisTools.Data
     {
         public enum Constraints
         {
-            BOUND,
+            BOUNDDOUBLE,
             BOUNDDATE,
             NOTNULL,
-            PREDICTION,
-            REFERENTIALINTEGRITYCONSTRAINT,
+            //PREDICTION,
+            //REFERENTIALINTEGRITYCONSTRAINT,
             REGULAREXPRESSION
         }
 
