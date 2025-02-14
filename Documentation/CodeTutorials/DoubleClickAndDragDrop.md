@@ -72,9 +72,7 @@ If you find you cannot use Visual Studio Designer to edit your control because o
 <!--- 56df0867990f4b0397e51a6a49f7bdd0 --->
 ```csharp
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ANOTableUI_Design, UserControl>))]
-public abstract class ANOTableUI_Design : RDMPSingleDatabaseObjectControl<ANOTable>
-{
-}
+public abstract class ANOTableUI_Design : RDMPSingleDatabaseObjectControl<ANOTable>;
 ```
 
 # Drop
