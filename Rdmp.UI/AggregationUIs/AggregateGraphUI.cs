@@ -299,32 +299,31 @@ public partial class AggregateGraphUI : AggregateGraph_Design
 
                 var columnIndex = _dt.Columns.IndexOf(dateColumnName);
 
-                var incriment = axis.AxisIncrement;
+                var increment = axis.AxisIncrement;
 
 
-                var startDate = ConvertAxisOverridetoDate(startDateOverride.Trim('\''), incriment);
-                var endDate = ConvertAxisOverridetoDate(endDateOverride.Trim('\''), incriment);
+                var startDate = ConvertAxisOverridetoDate(startDateOverride.Trim('\''), increment);
+                var endDate = ConvertAxisOverridetoDate(endDateOverride.Trim('\''), increment);
                 var rowsToDelete = _dt.Rows.Cast<DataRow>().Where(r =>
                 {
                     //this could maybe be more efficient with some sort of lookup after the first time?
                     var currentDT = new DateTime();
-                    if (incriment == AxisIncrement.Day)
+                    if (increment == AxisIncrement.Day)
                     {
                         DateTime.TryParseExact(r.ItemArray[columnIndex].ToString(), "yyyy-mm-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out currentDT);
                     }
-                    if (incriment == AxisIncrement.Month)
+                    if (increment == AxisIncrement.Month)
                     {
                         DateTime.TryParseExact(r.ItemArray[columnIndex].ToString(), "yyyy-mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out currentDT);
                     }
-                    if (incriment == AxisIncrement.Quarter)
+                    if (increment == AxisIncrement.Quarter)
                     {
-                        var year = r.ItemArray[columnIndex].ToString()[0..4];
+                        var year = r.ItemArray[columnIndex].ToString()[..4];
                         var asString = r.ItemArray[columnIndex].ToString();
-                        var quarter = Int32.Parse(asString.Substring(asString.Length - 1)) * 3;
+                        var quarter = int.Parse(asString[^1..]) * 3;
                         DateTime.TryParseExact($"{year}-{quarter}", "yyyy-mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out currentDT);
-
                     }
-                    if (incriment == AxisIncrement.Year)
+                    if (increment == AxisIncrement.Year)
                     {
                         DateTime.TryParseExact(r.ItemArray[columnIndex].ToString(), "yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out currentDT);
                     }

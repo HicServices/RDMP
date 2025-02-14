@@ -31,12 +31,12 @@ namespace Rdmp.Core.Curation.DataHelper.RegexRedaction
             RegexRedaction_ID,
             Value,
             TEMP_RedactionUpdates
-        };
+        }
 
 
         public static DataTable GenerateRedactionsDataTable()
         {
-            DataTable redactionsToSaveTable = new DataTable();
+            var redactionsToSaveTable = new DataTable();
             redactionsToSaveTable.Columns.Add(nameof(Constants.RedactionConfiguration_ID));
             redactionsToSaveTable.Columns.Add(nameof(Constants.ColumnInfo_ID));
             redactionsToSaveTable.Columns.Add(nameof(Constants.startingIndex));
