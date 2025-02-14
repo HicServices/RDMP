@@ -52,7 +52,6 @@ public class ExecuteCommandSetPivot : BasicCommandExecution
             {
                 SetImpossible(
                     $"AggregateConfiguration {aggregate} is a cohort identification aggregate and so cannot have a pivot");
-                return;
             }
         }
         else

@@ -36,7 +36,6 @@ public partial class ExecuteCommandRunSupportingSql : ExecuteCommandViewDataBase
         if (string.IsNullOrWhiteSpace(SupportingSQLTable.SQL))
         {
             SetImpossible($"No SQL is defined for {SupportingSQLTable}");
-            return;
         }
     }
 

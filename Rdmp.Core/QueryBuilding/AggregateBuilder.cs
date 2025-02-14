@@ -406,9 +406,7 @@ public class AggregateBuilder : ISqlQueryBuilder
                     if (primary ==
                         null) //we don't currently know the primary (i.e. none of the SELECT columns were from primary tables so use this table as primary)
                         primary = t;
-                    else if (primary.ID == t.ID) //we know the primary already but it is the same table so that's fine
-                        continue;
-                    else
+                    else if (primary.ID != t.ID) //we know the primary already: if it is the same table so that's fine
                         //this isn't fine
                         throw new QueryBuildingException(
                             $"You chose to FORCE a join to table {t} which is marked IsPrimaryExtractionTable but you have also selected a column called {primary} which is also an IsPrimaryExtractionTable (cannot have 2 different primary extraction tables)");

@@ -692,7 +692,6 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
         if (Request == null)
         {
             notifier.OnCheckPerformed(new CheckEventArgs("ExtractionRequest has not been set", CheckResult.Fail));
-            return;
         }
     }
 }

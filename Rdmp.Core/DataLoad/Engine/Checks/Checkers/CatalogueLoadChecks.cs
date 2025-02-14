@@ -268,12 +268,10 @@ internal class CatalogueLoadChecks : ICheckable
         DiscoveredColumn[] liveCols, bool requireSameNumberAndOrder, ICheckNotifier notifier)
     {
         //in LIVE but not STAGING
-        foreach (var missingColumn in liveCols.Select(c => c.GetRuntimeName())
-                     .Except(stagingCols.Select(c => c.GetRuntimeName())))
+        foreach (var missingColumn in liveCols.Select(static c => c.GetRuntimeName())
+                     .Except(stagingCols.Select(static c => c.GetRuntimeName())))
             //column is in live but not in staging, but it is hic_
-            if (SpecialFieldNames.IsHicPrefixed(missingColumn)) //this is permitted
-                continue;
-            else
+            if (!SpecialFieldNames.IsHicPrefixed(missingColumn)) //this is permitted
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     $"Column {missingColumn} is missing from STAGING", CheckResult.Fail, null));
 

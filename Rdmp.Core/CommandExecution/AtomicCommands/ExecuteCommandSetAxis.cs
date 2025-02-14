@@ -64,7 +64,6 @@ public class ExecuteCommandSetAxis : BasicCommandExecution
             if (aggregate.GetAxisIfAny() != null)
             {
                 SetImpossible($"AggregateConfiguration {aggregate} already has an axis");
-                return;
             }
         }
         else

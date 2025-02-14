@@ -156,8 +156,6 @@ internal class CommandLineParser
                 ++i;
             }
         }
-
-        return;
     }
 
     /// <summary>

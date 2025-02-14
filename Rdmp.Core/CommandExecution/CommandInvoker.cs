@@ -251,7 +251,6 @@ public class CommandInvoker
 
                 //the parameters are expected to be consumed by the target constructors so its not really a problem if there are extra
                 complainAboutExtraParameters = false;
-                continue;
             }
             else
             //if we have argument values specified

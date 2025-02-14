@@ -140,17 +140,16 @@ INSERT [ANOMigration] ([AdmissionDate], [DischargeDate], [Condition1], [Conditio
     }
 
 
-    [Test]
+    /*[Test]
     [Order(3)]
     [TestCase("Condition2")]
     [TestCase("Condition3")]
-    [TestCase("Condition4")]
-    public void ConvertNonPrimaryKeyColumn(string conditionColumn)
+    [TestCase("Condition4")]*/
+    private void ConvertNonPrimaryKeyColumn(string conditionColumn)
     {
         // TODO: This test doesn't ever seem to work!
-        return;
 
-/*
+        /*
             //Value and a list of the rows in which it was found on (e.g. the value 'Fish' was found on row 11, 31, 52 and 501
 /*
             Dictionary<object,List<int>> rowsObjectFoundIn = new Dictionary<object, List<int>>();

@@ -41,7 +41,7 @@ public sealed class ExecuteCommandUnMergeCohortIdentificationConfiguration : Bas
             return;
         }
 
-        if (_target.GetAggregateConfigurations().Any())
+        if (_target.GetAggregateConfigurations().Length != 0)
         {
             SetImpossible("Container must contain only subcontainers (i.e. no aggregate sets)");
             return;
@@ -50,7 +50,6 @@ public sealed class ExecuteCommandUnMergeCohortIdentificationConfiguration : Bas
         if (_target.GetSubContainers().Length <= 1)
         {
             SetImpossible("Container must have 2 or more immediate subcontainers for unmerging");
-            return;
         }
     }
 

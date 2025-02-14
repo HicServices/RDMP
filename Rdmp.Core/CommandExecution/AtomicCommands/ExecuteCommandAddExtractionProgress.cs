@@ -32,7 +32,6 @@ public class ExecuteCommandAddExtractionProgress : BasicCommandExecution
         if (_sds.GetCatalogue()?.TimeCoverage_ExtractionInformation_ID == null)
         {
             SetImpossible("Catalogue does not have a time coverage field configured");
-            return;
         }
     }
 

@@ -389,25 +389,16 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
     {
         //if it is AdjustRaw then it will also have the pre load discarded columns
         if (loadStage <= LoadStage.AdjustRaw)
-            foreach (var discardedColumn in PreLoadDiscardedColumns.Where(c =>
+            foreach (var discardedColumn in PreLoadDiscardedColumns.Where(static c =>
                          c.Destination != DiscardedColumnDestination.Dilute))
                 yield return discardedColumn;
 
         //also add column infos
-        foreach (var c in ColumnInfos)
-            if (loadStage <= LoadStage.AdjustRaw && SpecialFieldNames.IsHicPrefixed(c))
-                continue;
-            else if (loadStage <= LoadStage.AdjustStaging &&
-                     c.IsAutoIncrement) //auto increment columns do not get created in RAW/STAGING
-                continue;
-            else if (loadStage == LoadStage.AdjustStaging &&
-                     //these two do not appear in staging
-                     (c.GetRuntimeName().Equals(SpecialFieldNames.DataLoadRunID) ||
-                      c.GetRuntimeName().Equals(SpecialFieldNames.ValidFrom))
-                    )
-                continue;
-            else
-                yield return c;
+        foreach (var c in ColumnInfos.Where(
+                     c => loadStage > LoadStage.AdjustRaw || !SpecialFieldNames.IsHicPrefixed(c) ||
+                          loadStage > LoadStage.AdjustStaging || !c.IsAutoIncrement ||
+                          loadStage == LoadStage.AdjustStaging || !new[] { SpecialFieldNames.DataLoadRunID, SpecialFieldNames.ValidFrom }.Contains(c.GetRuntimeName())))
+            yield return c;
     }
 
     /// <inheritdoc/>

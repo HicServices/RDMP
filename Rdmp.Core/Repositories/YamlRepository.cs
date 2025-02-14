@@ -655,7 +655,6 @@ public class YamlRepository : MemoryDataExportRepository
                         catch (KeyNotFoundException)
                         {
                             // skip missing objects (they will disappear next save anyway)
-                            continue;
                         }
 
                     dictionary.Add(key, set);
@@ -663,7 +662,6 @@ public class YamlRepository : MemoryDataExportRepository
                 catch (KeyNotFoundException)
                 {
                     // skip missing container objects (they will disappear next save anyway)
-                    continue;
                 }
 
             return dictionary;

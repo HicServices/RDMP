@@ -375,7 +375,6 @@ public partial class ParameterCollectionUI : RDMPUserControl
             e.Title = "Parameter is declared at a higher level";
             e.Text =
                 $"This parameter is declared at {Options.ParameterManager.GetLevelForParameter(sqlParameter)} level which is higher than the level you are editing ({Options.CurrentLevel}).  You cannot change higher level parameters from here, look at the 'Owner' column to see which object the global belongs to";
-            return;
         }
     }
 

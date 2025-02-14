@@ -155,7 +155,6 @@ public partial class SelectColumnUI : RDMPUserControl
                     Save(dimension);
 
                     //object doesn't exist, that might cause problems
-                    return;
                 }
             }
             else

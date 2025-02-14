@@ -38,7 +38,6 @@ internal class ExecuteCommandReOrderAggregate : BasicUICommandExecution
         {
             SetImpossible(
                 "Cannot ReOrder, you should first move both objects into the same container (UNION / EXCEPT / INTERSECT)");
-            return;
         }
     }
 
@@ -54,7 +53,6 @@ internal class ExecuteCommandReOrderAggregate : BasicUICommandExecution
         {
             SetImpossible(
                 "Cannot ReOrder, you should first move both objects into the same container (UNION / EXCEPT / INTERSECT)");
-            return;
         }
     }
 

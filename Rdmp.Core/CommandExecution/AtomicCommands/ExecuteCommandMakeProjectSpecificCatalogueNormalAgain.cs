@@ -43,7 +43,6 @@ public class ExecuteCommandMakeProjectSpecificCatalogueNormalAgain : BasicComman
         if (_extractableDataSet.Project_ID == null)
         {
             SetImpossible("Catalogue is not a project specific Catalogue");
-            return;
         }
     }
 
