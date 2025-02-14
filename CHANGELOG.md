@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Build on and target .Net 9 rather than 8
 - Simplify DB Patching Interface
 - Fix issue with Simple File Extractor pipeline component checking
+- Update Catalogue metadata options
 - Add Load Metadata versioning
 - Fix application restart not closing all windows
 - Improve cohort deprecation override test

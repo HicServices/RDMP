@@ -102,6 +102,21 @@ public interface ICatalogue : IHasDependencies, IHasQuerySyntaxHelper, INamed, I
     /// </summary>
     string Description { get; set; }
 
+
+    string ShortDescription { get;set; }
+    string DataType { get; set; }
+    string DataSubtype { get; set; }
+    DateTime? DatasetReleaseDate { get; set; }
+    DateTime? StartDate { get; set; }
+    DateTime? EndDate { get; set; }
+    string Juristiction { get; set; }
+    string DataController { get; set; }
+    string DataProcessor { get; set; }
+    string ControlledVocabulary { get;set; }
+    string AssociatedPeople { get; set; }
+    string AssociatedMedia{ get; set; }
+    string Doi { get; set; }
+
     /// <summary>
     /// The alleged user specified date at which data began being collected.  For a more accurate answer you should run the DQE (See also DatasetTimespanCalculator)
     /// <para>This field is optional</para>

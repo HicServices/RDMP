@@ -46,12 +46,13 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
     private string _description;
     private Uri _detailPageUrl;
     private CatalogueType _type;
+    private DatasetPurpose _purpose;
     private CataloguePeriodicity _periodicity;
     private CatalogueGranularity _granularity;
     private string _geographicalCoverage;
     private string _backgroundSummary;
     private string _searchKeywords;
-    private string _updateFreq;
+    private UpdateFrequencies _updateFreq;
     private string _updateSched;
     private string _timeCoverage;
     private DateTime? _lastRevisionDate;
@@ -87,6 +88,22 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
     private bool _isColdStorageDataset;
     private int? _liveLoggingServerID;
 
+    private string _shortDescription;
+    private string _dataType;
+    private string _dataSubtype;
+    private string _dataSource;
+    private string _dataSourceSetting;
+    private DateTime? _datasetReleaseDate;
+    private DateTime? _startDate;
+    private DateTime? _endDate;
+    private UpdateLagTimes _updateLag;
+    private string _juristiction;
+    private string _dataController;
+    private string _dataProcessor;
+    private string _controlledVocabulary;
+    private string _associatedPeople;
+    private string _associatedMedia;
+    private string _doi;
     private Lazy<CatalogueItem[]> _knownCatalogueItems;
 
 
@@ -148,6 +165,15 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
         set => SetField(ref _type, value);
     }
 
+    /// <summary>
+    /// User defined classification of the Type of dataset the Catalogue is e.g. Cohort, ResearchStudy etc
+    /// </summary>
+    public DatasetPurpose Purpose
+    {
+        get => _purpose;
+        set => SetField(ref _purpose, value);
+    }
+
     /// <inheritdoc/>
     public CataloguePeriodicity Periodicity
     {
@@ -195,7 +221,7 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
     /// User specified free text field.  Not used for anything by RDMP.
     /// <seealso cref="Periodicity"/>
     /// </summary>
-    public string Update_freq
+    public UpdateFrequencies Update_freq
     {
         get => _updateFreq;
         set => SetField(ref _updateFreq, value);
@@ -487,6 +513,40 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
         get => _datasetStartDate;
         set => SetField(ref _datasetStartDate, value);
     }
+    /// <inheritdoc/>
+
+    public string ShortDescription { get => _shortDescription; set => SetField(ref _shortDescription, value); }
+    /// <inheritdoc/>
+    public string DataType { get => _dataType; set => SetField(ref _dataType, value); }
+    /// <inheritdoc/>
+    public string DataSubtype { get => _dataSubtype; set => SetField(ref _dataSubtype, value); }
+    /// <inheritdoc/>
+    public string DataSource { get => _dataSource; set => SetField(ref _dataSource, value); }
+    /// <inheritdoc/>
+    public string DataSourceSetting { get => _dataSourceSetting; set => SetField(ref _dataSourceSetting, value); }
+    /// <inheritdoc/>
+    public DateTime? DatasetReleaseDate { get => _datasetReleaseDate; set => SetField(ref _datasetReleaseDate, value); }
+    /// <inheritdoc/>
+    public DateTime? StartDate { get => _startDate; set => SetField(ref _startDate, value); }
+    /// <inheritdoc/>
+    public DateTime? EndDate { get => _endDate; set => SetField(ref _endDate, value); }
+    /// <inheritdoc/>
+    public UpdateLagTimes UpdateLag { get => _updateLag; set => SetField(ref _updateLag, value); }
+    /// <inheritdoc/>
+    public string Juristiction { get => _juristiction; set => SetField(ref _juristiction, value); }
+    /// <inheritdoc/>
+    public string DataController { get => _dataController; set => SetField(ref _dataController, value); }
+    /// <inheritdoc/>
+    public string DataProcessor { get => _dataProcessor; set => SetField(ref _dataProcessor, value); }
+    /// <inheritdoc/>
+    public string ControlledVocabulary { get => _controlledVocabulary; set => SetField(ref _controlledVocabulary, value); }
+    /// <inheritdoc/>
+    public string AssociatedPeople { get => _associatedPeople; set => SetField(ref _associatedPeople, value); }
+    /// <inheritdoc/>
+
+    public string AssociatedMedia { get => _associatedMedia; set => SetField(ref _associatedMedia, value); }
+
+    public string Doi { get => _doi; set => SetField(ref _doi, value); }
 
     #endregion
 
@@ -653,6 +713,208 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
         Clinic
     }
 
+    /// <summary>
+    /// Notional user declared type of data catalogue contains. Copied from the HDR Gateway
+    /// </summary>
+    public enum DatasetType
+    {
+        /// <summary>
+        ///  Includes any data related to mental health, cardiovascular, cancer, rare diseases, metabolic and endocrine, neurological, reproductive, maternity and neonatology, respiratory, immunity, musculoskeletal, vision, renal and urogenital, oral and gastrointestinal, cognitive function or hearing.
+        /// </summary>
+        HealthcareAndDisease,
+        /// <summary>
+        /// Includes any data related to treatment or interventions related to vaccines or which are preventative or therapeutic in nature.
+        /// </summary>
+        TreatmentsAndInterventions,
+        /// <summary>
+        /// Includes any data related to laboratory or other diagnostics.
+        /// </summary>
+        MeasurementsAndTests,
+        /// <summary>
+        /// Includes any data related to CT, MRI, PET, x-ray, ultrasound or pathology imaging.
+        /// </summary>
+        ImagingTypes,
+        /// <summary>
+        ///  Indicates whether the dataset relates to head, chest, arm abdomen or leg imaging.
+        /// </summary>
+        ImagingAreaOfTheBody,
+        /// <summary>
+        ///  Includes any data related to proteomics, transcriptomics, epigenomics, metabolomics, multiomics, metagenomics or genomics.
+        /// </summary>
+        Omics,
+        /// <summary>
+        ///  Includes any data related to education, crime and justice, ethnicity, housing, labour, ageing, economics, marital status, social support, deprivation, religion, occupation, finances or family circumstances.
+        /// </summary>
+        Socioeconomic,
+        /// <summary>
+        /// Includes any data related to smoking, physical activity, dietary habits or alcohol.
+        /// </summary>
+        Lifestyle,
+        /// <summary>
+        ///  Includes any data related to disease registries for research, national disease registries, audits, or birth and deaths records.
+        /// </summary>
+        Registry,
+        /// <summary>
+        ///  Includes any data related to the monitoring or study of environmental or energy factors or events.
+        /// </summary>
+        EnvironmentalAndEnergy,
+        /// <summary>
+        ///  Includes any data related to the study or application of information and communication.
+        /// </summary>
+        InformationAndCommunication,
+        /// <summary>
+        ///  Includes any data related to political views, activities, voting, etc.
+        /// </summary>
+        Politics
+    }
+
+    public enum DatasetSubType
+    {
+        NotApplicable,
+        BirthsAndDeaths,
+        NationalDiseaseRegistryAndAudits,
+        ResearchDiseaseRegistry,
+        Alcohol,
+        DietaryHabits,
+        PhysicalActivity,
+        FamilyCircumstance,
+        Finances,
+        Occupation,
+        Religion,
+        Deprivation,
+        SocialSupport,
+        MaritalStatus,
+        Economics,
+        Ageing,
+        Labour,
+        Housing,
+        Ethnicity,
+        CrimeAndJustice,
+        Education,
+        Lipidomics,
+        Genomics,
+        Metagenomics,
+        Metabolomics,
+        Epigenomics,
+        Transcriptomics,
+        Proteomics,
+        Leg,
+        Abdomen,
+        Arm,
+        MentalHealth,
+        Cardiovascular,
+        Cancer,
+        RareDiseases,
+        MetabolicAndEndocrine,
+        Neurological,
+        Reproductve,
+        MaternityAndNeonatology,
+        Chest,
+        Head,
+        Pathology,
+        Ultrasound,
+        XRay,
+        PET,
+        MRI,
+        CT,
+        CognitiveFunction,
+        Hearing,
+        Others,
+        Vaccines,
+        Preventative,
+        Theraputic,
+        Laboratory,
+        OtherDiagnosis,
+        Respiratory,
+        Immunity,
+        Musculoskeletal,
+        Vision,
+        RenalAndUrogenital,
+        OralAndGastrointestinal
+    }
+
+
+    public enum UpdateFrequencies
+    {
+        Other,
+        Static,
+        Irregular,
+        Continuous,
+        Biennial,
+        Annual,
+        Biannual,
+        Quarterly,
+        Bimonthly,
+        Monthly,
+        Biweekly,
+        Weekly,
+        TwiceWeekly,
+        Daily
+    }
+
+    public enum UpdateLagTimes
+    {
+        Other,
+        LessThanAWeek,
+        OneToTwoWeeks,
+        TwoToFourWeeks,
+        OneToTwoMonths,
+        TwoToSixMonths,
+        SixMonthsPlus,
+        Variable,
+        NotApplicable
+    }
+
+    public enum DatasetPurpose
+    {
+        Other,
+        ResearchCohort,
+        Study,
+        DiseaseRegistry,
+        Trial,
+        Care,
+        Audit,
+        Administrative,
+        Finantial,
+        Statutory
+    }
+
+    public enum DataSourceTypes
+    {
+        Other,
+        EPR,
+        ElectronicSurvey,
+        LIMS,
+        PaperBased,
+        FreeTextNLP,
+        MachineLearning
+    }
+    public enum DataSourceSettingTypes
+    {
+        Other,
+        CohortStudyTrial,
+        Clinic,
+        PrimaryCareReferrals,
+        PrimaryCareClinic,
+        PrimaryCareOutOfHours,
+        SecondaryCareAccidentAndEmergency,
+        SecondaryCareOutpatients,
+        SecondaryCareInPateints,
+        SecondaryCareAmbulance,
+        SecondaryCareICU,
+        PrescribingCommunityPharmacy,
+        PateintReportOutcome,
+        Wearables,
+        LocalAuthority,
+        NationalGovernment,
+        Community,
+        Services,
+        Home,
+        Private,
+        SocialCareHealthcareAtHome,
+        SocialCareOthersocialData,
+        Census
+    }
     #endregion
 
     /// <summary>
@@ -734,6 +996,18 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
             else
                 throw new Exception($" r[\"Type\"] had value {type} which is not contained in Enum CatalogueType");
         }
+        var purpose = r["Purpose"];
+        if (purpose == null || purpose == DBNull.Value)
+        {
+            Purpose = DatasetPurpose.Other;
+        }
+        else
+        {
+            if (Enum.TryParse(purpose.ToString(), true, out DatasetPurpose purposeAsEnum))
+                Purpose = purposeAsEnum;
+            else
+                throw new Exception($" r[\"Purpose\"] had value {purpose} which is not contained in Enum DatasetPurpose");
+        }
 
         //Periodicity - with handling for invalid enum values listed in database
         var periodicity = r["Periodicity"];
@@ -767,7 +1041,19 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
         Geographical_coverage = r["Geographical_coverage"].ToString();
         Background_summary = r["Background_summary"].ToString();
         Search_keywords = r["Search_keywords"].ToString();
-        Update_freq = r["Update_freq"].ToString();
+        var updateFreq = r["Update_freq"];
+        if (updateFreq == null || updateFreq == DBNull.Value)
+        {
+            Update_freq = UpdateFrequencies.Other;
+        }
+        else
+        {
+            if (Enum.TryParse(updateFreq.ToString(), true, out UpdateFrequencies updateFreqAsEnum))
+                Update_freq = updateFreqAsEnum;
+            else
+                throw new Exception(
+                    $" r[\"Update_freq\"] had value {updateFreq} which is not contained in Enum UpdateFrequencies");
+        }
         Update_sched = r["Update_sched"].ToString();
         Time_coverage = r["Time_coverage"].ToString();
         SubjectNumbers = r["SubjectNumbers"].ToString();
@@ -821,6 +1107,34 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
 
         Folder = r["Folder"].ToString();
 
+        ShortDescription = r["ShortDescription"].ToString();
+        DataSource = r["DataSource"].ToString();
+        DataSourceSetting = r["DataSourceSetting"].ToString();
+        StartDate = !string.IsNullOrEmpty(r["StartDate"].ToString()) ? DateTime.Parse(r["StartDate"].ToString()) : null;
+        EndDate = !string.IsNullOrEmpty(r["EndDate"].ToString()) ? DateTime.Parse(r["EndDate"].ToString()) : null;
+        DatasetReleaseDate = !string.IsNullOrEmpty(r["DatasetReleaseDate"].ToString()) ? DateTime.Parse(r["DatasetReleaseDate"].ToString()) : null;
+        DataController = r["DataController"].ToString();
+        DataProcessor = r["DataProcessor"].ToString();
+        Juristiction = r["Juristiction"].ToString();
+        AssociatedPeople = r["AssociatedPeople"].ToString();
+        AssociatedMedia = r["AssociatedMedia"].ToString();
+        ControlledVocabulary = r["ControlledVocabulary"].ToString();
+        DataType = r["DataType"].ToString();
+        DataSubtype = r["DataSubtype"].ToString();
+        Doi = r["Doi"].ToString();
+        var updateLag = r["UpdateLag"];
+        if (updateLag == null || updateLag == DBNull.Value)
+        {
+            UpdateLag = UpdateLagTimes.Other;
+        }
+        else
+        {
+            if (Enum.TryParse(updateLag.ToString(), true, out UpdateLagTimes updateLagAsEnum))
+                UpdateLag = updateLagAsEnum;
+            else
+                throw new Exception(
+                    $" r[\"UpdateLag\"] had value {updateLag} which is not contained in Enum UpdateLagTimes");
+        }
         ClearAllInjections();
     }
 
