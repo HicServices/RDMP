@@ -53,20 +53,20 @@ public class DitaCatalogueExtractor : ICheckable
     public void Extract(IDataLoadEventListener listener)
     {
         var xml = new StringBuilder();
-        xml.Append($"""
-                    <?xml version="1.0" encoding="UTF-8"?>
-                    <!DOCTYPE map PUBLIC "-//OASIS//DTD DITA Map//EN"
-                    "map.dtd">
-                    <map>
-                    <title>HIC Data Catalogue</title>
-                    <topicmeta product="hicdc" rev="1">
-                    <author>Wilfred Bonney; Thomas Nind; Mikhail Ghattas</author>
-                    <publisher>Health Informatics Centre (HIC), University of Dundee</publisher
-                    </topicmeta>
-                    <topicref href="introduction.dita"/>
-                    <topicref href="dataset.dita">
+        xml.Append("""
+                   <?xml version="1.0" encoding="UTF-8"?>
+                   <!DOCTYPE map PUBLIC "-//OASIS//DTD DITA Map//EN"
+                   "map.dtd">
+                   <map>
+                   <title>HIC Data Catalogue</title>
+                   <topicmeta product="hicdc" rev="1">
+                   <author>Wilfred Bonney; Thomas Nind; Mikhail Ghattas</author>
+                   <publisher>Health Informatics Centre (HIC), University of Dundee</publisher
+                   </topicmeta>
+                   <topicref href="introduction.dita"/>
+                   <topicref href="dataset.dita">
 
-                    """);
+                   """);
         GenerateIntroductionFile("introduction.dita");
         GenerateDataSetFile("dataset.dita");
 
