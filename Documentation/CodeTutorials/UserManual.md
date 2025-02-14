@@ -50,7 +50,7 @@ This is the user manual for RDMP.  You may also want to read:
   * [Configuring an Extraction](#configuring-an-extraction)
   * [Verification](#verification)
   * [Adding filters](#adding-filters)
-  * [Scaleability and Adaptability](#scaleability-and-adaptability)
+  * [Scalability and Adaptability](#scaleability-and-adaptability)
 - [Release](#release)
 
 # Background
@@ -107,7 +107,7 @@ Enter the connection details of your server and any keywords that are required t
 > ./rdmp install "(localdb)\MSSQLLocalDB" RDMP_ -e
 > ```
 
-This creates 4 databases which are the minimum set of platform databases required for RDMP to function.  The databses fulfil the following roles.
+This creates 4 databases which are the minimum set of platform databases required for RDMP to function.  The databases fulfil the following roles.
 
 |Database|Role|
 |--|---|
@@ -261,7 +261,7 @@ When the filter is deployed in an [ExtractionConfiguration] or [CohortIdentifica
 
 Sometimes you need to be able to provide a given column in more than one format. Or you may want to hold it in one format and release it in another.  The most common use case is sensitive or identifiable data.  RDMP allows you to write SQL code to change how a given column is extracted (or create multiple versions) and assign it an extraction category (Core, Supplemental, Special Approval etc).
 
-For example you may call a scalar function on the underlying column (e.g. `UPPER` or `dbo.MakeAnonymous(mycol)`).  These are refered to as 'Extraction Transforms' because they transform the data before it is provided in a research extract.
+For example you may call a scalar function on the underlying column (e.g. `UPPER` or `dbo.MakeAnonymous(mycol)`).  These are referred to as 'Extraction Transforms' because they transform the data before it is provided in a research extract.
 
 In mature agencies such transforms are often already modelled in views and/or table valued functions.  If this is the case then these should simply be imported directly into RDMP as new [Catalogues] (RDMP supports both views and table valued functions).
 
@@ -301,7 +301,7 @@ The RDMP data load engine was developed by the Health Informatics Centre at a ti
 - Centralise load logic into one place that is accessible to every data analyst
 - Handle strange file types and bespoke/proprietary file layouts
   - Plugin architecture allows agency specific requirements 
-- Useable by data analysts who familiar only with SQL
+- Usable by data analysts who familiar only with SQL
 - Ensure reusability of components where possible (e.g. where previously each load application would use a different FTP library and store credentials in different places or be hard coded or be a manual task!) 
 - Be automatable through a single point of automation
 
@@ -355,7 +355,7 @@ Since error messages may contain identifiable data, it is important to secure th
 
 All tables loaded by the DLE must have a primary key.  This prevents duplication and allows for 'UPSERT' of new batches such that only new/different records are loaded.
 
-In order to keep a backup of replaced data the DLE creates an `_Archive` table for each table in a load.  This provides a longitudinal history of each row (by primary key).  It is done to provide traceability and reproducability of data extracts as well as to investigate changes in data quality etc.  This process is transparent to the analyst building the load and requires only that appropriate primary keys exist in the source data and are enforced in the repository data table.
+In order to keep a backup of replaced data the DLE creates an `_Archive` table for each table in a load.  This provides a longitudinal history of each row (by primary key).  It is done to provide traceability and reproducibility of data extracts as well as to investigate changes in data quality etc.  This process is transparent to the analyst building the load and requires only that appropriate primary keys exist in the source data and are enforced in the repository data table.
 
 
 ![Archive tables](Images/UserManual/ArchiveTables.png)
@@ -411,7 +411,7 @@ Create a new [LoadMetadata] by clicking New under Data Load on the home screen o
 > ./rdmp CreateNewLoadMetadata Catalogue:Biochemistry
 > ```
 
-All loads require a file system to load data from.  This is the case even if data comes from another source (e.g. remote database table).  Set the load directory to a location on disk.  If you intend to run the load from a seperate server (e.g. automation) then this should be a network drive so that data analysts and automation server can both access it.
+All loads require a file system to load data from.  This is the case even if data comes from another source (e.g. remote database table).  Set the load directory to a location on disk.  If you intend to run the load from a separate server (e.g. automation) then this should be a network drive so that data analysts and automation server can both access it.
 
 ![Set the load directory](Images/UserManual/ChooseLoadDirectory.png)
 
@@ -524,7 +524,7 @@ There are 2 stages to creating a cohort before it can be used to generate an ext
 |Stage| Purpose|
 |---|---|
 |Identify Cohort| Build a query or locate a file that contains unique person identifiers |
-|Commit Cohort| Create a permenant record of the results of the query / contents of the file and allocate any anonymous mappings|
+|Commit Cohort| Create a permanent record of the results of the query / contents of the file and allocate any anonymous mappings|
 
 ## Identify Cohort
 
@@ -687,7 +687,7 @@ You can tailor how these identifiers are allocated in several ways.  For example
 
 ## Do Not Allocate Release Identifiers
 
-If your data is already anonymised or is not sensitive then you may not want seperate release identifiers at all.  Alternatively you may have a seperate process for allocating identifiers (e.g. a find/replace script).
+If your data is already anonymised or is not sensitive then you may not want separate release identifiers at all.  Alternatively you may have a separate process for allocating identifiers (e.g. a find/replace script).
 
 In this case you can disable release identifier allocation by editing the [ExternalCohortTable] such that the 'Private Identifier Field' is the same as the 'Release Identifier Field':
 
@@ -751,7 +751,7 @@ Data export in RDMP allows you to link a cohort to one or more dataset(s).  This
 
 In order to be included in an [ExtractionConfiguration] a [Catalogue] must be marked extractable and have a column marked [IsExtractionIdentifier].  When added you can define [Filters] to further constrain what records are extracted (e.g. prescriptions for a specific drug group only).
 
-RDMP preserves all [ExtractionConfiguration] seperate from [Catalogue] definitions.  This ensures reproducibility of extracts even at a far later date (e.g. years).
+RDMP preserves all [ExtractionConfiguration] separate from [Catalogue] definitions.  This ensures reproducibility of extracts even at a far later date (e.g. years).
 
 [ExtractionConfiguration] can be frozen after release to prevent accidental changes.  They can even be cloned for later reuse (e.g. in a data refresh after 6 months).
 
@@ -786,7 +786,7 @@ _Check then execute an ExtractionConfiguration.  Note that when specifying the P
 
 ## Verification
 
-You can confirm that an extraction was succesful by opening the extraction location on disk or by running the Extraction SQL.
+You can confirm that an extraction was successful by opening the extraction location on disk or by running the Extraction SQL.
 
 ![Check extraction matches expectations](Images/UserManual/CheckExtraction.png)
 
@@ -809,9 +809,9 @@ You can add or import [Filters] to reduce the scope of the extract.  For example
 > ```
 _Note that this will view both the SQL query and all the data returned_
 
-## Scaleability and Adaptability
+## Scalability and Adaptability
 
-Since data repositories can contain hundreds of millions of records and cohorts can be equally large, RDMP data export is designed for scalability.   Datasets are extraced in parallel and results are streamed in batches (to reduce RAM overhead or out of memory errors).
+Since data repositories can contain hundreds of millions of records and cohorts can be equally large, RDMP data export is designed for scalability.   Datasets are extracted in parallel and results are streamed in batches (to reduce RAM overhead or out of memory errors).
 
 As seen above the CLI can be used to execute [ExtractionConfigurations].  This allows for a workflow where data analysts build and check the configuration but the running is then done by a powerful automation server overnight.
 
@@ -819,7 +819,7 @@ Extractions are executed through a [Pipeline] (See [Pipelines chapter](#Pipeline
 
 # Release
 
-An [ExtractionConfiguration] can have many [Catalogues].  These can be extracted at different times.  Some may aquire modifications over time (adjusting filters etc).  Some may fail to extract (e.g. bad SQL in filter) or have extracted files lost (e.g. disk backup restore).
+An [ExtractionConfiguration] can have many [Catalogues].  These can be extracted at different times.  Some may acquire modifications over time (adjusting filters etc).  Some may fail to extract (e.g. bad SQL in filter) or have extracted files lost (e.g. disk backup restore).
 
 The Release process of RDMP confirms that all expected extraction artifacts are in place and that the extraction audit matches the current live configuration of the [ExtractionConfiguration] (no changes have been made but not run).
 

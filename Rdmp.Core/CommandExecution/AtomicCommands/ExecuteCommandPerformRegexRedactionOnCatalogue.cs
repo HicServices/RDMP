@@ -46,7 +46,7 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
         _readLimit = readLimit;
         if (_server.DatabaseType != FAnsi.DatabaseType.MicrosoftSQLServer)
         {
-            //This should be implimented for all db types after UAT for the initial purpose
+            //This should be implemented for all db types after UAT for the initial purpose
             SetImpossible("Regex Redaction are currently only supported on MSSQL databases");
         }
     }

@@ -164,7 +164,7 @@ public class ExecutableRuntimeTask : RuntimeTask
                     $"ProcessTask called {ProcessTask.Name} is marked as an Executable but seems to point at an SQL file.  You should set the process task type to SQLFile instead",
                     CheckResult.Fail));
 
-        //we cant tell
+        //we can't tell
         if (exeParsed.Length == 0)
             throw new Exception(
                 $"Could not parse process task {ProcessTask.Path} into a valid command line instruction for process task {ProcessTask}");

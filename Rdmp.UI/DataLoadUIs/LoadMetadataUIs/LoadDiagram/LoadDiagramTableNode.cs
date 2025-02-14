@@ -153,7 +153,7 @@ public class LoadDiagramTableNode : Node, ICombineableSource, IHasLoadDiagramSta
                 return Bubble switch
                 {
                     LoadBubble.Raw =>
-                        "A Table that will be created in the RAW bubble when the load is run, this table will not have any constraints (not nulls, referential integrity ect)",
+                        "A Table that will be created in the RAW bubble when the load is run, this table will not have any constraints (not nulls, referential integrity etc)",
                     LoadBubble.Staging =>
                         "A Table that will be created in the STAGING bubble when the load is run, this table will have normal constraints that match LIVE",
                     _ => "A Table that is involved in the load (based on the Catalogues associated with the load)"

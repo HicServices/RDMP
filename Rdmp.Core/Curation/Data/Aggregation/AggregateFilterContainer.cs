@@ -89,7 +89,7 @@ public class AggregateFilterContainer : ConcreteContainer, IDisableable
     }
 
     /// <summary>
-    /// Creates a copy of the current AggregateFilterContainer including new copies of all subcontainers, filters (including those in subcontainers) and paramaters of those
+    /// Creates a copy of the current AggregateFilterContainer including new copies of all subcontainers, filters (including those in subcontainers) and parameters of those
     /// filters.  This is a recursive operation that will clone the entire tree no matter how deep.
     /// </summary>
     /// <returns></returns>
@@ -116,7 +116,7 @@ public class AggregateFilterContainer : ConcreteContainer, IDisableable
             var clonedSubcontainer =
                 toCloneSubcontainer.DeepCloneEntireTreeRecursivelyIncludingFilters();
 
-            //get the returned filter subcontainer and assocaite it with the cloned version of this
+            //get the returned filter subcontainer and associate it with the cloned version of this
             clone.AddChild(clonedSubcontainer);
         }
 

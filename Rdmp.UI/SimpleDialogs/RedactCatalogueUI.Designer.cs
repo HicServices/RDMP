@@ -187,7 +187,7 @@ partial class RedactCatalogueUI
         label3.Name = "label3";
         label3.Size = new System.Drawing.Size(102, 15);
         label3.TabIndex = 5;
-        label3.Text = "Colums To Redact";
+        label3.Text = "Columns To Redact";
         // 
         // checkedListBox1
         // 

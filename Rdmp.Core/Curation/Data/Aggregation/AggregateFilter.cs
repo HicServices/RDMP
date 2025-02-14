@@ -25,7 +25,7 @@ namespace Rdmp.Core.Curation.Data.Aggregation;
 /// when the two fields are in different tables - that will be joined at Query Time).
 /// 
 /// <para>Each AggregateFilter can have a collection of AggregateFilterParameters which store SQL parameter values (along with descriptions for the user) that let you
-/// paramaterise (for the user) your AggregateFilter</para>
+/// parameterise (for the user) your AggregateFilter</para>
 /// </summary>
 public class AggregateFilter : ConcreteFilter, IDisableable
 {

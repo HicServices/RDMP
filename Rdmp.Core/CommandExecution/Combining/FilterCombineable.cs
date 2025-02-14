@@ -45,7 +45,7 @@ public class FilterCombineable : ICombineToMakeCommand
         {
             RootContainerIfAny = ImmediateContainerIfAny.GetRootContainerOrSelf();
 
-            //so we can determine whether we are being draged into a new heirarchy tree (copy) or just being dragged around inside our own tree (move)
+            //so we can determine whether we are being dragged into a new hierarchy tree (copy) or just being dragged around inside our own tree (move)
             AllContainersInEntireTreeFromRootDown.Add(RootContainerIfAny);
             AllContainersInEntireTreeFromRootDown.AddRange(RootContainerIfAny.GetAllSubContainersRecursively());
         }

@@ -15,7 +15,7 @@ namespace Rdmp.Core.Curation.Data.Cache;
 public interface ICacheFetchFailure : ISaveable, IDeleteable, IMapsDirectlyToDatabaseTable
 {
     /// <summary>
-    /// The ID of the <see cref="CacheProgress"/> that was being executed when the fetch error occured.
+    /// The ID of the <see cref="CacheProgress"/> that was being executed when the fetch error occurred.
     /// </summary>
     int CacheProgress_ID { get; set; }
 
@@ -40,14 +40,14 @@ public interface ICacheFetchFailure : ISaveable, IDeleteable, IMapsDirectlyToDat
     DateTime LastAttempt { get; set; }
 
     /// <summary>
-    /// The date at which we were able to make a succesful request for the time period defined by <see cref="FetchRequestStart"/> and <see cref="FetchRequestEnd"/>.  If this
+    /// The date at which we were able to make a successful request for the time period defined by <see cref="FetchRequestStart"/> and <see cref="FetchRequestEnd"/>.  If this
     /// date is populated then it means that although we were unable to fetch the period when we first requested it we were subsequently able to rerun that period and the
-    /// remote endpoint was succesfully able to return to us the results
+    /// remote endpoint was successfully able to return to us the results
     /// </summary>
     DateTime? ResolvedOn { get; set; }
 
     /// <summary>
-    /// Marks that we were able to succesfully rerun this request window
+    /// Marks that we were able to successfully rerun this request window
     /// </summary>
     /// <seealso cref="ResolvedOn"/>
     void Resolve();

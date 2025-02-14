@@ -150,7 +150,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
 
     /// <summary>
     /// The format for storing files in when reading/writing to a cache with a <see cref="CacheProgress"/>.  This may not be respected
-    /// depending on the implementation of the sepecific ICacheLayout
+    /// depending on the implementation of the specific ICacheLayout
     /// </summary>
     public CacheArchiveType CacheArchiveType
     {

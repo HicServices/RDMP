@@ -15,7 +15,7 @@ namespace Rdmp.Core.Curation.Data;
 public interface IJoin
 {
     /// <summary>
-    /// The column in the secondary table that should be joined iwth the <see cref="PrimaryKey"/> column
+    /// The column in the secondary table that should be joined with the <see cref="PrimaryKey"/> column
     /// </summary>
     ColumnInfo ForeignKey { get; }
 
@@ -38,7 +38,7 @@ public interface IJoin
     ExtractionJoinType ExtractionJoinType { get; }
 
     /// <summary>
-    /// If it is nessesary to join on more than one column, use this method to indicate the aditional fk / pk pairs (they must belong to the same TableInfos as the
+    /// If it is necessary to join on more than one column, use this method to indicate the additional fk / pk pairs (they must belong to the same TableInfos as the
     /// main IJoin)
     /// </summary>
     /// <returns></returns>

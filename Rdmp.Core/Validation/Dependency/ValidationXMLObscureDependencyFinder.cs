@@ -144,7 +144,7 @@ public class ValidationXMLObscureDependencyFinder : IObscureDependencyFinder
     private bool DeserializeToSeeIfThereIsADependency(IMapsDirectlyToDatabaseTable oTableWrapperObject,
         Catalogue firstPassSuspect)
     {
-        //we already forbidlisted this Catalogue because it has dodgy XML that cant be deserialized properly
+        //we already forbidlisted this Catalogue because it has dodgy XML that can't be deserialized properly
         var forbidlisted = CataloguesWithBrokenValidationXml.SingleOrDefault(c => c.ID == firstPassSuspect.ID);
 
         //it was forbidlisted because it had dodgy XML, if the xml hasn't changed it will still be broken so give up

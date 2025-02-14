@@ -112,7 +112,7 @@ count(*)>1"));
             Assert.That(queryBuilder.SQL, Does.Contain(@"DECLARE @name AS varchar(50);"));
             Assert.That(queryBuilder.SQL, Does.Contain(@"SET @name='lobster';"));
 
-            //isntead of this verison of things
+            //instead of this version of things
             Assert.That(queryBuilder.SQL, Does.Not.Contain(@"SET @name='fish';"));
 
             Assert.That(

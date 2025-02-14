@@ -12,7 +12,7 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.Ticketing;
 
 /// <summary>
-/// How RDMP interacts with an (optional) ticketing sytem such as Jira, Fogbugz etc.  RDMP allows you to control governance via your ticketing system and
+/// How RDMP interacts with an (optional) ticketing system such as Jira, Fogbugz etc.  RDMP allows you to control governance via your ticketing system and
 /// to associate ticket identifiers with project extracts, catalogues, issues etc.  By implementing this interface for your ticketing system you can prevent
 /// data releases unless a ticket is in a given state etc.
 /// 

@@ -246,7 +246,7 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
     }
 
     /// <summary>
-    /// User specified date that user alledgedly reviewed the contents of the Catalogue / Metadata
+    /// User specified date that user allegedly reviewed the contents of the Catalogue / Metadata
     /// </summary>
     public DateTime? Last_revision_date
     {
@@ -1483,7 +1483,7 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
     }
 
     /// <summary>
-    /// Cleares the cached answer of <see cref="GetExtractabilityStatus"/>
+    /// Clears the cached answer of <see cref="GetExtractabilityStatus"/>
     /// </summary>
     public void ClearAllInjections()
     {

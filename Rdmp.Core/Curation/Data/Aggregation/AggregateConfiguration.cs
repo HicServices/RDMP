@@ -250,7 +250,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     public ISqlParameter[] GetAllParameters() => Parameters.ToArray();
 
     /// <summary>
-    /// An AggregateConfiguration is a Group By statement.  This will involve using at least one Table in the FROM section of the query.  The descision on which tables
+    /// An AggregateConfiguration is a Group By statement.  This will involve using at least one Table in the FROM section of the query.  The decision on which tables
     /// to join is made by the AggregateBuilder based on the AggregateDimensions (columns).  If there are no column mapped AggregateDimensions (e.g. there is only a count(*))
     /// or there are other tables you want joined in addition the user can specify them in this property Populated via <see cref="AggregateForcedJoin"/>
     /// </summary>
@@ -410,8 +410,8 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
 
     /// <summary>
     /// All AggregateConfigurations have the potential a'Joinable Patient Index Table' (see AggregateConfiguration class documentation).  This method injects
-    /// what fact that the AggregateConfiguration is definetly one by passing the JoinableCohortAggregateConfiguration that makes it one.  Pass null in to
-    /// indicate that the AggregateConfiguration is definetly NOT ONE.  See also the method <see cref="IsJoinablePatientIndexTable"/>
+    /// what fact that the AggregateConfiguration is definitely one by passing the JoinableCohortAggregateConfiguration that makes it one.  Pass null in to
+    /// indicate that the AggregateConfiguration is definitely NOT ONE.  See also the method <see cref="IsJoinablePatientIndexTable"/>
     /// </summary>
     public void InjectKnown(JoinableCohortAggregateConfiguration instance)
     {

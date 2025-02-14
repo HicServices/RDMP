@@ -164,7 +164,7 @@ public class ExtractableCohortDescription
                 $"No row found for Origin ID {OriginID} in fetched cohort description table for source {Fetch.Source}");
 
 
-            //it's overriden ugh, got to go the slow way
+            //it's overridden ugh, got to go the slow way
             if (!string.IsNullOrWhiteSpace(Cohort.OverrideReleaseIdentifierSQL))
             {
                 Count = Cohort.Count;
@@ -172,7 +172,7 @@ public class ExtractableCohortDescription
             }
             else
             {
-                //it's a proper not overriden release identifier so we can use the DataTable value
+                //it's a proper not overridden release identifier so we can use the DataTable value
                 Count = Convert.ToInt32(row["Count"]);
                 CountDistinct = Convert.ToInt32(row["CountDistinct"]);
             }

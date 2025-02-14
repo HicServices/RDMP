@@ -355,26 +355,26 @@ public abstract class BasicActivateItems : IBasicActivateItems
     }
 
     /// <inheritdoc/>
-    public virtual bool DeleteWithConfirmation(IDeleteable deleteable)
+    public virtual bool DeleteWithConfirmation(IDeleteable deletable)
     {
         if (IsInteractive && InteractiveDeletes)
         {
-            var didDelete = InteractiveDelete(deleteable);
+            var didDelete = InteractiveDelete(deletable);
 
-            if (didDelete) PublishNearest(deleteable);
+            if (didDelete) PublishNearest(deletable);
 
             return didDelete;
         }
 
-        deleteable.DeleteInDatabase();
-        PublishNearest(deleteable);
+        deletable.DeleteInDatabase();
+        PublishNearest(deletable);
 
         return true;
     }
 
-    protected virtual bool InteractiveDelete(IDeleteable deleteable)
+    protected virtual bool InteractiveDelete(IDeleteable deletable)
     {
-        var databaseObject = deleteable as DatabaseEntity;
+        var databaseObject = deletable as DatabaseEntity;
 
         switch (databaseObject)
         {
@@ -460,29 +460,29 @@ public abstract class BasicActivateItems : IBasicActivateItems
 
         var overrideConfirmationText =
             //If there is some special way of describing the effects of deleting this object e.g. Selected Datasets
-            deleteable is IDeletableWithCustomMessage customMessageDeletable
+            deletable is IDeletableWithCustomMessage customMessageDeletable
                 ? $"Are you sure you want to {customMessageDeletable.GetDeleteMessage()}?"
-                : $"Are you sure you want to delete '{deleteable}'?{Environment.NewLine}({deleteable.GetType().Name}{idText})";
+                : $"Are you sure you want to delete '{deletable}'?{Environment.NewLine}({deletable.GetType().Name}{idText})";
         if (
             YesNo(
                 overrideConfirmationText,
-                $"Delete {deleteable.GetType().Name}"))
+                $"Delete {deletable.GetType().Name}"))
         {
-            deleteable.DeleteInDatabase();
+            deletable.DeleteInDatabase();
 
             if (databaseObject == null)
             {
-                var descendancy = CoreChildProvider.GetDescendancyListIfAnyFor(deleteable);
+                var descendancy = CoreChildProvider.GetDescendancyListIfAnyFor(deletable);
                 if (descendancy != null)
                     databaseObject = descendancy.Parents.OfType<DatabaseEntity>().LastOrDefault();
             }
 
-            if (deleteable is IMasqueradeAs masqueradeAs)
+            if (deletable is IMasqueradeAs masqueradeAs)
                 databaseObject ??= masqueradeAs.MasqueradingAs() as DatabaseEntity;
 
             return databaseObject == null
                 ? throw new NotSupportedException(
-                    $"IDeletable {deleteable} was not a DatabaseObject and it did not have a Parent in its tree which was a DatabaseObject (DescendancyList)")
+                    $"IDeletable {deletable} was not a DatabaseObject and it did not have a Parent in its tree which was a DatabaseObject (DescendancyList)")
                 : true;
         }
 

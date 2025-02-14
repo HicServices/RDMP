@@ -51,7 +51,7 @@ public class SupportingDocumentsFetcher
             throw new FileNotFoundException(
                 $"Could not find supporting document '{supportingDocument}' which was expected to be at path:{toCopy.FullName}");
 
-        //copy with overwritte
+        //copy with overwrite
         File.Copy(toCopy.FullName, Path.Combine(directory.FullName, "SupportingDocuments", toCopy.Name), true);
 
         return Path.Combine(directory.FullName, "SupportingDocuments", toCopy.Name);

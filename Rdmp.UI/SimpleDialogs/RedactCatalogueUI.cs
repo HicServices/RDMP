@@ -101,7 +101,7 @@ public partial class RedactCatalogueUI : RedactCatalogueUI_Design
 
     private void btnRedact_Click(object sender, EventArgs e)
     {
-        if (_activator.YesNo("Are you sure you want to preform redactions on the selected columns?", "Redact All matches in this catalogue"))
+        if (_activator.YesNo("Are you sure you want to perform redactions on the selected columns?", "Redact All matches in this catalogue"))
         {
             int? max = string.IsNullOrWhiteSpace(tbMaxCount.Text) ? null : int.Parse(tbMaxCount.Text);
             var columns = new List<ColumnInfo>();

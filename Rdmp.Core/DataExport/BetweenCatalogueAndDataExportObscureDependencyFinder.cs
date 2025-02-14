@@ -24,7 +24,7 @@ public class BetweenCatalogueAndDataExportObscureDependencyFinder : IObscureDepe
     private readonly IDataExportRepositoryServiceLocator _serviceLocator;
 
     /// <summary>
-    /// Sets up class to fobid deleting <see cref="Catalogue"/> that are in project extractions etc.
+    /// Sets up class to forbid deleting <see cref="Catalogue"/> that are in project extractions etc.
     /// </summary>
     /// <param name="serviceLocator"></param>
     public BetweenCatalogueAndDataExportObscureDependencyFinder(IDataExportRepositoryServiceLocator serviceLocator)
@@ -46,7 +46,7 @@ public class BetweenCatalogueAndDataExportObscureDependencyFinder : IObscureDepe
             var dependencies = _serviceLocator.DataExportRepository
                 .GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", cata.ID).ToArray();
 
-            //we have any dependant catalogues?
+            //we have any dependent catalogues?
             if (dependencies.Any())
                 throw new Exception(
                     $"Cannot delete Catalogue {cata} because there are ExtractableDataSets which depend on them (IDs={string.Join(",", dependencies.Select(ds => ds.ID.ToString()))})");

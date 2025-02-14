@@ -10,7 +10,7 @@ using Rdmp.Core.Curation.Data;
 namespace Rdmp.Core.CohortCommitting;
 
 /// <summary>
-/// The datatype of an IsExtractionIdentifier column found in (at least) one of your Catalogues.  This is used to help you make an informed descision about
+/// The datatype of an IsExtractionIdentifier column found in (at least) one of your Catalogues.  This is used to help you make an informed decision about
 /// what datatype to store patient identifiers in when creating a new cohort database (See CreateNewCohortDatabaseWizard).  Every IsExtractionIdentifier column
 /// datatype will be listed along with a count of the number of columns with that datatype and the user (or system) will be allowed to select one.
 /// 

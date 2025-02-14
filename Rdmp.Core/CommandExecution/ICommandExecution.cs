@@ -13,10 +13,10 @@ namespace Rdmp.Core.CommandExecution;
 public interface ICommandExecution
 {
     /// <summary>
-    /// True if the command's current state means that it cannot be succesfully executed.  This should ideally be set in the constructor logic
+    /// True if the command's current state means that it cannot be successfully executed.  This should ideally be set in the constructor logic
     /// but must be set before <see cref="Execute"/> is called.
     /// 
-    /// <para>If determining a given error state is expensive and therefore not desireable to do in the constructor you should just determine
+    /// <para>If determining a given error state is expensive and therefore not desirable to do in the constructor you should just determine
     /// it in <see cref="Execute"/> and throw at that point</para>
     /// </summary>
     bool IsImpossible { get; }

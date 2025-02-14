@@ -71,7 +71,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
     private RecentHistoryOfControls recentHistoryOfSearches;
 
     /// <summary>
-    /// The users final selection when not using mutli select mode
+    /// The users final selection when not using multi select mode
     /// </summary>
     public T Selected;
 

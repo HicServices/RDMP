@@ -11,7 +11,7 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-/// Helper class for becomming an IEncryptedPasswordHost via SimpleStringValueEncryption.  This class needs an ICatalogueRepository because
+/// Helper class for becoming an IEncryptedPasswordHost via SimpleStringValueEncryption.  This class needs an ICatalogueRepository because
 /// SimpleStringValueEncryption is only secure when there is a private RSA encryption key specified in the CatalogueRepository.  This key
 /// certificate will be a file location.  This allows you to use windows file system based user authentication to securely encrypt strings
 /// within RDMP databases.

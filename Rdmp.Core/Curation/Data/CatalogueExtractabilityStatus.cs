@@ -19,7 +19,7 @@ public class CatalogueExtractabilityStatus
     public bool IsExtractable { get; private set; }
 
     /// <summary>
-    /// The <see cref="Catalogue"/> is extractable as an ExtractableDataSet in data export dabase but only for use in a single
+    /// The <see cref="Catalogue"/> is extractable as an ExtractableDataSet in data export database but only for use in a single
     /// Project.
     /// </summary>
     public bool IsProjectSpecific { get; private set; }

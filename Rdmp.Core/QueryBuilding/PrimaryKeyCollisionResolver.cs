@@ -242,7 +242,7 @@ WHERE DuplicateCount > 1";
     /// <returns></returns>
     public static string GetNullSubstituteForComparisonsWithDataType(string datatype, bool min)
     {
-        //technically these can go lower (real and float) but how realistic is that espcially when SqlServer plays fast and loose with very small numbers in floats...
+        //technically these can go lower (real and float) but how realistic is that especially when SqlServer plays fast and loose with very small numbers in floats...
         if (datatype.Equals("bigint") || datatype.Equals("real") || datatype.StartsWith("float"))
             return min ? "-9223372036854775808" : "9223372036854775807";
 

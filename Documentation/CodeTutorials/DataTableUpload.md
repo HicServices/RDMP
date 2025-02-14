@@ -24,7 +24,7 @@ The behaviour of `DataTableUploadDestination` is controlled through settings suc
 ![DataTableUploadDiagram](Images/DataTableUpload/Settings.png)
 
 ## Behaviour
-When the first DataTable is passed into `DataTableUploadDestination` a new [Guesser](https://github.com/HicServices/TypeGuesser) will be created for each column.  Every cell value is then fed through these computers.  This will record the maximum decimal size seen, the longest string and make a guess at the Type (if the data is not hard typed already).  The determination of data type is handled by implementations of `IDecideTypesForStrings`.  Each allowable `Type` has a `TypeCompatibilityGroup`, this determines the behaviour of the system when mixed values are encountered e.g. "1" (int) followed by "1.1" (decimal).  If the Types are compatible then the `Guess` will be the Type that accomodates both values (e.g. decimal).  If values are not compatible (e.g. "1" followed by "2001-01-01") then the `Guess` will be changed to string (varchar).
+When the first DataTable is passed into `DataTableUploadDestination` a new [Guesser](https://github.com/HicServices/TypeGuesser) will be created for each column.  Every cell value is then fed through these computers.  This will record the maximum decimal size seen, the longest string and make a guess at the Type (if the data is not hard typed already).  The determination of data type is handled by implementations of `IDecideTypesForStrings`.  Each allowable `Type` has a `TypeCompatibilityGroup`, this determines the behaviour of the system when mixed values are encountered e.g. "1" (int) followed by "1.1" (decimal).  If the Types are compatible then the `Guess` will be the Type that accommodates both values (e.g. decimal).  If values are not compatible (e.g. "1" followed by "2001-01-01") then the `Guess` will be changed to string (varchar).
 
 Sometimes you want to force a specific destination database datatype for some/all columns.  This can be done either by setting `ExplicitTypes` or by creating the table yourself before running the `DataTableUploadDestination`. These types are the initial estimates and can be changed based on data encountered (unless you turn off `AllowResizingColumnsAtUploadTime`).
 
@@ -33,7 +33,7 @@ Once all data types have been determined the destination table is created with t
 If a column is always null then the column estimate will be `Boolean` (`bit`).
 
 ## Resizing
-Data is loaded into tables in batches using an appropriate `IBulkCopy` for the [DBMS] being targetted (e.g. Sql Server, MySql).  Each batch goes through the `Guesser` which can result in a column estimate changing.  When this occurs (assuming `AllowResizingColumnsAtUploadTime`) then an ALTER statement is issued to change the column to the new `Type`.
+Data is loaded into tables in batches using an appropriate `IBulkCopy` for the [DBMS] being targeted (e.g. Sql Server, MySql).  Each batch goes through the `Guesser` which can result in a column estimate changing.  When this occurs (assuming `AllowResizingColumnsAtUploadTime`) then an ALTER statement is issued to change the column to the new `Type`.
 
 ## Primary Keys
 The table created will have an appropriate primary key if the `DataTable` batches supplied have a PrimaryKey set or if any `ExplicitTypes` columns have `IsPrimaryKey` set.  This key will only be created when the `DataTableUploadDestination` is disposed since primary keys can affect the ability to issue ALTER statements.

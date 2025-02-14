@@ -134,7 +134,7 @@ public class PipelineComponent : DatabaseEntity, IPipelineComponent
         // the Type for the PipelineComponent could not be resolved
         // Maybe the user created this pipe with a Plugin and then uninstalled
         // the plugin.  So tell the API its an Object then update the Class
-        // to the name of it even though it doesnt exist (its just cloning afterall)
+        // to the name of it even though it doesnt exist (its just cloning after all)
 
         if (type == null)
             clone.Class = Class;

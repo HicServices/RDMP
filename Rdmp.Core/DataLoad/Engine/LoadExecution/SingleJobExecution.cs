@@ -52,11 +52,11 @@ public class SingleJobExecution : IDataLoadExecution
                     //run current component
                     var exitCodeType = component.Run(job, cancellationToken);
 
-                    //current component failed so jump out, either because load not nessesary or crash
+                    //current component failed so jump out, either because load not necessary or crash
                     if (exitCodeType == ExitCodeType.OperationNotRequired)
                     {
                         TryDispose(exitCodeType, job);
-                        //load not nessesary so abort entire DLE process but also cleanup still
+                        //load not necessary so abort entire DLE process but also cleanup still
                         return exitCodeType;
                     }
 

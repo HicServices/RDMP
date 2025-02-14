@@ -26,7 +26,7 @@ public class ExplicitDatabaseNameChecker
             "AutomationServiceOptions.cs", //allowed because it is the usage text for the program.
             "DatabaseTests.cs", //allowed because it is telling user about how you can setup database tests support
             "ChoosePlatformDatabasesUI.Designer.cs", //allowed because it is a suggestion to user about what prefix to use
-            "PluginPackagerProgramOptions.cs", //allwed because it's a suggestion to the user about command line arguments
+            "PluginPackagerProgramOptions.cs", //allowed because it's a suggestion to the user about command line arguments
             "DocumentationCrossExaminationTest.cs", //allowed because its basically a list of comments that are allowed despite not appearing in the codebase
             "ResearchDataManagementPlatformOptions.cs", //allowed because it's an Example
             "AWSS3BucketReleaseDestination.cs" //allowed as it uses it as a temp file identifier

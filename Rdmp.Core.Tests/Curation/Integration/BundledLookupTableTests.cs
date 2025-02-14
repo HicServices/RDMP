@@ -44,7 +44,7 @@ FROM
 ChildTable"));
 
 
-        // ei 1 is suplemental now
+        // ei 1 is supplemental now
         eis[1].ExtractionCategory = ExtractionCategory.Supplemental;
         eis[1].SaveToDatabase();
 
