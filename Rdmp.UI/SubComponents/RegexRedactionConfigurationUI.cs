@@ -50,6 +50,4 @@ public partial class RegexRedactionConfigurationUI : RegexRedactionConfiguration
 [TypeDescriptionProvider(
     typeof(AbstractControlDescriptionProvider<RegexRedactionConfigurationUI_Design, UserControl>))]
 public abstract class
-    RegexRedactionConfigurationUI_Design : RDMPSingleDatabaseObjectControl<RegexRedactionConfiguration>
-{
-}
+    RegexRedactionConfigurationUI_Design : RDMPSingleDatabaseObjectControl<RegexRedactionConfiguration>;

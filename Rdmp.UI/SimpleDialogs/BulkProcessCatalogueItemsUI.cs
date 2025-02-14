@@ -298,6 +298,4 @@ public partial class BulkProcessCatalogueItemsUI : BulkProcessCatalogueItems_Des
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<BulkProcessCatalogueItems_Design, UserControl>))]
-public class BulkProcessCatalogueItems_Design : RDMPSingleDatabaseObjectControl<Catalogue>
-{
-}
+public class BulkProcessCatalogueItems_Design : RDMPSingleDatabaseObjectControl<Catalogue>;

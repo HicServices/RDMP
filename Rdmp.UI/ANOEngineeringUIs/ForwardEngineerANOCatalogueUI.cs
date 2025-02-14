@@ -602,6 +602,4 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ForwardEngineerANOCatalogueUI_Design, UserControl>))]
-public abstract class ForwardEngineerANOCatalogueUI_Design : RDMPSingleDatabaseObjectControl<Catalogue>
-{
-}
+public abstract class ForwardEngineerANOCatalogueUI_Design : RDMPSingleDatabaseObjectControl<Catalogue>;

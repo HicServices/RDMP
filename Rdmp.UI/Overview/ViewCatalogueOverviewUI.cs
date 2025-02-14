@@ -187,6 +187,4 @@ public partial class ViewCatalogueOverviewUI : ViewCatalogueOverviewUI_Design
     }
 }
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ViewCatalogueOverviewUI_Design, UserControl>))]
-public abstract class ViewCatalogueOverviewUI_Design : RDMPSingleDatabaseObjectControl<Catalogue>
-{
-}
+public abstract class ViewCatalogueOverviewUI_Design : RDMPSingleDatabaseObjectControl<Catalogue>;

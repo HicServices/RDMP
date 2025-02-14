@@ -146,6 +146,4 @@ public partial class ExeProcessTaskUI : ExeProcessTaskUI_Design
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ExeProcessTaskUI_Design, UserControl>))]
-public abstract class ExeProcessTaskUI_Design : RDMPSingleDatabaseObjectControl<ProcessTask>
-{
-}
+public abstract class ExeProcessTaskUI_Design : RDMPSingleDatabaseObjectControl<ProcessTask>;

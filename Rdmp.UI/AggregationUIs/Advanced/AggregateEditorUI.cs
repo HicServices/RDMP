@@ -544,6 +544,4 @@ public partial class AggregateEditorUI : AggregateEditor_Design, ISaveableUI
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<AggregateEditor_Design, UserControl>))]
-public abstract class AggregateEditor_Design : RDMPSingleDatabaseObjectControl<AggregateConfiguration>
-{
-}
+public abstract class AggregateEditor_Design : RDMPSingleDatabaseObjectControl<AggregateConfiguration>;

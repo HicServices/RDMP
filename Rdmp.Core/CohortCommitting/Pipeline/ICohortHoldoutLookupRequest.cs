@@ -12,8 +12,5 @@ namespace Rdmp.Core.CohortCommitting.Pipeline;
 /// <summary>
 /// See CohortHoldoutLookupRequest
 ///  </summary>
-public interface ICohortHoldoutLookupRequest : ICheckable, IPipelineUseCase
-{
-
-}
+public interface ICohortHoldoutLookupRequest : ICheckable, IPipelineUseCase;
 

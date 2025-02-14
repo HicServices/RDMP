@@ -229,6 +229,4 @@ public partial class ExtractionFilterUI : ExtractionFilterUI_Design, ILifetimeSu
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ExtractionFilterUI_Design, UserControl>))]
-public abstract class ExtractionFilterUI_Design : RDMPSingleDatabaseObjectControl<ConcreteFilter>
-{
-}
+public abstract class ExtractionFilterUI_Design : RDMPSingleDatabaseObjectControl<ConcreteFilter>;

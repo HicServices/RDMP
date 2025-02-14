@@ -12,6 +12,4 @@ namespace Rdmp.Core.DataFlowPipeline;
 /// MEF discoverable version of IDataFlowSource
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public interface IPluginDataFlowSource<out T> : IDataFlowSource<T>, ICheckable
-{
-}
+public interface IPluginDataFlowSource<out T> : IDataFlowSource<T>, ICheckable;

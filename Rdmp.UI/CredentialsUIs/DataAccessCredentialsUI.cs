@@ -38,6 +38,4 @@ public partial class DataAccessCredentialsUI : DataAccessCredentialsUI_Design, I
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<DataAccessCredentialsUI_Design, UserControl>))]
-public abstract class DataAccessCredentialsUI_Design : RDMPSingleDatabaseObjectControl<DataAccessCredentials>
-{
-}
+public abstract class DataAccessCredentialsUI_Design : RDMPSingleDatabaseObjectControl<DataAccessCredentials>;

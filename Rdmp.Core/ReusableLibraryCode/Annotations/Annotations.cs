@@ -22,10 +22,8 @@ namespace Rdmp.Core.ReusableLibraryCode.Annotations;
 [AttributeUsage(
     AttributeTargets.Method | AttributeTargets.Parameter |
     AttributeTargets.Property | AttributeTargets.Delegate |
-    AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
-public sealed class CanBeNullAttribute : Attribute
-{
-}
+    AttributeTargets.Field)]
+public sealed class CanBeNullAttribute : Attribute;
 
 /// <summary>
 /// Indicates that the value of the marked element could never be <c>null</c>
@@ -38,10 +36,8 @@ public sealed class CanBeNullAttribute : Attribute
 [AttributeUsage(
     AttributeTargets.Method | AttributeTargets.Parameter |
     AttributeTargets.Property | AttributeTargets.Delegate |
-    AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
-public sealed class NotNullAttribute : Attribute
-{
-}
+    AttributeTargets.Field)]
+public sealed class NotNullAttribute : Attribute;
 
 /// <summary>
 /// Indicates that the method is contained in a type that implements
@@ -79,7 +75,7 @@ public sealed class NotNullAttribute : Attribute
 /// <item><c>SetProperty(ref myField, value, "Property")</c></item>
 /// </list>
 /// </example>
-[AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
+[AttributeUsage(AttributeTargets.Method)]
 public sealed class NotifyPropertyChangedInvocatorAttribute : Attribute
 {
     public NotifyPropertyChangedInvocatorAttribute()
@@ -99,7 +95,7 @@ public sealed class NotifyPropertyChangedInvocatorAttribute : Attribute
 /// (e.g. via reflection, in external library), so this symbol
 /// will not be marked as unused (as well as by other usage inspections)
 /// </summary>
-[AttributeUsage(AttributeTargets.All, AllowMultiple = false, Inherited = true)]
+[AttributeUsage(AttributeTargets.All)]
 public sealed class UsedImplicitlyAttribute : Attribute
 {
     public UsedImplicitlyAttribute(

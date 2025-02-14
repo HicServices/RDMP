@@ -15,9 +15,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.Tests.Caching.Unit;
 
-public interface IFileDataFlowDestination : TestIFileDataFlowComponent
-{
-}
+public interface IFileDataFlowDestination : TestIFileDataFlowComponent;
 
 public interface TestIFileDataFlowComponent
 {

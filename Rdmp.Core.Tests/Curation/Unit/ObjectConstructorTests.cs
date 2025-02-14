@@ -92,9 +92,7 @@ public class ObjectConstructorTests : UnitTests
         Console.WriteLine($"Found compatible constructors on {countCompatible} objects");
     }
 
-    private class TestClassDefaultConstructor
-    {
-    }
+    private class TestClassDefaultConstructor;
 
 
     private class TestClass1
@@ -161,11 +159,7 @@ public class ObjectConstructorTests : UnitTests
         public string Text { get; set; }
     }
 
-    private class TestArg2 : TestArg
-    {
-    }
+    private class TestArg2 : TestArg;
 
-    private class TestArg3 : TestArg2
-    {
-    }
+    private class TestArg3 : TestArg2;
 }

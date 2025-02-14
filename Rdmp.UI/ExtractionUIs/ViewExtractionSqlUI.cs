@@ -227,6 +227,4 @@ public partial class ViewExtractionSqlUI : ViewExtractionSql_Design
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ViewExtractionSql_Design, UserControl>))]
-public abstract class ViewExtractionSql_Design : RDMPSingleDatabaseObjectControl<Catalogue>
-{
-}
+public abstract class ViewExtractionSql_Design : RDMPSingleDatabaseObjectControl<Catalogue>;

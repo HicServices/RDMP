@@ -147,6 +147,4 @@ public partial class ExtractionProgressUI : ExtractionProgressUI_Design, ISaveab
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ExtractionProgressUI_Design, UserControl>))]
-public abstract class ExtractionProgressUI_Design : RDMPSingleDatabaseObjectControl<ExtractionProgress>
-{
-}
+public abstract class ExtractionProgressUI_Design : RDMPSingleDatabaseObjectControl<ExtractionProgress>;

@@ -243,6 +243,4 @@ public partial class ExtractableCohortUI : ExtractableCohortUI_Design, ISaveable
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ExtractableCohortUI_Design, UserControl>))]
-public abstract class ExtractableCohortUI_Design : RDMPSingleDatabaseObjectControl<ExtractableCohort>
-{
-}
+public abstract class ExtractableCohortUI_Design : RDMPSingleDatabaseObjectControl<ExtractableCohort>;

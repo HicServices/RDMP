@@ -136,6 +136,4 @@ public partial class CommitsUI : CommitsUI_Design
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<CommitsUI_Design, UserControl>))]
-public abstract class CommitsUI_Design : RDMPUserControl
-{
-}
+public abstract class CommitsUI_Design : RDMPUserControl;

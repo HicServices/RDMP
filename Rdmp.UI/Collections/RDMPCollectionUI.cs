@@ -34,6 +34,4 @@ public abstract class RDMPCollectionUI : RDMPCollectionUI_Design, IConsultableBe
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<RDMPCollectionUI_Design, UserControl>))]
-public class RDMPCollectionUI_Design : RDMPUserControl
-{
-}
+public class RDMPCollectionUI_Design : RDMPUserControl;

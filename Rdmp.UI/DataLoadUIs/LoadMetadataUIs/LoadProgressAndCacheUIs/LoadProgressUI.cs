@@ -119,6 +119,4 @@ public partial class LoadProgressUI : LoadProgressUI_Design, ISaveableUI
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<LoadProgressUI_Design, UserControl>))]
-public abstract class LoadProgressUI_Design : RDMPSingleDatabaseObjectControl<LoadProgress>
-{
-}
+public abstract class LoadProgressUI_Design : RDMPSingleDatabaseObjectControl<LoadProgress>;

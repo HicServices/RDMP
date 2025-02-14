@@ -136,6 +136,4 @@ public partial class RedactCatalogueUI : RedactCatalogueUI_Design
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<RedactCatalogueUI_Design, UserControl>))]
-public abstract class RedactCatalogueUI_Design : RDMPSingleDatabaseObjectControl<Catalogue>
-{
-}
+public abstract class RedactCatalogueUI_Design : RDMPSingleDatabaseObjectControl<Catalogue>;

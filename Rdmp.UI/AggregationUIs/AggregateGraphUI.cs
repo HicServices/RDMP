@@ -972,6 +972,4 @@ public partial class AggregateGraphUI : AggregateGraph_Design
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<AggregateGraph_Design, UserControl>))]
-public abstract class AggregateGraph_Design : RDMPSingleDatabaseObjectControl<AggregateConfiguration>
-{
-}
+public abstract class AggregateGraph_Design : RDMPSingleDatabaseObjectControl<AggregateConfiguration>;

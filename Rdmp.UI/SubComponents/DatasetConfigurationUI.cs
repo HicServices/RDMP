@@ -9,6 +9,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.SubComponents;
+
 public partial class DatasetConfigurationUI : DatsetConfigurationUI_Design, IRefreshBusSubscriber
 {
     private readonly DatasetConfigurationUICommon _common;
@@ -43,7 +44,6 @@ public partial class DatasetConfigurationUI : DatsetConfigurationUI_Design, IRef
         var s = GetObjectSaverButton();
         s.SetupFor(this, databaseObject, activator);
         GetObjectSaverButton()?.Enable(false);
-
     }
 
 
@@ -53,17 +53,14 @@ public partial class DatasetConfigurationUI : DatsetConfigurationUI_Design, IRef
 
     private void label1_Click(object sender, EventArgs e)
     {
-
     }
 
     private void label4_Click(object sender, EventArgs e)
     {
-
     }
 }
+
 [TypeDescriptionProvider(
     typeof(AbstractControlDescriptionProvider<DatsetConfigurationUI_Design, UserControl>))]
 public abstract class
-    DatsetConfigurationUI_Design : RDMPSingleDatabaseObjectControl<Dataset>
-{
-}
+    DatsetConfigurationUI_Design : RDMPSingleDatabaseObjectControl<Dataset>;

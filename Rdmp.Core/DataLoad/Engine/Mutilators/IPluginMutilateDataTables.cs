@@ -9,6 +9,4 @@ namespace Rdmp.Core.DataLoad.Engine.Mutilators;
 /// <summary>
 /// MEF discoverable version of IMutilateDataTables
 /// </summary>
-public interface IPluginMutilateDataTables : IMutilateDataTables
-{
-}
+public interface IPluginMutilateDataTables : IMutilateDataTables;

@@ -227,6 +227,4 @@ public partial class ExtractionConfigurationUI : ExtractionConfigurationUI_Desig
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ExtractionConfigurationUI_Design, UserControl>))]
-public abstract class ExtractionConfigurationUI_Design : RDMPSingleDatabaseObjectControl<ExtractionConfiguration>
-{
-}
+public abstract class ExtractionConfigurationUI_Design : RDMPSingleDatabaseObjectControl<ExtractionConfiguration>;

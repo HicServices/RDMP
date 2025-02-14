@@ -11,6 +11,4 @@ namespace Rdmp.Core.DataLoad.Modules.Mutilators.Dilution.Operations;
 /// <summary>
 /// MEF discoverable version of IDilutionOperation
 /// </summary>
-public interface IPluginDilutionOperation : IDilutionOperation
-{
-}
+public interface IPluginDilutionOperation : IDilutionOperation;

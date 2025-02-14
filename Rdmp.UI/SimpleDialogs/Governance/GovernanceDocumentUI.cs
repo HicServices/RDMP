@@ -67,6 +67,4 @@ public partial class GovernanceDocumentUI : GovernanceDocumentUI_Design, ISaveab
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<GovernanceDocumentUI_Design, UserControl>))]
-public abstract class GovernanceDocumentUI_Design : RDMPSingleDatabaseObjectControl<GovernanceDocument>
-{
-}
+public abstract class GovernanceDocumentUI_Design : RDMPSingleDatabaseObjectControl<GovernanceDocument>;

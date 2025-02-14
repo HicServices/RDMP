@@ -11,6 +11,4 @@ namespace Rdmp.UI.Overview;
 /// <summary>
 /// Input/persistence object for <see cref="DataLoadsGraph"/> (no objects get persisted).
 /// </summary>
-public class DataLoadsGraphObjectCollection : PersistableObjectCollection
-{
-}
+public sealed class DataLoadsGraphObjectCollection : PersistableObjectCollection;

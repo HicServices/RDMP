@@ -115,6 +115,4 @@ public partial class ExternalDatabaseServerUI : ExternalDatabaseServerUI_Design,
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ExternalDatabaseServerUI_Design, UserControl>))]
-public abstract class ExternalDatabaseServerUI_Design : RDMPSingleDatabaseObjectControl<ExternalDatabaseServer>
-{
-}
+public abstract class ExternalDatabaseServerUI_Design : RDMPSingleDatabaseObjectControl<ExternalDatabaseServer>;

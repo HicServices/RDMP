@@ -13,6 +13,4 @@ namespace Rdmp.Core.Repositories.Construction;
 /// This is only needed if you have 2+ constructors in your class.
 /// </summary>
 [AttributeUsage(AttributeTargets.Constructor)]
-public class UseWithObjectConstructorAttribute : Attribute
-{
-}
+public class UseWithObjectConstructorAttribute : Attribute;

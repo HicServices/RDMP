@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.ComponentModel;
 using System.Windows.Forms;
 using Rdmp.Core;
 using Rdmp.Core.Curation;
@@ -17,7 +16,6 @@ using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleControls;
 using Rdmp.UI.SimpleDialogs;
-using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
 
 namespace Rdmp.UI.MainFormUITabs.SubComponents;
@@ -162,9 +160,4 @@ public partial class TableInfoUI : TableInfoUI_Design, ISaveableUI
             ExceptionViewer.Show(exception);
         }
     }
-}
-
-[TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<TableInfoUI_Design, UserControl>))]
-public abstract class TableInfoUI_Design : RDMPSingleDatabaseObjectControl<TableInfo>
-{
 }

@@ -99,6 +99,4 @@ public partial class ExternalCohortTableUI : ExternalCohortTableUI_Design, ISave
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ExternalCohortTableUI_Design, UserControl>))]
-public abstract class ExternalCohortTableUI_Design : RDMPSingleDatabaseObjectControl<ExternalCohortTable>
-{
-}
+public abstract class ExternalCohortTableUI_Design : RDMPSingleDatabaseObjectControl<ExternalCohortTable>;

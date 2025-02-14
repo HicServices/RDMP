@@ -445,6 +445,4 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
 
 [TypeDescriptionProvider(
     typeof(AbstractControlDescriptionProvider<ColumnInfoToANOTableConverterUI_Design, UserControl>))]
-public abstract class ColumnInfoToANOTableConverterUI_Design : RDMPSingleDatabaseObjectControl<ColumnInfo>
-{
-}
+public abstract class ColumnInfoToANOTableConverterUI_Design : RDMPSingleDatabaseObjectControl<ColumnInfo>;

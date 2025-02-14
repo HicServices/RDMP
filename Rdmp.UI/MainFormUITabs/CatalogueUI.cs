@@ -272,6 +272,4 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<CatalogueUI_Design, UserControl>))]
-public abstract class CatalogueUI_Design : RDMPSingleDatabaseObjectControl<Catalogue>
-{
-}
+public abstract class CatalogueUI_Design : RDMPSingleDatabaseObjectControl<Catalogue>;

@@ -65,6 +65,4 @@ public partial class ExecuteCacheProgressUI : CachingEngineUI_Design
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<CachingEngineUI_Design, UserControl>))]
-public abstract class CachingEngineUI_Design : RDMPSingleDatabaseObjectControl<CacheProgress>
-{
-}
+public abstract class CachingEngineUI_Design : RDMPSingleDatabaseObjectControl<CacheProgress>;

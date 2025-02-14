@@ -11,6 +11,4 @@ namespace Rdmp.Core.DataFlowPipeline;
 /// DataFlowPipelineContext
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public interface IDataFlowDestination<T> : IDataFlowComponent<T>
-{
-}
+public interface IDataFlowDestination<T> : IDataFlowComponent<T>;

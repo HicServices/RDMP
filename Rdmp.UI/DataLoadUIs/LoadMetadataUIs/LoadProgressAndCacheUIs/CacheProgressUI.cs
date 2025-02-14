@@ -229,6 +229,4 @@ public partial class CacheProgressUI : CacheProgressUI_Design, ISaveableUI
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<CacheProgressUI_Design, UserControl>))]
-public abstract class CacheProgressUI_Design : RDMPSingleDatabaseObjectControl<CacheProgress>
-{
-}
+public abstract class CacheProgressUI_Design : RDMPSingleDatabaseObjectControl<CacheProgress>;

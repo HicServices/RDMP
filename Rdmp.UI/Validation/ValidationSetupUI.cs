@@ -424,6 +424,4 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ValidationSetupForm_Design, UserControl>))]
-public abstract class ValidationSetupForm_Design : RDMPSingleDatabaseObjectControl<Catalogue>
-{
-}
+public abstract class ValidationSetupForm_Design : RDMPSingleDatabaseObjectControl<Catalogue>;

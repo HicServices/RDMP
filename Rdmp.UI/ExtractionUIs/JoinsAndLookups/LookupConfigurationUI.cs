@@ -369,6 +369,4 @@ You will be asked if you wish to add a description field. We recommend selecting
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<LookupConfiguration_Design, UserControl>))]
-public abstract class LookupConfiguration_Design : RDMPSingleDatabaseObjectControl<Catalogue>
-{
-}
+public abstract class LookupConfiguration_Design : RDMPSingleDatabaseObjectControl<Catalogue>;

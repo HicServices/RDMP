@@ -188,6 +188,4 @@ public partial class SupportingSQLTableUI : SupportingSQLTableUI_Design, ISaveab
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<SupportingSQLTableUI_Design, UserControl>))]
-public abstract class SupportingSQLTableUI_Design : RDMPSingleDatabaseObjectControl<SupportingSQLTable>
-{
-}
+public abstract class SupportingSQLTableUI_Design : RDMPSingleDatabaseObjectControl<SupportingSQLTable>;

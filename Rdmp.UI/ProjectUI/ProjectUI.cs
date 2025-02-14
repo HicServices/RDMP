@@ -367,6 +367,4 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ProjectUI_Design, UserControl>))]
-public abstract class ProjectUI_Design : RDMPSingleDatabaseObjectControl<Project>
-{
-}
+public abstract class ProjectUI_Design : RDMPSingleDatabaseObjectControl<Project>;

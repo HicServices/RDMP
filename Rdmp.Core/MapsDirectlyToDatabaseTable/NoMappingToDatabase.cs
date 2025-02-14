@@ -12,6 +12,4 @@ namespace Rdmp.Core.MapsDirectlyToDatabaseTable;
 /// Used to indicate when a property does not map to an underlying data table
 /// </summary>
 [AttributeUsage(AttributeTargets.Property)]
-public sealed class NoMappingToDatabase : Attribute
-{
-}
+public sealed class NoMappingToDatabase : Attribute;

@@ -81,6 +81,4 @@ public partial class PreLoadDiscardedColumnUI : PreLoadDiscardedColumnUI_Design,
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<PreLoadDiscardedColumnUI_Design, UserControl>))]
-public abstract class PreLoadDiscardedColumnUI_Design : RDMPSingleDatabaseObjectControl<PreLoadDiscardedColumn>
-{
-}
+public abstract class PreLoadDiscardedColumnUI_Design : RDMPSingleDatabaseObjectControl<PreLoadDiscardedColumn>;

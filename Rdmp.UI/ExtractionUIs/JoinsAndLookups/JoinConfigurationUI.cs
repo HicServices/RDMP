@@ -271,6 +271,4 @@ public partial class JoinConfigurationUI : JoinConfiguration_Design
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<JoinConfiguration_Design, UserControl>))]
-public abstract class JoinConfiguration_Design : RDMPSingleDatabaseObjectControl<TableInfo>
-{
-}
+public abstract class JoinConfiguration_Design : RDMPSingleDatabaseObjectControl<TableInfo>;

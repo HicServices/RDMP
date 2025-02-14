@@ -376,6 +376,4 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ReOrderCatalogueItems_Design, UserControl>))]
-public abstract class ReOrderCatalogueItems_Design : RDMPSingleDatabaseObjectControl<Catalogue>
-{
-}
+public abstract class ReOrderCatalogueItems_Design : RDMPSingleDatabaseObjectControl<Catalogue>;

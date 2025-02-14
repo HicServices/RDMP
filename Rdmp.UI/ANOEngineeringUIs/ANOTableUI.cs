@@ -150,6 +150,4 @@ public partial class ANOTableUI : ANOTableUI_Design
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ANOTableUI_Design, UserControl>))]
-public abstract class ANOTableUI_Design : RDMPSingleDatabaseObjectControl<ANOTable>
-{
-}
+public abstract class ANOTableUI_Design : RDMPSingleDatabaseObjectControl<ANOTable>;

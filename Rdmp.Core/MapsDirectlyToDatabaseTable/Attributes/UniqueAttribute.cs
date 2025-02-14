@@ -14,6 +14,4 @@ namespace Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 /// on the database level.
 /// </summary>
 [AttributeUsage(AttributeTargets.Property)]
-public class UniqueAttribute : Attribute
-{
-}
+public class UniqueAttribute : Attribute;

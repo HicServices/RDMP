@@ -148,6 +148,4 @@ public partial class PluginProcessTaskUI : PluginProcessTaskUI_Design, ISaveable
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<PluginProcessTaskUI_Design, UserControl>))]
-public abstract class PluginProcessTaskUI_Design : RDMPSingleDatabaseObjectControl<ProcessTask>
-{
-}
+public abstract class PluginProcessTaskUI_Design : RDMPSingleDatabaseObjectControl<ProcessTask>;

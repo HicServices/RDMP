@@ -125,6 +125,4 @@ public partial class PermissionWindowUI : PermissionWindowUI_Design, ISaveableUI
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<PermissionWindowUI_Design, UserControl>))]
-public abstract class PermissionWindowUI_Design : RDMPSingleDatabaseObjectControl<PermissionWindow>
-{
-}
+public abstract class PermissionWindowUI_Design : RDMPSingleDatabaseObjectControl<PermissionWindow>;

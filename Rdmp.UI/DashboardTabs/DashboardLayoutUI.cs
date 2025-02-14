@@ -143,6 +143,4 @@ public partial class DashboardLayoutUI : DashboardLayoutUI_Design
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<DashboardLayoutUI_Design, UserControl>))]
-public abstract class DashboardLayoutUI_Design : RDMPSingleDatabaseObjectControl<DashboardLayout>
-{
-}
+public abstract class DashboardLayoutUI_Design : RDMPSingleDatabaseObjectControl<DashboardLayout>;

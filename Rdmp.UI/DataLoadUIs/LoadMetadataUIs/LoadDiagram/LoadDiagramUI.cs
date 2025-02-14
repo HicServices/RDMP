@@ -352,6 +352,4 @@ public partial class LoadDiagramUI : LoadDiagram_Design
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<LoadDiagram_Design, UserControl>))]
-public abstract class LoadDiagram_Design : RDMPSingleDatabaseObjectControl<LoadMetadata>
-{
-}
+public abstract class LoadDiagram_Design : RDMPSingleDatabaseObjectControl<LoadMetadata>;

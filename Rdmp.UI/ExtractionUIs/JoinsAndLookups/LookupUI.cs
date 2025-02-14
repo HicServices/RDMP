@@ -84,6 +84,4 @@ public partial class LookupUI : LookupUI_Design
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<LookupUI_Design, UserControl>))]
-public abstract class LookupUI_Design : RDMPSingleDatabaseObjectControl<Lookup>
-{
-}
+public abstract class LookupUI_Design : RDMPSingleDatabaseObjectControl<Lookup>;

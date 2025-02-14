@@ -16,6 +16,4 @@ namespace Rdmp.UI.Refreshing;
 ///
 /// <para>See <see cref="RefreshBus.EstablishLifetimeSubscription"/></para>
 /// </summary>
-public interface ILifetimeSubscriber : IContainerControl, IRefreshBusSubscriber
-{
-}
+public interface ILifetimeSubscriber : IContainerControl, IRefreshBusSubscriber;

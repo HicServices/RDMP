@@ -222,6 +222,4 @@ public partial class GovernancePeriodUI : GovernancePeriodUI_Design, ISaveableUI
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<GovernancePeriodUI_Design, UserControl>))]
-public abstract class GovernancePeriodUI_Design : RDMPSingleDatabaseObjectControl<GovernancePeriod>
-{
-}
+public abstract class GovernancePeriodUI_Design : RDMPSingleDatabaseObjectControl<GovernancePeriod>;

@@ -83,6 +83,4 @@ public partial class ExtractionFilterParameterSetUI : ExtractionFilterParameterS
 [TypeDescriptionProvider(
     typeof(AbstractControlDescriptionProvider<ExtractionFilterParameterSetUI_Design, UserControl>))]
 public abstract class
-    ExtractionFilterParameterSetUI_Design : RDMPSingleDatabaseObjectControl<ExtractionFilterParameterSet>
-{
-}
+    ExtractionFilterParameterSetUI_Design : RDMPSingleDatabaseObjectControl<ExtractionFilterParameterSet>;

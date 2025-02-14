@@ -105,6 +105,4 @@ public partial class CatalogueDQEResultsUI : CatalogueSummaryScreen_Design
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<CatalogueSummaryScreen_Design, UserControl>))]
-public abstract class CatalogueSummaryScreen_Design : RDMPSingleDatabaseObjectControl<Catalogue>
-{
-}
+public abstract class CatalogueSummaryScreen_Design : RDMPSingleDatabaseObjectControl<Catalogue>;

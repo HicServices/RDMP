@@ -203,6 +203,4 @@ public partial class ExecuteLoadMetadataUI : DatasetLoadControl_Design
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<DatasetLoadControl_Design, UserControl>))]
-public abstract class DatasetLoadControl_Design : RDMPSingleDatabaseObjectControl<LoadMetadata>
-{
-}
+public abstract class DatasetLoadControl_Design : RDMPSingleDatabaseObjectControl<LoadMetadata>;

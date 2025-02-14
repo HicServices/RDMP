@@ -80,6 +80,4 @@ public partial class StandardRegexUI : StandardRegexUI_Design, ISaveableUI
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<StandardRegexUI_Design, UserControl>))]
-public abstract class StandardRegexUI_Design : RDMPSingleDatabaseObjectControl<StandardRegex>
-{
-}
+public abstract class StandardRegexUI_Design : RDMPSingleDatabaseObjectControl<StandardRegex>;

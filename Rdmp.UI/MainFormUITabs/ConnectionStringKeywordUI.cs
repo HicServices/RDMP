@@ -72,6 +72,4 @@ public partial class ConnectionStringKeywordUI : ConnectionStringKeywordUI_Desig
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ConnectionStringKeywordUI_Design, UserControl>))]
-public abstract class ConnectionStringKeywordUI_Design : RDMPSingleDatabaseObjectControl<ConnectionStringKeyword>
-{
-}
+public abstract class ConnectionStringKeywordUI_Design : RDMPSingleDatabaseObjectControl<ConnectionStringKeyword>;

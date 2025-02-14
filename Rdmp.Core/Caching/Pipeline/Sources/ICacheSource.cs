@@ -16,6 +16,4 @@ namespace Rdmp.Core.Caching.Pipeline.Sources;
 /// attempt to cache data between 9am and 5pm at night)
 /// </summary>
 public interface ICacheSource : IPipelineRequirement<ICacheFetchRequestProvider>,
-    IPipelineRequirement<IPermissionWindow>
-{
-}
+    IPipelineRequirement<IPermissionWindow>;

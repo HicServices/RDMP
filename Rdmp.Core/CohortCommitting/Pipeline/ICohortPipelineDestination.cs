@@ -15,6 +15,4 @@ namespace Rdmp.Core.CohortCommitting.Pipeline;
 /// identifiers supplied in the DataTable.
 /// </summary>
 public interface ICohortPipelineDestination : IDataFlowDestination<DataTable>,
-    IPipelineRequirement<ICohortCreationRequest>
-{
-}
+    IPipelineRequirement<ICohortCreationRequest>;

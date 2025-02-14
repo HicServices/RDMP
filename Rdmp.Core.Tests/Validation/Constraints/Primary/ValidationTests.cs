@@ -8,6 +8,4 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Validation.Constraints.Primary;
 
-internal class ValidationTests : UnitTests
-{
-}
+internal class ValidationTests : UnitTests;

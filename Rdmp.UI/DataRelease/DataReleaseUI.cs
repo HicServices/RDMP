@@ -266,6 +266,4 @@ public partial class DataReleaseUI : DataReleaseUI_Design
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<DataReleaseUI_Design, UserControl>))]
-public abstract class DataReleaseUI_Design : RDMPSingleDatabaseObjectControl<Project>
-{
-}
+public abstract class DataReleaseUI_Design : RDMPSingleDatabaseObjectControl<Project>;

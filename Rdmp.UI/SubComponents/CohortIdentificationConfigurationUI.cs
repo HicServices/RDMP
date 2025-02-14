@@ -412,13 +412,10 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
 
     private void cbKnownVersions_SelectedIndexChanged(object sender, EventArgs e)
     {
-
     }
 }
 
 [TypeDescriptionProvider(
     typeof(AbstractControlDescriptionProvider<CohortIdentificationConfigurationUI_Design, UserControl>))]
 public abstract class
-    CohortIdentificationConfigurationUI_Design : RDMPSingleDatabaseObjectControl<CohortIdentificationConfiguration>
-{
-}
+    CohortIdentificationConfigurationUI_Design : RDMPSingleDatabaseObjectControl<CohortIdentificationConfiguration>;

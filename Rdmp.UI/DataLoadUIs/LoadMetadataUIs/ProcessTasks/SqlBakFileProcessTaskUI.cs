@@ -123,6 +123,4 @@ public partial class SqlBakFileProcessTaskUI : SqlBakFileProcessTask_Design, ISa
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<SqlBakFileProcessTask_Design, UserControl>))]
-public abstract class SqlBakFileProcessTask_Design : RDMPSingleDatabaseObjectControl<ProcessTask>
-{
-}
+public abstract class SqlBakFileProcessTask_Design : RDMPSingleDatabaseObjectControl<ProcessTask>;

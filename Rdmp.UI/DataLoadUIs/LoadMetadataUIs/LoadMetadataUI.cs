@@ -37,6 +37,4 @@ public partial class LoadMetadataUI : LoadMetadataUI_Design, ISaveableUI
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<LoadMetadataUI_Design, UserControl>))]
-public abstract class LoadMetadataUI_Design : RDMPSingleDatabaseObjectControl<LoadMetadata>
-{
-}
+public abstract class LoadMetadataUI_Design : RDMPSingleDatabaseObjectControl<LoadMetadata>;

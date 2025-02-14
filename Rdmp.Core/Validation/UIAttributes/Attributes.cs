@@ -12,22 +12,16 @@ namespace Rdmp.Core.Validation.UIAttributes;
 /// Attribute for <see cref="IConstraint"/> properties which should not be visible in user interfaces
 /// </summary>
 [System.AttributeUsage(System.AttributeTargets.Property)]
-public class HideOnValidationUI : System.Attribute
-{
-}
+public class HideOnValidationUI : System.Attribute;
 
 /// <summary>
 /// Attribute for <see cref="IConstraint"/> properties which should store a column name
 /// </summary>
 [System.AttributeUsage(System.AttributeTargets.Property)]
-public class ExpectsColumnNameAsInput : System.Attribute
-{
-}
+public class ExpectsColumnNameAsInput : System.Attribute;
 
 /// <summary>
 /// Attribute for <see cref="IConstraint"/> properties which should a large body of user entered text
 /// </summary>
 [System.AttributeUsage(System.AttributeTargets.Property)]
-public class ExpectsLotsOfText : System.Attribute
-{
-}
+public class ExpectsLotsOfText : System.Attribute;

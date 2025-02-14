@@ -132,6 +132,4 @@ public partial class SupportingDocumentUI : SupportingDocumentUI_Design, ISaveab
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<SupportingDocumentUI_Design, UserControl>))]
-public abstract class SupportingDocumentUI_Design : RDMPSingleDatabaseObjectControl<SupportingDocument>
-{
-}
+public abstract class SupportingDocumentUI_Design : RDMPSingleDatabaseObjectControl<SupportingDocument>;

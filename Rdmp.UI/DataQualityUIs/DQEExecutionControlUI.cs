@@ -69,6 +69,4 @@ public partial class DQEExecutionControlUI : DQEExecutionControl_Design
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<DQEExecutionControl_Design, UserControl>))]
-public abstract class DQEExecutionControl_Design : RDMPSingleDatabaseObjectControl<Catalogue>
-{
-}
+public abstract class DQEExecutionControl_Design : RDMPSingleDatabaseObjectControl<Catalogue>;

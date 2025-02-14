@@ -8,9 +8,7 @@ using Rdmp.Core.Curation.Data;
 
 namespace Rdmp.Core.Providers.Nodes.UsedByNodes;
 
-public interface IObjectUsedByOtherObjectNode : IMasqueradeAs
-{
-}
+public interface IObjectUsedByOtherObjectNode : IMasqueradeAs;
 
 public interface IObjectUsedByOtherObjectNode<out T> : IObjectUsedByOtherObjectNode
 {
