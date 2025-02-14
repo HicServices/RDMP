@@ -7,27 +7,14 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using BrightIdeasSoftware;
-using Rdmp.Core;
-using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Overview;
-using Rdmp.Core.DataViewing;
-using Rdmp.Core.Icons.IconProvision;
-using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
-using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
-using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.MainFormUITabs;
-using Rdmp.UI.ScintillaHelper;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using ScintillaNET;
-using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.Overview;
 
