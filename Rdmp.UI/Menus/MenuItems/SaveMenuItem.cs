@@ -15,7 +15,7 @@ namespace Rdmp.UI.Menus.MenuItems;
 /// Provides a shortcut to save the currently selected ISaveableUI.  This class requires that you track and regularly update the Saveable property to match
 /// the currently selected saveable tab
 /// </summary>
-[System.ComponentModel.DesignerCategory("")]
+[DesignerCategory("")]
 public class SaveMenuItem : ToolStripMenuItem
 {
     private ISaveableUI _saveable;

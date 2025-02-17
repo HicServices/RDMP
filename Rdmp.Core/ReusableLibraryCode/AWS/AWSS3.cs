@@ -9,7 +9,6 @@ using Amazon;
 using Amazon.Runtime;
 using Amazon.S3;
 using Amazon.S3.Model;
-using Org.BouncyCastle.Security.Certificates;
 using System;
 using System.Collections.Generic;
 using System.IO;

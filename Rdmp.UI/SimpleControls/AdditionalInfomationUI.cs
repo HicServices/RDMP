@@ -1,14 +1,6 @@
-﻿using MongoDB.Driver;
-using Rdmp.UI.TestsAndSetup.ServicePropogation;
+﻿using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace Rdmp.UI.SimpleControls
 {
@@ -23,7 +15,7 @@ namespace Rdmp.UI.SimpleControls
             set
             {
                 _text = value;
-                this.toolTip1.SetToolTip(this.pictureBox1, this._text);
+                toolTip1.SetToolTip(pictureBox1, _text);
 
             }
         }

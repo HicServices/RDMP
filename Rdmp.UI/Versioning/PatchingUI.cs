@@ -12,7 +12,6 @@ using FAnsi.Discovery;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.ReusableLibraryCode.Checks;
-using Rdmp.UI.SimpleDialogs.SqlDialogs;
 
 
 namespace Rdmp.UI.Versioning;
@@ -38,7 +37,7 @@ public partial class PatchingUI : Form
         _repository = repository;
         _patcher = patcher;
         InitializeComponent();
-        this.btnAttemptPatching.Enabled = false;
+        btnAttemptPatching.Enabled = false;
         if (LicenseManager.UsageMode == LicenseUsageMode.Designtime)
             return;
 
