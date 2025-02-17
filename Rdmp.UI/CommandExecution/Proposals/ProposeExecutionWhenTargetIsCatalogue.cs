@@ -25,7 +25,7 @@ internal class ProposeExecutionWhenTargetIsCatalogue : RDMPCommandExecutionPropo
 
     public override void Activate(Catalogue c)
     {
-        ItemActivator.Activate<CatalogueUI, Catalogue>(c);
+        ItemActivator.Activate<ViewCatalogueOverviewUI, Catalogue>(c);
     }
 
     public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Catalogue targetCatalogue,

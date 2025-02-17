@@ -1419,7 +1419,6 @@ CONSTRAINT [PK_RegexRedactionKey] PRIMARY KEY CLUSTERED
 END
 GO
 
-
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Table ID' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Catalogue', @level2type=N'COLUMN',@level2name=N'ID'
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'‘SMR01’ for example' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Catalogue', @level2type=N'COLUMN',@level2name=N'Acronym'
