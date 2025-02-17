@@ -195,7 +195,7 @@ namespace Rdmp.Core.Datasets
     {
         public Metadata metadata { get; set; }
         public string gwdmVersion { get; set; }
-        //public OriginalMetadata original_metadata { get; set; }
+        public OriginalMetadata original_metadata { get; set; }
         public object omics { get; set; }
         public Linkage linkage { get; set; }
         public Summary summary { get; set; }
