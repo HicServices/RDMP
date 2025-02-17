@@ -145,7 +145,7 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
                 ObjectSaverButton1.BeforeSave += BeforeSave_FinishCommitInProgressIfAny;
                 ObjectSaverButton1.AfterSave += AfterSave_BeginNewCommitIfApplicable;
             }
-            if (this.GetType() == typeof(ExtractionFilterUI) && UserSettings.PromptRenameOnCohortFilterChange)
+            if (GetType() == typeof(ExtractionFilterUI) && UserSettings.PromptRenameOnCohortFilterChange)
             {
                 ObjectSaverButton1.BeforeSave -= BeforeSave_PromptRenameOfExtractionFilterContainer;
                 ObjectSaverButton1.BeforeSave += BeforeSave_PromptRenameOfExtractionFilterContainer;

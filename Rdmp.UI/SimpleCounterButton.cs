@@ -15,7 +15,7 @@ namespace Rdmp.UI;
 /// ToolStripButton with a public Property Count on it which displays a number up to 99 (after which it displays 99+)
 /// </summary>
 [TechnicalUI]
-[System.ComponentModel.DesignerCategory("")]
+[DesignerCategory("")]
 public class SimpleCounterButton : ToolStripButton
 {
     private int? _count;

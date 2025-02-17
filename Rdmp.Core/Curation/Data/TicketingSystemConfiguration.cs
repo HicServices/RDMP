@@ -123,7 +123,7 @@ public class TicketingSystemConfiguration : DatabaseEntity, INamed
     /// </summary>
     public List<TicketingSystemReleaseStatus> GetReleaseStatuses()
     {
-        return [.. Repository.GetAllObjectsWhere<TicketingSystemReleaseStatus>("TicketingSystemConfigurationID", this.ID)];
+        return [.. Repository.GetAllObjectsWhere<TicketingSystemReleaseStatus>("TicketingSystemConfigurationID", ID)];
     }
 
     /// <inheritdoc/>

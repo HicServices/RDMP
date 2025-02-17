@@ -20,7 +20,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.
 /// <summary>
 /// TECHNICAL: Base class for all dockable tabs that host a single control
 /// </summary>
-[System.ComponentModel.DesignerCategory("")]
+[DesignerCategory("")]
 [TechnicalUI]
 public class RDMPSingleControlTab : DockContent, IRefreshBusSubscriber
 {
