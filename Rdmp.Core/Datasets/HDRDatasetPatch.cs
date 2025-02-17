@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Rdmp.Core.Datasets;
 public class PatchMetadata
 {
 
-    public string schemaModel = "HDRUK";
-    public string schemaVersion = "3.0.0";
+    public string schemaModel { get; set; }
+    public string schemaVersion { get; set; }
     public PatchSubMetadata metadata { get; set; }
 
 
@@ -17,31 +18,50 @@ public class PatchMetadata
     public PatchMetadata(Metadata existingMetadata)
     {
 
-        metadata = existingMetadata.metadata!=null?new PatchSubMetadata(existingMetadata.metadata):null;
+        metadata = existingMetadata.metadata != null ? new PatchSubMetadata(existingMetadata.metadata) : null;
+        schemaModel = "HDRUK";
+        schemaVersion = "3.0.0";
     }
 }
 
 public class PatchSubMetadata
 {
     public object observations { get; set; }
-    public object coverage { get; set; }
+    public Coverage coverage { get; set; }
     public object structuralMetadata { get; set; }
     public object enrichmentAndLinkage { get; set; }
-    public object accessibility { get; set; }
+    public Accessibility accessibility { get; set; }
 
-    public object provenance { get; set; }
+    public string identifier { get; set; }
+    [JsonConverter(typeof(CustomDateTimeConverterThreeMilliseconds))]
+
+    public DateTime issued { get; set; }
+    [JsonConverter(typeof(CustomDateTimeConverterThreeMilliseconds))]
+
+    public DateTime modified { get; set; }
+
+    public Provenance provenance { get; set; }
     public object documentation { get; set; }
     public Summary summary { get; set; }
+    public List<Revision> revisions { get; set; }
+
+    public string version { get; set; }
+
     public PatchSubMetadata(Metadata existingMetadata)
     {
         accessibility = existingMetadata.accessibility;
         observations = existingMetadata.observations;
         coverage = existingMetadata.coverage;
         structuralMetadata = existingMetadata.structuralMetadata;
-        enrichmentAndLinkage = existingMetadata?.original_metadata?.enrichmentAndLinkage;
+        enrichmentAndLinkage = existingMetadata.enrichmentAndLinkage;
         provenance = existingMetadata.provenance;
-        documentation = existingMetadata.original_metadata?.documentation;
+        documentation = existingMetadata.documentation;
         summary = existingMetadata.summary;
+        identifier = existingMetadata.identifier;
+        issued = existingMetadata.issued;
+        modified = existingMetadata.modified;
+        revisions = existingMetadata.revisions;
+        version = existingMetadata.version;
     }
 }
 
@@ -82,7 +102,7 @@ public class HDRDatasetPatch
     public List<object> durs { get; set; }
     public List<object> publications { get; set; }
     public List<NamedEntity> named_entities { get; set; }
-    public List<Collection> collections { get; set; }
+    public List<object> collections { get; set; }
     public Team team { get; set; }
     public PatchMetadata metadata { get; set; }
 
@@ -97,12 +117,12 @@ public class HDRDatasetPatch
         datasetid = existingDataset.data.datasetid;
         pid = existingDataset.data.pid;
         source = existingDataset.data.source;
-        discourse_topic_id =existingDataset.data.discourse_topic_id;
+        discourse_topic_id = existingDataset.data.discourse_topic_id;
         is_cohort_discovery = existingDataset.data.is_cohort_discovery;
         commercial_use = existingDataset.data.commercial_use;
         state_id = existingDataset.data.state_id;
         uploader_id = existingDataset.data.uploader_id;
-        metadataquality_id =    existingDataset.data.metadataquality_id;
+        metadataquality_id = existingDataset.data.metadataquality_id;
         user_id = existingDataset.data.user_id;
         team_id = existingDataset.data.team_id;
         views_count = existingDataset.data.views_count;
@@ -127,7 +147,28 @@ public class HDRDatasetPatch
         named_entities = existingDataset.data.named_entities;
         collections = existingDataset.data.collections;
         team = existingDataset.data.team;
-        metadata = new PatchMetadata(existingDataset.data.metadata);
+        //metadata = new PatchMetadata(existingDataset.data.metadata);
+        metadata = new PatchMetadata(existingDataset.data.versions.First().metadata);
+        //if(metadata.metadata.accessibility.access.jurisdiction is string)
+        //    metadata.metadata.accessibility.access.jurisdiction = metadata.metadata.accessibility.access.jurisdiction.ToString().Split(";,;");
+
+        //if (metadata.metadata.accessibility.formatAndStandards.conformsTo is string)
+        //    metadata.metadata.accessibility.formatAndStandards.conformsTo = metadata.metadata.accessibility.formatAndStandards.conformsTo.ToString().Split(";,;");
+        //if (metadata.metadata.accessibility.formatAndStandards.formats is string)
+        //    metadata.metadata.accessibility.formatAndStandards.formats = metadata.metadata.accessibility.formatAndStandards.formats.ToString().Split(";,;");
+        //if (metadata.metadata.accessibility.formatAndStandards.languages is string)
+        //    metadata.metadata.accessibility.formatAndStandards.languages = metadata.metadata.accessibility.formatAndStandards.languages.ToString().Split(";,;");
+        //if (metadata.metadata.accessibility.formatAndStandards.vocabularyEncodingSchemes is string)
+        //    metadata.metadata.accessibility.formatAndStandards.vocabularyEncodingSchemes = metadata.metadata.accessibility.formatAndStandards.vocabularyEncodingSchemes.ToString().Split(";,;");
+
+        //if (metadata.metadata.accessibility.usage.dataUseLimitation is string)
+        //    metadata.metadata.accessibility.usage.dataUseLimitation = metadata.metadata.accessibility.usage.dataUseLimitation.ToString().Split(";,;");
+        if (metadata.metadata.accessibility.usage.dataUseRequirements is null)
+            metadata.metadata.accessibility.usage.dataUseRequirements = [];
+
+        metadata.metadata.coverage.materialType = new List<string>(){ "Other" };
+        //metadata.metadata.summary.dataCustodian.description = "Test";
+        //metadata.metadata.summary.dataCustodian.logo = "https://cdn.britannica.com/92/100692-050-5B69B59B/Mallard.jpg";
     }
 }
 

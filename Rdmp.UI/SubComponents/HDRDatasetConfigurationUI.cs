@@ -47,9 +47,9 @@ public partial class HDRDatasetConfigurationUI : DatsetConfigurationUI_Design, I
         tbAbstract.Text = summary.@abstract;
         tbContactPoint.Text = summary.contactPoint.ToString();
         tbDOI.Text = summary.doiName?.ToString();
-        tbDescription.Text = summary.description;
-        tbStartDate.Text = _dataset.data.versions.First().metadata.metadata.provenance.temporal.startDate;
-        tbEndDate.Text = _dataset.data.versions.First().metadata.metadata.provenance.temporal.endDate;
+        tbDescription.Text = _dataset.data.versions.First().metadata.metadata.documentation.description;
+        //tbStartDate.Text = _dataset.data.versions.First().metadata.metadata.provenance.temporal.startDate.ToString();
+        //tbEndDate.Text = _dataset.data.versions.First().metadata.metadata.provenance.temporal.endDate.ToString();
     }
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
@@ -124,7 +124,7 @@ public partial class HDRDatasetConfigurationUI : DatsetConfigurationUI_Design, I
             //        datasetUpdate.Links.Add(pl);
             //    }
             //    if (!datasetUpdate.Links.Any()) datasetUpdate.Links = null;
-            _dataset.data.metadata = metadata;
+            //_dataset.data.metadata = metadata;
             _provider.Update(_dataset.data.id.ToString(), _dataset);
             SetDatabaseObject(_activator, _dbObject);
             _activator.Show("Successfully updated Pure dataset");

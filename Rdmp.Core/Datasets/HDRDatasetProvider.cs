@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 
 namespace Rdmp.Core.Datasets
 {
+
     public class HDRDatasetProvider : PluginDatasetProvider
     {
         private HttpClient _client;
@@ -58,7 +59,7 @@ namespace Rdmp.Core.Datasets
 
         public HDRDataset FetchHDRDataset(Dataset dataset)
         {
-            var response = Task.Run(async () => await _client.GetAsync(dataset.Url)).Result;
+            var response = Task.Run(async () => await _client.GetAsync($"{dataset.Url}?schema_model=HDRUK&schema_version=3.0.0")).Result;
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 var detailsString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
@@ -85,8 +86,9 @@ namespace Rdmp.Core.Datasets
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 WriteIndented = true,
-                //DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
             };
+            serializeOptions.Converters.Add(new CustomDateTimeConverter());
+            serializeOptions.Converters.Add(new CustomDateTimeConverterThreeMilliseconds());
 
             var options = new JsonWriterOptions
             {
@@ -103,13 +105,14 @@ namespace Rdmp.Core.Datasets
             };
             System.Text.Json.JsonSerializer.Serialize<HDRDatasetPatch>(stream, (new HDRDatasetPatch((HDRDataset)datasetUpdates)), serializeOptions);
             var jsonString = Encoding.UTF8.GetString(stream.ToArray());
-            var uri = $"{Configuration.Url}/v1/integrations/datasets/{uuid}";
+            var uri = $"{Configuration.Url}/v1/integrations/datasets/{uuid}?schema_model=HDRUK&schema_version=3.0.0";
             var httpContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
 
-            var response = Task.Run(async () => await _client.PatchAsync(uri, httpContent)).Result;
+            var response = Task.Run(async () => await _client.PutAsync(uri, httpContent)).Result;
             if (response.StatusCode != HttpStatusCode.OK)
             {
-                throw new Exception("Error");
+                var x = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
+                throw new Exception(x);
             }
         }
 
