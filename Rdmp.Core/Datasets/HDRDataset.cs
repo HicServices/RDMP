@@ -1,4 +1,5 @@
-﻿using Rdmp.Core.Datasets.HDRItems;
+﻿using Amazon.S3.Model;
+using Rdmp.Core.Datasets.HDRItems;
 using Rdmp.Core.Repositories;
 using System;
 using System.Collections.Generic;
@@ -28,7 +29,7 @@ namespace Rdmp.Core.Datasets
     public class Access
     {
         public string accessRights { get; set; }
-        public string jurisdiction { get; set; }
+        public object jurisdiction { get; set; } //string or list
         public string accessService { get; set; }
         public object dataProcessor { get; set; }
         public string dataController { get; set; }
@@ -36,6 +37,8 @@ namespace Rdmp.Core.Datasets
         public object accessRequestCost { get; set; }
         public string accessServiceCategory { get; set; }
     }
+
+    //they've borked the schema, so access object is different in versions and original metadata...
 
     public class Accessibility
     {
@@ -230,8 +233,8 @@ namespace Rdmp.Core.Datasets
 
     public class Origin
     {
-        public string source { get; set; }
-        public string purpose { get; set; }
+        public object source { get; set; } //string or list
+        public object purpose { get; set; } //string or list
         public string imageContrast { get; set; }
         public string collectionSituation { get; set; }
         public List<string> datasetType { get; set; }
@@ -402,7 +405,7 @@ namespace Rdmp.Core.Datasets
     public class Usage
     {
         public ResourceCreator resourceCreator { get; set; }
-        public string dataUseLimitation { get; set; }
+        public object dataUseLimitation { get; set; } //string or list<string>
         public string dataUseRequirement { get; set; }
         public List<string> dataUseRequirements { get; set; }
     }

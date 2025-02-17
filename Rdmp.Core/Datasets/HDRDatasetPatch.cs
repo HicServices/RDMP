@@ -7,31 +7,43 @@ using System.Threading.Tasks;
 namespace Rdmp.Core.Datasets;
 public class PatchMetadata
 {
-    public PatchMetadata metadata { get; set; }
-    public object accessibility { get; set; }
-    public object observations { get; set; }
-    public object coverage { get; set; }
-    public object structuralMetadata { get; set; }
-    public object enrichmentAndLinkage { get; set; }
-    public object provenance { get; set; }
-    public object documentation { get; set; }
-    public Summary summary { get; set; }
+
+    public string schemaModel = "HDRUK";
+    public string schemaVersion = "3.0.0";
+    public PatchSubMetadata metadata { get; set; }
+
 
     public PatchMetadata() { }
     public PatchMetadata(Metadata existingMetadata)
     {
-        metadata = existingMetadata.metadata!=null?new PatchMetadata(existingMetadata.metadata):null;
+
+        metadata = existingMetadata.metadata!=null?new PatchSubMetadata(existingMetadata.metadata):null;
+    }
+}
+
+public class PatchSubMetadata
+{
+    public object observations { get; set; }
+    public object coverage { get; set; }
+    public object structuralMetadata { get; set; }
+    public object enrichmentAndLinkage { get; set; }
+    public object accessibility { get; set; }
+
+    public object provenance { get; set; }
+    public object documentation { get; set; }
+    public Summary summary { get; set; }
+    public PatchSubMetadata(Metadata existingMetadata)
+    {
         accessibility = existingMetadata.accessibility;
         observations = existingMetadata.observations;
         coverage = existingMetadata.coverage;
         structuralMetadata = existingMetadata.structuralMetadata;
-        enrichmentAndLinkage = existingMetadata.original_metadata.enrichmentAndLinkage;
+        enrichmentAndLinkage = existingMetadata?.original_metadata?.enrichmentAndLinkage;
         provenance = existingMetadata.provenance;
-        documentation = existingMetadata.original_metadata.documentation;
+        documentation = existingMetadata.original_metadata?.documentation;
         summary = existingMetadata.summary;
     }
 }
-
 
 public class HDRDatasetPatch
 {
