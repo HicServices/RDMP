@@ -50,6 +50,11 @@ public class DQEStateOverDataLoadRunId
         RowsPassingValidationByDataLoadRunID = new Dictionary<int, int>();
     }
 
+    public string GetPiviotCategory()
+    {
+        return _pivotCategory;
+    }
+
     public void AddKeyToDictionaries(int dataLoadRunID, Validator validator, QueryBuilder queryBuilder)
     {
         //ensure keys exit (if it is a novel data load run ID then we will add it to the dictionaries

@@ -1,4 +1,4 @@
-// Copyright (c) The University of Dundee 2018-2019
+// Copyright (c) The University of Dundee 2018-2025
 // This file is part of the Research Data Management Platform (RDMP).
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -6,13 +6,15 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Common;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using FAnsi.Discovery;
+using MongoDB.Driver;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Defaults;
+using Rdmp.Core.DataLoad.Triggers;
 using Rdmp.Core.DataQualityEngine.Data;
 using Rdmp.Core.DataQualityEngine.Reports.PeriodicityHelpers;
 using Rdmp.Core.Logging;
@@ -42,14 +44,14 @@ public class CatalogueConstraintReport : DataQualityReport
     private Validator _validator;
     private bool _containsDataLoadID;
 
-    public static int MaximumPivotValues = 5000;
-
-    private Dictionary<string, DQEStateOverDataLoadRunId> byPivotRowStatesOverDataLoadRunId = new();
-    private Dictionary<string, PeriodicityCubesOverTime> byPivotCategoryCubesOverTime = new();
+    private Dictionary<string, DQEStateOverDataLoadRunId> byPivotRowStatesOverDataLoadRunId = [];
+    private Dictionary<string, PeriodicityCubesOverTime> byPivotCategoryCubesOverTime = [];
 
     private IExternalDatabaseServer _loggingServer;
     private string _loggingTask;
     private LogManager _logManager;
+
+    private int? _dataLoadID;
 
     /// <summary>
     /// Set this property to use an explicit DQE results store database instead of the
@@ -89,10 +91,8 @@ public class CatalogueConstraintReport : DataQualityReport
         }
     }
 
-    private bool haveComplainedAboutNullCategories;
-
     public override void GenerateReport(ICatalogue c, IDataLoadEventListener listener,
-        CancellationToken cancellationToken)
+          CancellationToken cancellationToken)
     {
         SetupLogging(c.CatalogueRepository);
 
@@ -105,18 +105,15 @@ public class CatalogueConstraintReport : DataQualityReport
         {
             _catalogue = c;
             var dqeRepository = ExplicitDQERepository ?? new DQERepository(c.CatalogueRepository);
-
-            byPivotCategoryCubesOverTime.Add("ALL", new PeriodicityCubesOverTime("ALL"));
-            byPivotRowStatesOverDataLoadRunId.Add("ALL", new DQEStateOverDataLoadRunId("ALL"));
-
+            DbDataReader r;
             Check(new FromDataLoadEventListenerToCheckNotifier(forker));
-
-            var sw = Stopwatch.StartNew();
             using (var con = _server.GetConnection())
             {
                 con.Open();
-
-                var cmd = _server.GetCommand(_queryBuilder.SQL, con);
+                var qb = _queryBuilder;
+                if (_dataLoadID is not null)
+                    qb.AddCustomLine($"{SpecialFieldNames.DataLoadRunID} = {_dataLoadID}", FAnsi.Discovery.QuerySyntax.QueryComponent.WHERE);
+                var cmd = _server.GetCommand(qb.SQL, con);
                 cmd.CommandTimeout = 500000;
 
                 var t = cmd.ExecuteReaderAsync(cancellationToken);
@@ -125,90 +122,16 @@ public class CatalogueConstraintReport : DataQualityReport
                 if (cancellationToken.IsCancellationRequested)
                     throw new OperationCanceledException("User cancelled DQE while fetching data");
 
-                var r = t.Result;
+                r = t.Result;
+                var reportBuilder = new ReportBuilder(c, _validator, _queryBuilder, _dataLoadRunFieldName, _containsDataLoadID, _timePeriodicityField, _pivotCategory, r);
+                reportBuilder.BuildReportInternals(cancellationToken, forker, dqeRepository);
 
-                var progress = 0;
-
-                while (r.Read())
-                {
-                    cancellationToken.ThrowIfCancellationRequested();
-
-                    progress++;
-                    var dataLoadRunIDOfCurrentRecord = 0;
-                    //to start with assume we will pass the results for the 'unknown batch' (where data load run ID is null or not available)
-
-                    //if the DataReader is likely to have a data load run ID column
-                    if (_containsDataLoadID)
-                    {
-                        //get data load run id
-                        var runID = dqeRepository.ObjectToNullableInt(r[_dataLoadRunFieldName]);
-
-                        //if it has a value use it (otherwise it is null so use 0 - ugh I know, it's a primary key constraint issue)
-                        if (runID != null)
-                            dataLoadRunIDOfCurrentRecord = (int)runID;
-                    }
-
-                    string pivotValue = null;
-
-                    //if the user has a pivot category configured
-                    if (_pivotCategory != null)
-                    {
-                        pivotValue = GetStringValueForPivotField(r[_pivotCategory], forker);
-
-                        if (!haveComplainedAboutNullCategories && string.IsNullOrWhiteSpace(pivotValue))
-                        {
-                            forker.OnNotify(this,
-                                new NotifyEventArgs(ProgressEventType.Warning,
-                                    $"Found a null/empty value for pivot category '{_pivotCategory}', this record will ONLY be recorded under ALL and not its specific category, you will not be warned of further nulls because there are likely to be many if there are any"));
-                            haveComplainedAboutNullCategories = true;
-                            pivotValue = null;
-                        }
-                    }
-
-                    //always increase the "ALL" category
-                    ProcessRecord(dqeRepository, dataLoadRunIDOfCurrentRecord, r,
-                        byPivotCategoryCubesOverTime["ALL"], byPivotRowStatesOverDataLoadRunId["ALL"]);
-
-                    //if there is a value in the current record for the pivot column
-                    if (pivotValue != null)
-                    {
-                        //if it is a novel
-                        if (!byPivotCategoryCubesOverTime.TryGetValue(pivotValue, out var periodicityCubesOverTime))
-                        {
-                            //we will need to expand the dictionaries
-                            if (byPivotCategoryCubesOverTime.Keys.Count > MaximumPivotValues)
-                                throw new OverflowException(
-                                    $"Encountered more than {MaximumPivotValues} values for the pivot column {_pivotCategory} this will result in crazy space usage since it is a multiplicative scale of DQE tesseracts");
-
-                            //expand both the time periodicity and the state results
-                            byPivotRowStatesOverDataLoadRunId.Add(pivotValue,
-                                new DQEStateOverDataLoadRunId(pivotValue));
-                            periodicityCubesOverTime = new PeriodicityCubesOverTime(pivotValue);
-                            byPivotCategoryCubesOverTime.Add(pivotValue, periodicityCubesOverTime);
-                        }
-
-                        //now we are sure that the dictionaries have the category field we can increment it
-                        ProcessRecord(dqeRepository, dataLoadRunIDOfCurrentRecord, r,
-periodicityCubesOverTime, byPivotRowStatesOverDataLoadRunId[pivotValue]);
-                    }
-
-                    if (progress % 5000 == 0)
-                        forker.OnProgress(this,
-                            new ProgressEventArgs($"Processing {_catalogue}",
-                                new ProgressMeasurement(progress, ProgressType.Records), sw.Elapsed));
-                }
-
-                //final value
-                forker.OnProgress(this,
-                    new ProgressEventArgs($"Processing {_catalogue}",
-                        new ProgressMeasurement(progress, ProgressType.Records), sw.Elapsed));
-                con.Close();
+                byPivotCategoryCubesOverTime = reportBuilder.GetByPivotCategoryCubesOverTime();
+                byPivotRowStatesOverDataLoadRunId = reportBuilder.GetByPivotRowStatesOverDataLoadRunId();
             }
 
-            sw.Stop();
 
-            foreach (var state in byPivotRowStatesOverDataLoadRunId.Values)
-                state.CalculateFinalValues();
+
 
             //now commit results
             using (var con = dqeRepository.BeginNewTransactedConnection())
@@ -251,24 +174,389 @@ periodicityCubesOverTime, byPivotRowStatesOverDataLoadRunId[pivotValue]);
         }
     }
 
-    private bool _haveComplainedAboutTrailingWhitespaces;
+    //Notes
+    // this is technically more efficient than a full DQE, but ot's pretty rubbish for categories with updates as we recalculate for the whole category
+    //may be worth thinking about how we can keep existing records and modify/add to them depending on what's goin on
 
-    private string GetStringValueForPivotField(object o, IDataLoadEventListener listener)
+
+    public void UpdateReport(ICatalogue c, int dataLoadID, int? commandTimeout, IDataLoadEventListener listener,
+        CancellationToken cancellationToken)
     {
-        if (o == null || o == DBNull.Value)
-            return null;
+        _dataLoadID = dataLoadID;
+        SetupLogging(c.CatalogueRepository);
 
-        var stringValue = o.ToString();
-        var trimmedValue = stringValue.Trim();
+        var toDatabaseLogger = new ToLoggingDatabaseDataLoadEventListener(this, _logManager, _loggingTask,
+            $"DQE evaluation of {c}");
 
-        if (!_haveComplainedAboutTrailingWhitespaces && stringValue != trimmedValue)
+        var forker = new ForkDataLoadEventListener(listener, toDatabaseLogger);
+        try
         {
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
-                $"Found trailing/leading whitespace in value in Pivot field, this will be trimmed off:'{o}'"));
-            _haveComplainedAboutTrailingWhitespaces = true;
-        }
+            _catalogue = c;
+            var dqeRepository = ExplicitDQERepository ?? new DQERepository(c.CatalogueRepository);
+            //make report for new data
+            DataTable rDT = new();
+            Check(new FromDataLoadEventListenerToCheckNotifier(forker));
 
-        return trimmedValue;
+            using (var con = _server.GetConnection())
+            {
+                con.Open();
+                var qb = _queryBuilder;
+                if (_dataLoadID is not null)
+                    qb.AddCustomLine($"{SpecialFieldNames.DataLoadRunID} = {_dataLoadID}", FAnsi.Discovery.QuerySyntax.QueryComponent.WHERE);
+                var cmd = _server.GetCommand(qb.SQL, con);
+                if (commandTimeout is not null)
+                    cmd.CommandTimeout = (int)commandTimeout;
+                var adapter = _server.GetDataAdapter(cmd);
+                rDT.BeginLoadData();
+                adapter.Fill(rDT);
+                rDT.EndLoadData();
+                con.Close();
+            }
+            var reportBuilder = new ReportBuilder(c, _validator, _queryBuilder, _dataLoadRunFieldName, _containsDataLoadID, _timePeriodicityField, _pivotCategory, rDT);
+            reportBuilder.BuildReportInternals(cancellationToken, forker, dqeRepository);
+            var newByPivotRowStatesOverDataLoadRunId = reportBuilder.GetByPivotRowStatesOverDataLoadRunId();
+
+            var pivotColumn = c.PivotCategory_ExtractionInformation.ColumnInfo.GetRuntimeName();
+
+            var incomingPivotCategories = rDT.AsEnumerable().Select(r => r[pivotColumn].ToString()).ToList().Distinct();
+
+            using (var con = dqeRepository.BeginNewTransactedConnection())
+            {
+                var previousEvaluation = dqeRepository.GetAllObjectsWhere<Evaluation>("CatalogueID", _catalogue.ID).LastOrDefault() ?? throw new Exception("No DQE results currently exist");
+                var previousColumnStates = previousEvaluation.ColumnStates;
+                var previousRowSates = previousEvaluation.RowStates;
+                var previousCategories = previousEvaluation.GetPivotCategoryValues().Where(c => c != "ALL");
+
+                var evaluation = new Evaluation(dqeRepository, _catalogue);
+
+                //new pivotCategories coming in
+                var newIncomingPivotCategories = incomingPivotCategories.Where(c => !previousCategories.Contains(c));
+                List<ColumnState> ColumnStates = [];
+
+
+                var pivotColumnInfo = _catalogue.CatalogueItems.Where(ci => ci.Name == _pivotCategory).FirstOrDefault();
+                if (pivotColumnInfo is null) throw new Exception("Can't find column infor for pivot category");
+                var tableInfo = pivotColumnInfo.ColumnInfo.TableInfo;
+
+                var dataDiffFetcher = new DiffDatabaseDataFetcher(2147483647, tableInfo, (int)_dataLoadID, commandTimeout != null ? (int)commandTimeout : 30);
+                dataDiffFetcher.FetchData(new AcceptAllCheckNotifier());
+                //pivot categories that have been replaces 100%?
+                var replacedPivotCategories = previousCategories.Where(c =>
+                {
+                    if (incomingPivotCategories.Contains(c)) return false;//not a total replacement
+                    var replacedCount = dataDiffFetcher.Updates_Replaced.AsEnumerable().Where(r => r[_pivotCategory].ToString() == c).Count();
+                    var previousRowState = previousRowSates.Where(rs => rs.PivotCategory == c).FirstOrDefault();
+                    if (previousRowState is null) return false; //did not exist before
+                    var previousEvaluationTotal = previousRowState.Correct + previousRowState.Missing + previousRowState.Wrong + previousRowState.Invalid;
+                    return replacedCount == previousEvaluationTotal;
+                });
+
+                // existing pivot categories coming in
+                var existingIncomingPivotCategories = incomingPivotCategories.Where(c => previousCategories.Contains(c) && !replacedPivotCategories.Contains(c) && c != "ALL");
+
+
+                //* Row States *//
+                //unchanges categories
+                foreach (var previousRowState in previousRowSates.Where(rs => rs.PivotCategory != "ALL" && !existingIncomingPivotCategories.Contains(rs.PivotCategory) && !replacedPivotCategories.Contains(rs.PivotCategory)))
+                {
+                    //copy row states that have not changes
+                    evaluation.AddRowState(previousRowState.DataLoadRunID, previousRowState.Correct, previousRowState.Missing, previousRowState.Wrong, previousRowState.Invalid, previousRowState.ValidatorXML, previousRowState.PivotCategory, con.Connection, con.Transaction);
+                }
+                //new categories
+                foreach (var newCategory in newIncomingPivotCategories)
+                {
+                    newByPivotRowStatesOverDataLoadRunId.TryGetValue(newCategory, out DQEStateOverDataLoadRunId incomingState);
+                    incomingState.RowsPassingValidationByDataLoadRunID.TryGetValue((int)_dataLoadID, out int correct);
+                    incomingState.WorstConsequencesByDataLoadRunID.TryGetValue((int)_dataLoadID, out Dictionary<Consequence, int> results);
+                    results.TryGetValue(Consequence.Missing, out int mising);
+                    results.TryGetValue(Consequence.Wrong, out int wrong);
+                    results.TryGetValue(Consequence.InvalidatesRow, out int invalidatesRow);
+                    evaluation.AddRowState((int)_dataLoadID, correct, mising, wrong, invalidatesRow, _catalogue.ValidatorXML, newCategory, con.Connection, con.Transaction);
+
+                    incomingState.AllColumnStates.TryGetValue((int)_dataLoadID, out ColumnState[] columnStates);
+                    foreach (var columnState in columnStates)
+                    {
+                        columnState.Commit(evaluation, newCategory, con.Connection, con.Transaction);
+                        ColumnStates.Add(columnState);
+                    }
+                }
+                //Updates
+                if (existingIncomingPivotCategories.Any())
+                {
+                    //existing row states with new entries
+                    var updatedRowsDataTable = new DataTable();
+                    var qb = new QueryBuilder(null, "");
+
+                    using (var updateCon = _server.GetConnection())
+                    {
+                        updateCon.Open();
+                        qb.AddColumnRange(_catalogue.GetAllExtractionInformation(ExtractionCategory.Any));
+                        qb.AddCustomLine($"{pivotColumn} in ({string.Join(',', existingIncomingPivotCategories.Select(i => $"'{i}'"))})", FAnsi.Discovery.QuerySyntax.QueryComponent.WHERE);
+                        var cmd = _server.GetCommand(qb.SQL, updateCon);
+                        if (commandTimeout is not null)
+                            cmd.CommandTimeout = (int)commandTimeout;
+                        var adapter = _server.GetDataAdapter(cmd);
+                        updatedRowsDataTable.BeginLoadData();
+                        adapter.Fill(updatedRowsDataTable);
+                        updatedRowsDataTable.EndLoadData();
+                        updateCon.Close();
+                    }
+                    var updatedRowsReportBuilder = new ReportBuilder(c, _validator, _queryBuilder, _dataLoadRunFieldName, _containsDataLoadID, _timePeriodicityField, _pivotCategory, updatedRowsDataTable);
+                    updatedRowsReportBuilder.BuildReportInternals(cancellationToken, forker, dqeRepository);
+                    var updatedByPivotRowStatesOverDataLoadRunId = updatedRowsReportBuilder.GetByPivotRowStatesOverDataLoadRunId();
+
+                    foreach (var updatedCategory in existingIncomingPivotCategories)
+                    {
+                        updatedByPivotRowStatesOverDataLoadRunId.TryGetValue(updatedCategory, out DQEStateOverDataLoadRunId incomingState);
+                        foreach (var loadId in incomingState.RowsPassingValidationByDataLoadRunID.Keys)
+                        {
+                            incomingState.RowsPassingValidationByDataLoadRunID.TryGetValue(loadId, out int _correct);
+                            incomingState.WorstConsequencesByDataLoadRunID.TryGetValue(loadId, out Dictionary<Consequence, int> results);
+                            results.TryGetValue(Consequence.Missing, out int _missing);
+                            results.TryGetValue(Consequence.Wrong, out int _wrong);
+                            results.TryGetValue(Consequence.InvalidatesRow, out int _invalidatesRow);
+                            evaluation.AddRowState(loadId, _correct, _missing, _wrong, _invalidatesRow, _catalogue.ValidatorXML, updatedCategory, con.Connection, con.Transaction);
+
+                            incomingState.AllColumnStates.TryGetValue(loadId, out ColumnState[] columnStates);
+                            foreach (var columnState in columnStates)
+                            {
+                                columnState.Commit(evaluation, updatedCategory, con.Connection, con.Transaction);
+                                ColumnStates.Add(columnState);
+                            }
+                        }
+                    }
+                }
+                List<RowState> AllStates = [];
+                foreach (var rowState in evaluation.RowStates)
+                {
+                    if (!AllStates.Any(state => state.DataLoadRunID == rowState.DataLoadRunID))
+                    {
+                        AllStates.Add(new RowState(rowState.DataLoadRunID, rowState.Correct, rowState.Missing, rowState.Wrong, rowState.Invalid, _catalogue.ValidatorXML, "ALL"));
+                    }
+                    else
+                    {
+                        var current = AllStates.Where(state => state.DataLoadRunID == rowState.DataLoadRunID).FirstOrDefault();
+                        if (current is not null)
+                        {
+                            var newState = new RowState(rowState.DataLoadRunID, rowState.Correct + current.Correct, rowState.Missing + current.Missing, rowState.Wrong + current.Wrong, rowState.Invalid + current.Invalid, _catalogue.ValidatorXML, "ALL");
+                            AllStates = AllStates.Where(state => state.DataLoadRunID != rowState.DataLoadRunID).ToList();
+                            AllStates.Add(newState);
+                        }
+                    }
+                }
+                foreach (var state in AllStates)
+                {
+                    evaluation.AddRowState(state.DataLoadRunID, state.Correct, state.Missing, state.Wrong, state.Invalid, _catalogue.ValidatorXML, "ALL", con.Connection, con.Transaction);
+
+                }
+                //* Column States *//
+                //unchanged 
+                foreach (var previousColumnState in previousColumnStates.Where(rs => rs.PivotCategory != "ALL" && !existingIncomingPivotCategories.Contains(rs.PivotCategory) && !replacedPivotCategories.Contains(rs.PivotCategory)))
+                {
+                    var cm = new ColumnState(previousColumnState.TargetProperty, previousColumnState.DataLoadRunID, previousColumnState.ItemValidatorXML)
+                    {
+                        CountCorrect = previousColumnState.CountCorrect,
+                        CountMissing = previousColumnState.CountMissing,
+                        CountWrong = previousColumnState.CountWrong,
+                        CountInvalidatesRow = previousColumnState.CountInvalidatesRow,
+                        CountDBNull = previousColumnState.CountDBNull
+                    };
+                    cm.Commit(evaluation, previousColumnState.PivotCategory, con.Connection, con.Transaction);
+                    ColumnStates.Add(cm);
+                }
+                List<ColumnState> AllColumns = [];
+                foreach (var columnState in ColumnStates)
+                {
+                    if (!AllColumns.Any(state => state.DataLoadRunID == columnState.DataLoadRunID && state.TargetProperty == columnState.TargetProperty && state.PivotCategory == columnState.PivotCategory))
+                    {
+                        var cm = new ColumnState(columnState.TargetProperty, columnState.DataLoadRunID, columnState.ItemValidatorXML)
+                        {
+                            CountCorrect = columnState.CountCorrect,
+                            CountMissing = columnState.CountMissing,
+                            CountWrong = columnState.CountWrong,
+                            CountInvalidatesRow = columnState.CountInvalidatesRow,
+                            CountDBNull = columnState.CountDBNull
+                        };
+                        AllColumns.Add(cm);
+                    }
+                    else
+                    {
+                        var index = AllColumns.FindIndex(state => state.DataLoadRunID == columnState.DataLoadRunID && state.TargetProperty == columnState.TargetProperty && state.PivotCategory == columnState.PivotCategory);
+                        if (index != -1)
+                        {
+                            AllColumns[index].CountCorrect += columnState.CountCorrect;
+                            AllColumns[index].CountMissing += columnState.CountMissing;
+                            AllColumns[index].CountWrong += columnState.CountWrong;
+                            AllColumns[index].CountInvalidatesRow += columnState.CountInvalidatesRow;
+                            AllColumns[index].CountDBNull += columnState.CountDBNull;
+                        }
+                    }
+                }
+                foreach (var column in AllColumns)
+                {
+                    column.Commit(evaluation, "ALL", con.Connection, con.Transaction);
+                }
+
+                //* Periodicity States *//
+
+                //Unchanged
+                Dictionary<string, PeriodicityCubesOverTime> newByPivotCategoryCubesOverTime = [];//reset
+
+                var unchangedPivotCategories = previousRowSates.Where(rs => rs.PivotCategory != "ALL" && !existingIncomingPivotCategories.Contains(rs.PivotCategory) && !replacedPivotCategories.Contains(rs.PivotCategory)).Select(rs => rs.PivotCategory).Distinct();
+                newByPivotCategoryCubesOverTime.TryGetValue("ALL", out var value);
+                if (value is null)
+                {
+                    newByPivotCategoryCubesOverTime["ALL"] = new PeriodicityCubesOverTime("ALL");
+                }
+                foreach (var pivotCategory in unchangedPivotCategories)
+                {
+                    var previousPeriodicity = PeriodicityState.GetPeriodicityForDataTableForEvaluation(previousEvaluation, pivotCategory, false);
+                    newByPivotCategoryCubesOverTime.TryGetValue(pivotCategory, out value);
+                    if (value is null)
+                    {
+                        newByPivotCategoryCubesOverTime[pivotCategory] = new PeriodicityCubesOverTime(pivotCategory);
+                    }
+
+                    foreach (var row in previousPeriodicity.AsEnumerable())
+                    {
+                        var countOfRecords = int.Parse(row[2].ToString());
+                        for (var i = 0; i < countOfRecords; i++)
+                        {
+
+                            Enum.TryParse(row[3].ToString(), out Consequence consequence);
+                            var date = DateTime.Parse(row[1].ToString());
+                            newByPivotCategoryCubesOverTime[pivotCategory].IncrementHyperCube(date.Year, date.Month, consequence);
+
+                            newByPivotCategoryCubesOverTime["ALL"].IncrementHyperCube(date.Year, date.Month, consequence);
+                        }
+                    }
+                }
+                //replacements
+                if (existingIncomingPivotCategories.Any())
+                {
+                    var updatedRowsDataTable = new DataTable();
+                    var qb = new QueryBuilder(null, "");
+
+                    using (var updateCon = _server.GetConnection())
+                    {
+                        updateCon.Open();
+                        qb.AddColumnRange(_catalogue.GetAllExtractionInformation(ExtractionCategory.Any));
+                        qb.AddCustomLine($"{pivotColumn} in ({string.Join(',', existingIncomingPivotCategories.Select(i => $"'{i}'"))})", FAnsi.Discovery.QuerySyntax.QueryComponent.WHERE);
+                        var cmd = _server.GetCommand(qb.SQL, updateCon);
+                        if (commandTimeout is not null)
+                            cmd.CommandTimeout = (int)commandTimeout;
+                        var adapter = _server.GetDataAdapter(cmd);
+                        updatedRowsDataTable.BeginLoadData();
+                        adapter.Fill(updatedRowsDataTable);
+                        updatedRowsDataTable.EndLoadData();
+                        updateCon.Close();
+                    }
+                    var updatedRowsReportBuilder = new ReportBuilder(c, _validator, _queryBuilder, _dataLoadRunFieldName, _containsDataLoadID, _timePeriodicityField, _pivotCategory, updatedRowsDataTable);
+                    updatedRowsReportBuilder.BuildReportInternals(cancellationToken, forker, dqeRepository);
+                    var cc = updatedRowsReportBuilder.GetByPivotCategoryCubesOverTime();
+                    foreach (var category in cc.Keys)
+                    {
+                        var hyperCube = cc[category].GetHyperCube();
+                        foreach (var year in hyperCube.Keys)
+                        {
+                            var periodicityCubes = hyperCube[year];
+                            foreach (var month in periodicityCubes.Keys)
+                            {
+                                var cube = periodicityCubes[month];
+                                foreach (var consequence in Enum.GetValues<Consequence>().Cast<Consequence>().ToList())
+                                {
+                                    var state = cube.GetStateForConsequence(consequence);
+                                    for (var i = 0; i < state.CountOfRecords; i++)
+                                    {
+                                        newByPivotCategoryCubesOverTime.TryGetValue(category, out value);
+                                        if (value is null)
+                                        {
+                                            newByPivotCategoryCubesOverTime[category] = new PeriodicityCubesOverTime(category);
+                                        }
+                                        newByPivotCategoryCubesOverTime[category].IncrementHyperCube(year, month, consequence);
+                                    }
+
+                                }
+                            }
+
+                        }
+                    }
+                }
+                if (newIncomingPivotCategories.Any())
+                {
+                    var updatedRowsDataTable = new DataTable();
+                    var qb = new QueryBuilder(null, "");
+
+                    using (var updateCon = _server.GetConnection())
+                    {
+                        updateCon.Open();
+                        qb.AddColumnRange(_catalogue.GetAllExtractionInformation(ExtractionCategory.Any));
+                        qb.AddCustomLine($"{pivotColumn} in ({string.Join(',', newIncomingPivotCategories.Select(i => $"'{i}'"))})", FAnsi.Discovery.QuerySyntax.QueryComponent.WHERE);
+                        var cmd = _server.GetCommand(qb.SQL, updateCon);
+                        if (commandTimeout is not null)
+                            cmd.CommandTimeout = (int)commandTimeout;
+                        var adapter = _server.GetDataAdapter(cmd);
+                        updatedRowsDataTable.BeginLoadData();
+                        adapter.Fill(updatedRowsDataTable);
+                        updatedRowsDataTable.EndLoadData();
+                        updateCon.Close();
+                    }
+                    var updatedRowsReportBuilder = new ReportBuilder(c, _validator, _queryBuilder, _dataLoadRunFieldName, _containsDataLoadID, _timePeriodicityField, _pivotCategory, updatedRowsDataTable);
+                    updatedRowsReportBuilder.BuildReportInternals(cancellationToken, forker, dqeRepository);
+                    var cc = updatedRowsReportBuilder.GetByPivotCategoryCubesOverTime();
+                    foreach (var category in cc.Keys)
+                    {
+                        var hyperCube = cc[category].GetHyperCube();
+                        foreach (var year in hyperCube.Keys)
+                        {
+                            var periodicityCubes = hyperCube[year];
+                            foreach (var month in periodicityCubes.Keys)
+                            {
+                                var cube = periodicityCubes[month];
+                                foreach (var consequence in Enum.GetValues(typeof(Consequence)).Cast<Consequence>().ToList())
+                                {
+                                    var state = cube.GetStateForConsequence(consequence);
+                                    for (var i = 0; i < state.CountOfRecords; i++)
+                                    {
+                                        newByPivotCategoryCubesOverTime.TryGetValue(category, out value);
+                                        if (value is null)
+                                        {
+                                            newByPivotCategoryCubesOverTime[category] = new PeriodicityCubesOverTime(category);
+                                        }
+                                        newByPivotCategoryCubesOverTime[category].IncrementHyperCube(year, month, consequence);
+                                    }
+
+                                }
+                            }
+
+                        }
+
+                    }
+                }
+                //add all the new stuff
+                foreach (var v in newByPivotCategoryCubesOverTime.Values)
+                {
+                    v.CommitToDatabase(evaluation);
+                }
+                dqeRepository.EndTransactedConnection(true);
+
+            }
+
+            forker.OnNotify(this,
+                 new NotifyEventArgs(ProgressEventType.Information,
+                     "CatalogueConstraintReport completed successfully  and committed results to DQE server"));
+        }
+        catch (Exception e)
+        {
+            forker.OnNotify(this,
+                e is OperationCanceledException
+                    ? new NotifyEventArgs(ProgressEventType.Warning, "DQE Execution Cancelled", e)
+                    : new NotifyEventArgs(ProgressEventType.Error, "Fatal Crash", e));
+        }
+        finally
+        {
+            toDatabaseLogger.FinalizeTableLoadInfos();
+        }
     }
 
     private string _timePeriodicityField;
@@ -529,54 +817,4 @@ periodicityCubesOverTime, byPivotRowStatesOverDataLoadRunId[pivotValue]);
             }
     }
 
-    private void ProcessRecord(DQERepository dqeRepository, int dataLoadRunIDOfCurrentRecord, DbDataReader r,
-        PeriodicityCubesOverTime periodicity, DQEStateOverDataLoadRunId states)
-    {
-        //make sure all the results dictionaries
-        states.AddKeyToDictionaries(dataLoadRunIDOfCurrentRecord, _validator, _queryBuilder);
-
-        //ask the validator to validate!
-        _validator.ValidateVerboseAdditive(
-            r, //validate the data reader
-            states.ColumnValidationFailuresByDataLoadRunID[
-                dataLoadRunIDOfCurrentRecord], //additively adjust the validation failures dictionary
-            out var worstConsequence); //and tell us what the worst consequence in the row was
-
-
-        //increment the time periodicity hypercube!
-        if (_timePeriodicityField != null)
-        {
-            DateTime? dt;
-
-            try
-            {
-                dt = dqeRepository.ObjectToNullableDateTime(r[_timePeriodicityField]);
-            }
-            catch (InvalidCastException e)
-            {
-                throw new Exception(
-                    $"Found value {r[_timePeriodicityField]} of type {r[_timePeriodicityField].GetType().Name} in your time periodicity field which was not a valid date time, make sure your time periodicity field is a datetime datatype",
-                    e);
-            }
-
-            if (dt != null)
-                periodicity.IncrementHyperCube(dt.Value.Year, dt.Value.Month, worstConsequence);
-        }
-
-        //now we need to update everything we know about all the columns
-        foreach (var state in states.AllColumnStates[dataLoadRunIDOfCurrentRecord])
-        {
-            //start out by assuming everything is dandy
-            state.CountCorrect++;
-
-            if (r[state.TargetProperty] == DBNull.Value)
-                state.CountDBNull++;
-        }
-
-        //update row level dictionaries
-        if (worstConsequence == null)
-            states.RowsPassingValidationByDataLoadRunID[dataLoadRunIDOfCurrentRecord]++;
-        else
-            states.WorstConsequencesByDataLoadRunID[dataLoadRunIDOfCurrentRecord][(Consequence)worstConsequence]++;
-    }
 }

@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using FAnsi;
 using FAnsi.Discovery;
+using MongoDB.Driver;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Spontaneous;
 using Rdmp.Core.QueryBuilding;
@@ -113,7 +114,7 @@ public class DiffDatabaseDataFetcher
                 CheckResult.Success));
 
             GetInsertData(server, database, checkNotifier);
-            GetUpdatetData(server, database, checkNotifier);
+            GetUpdatedData(server, database, checkNotifier);
         }
         catch (Exception e)
         {
@@ -163,7 +164,7 @@ select 1 from {archiveTableName} where {whereStatement} {syntaxHelper.EnsureWrap
     }
 
 
-    private void GetUpdatetData(DiscoveredServer server, DiscoveredDatabase database, ICheckNotifier checkNotifier)
+    private void GetUpdatedData(DiscoveredServer server, DiscoveredDatabase database, ICheckNotifier checkNotifier)
     {
         const string archive = "archive";
         const string zzArchive = "zzarchivezz";
@@ -191,7 +192,8 @@ select 1 from {archiveTableName} where {whereStatement} {syntaxHelper.EnsureWrap
 --Records which appear in the archive
 SELECT top {{0}}
 {{6}},
-{{7}}
+{{7}},
+{{8}}
 FROM    {{1}}
 CROSS APPLY
         (
@@ -200,7 +202,7 @@ CROSS APPLY
         WHERE
          {{3}}
          order by {syntaxHelper.EnsureWrapped(SpecialFieldNames.ValidFrom)} desc
-        ) {{8}}
+        ) {{9}}
 where
 {{1}}.{{4}} = {{5}}";
                 break;
@@ -214,13 +216,14 @@ where
 /*Records which appear in the archive*/
 SELECT
 {{6}},
-{{7}}
+{{7}},
+{{8}}
 FROM
 {{1}}
 Join
-{{2}} {{8}} on {whereStatement.Replace(archiveTableName, archive)}
+{{2}} {{9}} on {whereStatement.Replace(archiveTableName, archive)}
  AND
- {{8}}.{{9}} = (select max({syntaxHelper.EnsureWrapped(SpecialFieldNames.ValidFrom)}) from {{2}} s where {whereStatement.Replace(archiveTableName, archive).Replace(tableName, "s")})
+ {{9}}.{{10}} = (select max({syntaxHelper.EnsureWrapped(SpecialFieldNames.ValidFrom)}) from {{2}} s where {whereStatement.Replace(archiveTableName, archive).Replace(tableName, "s")})
  where
   {{1}}.{{4}} = {{5}}
 
@@ -241,8 +244,9 @@ Join
             _dataLoadRunID, //{5}
             GetSharedColumnsSQL(tableName), //{6}
             GetSharedColumnsSQLWithColumnAliasPrefix(archive, zzArchive), //{7}
-            archive, //{8}
-            syntaxHelper.EnsureWrapped(SpecialFieldNames.ValidFrom)
+            GetHICSpecialColumns(archive, zzArchive),//{8}
+            archive, //{9}
+            syntaxHelper.EnsureWrapped(SpecialFieldNames.ValidFrom) //{10}
         );
 
         var dtComboTable = new DataTable();
@@ -253,11 +257,15 @@ Join
 
         //add the columns from the combo table to both views
         foreach (DataColumn col in dtComboTable.Columns)
+        {
             if (!col.ColumnName.StartsWith(zzArchive, StringComparison.InvariantCultureIgnoreCase))
             {
                 Updates_New.Columns.Add(col.ColumnName, col.DataType);
                 Updates_Replaced.Columns.Add(col.ColumnName, col.DataType);
             }
+        }
+        Updates_Replaced.Columns.Add(SpecialFieldNames.DataLoadRunID, typeof(int));
+        Updates_Replaced.Columns.Add(SpecialFieldNames.ValidFrom, typeof(DateTime));
 
         foreach (DataRow fromRow in dtComboTable.Rows)
         {
@@ -270,6 +278,13 @@ Join
                 else
                     newRow[column.ColumnName] = fromRow[column];
         }
+    }
+
+    private string GetHICSpecialColumns(string tableName, string columnAliasPrefix = "")
+    {
+        return $@"{tableName}.{SpecialFieldNames.DataLoadRunID} as {columnAliasPrefix}{SpecialFieldNames.DataLoadRunID},
+{tableName}.{SpecialFieldNames.ValidFrom} as {columnAliasPrefix}{SpecialFieldNames.ValidFrom}
+";
     }
 
     private string GetSharedColumnsSQLWithColumnAliasPrefix(string tableName, string columnAliasPrefix)
