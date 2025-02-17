@@ -6,7 +6,6 @@
 
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
-using MongoDB.Driver;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.DataHelper.RegexRedaction;
 using Rdmp.Core.QueryBuilding;
@@ -16,7 +15,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using static System.Linq.Enumerable;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 

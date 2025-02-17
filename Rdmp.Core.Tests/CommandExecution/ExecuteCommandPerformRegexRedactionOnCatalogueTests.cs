@@ -9,7 +9,6 @@ using Tests.Common;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.DataHelper.RegexRedaction;
 using System.Text.RegularExpressions;
-using Rdmp.Core.CommandLine.Interactive;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using System.Data;
 using FAnsi.Discovery;

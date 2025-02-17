@@ -333,11 +333,9 @@ public class ObjectConstructor
     public static ConstructorInfo GetRepositoryConstructor(Type type)
     {
         var compatible = type.GetConstructors()
-            .Select(constructorInfo => new { constructorInfo, parameters = constructorInfo.GetParameters() })
-            .Where(@t => @t.parameters.All(p => p.GetType() != typeof(ShareManager)))
-            .Where(@t => @t.parameters.All(p => p.GetType() != typeof(DbDataReader)))
-            .Where(@t => @t.parameters.Any(p => typeof(IRepository).IsAssignableFrom(p.ParameterType)))
-            .Select(@t => @t.constructorInfo).ToList();
+            .Select(static constructorInfo => new { constructorInfo, parameters = constructorInfo.GetParameters() })
+            .Where(static t => t.parameters.All(static p => p.GetType() != typeof(ShareManager) && p.GetType() != typeof(DbDataReader)) && t.parameters.Any(static p => typeof(IRepository).IsAssignableFrom(p.ParameterType)))
+            .Select(static t => t.constructorInfo).ToList();
 
         return compatible.Count == 1
             ? compatible.Single()

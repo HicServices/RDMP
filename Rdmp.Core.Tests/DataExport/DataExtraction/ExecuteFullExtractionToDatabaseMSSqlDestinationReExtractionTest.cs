@@ -56,7 +56,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
     [Test]
     public void ReExtractToADatabaseWithNoNewData()
     {
-        var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
 
         //create catalogue from file
         var csvFile = CreateFileInForLoading("bob.csv", 1, new Random(5000));
@@ -285,7 +285,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
     [Test]
     public void ReExtractToADatabaseWithNewDataAndNoPKs()
     {
-        var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
 
         //create catalogue from file
         var csvFile = CreateFileInForLoading("bob.csv", 1, new Random(5000));
@@ -539,7 +539,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
     [Test]
     public void ReExtractToADatabaseWithNewDataAndSinglePK()
     {
-        var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
 
         //create catalogue from file
         var csvFile = CreateFileInForLoading("bob.csv", 1, new Random(5000));
@@ -808,7 +808,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
     [Test]
     public void ReExtractToADatabaseWithNewDataAndExtractionIdentifierIsPK()
     {
-        var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
 
         //create catalogue from file
         var csvFile = CreateFileInForLoading("bob.csv", 1, new Random(5000));
@@ -1067,7 +1067,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
     [Test]
     public void ExtractToDatabaseUseTriggers()
     {
-        var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
 
         //create catalogue from file
         var csvFile = CreateFileInForLoading("bob.csv", 1, new Random(5000));

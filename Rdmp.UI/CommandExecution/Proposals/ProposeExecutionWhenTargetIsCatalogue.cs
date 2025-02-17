@@ -11,7 +11,6 @@ using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.MainFormUITabs;
-using Rdmp.UI.Overview;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 

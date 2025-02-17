@@ -318,7 +318,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
                     }
                     if (incriment == AxisIncrement.Quarter)
                     {
-                        var year = r.ItemArray[columnIndex].ToString()[0..4];
+                        var year = r.ItemArray[columnIndex].ToString()[..4];
                         var asString = r.ItemArray[columnIndex].ToString();
                         var quarter = Int32.Parse(asString.Substring(asString.Length - 1)) * 3;
                         DateTime.TryParseExact($"{year}-{quarter}", "yyyy-mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out currentDT);
