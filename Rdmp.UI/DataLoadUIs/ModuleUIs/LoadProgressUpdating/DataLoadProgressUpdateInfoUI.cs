@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data.DataLoad;
@@ -35,6 +36,7 @@ public partial class DataLoadProgressUpdateInfoUI : Form, ICustomUI<DataLoadProg
     private const string WarningRAW =
         "(Must return a single date value.  IMPORTANT: Since you are targetting RAW, you MUST only specify table names, do not add a database qualifier e.g. [MyTable] NOT [MyLIVEDb]..[MyTable])";
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Scintilla QueryEditor { get; set; }
 
     public DataLoadProgressUpdateInfoUI()
@@ -49,6 +51,7 @@ public partial class DataLoadProgressUpdateInfoUI : Form, ICustomUI<DataLoadProg
         ddStrategy.DataSource = Enum.GetValues(typeof(DataLoadProgressUpdateStrategy));
     }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public ICatalogueRepository CatalogueRepository { get; set; }
 
     public void SetGenericUnderlyingObjectTo(ICustomUIDrivenClass value)

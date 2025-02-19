@@ -46,6 +46,7 @@ namespace Rdmp.UI.ProjectUI.Datasets;
 /// </summary>
 public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design, ILifetimeSubscriber
 {
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public SelectedDataSets SelectedDataSet { get; private set; }
     private IExtractableDataSet _dataSet;
     private ExtractionConfiguration _config;

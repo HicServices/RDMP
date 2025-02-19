@@ -38,6 +38,8 @@ namespace Rdmp.UI.CatalogueSummary.LoadEvents;
 /// </summary>
 public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionControl
 {
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+
     public LoadEventsTreeViewObjectCollection Collection { get; set; }
 
     private BackgroundWorker _populateLoadHistory = new();

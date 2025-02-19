@@ -24,12 +24,14 @@ namespace Rdmp.UI.PipelineUIs.DataObjects;
 [TechnicalUI]
 public partial class DataFlowComponentVisualisation : UserControl
 {
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public object Value { get; set; }
     private readonly PipelineComponentRole _role;
 
     private ICheckable _checkable;
     private MandatoryPropertyChecker _mandatoryChecker;
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public bool IsLocked
     {
         get => pbPadlock.Visible;

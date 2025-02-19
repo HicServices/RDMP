@@ -64,9 +64,18 @@ public partial class AggregateGraphUI : AggregateGraph_Design
     /// the sensible decision is taken e.g. to not try to render.
     /// 
     /// </summary>
+    /// <summary>
+    /// Set to true to suppress yes/no dialogues from showing e.g. if there is too much data
+    /// (see <see cref="MAXIMUM_CELLS_BEFORE_WARNING"/>) to sensibly render.  If true then
+    /// the sensible decision is taken e.g. to not try to render.
+    /// 
+    /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public bool Silent { get; set; }
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 
     public Scintilla QueryEditor { get; private set; }
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 
     public int Timeout
     {
@@ -165,9 +174,12 @@ public partial class AggregateGraphUI : AggregateGraph_Design
         pbLoading.Visible = false;
         llCancel.Visible = false;
     }
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 
     public Exception Exception { get; private set; }
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public bool Crashed { get; private set; }
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public bool Done { get; private set; }
 
     private Task _loadTask;

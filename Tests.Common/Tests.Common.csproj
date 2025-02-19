@@ -3,7 +3,7 @@
         <PackageId>HIC.RDMP.Plugin.Test</PackageId>
         <version>$(version)</version>
         <title>HIC.RDMP.Plugin.Test</title>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net9.0</TargetFramework>
         <authors>Health Informatics Centre, University of Dundee</authors>
         <owners>Health Informatics Centre, University of Dundee</owners>
         <licenseUrl>https://raw.githubusercontent.com/HicServices/RDMP/master/LICENSE</licenseUrl>

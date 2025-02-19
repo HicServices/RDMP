@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using System.Windows.Forms;
 using Rdmp.Core.DataQualityEngine.Data;
 
@@ -19,6 +20,7 @@ namespace Rdmp.UI.CatalogueSummary.DataQualityReporting.SubComponents;
 public partial class DQEPivotCategorySelector : UserControl
 {
     public event Action PivotCategorySelectionChanged;
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public string SelectedPivotCategory { get; private set; }
 
     public DQEPivotCategorySelector()

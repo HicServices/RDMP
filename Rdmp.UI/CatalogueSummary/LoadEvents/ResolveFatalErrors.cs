@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using System.Linq;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Logging.PastEvents;
@@ -28,6 +29,7 @@ public partial class ResolveFatalErrors : RDMPForm
 {
     private readonly LogManager _logManager;
     private readonly ArchivalFatalError[] _toResolve;
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Scintilla Explanation { get; set; }
 
     public ResolveFatalErrors(IActivateItems activator, LogManager logManager, ArchivalFatalError[] toResolve) :

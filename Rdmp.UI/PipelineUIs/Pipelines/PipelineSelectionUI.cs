@@ -37,6 +37,7 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
     private const string ShowAll = "Show All/Incompatible Pipelines";
     public bool showAll = false;
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public IPipeline Pipeline
     {
         get => _pipeline;
@@ -56,6 +57,7 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
         }
     }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public override string Text
     {
         get => gbPrompt.Text;

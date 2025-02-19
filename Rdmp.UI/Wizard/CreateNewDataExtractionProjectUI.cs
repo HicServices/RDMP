@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -50,7 +51,9 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
 
     private bool _bLoading;
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public ExtractionConfiguration ExtractionConfigurationCreatedIfAny { get; private set; }
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Project ProjectCreatedIfAny { get; private set; }
 
     private void GetNextProjectNumber(IActivateItems activator)

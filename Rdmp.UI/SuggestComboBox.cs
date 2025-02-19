@@ -30,6 +30,7 @@ public class SuggestComboBox : ComboBox
     private Expression<Func<string, string>> _suggestListOrderRule;
     private Func<string, string> _suggestListOrderRuleCompiled;
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public int SuggestBoxHeight
     {
         get => _suggLb.Height;
@@ -43,6 +44,7 @@ public class SuggestComboBox : ComboBox
     /// If the item-type of the ComboBox is not string,
     /// you can set here which property should be used
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Expression<Func<ObjectCollection, IEnumerable<string>>> PropertySelector
     {
         get => _propertySelector;
@@ -61,6 +63,7 @@ public class SuggestComboBox : ComboBox
     /// <para>1st string: list item</para>
     /// <para>2nd string: typed text</para>
     ///</summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Expression<Func<string, string, bool>> FilterRule
     {
         get => _filterRule;
@@ -77,6 +80,7 @@ public class SuggestComboBox : ComboBox
     /// (as Expression here because simple lamda (func) is not serializable)
     /// <para>default: alphabetic ordering</para>
     ///</summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Expression<Func<string, string>> SuggestListOrderRule
     {
         get => _suggestListOrderRule;

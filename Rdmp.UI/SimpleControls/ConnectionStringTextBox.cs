@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -23,6 +24,8 @@ public class ConnectionStringTextBox : TextBox
     private DatabaseType _databaseType;
     private List<string> supportedKeywords = new();
     private bool suppressAutocomplete;
+
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 
     public DatabaseType DatabaseType
     {

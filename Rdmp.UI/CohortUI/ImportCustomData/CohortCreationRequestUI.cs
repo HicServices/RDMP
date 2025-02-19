@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -36,6 +37,7 @@ public partial class CohortCreationRequestUI : RDMPForm
     private readonly IExternalCohortTable _target;
     private IDataExportRepository _repository;
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public string CohortDescription
     {
         get => tbDescription.Text;
@@ -68,7 +70,9 @@ public partial class CohortCreationRequestUI : RDMPForm
     }
 
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public CohortCreationRequest Result { get; set; }
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public IProject Project { get; set; }
 
     private void btnOk_Click(object sender, EventArgs e)

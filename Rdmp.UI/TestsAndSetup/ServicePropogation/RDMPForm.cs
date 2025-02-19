@@ -24,11 +24,14 @@ public class RDMPForm : Form, IRDMPControl
     /// <summary>
     /// Whether escape keystrokes should trigger form closing (defaults to true).
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public bool CloseOnEscape { get; set; }
 
     protected readonly bool VisualStudioDesignMode;
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public IActivateItems Activator { get; private set; }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public RDMPControlCommonFunctionality CommonFunctionality { get; private set; }
 
     /// <summary>

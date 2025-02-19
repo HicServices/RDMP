@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Modules.DataFlowSources;
@@ -25,6 +26,7 @@ namespace Rdmp.UI.DataLoadUIs.ModuleUIs.DataFlowSources;
 /// </summary>
 public partial class ExplicitTypingCollectionUI : Form, ICustomUI<ExplicitTypingCollection>
 {
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public ICatalogueRepository CatalogueRepository { get; set; }
 
     public ExplicitTypingCollectionUI()

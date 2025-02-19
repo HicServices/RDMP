@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 using FAnsi.Discovery;
@@ -36,8 +37,11 @@ namespace Rdmp.UI.MainFormUITabs.SubComponents;
 public partial class ImportSQLTableUI : RDMPForm
 {
     private readonly bool _allowImportAsCatalogue;
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public ITableInfoImporter Importer { get; private set; }
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public ITableInfo TableInfoCreatedIfAny { get; private set; }
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public string TargetFolder { get; set; }
 
     private Project _projectSpecific;

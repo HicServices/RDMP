@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
@@ -24,6 +25,7 @@ namespace Rdmp.UI.DataLoadUIs;
 public partial class CreateNewLoadMetadataUI : RDMPForm
 {
     private readonly Catalogue _catalogue;
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public LoadMetadata LoadMetadataCreatedIfAny { get; set; }
 
     public CreateNewLoadMetadataUI(Catalogue catalogue, IActivateItems activator) : base(activator)

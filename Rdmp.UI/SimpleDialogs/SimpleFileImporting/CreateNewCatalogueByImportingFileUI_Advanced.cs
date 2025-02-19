@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using System.IO;
 using System.Windows.Forms;
 using FAnsi.Discovery;
@@ -41,6 +42,7 @@ public partial class CreateNewCatalogueByImportingFileUI_Advanced : UserControl
     private FileInfo _file;
     private Project _projectSpecific;
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public ICatalogue CatalogueCreatedIfAny { get; private set; }
 
     public CreateNewCatalogueByImportingFileUI_Advanced(IActivateItems activator, DiscoveredDatabase database,

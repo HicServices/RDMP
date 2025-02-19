@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using System.Linq;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
@@ -35,6 +36,7 @@ namespace Rdmp.UI.ProjectUI.Graphs;
 /// </summary>
 public sealed class ExtractionAggregateGraphUI : AggregateGraphUI, IObjectCollectionControl
 {
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public ExtractDatasetCommand Request { get; private set; }
     private ExtractionAggregateGraphObjectCollection _collection;
 

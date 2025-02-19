@@ -31,6 +31,7 @@ internal class ScintillaMenu : ContextMenuStrip
     /// Spell checker for the hosted control.  If set then right clicks will spell check the word
     /// under the caret and show suggestions
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public WordList Hunspell { get; set; }
 
     public ScintillaMenu(Scintilla scintilla, bool spellCheck) : base()

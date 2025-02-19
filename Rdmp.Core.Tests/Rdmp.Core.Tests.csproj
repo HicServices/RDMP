@@ -5,7 +5,7 @@
         <Product>Rdmp.Core.Tests</Product>
         <Copyright>Copyright © 2019</Copyright>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net9.0</TargetFramework>
         <DebugType>embedded</DebugType>
         <DebugSymbols>true</DebugSymbols>
     </PropertyGroup>

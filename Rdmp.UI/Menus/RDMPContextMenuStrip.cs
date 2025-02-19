@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -35,6 +36,7 @@ namespace Rdmp.UI.Menus;
 public class RDMPContextMenuStrip : ContextMenuStrip
 {
     private readonly object _o;
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
     protected IActivateItems _activator;
 

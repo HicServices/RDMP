@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Rdmp.Core.CommandExecution.AtomicCommands.Automation;
@@ -32,6 +33,7 @@ public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClos
     public event EventHandler StateChanged;
 
     public CommandGetterHandler CommandGetter;
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 
     public bool ChecksPassed { get; private set; }
     public bool IsExecuting => _runningTask is { IsCompleted: false };
@@ -43,8 +45,10 @@ public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClos
     public event EventHandler<ExecutionEventArgs> ExecutionFinished;
 
     private RunnerFactory _factory;
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 
     public IRunner CurrentRunner { get; private set; }
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 
     public bool AllowsYesNoToAll
     {
@@ -65,6 +69,7 @@ public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClos
     }
 
     private RDMPCommandLineOptions Detatch_CommandGetter() => CommandGetter(CommandLineActivity.run);
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 
     public List<HelpStage> HelpStages { get; private set; }
 

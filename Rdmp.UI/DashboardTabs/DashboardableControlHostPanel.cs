@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data.Dashboarding;
@@ -25,6 +26,7 @@ public partial class DashboardableControlHostPanel : RDMPUserControl
 {
     private readonly DashboardControl _databaseRecord;
     private bool _editMode;
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public IDashboardableControl HostedControl { get; private set; }
 
     private const float BorderWidth = 5;

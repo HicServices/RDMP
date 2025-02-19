@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using Rdmp.Core.Ticketing;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs;
@@ -25,14 +26,17 @@ public partial class TicketingControlUI : RDMPUserControl
 {
     private ITicketingSystem _ticketingSystemConfiguration;
     public event EventHandler TicketTextChanged;
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public bool IsValidTicketName { get; private set; }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public string TicketText
     {
         get => tbTicket.Text;
         set => tbTicket.Text = value;
     }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public string Title
     {
         set => gbTicketing.Text = value;

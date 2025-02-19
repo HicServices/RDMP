@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -34,6 +35,7 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
     /// The users final choice of project directory, also check DialogResult for Ok / Cancel
     /// </summary>
     //public string Result { get; private set; }
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public LoadDirectory ResultDirectory { get; private set; }
 
     private Regex _endsWithDataFolder = new(@"[/\\]Data[/\\ ]*$", RegexOptions.IgnoreCase);

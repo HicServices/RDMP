@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using System.Windows.Forms;
 using Rdmp.Core.CohortCommitting;
 using Rdmp.Core.DataExport.Data;
@@ -53,8 +54,11 @@ internal partial class CreateNewCohortDatabaseWizardUI : RDMPUserControl
             Activator.RepositoryLocator.DataExportRepository, false);
     }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public CreateNewCohortDatabaseWizard Wizard { get; private set; }
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public PrivateIdentifierPrototype PrivateIdentifierPrototype { get; private set; }
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 
     public ExternalCohortTable ExternalCohortTableCreatedIfAny { get; private set; }
 
