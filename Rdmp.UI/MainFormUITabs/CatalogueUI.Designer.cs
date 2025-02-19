@@ -372,6 +372,7 @@ namespace Rdmp.UI.MainFormUITabs
             // 
             // tableLayoutPanel2
             // 
+            tableLayoutPanel2.AutoScroll = true;
             tableLayoutPanel2.AutoSize = true;
             tableLayoutPanel2.ColumnCount = 1;
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
