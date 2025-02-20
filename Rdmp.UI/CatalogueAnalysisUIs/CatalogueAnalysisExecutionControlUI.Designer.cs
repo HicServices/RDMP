@@ -114,9 +114,9 @@
             groupBox4.Controls.Add(button2);
             groupBox4.Controls.Add(pictureBox1);
             groupBox4.Controls.Add(SecondaryConstrainsTableLayoutPanel);
-            groupBox4.Location = new System.Drawing.Point(453, 61);
+            groupBox4.Location = new System.Drawing.Point(525, 61);
             groupBox4.Name = "groupBox4";
-            groupBox4.Size = new System.Drawing.Size(431, 100);
+            groupBox4.Size = new System.Drawing.Size(699, 100);
             groupBox4.TabIndex = 5;
             groupBox4.TabStop = false;
             groupBox4.Text = "Secondary Constraints";
@@ -126,7 +126,7 @@
             button2.Dock = System.Windows.Forms.DockStyle.Bottom;
             button2.Location = new System.Drawing.Point(3, 74);
             button2.Name = "button2";
-            button2.Size = new System.Drawing.Size(425, 23);
+            button2.Size = new System.Drawing.Size(693, 23);
             button2.TabIndex = 7;
             button2.Text = "Save";
             button2.UseVisualStyleBackColor = true;
@@ -161,7 +161,7 @@
             SecondaryConstrainsTableLayoutPanel.RowCount = 2;
             SecondaryConstrainsTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
             SecondaryConstrainsTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            SecondaryConstrainsTableLayoutPanel.Size = new System.Drawing.Size(425, 50);
+            SecondaryConstrainsTableLayoutPanel.Size = new System.Drawing.Size(693, 50);
             SecondaryConstrainsTableLayoutPanel.TabIndex = 1;
             SecondaryConstrainsTableLayoutPanel.Paint += tableLayoutPanel1_Paint;
             // 
@@ -258,7 +258,7 @@
             groupBox1.Location = new System.Drawing.Point(6, 60);
             groupBox1.MinimumSize = new System.Drawing.Size(300, 100);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new System.Drawing.Size(441, 100);
+            groupBox1.Size = new System.Drawing.Size(513, 100);
             groupBox1.TabIndex = 1;
             groupBox1.TabStop = false;
             groupBox1.Text = "Primary Constraints";
@@ -268,7 +268,7 @@
             btnSavePrimaryConstraints.Dock = System.Windows.Forms.DockStyle.Bottom;
             btnSavePrimaryConstraints.Location = new System.Drawing.Point(3, 74);
             btnSavePrimaryConstraints.Name = "btnSavePrimaryConstraints";
-            btnSavePrimaryConstraints.Size = new System.Drawing.Size(435, 23);
+            btnSavePrimaryConstraints.Size = new System.Drawing.Size(507, 23);
             btnSavePrimaryConstraints.TabIndex = 2;
             btnSavePrimaryConstraints.Text = "Save";
             btnSavePrimaryConstraints.UseVisualStyleBackColor = true;
@@ -291,7 +291,7 @@
             primaryConstrainsTableLayout.RowCount = 2;
             primaryConstrainsTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
             primaryConstrainsTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            primaryConstrainsTableLayout.Size = new System.Drawing.Size(435, 50);
+            primaryConstrainsTableLayout.Size = new System.Drawing.Size(507, 50);
             primaryConstrainsTableLayout.TabIndex = 0;
             primaryConstrainsTableLayout.Paint += primaryConstrainsTableLayout_Paint;
             // 

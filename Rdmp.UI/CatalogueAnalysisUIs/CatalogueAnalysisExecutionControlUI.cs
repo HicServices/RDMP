@@ -60,7 +60,7 @@ public partial class CatalogueAnalysisExecutionControlUI : CatalogueAnalysisExec
             clearButton.Text = "Clear";
 
             primaryConstrainsTableLayout.RowCount++;
-            primaryConstrainsTableLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F));
+            primaryConstrainsTableLayout.RowStyles.Add(new RowStyle(SizeType.AutoSize, 50F));
             primaryConstrainsTableLayout.Controls.Add(new Label() { Text = ci.GetRuntimeName() }, 0, primaryConstrainsTableLayout.RowCount - 1);
             primaryConstrainsTableLayout.Controls.Add(constraintsDropdown, 1, primaryConstrainsTableLayout.RowCount - 1);
             primaryConstrainsTableLayout.Controls.Add(resultsDropdown, 2, primaryConstrainsTableLayout.RowCount - 1);
@@ -196,8 +196,9 @@ public partial class CatalogueAnalysisExecutionControlUI : CatalogueAnalysisExec
         var consequencesCb = new ComboBox();
         consequencesCb.Items.AddRange(Enum.GetNames(typeof(SecondaryConstraint.Consequences)).ToArray());
 
+
         SecondaryConstrainsTableLayoutPanel.RowCount++;
-        SecondaryConstrainsTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F));
+        SecondaryConstrainsTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize, 50F));
         SecondaryConstrainsTableLayoutPanel.Controls.Add(columnsCb, 0, SecondaryConstrainsTableLayoutPanel.RowCount - 1);
         SecondaryConstrainsTableLayoutPanel.Controls.Add(constraintCb, 1, SecondaryConstrainsTableLayoutPanel.RowCount - 1);
         SecondaryConstrainsTableLayoutPanel.Controls.Add(consequencesCb, 2, SecondaryConstrainsTableLayoutPanel.RowCount - 1);
@@ -205,21 +206,81 @@ public partial class CatalogueAnalysisExecutionControlUI : CatalogueAnalysisExec
 
     private void ConstraintCb_SelectedIndexChanged(ComboBox cb, int rowIndex)
     {
-        SecondaryConstrainsTableLayoutPanel.Controls.RemoveAt(rowIndex * 4);
+        if (SecondaryConstrainsTableLayoutPanel.Controls.Count >= rowIndex * 4)
+        {
+            //todo this isn't right
+            //SecondaryConstrainsTableLayoutPanel.Controls.RemoveAt(rowIndex * 4);
+        }
         var gb= new GroupBox();
         gb.Width = 100;
-        gb.Height = 100;
+        gb.Height = 1000;
+        gb.AutoSize = true;
         gb.BackColor = System.Drawing.Color.BlueViolet;
-       
+        gb.Location = new Point(6, 19);
+
 
         var selectedType = (SecondaryConstraint.Constraints)cb.SelectedIndex;
         switch (selectedType) {
+            case SecondaryConstraint.Constraints.REGULAREXPRESSION:
+                var argsGb = new GroupBox();
+                argsGb.Text = "Pattern";
+                var tb = new TextBox();
+                tb.Width = 200;
+                tb.Height = 40;
+                tb.Name = "patternArg";
+                tb.Location = new Point(6, 19);
+                argsGb.Controls.Add(tb);
+                gb.Controls.Add(argsGb);
+                break;
             case SecondaryConstraint.Constraints.BOUNDDATE:
             case SecondaryConstraint.Constraints.BOUNDDOUBLE:
-            case SecondaryConstraint.Constraints.REGULAREXPRESSION:
+                var gb1 = new GroupBox();
+                gb1.Width = 100;
+                gb1.Text = "Lower Bound Column 2";
+                var cb1 = new ComboBox();
+                cb1.Width = 200;
+                cb1.Name = "lowerBoundColumn";
+                cb1.Items.AddRange(_catalogue.CatalogueItems.Select(ci => ci.ColumnInfo).ToArray());
+                cb1.Location = new Point(6, 19);
+                gb1.Controls.Add(cb1);
+                gb.Controls.Add(gb1);
+
+                //var gb2 = new GroupBox();
+                //gb2.Location = new Point(6, 60);
+                //gb2.Text = "Lower Bound";
+                //var tb1 = new TextBox();
+                //tb1.Width = 200;
+                //tb1.Height = 40;
+                //tb1.Name = "lowerBound";
+                //tb1.Location = new Point(6, 19);
+                //gb2.Controls.Add(tb1);
+                //gb.Controls.Add(gb2);
+
+                //var gb3 = new GroupBox();
+                //gb3.Location = new Point(6, 100);
+                //gb3.Text = "Upper Bound Column";
+                //var cb2 = new ComboBox();
+                //cb2.Width = 200;
+                //cb2.Height = 40;
+                //cb2.Name = "upperBoundColumn";
+                //cb2.Items.AddRange(_catalogue.CatalogueItems.Select(ci => ci.ColumnInfo).ToArray());
+                //cb2.Location = new Point(6, 19);
+                //gb3.Controls.Add(cb2);
+                //gb.Controls.Add(gb2);
+
+                //var gb4 = new GroupBox();
+                //gb4.Location = new Point(6, 140);
+
+                //gb2.Text = "Upper Bound";
+                //var tb2 = new TextBox();
+                //tb2.Width = 200;
+                //tb2.Height = 40;
+                //tb2.Name = "lowerBound";
+                //tb2.Location = new Point(6, 19);
+                //gb4.Controls.Add(tb2);
+                //gb.Controls.Add(gb4);
+                break;
             case SecondaryConstraint.Constraints.NOTNULL:
-            //case SecondaryConstraint.Constraints.PREDICTION:
-            //case SecondaryConstraint.Constraints.REFERENTIALINTEGRITYCONSTRAINT:
             default:
                 break;
         }
@@ -236,12 +297,29 @@ public partial class CatalogueAnalysisExecutionControlUI : CatalogueAnalysisExec
         var rowCount = SecondaryConstrainsTableLayoutPanel.RowCount;
         foreach (var row in Enumerable.Range(1, rowCount - 2))
         {
-            var columnCB = primaryConstrainsTableLayout.GetControlFromPosition(0, row + 1) as ComboBox;
-            var column = columnCB.SelectedItem;
-            var constraintCB = primaryConstrainsTableLayout.GetControlFromPosition(1, row + 1) as ComboBox;
-            SecondaryConstraint.Constraints constraint = (SecondaryConstraint.Constraints)constraintCB.SelectedItem;
-            var consequenceCB = primaryConstrainsTableLayout.GetControlFromPosition(2, row + 1) as ComboBox;
-            SecondaryConstraint.Consequences consequence = (SecondaryConstraint.Consequences)consequenceCB.SelectedItem;
+            var columnCB = SecondaryConstrainsTableLayoutPanel.GetControlFromPosition(0, row + 1) as ComboBox;
+            var column = columnCB.SelectedItem as ColumnInfo;
+            var constraintCB = SecondaryConstrainsTableLayoutPanel.GetControlFromPosition(1, row + 1) as ComboBox;
+            SecondaryConstraint.Constraints constraint = (SecondaryConstraint.Constraints) Enum.Parse(typeof(SecondaryConstraint.Constraints),constraintCB.SelectedItem.ToString(),true);
+            var consequenceCB = SecondaryConstrainsTableLayoutPanel.GetControlFromPosition(2, row + 1) as ComboBox;
+            SecondaryConstraint.Consequences consequence = (SecondaryConstraint.Consequences) Enum.Parse(typeof(SecondaryConstraint.Consequences),consequenceCB.SelectedItem.ToString(),true);
+            var secondary = new SecondaryConstraint(_dqeRepository, column, constraint, consequence);
+            //todo for some reason the save doesn't work...
+            secondary.SaveToDatabase();
+            var args = SecondaryConstrainsTableLayoutPanel.GetControlFromPosition(3, row + 1) as GroupBox;
+            switch (constraint)
+            {
+                case Constraints.REGULAREXPRESSION:
+                    var pattern = args.Controls.Find("patternArg", true).First();
+                    var scArg = new SecondaryConstraintArgument(_dqeRepository, "Pattern", pattern.Text, secondary);
+                    scArg.SaveToDatabase();
+                    break;
+                default:
+                    break;
+            }
+
+
+            //SecondaryConstraintArgument
             //    var y = primaryConstrainsTableLayout.GetControlFromPosition(1, row + 1);
 
             //    var constraint = primaryConstrainsTableLayout.GetControlFromPosition(1, row + 1) as ComboBox;
