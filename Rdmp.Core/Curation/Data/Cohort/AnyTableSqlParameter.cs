@@ -187,7 +187,7 @@ public class AnyTableSqlParameter : ReferenceOtherObjectDatabaseEntity, ISqlPara
     }
 
     /// <summary>
-    /// Returns the parent object that declares this paramter (see <see cref="ReferenceOtherObjectDatabaseEntity.ReferencedObjectID"/> and <see cref="ReferenceOtherObjectDatabaseEntity.ReferencedObjectType"/>)
+    /// Returns the parent object that declares this parameter (see <see cref="ReferenceOtherObjectDatabaseEntity.ReferencedObjectID"/> and <see cref="ReferenceOtherObjectDatabaseEntity.ReferencedObjectType"/>)
     /// </summary>
     /// <returns></returns>
     public IMapsDirectlyToDatabaseTable GetOwnerIfAny()

@@ -69,18 +69,17 @@ public class ExecuteCommandSetPivot : BasicCommandExecution
         if (string.IsNullOrWhiteSpace(column) && !askAtRuntime)
         {
             aggregate.PivotOnDimensionID = null;
-            aggregate.SaveToDatabase();
         }
         else
         {
             var opts = AggregateBuilderOptionsFactory.Create(aggregate);
-            AggregateDimension match = null;
+            AggregateDimension match;
 
             if (askAtRuntime)
             {
-                var possible = aggregate.AggregateDimensions.Where(d => !d.IsDate()).ToArray();
+                var possible = aggregate.AggregateDimensions.Where(static d => !d.IsDate()).ToArray();
 
-                if (!possible.Any())
+                if (possible.Length == 0)
                     throw new Exception($"There are no AggregateDimensions in {aggregate} that can be used as a Pivot");
 
                 match = (AggregateDimension)BasicActivator.SelectOne("Choose pivot dimension", possible);
@@ -106,8 +105,9 @@ public class ExecuteCommandSetPivot : BasicCommandExecution
                     $"Current state of Aggregate {aggregate} does not support having a Pivot Dimension");
 
             aggregate.PivotOnDimensionID = match.ID;
-            aggregate.SaveToDatabase();
         }
+
+        aggregate.SaveToDatabase();
 
         Publish(aggregate);
     }

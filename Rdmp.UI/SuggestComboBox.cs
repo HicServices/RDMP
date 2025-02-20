@@ -59,7 +59,7 @@ public class SuggestComboBox : ComboBox
 
     ///<summary>
     /// Lambda-Expression to determine the suggested items
-    /// (as Expression here because simple lamda (func) is not serializable)
+    /// (as Expression here because simple lambda (func) is not serializable)
     /// <para>default: case-insensitive contains search</para>
     /// <para>1st string: list item</para>
     /// <para>2nd string: typed text</para>
@@ -79,7 +79,7 @@ public class SuggestComboBox : ComboBox
 
     ///<summary>
     /// Lambda-Expression to order the suggested items
-    /// (as Expression here because simple lamda (func) is not serializable)
+    /// (as Expression here because simple lambda (func) is not serializable)
     /// <para>default: alphabetic ordering</para>
     ///</summary>
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]

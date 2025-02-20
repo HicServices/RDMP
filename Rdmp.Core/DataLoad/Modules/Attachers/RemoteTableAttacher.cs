@@ -306,7 +306,7 @@ public class RemoteTableAttacher : RemoteAttacher
             if (!_remoteDatabase.Exists())
                 throw new Exception($"Database {_remoteDatabase} did not exist on the remote server");
 
-            //still worthwhile doing this incase we cannot connect to the server
+            //still worthwhile doing this in case we cannot connect to the server
             var tables = _remoteDatabase.DiscoverTables(true).Select(t => t.GetRuntimeName()).ToArray();
 
             //overrides table level checks

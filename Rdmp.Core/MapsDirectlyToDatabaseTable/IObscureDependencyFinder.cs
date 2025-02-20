@@ -30,7 +30,7 @@ public interface IObscureDependencyFinder
     /// <summary>
     /// Callback for when an <see cref="IMapsDirectlyToDatabaseTable"/> object has just been deleted.  This method automatically cleans up any objects which the
     /// <see cref="IObscureDependencyFinder"/> thinks are dependent in a way similar to a CASCADE foreign key constraint.  This should only ever include cases
-    /// where it is not possible to model the behaviour at database level e.g. when the dependency is cross server/databse.
+    /// where it is not possible to model the behaviour at database level e.g. when the dependency is cross server/database.
     /// 
     /// <para><remarks>Do not attempt to Save or Delete or really do any other database level operations with the parameter <paramref name="oTableWrapperObject"/> because
     /// it will no longer exists in the database as a record (<see cref="IRevertable.Exists"/> will be false).</remarks></para>

@@ -1,18 +1,10 @@
 ﻿using BrightIdeasSoftware;
 using Rdmp.Core.CommandExecution;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
-using Rdmp.Core.Providers;
-using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Rdmp.UI.SimpleDialogs
@@ -27,18 +19,18 @@ namespace Rdmp.UI.SimpleDialogs
             _tree = tree;
             _activator = activator;
             InitializeComponent();
-            this.tlv.CanExpandGetter = delegate (object x)
+            tlv.CanExpandGetter = delegate (object x)
             {
                 return tree.IndexOf(x) < tree.Count() - 1;
             };
-            this.tlv.ChildrenGetter = delegate (object x)
+            tlv.ChildrenGetter = delegate (object x)
             {
                 var item = tree[tree.IndexOf(x) + 1];
                 return new List<object>() { item };
             };
-            this.tlv.Roots = new List<object>() { tree[0] };
-            this.tlvParentColumn.FillsFreeSpace = true;
-            this.tlv.ExpandAll();
+            tlv.Roots = new List<object>() { tree[0] };
+            tlvParentColumn.FillsFreeSpace = true;
+            tlv.ExpandAll();
         }
 
         private Bitmap ImageGetter(object rowObject)

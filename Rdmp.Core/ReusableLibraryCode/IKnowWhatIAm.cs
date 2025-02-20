@@ -7,7 +7,7 @@
 namespace Rdmp.Core.ReusableLibraryCode;
 
 /// <summary>
-/// Interface for classes who do not want to rely on thier own xmldoc comments to tell the user what they are (see ExecuteCommandShowKeywordHelp)
+/// Interface for classes who do not want to rely on their own xmldoc comments to tell the user what they are (see ExecuteCommandShowKeywordHelp)
 /// </summary>
 public interface IKnowWhatIAm
 {

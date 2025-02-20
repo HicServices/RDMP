@@ -136,7 +136,7 @@ internal class CommandLineObjectPickerTests : UnitTests
             Assert.That(picker.Arguments.Single().Type, Is.EqualTo(typeof(Catalogue)));
             Assert.That(picker.Arguments.Single().DatabaseEntities, Is.Empty);
 
-            //when interpretting as a Type we get Catalogue
+            //when interpreting as a Type we get Catalogue
             Assert.That(picker.Arguments.First().HasValueOfType(typeof(Type)));
             Assert.That(picker.Arguments.Single().GetValueForParameterOfType(typeof(Type)), Is.EqualTo(typeof(Catalogue)));
 

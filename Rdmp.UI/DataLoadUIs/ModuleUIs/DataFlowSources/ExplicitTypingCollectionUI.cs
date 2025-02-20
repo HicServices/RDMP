@@ -18,7 +18,7 @@ namespace Rdmp.UI.DataLoadUIs.ModuleUIs.DataFlowSources;
 
 /// <summary>
 /// ExplicitlyTypedColumns are an expectation that a column of a given name will appear in the data flow pipeline DataTable and a notification to the RDMP that it must be given the
-/// supplied C# Type instead of RDMP infering Types or leaving it as the default DataColumn Type as usually happens.  You should only explicitly type a few columns and usually only
+/// supplied C# Type instead of RDMP inferring Types or leaving it as the default DataColumn Type as usually happens.  You should only explicitly type a few columns and usually only
 /// where they are likely to be confused e.g. if you have a column with important leading zeroes that should be treated as a string despite looking like an int.  If you have too
 /// many explicitly typed columns it can limit your Pipelines reusability with novel files you might receive in the future.
 /// 

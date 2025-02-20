@@ -118,7 +118,7 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
 
         if (_scintilla == null)
         {
-            // figure out what DBMS we are targetting
+            // figure out what DBMS we are targeting
             var syntax = _collection.GetQuerySyntaxHelper();
 
             // Create the SQL editor for that language

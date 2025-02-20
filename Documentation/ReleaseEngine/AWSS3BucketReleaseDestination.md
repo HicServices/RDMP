@@ -6,7 +6,7 @@ Using your local [AWS profile](https://docs.aws.amazon.com/cli/v1/userguide/cli-
 
 ## Configuration
 1. The first thing you'll need to do it set up your  [AWS profile](https://docs.aws.amazon.com/cli/v1/userguide/cli-configure-files.html) on your machine.
-2. Next, we need to configure the release component (this can also be done interactivly when the checks are ran)
+2. Next, we need to configure the release component (this can also be done interactively when the checks are ran)
     a. The name of theAWS profile you wish to use to perform the release. You can get this information during step 1
     b. The name of the S3 Bucket you wish to write to. This bucket must exist and you mist have list and write access to the bucket
     c. The AWS region the bucket exists in e.g. "eu-west-2"

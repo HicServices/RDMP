@@ -29,7 +29,7 @@ public class ExtractionFilterParameterSetValue : DatabaseEntity, ISqlParameter, 
     private int _extractionFilterParameterID;
 
     /// <summary>
-    /// The 'known good paramter set' (<see cref="ExtractionFilterParameterSet"/>) to which this parameter value belongs
+    /// The 'known good parameter set' (<see cref="ExtractionFilterParameterSet"/>) to which this parameter value belongs
     /// </summary>
     public int ExtractionFilterParameterSet_ID
     {

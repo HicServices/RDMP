@@ -31,7 +31,7 @@ public sealed class CreateTableFromAggregateUseCase : PipelineUseCase
     /// <param name="constrainByCohort">Only applies if <see cref="AggregateConfiguration"/> is a patient index table, specifying a cohort will only commit rows
     /// in which the patient id appears in the cohort</param>
     /// <param name="table">The destination table in which to put the matched records.
-    /// <para> (table does not have to exist yet, you can use <see cref="DiscoveredDatabase.ExpectTable"/> to obtain a reference to a non existant table)</para></param>
+    /// <para> (table does not have to exist yet, you can use <see cref="DiscoveredDatabase.ExpectTable"/> to obtain a reference to a non existent table)</para></param>
     public CreateTableFromAggregateUseCase(AggregateConfiguration aggregateConfiguration,
         ExtractableCohort constrainByCohort, DiscoveredTable table)
     {

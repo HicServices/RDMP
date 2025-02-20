@@ -65,7 +65,7 @@ public interface ICatalogue : IHasDependencies, IHasQuerySyntaxHelper, INamed, I
 
     /// <summary>
     /// The <see cref="ExtractionInformation"/> which can provide a useful subdivision of the dataset e.g. 'Healthboard'.  This should be a logical subdivision
-    /// that helps in the assesment of data quality e.g. you might imagine that if you have 10% errors in data quality and 10 healthboards knowing that all the errors
+    /// that helps in the assessment of data quality e.g. you might imagine that if you have 10% errors in data quality and 10 healthboards knowing that all the errors
     /// are from a single healthboard would be handy.
     /// 
     /// <para>This chosen column should not have hundreds/thousands of unique values</para>
@@ -102,8 +102,23 @@ public interface ICatalogue : IHasDependencies, IHasQuerySyntaxHelper, INamed, I
     /// </summary>
     string Description { get; set; }
 
+
+    string ShortDescription { get;set; }
+    string DataType { get; set; }
+    string DataSubtype { get; set; }
+    DateTime? DatasetReleaseDate { get; set; }
+    DateTime? StartDate { get; set; }
+    DateTime? EndDate { get; set; }
+    string Juristiction { get; set; }
+    string DataController { get; set; }
+    string DataProcessor { get; set; }
+    string ControlledVocabulary { get;set; }
+    string AssociatedPeople { get; set; }
+    string AssociatedMedia{ get; set; }
+    string Doi { get; set; }
+
     /// <summary>
-    /// The alledged user specified date at which data began being collected.  For a more accurate answer you should run the DQE (See also DatasetTimespanCalculator)
+    /// The alleged user specified date at which data began being collected.  For a more accurate answer you should run the DQE (See also DatasetTimespanCalculator)
     /// <para>This field is optional</para>
     /// </summary>
     DateTime? DatasetStartDate { get; set; }

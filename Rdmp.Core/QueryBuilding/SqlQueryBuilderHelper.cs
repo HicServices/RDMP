@@ -262,7 +262,7 @@ public class SqlQueryBuilderHelper
             toReturn = AddOpportunisticJoins(toReturn, qb.Filters);
         }
 
-        //Some TableInfos might be TableValuedFunctions or for some other reason have a paramter associated with them
+        //Some TableInfos might be TableValuedFunctions or for some other reason have a parameter associated with them
         qb.ParameterManager.AddParametersFor(toReturn);
 
 

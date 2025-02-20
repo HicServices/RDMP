@@ -84,14 +84,14 @@ public class ValidationXMLObscureDependencyFinderTests : DatabaseTests
                 testData.catalogue.ValidatorXML.Insert(100, "I've got a lovely bunch of coconuts!");
             testData.catalogue.SaveToDatabase();
 
-            //column info should be deleteable but only because we got ourselves onto the forbidlist
+            //column info should be deletable but only because we got ourselves onto the forbidlist
             Assert.DoesNotThrow(() => finder.ThrowIfDeleteDisallowed(l2ColumnInfo));
             Assert.That(finder.CataloguesWithBrokenValidationXml, Has.Count.EqualTo(1));
 
             testData.catalogue.ValidatorXML = "";
             testData.catalogue.SaveToDatabase();
 
-            //column info should be deleteable now that we cleared the XML
+            //column info should be deletable now that we cleared the XML
             Assert.DoesNotThrow(() => finder.ThrowIfDeleteDisallowed(l2ColumnInfo));
         }
         finally

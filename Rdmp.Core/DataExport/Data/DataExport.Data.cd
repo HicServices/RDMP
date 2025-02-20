@@ -6,10 +6,10 @@
   <Comment CommentText="The database the cohort is stored in">
     <Position X="12.25" Y="2.198" Height="0.333" Width="2.346" />
   </Comment>
-  <Comment CommentText="Record of succesfully extracted artifacts so far">
+  <Comment CommentText="Record of successfully extracted artifacts so far">
     <Position X="8.844" Y="4.917" Height="0.333" Width="2.887" />
   </Comment>
-  <Comment CommentText="Record of succesfully released artifacts">
+  <Comment CommentText="Record of successfully released artifacts">
     <Position X="8.906" Y="6.479" Height="0.333" Width="2.44" />
   </Comment>
   <Comment CommentText="WHERE logic AND/OR containers and IFilters">

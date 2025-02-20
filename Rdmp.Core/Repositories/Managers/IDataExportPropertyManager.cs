@@ -7,7 +7,7 @@
 namespace Rdmp.Core.Repositories.Managers;
 
 /// <summary>
-/// Handles persistence of <see cref="DataExportProperty"/> settings (e.g. what is the hashing algorithmn)
+/// Handles persistence of <see cref="DataExportProperty"/> settings (e.g. what is the hashing algorithm)
 /// </summary>
 public interface IDataExportPropertyManager
 {

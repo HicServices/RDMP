@@ -31,7 +31,7 @@ internal class SelfDestructProtocol<T> : IRefreshBusSubscriber where T : Databas
         var descendancy = e.DeletedObjectDescendancy ??
                           _activator.CoreChildProvider.GetDescendancyListIfAnyFor(e.Object);
 
-        //implementation of the anoymous callback
+        //implementation of the anonymous callback
         var o = e.Object as T;
 
         //if the descendancy contained our object Type we should also consider a refresh

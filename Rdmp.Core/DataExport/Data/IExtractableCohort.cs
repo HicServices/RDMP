@@ -15,7 +15,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataExport.Data;
 
 /// <summary>
-/// While actual patient identifiers are stored in an external database (referenced by a ExternalCohortTable), RDMP still needs to have a reference to each cohort for extaction.
+/// While actual patient identifiers are stored in an external database (referenced by a ExternalCohortTable), RDMP still needs to have a reference to each cohort for extraction.
 /// The ExtractableCohort object is a record that documents the location and ID of a cohort in your ExternalCohortTable.  This record means that the RDMP can record which cohorts
 /// are part of which ExtractionConfiguration in a Project without ever having to move the identifiers into the RDMP application database.
 /// 
@@ -62,7 +62,7 @@ public interface IExtractableCohort : IHasQuerySyntaxHelper, IMightBeDeprecated,
 
     /// <summary>
     /// Allows you to override the release identifier column setting in <see cref="IExternalCohortTable"/> when extracting this specific
-    /// cohort list.  Use this only if your mapping table has multiple different types of release identifier (stored in seperate columns).
+    /// cohort list.  Use this only if your mapping table has multiple different types of release identifier (stored in separate columns).
     /// </summary>
     string OverrideReleaseIdentifierSQL { get; set; }
 

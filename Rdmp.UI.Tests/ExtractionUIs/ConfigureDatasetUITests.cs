@@ -49,7 +49,7 @@ internal class ConfigureDatasetUITests : UITests
         cols = sds.ExtractionConfiguration.GetAllExtractableColumnsFor(sds.ExtractableDataSet);
         Assert.That(cols, Has.Length.GreaterThanOrEqualTo(2));
 
-        //multiple includes shouldnt change the number of columns
+        //multiple includes shouldn't change the number of columns
         ui.IncludeAll();
         ui.IncludeAll();
         ui.IncludeAll();

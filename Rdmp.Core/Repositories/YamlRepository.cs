@@ -653,7 +653,7 @@ public class YamlRepository : MemoryDataExportRepository
                         }
                         catch (KeyNotFoundException)
                         {
-                            // skip missing objects (they will disapear next save anyway)
+                            // skip missing objects (they will disappear next save anyway)
                             continue;
                         }
 
@@ -661,7 +661,7 @@ public class YamlRepository : MemoryDataExportRepository
                 }
                 catch (KeyNotFoundException)
                 {
-                    // skip missing container objects (they will disapear next save anyway)
+                    // skip missing container objects (they will disappear next save anyway)
                     continue;
                 }
 

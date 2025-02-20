@@ -156,7 +156,7 @@ public partial class TypeTextOrCancelDialog : Form
             //If the OK button is enabled AND... (we're not multiline OR we are multiline but they're holding shift)
             if (btnOk.Enabled && (!_multiline || (_multiline && e.Shift)))
             {
-                //Supress the enter key (so a new line isn't created) and press the OK button
+                //Suppress the enter key (so a new line isn't created) and press the OK button
                 e.Handled = true;
                 e.SuppressKeyPress = true;
                 btnOk_Click(null, null);

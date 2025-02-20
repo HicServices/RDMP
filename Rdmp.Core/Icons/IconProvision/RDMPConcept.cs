@@ -122,6 +122,7 @@ public enum RDMPConcept
     AllProcessTasksUsedByLoadMetadataNode,
     AllCataloguesUsedByLoadMetadataNode,
     LoadMetadataScheduleNode,
+    LoadMetadataVersionNode,
     Logging,
 
     GetFilesStage,

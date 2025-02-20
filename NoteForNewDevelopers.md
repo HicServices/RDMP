@@ -14,7 +14,7 @@ Here are things you should know about RDMP!
 1. [Existing Plugins](#existing-plugins)
 
 ## Other Docs
-All technical and repo specific documentation are stored in markdown (`.md` format).  Below is a list of docs in the repo.  There is also a Confluence website which stores [documentation on how to perform common user tasks](https://hic-docs.atlassian.net/wiki/spaces/RDMPDOCUME/overview?homepageId=196610)
+All technical and repo specific documentation are stored in markdown (`.md` format).  Below is a list of docs in the repo.  There is also a Confluence website which stores [documentation on how to perform common user tasks](https://hicservices.atlassian.net/wiki/spaces/RDMPDOCUME/overview?homepageId=196610)
 
 **Code Tutorials**
 - [Overview of RDMP Windows Client GUI application](./Documentation/CodeTutorials/UserInterfaceOverview.md)
@@ -187,9 +187,9 @@ Finally merge `develop` into `main` and push.  This will ensure that the `main` 
 ## Database Schema Changes
 Avoid making changes to the RDMP schema until you are experienced with the codebase as these changes have the greatest possibility of breaking deployments/plugins.
 
-If you need to record new information about an object consider using [ExtendedProperty] instead of writting a patch (especially if you are working within a Plugin).
+If you need to record new information about an object consider using [ExtendedProperty] instead of writing a patch (especially if you are working within a Plugin).
 
-Do not write patches for the [CohortCachingDatabase](.\Rdmp.Core\Databases\QueryCachingPatcher.cs), [LoggingDatabase](.\Rdmp.Core\Databases\LoggingDatabasePatcher.cs) or [DataQualityEngine](.\Rdmp.Core\Databases\DataQualityEnginePatcher.cs) databases.   These 3 databases are cross [DBMS] (you can create them in MySql / PostgresSQL and/or Oracle).  Patching for cross [DBMS] database schemas is not implemented yet.  If you
+Do not write patches for the [CohortCachingDatabase](.\Rdmp.Core\Databases\QueryCachingPatcher.cs), [LoggingDatabase](.\Rdmp.Core\Databases\LoggingDatabasePatcher.cs) or [DataQualityEngine](.\Rdmp.Core\Databases\DataQualityEnginePatcher.cs) databases.   These 3 databases are cross [DBMS] (you can create them in MySql / postgresql and/or Oracle).  Patching for cross [DBMS] database schemas is not implemented yet.  If you
 want to look into writing such a patch you would start with the `SortedDictionary<string, Patch> GetAllPatchesInAssembly(DiscoveredDatabase db)` method and adjust the patch SQL generated for each [DBMS].
 
 If after considering all the alternatives you are sure that a new patch is required and it is for the [Catalogue or Data Export Databases](.\Rdmp.Core\Databases\PlatformDatabase.cs) then the process is as follows:

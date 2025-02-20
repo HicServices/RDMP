@@ -140,6 +140,9 @@
 		<Compile Update="SimpleControls\DatabaseTypeUI.Designer.cs">
 			<DependentUpon>DatabaseTypeUI.cs</DependentUpon>
 		</Compile>
+		<Compile Update="SimpleControls\MultiSelectChips\DropdownOptionsChipDisplay.cs">
+		  <SubType>UserControl</SubType>
+		</Compile>
 		<Compile Update="SimpleDialogs\DataTableViewerUI.cs">
 			<SubType>UserControl</SubType>
 		</Compile>

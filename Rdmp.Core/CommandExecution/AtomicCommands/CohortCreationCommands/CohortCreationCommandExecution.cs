@@ -35,7 +35,7 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
     private readonly string _explicitCohortName;
 
     /// <summary>
-    /// Initialises base class with no targetting parameters, these will be prompted from the user at execution time assuming <see cref="IBasicActivateItems.IsInteractive"/>
+    /// Initialises base class with no targeting parameters, these will be prompted from the user at execution time assuming <see cref="IBasicActivateItems.IsInteractive"/>
     /// </summary>
     /// <param name="activator"></param>
     protected CohortCreationCommandExecution(IBasicActivateItems activator)
@@ -44,7 +44,7 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
     }
 
     /// <summary>
-    /// Initialises common targetting parameters (where to store resulting identifiers etc)
+    /// Initialises common targeting parameters (where to store resulting identifiers etc)
     /// </summary>
     /// <param name="activator"></param>
     /// <param name="externalCohortTable"></param>

@@ -15,7 +15,7 @@
   <Comment CommentText="Database implementation of IRepository (really the only kind we support)">
     <Position X="5.123" Y="2.952" Height="0.542" Width="2.944" />
   </Comment>
-  <Comment CommentText="Handles cross database referential integrity e.g. 'dont delete a Catalogue because there is an ExtractableDataSet in data export database that contains a refernece to it)">
+  <Comment CommentText="Handles cross database referential integrity e.g. 'dont delete a Catalogue because there is an ExtractableDataSet in data export database that contains a reference to it)">
     <Position X="10.053" Y="8.423" Height="0.79" Width="3.949" />
   </Comment>
   <Class Name="MapsDirectlyToDatabaseTable.NoMappingToDatabase" Collapsed="true">

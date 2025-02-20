@@ -40,7 +40,7 @@ namespace Rdmp.UI.LocationsMenu;
 /// 
 /// <para>Only the Catalogue database is required, if you do not intend to do data extraction at this time then you can skip creating one.  </para>
 /// 
-/// <para>It is a good idea to run Check after configuring your connection string to ensure that the database is accessible and that the tables/columns in the database match the softwares
+/// <para>It is a good idea to run Check after configuring your connection string to ensure that the database is accessible and that the tables/columns in the database match the software
 /// expectations.  </para>
 /// 
 /// <para>IMPORTANT: if you configure your connection string wrongly it might take up to 30s for windows to timeout the network connection (e.g. if you specify the wrong server name). This is
@@ -191,7 +191,7 @@ public partial class ChoosePlatformDatabasesUI : Form
             //he is pasting something with newlines
             if (toPaste.Contains(Environment.NewLine))
             {
-                //see if he is trying to paste two lines at once, in whichcase surpress Windows and paste it across the two text boxes
+                //see if he is trying to paste two lines at once, in whichcase suppress Windows and paste it across the two text boxes
                 var toPasteArray = toPaste.Split(Environment.NewLine.ToCharArray(),
                     StringSplitOptions.RemoveEmptyEntries);
                 if (toPasteArray.Length == 2)
