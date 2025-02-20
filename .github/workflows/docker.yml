@@ -49,7 +49,7 @@ jobs:
           ACCEPT_EULA=y apt-get install -qqy mssql-tools mssql-server --no-install-recommends
           curl -sL https://raw.githubusercontent.com/gdraheim/docker-systemctl-replacement/master/files/docker/systemctl3.py > /usr/bin/systemctl
           chmod +x /usr/bin/systemctl 
-          MSSQL_PID=Express ACCEPT_EULA=Y MSSQL_SA_PASSWORD='YourStrong#Passw0rd' /opt/mssql/bin/mscsql-conf -n setup
+          MSSQL_PID=Express ACCEPT_EULA=Y MSSQL_SA_PASSWORD='YourStrong#Passw0rd' /opt/mssql/bin/mssql-conf -n setup
           /opt/mssql-tools/bin/sqlcmd -l 180 -S localhost -U sa -P 'YourStrong#Passw0rd' -Q 'SELECT @@VERSION;'
           /rdmp/rdmp install -u sa -p 'YourStrong#Passw0rd' -e localhost RDMPDock_
           cat <<EOT > /rdmp/Databases.yaml
