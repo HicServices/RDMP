@@ -53,7 +53,8 @@ public partial class CatalogueAnalysisExecutionControlUI : CatalogueAnalysisExec
             }
 
             var clearButton = new Button();
-            clearButton.Click += (o, e) => {
+            clearButton.Click += (o, e) =>
+            {
                 constraintsDropdown.SelectedIndex = -1;
                 resultsDropdown.SelectedIndex = -1;
             };
@@ -168,9 +169,16 @@ public partial class CatalogueAnalysisExecutionControlUI : CatalogueAnalysisExec
             throw new Exception("No time or pivot column selected");
         }
 
+        bool hasStart = DateTime.TryParse(tbStartDate.Text, out var parsedStartDate);
+        bool hasEnd = DateTime.TryParse(tbEndDate.Text, out var parsedEndDate);
+
+
         var validation = new CatalogueValidationTool(Activator.RepositoryLocator.CatalogueRepository, _catalogue,
            cbTime.SelectedItem as ColumnInfo,
-            cbPivot.SelectedItem as ColumnInfo
+            cbPivot.SelectedItem as ColumnInfo,
+            hasStart?parsedStartDate:null,
+            hasEnd?parsedEndDate:null,
+            cbUsePrevious.Checked
             );
         validation.GenerateValidationReports();
     }
@@ -192,7 +200,7 @@ public partial class CatalogueAnalysisExecutionControlUI : CatalogueAnalysisExec
 
         var constraintCb = new ComboBox();
         constraintCb.Items.AddRange(Enum.GetNames(typeof(SecondaryConstraint.Constraints)).ToArray());
-        constraintCb.SelectedIndexChanged += (object sender, EventArgs e)=>ConstraintCb_SelectedIndexChanged(constraintCb, SecondaryConstrainsTableLayoutPanel.RowCount - 1);
+        constraintCb.SelectedIndexChanged += (object sender, EventArgs e) => ConstraintCb_SelectedIndexChanged(constraintCb, SecondaryConstrainsTableLayoutPanel.RowCount - 1);
         var consequencesCb = new ComboBox();
         consequencesCb.Items.AddRange(Enum.GetNames(typeof(SecondaryConstraint.Consequences)).ToArray());
 
@@ -211,7 +219,7 @@ public partial class CatalogueAnalysisExecutionControlUI : CatalogueAnalysisExec
             //todo this isn't right
             //SecondaryConstrainsTableLayoutPanel.Controls.RemoveAt(rowIndex * 4);
         }
-        var gb= new GroupBox();
+        var gb = new GroupBox();
         gb.Width = 100;
         gb.Height = 1000;
         gb.AutoSize = true;
@@ -220,7 +228,8 @@ public partial class CatalogueAnalysisExecutionControlUI : CatalogueAnalysisExec
 
 
         var selectedType = (SecondaryConstraint.Constraints)cb.SelectedIndex;
-        switch (selectedType) {
+        switch (selectedType)
+        {
             case SecondaryConstraint.Constraints.REGULAREXPRESSION:
                 var argsGb = new GroupBox();
                 argsGb.Text = "Pattern";
@@ -300,9 +309,9 @@ public partial class CatalogueAnalysisExecutionControlUI : CatalogueAnalysisExec
             var columnCB = SecondaryConstrainsTableLayoutPanel.GetControlFromPosition(0, row + 1) as ComboBox;
             var column = columnCB.SelectedItem as ColumnInfo;
             var constraintCB = SecondaryConstrainsTableLayoutPanel.GetControlFromPosition(1, row + 1) as ComboBox;
-            SecondaryConstraint.Constraints constraint = (SecondaryConstraint.Constraints) Enum.Parse(typeof(SecondaryConstraint.Constraints),constraintCB.SelectedItem.ToString(),true);
+            SecondaryConstraint.Constraints constraint = (SecondaryConstraint.Constraints)Enum.Parse(typeof(SecondaryConstraint.Constraints), constraintCB.SelectedItem.ToString(), true);
             var consequenceCB = SecondaryConstrainsTableLayoutPanel.GetControlFromPosition(2, row + 1) as ComboBox;
-            SecondaryConstraint.Consequences consequence = (SecondaryConstraint.Consequences) Enum.Parse(typeof(SecondaryConstraint.Consequences),consequenceCB.SelectedItem.ToString(),true);
+            SecondaryConstraint.Consequences consequence = (SecondaryConstraint.Consequences)Enum.Parse(typeof(SecondaryConstraint.Consequences), consequenceCB.SelectedItem.ToString(), true);
             var secondary = new SecondaryConstraint(_dqeRepository, column, constraint, consequence);
             //todo for some reason the save doesn't work...
             secondary.SaveToDatabase();
@@ -344,6 +353,11 @@ public partial class CatalogueAnalysisExecutionControlUI : CatalogueAnalysisExec
             //        }
             //        //todo warn about not selecting both
         }
+    }
+
+    private void cbUsePrevious_CheckedChanged(object sender, EventArgs e)
+    {
+
     }
 }
 

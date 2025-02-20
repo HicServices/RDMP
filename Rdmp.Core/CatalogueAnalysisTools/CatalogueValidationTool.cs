@@ -29,24 +29,32 @@ public class CatalogueValidationTool
     private readonly Catalogue _catalogue;
     private readonly ColumnInfo _timeColumn;
     private readonly ColumnInfo _pivotColumn;
+    private readonly DateTime? _startDate;
+    private readonly DateTime? _endDate;
+    private readonly bool _updatePreviousResult;
     private RowPeeker _peeker = new();
     private Dictionary<string, Dictionary<string, ResultObject>> _results = new();
     private Dictionary<string, PrimaryContraint> _primaryConstraints = new();
     private DQERepository _DQERepository;
     private readonly string ALL = "ALL";
     private readonly string CORRECT = "CORRECT";
-    public CatalogueValidationTool(ICatalogueRepository catalogueRepository, Catalogue catalogue, ColumnInfo timeColumn, ColumnInfo pivotColumn)
+    public CatalogueValidationTool(ICatalogueRepository catalogueRepository, Catalogue catalogue, ColumnInfo timeColumn, ColumnInfo pivotColumn, DateTime? startDate=null, DateTime? endDate=null, bool updatePreviousResult=false)
     {
         _catalogueRepository = catalogueRepository;
         _DQERepository = new DQERepository(_catalogueRepository);
         _catalogue = catalogue;
         _timeColumn = timeColumn;
         _pivotColumn = pivotColumn;
+        _startDate = startDate;
+        _endDate = endDate;
+        _updatePreviousResult = updatePreviousResult;
 
         foreach (var columnInfo in catalogue.CatalogueItems.Select(c => c.ColumnInfo))
         {
             _primaryConstraints[columnInfo.GetRuntimeName()] = _DQERepository.GetAllObjectsWhere<PrimaryContraint>("ColumnInfo_ID", columnInfo.ID).FirstOrDefault();
         }
+
+
     }
 
     private class ResultObject
@@ -168,13 +176,24 @@ public class CatalogueValidationTool
         return chunk;
     }
 
-    private void GenerateReport(string pivotColumnValue, CatalogueValidation catalogueValidation)
+    private void GenerateReport(string pivotColumnValue, CatalogueValidation catalogueValidation,DateTime? startDate=null, DateTime? endDate = null, bool updatePreviousEvaluation=false)
     {
+        //todo need to do something with updatePreviousEvaluation
+
         var qb = new QueryBuilder(null, null);
         qb.AddColumnRange(_catalogue.GetAllExtractionInformation());
         if (pivotColumnValue != ALL)
         {
             qb.AddCustomLine($"{_pivotColumn.GetFullyQualifiedName()} = '{pivotColumnValue}'", FAnsi.Discovery.QuerySyntax.QueryComponent.WHERE);
+           
+        }
+        if (startDate is not null)
+        {
+            qb.AddCustomLine($"{catalogueValidation.Catalogue.CatalogueItems.Select(c => c.ColumnInfo).Where(ci => ci.ID == catalogueValidation.TimeColumn_ID).First().GetRuntimeName()} >= '{startDate.ToString()}'", FAnsi.Discovery.QuerySyntax.QueryComponent.WHERE);
+        }
+        if (endDate is not null)
+        {
+            qb.AddCustomLine($"{catalogueValidation.Catalogue.CatalogueItems.Select(c => c.ColumnInfo).Where(ci => ci.ID == catalogueValidation.TimeColumn_ID).First().GetRuntimeName()} <= '{endDate.ToString()}'", FAnsi.Discovery.QuerySyntax.QueryComponent.WHERE);
         }
         qb.RegenerateSQL();
         var sql = qb.SQL;
@@ -222,11 +241,11 @@ public class CatalogueValidationTool
     {
         var catalogueValidation = new CatalogueValidation(_DQERepository, _catalogue, _timeColumn, _pivotColumn);
         catalogueValidation.SaveToDatabase();
-        GenerateReport(ALL, catalogueValidation);
+        GenerateReport(ALL, catalogueValidation,_startDate,_endDate,_updatePreviousResult);
         var pivotValues = GetPivotColumnValues();
         foreach (var pivotColumnValue in pivotValues)
         {
-            GenerateReport(pivotColumnValue, catalogueValidation);
+            GenerateReport(pivotColumnValue, catalogueValidation, _startDate, _endDate, _updatePreviousResult);
         }
         //todo for all values in pivot category
     }

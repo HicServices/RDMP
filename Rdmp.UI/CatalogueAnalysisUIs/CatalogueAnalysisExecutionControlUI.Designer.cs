@@ -33,6 +33,7 @@
             tabPage1 = new System.Windows.Forms.TabPage();
             timePeriodicityChart1 = new CatalogueSummary.DataQualityReporting.TimePeriodicityChart();
             tabPage2 = new System.Windows.Forms.TabPage();
+            cbUsePrevious = new System.Windows.Forms.CheckBox();
             groupBox4 = new System.Windows.Forms.GroupBox();
             button2 = new System.Windows.Forms.Button();
             pictureBox1 = new System.Windows.Forms.PictureBox();
@@ -52,6 +53,10 @@
             label3 = new System.Windows.Forms.Label();
             label2 = new System.Windows.Forms.Label();
             label1 = new System.Windows.Forms.Label();
+            tbStartDate = new System.Windows.Forms.TextBox();
+            groupBox5 = new System.Windows.Forms.GroupBox();
+            groupBox6 = new System.Windows.Forms.GroupBox();
+            tbEndDate = new System.Windows.Forms.TextBox();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             tabPage2.SuspendLayout();
@@ -62,6 +67,8 @@
             groupBox2.SuspendLayout();
             groupBox1.SuspendLayout();
             primaryConstrainsTableLayout.SuspendLayout();
+            groupBox5.SuspendLayout();
+            groupBox6.SuspendLayout();
             SuspendLayout();
             // 
             // tabControl1
@@ -95,6 +102,9 @@
             // 
             // tabPage2
             // 
+            tabPage2.Controls.Add(groupBox6);
+            tabPage2.Controls.Add(groupBox5);
+            tabPage2.Controls.Add(cbUsePrevious);
             tabPage2.Controls.Add(groupBox4);
             tabPage2.Controls.Add(button1);
             tabPage2.Controls.Add(groupBox3);
@@ -107,6 +117,17 @@
             tabPage2.TabIndex = 1;
             tabPage2.Text = "Configuration";
             tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // cbUsePrevious
+            // 
+            cbUsePrevious.AutoSize = true;
+            cbUsePrevious.Location = new System.Drawing.Point(1031, 51);
+            cbUsePrevious.Name = "cbUsePrevious";
+            cbUsePrevious.Size = new System.Drawing.Size(147, 19);
+            cbUsePrevious.TabIndex = 6;
+            cbUsePrevious.Text = "Update Previous Result";
+            cbUsePrevious.UseVisualStyleBackColor = true;
+            cbUsePrevious.CheckedChanged += cbUsePrevious_CheckedChanged;
             // 
             // groupBox4
             // 
@@ -206,7 +227,7 @@
             // 
             button1.Image = (System.Drawing.Image)resources.GetObject("button1.Image");
             button1.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            button1.Location = new System.Drawing.Point(1103, 5);
+            button1.Location = new System.Drawing.Point(1044, 3);
             button1.Name = "button1";
             button1.Size = new System.Drawing.Size(121, 42);
             button1.TabIndex = 4;
@@ -323,6 +344,40 @@
             label1.Text = "Column";
             label1.Click += label1_Click;
             // 
+            // tbStartDate
+            // 
+            tbStartDate.Location = new System.Drawing.Point(6, 22);
+            tbStartDate.Name = "tbStartDate";
+            tbStartDate.Size = new System.Drawing.Size(130, 23);
+            tbStartDate.TabIndex = 7;
+            // 
+            // groupBox5
+            // 
+            groupBox5.Controls.Add(tbStartDate);
+            groupBox5.Location = new System.Drawing.Point(686, 6);
+            groupBox5.Name = "groupBox5";
+            groupBox5.Size = new System.Drawing.Size(139, 49);
+            groupBox5.TabIndex = 8;
+            groupBox5.TabStop = false;
+            groupBox5.Text = "Start Date";
+            // 
+            // groupBox6
+            // 
+            groupBox6.Controls.Add(tbEndDate);
+            groupBox6.Location = new System.Drawing.Point(831, 6);
+            groupBox6.Name = "groupBox6";
+            groupBox6.Size = new System.Drawing.Size(139, 49);
+            groupBox6.TabIndex = 9;
+            groupBox6.TabStop = false;
+            groupBox6.Text = "End Date";
+            // 
+            // tbEndDate
+            // 
+            tbEndDate.Location = new System.Drawing.Point(6, 22);
+            tbEndDate.Name = "tbEndDate";
+            tbEndDate.Size = new System.Drawing.Size(130, 23);
+            tbEndDate.TabIndex = 7;
+            // 
             // CatalogueAnalysisExecutionControlUI
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -345,6 +400,10 @@
             groupBox1.PerformLayout();
             primaryConstrainsTableLayout.ResumeLayout(false);
             primaryConstrainsTableLayout.PerformLayout();
+            groupBox5.ResumeLayout(false);
+            groupBox5.PerformLayout();
+            groupBox6.ResumeLayout(false);
+            groupBox6.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -373,5 +432,10 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.CheckBox cbUsePrevious;
+        private System.Windows.Forms.GroupBox groupBox6;
+        private System.Windows.Forms.TextBox tbEndDate;
+        private System.Windows.Forms.GroupBox groupBox5;
+        private System.Windows.Forms.TextBox tbStartDate;
     }
 }
