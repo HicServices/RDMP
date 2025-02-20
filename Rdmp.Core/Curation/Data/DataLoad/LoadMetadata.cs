@@ -245,7 +245,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
             { "IgnoreTrigger", false /*todo could be system global default here*/ },
             { "Folder", FolderHelper.Root },
             {"LastLoadTime", null },
-            {"RootLoadMetadata_ID", rootLoadMetadata is null? null: rootLoadMetadata.ID }
+            //{"RootLoadMetadata_ID", rootLoadMetadata is null? null: rootLoadMetadata.ID }
         });
     }
 
@@ -266,7 +266,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         Folder = r["Folder"] as string ?? FolderHelper.Root;
         LastLoadTime = string.IsNullOrWhiteSpace(r["LastLoadTime"].ToString()) ? null : DateTime.Parse(r["LastLoadTime"].ToString());
         AllowReservedPrefix = ObjectToNullableBool(r["AllowReservedPrefix"]) ?? false;
-        RootLoadMetadata_ID = ObjectToNullableInt(r["RootLoadMetadata_ID"]);
+        //RootLoadMetadata_ID = ObjectToNullableInt(r["RootLoadMetadata_ID"]);
     }
 
 

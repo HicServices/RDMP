@@ -996,18 +996,18 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
             else
                 throw new Exception($" r[\"Type\"] had value {type} which is not contained in Enum CatalogueType");
         }
-        var purpose = r["Purpose"];
-        if (purpose == null || purpose == DBNull.Value)
-        {
-            Purpose = DatasetPurpose.Other;
-        }
-        else
-        {
-            if (Enum.TryParse(purpose.ToString(), true, out DatasetPurpose purposeAsEnum))
-                Purpose = purposeAsEnum;
-            else
-                throw new Exception($" r[\"Purpose\"] had value {purpose} which is not contained in Enum DatasetPurpose");
-        }
+        //var purpose = r["Purpose"];
+        //if (purpose == null || purpose == DBNull.Value)
+        //{
+        //    Purpose = DatasetPurpose.Other;
+        //}
+        //else
+        //{
+        //    if (Enum.TryParse(purpose.ToString(), true, out DatasetPurpose purposeAsEnum))
+        //        Purpose = purposeAsEnum;
+        //    else
+        //        throw new Exception($" r[\"Purpose\"] had value {purpose} which is not contained in Enum DatasetPurpose");
+        //}
 
         //Periodicity - with handling for invalid enum values listed in database
         var periodicity = r["Periodicity"];
@@ -1041,19 +1041,19 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
         Geographical_coverage = r["Geographical_coverage"].ToString();
         Background_summary = r["Background_summary"].ToString();
         Search_keywords = r["Search_keywords"].ToString();
-        var updateFreq = r["Update_freq"];
-        if (updateFreq == null || updateFreq == DBNull.Value)
-        {
-            Update_freq = UpdateFrequencies.Other;
-        }
-        else
-        {
-            if (Enum.TryParse(updateFreq.ToString(), true, out UpdateFrequencies updateFreqAsEnum))
-                Update_freq = updateFreqAsEnum;
-            else
-                throw new Exception(
-                    $" r[\"Update_freq\"] had value {updateFreq} which is not contained in Enum UpdateFrequencies");
-        }
+        //var updateFreq = r["Update_freq"];
+        //if (updateFreq == null || updateFreq == DBNull.Value)
+        //{
+        //    Update_freq = UpdateFrequencies.Other;
+        //}
+        //else
+        //{
+        //    if (Enum.TryParse(updateFreq.ToString(), true, out UpdateFrequencies updateFreqAsEnum))
+        //        Update_freq = updateFreqAsEnum;
+        //    else
+        //        throw new Exception(
+        //            $" r[\"Update_freq\"] had value {updateFreq} which is not contained in Enum UpdateFrequencies");
+        //}
         Update_sched = r["Update_sched"].ToString();
         Time_coverage = r["Time_coverage"].ToString();
         SubjectNumbers = r["SubjectNumbers"].ToString();
@@ -1107,34 +1107,34 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
 
         Folder = r["Folder"].ToString();
 
-        ShortDescription = r["ShortDescription"].ToString();
-        DataSource = r["DataSource"].ToString();
-        DataSourceSetting = r["DataSourceSetting"].ToString();
-        StartDate = !string.IsNullOrEmpty(r["StartDate"].ToString()) ? DateTime.Parse(r["StartDate"].ToString()) : null;
-        EndDate = !string.IsNullOrEmpty(r["EndDate"].ToString()) ? DateTime.Parse(r["EndDate"].ToString()) : null;
-        DatasetReleaseDate = !string.IsNullOrEmpty(r["DatasetReleaseDate"].ToString()) ? DateTime.Parse(r["DatasetReleaseDate"].ToString()) : null;
-        DataController = r["DataController"].ToString();
-        DataProcessor = r["DataProcessor"].ToString();
-        Juristiction = r["Juristiction"].ToString();
-        AssociatedPeople = r["AssociatedPeople"].ToString();
-        AssociatedMedia = r["AssociatedMedia"].ToString();
-        ControlledVocabulary = r["ControlledVocabulary"].ToString();
-        DataType = r["DataType"].ToString();
-        DataSubtype = r["DataSubtype"].ToString();
-        Doi = r["Doi"].ToString();
-        var updateLag = r["UpdateLag"];
-        if (updateLag == null || updateLag == DBNull.Value)
-        {
-            UpdateLag = UpdateLagTimes.Other;
-        }
-        else
-        {
-            if (Enum.TryParse(updateLag.ToString(), true, out UpdateLagTimes updateLagAsEnum))
-                UpdateLag = updateLagAsEnum;
-            else
-                throw new Exception(
-                    $" r[\"UpdateLag\"] had value {updateLag} which is not contained in Enum UpdateLagTimes");
-        }
+        //ShortDescription = r["ShortDescription"].ToString();
+        //DataSource = r["DataSource"].ToString();
+        //DataSourceSetting = r["DataSourceSetting"].ToString();
+        //StartDate = !string.IsNullOrEmpty(r["StartDate"].ToString()) ? DateTime.Parse(r["StartDate"].ToString()) : null;
+        //EndDate = !string.IsNullOrEmpty(r["EndDate"].ToString()) ? DateTime.Parse(r["EndDate"].ToString()) : null;
+        //DatasetReleaseDate = !string.IsNullOrEmpty(r["DatasetReleaseDate"].ToString()) ? DateTime.Parse(r["DatasetReleaseDate"].ToString()) : null;
+        //DataController = r["DataController"].ToString();
+        //DataProcessor = r["DataProcessor"].ToString();
+        //Juristiction = r["Juristiction"].ToString();
+        //AssociatedPeople = r["AssociatedPeople"].ToString();
+        //AssociatedMedia = r["AssociatedMedia"].ToString();
+        //ControlledVocabulary = r["ControlledVocabulary"].ToString();
+        //DataType = r["DataType"].ToString();
+        //DataSubtype = r["DataSubtype"].ToString();
+        //Doi = r["Doi"].ToString();
+        //var updateLag = r["UpdateLag"];
+        //if (updateLag == null || updateLag == DBNull.Value)
+        //{
+        //    UpdateLag = UpdateLagTimes.Other;
+        //}
+        //else
+        //{
+        //    if (Enum.TryParse(updateLag.ToString(), true, out UpdateLagTimes updateLagAsEnum))
+        //        UpdateLag = updateLagAsEnum;
+        //    else
+        //        throw new Exception(
+        //            $" r[\"UpdateLag\"] had value {updateLag} which is not contained in Enum UpdateLagTimes");
+        //}
         ClearAllInjections();
     }
 
