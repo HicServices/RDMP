@@ -363,6 +363,7 @@ namespace Rdmp.UI.MainFormUITabs
             tabPage2.BackColor = System.Drawing.Color.WhiteSmoke;
             tabPage2.Controls.Add(tableLayoutPanel2);
             tabPage2.Controls.Add(groupBox17);
+            tabPage2.Controls.Add(groupBox24);
             tabPage2.Location = new System.Drawing.Point(4, 24);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
@@ -372,7 +373,6 @@ namespace Rdmp.UI.MainFormUITabs
             // 
             // tableLayoutPanel2
             // 
-            tableLayoutPanel2.AutoScroll = true;
             tableLayoutPanel2.AutoSize = true;
             tableLayoutPanel2.ColumnCount = 1;
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
@@ -381,7 +381,6 @@ namespace Rdmp.UI.MainFormUITabs
             tableLayoutPanel2.Controls.Add(groupBox19, 0, 1);
             tableLayoutPanel2.Controls.Add(groupBox21, 0, 3);
             tableLayoutPanel2.Controls.Add(groupBox20, 0, 2);
-            tableLayoutPanel2.Controls.Add(groupBox24, 0, 5);
             tableLayoutPanel2.Location = new System.Drawing.Point(7, 70);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
             tableLayoutPanel2.RowCount = 6;
@@ -391,7 +390,7 @@ namespace Rdmp.UI.MainFormUITabs
             tableLayoutPanel2.RowStyles.Add(new RowStyle());
             tableLayoutPanel2.RowStyles.Add(new RowStyle());
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel2.Size = new System.Drawing.Size(843, 759);
+            tableLayoutPanel2.Size = new System.Drawing.Size(843, 717);
             tableLayoutPanel2.TabIndex = 20;
             // 
             // groupBox18
@@ -544,11 +543,12 @@ namespace Rdmp.UI.MainFormUITabs
             // 
             // groupBox24
             // 
+            groupBox24.AutoSize = true;
             groupBox24.Controls.Add(aiPurposeOfDataset);
             groupBox24.Controls.Add(cbPurpose);
-            groupBox24.Location = new System.Drawing.Point(3, 636);
+            groupBox24.Location = new System.Drawing.Point(207, 6);
             groupBox24.Name = "groupBox24";
-            groupBox24.Size = new System.Drawing.Size(372, 100);
+            groupBox24.Size = new System.Drawing.Size(194, 67);
             groupBox24.TabIndex = 20;
             groupBox24.TabStop = false;
             groupBox24.Text = "Purpose of Dataset";
@@ -570,11 +570,12 @@ namespace Rdmp.UI.MainFormUITabs
             // 
             // groupBox17
             // 
+            groupBox17.AutoSize = true;
             groupBox17.Controls.Add(aiResourceType);
             groupBox17.Controls.Add(cb_resourceType);
             groupBox17.Location = new System.Drawing.Point(7, 6);
             groupBox17.Name = "groupBox17";
-            groupBox17.Size = new System.Drawing.Size(194, 58);
+            groupBox17.Size = new System.Drawing.Size(194, 67);
             groupBox17.TabIndex = 14;
             groupBox17.TabStop = false;
             groupBox17.Text = "Resource Type";
