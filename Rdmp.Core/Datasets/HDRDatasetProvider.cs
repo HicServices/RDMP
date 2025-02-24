@@ -1,5 +1,6 @@
 ﻿using Amazon.Runtime.Internal.Endpoints.StandardLibrary;
 using Newtonsoft.Json;
+using Org.BouncyCastle.Asn1.Cms;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Datasets;
@@ -97,13 +98,18 @@ namespace Rdmp.Core.Datasets
 
             using var stream = new MemoryStream();
             var update = (HDRDataset)datasetUpdates;
-            var updateObj = new HDRUpdateObject() {
+            var updateObj = new HDRUpdateObject()
+            {
                 team_id = update.data.team_id,
                 user_id = update.data.user_id,
-                create_origin= update.data.create_origin,
-                metadata = update.data.versions.First().metadata
+                create_origin = update.data.create_origin,
+                metadata = (new HDRDatasetPatch((HDRDataset)datasetUpdates)).metadata.metadata
             };
-            System.Text.Json.JsonSerializer.Serialize<HDRDatasetPatch>(stream, (new HDRDatasetPatch((HDRDataset)datasetUpdates)), serializeOptions);
+            //update.data.versions.First().metadata.metadata
+
+
+            //System.Text.Json.JsonSerializer.Serialize<PatchMetadata>(stream, (new HDRDatasetPatch((HDRDataset)datasetUpdates)).metadata, serializeOptions);
+            System.Text.Json.JsonSerializer.Serialize<PatchSubMetadata>(stream, updateObj.metadata, serializeOptions);
             var jsonString = Encoding.UTF8.GetString(stream.ToArray());
             var uri = $"{Configuration.Url}/v1/integrations/datasets/{uuid}?schema_model=HDRUK&schema_version=3.0.0";
             var httpContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
@@ -121,7 +127,7 @@ namespace Rdmp.Core.Datasets
             public int team_id { get; set; }
             public int user_id { get; set; }
             public string create_origin { get; set; }
-            public  Metadata metadata { get; set; }
+            public  PatchSubMetadata metadata { get; set; }
         }
     }
 
