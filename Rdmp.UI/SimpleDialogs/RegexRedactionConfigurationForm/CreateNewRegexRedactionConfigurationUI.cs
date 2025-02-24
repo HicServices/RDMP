@@ -16,14 +16,14 @@ namespace Rdmp.UI.SimpleDialogs.RegexRedactionConfigurationForm
         {
             _activator = activator;
             InitializeComponent();
-            this.btnCreate.Enabled = false;
-            this.tbName.TextChanged += OnChange;
-            this.tbRegexPattern.TextChanged += OnChange;
-            this.tbRedactionString.TextChanged += OnChange;
-            this.btnCancel.Click += Cancel;
-            this.btnCreate.Click += Create;
-            this.lblError.Text = "";
-            this.lblError.Visible = false;
+            btnCreate.Enabled = false;
+            tbName.TextChanged += OnChange;
+            tbRegexPattern.TextChanged += OnChange;
+            tbRedactionString.TextChanged += OnChange;
+            btnCancel.Click += Cancel;
+            btnCreate.Click += Create;
+            lblError.Text = "";
+            lblError.Visible = false;
         }
 
         private void Cancel(object sender, EventArgs e)
@@ -39,7 +39,7 @@ namespace Rdmp.UI.SimpleDialogs.RegexRedactionConfigurationForm
         }
         private bool ValidRegex()
         {
-            var regexString = this.tbRegexPattern.Text;
+            var regexString = tbRegexPattern.Text;
             if (string.IsNullOrWhiteSpace(regexString)) return false;
             try
             {
@@ -70,14 +70,14 @@ namespace Rdmp.UI.SimpleDialogs.RegexRedactionConfigurationForm
                     lblError.ForeColor = Color.Red;
                 }
             }
-            if (!string.IsNullOrWhiteSpace(this.tbName.Text)
-                && validRegex && !string.IsNullOrWhiteSpace(this.tbRedactionString.Text))
+            if (!string.IsNullOrWhiteSpace(tbName.Text)
+                && validRegex && !string.IsNullOrWhiteSpace(tbRedactionString.Text))
             {
-                this.btnCreate.Enabled = true;
+                btnCreate.Enabled = true;
             }
             else
             {
-                this.btnCreate.Enabled = false;
+                btnCreate.Enabled = false;
             }
         }
     }

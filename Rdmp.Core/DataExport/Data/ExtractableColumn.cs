@@ -200,7 +200,7 @@ public class ExtractableColumn : ConcreteColumn, IComparable, IInjectKnown<Catal
     public override string ToString() => !string.IsNullOrWhiteSpace(Alias) ? Alias : SelectSQL;
 
     /// <summary>
-    /// Returns true if the underlying column (<see cref="Curation.Data.ColumnInfo"/>) referenced by this class has disapeared since its creation.
+    /// Returns true if the underlying column (<see cref="Curation.Data.ColumnInfo"/>) referenced by this class has disappeared since its creation.
     /// </summary>
     /// <returns></returns>
     public bool HasOriginalExtractionInformationVanished() => ColumnInfo == null;

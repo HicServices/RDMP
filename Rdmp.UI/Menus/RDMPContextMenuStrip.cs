@@ -32,7 +32,7 @@ namespace Rdmp.UI.Menus;
 /// Base class for all right click context menus in <see cref="RDMPCollectionUI"/> controls.  These menus are built by reflection
 /// when the selected object is changed.
 /// </summary>
-[System.ComponentModel.DesignerCategory("")]
+[DesignerCategory("")]
 public class RDMPContextMenuStrip : ContextMenuStrip
 {
     private readonly object _o;

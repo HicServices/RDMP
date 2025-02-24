@@ -167,7 +167,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                     var existingIDsforReleaseID = lookupDT.Rows.Cast<DataRow>().Where(r => r.ItemArray[privateIdIndex].ToString() == originalValue.ToString()).Select(s => s.ItemArray[releaseIdIndex].ToString());
                     if (existingIDsforReleaseID.Count() > 0)
                     {
-                        //we don't know what the current releae ID is ( there may be ones from multiple cohorts)
+                        //we don't know what the current release ID is ( there may be ones from multiple cohorts)
                         var ids = existingIDsforReleaseID.Select(id => $"'{id}'");
                         return $"{pkName} in ({string.Join(',', ids)})";
                     }
@@ -279,10 +279,11 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             _firstTime = false;
         }
 
-        if (IncludeTimeStamp && !_discoveredTable.DiscoverColumns().Where(c => c.GetRuntimeName() == _extractionTimeStamp).Any())
+        if (IncludeTimeStamp && _discoveredTable.DiscoverColumns().All(c => c.GetRuntimeName() != _extractionTimeStamp))
         {
             _discoveredTable.AddColumn(_extractionTimeStamp, new DatabaseTypeRequest(typeof(DateTime)), true, 30000);
         }
+
         if (IndexTables)
         {
             var indexes = UserDefinedIndexes.Count != 0 ? UserDefinedIndexes : pkColumns.Select(c => c.ColumnName);
@@ -353,11 +354,11 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                             // look up the original value and check we've not already extected the same value under a different release ID
                             var privateIdentifierField = _externalCohortTable.PrivateIdentifierField.Split('.').Last()[1..^1];//remove the "[]" from the identifier field
                             var releaseIdentifierField = _externalCohortTable.ReleaseIdentifierField.Split('.').Last()[1..^1];//remove the "[]" from the identifier field
-                            DiscoveredTable cohortTable = _externalCohortTable.DiscoverCohortTable();
-                            var lookupDT = cohortTable.GetDataTable();
+                            var cohortTable = _externalCohortTable.DiscoverCohortTable();
+                            using var lookupDT = cohortTable.GetDataTable();
                             var releaseIdIndex = lookupDT.Columns.IndexOf(releaseIdentifierField);
                             var privateIdIndex = lookupDT.Columns.IndexOf(privateIdentifierField);
-                            var foundRow = lookupDT.Rows.Cast<DataRow>().Where(r => r.ItemArray[releaseIdIndex].ToString() == row[pkCol.ColumnName].ToString()).FirstOrDefault();
+                            var foundRow = lookupDT.Rows.Cast<DataRow>().FirstOrDefault(r => r.ItemArray[releaseIdIndex].ToString() == row[pkCol.ColumnName].ToString());
                             if (foundRow is not null)
                             {
                                 var originalValue = foundRow.ItemArray[privateIdIndex];
@@ -667,16 +668,16 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                 _discoveredTable.CreatePrimaryKey(AlterTimeout, pkColumnsToCreate);
             }
         }
-        if (UseTrigger && _discoveredTable.DiscoverColumns().Where(col => col.IsPrimaryKey).Any()) //can't use triggers without a PK
-        {
 
+        if (UseTrigger && _discoveredTable?.DiscoverColumns().Any(static col => col.IsPrimaryKey) == true) //can't use triggers without a PK
+        {
             var factory = new TriggerImplementerFactory(_database.Server.DatabaseType);
-            var _triggerImplementer = factory.Create(_discoveredTable);
-            var currentStatus = _triggerImplementer.GetTriggerStatus();
+            var triggerImplementer = factory.Create(_discoveredTable);
+            var currentStatus = triggerImplementer.GetTriggerStatus();
             if (currentStatus == TriggerStatus.Missing)
                 try
                 {
-                    _triggerImplementer.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
+                    triggerImplementer.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
                 }
                 catch (Exception e)
                 {
@@ -727,7 +728,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
     /// <summary>
     /// Declare that the column of name columnName (which might or might not appear in DataTables being uploaded) should always have the associated database type (e.g. varchar(59))
     /// The columnName is Case insensitive.  Note that if AllowResizingColumnsAtUploadTime is true then these datatypes are only the starting types and might get changed later to
-    /// accomodate new data.
+    /// accommodate new data.
     /// </summary>
     /// <param name="columnName"></param>
     /// <param name="explicitType"></param>

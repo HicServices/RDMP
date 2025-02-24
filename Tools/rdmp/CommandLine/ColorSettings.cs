@@ -16,7 +16,7 @@ namespace Rdmp.Core.CommandLine;
 /// Stores console colors to use in the RDMP command line gui.
 /// Primarily a singleton with implicit loading of settings from the ColorSettings.yaml
 /// file (if present).  Allows end users to change the colors used if they do not work
-/// well with their terminal or accessiblity needs etc.
+/// well with their terminal or accessibility needs etc.
 /// </summary>
 public class ColorSettings
 {

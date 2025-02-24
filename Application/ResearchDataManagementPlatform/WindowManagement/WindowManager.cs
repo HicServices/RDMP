@@ -248,7 +248,7 @@ public class WindowManager
     /// <summary>
     /// Attempts to ensure that a compatible RDMPCollectionUI is made visible for the supplied object which must be one of the expected root Tree types of
     /// an RDMPCollectionUI.  For example Project is the a root object of DataExportCollectionUI.  If a matching collection is already visible or no collection
-    /// supports the supplied object as a root object then nothing will happen.  Otherwise the coresponding collection will be shown
+    /// supports the supplied object as a root object then nothing will happen.  Otherwise the corresponding collection will be shown
     /// </summary>
     /// <param name="root"></param>
     public void ShowCollectionWhichSupportsRootObjectType(object root)
@@ -415,13 +415,13 @@ public class WindowManager
     /// Check whether a given RDMPSingleControlTab is already showing with the given DatabaseObject (e.g. is user currently editing Catalogue bob in CatalogueUI)
     /// </summary>
     /// <exception cref="ArgumentException"></exception>
-    /// <param name="windowType">A Type derrived from RDMPSingleControlTab</param>
+    /// <param name="windowType">A Type derived from RDMPSingleControlTab</param>
     /// <param name="databaseObject">An instance of an object which matches the windowType</param>
     /// <returns></returns>
     public bool AlreadyActive(Type windowType, IMapsDirectlyToDatabaseTable databaseObject)
     {
         return !typeof(IRDMPSingleDatabaseObjectControl).IsAssignableFrom(windowType)
-            ? throw new ArgumentException("windowType must be a Type derrived from RDMPSingleControlTab")
+            ? throw new ArgumentException("windowType must be a Type derived from RDMPSingleControlTab")
             : _trackedWindows.OfType<PersistableSingleDatabaseObjectDockContent>().Any(t =>
                 t.Control.GetType() == windowType && t.DatabaseObject.Equals(databaseObject));
     }

@@ -14,7 +14,6 @@ using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Theme;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -38,12 +37,12 @@ namespace Rdmp.UI.SimpleDialogs
 
         private readonly bool _showReplaceOptions = false;
 
-        private void SimulateClickForAutoFilter<T>()
+        private void SimulateClickForAutoFilter<T2>()
         {
-            var item = newFindToolStrip.Items.Find((typeof(T)).Name, false).FirstOrDefault();
-            if (item is not null)
-                item.PerformClick();
+            var item = newFindToolStrip.Items.Find(typeof(T2).Name, false).FirstOrDefault();
+            item?.PerformClick();
         }
+
         private void PresetFiltersBasedOnFocusItem(RDMPUserControl focusItem)
         {
             var focusItemType = focusItem.GetType();
@@ -173,29 +172,29 @@ namespace Rdmp.UI.SimpleDialogs
                 {
                     _items = _items.Where(i => showOnlyTypes.Contains(i.Key.GetType())).ToDictionary(i => i.Key, i => i.Value);
                 }
-                this.folv.BeginUpdate();
+                folv.BeginUpdate();
 
-                this.folv.ClearObjects();
-                this.folv.SetObjects(_items.Keys.ToArray());
-                this.folv.RebuildColumns();
-                this.folv.EndUpdate();
+                folv.ClearObjects();
+                folv.SetObjects(_items.Keys.ToArray());
+                folv.RebuildColumns();
+                folv.EndUpdate();
             }
             if (rbSqlMode.Checked)
             {
-                this.folv.BeginUpdate();
-                this.folv.ClearObjects();
-                this.folv.AddObjects(_sqlNodes);
-                this.folv.RebuildColumns();
-                this.folv.EndUpdate();
+                folv.BeginUpdate();
+                folv.ClearObjects();
+                folv.AddObjects(_sqlNodes);
+                folv.RebuildColumns();
+                folv.EndUpdate();
             }
             if (rbLocations.Checked)
             {
 
-                this.folv.BeginUpdate();
-                this.folv.ClearObjects();
-                this.folv.AddObjects(_locationNodes);
-                this.folv.RebuildColumns();
-                this.folv.EndUpdate();
+                folv.BeginUpdate();
+                folv.ClearObjects();
+                folv.AddObjects(_locationNodes);
+                folv.RebuildColumns();
+                folv.EndUpdate();
             }
         }
 
@@ -256,7 +255,7 @@ namespace Rdmp.UI.SimpleDialogs
                 }
                 if (!_showReplaceOptions)
                 {
-                    //the edit values dissapear when we close the dialog, so keep them around when we're in replace mode
+                    //the edit values disappear when we close the dialog, so keep them around when we're in replace mode
                     DialogResult = DialogResult.OK;
                     Close();
                 }

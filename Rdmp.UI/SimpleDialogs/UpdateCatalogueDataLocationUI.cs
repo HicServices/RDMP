@@ -133,7 +133,7 @@ public partial class UpdateCatalogueDataLocationUI : Form
                 _activator.RefreshBus.Publish(_catalogue, new RefreshObjectEventArgs(_catalogue));
             if (_columnInfo is not null)
                 _activator.RefreshBus.Publish(_columnInfo, new RefreshObjectEventArgs(_columnInfo));
-            this.Close();
+            Close();
         }
         else
         {

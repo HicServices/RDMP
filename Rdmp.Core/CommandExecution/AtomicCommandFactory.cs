@@ -502,38 +502,59 @@ public class AtomicCommandFactory : CommandFactoryBase
 
         if (Is(o, out LoadMetadata lmd))
         {
-            yield return new ExecuteCommandExportObjectsToFile(_activator, new IMapsDirectlyToDatabaseTable[] { lmd });
-
-            yield return new ExecuteCommandOverrideRawServer(_activator, lmd);
-            yield return new ExecuteCommandCreateNewLoadMetadata(_activator);
-            var reservedTest = lmd.AllowReservedPrefix ? "Drop" : "Allow";
-            yield return new ExecuteCommandToggleAllowReservedPrefixForLoadMetadata(lmd)
+            if (lmd.RootLoadMetadata_ID is null)
             {
-                OverrideCommandName=$"{reservedTest} Reserved Prefix Columns"
-            };
+                yield return new ExecuteCommandExportObjectsToFile(_activator, new IMapsDirectlyToDatabaseTable[] { lmd });
 
-            yield return new ExecuteCommandSetGlobalDleIgnorePattern(_activator) { SuggestedCategory = Advanced };
-            yield return new ExecuteCommandSetIgnoredColumns(_activator, lmd) { SuggestedCategory = Advanced };
-            yield return new ExecuteCommandSetIgnoredColumns(_activator, lmd, null)
-            { OverrideCommandName = "Clear Ignored Columns", SuggestedCategory = Advanced };
+                yield return new ExecuteCommandOverrideRawServer(_activator, lmd);
+                yield return new ExecuteCommandCreateNewLoadMetadata(_activator);
+                var reservedTest = lmd.AllowReservedPrefix ? "Drop" : "Allow";
+                yield return new ExecuteCommandToggleAllowReservedPrefixForLoadMetadata(lmd)
+                {
+                    OverrideCommandName = $"{reservedTest} Reserved Prefix Columns"
+                };
+                yield return new ExecuteCommandCreateLoadMetadataVersion(_activator, lmd)
+                {
+                    OverrideCommandName = "Save Version"
+                };
+                yield return new ExecuteCommandCloneLoadMetadata(_activator, lmd)
+                {
+                    OverrideCommandName = "Clone Load Metadata"
+                };
 
-            yield return new ExecuteCommandSetExtendedProperty(_activator, new[] { lmd },
-                ExtendedProperty.PersistentRaw, null)
+                yield return new ExecuteCommandSetGlobalDleIgnorePattern(_activator) { SuggestedCategory = Advanced };
+                yield return new ExecuteCommandSetIgnoredColumns(_activator, lmd) { SuggestedCategory = Advanced };
+                yield return new ExecuteCommandSetIgnoredColumns(_activator, lmd, null)
+                { OverrideCommandName = "Clear Ignored Columns", SuggestedCategory = Advanced };
+
+                yield return new ExecuteCommandSetExtendedProperty(_activator, new[] { lmd },
+                    ExtendedProperty.PersistentRaw, null)
+                {
+                    OverrideCommandName = "Persistent RAW",
+                    PromptForValue = true,
+                    PromptForValueTaskDescription = ExtendedProperty.PersistentRawDescription,
+                    SuggestedCategory = Advanced
+                };
+
+                yield return new ExecuteCommandSet(_activator, lmd,
+                    typeof(LoadMetadata).GetProperty(nameof(LoadMetadata.IgnoreTrigger)))
+                {
+                    OverrideCommandName = $"Ignore Trigger (Current value:{lmd.IgnoreTrigger})",
+                    SuggestedCategory = Advanced
+                };
+            }
+            else
             {
-                OverrideCommandName = "Persistent RAW",
-                PromptForValue = true,
-                PromptForValueTaskDescription = ExtendedProperty.PersistentRawDescription,
-                SuggestedCategory = Advanced
-            };
-
-            yield return new ExecuteCommandSet(_activator, lmd,
-                typeof(LoadMetadata).GetProperty(nameof(LoadMetadata.IgnoreTrigger)))
-            {
-                OverrideCommandName = $"Ignore Trigger (Current value:{lmd.IgnoreTrigger})",
-                SuggestedCategory = Advanced
-            };
+                yield return new ExecuteCommandRestoreLoadMetadataVersion(_activator, lmd)
+                {
+                    OverrideCommandName = "Restore Version"
+                };
+                yield return new ExecuteCommandCloneLoadMetadata(_activator, lmd)
+                {
+                    OverrideCommandName = "Clone Load Metadata"
+                };
+            }
         }
-
 
         if (Is(o, out LoadMetadataScheduleNode scheduleNode))
             yield return new ExecuteCommandCreateNewLoadProgress(_activator, scheduleNode.LoadMetadata);

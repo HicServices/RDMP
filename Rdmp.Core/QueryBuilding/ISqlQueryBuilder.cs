@@ -12,7 +12,7 @@ using Rdmp.Core.QueryBuilding.Parameters;
 namespace Rdmp.Core.QueryBuilding;
 
 /// <summary>
-/// Shared interface for both the RDMP query builders (QueryBuilder and AggregateBuilder).  Query Building in RDMP consists of defining mono atomic comonents
+/// Shared interface for both the RDMP query builders (QueryBuilder and AggregateBuilder).  Query Building in RDMP consists of defining mono atomic components
 /// ('I want this column',  'I want LimitationSQL: DISTINCT' etc) then the ISqlQueryBuilder turns it into SQL.
 /// 
 /// <para>The main purpose of this interface is to move common logic such as finding which TableInfos to join and resolving Parameter overriding into SqlQueryBuilderHelper </para>

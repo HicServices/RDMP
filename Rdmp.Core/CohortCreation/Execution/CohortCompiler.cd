@@ -21,7 +21,7 @@
   <Comment CommentText="Creates Builder and tailors it to cohort subquery task">
     <Position X="29.289" Y="7.969" Height="0.455" Width="2.021" />
   </Comment>
-  <Comment CommentText="Gathers all subqueries and decides on CacheUsage based on the servers datasets are on etc.  Throws early in error states e.g. no cache and datsets on seperate servers">
+  <Comment CommentText="Gathers all subqueries and decides on CacheUsage based on the servers datasets are on etc.  Throws early in error states e.g. no cache and datasets on separate servers">
     <Position X="24.814" Y="13.713" Height="1.018" Width="2.524" />
   </Comment>
   <Comment CommentText="Handles one subquery (with optional join to patient index table).  Asks helper to generate the actual SQL.  Generates all permutations of cache usage to delay cache usage decisions.">

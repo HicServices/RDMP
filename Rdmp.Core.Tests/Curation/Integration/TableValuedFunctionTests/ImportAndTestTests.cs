@@ -159,7 +159,7 @@ public class ImportAndTestTests : DatabaseTests
             Assert.That(syncer.Synchronize(new AcceptAllCheckNotifier()));
         });
 
-        //now parameter shouldnt be there
+        //now parameter shouldn't be there
         Assert.That(excessParameter.HasLocalChanges().Evaluation, Is.EqualTo(ChangeDescription.DatabaseCopyWasDeleted));
     }
 

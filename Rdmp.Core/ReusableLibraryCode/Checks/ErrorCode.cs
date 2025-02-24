@@ -26,7 +26,7 @@ public sealed class ErrorCode
     public string Message { get; }
 
     /// <summary>
-    /// The severity level at which the error is reported.  Can be overriden by <see cref="UserSettings"/>
+    /// The severity level at which the error is reported.  Can be overridden by <see cref="UserSettings"/>
     /// </summary>
     public CheckResult DefaultTreatment { get; }
 

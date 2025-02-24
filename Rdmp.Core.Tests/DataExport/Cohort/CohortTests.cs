@@ -27,7 +27,7 @@ public class CohortTests : TestsRequiringACohort
             Assert.That(_extractableCohort.GetReleaseIdentifier(true), Is.EqualTo("ReleaseID"));
         });
 
-        //appy override
+        //apply override
         _extractableCohort.OverrideReleaseIdentifierSQL = "Fish";
         _extractableCohort.SaveToDatabase();
 

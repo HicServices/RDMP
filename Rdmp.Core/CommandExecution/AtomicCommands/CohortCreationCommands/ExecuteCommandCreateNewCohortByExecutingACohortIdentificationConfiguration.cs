@@ -14,7 +14,6 @@ using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
-using Rdmp.Core.Setting;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
@@ -70,19 +69,20 @@ public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfig
         if (cic == null)
             return;
 
-        if (BasicActivator.IsInteractive) {
-            var PromptForVersionOnCohortCommit = false;
-            var PromptForVersionOnCohortCommitSetting = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Setting.Setting>().Where(s => s.Key == "PromptForVersionOnCohortCommit").FirstOrDefault();
-            if (PromptForVersionOnCohortCommitSetting is not null) PromptForVersionOnCohortCommit = Convert.ToBoolean(PromptForVersionOnCohortCommitSetting.Value);
-            if (PromptForVersionOnCohortCommit && BasicActivator.YesNo("It is recommended to save your cohort as a new version before committing. Would you like to do this?", "Save cohort as new version before committing?"))
+        if (BasicActivator.IsInteractive)
+        {
+            var promptForVersionOnCohortCommit = false;
+            var promptForVersionOnCohortCommitSetting = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Setting.Setting>().FirstOrDefault(static s => s.Key == "PromptForVersionOnCohortCommit");
+            if (promptForVersionOnCohortCommitSetting is not null) promptForVersionOnCohortCommit = Convert.ToBoolean(promptForVersionOnCohortCommitSetting.Value);
+            if (promptForVersionOnCohortCommit && BasicActivator.YesNo("It is recommended to save your cohort as a new version before committing. Would you like to do this?", "Save cohort as new version before committing?"))
             {
                 var newVersion = new ExecuteCommandCreateVersionOfCohortConfiguration(BasicActivator, cic);
                 newVersion.Execute();
                 var versions = cic.GetVersions();
                 cic = versions.Last();
             }
-
         }
+
         if (Project == null && BasicActivator.CoreChildProvider is DataExportChildProvider dx)
         {
             var projAssociations = dx.AllProjectAssociatedCics

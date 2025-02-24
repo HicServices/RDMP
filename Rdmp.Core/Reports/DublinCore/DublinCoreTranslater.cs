@@ -26,7 +26,7 @@ public class DublinCoreTranslater
     {
         if (toFill is Catalogue c)
         {
-            //only overwritte name if Catalogue has default blank name
+            //only overwrite name if Catalogue has default blank name
             if (c.Name != null && c.Name.StartsWith("New Catalogue ", StringComparison.CurrentCultureIgnoreCase))
                 c.Name = fillWith.Title;
 

@@ -23,7 +23,7 @@ public class AggregateCountColumn : SpontaneousObject, IColumn
     private readonly string _sql;
 
     /// <summary>
-    /// The default alias for unamed count columns
+    /// The default alias for unnamed count columns
     /// </summary>
     public const string DefaultAliasName = "MyCount";
 

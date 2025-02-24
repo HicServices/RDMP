@@ -19,7 +19,7 @@ public interface IReferenceOtherObjectWithPersist : IReferenceOtherObject
     string ReferencedObjectType { get; set; }
 
     /// <summary>
-    /// The ID of the object being refered to by this class
+    /// The ID of the object being referred to by this class
     /// </summary>
     int ReferencedObjectID { get; set; }
 

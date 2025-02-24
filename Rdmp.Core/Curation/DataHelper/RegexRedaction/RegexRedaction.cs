@@ -68,7 +68,7 @@ public class RegexRedaction : DatabaseEntity, IRegexRedaction
 
     #region Relationships
     [NoMappingToDatabase]
-    public List<RegexRedactionKey> RedactionKeys => [.. CatalogueRepository.GetAllObjectsWhere<RegexRedactionKey>("RegexRedaction_ID", this.ID)];
+    public List<RegexRedactionKey> RedactionKeys => [.. CatalogueRepository.GetAllObjectsWhere<RegexRedactionKey>("RegexRedaction_ID", ID)];
     #endregion
 
 

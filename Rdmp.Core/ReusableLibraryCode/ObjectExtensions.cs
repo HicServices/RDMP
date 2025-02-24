@@ -16,7 +16,7 @@ public static class ObjectExtensions
 {
     /// <summary>
     /// Returns a beautiful representation of the given object.  For example splitting array elements into
-    /// a comma seperated list.  Falls back on calling <paramref name="o"/> normal ToString if no specific logic
+    /// a comma separated list.  Falls back on calling <paramref name="o"/> normal ToString if no specific logic
     /// is defined for its Type.
     /// </summary>
     /// <param name="o"></param>

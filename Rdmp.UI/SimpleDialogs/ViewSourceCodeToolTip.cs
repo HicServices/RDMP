@@ -36,7 +36,7 @@ internal class ViewSourceCodeToolTip : ToolTip
     {
         if (Screen.PrimaryScreen != null && Screen.PrimaryScreen.Bounds != Rectangle.Empty)
         {
-            //use half the screen width or 600 if they are playing on a gameboy advanced
+            //use half the screen width or 600 if they are playing on a game boy advanced
             WIDTH = Math.Max(600, Screen.PrimaryScreen.Bounds.Width / 2);
             HEIGHT = Math.Max(450, Screen.PrimaryScreen.Bounds.Height / 2);
         }

@@ -35,7 +35,7 @@ internal class RunDleWindow : RunEngineWindow<DleOptions>
 
         if (lmd.LoadProgresses.Any() && activity == CommandLineActivity.run)
         {
-            var lp = (LoadProgress)BasicActivator.SelectOne("Load Progres", lmd.LoadProgresses, null, true);
+            var lp = (LoadProgress)BasicActivator.SelectOne("Load Progress", lmd.LoadProgresses, null, true);
             if (lp == null)
                 return;
 

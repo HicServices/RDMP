@@ -37,7 +37,7 @@ public partial class UserInterfaceStandardisationChecker
 
     private Type[] excusedNodeClasses =
     {
-        //it's a singleton because you can only have one decryption certificate for an RDMP as opposed to other SingletonNode classses that represent collections e.g. AllTableInfos is the only collection of TableInfos but it's a collection
+        //it's a singleton because you can only have one decryption certificate for an RDMP as opposed to other SingletonNode classes that represent collections e.g. AllTableInfos is the only collection of TableInfos but it's a collection
         typeof(DecryptionPrivateKeyNode),
         typeof(ArbitraryFolderNode),
 

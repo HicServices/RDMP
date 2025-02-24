@@ -18,7 +18,7 @@ namespace Rdmp.UI.SimpleControls;
 /// <summary>
 /// Text box for entering Sql Server connection strings, includes autocomplete support for keywords (e.g. Database)
 /// </summary>
-[System.ComponentModel.DesignerCategory("")]
+[DesignerCategory("")]
 public class ConnectionStringTextBox : TextBox
 {
     private DatabaseType _databaseType;

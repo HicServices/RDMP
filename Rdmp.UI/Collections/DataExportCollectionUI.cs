@@ -126,7 +126,7 @@ public partial class DataExportCollectionUI : RDMPCollectionUI, ILifetimeSubscri
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {
-        SetupToolStrip();
+            SetupToolStrip();
     }
 
     private void SetupToolStrip()

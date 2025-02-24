@@ -31,7 +31,7 @@ namespace Rdmp.Core.Curation.DataHelper.RegexRedaction
             RegexRedaction_ID,
             Value,
             TEMP_RedactionUpdates
-        };
+        }
 
 
         public static DataTable GenerateRedactionsDataTable()

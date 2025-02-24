@@ -8,7 +8,6 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
-using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Defaults;

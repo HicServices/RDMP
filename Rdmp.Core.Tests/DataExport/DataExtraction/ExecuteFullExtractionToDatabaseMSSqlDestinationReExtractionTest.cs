@@ -56,7 +56,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
     [Test]
     public void ReExtractToADatabaseWithNoNewData()
     {
-        var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
 
         //create catalogue from file
         var csvFile = CreateFileInForLoading("bob.csv", 1, new Random(5000));
@@ -82,19 +82,19 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
             null, db, pipe, null);
 
         cmd.Execute();
-        var catalogue = CatalogueRepository.GetAllObjects<Catalogue>().Where(c => c.Name == "bob").FirstOrDefault();
-        var chiColumnInfo = catalogue.CatalogueItems.Where(ci => ci.Name == "chi").First();
+        var catalogue = CatalogueRepository.GetAllObjects<Catalogue>().FirstOrDefault(static c => c.Name == "bob");
+        var chiColumnInfo = catalogue.CatalogueItems.First(static ci => ci.Name == "chi");
         var ei = chiColumnInfo.ExtractionInformation;
         ei.IsExtractionIdentifier = true;
         ei.IsPrimaryKey = true;
         ei.SaveToDatabase();
         var project = new Project(DataExportRepository, "MyProject")
         {
-            ProjectNumber = 500
+            ProjectNumber = 500,
+            ExtractionDirectory = Path.GetTempPath()
         };
-        project.ExtractionDirectory = Path.GetTempPath();
         project.SaveToDatabase();
-        CohortIdentificationConfiguration cic = new CohortIdentificationConfiguration(CatalogueRepository, "Cohort1");
+        var cic = new CohortIdentificationConfiguration(CatalogueRepository, "Cohort1");
         cic.CreateRootContainerIfNotExists();
         var agg1 = new AggregateConfiguration(CatalogueRepository, catalogue, "agg1");
         var conf = new AggregateConfiguration(CatalogueRepository, catalogue, "UnitTestShortcutAggregate");
@@ -106,13 +106,13 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
         dim.SaveToDatabase();
         agg1.SaveToDatabase();
 
-        string CohortDatabaseName = TestDatabaseNames.GetConsistentName("CohortDatabase");
-        string cohortTableName = "Cohort";
-        string definitionTableName = "CohortDefinition";
-        string ExternalCohortTableNameInCatalogue = "CohortTests";
+        var CohortDatabaseName = TestDatabaseNames.GetConsistentName("CohortDatabase");
+        var cohortTableName = "Cohort";
+        var definitionTableName = "CohortDefinition";
+        var ExternalCohortTableNameInCatalogue = "CohortTests";
         const string ReleaseIdentifierFieldName = "ReleaseId";
         const string DefinitionTableForeignKeyField = "cohortDefinition_id";
-        DiscoveredDatabase _cohortDatabase = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(CohortDatabaseName);
+        var _cohortDatabase = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(CohortDatabaseName);
         if (_cohortDatabase.Exists())
             DeleteTables(_cohortDatabase);
         else
@@ -166,7 +166,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
                     };
 
         newExternal.SaveToDatabase();
-        var cohortPipeline = CatalogueRepository.GetAllObjects<Pipeline>().Where(p => p.Name == "CREATE COHORT:By Executing Cohort Identification Configuration").First();
+        var cohortPipeline = CatalogueRepository.GetAllObjects<Pipeline>().First(static p => p.Name == "CREATE COHORT:By Executing Cohort Identification Configuration");
         var newCohortCmd = new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(
             new ThrowImmediatelyActivator(RepositoryLocator),
             cic,
@@ -174,14 +174,14 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
             "MyCohort",
             project,
             cohortPipeline
-            );
+        );
         newCohortCmd.Execute();
-        ExtractableCohort _extractableCohort = new ExtractableCohort(DataExportRepository, newExternal, 1);
+        var extractableCohort = new ExtractableCohort(DataExportRepository, newExternal, 1);
 
         var ec = new ExtractionConfiguration(DataExportRepository, project)
         {
             Name = "ext1",
-            Cohort_ID = _extractableCohort.ID
+            Cohort_ID = extractableCohort.ID
         };
         ec.AddDatasetToConfiguration(new ExtractableDataSet(DataExportRepository, catalogue));
 
@@ -197,7 +197,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
         var argumentTblNamePattern = destinationArguments.Single(a => a.Name == "TableNamingPattern");
         var reExtract = destinationArguments.Single(a => a.Name == "AppendDataIfTableExists");
         Assert.That(argumentServer.Name, Is.EqualTo("TargetDatabaseServer"));
-        ExternalDatabaseServer _extractionServer = new ExternalDatabaseServer(CatalogueRepository, "myserver", null)
+        var _extractionServer = new ExternalDatabaseServer(CatalogueRepository, "myserver", null)
         {
             Server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Name,
             Username = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExplicitUsernameIfAny,
@@ -285,7 +285,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
     [Test]
     public void ReExtractToADatabaseWithNewDataAndNoPKs()
     {
-        var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
 
         //create catalogue from file
         var csvFile = CreateFileInForLoading("bob.csv", 1, new Random(5000));
@@ -309,19 +309,19 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
             null, db, pipe, null);
 
         cmd.Execute();
-        var catalogue = CatalogueRepository.GetAllObjects<Catalogue>().Where(c => c.Name == "bob").FirstOrDefault();
-        var chiColumnInfo = catalogue.CatalogueItems.Where(ci => ci.Name == "chi").First();
+        var catalogue = CatalogueRepository.GetAllObjects<Catalogue>().FirstOrDefault(static c => c.Name == "bob");
+        var chiColumnInfo = catalogue.CatalogueItems.First(static ci => ci.Name == "chi");
         var ei = chiColumnInfo.ExtractionInformation;
         ei.IsExtractionIdentifier = true;
         ei.IsPrimaryKey = true;
         ei.SaveToDatabase();
         var project = new Project(DataExportRepository, "MyProject")
         {
-            ProjectNumber = 500
+            ProjectNumber = 500,
+            ExtractionDirectory = Path.GetTempPath()
         };
-        project.ExtractionDirectory = Path.GetTempPath();
         project.SaveToDatabase();
-        CohortIdentificationConfiguration cic = new CohortIdentificationConfiguration(CatalogueRepository, "Cohort1");
+        var cic = new CohortIdentificationConfiguration(CatalogueRepository, "Cohort1");
         cic.CreateRootContainerIfNotExists();
         var agg1 = new AggregateConfiguration(CatalogueRepository, catalogue, "agg1");
         var conf = new AggregateConfiguration(CatalogueRepository, catalogue, "UnitTestShortcutAggregate");
@@ -333,13 +333,13 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
         dim.SaveToDatabase();
         agg1.SaveToDatabase();
 
-        string CohortDatabaseName = TestDatabaseNames.GetConsistentName("CohortDatabase");
-        string cohortTableName = "Cohort";
-        string definitionTableName = "CohortDefinition";
-        string ExternalCohortTableNameInCatalogue = "CohortTests";
+        var CohortDatabaseName = TestDatabaseNames.GetConsistentName("CohortDatabase");
+        var cohortTableName = "Cohort";
+        var definitionTableName = "CohortDefinition";
+        var ExternalCohortTableNameInCatalogue = "CohortTests";
         const string ReleaseIdentifierFieldName = "ReleaseId";
         const string DefinitionTableForeignKeyField = "cohortDefinition_id";
-        DiscoveredDatabase _cohortDatabase = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(CohortDatabaseName);
+        var _cohortDatabase = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(CohortDatabaseName);
         if (_cohortDatabase.Exists())
             DeleteTables(_cohortDatabase);
         else
@@ -392,7 +392,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
                     };
 
         newExternal.SaveToDatabase();
-        var cohortPipeline = CatalogueRepository.GetAllObjects<Pipeline>().Where(p => p.Name == "CREATE COHORT:By Executing Cohort Identification Configuration").First();
+        var cohortPipeline = CatalogueRepository.GetAllObjects<Pipeline>().First(static p => p.Name == "CREATE COHORT:By Executing Cohort Identification Configuration");
         var newCohortCmd = new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(
             new ThrowImmediatelyActivator(RepositoryLocator),
             cic,
@@ -400,14 +400,14 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
             "MyCohort",
             project,
             cohortPipeline
-            );
+        );
         newCohortCmd.Execute();
-        ExtractableCohort _extractableCohort = new ExtractableCohort(DataExportRepository, newExternal, 1);
+        var extractableCohort = new ExtractableCohort(DataExportRepository, newExternal, 1);
 
         var ec = new ExtractionConfiguration(DataExportRepository, project)
         {
             Name = "ext1",
-            Cohort_ID = _extractableCohort.ID
+            Cohort_ID = extractableCohort.ID
         };
         ec.AddDatasetToConfiguration(new ExtractableDataSet(DataExportRepository, catalogue));
 
@@ -423,7 +423,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
         var argumentTblNamePattern = destinationArguments.Single(a => a.Name == "TableNamingPattern");
         var reExtract = destinationArguments.Single(a => a.Name == "AppendDataIfTableExists");
         Assert.That(argumentServer.Name, Is.EqualTo("TargetDatabaseServer"));
-        ExternalDatabaseServer _extractionServer = new ExternalDatabaseServer(CatalogueRepository, "myserver", null)
+        var _extractionServer = new ExternalDatabaseServer(CatalogueRepository, "myserver", null)
         {
             Server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Name,
             Username = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExplicitUsernameIfAny,
@@ -486,17 +486,17 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
         //add new entry here
         var tbl = db.DiscoverTables(false).First();
         tbl.Insert(new Dictionary<string, object>
-            {
-                { "chi","1111111111"},
-                {"notes","T"},
-                {"dtCreated", new DateTime(2001, 1, 2) },
-                {"century",19},
-                {"surname","1234"},
-                {"forename","yes"},
-                {"sex","M"},
-            });
+        {
+            { "chi","1111111111"},
+            {"notes","T"},
+            {"dtCreated", new DateTime(2001, 1, 2) },
+            {"century",19},
+            {"surname","1234"},
+            {"forename","yes"},
+            {"sex","M"},
+        });
 
-        CohortIdentificationConfiguration cic2 = new CohortIdentificationConfiguration(CatalogueRepository, "Cohort1");
+        var cic2 = new CohortIdentificationConfiguration(CatalogueRepository, "Cohort1");
         cic2.CreateRootContainerIfNotExists();
         var agg12 = new AggregateConfiguration(CatalogueRepository, catalogue, "agg1");
         _ = new AggregateConfiguration(CatalogueRepository, catalogue, "UnitTestShortcutAggregate");
@@ -509,7 +509,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
         agg12.SaveToDatabase();
 
         newCohortCmd.Execute();
-        ExtractableCohort _extractableCohort2 = new ExtractableCohort(DataExportRepository, newExternal, 2);
+        var _extractableCohort2 = new ExtractableCohort(DataExportRepository, newExternal, 2);
         ec.Cohort_ID = _extractableCohort2.ID;
         ec.SaveToDatabase();
 
@@ -539,7 +539,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
     [Test]
     public void ReExtractToADatabaseWithNewDataAndSinglePK()
     {
-        var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
 
         //create catalogue from file
         var csvFile = CreateFileInForLoading("bob.csv", 1, new Random(5000));
@@ -566,24 +566,24 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
             null, db, pipe, null);
 
         cmd.Execute();
-        var catalogue = CatalogueRepository.GetAllObjects<Catalogue>().Where(c => c.Name == "bob").FirstOrDefault();
-        var chiColumnInfo = catalogue.CatalogueItems.Where(ci => ci.Name == "chi").First();
+        var catalogue = CatalogueRepository.GetAllObjects<Catalogue>().FirstOrDefault(static c => c.Name == "bob");
+        var chiColumnInfo = catalogue.CatalogueItems.First(static ci => ci.Name == "chi");
         var ei = chiColumnInfo.ExtractionInformation;
         ei.IsExtractionIdentifier = true;
         ei.IsPrimaryKey = true;
         ei.SaveToDatabase();
 
-        var surnameInfo = catalogue.CatalogueItems.Where(ci => ci.Name == "surname").First();
+        var surnameInfo = catalogue.CatalogueItems.First(static ci => ci.Name == "surname");
         surnameInfo.ExtractionInformation.IsPrimaryKey = true;
         surnameInfo.ExtractionInformation.SaveToDatabase();
 
         var project = new Project(DataExportRepository, "MyProject")
         {
-            ProjectNumber = 500
+            ProjectNumber = 500,
+            ExtractionDirectory = Path.GetTempPath()
         };
-        project.ExtractionDirectory = Path.GetTempPath();
         project.SaveToDatabase();
-        CohortIdentificationConfiguration cic = new CohortIdentificationConfiguration(CatalogueRepository, "Cohort1");
+        var cic = new CohortIdentificationConfiguration(CatalogueRepository, "Cohort1");
         cic.CreateRootContainerIfNotExists();
         var agg1 = new AggregateConfiguration(CatalogueRepository, catalogue, "agg1");
         var conf = new AggregateConfiguration(CatalogueRepository, catalogue, "UnitTestShortcutAggregate");
@@ -595,13 +595,13 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
         dim.SaveToDatabase();
         agg1.SaveToDatabase();
 
-        string CohortDatabaseName = TestDatabaseNames.GetConsistentName("CohortDatabase");
-        string cohortTableName = "Cohort";
-        string definitionTableName = "CohortDefinition";
-        string ExternalCohortTableNameInCatalogue = "CohortTests";
+        var CohortDatabaseName = TestDatabaseNames.GetConsistentName("CohortDatabase");
+        var cohortTableName = "Cohort";
+        var definitionTableName = "CohortDefinition";
+        var ExternalCohortTableNameInCatalogue = "CohortTests";
         const string ReleaseIdentifierFieldName = "ReleaseId";
         const string DefinitionTableForeignKeyField = "cohortDefinition_id";
-        DiscoveredDatabase _cohortDatabase = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(CohortDatabaseName);
+        var _cohortDatabase = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(CohortDatabaseName);
         if (_cohortDatabase.Exists())
             DeleteTables(_cohortDatabase);
         else
@@ -654,7 +654,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
                     };
 
         newExternal.SaveToDatabase();
-        var cohortPipeline = CatalogueRepository.GetAllObjects<Pipeline>().Where(p => p.Name == "CREATE COHORT:By Executing Cohort Identification Configuration").First();
+        var cohortPipeline = CatalogueRepository.GetAllObjects<Pipeline>().First(static p => p.Name == "CREATE COHORT:By Executing Cohort Identification Configuration");
         var newCohortCmd = new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(
             new ThrowImmediatelyActivator(RepositoryLocator),
             cic,
@@ -662,14 +662,14 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
             "MyCohort",
             project,
             cohortPipeline
-            );
+        );
         newCohortCmd.Execute();
-        ExtractableCohort _extractableCohort = new ExtractableCohort(DataExportRepository, newExternal, 1);
+        var extractableCohort = new ExtractableCohort(DataExportRepository, newExternal, 1);
 
         var ec = new ExtractionConfiguration(DataExportRepository, project)
         {
             Name = "ext1",
-            Cohort_ID = _extractableCohort.ID
+            Cohort_ID = extractableCohort.ID
         };
         ec.AddDatasetToConfiguration(new ExtractableDataSet(DataExportRepository, catalogue));
 
@@ -685,7 +685,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
         var argumentTblNamePattern = destinationArguments.Single(a => a.Name == "TableNamingPattern");
         var reExtract = destinationArguments.Single(a => a.Name == "AppendDataIfTableExists");
         Assert.That(argumentServer.Name, Is.EqualTo("TargetDatabaseServer"));
-        ExternalDatabaseServer _extractionServer = new ExternalDatabaseServer(CatalogueRepository, "myserver", null)
+        var _extractionServer = new ExternalDatabaseServer(CatalogueRepository, "myserver", null)
         {
             Server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Name,
             Username = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExplicitUsernameIfAny,
@@ -748,17 +748,17 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
         //add new entry here
         var tbl = db.DiscoverTables(false).First();
         tbl.Insert(new Dictionary<string, object>
-            {
-                { "chi","1111111111"},
-                {"notes","T"},
-                {"dtCreated", new DateTime(2001, 1, 2) },
-                {"century",19},
-                {"surname","1234"},
-                {"forename","yes"},
-                {"sex","M"},
-            });
+        {
+            { "chi","1111111111"},
+            {"notes","T"},
+            {"dtCreated", new DateTime(2001, 1, 2) },
+            {"century",19},
+            {"surname","1234"},
+            {"forename","yes"},
+            {"sex","M"},
+        });
 
-        CohortIdentificationConfiguration cic2 = new CohortIdentificationConfiguration(CatalogueRepository, "Cohort1");
+        var cic2 = new CohortIdentificationConfiguration(CatalogueRepository, "Cohort1");
         cic2.CreateRootContainerIfNotExists();
         var agg12 = new AggregateConfiguration(CatalogueRepository, catalogue, "agg1");
         _ = new AggregateConfiguration(CatalogueRepository, catalogue, "UnitTestShortcutAggregate");
@@ -770,15 +770,15 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
         dim2.SaveToDatabase();
         agg12.SaveToDatabase();
         newCohortCmd = new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(
-           new ThrowImmediatelyActivator(RepositoryLocator),
-           cic2,
-           newExternal,
-           "MyCohort",
-           project,
-           cohortPipeline
-           );
+            new ThrowImmediatelyActivator(RepositoryLocator),
+            cic2,
+            newExternal,
+            "MyCohort",
+            project,
+            cohortPipeline
+        );
         newCohortCmd.Execute();
-        ExtractableCohort _extractableCohort2 = new ExtractableCohort(DataExportRepository, newExternal, 2);
+        var _extractableCohort2 = new ExtractableCohort(DataExportRepository, newExternal, 2);
         ec.Cohort_ID = _extractableCohort2.ID;
         ec.SaveToDatabase();
 
@@ -808,7 +808,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
     [Test]
     public void ReExtractToADatabaseWithNewDataAndExtractionIdentifierIsPK()
     {
-        var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
 
         //create catalogue from file
         var csvFile = CreateFileInForLoading("bob.csv", 1, new Random(5000));
@@ -835,8 +835,8 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
             null, db, pipe, null);
 
         cmd.Execute();
-        var catalogue = CatalogueRepository.GetAllObjects<Catalogue>().Where(c => c.Name == "bob").FirstOrDefault();
-        var chiColumnInfo = catalogue.CatalogueItems.Where(ci => ci.Name == "chi").First();
+        var catalogue = CatalogueRepository.GetAllObjects<Catalogue>().FirstOrDefault(static c => c.Name == "bob");
+        var chiColumnInfo = catalogue.CatalogueItems.First(static ci => ci.Name == "chi");
         var ei = chiColumnInfo.ExtractionInformation;
         ei.IsPrimaryKey = true;
         ei.IsExtractionIdentifier = true;
@@ -844,11 +844,11 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
 
         var project = new Project(DataExportRepository, "MyProject")
         {
-            ProjectNumber = 500
+            ProjectNumber = 500,
+            ExtractionDirectory = Path.GetTempPath()
         };
-        project.ExtractionDirectory = Path.GetTempPath();
         project.SaveToDatabase();
-        CohortIdentificationConfiguration cic = new CohortIdentificationConfiguration(CatalogueRepository, "Cohort1");
+        var cic = new CohortIdentificationConfiguration(CatalogueRepository, "Cohort1");
         cic.CreateRootContainerIfNotExists();
         var agg1 = new AggregateConfiguration(CatalogueRepository, catalogue, "agg1");
         var conf = new AggregateConfiguration(CatalogueRepository, catalogue, "UnitTestShortcutAggregate");
@@ -860,13 +860,13 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
         dim.SaveToDatabase();
         agg1.SaveToDatabase();
 
-        string CohortDatabaseName = TestDatabaseNames.GetConsistentName("CohortDatabase");
-        string cohortTableName = "Cohort";
-        string definitionTableName = "CohortDefinition";
-        string ExternalCohortTableNameInCatalogue = "CohortTests";
+        var CohortDatabaseName = TestDatabaseNames.GetConsistentName("CohortDatabase");
+        const string cohortTableName = "Cohort";
+        const string definitionTableName = "CohortDefinition";
+        var ExternalCohortTableNameInCatalogue = "CohortTests";
         const string ReleaseIdentifierFieldName = "ReleaseId";
         const string DefinitionTableForeignKeyField = "cohortDefinition_id";
-        DiscoveredDatabase _cohortDatabase = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(CohortDatabaseName);
+        var _cohortDatabase = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(CohortDatabaseName);
         if (_cohortDatabase.Exists())
             DeleteTables(_cohortDatabase);
         else
@@ -920,7 +920,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
                     };
 
         newExternal.SaveToDatabase();
-        var cohortPipeline = CatalogueRepository.GetAllObjects<Pipeline>().Where(p => p.Name == "CREATE COHORT:By Executing Cohort Identification Configuration").First();
+        var cohortPipeline = CatalogueRepository.GetAllObjects<Pipeline>().First(static p => p.Name == "CREATE COHORT:By Executing Cohort Identification Configuration");
         var newCohortCmd = new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(
             new ThrowImmediatelyActivator(RepositoryLocator),
             cic,
@@ -928,14 +928,14 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
             "MyCohort",
             project,
             cohortPipeline
-            );
+        );
         newCohortCmd.Execute();
-        ExtractableCohort _extractableCohort = new ExtractableCohort(DataExportRepository, newExternal, 1);
+        var extractableCohort = new ExtractableCohort(DataExportRepository, newExternal, 1);
 
         var ec = new ExtractionConfiguration(DataExportRepository, project)
         {
             Name = "ext1",
-            Cohort_ID = _extractableCohort.ID
+            Cohort_ID = extractableCohort.ID
         };
         ec.AddDatasetToConfiguration(new ExtractableDataSet(DataExportRepository, catalogue));
 
@@ -951,7 +951,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
         var argumentTblNamePattern = destinationArguments.Single(a => a.Name == "TableNamingPattern");
         var reExtract = destinationArguments.Single(a => a.Name == "AppendDataIfTableExists");
         Assert.That(argumentServer.Name, Is.EqualTo("TargetDatabaseServer"));
-        ExternalDatabaseServer _extractionServer = new ExternalDatabaseServer(CatalogueRepository, "myserver", null)
+        var _extractionServer = new ExternalDatabaseServer(CatalogueRepository, "myserver", null)
         {
             Server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Name,
             Username = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExplicitUsernameIfAny,
@@ -1014,17 +1014,17 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
         //add new entry here
         var tbl = db.DiscoverTables(false).First();
         tbl.Insert(new Dictionary<string, object>
-            {
-                { "chi","1111111111"},
-                {"notes","T"},
-                {"dtCreated", new DateTime(2001, 1, 2) },
-                {"century",19},
-                {"surname","1234"},
-                {"forename","yes"},
-                {"sex","M"},
-            });
+        {
+            { "chi","1111111111"},
+            {"notes","T"},
+            {"dtCreated", new DateTime(2001, 1, 2) },
+            {"century",19},
+            {"surname","1234"},
+            {"forename","yes"},
+            {"sex","M"},
+        });
 
-        CohortIdentificationConfiguration cic2 = new CohortIdentificationConfiguration(CatalogueRepository, "Cohort1");
+        var cic2 = new CohortIdentificationConfiguration(CatalogueRepository, "Cohort1");
         cic2.CreateRootContainerIfNotExists();
         var agg12 = new AggregateConfiguration(CatalogueRepository, catalogue, "agg1");
         _ = new AggregateConfiguration(CatalogueRepository, catalogue, "UnitTestShortcutAggregate");
@@ -1037,7 +1037,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
         agg12.SaveToDatabase();
 
         newCohortCmd.Execute();
-        ExtractableCohort _extractableCohort2 = new ExtractableCohort(DataExportRepository, newExternal, 2);
+        var _extractableCohort2 = new ExtractableCohort(DataExportRepository, newExternal, 2);
         ec.Cohort_ID = _extractableCohort2.ID;
         ec.SaveToDatabase();
 
@@ -1067,7 +1067,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
     [Test]
     public void ExtractToDatabaseUseTriggers()
     {
-        var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
 
         //create catalogue from file
         var csvFile = CreateFileInForLoading("bob.csv", 1, new Random(5000));
@@ -1094,8 +1094,8 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
             null, db, pipe, null);
 
         cmd.Execute();
-        var catalogue = CatalogueRepository.GetAllObjects<Catalogue>().Where(c => c.Name == "bob").FirstOrDefault();
-        var chiColumnInfo = catalogue.CatalogueItems.Where(ci => ci.Name == "chi").First();
+        var catalogue = CatalogueRepository.GetAllObjects<Catalogue>().FirstOrDefault(static c => c.Name == "bob");
+        var chiColumnInfo = catalogue.CatalogueItems.First(static ci => ci.Name == "chi");
         var ei = chiColumnInfo.ExtractionInformation;
         ei.IsPrimaryKey = true;
         ei.IsExtractionIdentifier = true;
@@ -1103,11 +1103,11 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
 
         var project = new Project(DataExportRepository, "MyProject")
         {
-            ProjectNumber = 500
+            ProjectNumber = 500,
+            ExtractionDirectory = Path.GetTempPath()
         };
-        project.ExtractionDirectory = Path.GetTempPath();
         project.SaveToDatabase();
-        CohortIdentificationConfiguration cic = new CohortIdentificationConfiguration(CatalogueRepository, "Cohort1");
+        var cic = new CohortIdentificationConfiguration(CatalogueRepository, "Cohort1");
         cic.CreateRootContainerIfNotExists();
         var agg1 = new AggregateConfiguration(CatalogueRepository, catalogue, "agg1");
         var conf = new AggregateConfiguration(CatalogueRepository, catalogue, "UnitTestShortcutAggregate");
@@ -1119,13 +1119,13 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
         dim.SaveToDatabase();
         agg1.SaveToDatabase();
 
-        string CohortDatabaseName = TestDatabaseNames.GetConsistentName("CohortDatabase");
-        string cohortTableName = "Cohort";
-        string definitionTableName = "CohortDefinition";
-        string ExternalCohortTableNameInCatalogue = "CohortTests";
+        var CohortDatabaseName = TestDatabaseNames.GetConsistentName("CohortDatabase");
+        var cohortTableName = "Cohort";
+        var definitionTableName = "CohortDefinition";
+        var ExternalCohortTableNameInCatalogue = "CohortTests";
         const string ReleaseIdentifierFieldName = "ReleaseId";
         const string DefinitionTableForeignKeyField = "cohortDefinition_id";
-        DiscoveredDatabase _cohortDatabase = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(CohortDatabaseName);
+        var _cohortDatabase = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(CohortDatabaseName);
         if (_cohortDatabase.Exists())
             DeleteTables(_cohortDatabase);
         else
@@ -1179,7 +1179,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
                     };
 
         newExternal.SaveToDatabase();
-        var cohortPipeline = CatalogueRepository.GetAllObjects<Pipeline>().Where(p => p.Name == "CREATE COHORT:By Executing Cohort Identification Configuration").First();
+        var cohortPipeline = CatalogueRepository.GetAllObjects<Pipeline>().First(static p => p.Name == "CREATE COHORT:By Executing Cohort Identification Configuration");
         var newCohortCmd = new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(
             new ThrowImmediatelyActivator(RepositoryLocator),
             cic,
@@ -1187,14 +1187,14 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
             "MyCohort",
             project,
             cohortPipeline
-            );
+        );
         newCohortCmd.Execute();
-        ExtractableCohort _extractableCohort = new ExtractableCohort(DataExportRepository, newExternal, 1);
+        var extractableCohort = new ExtractableCohort(DataExportRepository, newExternal, 1);
 
         var ec = new ExtractionConfiguration(DataExportRepository, project)
         {
             Name = "ext1",
-            Cohort_ID = _extractableCohort.ID
+            Cohort_ID = extractableCohort.ID
         };
         ec.AddDatasetToConfiguration(new ExtractableDataSet(DataExportRepository, catalogue));
 
@@ -1205,20 +1205,20 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
             typeof(ExecuteFullExtractionToDatabaseMSSql), 0, "MS SQL Destination");
         var destinationArguments = component.CreateArgumentsForClassIfNotExists<ExecuteFullExtractionToDatabaseMSSql>()
             .ToList();
-        var argumentServer = destinationArguments.Single(a => a.Name == "TargetDatabaseServer");
-        var argumentDbNamePattern = destinationArguments.Single(a => a.Name == "DatabaseNamingPattern");
-        var argumentTblNamePattern = destinationArguments.Single(a => a.Name == "TableNamingPattern");
-        var reExtract = destinationArguments.Single(a => a.Name == "AppendDataIfTableExists");
+        var argumentServer = destinationArguments.Single(static a => a.Name == "TargetDatabaseServer");
+        var argumentDbNamePattern = destinationArguments.Single(static a => a.Name == "DatabaseNamingPattern");
+        var argumentTblNamePattern = destinationArguments.Single(static a => a.Name == "TableNamingPattern");
+        var reExtract = destinationArguments.Single(static a => a.Name == "AppendDataIfTableExists");
         Assert.That(argumentServer.Name, Is.EqualTo("TargetDatabaseServer"));
-        ExternalDatabaseServer _extractionServer = new ExternalDatabaseServer(CatalogueRepository, "myserver", null)
+        var extractionServer = new ExternalDatabaseServer(CatalogueRepository, "myserver", null)
         {
             Server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Name,
             Username = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExplicitUsernameIfAny,
             Password = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExplicitPasswordIfAny
         };
-        _extractionServer.SaveToDatabase();
+        extractionServer.SaveToDatabase();
 
-        argumentServer.SetValue(_extractionServer);
+        argumentServer.SetValue(extractionServer);
         argumentServer.SaveToDatabase();
         argumentDbNamePattern.SetValue($"{TestDatabaseNames.Prefix}$p_$n");
         argumentDbNamePattern.SaveToDatabase();
@@ -1231,8 +1231,9 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
             typeof(ExecuteCrossServerDatasetExtractionSource), -1, "Source");
         var arguments2 = component2.CreateArgumentsForClassIfNotExists<ExecuteCrossServerDatasetExtractionSource>()
             .ToArray();
-        arguments2.Single(a => a.Name.Equals("AllowEmptyExtractions")).SetValue(false);
-        arguments2.Single(a => a.Name.Equals("AllowEmptyExtractions")).SaveToDatabase();
+        var allowEmpty = arguments2.Single(static a => a.Name.Equals("AllowEmptyExtractions"));
+        allowEmpty.SetValue(false);
+        allowEmpty.SaveToDatabase();
 
         //configure the component as the destination
         extractionPipeline.DestinationPipelineComponent_ID = component.ID;
@@ -1275,17 +1276,17 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
         ////add new entry here
         var tbl = db.DiscoverTables(false).First();
         tbl.Insert(new Dictionary<string, object>
-            {
-                { "chi","1111111111"},
-                {"notes","T"},
-                {"dtCreated", new DateTime(2001, 1, 2) },
-                {"century",19},
-                {"surname","1234"},
-                {"forename","yes"},
-                {"sex","M"},
-            });
+        {
+            { "chi","1111111111"},
+            {"notes","T"},
+            {"dtCreated", new DateTime(2001, 1, 2) },
+            {"century",19},
+            {"surname","1234"},
+            {"forename","yes"},
+            {"sex","M"},
+        });
 
-        CohortIdentificationConfiguration cic2 = new CohortIdentificationConfiguration(CatalogueRepository, "Cohort1");
+        var cic2 = new CohortIdentificationConfiguration(CatalogueRepository, "Cohort1");
         cic2.CreateRootContainerIfNotExists();
         var agg12 = new AggregateConfiguration(CatalogueRepository, catalogue, "agg1");
         _ = new AggregateConfiguration(CatalogueRepository, catalogue, "UnitTestShortcutAggregate");
@@ -1298,7 +1299,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
         agg12.SaveToDatabase();
 
         newCohortCmd.Execute();
-        ExtractableCohort _extractableCohort2 = new ExtractableCohort(DataExportRepository, newExternal, 2);
+        var _extractableCohort2 = new ExtractableCohort(DataExportRepository, newExternal, 2);
         ec.Cohort_ID = _extractableCohort2.ID;
         ec.SaveToDatabase();
 

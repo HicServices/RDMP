@@ -265,8 +265,8 @@ public partial class StartupUI : Form, ICheckNotifier
 
             case RDMPPlatformDatabaseStatus.RequiresPatching:
 
-                if (MessageBox.Show($"Patching Required on database of type {eventArgs.Patcher.Name}", "Patch",
-                        MessageBoxButtons.YesNo) == DialogResult.Yes)
+                if (MessageBox.Show($"Patching Required on database of type {eventArgs.Patcher.Name}", "Patch RDMP",
+                        MessageBoxButtons.OKCancel) == DialogResult.OK)
                 {
                     PatchingUI.ShowIfRequired(
                         eventArgs.Repository.DiscoveredServer.GetCurrentDatabase(),
@@ -275,8 +275,8 @@ public partial class StartupUI : Form, ICheckNotifier
                 }
                 else
                 {
-                    MessageBox.Show("Patching was cancelled, application will exit");
-                    Application.Exit();
+                    MessageBox.Show("Patching was cancelled. Apply Patch to use the latest version of RDMP. Application will exit."); 
+                    Environment.Exit(0);
                 }
 
                 break;

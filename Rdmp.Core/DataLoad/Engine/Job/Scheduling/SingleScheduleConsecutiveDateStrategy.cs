@@ -39,7 +39,7 @@ public class SingleScheduleConsecutiveDateStrategy : IJobDateGenerationStrategy
     /// 
     /// </summary>
     /// <param name="batchSize"></param>
-    /// <param name="allowLoadingFutureDates">if true then dates can be loaded that are in the future otherwise the returned list of dates will only contain dates in teh past</param>
+    /// <param name="allowLoadingFutureDates">if true then dates can be loaded that are in the future otherwise the returned list of dates will only contain dates in the past</param>
     /// <returns></returns>
     public List<DateTime> GetDates(int batchSize, bool allowLoadingFutureDates)
     {

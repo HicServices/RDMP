@@ -1279,10 +1279,10 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
     }
 
     /// <summary>
-    /// Tests the systems ability to change live table datatypes during bulk insert to accomodate novel data
+    /// Tests the systems ability to change live table datatypes during bulk insert to accommodate novel data
     /// 
     /// <para>This test set passes v1 in the first batch which determines the initial Type of the database table.  Then v2 is passed in the next batch
-    /// which will (in most cases) require an ALTER of the live table to accomodate the wider datatype.</para>
+    /// which will (in most cases) require an ALTER of the live table to accommodate the wider datatype.</para>
     /// </summary>
     /// <param name="dbType">The DBMS to test</param>
     /// <param name="v1">The row value to send in batch 1</param>
@@ -1551,10 +1551,11 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, ex);
             throw;
         }
-        var t = db.DiscoverTables(false).Select(t => t.GetRuntimeName()).ToList();
+
+        var t = db.DiscoverTables(false).Select(static t => t.GetRuntimeName()).ToList();
         Assert.That(t.Contains("DataTableUploadDestinationTests_Archive"), Is.EqualTo(false));
-        var destinationTable = db.DiscoverTables(false).Where(t => t.GetRuntimeName() == "DataTableUploadDestinationTests").First();
-        var columns = destinationTable.DiscoverColumns().Select(c => c.GetRuntimeName());
+        var destinationTable = db.DiscoverTables(false).First(static t => t.GetRuntimeName() == "DataTableUploadDestinationTests");
+        var columns = destinationTable.DiscoverColumns().Select(static c => c.GetRuntimeName());
         Assert.That(columns.Contains(SpecialFieldNames.DataLoadRunID), Is.EqualTo(false));
     }
 
@@ -1586,10 +1587,11 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, ex);
             throw;
         }
-        var t = db.DiscoverTables(false).Select(t => t.GetRuntimeName()).ToList();
+
+        var t = db.DiscoverTables(false).Select(static t => t.GetRuntimeName()).ToList();
         Assert.That(t.Contains("DataTableUploadDestinationTests_Archive"), Is.EqualTo(true));
-        var destinationTable = db.DiscoverTables(false).Where(t => t.GetRuntimeName() == "DataTableUploadDestinationTests").First();
-        var columns = destinationTable.DiscoverColumns().Select(c => c.GetRuntimeName());
+        var destinationTable = db.DiscoverTables(false).First(static t => t.GetRuntimeName() == "DataTableUploadDestinationTests");
+        var columns = destinationTable.DiscoverColumns().Select(static c => c.GetRuntimeName());
         Assert.That(columns.Contains(SpecialFieldNames.DataLoadRunID), Is.EqualTo(true));
     }
 
@@ -1633,10 +1635,12 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, ex);
             throw;
         }
-        var table = db.DiscoverTables(false).Where(t => t.GetRuntimeName() == "DataTableUploadDestinationTests").First();
-        var resultDT = table.GetDataTable();
-        Assert.That(resultDT.Rows.Count, Is.EqualTo(1));
+
+        var table = db.DiscoverTables(false).First(static t => t.GetRuntimeName() == "DataTableUploadDestinationTests");
+        using var resultDt = table.GetDataTable();
+        Assert.That(resultDt.Rows, Has.Count.EqualTo(1));
     }
+
     [Test]
     public void DataTableUploadClashSameRowWithTrigger()
     {
@@ -1678,10 +1682,12 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, ex);
             throw;
         }
-        var table = db.DiscoverTables(false).Where(t => t.GetRuntimeName() == "DataTableUploadDestinationTests").First();
-        var resultDT = table.GetDataTable();
-        Assert.That(resultDT.Rows.Count, Is.EqualTo(1));
+
+        var table = db.DiscoverTables(false).First(static t => t.GetRuntimeName() == "DataTableUploadDestinationTests");
+        using var resultDt = table.GetDataTable();
+        Assert.That(resultDt.Rows, Has.Count.EqualTo(1));
     }
+
     [Test]
     public void DataTableUploadClashUpdateNoTrigger()
     {
@@ -1730,12 +1736,13 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         destination.PreInitialize(db, toConsole);
         Assert.Throws<Exception>(() => destination.ProcessPipelineData(dt1, toConsole, token));
         destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
-        var table = db.DiscoverTables(false).Where(t => t.GetRuntimeName() == "DataTableUploadDestinationTests").First();
-        var resultDT = table.GetDataTable();
-        Assert.That(resultDT.Rows.Count, Is.EqualTo(1));
-        Assert.That(resultDT.Rows[0].ItemArray[0], Is.EqualTo("Fish"));
-        Assert.That(resultDT.Rows[0].ItemArray[1], Is.EqualTo("Friend"));
+        var table = db.DiscoverTables(false).First(static t => t.GetRuntimeName() == "DataTableUploadDestinationTests");
+        var resultDt = table.GetDataTable();
+        Assert.That(resultDt.Rows, Has.Count.EqualTo(1));
+        Assert.That(resultDt.Rows[0].ItemArray[0], Is.EqualTo("Fish"));
+        Assert.That(resultDt.Rows[0].ItemArray[1], Is.EqualTo("Friend"));
     }
+
     [Test]
     public void DataTableUploadClashUpdateWithTrigger()
     {
@@ -1777,16 +1784,18 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, ex);
             throw;
         }
-        var table = db.DiscoverTables(false).Where(t => t.GetRuntimeName() == "DataTableUploadDestinationTests").First();
-        var resultDT = table.GetDataTable();
-        Assert.That(resultDT.Rows.Count, Is.EqualTo(1));
-        Assert.That(resultDT.Rows[0].ItemArray[0], Is.EqualTo("Fish"));
-        Assert.That(resultDT.Rows[0].ItemArray[1], Is.EqualTo("Enemy"));
-        table = db.DiscoverTables(false).Where(t => t.GetRuntimeName() == "DataTableUploadDestinationTests_Archive").First();
-        resultDT = table.GetDataTable();
-        Assert.That(resultDT.Rows.Count, Is.EqualTo(1));
-        Assert.That(resultDT.Rows[0].ItemArray[0], Is.EqualTo("Fish"));
+
+        var table = db.DiscoverTables(false).First(static t => t.GetRuntimeName() == "DataTableUploadDestinationTests");
+        using var resultDt = table.GetDataTable();
+        Assert.That(resultDt.Rows, Has.Count.EqualTo(1));
+        Assert.That(resultDt.Rows[0].ItemArray[0], Is.EqualTo("Fish"));
+        Assert.That(resultDt.Rows[0].ItemArray[1], Is.EqualTo("Enemy"));
+        table = db.DiscoverTables(false).First(static t => t.GetRuntimeName() == "DataTableUploadDestinationTests_Archive");
+        using var resultDt2 = table.GetDataTable();
+        Assert.That(resultDt2.Rows, Has.Count.EqualTo(1));
+        Assert.That(resultDt2.Rows[0].ItemArray[0], Is.EqualTo("Fish"));
     }
+
     //need to test rows to modify ln 354
     //test when we drop a column
     [Test]
@@ -1830,15 +1839,16 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, ex);
             throw;
         }
-        var table = db.DiscoverTables(false).Where(t => t.GetRuntimeName() == "DataTableUploadDestinationTests").First();
-        var resultDT = table.GetDataTable();
-        Assert.That(resultDT.Rows.Count, Is.EqualTo(1));
-        Assert.That(resultDT.Rows[0].ItemArray[0], Is.EqualTo("Fish"));
-        Assert.That(resultDT.Rows[0].ItemArray[1], Is.EqualTo(string.Empty));
-        table = db.DiscoverTables(false).Where(t => t.GetRuntimeName() == "DataTableUploadDestinationTests_Archive").First();
-        resultDT = table.GetDataTable();
-        Assert.That(resultDT.Rows.Count, Is.EqualTo(1));
-        Assert.That(resultDT.Rows[0].ItemArray[0], Is.EqualTo("Fish"));
+
+        var table = db.DiscoverTables(false).First(static t => t.GetRuntimeName() == "DataTableUploadDestinationTests");
+        using var resultDt = table.GetDataTable();
+        Assert.That(resultDt.Rows, Has.Count.EqualTo(1));
+        Assert.That(resultDt.Rows[0].ItemArray[0], Is.EqualTo("Fish"));
+        Assert.That(resultDt.Rows[0].ItemArray[1], Is.EqualTo(string.Empty));
+        table = db.DiscoverTables(false).First(static t => t.GetRuntimeName() == "DataTableUploadDestinationTests_Archive");
+        using var resultDt2 = table.GetDataTable();
+        Assert.That(resultDt2.Rows, Has.Count.EqualTo(1));
+        Assert.That(resultDt2.Rows[0].ItemArray[0], Is.EqualTo("Fish"));
     }
 
 

@@ -15,7 +15,7 @@ namespace Rdmp.Core.Logging.PastEvents;
 
 /// <summary>
 /// Readonly historical version of DataLoadInfo.  The central hierarchical RDMP logging database records activites across all areas of the program in a central
-/// place.  You can process these records programatically via LogManager.  This class contains public properties for each of the sub concepts (Errors, Progress
+/// place.  You can process these records programmatically via LogManager.  This class contains public properties for each of the sub concepts (Errors, Progress
 /// messages, Tables loaded etc).  See Logging.cd for more information
 /// </summary>
 public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparable

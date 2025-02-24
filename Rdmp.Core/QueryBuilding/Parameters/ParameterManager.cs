@@ -135,7 +135,7 @@ public class ParameterManager
 
 
     /// <summary>
-    /// Resolves all <see cref="ISqlParameter"/> found so far and merges/overrides as appropriate to accomodate identical side by side parameters and
+    /// Resolves all <see cref="ISqlParameter"/> found so far and merges/overrides as appropriate to accommodate identical side by side parameters and
     /// global overriding ones etc.
     /// </summary>
     /// <returns></returns>
@@ -186,7 +186,7 @@ public class ParameterManager
                 StringComparison.InvariantCultureIgnoreCase));
         if (duplicate != null)
         {
-            //deal with duplicate paramater naming e.g. @startDate BUT: declared with 2 different types
+            //deal with duplicate parameter naming e.g. @startDate BUT: declared with 2 different types
             if (
                     !toAdd.Parameter.ParameterSQL.Trim()
                         .Equals(duplicate.Parameter.ParameterSQL.Trim(), StringComparison.CurrentCultureIgnoreCase))
@@ -251,7 +251,7 @@ public class ParameterManager
     }
 
     /// <summary>
-    /// Imports all TableInfo level paramaters into a super set (with all TableInfo level paramaters from every manager you have imported).  Also imports all
+    /// Imports all TableInfo level parameters into a super set (with all TableInfo level parameters from every manager you have imported).  Also imports all
     /// QueryLevel parameters but for these it will do renames where there are conflicting named parameters, you must
     /// 
     /// </summary>
@@ -280,7 +280,7 @@ public class ParameterManager
             if (!ParametersFoundSoFarInQueryGeneration[ParameterLevel.CompositeQueryLevel].Any(p =>
                     p.ParameterName.Equals(parameterToImport.ParameterName, StringComparison.CurrentCultureIgnoreCase)))
                 ParametersFoundSoFarInQueryGeneration[ParameterLevel.TableInfo].Add(parameterToImport); //import it
-        //Do not handle renaming here because it is likely the user doesn't even know this parameter exists as it is a tableinfo level one i.e. a default they declared when they first imported their table valued fuction (or there is a QueryLevel override anyway)
+        //Do not handle renaming here because it is likely the user doesn't even know this parameter exists as it is a tableinfo level one i.e. a default they declared when they first imported their table valued function (or there is a QueryLevel override anyway)
         toImport.ParametersFoundSoFarInQueryGeneration[ParameterLevel.TableInfo].Clear();
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -455,12 +455,12 @@ public class ParameterManager
     /// 
     /// <para>This operation ignores <see cref="State"/> so you should not use the <see cref="ParameterManager"/> for code generation after calling this method</para>
     /// </summary>
-    /// <param name="deleteable"></param>
-    public void RemoveParameter(ISqlParameter deleteable)
+    /// <param name="deletable"></param>
+    public void RemoveParameter(ISqlParameter deletable)
     {
         foreach (var parameters in ParametersFoundSoFarInQueryGeneration.Values)
-            if (parameters.Contains(deleteable))
-                parameters.Remove(deleteable);
+            if (parameters.Contains(deletable))
+                parameters.Remove(deletable);
     }
 
     /// <summary>
@@ -532,7 +532,7 @@ public class ParameterManager
             var to = ParametersFoundSoFarInQueryGeneration[l];
             var from = other.ParametersFoundSoFarInQueryGeneration[l];
 
-            //add all paramters which are not already represented with an identical parameter
+            //add all parameters which are not already represented with an identical parameter
             to.AddRange(from.Where(f => !to.Any(t => AreIdentical(f, t))));
         }
     }
