@@ -51,6 +51,7 @@ namespace Rdmp.UI.AggregationUIs
             dataGridView1 = new System.Windows.Forms.DataGridView();
             tpHeatmap = new System.Windows.Forms.TabPage();
             heatmapUI = new HeatmapUI();
+            ((System.ComponentModel.ISupportInitialize)chart1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pbLoading).BeginInit();
             tabControl1.SuspendLayout();
             tpGraph.SuspendLayout();
@@ -129,6 +130,7 @@ namespace Rdmp.UI.AggregationUIs
             tpGraph.Controls.Add(lblLoadStage);
             tpGraph.Controls.Add(llCancel);
             tpGraph.Controls.Add(pbLoading);
+            tpGraph.Controls.Add(chart1);
             tpGraph.Controls.Add(label1);
             tpGraph.Location = new System.Drawing.Point(4, 4);
             tpGraph.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -269,6 +271,7 @@ namespace Rdmp.UI.AggregationUIs
             Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             Name = "AggregateGraphUI";
             Size = new System.Drawing.Size(814, 586);
+            ((System.ComponentModel.ISupportInitialize)chart1).EndInit();
             ((System.ComponentModel.ISupportInitialize)pbLoading).EndInit();
             tabControl1.ResumeLayout(false);
             tpGraph.ResumeLayout(false);
