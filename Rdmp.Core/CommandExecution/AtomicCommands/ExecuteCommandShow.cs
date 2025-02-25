@@ -83,7 +83,7 @@ public class ExecuteCommandShow : BasicCommandExecution, IAtomicCommand
     }
 
     /// <summary>
-    /// Lazy constructor where the object to navigate to is not fetched until the command is definetly for sure running (see <see cref="Execute"/>)
+    /// Lazy constructor where the object to navigate to is not fetched until the command is definitely for sure running (see <see cref="Execute"/>)
     /// </summary>
     /// <param name="activator"></param>
     /// <param name="getObjectsFunc"></param>
@@ -177,7 +177,7 @@ public class ExecuteCommandShow : BasicCommandExecution, IAtomicCommand
                 : null;
 
     /// <summary>
-    /// Resolves any lamdas and returns what object(s) would be shown (if any)
+    /// Resolves any lambdas and returns what object(s) would be shown (if any)
     /// by running this command.  This method may be expensive to run
     /// </summary>
     /// <returns></returns>

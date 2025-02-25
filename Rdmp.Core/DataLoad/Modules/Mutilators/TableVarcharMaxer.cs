@@ -15,7 +15,7 @@ namespace Rdmp.Core.DataLoad.Modules.Mutilators;
 
 /// <summary>
 /// Widens columns on the specified table to be varchar(max).  This is useful for delaying truncation errors till later in the load.  For example if you
-/// apply a TableVarcharMaxer as a Mounting operation before loading data into it with an IAttacher you can have all the data loaded succesfully into RAW where
+/// apply a TableVarcharMaxer as a Mounting operation before loading data into it with an IAttacher you can have all the data loaded successfully into RAW where
 /// it can be interrogated with SQL to find out what the truncated fields are and what to do about them.
 /// 
 /// <para>Remember that RAW and STAGING are created based on the LIVE table schema (but that RAW has no column constraints like pks or not null fields).  This

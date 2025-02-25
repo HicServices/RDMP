@@ -33,7 +33,7 @@ public interface IPersistableObjectCollection
 
     /// <summary>
     /// Hydrate the <see cref="IPersistableObjectCollection"/> state with a value that was created by <see cref="SaveExtraText"/>.  This does not include populating <see cref="DatabaseObjects"/>
-    /// which happens seperately.
+    /// which happens separately.
     /// </summary>
     /// <param name="s"></param>
     void LoadExtraText(string s);

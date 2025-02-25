@@ -317,13 +317,13 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
         }
 
         launchAnotherInstanceToolStripMenuItem.ToolTipText =
-            "Start another copy of the RDMP process targetting the same (or another) RDMP platform database";
+            "Start another copy of the RDMP process targeting the same (or another) RDMP platform database";
 
         if (switchToInstanceToolStripMenuItem.DropDownItems.Count > 1)
         {
             switchToInstanceToolStripMenuItem.Enabled = true;
             switchToInstanceToolStripMenuItem.ToolTipText =
-                "Close the application and start another copy of the RDMP process targetting another RDMP platform database";
+                "Close the application and start another copy of the RDMP process targeting another RDMP platform database";
         }
         else
         {

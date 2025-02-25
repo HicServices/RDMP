@@ -395,7 +395,7 @@ periodicityCubesOverTime, byPivotRowStatesOverDataLoadRunId[pivotValue]);
         foreach (var itemValidator in _validator.ItemValidators)
             //is there a column in the query builder that matches it
             if (
-                //there isnt!
+                //there isn't!
                 !_queryBuilder.SelectColumns.Any(
                     c => c.IColumn.GetRuntimeName().Equals(itemValidator.TargetProperty)))
                 notifier.OnCheckPerformed(

@@ -22,7 +22,7 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.CohortCommitting.Pipeline;
 
 /// <summary>
-/// All metadata details nessesary to create a cohort including which project it goes into, its name, version etc.  There are no identifiers for the cohort.
+/// All metadata details necessary to create a cohort including which project it goes into, its name, version etc.  There are no identifiers for the cohort.
 /// Also functions as the use case for cohort creation (to which it passes itself as an input object).
 /// </summary>
 public sealed class CohortCreationRequest : PipelineUseCase, ICohortCreationRequest, ICanBeSummarised

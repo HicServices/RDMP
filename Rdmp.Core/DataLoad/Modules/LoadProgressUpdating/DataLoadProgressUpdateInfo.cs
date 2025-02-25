@@ -17,7 +17,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Modules.LoadProgressUpdating;
 
 /// <summary>
-/// Represents a user made descision about how to upload a LoadProgress after a succesful data load.  LoadProgress has a field DataLoadProgress which stores
+/// Represents a user made decision about how to upload a LoadProgress after a successful data load.  LoadProgress has a field DataLoadProgress which stores
 /// the last date that was loaded.  However you can overreach during a load e.g. run a load for 30 days but find only 5 days worth of data streamed through
 /// the load, in such cases you might want to update the DataLoadProgress to the 5 day mark on the assumption that there is a delay in data provision and it
 /// will arrive later.  There are multiple ways to determine what dates were actually loaded during a data load (See DataLoadProgressUpdateStrategy).

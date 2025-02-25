@@ -178,7 +178,7 @@ internal class TableInfoTests : DatabaseTests
         var sync = new TableInfoSynchronizer(ti);
         sync.Synchronize(new AcceptAllCheckNotifier());
 
-        //Test importing the _Legacy table valued function that should be created in the Omg schema and test synching that too.
+        //Test importing the _Legacy table valued function that should be created in the Omg schema and test syncing that too.
         var tvf = ti.Discover(DataAccessContext.InternalDataProcessing).Database
             .ExpectTableValuedFunction("Fish_Legacy", "Omg");
         Assert.That(tvf.Exists());

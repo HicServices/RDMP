@@ -31,7 +31,7 @@ public class DialogArgs
     public string TaskDescription { get; set; }
 
     /// <summary>
-    /// Used to indicate level of severity assocaited with the <see cref="TaskDescription" />
+    /// Used to indicate level of severity associated with the <see cref="TaskDescription" />
     /// </summary>
     public ProgressEventType DesciptionSeverity { get; set; } = ProgressEventType.Information;
 

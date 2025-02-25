@@ -361,7 +361,7 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
 
     /// <summary>
     /// Creates a complete copy of the <see cref="IExtractionConfiguration"/>, all selected datasets, filters etc.  The copy is created directly into
-    /// the <see cref="DatabaseEntity.Repository"/> database using a transaction (to prevent a half succesful clone being generated).
+    /// the <see cref="DatabaseEntity.Repository"/> database using a transaction (to prevent a half successful clone being generated).
     /// </summary>
     /// <returns></returns>
     public ExtractionConfiguration DeepCloneWithNewIDs()
@@ -387,7 +387,7 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
                         cloneExtractableColumn.SaveToDatabase();
                     }
 
-                    //clone should copy accross the forced joins (if any)
+                    //clone should copy across the forced joins (if any)
                     foreach (var oldForcedJoin in Repository.GetAllObjectsWithParent<SelectedDataSetsForcedJoin>(
                                  selected))
                         new SelectedDataSetsForcedJoin((IDataExportRepository)Repository, newSelectedDataSet,
@@ -400,7 +400,7 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
                         var clonedProgress = new ExtractionProgress(repo, newSelectedDataSet, old.StartDate,
                             old.EndDate, old.NumberOfDaysPerBatch, old.Name, old.ExtractionInformation_ID);
 
-                        // Notice that we do not set the ProgressDate because the cloned copy should be extracting from the begining
+                        // Notice that we do not set the ProgressDate because the cloned copy should be extracting from the beginning
                         // when it is run.  We don't want the user to have to manually reset it
                         clonedProgress.SaveToDatabase();
                     }

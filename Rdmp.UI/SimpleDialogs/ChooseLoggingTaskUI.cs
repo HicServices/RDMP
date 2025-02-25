@@ -216,7 +216,7 @@ public partial class ChooseLoggingTaskUI : RDMPUserControl, ICheckNotifier
     {
         if (args.ProposedFix != null)
             return MakeChangePopup.ShowYesNoMessageBoxToApplyFix(null, args.Message, args.ProposedFix);
-        //if it is sucessful user doesn't need to be spammed with messages
+        //if it is successful user doesn't need to be spammed with messages
         if (args.Result == CheckResult.Success)
             return true;
 

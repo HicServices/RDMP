@@ -78,7 +78,7 @@ internal class CatalogueItemTests : DatabaseTests
         {
             Agg_method = "Adding SetUp",
             Comments = "do not change amagad super secret!",
-            Limitations = "Extreme limitaitons",
+            Limitations = "Extreme limitations",
             Description =
                 "Exciting things are going down in the streets of new your this time of year it would be a great idea if you were to go there",
             Name = "KONGOR_MINIMAN",
@@ -119,7 +119,7 @@ internal class CatalogueItemTests : DatabaseTests
         {
             Agg_method = "Adding SetUp",
             Comments = "do not change amagad super secret!",
-            Limitations = "Extreme limitaitons",
+            Limitations = "Extreme limitations",
             Description =
                 "Exciting things are going down in the streets of new your this time of year it would be a great idea if you were to go there",
             Name = "KONGOR_MINIMAN",

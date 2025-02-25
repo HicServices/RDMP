@@ -48,7 +48,7 @@ public class ANOTableTests : TestsRequiringANOStore
         {
             Assert.That(discoveredTable.Exists());
 
-            //yes that's right hte table name and column name are the same here \|/
+            //yes that's right the table name and column name are the same here \|/
             Assert.That(discoveredTable.DiscoverColumn("MyTable").DataType.SQLType, Is.EqualTo(datatypeForPush));
 
             //20 + 20 + _ + A

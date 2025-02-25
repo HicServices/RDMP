@@ -35,7 +35,7 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
     private readonly string _explicitCohortName;
 
     /// <summary>
-    /// Initialises base class with no targetting parameters, these will be prompted from the user at execution time assuming <see cref="IBasicActivateItems.IsInteractive"/>
+    /// Initialises base class with no targeting parameters, these will be prompted from the user at execution time assuming <see cref="IBasicActivateItems.IsInteractive"/>
     /// </summary>
     /// <param name="activator"></param>
     protected CohortCreationCommandExecution(IBasicActivateItems activator)
@@ -44,7 +44,7 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
     }
 
     /// <summary>
-    /// Initialises common targetting parameters (where to store resulting identifiers etc)
+    /// Initialises common targeting parameters (where to store resulting identifiers etc)
     /// </summary>
     /// <param name="activator"></param>
     /// <param name="externalCohortTable"></param>
@@ -206,8 +206,11 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
 
         }
         var cohortIDs = cohortsThatAreDeprecatedOrHaveBeenDeprecated.Select(c => c.ID).ToList();
-        var extractionConfigurations = activator.RepositoryLocator.DataExportRepository.GetAllObjects<ExtractionConfiguration>().Where(ei => ei.Cohort_ID is not null && cohortIDs.Contains((int)ei.Cohort_ID));
-        if (extractionConfigurations.Any() && activator.YesNo("Would you like to replace all uses of a deprecated cohort in this project with this cohort?", "Replace Deprecated Cohorts"))
+        var extractionConfigurations = activator.RepositoryLocator.DataExportRepository.GetAllObjects<ExtractionConfiguration>().Where(ei => !ei.IsReleased && ei.Cohort_ID is not null && cohortIDs.Contains((int)ei.Cohort_ID));
+        if (extractionConfigurations.Any() && activator.YesNo("""
+Would you like to replace all uses of a deprecated cohort in this project with this cohort?
+This will update all non-released Extraction configurations that use the now deprecated cohort to use the cohort you have just created.
+""", "Replace Deprecated Cohorts"))
         {
             foreach (var config in extractionConfigurations)
             {

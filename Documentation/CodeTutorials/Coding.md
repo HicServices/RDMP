@@ -22,7 +22,7 @@ Many of the complicated low level APIs have been refactored out of RDMP and move
 
 ### Database Abstraction Layer
 
-RDMP interacts with relational databases (Sql Server, Oracle, PostgresSQL and MySql).  It runs SQL queries, creates tables and does general ETL.  This functionality has been abstracted out into the [FAnsiSql library](https://github.com/HicServices/FAnsiSql)
+RDMP interacts with relational databases (Sql Server, Oracle, postgresql and MySql).  It runs SQL queries, creates tables and does general ETL.  This functionality has been abstracted out into the [FAnsiSql library](https://github.com/HicServices/FAnsiSql)
 
 ### Type Determination
 

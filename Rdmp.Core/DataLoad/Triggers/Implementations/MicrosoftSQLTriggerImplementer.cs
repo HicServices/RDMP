@@ -22,7 +22,7 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations;
 /// <summary>
 /// Creates an _Archive table to match a live table and a Database Trigger On Update which moves old versions of records to the _Archive table when the main table
 /// is UPDATEd.  An _Archive table is an exact match of columns as the live table (which must have primary keys) but also includes several audit fields (date it
-/// was archived etc).  The _Archive table can be used to view the changes that occured during data loading (See DiffDatabaseDataFetcher) and/or generate a
+/// was archived etc).  The _Archive table can be used to view the changes that occurred during data loading (See DiffDatabaseDataFetcher) and/or generate a
 /// 'way back machine' view of the data at a given date in the past (See CreateViewOldVersionsTableValuedFunction method).
 /// 
 /// <para>This class is super Microsoft Sql Server specific.  It is not suitable to create backup triggers on tables in which you expect high volitility (lots of frequent

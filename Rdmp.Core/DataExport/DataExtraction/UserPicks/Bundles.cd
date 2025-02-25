@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Comment CommentText="At its simplest data extraction can be a single 1 Extraction Configuration containing x datasets + 1 cohort.  But RDMP also supports bundled Lookup tables, SupportingDocuments for each dataset (and global ones).  The user doesn't nessesarily want to extract everything all the time.  Bundles are the collection classes for recording what subset of an ExtractionConfiguration should be run through the extraction pipeline.">
+  <Comment CommentText="At its simplest data extraction can be a single 1 Extraction Configuration containing x datasets + 1 cohort.  But RDMP also supports bundled Lookup tables, SupportingDocuments for each dataset (and global ones).  The user doesn't necessarily want to extract everything all the time.  Bundles are the collection classes for recording what subset of an ExtractionConfiguration should be run through the extraction pipeline.">
     <Position X="0.5" Y="0.5" Height="1.031" Width="6.815" />
   </Comment>
   <Class Name="Rdmp.Core.DataExport.DataExtraction.Commands.ExtractDatasetCommand">

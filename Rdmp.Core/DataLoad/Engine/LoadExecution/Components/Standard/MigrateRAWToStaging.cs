@@ -17,7 +17,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Standard;
 
 /// <summary>
-/// DLE component resonsible for streaming data off the RAW database and writing it to the STAGING database.  Happens one table at a time with the actual
+/// DLE component responsible for streaming data off the RAW database and writing it to the STAGING database.  Happens one table at a time with the actual
 /// implementation of moving data in MigrateRAWTableToStaging (See MigrateRAWTableToStaging).
 /// </summary>
 public class MigrateRAWToStaging : DataLoadComponent

@@ -232,7 +232,7 @@ public class RDMPControlCommonFunctionality
     }
 
     /// <summary>
-    /// Reports the supplied exception in the RAG checks smiley on the top toolbar.  This will result in rag checks becomming
+    /// Reports the supplied exception in the RAG checks smiley on the top toolbar.  This will result in rag checks becoming
     /// visible if it was not visible before.
     /// </summary>
     /// <param name="s"></param>

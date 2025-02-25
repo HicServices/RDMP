@@ -477,7 +477,7 @@ public static partial class UsefulStuff
         pascalCaseString = pascalCaseString.Replace("_", " ");
 
         //There are two clauses in this Regex
-        //Part1: [A-Z][A-Z]*(?=[A-Z][a-z]|\b) - looks for any series of uppercase letters that have a ending uppercase then lowercase OR end of line charater: https://regex101.com/r/mCqVk6/2
+        //Part1: [A-Z][A-Z]*(?=[A-Z][a-z]|\b) - looks for any series of uppercase letters that have a ending uppercase then lowercase OR end of line character: https://regex101.com/r/mCqVk6/2
         //Part2: [A-Z](?=[a-z])               - looks for any single  of uppercase letters followed by a lower case letter: https://regex101.com/r/hdSCqH/1
         //This is then made into a single group that is matched and we add a space on front during the replacement.
         pascalCaseString = Regex.Replace(pascalCaseString, @"([A-Z][A-Z]*(?=[A-Z][a-z]|\b)|[A-Z](?=[a-z]))", " $1");

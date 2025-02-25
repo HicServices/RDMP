@@ -12,7 +12,7 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.Sharing.Dependency;
 
 /// <summary>
-/// Facilitiates importing plugins from a remote contributor and creating the local copies of the Plugin dlls in the local CatalogueRepository database.
+/// Facilitates importing plugins from a remote contributor and creating the local copies of the Plugin dlls in the local CatalogueRepository database.
 /// </summary>
 public class SharedPluginImporter
 {

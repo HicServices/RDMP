@@ -88,7 +88,7 @@ public abstract class BasicCommandExecution : IAtomicCommand
     {
         if (m?.ShouldBeReadOnly(out var reason) == true)
             SetImpossible(
-                $"{(m is IContainer ? "Container" : '\'' + m.ToString() + '\'')} is readonly beacause:{reason}");
+                $"{(m is IContainer ? "Container" : '\'' + m.ToString() + '\'')} is readonly because:{reason}");
     }
 
     public BasicCommandExecution()
@@ -145,7 +145,7 @@ public abstract class BasicCommandExecution : IAtomicCommand
     public virtual Image<Rgba32> GetImage(IIconProvider iconProvider) => OverrideIcon;
 
     /// <summary>
-    /// disables the command because of the given reason.  This will result in grayed out menu items, crashes when executed programatically etc.
+    /// disables the command because of the given reason.  This will result in grayed out menu items, crashes when executed programmatically etc.
     /// </summary>
     /// <param name="reason"></param>
     protected void SetImpossible(string reason)
@@ -155,7 +155,7 @@ public abstract class BasicCommandExecution : IAtomicCommand
     }
 
     /// <summary>
-    /// disables the command because of the given reason.  This will result in grayed out menu items, crashes when executed programatically etc.
+    /// disables the command because of the given reason.  This will result in grayed out menu items, crashes when executed programmatically etc.
     /// This overload calls string.Format with the <paramref name="objects"/>
     /// </summary>
     /// /// <param name="reason"></param>
@@ -508,7 +508,7 @@ public abstract class BasicCommandExecution : IAtomicCommand
     /// <para>
     /// Performs the <paramref name="toRun"/> action within a <see cref="Commit"/> (if
     /// commits are supported by platform).  Returns true if no commit was used or commit
-    /// was completed successfully.  Returns false if commit was abandonned (e.g. by user cancelling).
+    /// was completed successfully.  Returns false if commit was abandoned (e.g. by user cancelling).
     /// </para>
     /// <remarks> If commit is abandoned then <paramref name="trackObjects"/> will all be reverted
     /// to database state (i.e. local changes discarded)</remarks>
@@ -534,7 +534,7 @@ public abstract class BasicCommandExecution : IAtomicCommand
         {
             toRun();
 
-            // if user cancells transaction
+            // if user cancels transaction
             if (commit != null && commit.TryFinish(BasicActivator) == null) revert = true;
         }
         finally

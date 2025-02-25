@@ -167,7 +167,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                     var existingIDsforReleaseID = lookupDT.Rows.Cast<DataRow>().Where(r => r.ItemArray[privateIdIndex].ToString() == originalValue.ToString()).Select(s => s.ItemArray[releaseIdIndex].ToString());
                     if (existingIDsforReleaseID.Count() > 0)
                     {
-                        //we don't know what the current releae ID is ( there may be ones from multiple cohorts)
+                        //we don't know what the current release ID is ( there may be ones from multiple cohorts)
                         var ids = existingIDsforReleaseID.Select(id => $"'{id}'");
                         return $"{pkName} in ({string.Join(',', ids)})";
                     }
@@ -728,7 +728,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
     /// <summary>
     /// Declare that the column of name columnName (which might or might not appear in DataTables being uploaded) should always have the associated database type (e.g. varchar(59))
     /// The columnName is Case insensitive.  Note that if AllowResizingColumnsAtUploadTime is true then these datatypes are only the starting types and might get changed later to
-    /// accomodate new data.
+    /// accommodate new data.
     /// </summary>
     /// <param name="columnName"></param>
     /// <param name="explicitType"></param>

@@ -129,7 +129,7 @@ public class DragDropProvider : SimpleDragSource
     }
 
     /// <summary>
-    /// Only applies to external files and other wierd types that are not Models in our tree views but that we might still want to allow drag and drop interactions for
+    /// Only applies to external files and other weird types that are not Models in our tree views but that we might still want to allow drag and drop interactions for
     /// </summary>
     /// <param name="dataObject"></param>
     /// <param name="dropTargetModel"></param>

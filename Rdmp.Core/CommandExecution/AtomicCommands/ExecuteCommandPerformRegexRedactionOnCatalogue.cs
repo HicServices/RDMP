@@ -6,7 +6,6 @@
 
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
-using MongoDB.Driver;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.DataHelper.RegexRedaction;
 using Rdmp.Core.QueryBuilding;
@@ -16,7 +15,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using static System.Linq.Enumerable;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
@@ -46,7 +44,7 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
         _readLimit = readLimit;
         if (_server.DatabaseType != FAnsi.DatabaseType.MicrosoftSQLServer)
         {
-            //This should be implimented for all db types after UAT for the initial purpose
+            //This should be implemented for all db types after UAT for the initial purpose
             SetImpossible("Regex Redaction are currently only supported on MSSQL databases");
         }
     }

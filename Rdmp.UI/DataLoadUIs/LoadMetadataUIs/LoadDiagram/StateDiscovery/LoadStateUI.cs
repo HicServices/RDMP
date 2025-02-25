@@ -14,7 +14,7 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery;
 
 /// <summary>
 /// Tells you what state the LoadDiagram is in.  This starts at 'Unknown' which means no database requests have been sent and the visible tables are the 'Anticipated' state of the tables
-/// during a load.  Checking the state when RAW/STAGING do not exist indicates that no load is underway and that the last load was succesful (or RAW/STAGING were cleaned up after a problem
+/// during a load.  Checking the state when RAW/STAGING do not exist indicates that no load is underway and that the last load was successful (or RAW/STAGING were cleaned up after a problem
 /// was resolved).  The final state is 'Load Underway/Crashed' this indicates that RAW and/or STAGING exist which means that either a data load is in progress (not nesessarily started by you)
 /// or one has completed with an error and has therefore left RAW/STAGING for debugging (See LoadDiagram).
 /// </summary>

@@ -50,6 +50,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
     private HashSet<string> _typeNames;
 
     private List<Type> showOnlyTypes = new();
+    private readonly Dictionary<Type, List<string>> showOnlyEnums = new();
     private Type _alwaysFilterOn;
     private ToolStripTextBox _lblId;
     private readonly DialogArgs _args;
@@ -70,7 +71,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
     private RecentHistoryOfControls recentHistoryOfSearches;
 
     /// <summary>
-    /// The users final selection when not using mutli select mode
+    /// The users final selection when not using multi select mode
     /// </summary>
     public T Selected;
 
@@ -366,6 +367,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
         foreach (var t in StartingEasyFilters.SelectMany(v => v.Value)) _typeNames.Add(t.Name);
         Type[] startingFilters = null;
+        string[] startingFilterEnumValues = [];
 
         if (focusedCollection != RDMPCollection.None &&
             StartingEasyFilters.TryGetValue(focusedCollection, out var filter))
@@ -391,6 +393,32 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
                 b.CheckedChanged += CollectionCheckedChanged;
 
                 toolStrip1.Items.Add(b);
+            }
+        else if (_types.Length == 1)
+            switch (_types.First().Name)
+            {
+                case "CatalogueItem":
+                    foreach (var t in Enum.GetValues(typeof(ExtractionCategory)))
+                    {
+                        if (t.ToString() == ExtractionCategory.Any.ToString()) continue;
+                        var b = new ToolStripButton
+                        {
+                            Checked = startingFilterEnumValues?.Contains(t) == true,
+                            Image = _activator.CoreIconProvider.GetImage(t).ImageToBitmap(),
+                            DisplayStyle = ToolStripItemDisplayStyle.Image,
+                            CheckOnClick = true,
+                            Text = $"{t}",
+                            Tag = typeof(CatalogueItem)
+                        };
+
+                        b.CheckedChanged += EnumCheckedChanged;
+
+                        toolStrip1.Items.Add(b);
+                    }
+                    break;
+                default:
+                    toolStripLabel1.Visible = false;
+                    break;
             }
         else
             toolStripLabel1.Visible = false;
@@ -504,10 +532,32 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         };
 
         if (_lblId != null && int.TryParse(_lblId.Text, out var requireId)) scorer.ID = requireId;
+        var _filtered = new Dictionary<IMapsDirectlyToDatabaseTable,DescendancyList>(_searchables);
+        foreach(var key in showOnlyEnums.Keys)
+        {
+            switch (key.Name)
+            {
+                case "CatalogueItem":
+                    foreach(var k in _filtered.Keys)
+                    {
+                        showOnlyEnums.TryGetValue(k.GetType(), out var v1);
+                        if (showOnlyEnums.TryGetValue(k.GetType(),out var v) &&
+                            (v.Count >0 &&!v.Contains(((CatalogueItem)k).ExtractionInformation.ExtractionCategory.ToString()))
 
+                            )
+                        {
+                            _filtered.Remove(k);
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+        }
         if (AlwaysFilterOn != null) showOnlyTypes = new List<Type>(new[] { AlwaysFilterOn });
 
-        var scores = scorer.ScoreMatches(_searchables, text, showOnlyTypes, cancellationToken);
+        var scores = scorer.ScoreMatches(_filtered, text, showOnlyTypes, cancellationToken);
 
         if (scores == null)
         {
@@ -606,6 +656,34 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
             showOnlyTypes.Add(togglingType);
         else
             showOnlyTypes.Remove(togglingType);
+
+        //refresh the objects showing
+        tbFilter_TextChanged(null, null);
+    }
+
+    private void EnumCheckedChanged(object sender, EventArgs e)
+    {
+        var button = (ToolStripButton)sender;
+
+        var togglingType = (Type)button.Tag; ;
+
+        if (button.Checked)
+            if (showOnlyEnums.TryGetValue(togglingType, out var value))
+            {
+                value.Add(button.Text);
+                showOnlyEnums[togglingType] = value;
+            }
+            else
+            {
+                showOnlyEnums[togglingType] = new List<string>() { button.Text };
+            }
+        else
+            if (showOnlyEnums.TryGetValue(togglingType, out var value))
+        {
+            value = value.Where(v => v != button.Text).ToList();
+            showOnlyEnums[togglingType] = value;
+
+        }
 
         //refresh the objects showing
         tbFilter_TextChanged(null, null);

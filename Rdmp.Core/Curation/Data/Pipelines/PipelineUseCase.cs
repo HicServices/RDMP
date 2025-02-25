@@ -37,7 +37,7 @@ public abstract class PipelineUseCase : IPipelineUseCase
     }
 
     /// <summary>
-    /// Implement this to generate the compatiblity definition for pipelines that will be used by you.
+    /// Implement this to generate the compatibility definition for pipelines that will be used by you.
     /// 
     /// <para>IMPORTANT: Make sure you call <see cref="GenerateContext"/> in every constructor you have</para>
     /// </summary>
@@ -62,7 +62,7 @@ public abstract class PipelineUseCase : IPipelineUseCase
     private IDataFlowPipelineContext _context;
 
     /// <summary>
-    /// The normal (non desing time) constructor.  Add your objects to <see cref="InitializationObjects"/>
+    /// The normal (non design time) constructor.  Add your objects to <see cref="InitializationObjects"/>
     /// </summary>
     protected PipelineUseCase()
     {

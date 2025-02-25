@@ -220,7 +220,7 @@ public class LookupTest : DatabaseTests
             fk = new ColumnInfo(CatalogueRepository, "UnitTest_BCTestCode", "int", fkTable);
             fk2 = new ColumnInfo(CatalogueRepository, "UnitTest_BCHealthBoard", "int", fkTable);
 
-            //table 2 - the lookup table, it has 2 primary keys e.g. TestCode,Healthboard and 1 description e.g. TestDescription (the Healthboard makes it a composite JOIN which allows for the same TestCode being mapped to a different discription in Tayside vs Fife (healthboard)
+            //table 2 - the lookup table, it has 2 primary keys e.g. TestCode,Healthboard and 1 description e.g. TestDescription (the Healthboard makes it a composite JOIN which allows for the same TestCode being mapped to a different description in Tayside vs Fife (healthboard)
             pkTable = new TableInfo(CatalogueRepository, "UnitTest_BiochemistryLookup");
             pk = new ColumnInfo(CatalogueRepository, "UnitTest_TestCode", "int", pkTable);
             pk2 = new ColumnInfo(CatalogueRepository, "UnitTest_Healthboard", "int", pkTable);
@@ -298,7 +298,7 @@ public class LookupTest : DatabaseTests
     {
         //this only works for MSSQL Servers
         if (CatalogueTableRepository.DiscoveredServer.DatabaseType != DatabaseType.MicrosoftSQLServer)
-            Assert.Ignore("This test only targets Microsft SQL Servers");
+            Assert.Ignore("This test only targets Microsoft SQL Servers");
 
         TableInfo fkTable = null;
         TableInfo pkTable = null;
@@ -319,7 +319,7 @@ public class LookupTest : DatabaseTests
             fk = new ColumnInfo(CatalogueRepository, "UnitTest_BCTestCode", "int", fkTable);
             fk2 = new ColumnInfo(CatalogueRepository, "UnitTest_BCHealthBoard", "int", fkTable);
 
-            //table 2 - the lookup table, it has 2 primary keys e.g. TestCode,Healthboard and 1 description e.g. TestDescription (the Healthboard makes it a composite JOIN which allows for the same TestCode being mapped to a different discription in Tayside vs Fife (healthboard)
+            //table 2 - the lookup table, it has 2 primary keys e.g. TestCode,Healthboard and 1 description e.g. TestDescription (the Healthboard makes it a composite JOIN which allows for the same TestCode being mapped to a different description in Tayside vs Fife (healthboard)
             pkTable = new TableInfo(CatalogueRepository, "UnitTest_BiochemistryLookup");
             pk = new ColumnInfo(CatalogueRepository, "UnitTest_TestCode", "int", pkTable);
             pk2 = new ColumnInfo(CatalogueRepository, "UnitTest_Healthboard", "int", pkTable);
@@ -385,7 +385,7 @@ public class LookupTest : DatabaseTests
             fk = new ColumnInfo(CatalogueRepository, "One", "int", fkTable);
             fk2 = new ColumnInfo(CatalogueRepository, "Two", "int", fkTable);
 
-            //table 2 - the lookup table, it has 2 primary keys e.g. TestCode,Healthboard and 1 description e.g. TestDescription (the Healthboard makes it a composite JOIN which allows for the same TestCode being mapped to a different discription in Tayside vs Fife (healthboard)
+            //table 2 - the lookup table, it has 2 primary keys e.g. TestCode,Healthboard and 1 description e.g. TestDescription (the Healthboard makes it a composite JOIN which allows for the same TestCode being mapped to a different description in Tayside vs Fife (healthboard)
             pkTable = new TableInfo(CatalogueRepository, "UnitTest_BiochemistryLookup");
             pk = new ColumnInfo(CatalogueRepository, "One", "int", pkTable);
             pk2 = new ColumnInfo(CatalogueRepository, "Two", "int", pkTable);

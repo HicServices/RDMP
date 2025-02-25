@@ -55,7 +55,7 @@ public class ObjectSharingObscureDependencyFinderTests : DatabaseTests
         //can delete the import because that's ok
         Assert.DoesNotThrow(c2.DeleteInDatabase);
 
-        //now that we deleted the import it should have deleted everything else including the CatalogueItem import which magically disapeared when we deleted the Catalogue via database level cascade events
+        //now that we deleted the import it should have deleted everything else including the CatalogueItem import which magically disappeared when we deleted the Catalogue via database level cascade events
         Assert.That(CatalogueRepository.GetAllObjects<ObjectImport>(), Is.Empty);
 
         _share.GetImportAs(eci.SharingUID, ci2);

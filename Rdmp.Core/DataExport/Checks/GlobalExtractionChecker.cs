@@ -51,7 +51,7 @@ public class GlobalExtractionChecker : ICheckable
     }
 
     /// <summary>
-    /// Checks that all globals pass thier respective checkers (<see cref="SupportingSQLTableChecker"/> and <see cref="SupportingDocumentsFetcher"/>) and that
+    /// Checks that all globals pass their respective checkers (<see cref="SupportingSQLTableChecker"/> and <see cref="SupportingDocumentsFetcher"/>) and that
     /// the <see cref="Pipeline"/> (if any) is capable of extracting the globals.
     /// </summary>
     /// <param name="notifier"></param>

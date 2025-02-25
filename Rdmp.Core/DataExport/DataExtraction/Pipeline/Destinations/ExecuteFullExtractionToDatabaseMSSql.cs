@@ -90,7 +90,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
     public bool IncludeTimeStamp { get; set; } = false;
 
 
-    [DemandsInitialization("If chekced, indexed will be created using the primary keys specified")]
+    [DemandsInitialization("If checked, indexed will be created using the primary keys specified")]
     public bool IndexTables { get; set; } = true;
 
     [DemandsInitialization(@"How do you want to name the created index, use the following tokens if you need them:   
