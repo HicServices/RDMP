@@ -12,36 +12,43 @@ using static Rdmp.Core.CatalogueAnalysisTools.Data.PrimaryContraint;
 
 namespace Rdmp.Core.CatalogueAnalysisTools.Data
 {
-    public class SecondaryConstraint: DatabaseEntity
+    public class SecondaryConstraint : DatabaseEntity
     {
         public enum Constraints
         {
             BOUNDDOUBLE,
             BOUNDDATE,
             NOTNULL,
-            //PREDICTION,
-            //REFERENTIALINTEGRITYCONSTRAINT,
             REGULAREXPRESSION
         }
 
         public enum Consequences
         {
-            WRONG,
             MISSING,
+            WRONG,
             INVALIDATESROW
         }
 
         private DQERepository _DQERepository { get; set; }
         private ColumnInfo _columnInfo;
+        private int _columnInfoID;
         private Constraints _constraint;
         private Consequences _consequence;
-        private SecondaryConstraintArgument[] _arguments;
+        //private SecondaryConstraintArgument[] _arguments;
 
         public ColumnInfo ColumnInfo { get => _columnInfo; private set => SetField(ref _columnInfo, value); }
         public Consequences Consequence { get => _consequence; set => SetField(ref _consequence, value); }
-        public Constraints Constraint{ get => _constraint; set => SetField(ref _constraint, value); }
+        public Constraints Constraint { get => _constraint; set => SetField(ref _constraint, value); }
 
-        public SecondaryConstraintArgument[] Arguments { get => _arguments; set => SetField(ref _arguments, value); }
+        //public SecondaryConstraintArgument[] Arguments { get => _arguments == null ? GetArguments() : _arguments; set => SetField(ref _arguments, value); }
+
+
+        public SecondaryConstraintArgument[] GetArguments()
+        {
+            return  _DQERepository.GetAllObjectsWhere<SecondaryConstraintArgument>("SecondaryConstraint_ID", this.ID);
+            //return _arguments;
+
+        }
 
         public SecondaryConstraint() { }
 
@@ -49,12 +56,13 @@ namespace Rdmp.Core.CatalogueAnalysisTools.Data
         {
             _DQERepository = repository;
             _columnInfo = _DQERepository.CatalogueRepository.GetObjectByID<ColumnInfo>(int.Parse(r["ColumnInfo_ID"].ToString()));
+            _columnInfoID = (int.Parse(r["ColumnInfo_ID"].ToString()));
             _constraint = (Constraints)int.Parse(r["Constraint"].ToString());
             _consequence = (Consequences)int.Parse(r["Consequence"].ToString());
-            _arguments = _DQERepository.GetAllObjectsWhere<SecondaryConstraintArgument>("SecondaryConstraint_ID", int.Parse(r["ID"].ToString()));
         }
 
-        public SecondaryConstraint(DQERepository repository, ColumnInfo columnInfo, Constraints constraint, Consequences consequence) {
+        public SecondaryConstraint(DQERepository repository, ColumnInfo columnInfo, Constraints constraint, Consequences consequence)
+        {
             _DQERepository = repository;
             _columnInfo = columnInfo;
             _consequence = consequence;

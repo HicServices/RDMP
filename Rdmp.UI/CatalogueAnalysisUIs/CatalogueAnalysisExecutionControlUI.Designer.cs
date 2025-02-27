@@ -31,8 +31,12 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CatalogueAnalysisExecutionControlUI));
             tabControl1 = new System.Windows.Forms.TabControl();
             tabPage1 = new System.Windows.Forms.TabPage();
-            timePeriodicityChart1 = new CatalogueSummary.DataQualityReporting.TimePeriodicityChart();
+            catalogueValidationResultsui1 = new Rdmp.UI.CatalogueSummary.CatalogueValidationResultsUI();
             tabPage2 = new System.Windows.Forms.TabPage();
+            groupBox6 = new System.Windows.Forms.GroupBox();
+            tbEndDate = new System.Windows.Forms.TextBox();
+            groupBox5 = new System.Windows.Forms.GroupBox();
+            tbStartDate = new System.Windows.Forms.TextBox();
             cbUsePrevious = new System.Windows.Forms.CheckBox();
             groupBox4 = new System.Windows.Forms.GroupBox();
             button2 = new System.Windows.Forms.Button();
@@ -53,13 +57,11 @@
             label3 = new System.Windows.Forms.Label();
             label2 = new System.Windows.Forms.Label();
             label1 = new System.Windows.Forms.Label();
-            tbStartDate = new System.Windows.Forms.TextBox();
-            groupBox5 = new System.Windows.Forms.GroupBox();
-            groupBox6 = new System.Windows.Forms.GroupBox();
-            tbEndDate = new System.Windows.Forms.TextBox();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             tabPage2.SuspendLayout();
+            groupBox6.SuspendLayout();
+            groupBox5.SuspendLayout();
             groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SecondaryConstrainsTableLayoutPanel.SuspendLayout();
@@ -67,38 +69,37 @@
             groupBox2.SuspendLayout();
             groupBox1.SuspendLayout();
             primaryConstrainsTableLayout.SuspendLayout();
-            groupBox5.SuspendLayout();
-            groupBox6.SuspendLayout();
             SuspendLayout();
             // 
             // tabControl1
             // 
             tabControl1.Controls.Add(tabPage1);
             tabControl1.Controls.Add(tabPage2);
-            tabControl1.Location = new System.Drawing.Point(3, 25);
+            tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            tabControl1.Location = new System.Drawing.Point(0, 0);
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new System.Drawing.Size(1238, 847);
+            tabControl1.Size = new System.Drawing.Size(1249, 853);
             tabControl1.TabIndex = 0;
             // 
             // tabPage1
             // 
-            tabPage1.Controls.Add(timePeriodicityChart1);
+            tabPage1.Controls.Add(catalogueValidationResultsui1);
             tabPage1.Location = new System.Drawing.Point(4, 24);
             tabPage1.Name = "tabPage1";
             tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            tabPage1.Size = new System.Drawing.Size(1230, 819);
+            tabPage1.Size = new System.Drawing.Size(1241, 825);
             tabPage1.TabIndex = 0;
             tabPage1.Text = "Analysis";
             tabPage1.UseVisualStyleBackColor = true;
             // 
-            // timePeriodicityChart1
+            // catalogueValidationResultsui1
             // 
-            timePeriodicityChart1.Location = new System.Drawing.Point(7, 6);
-            timePeriodicityChart1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            timePeriodicityChart1.Name = "timePeriodicityChart1";
-            timePeriodicityChart1.Size = new System.Drawing.Size(985, 450);
-            timePeriodicityChart1.TabIndex = 0;
+            catalogueValidationResultsui1.Location = new System.Drawing.Point(-3, 0);
+            catalogueValidationResultsui1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            catalogueValidationResultsui1.Name = "catalogueValidationResultsui1";
+            catalogueValidationResultsui1.Size = new System.Drawing.Size(1206, 465);
+            catalogueValidationResultsui1.TabIndex = 1;
             // 
             // tabPage2
             // 
@@ -117,6 +118,40 @@
             tabPage2.TabIndex = 1;
             tabPage2.Text = "Configuration";
             tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // groupBox6
+            // 
+            groupBox6.Controls.Add(tbEndDate);
+            groupBox6.Location = new System.Drawing.Point(831, 6);
+            groupBox6.Name = "groupBox6";
+            groupBox6.Size = new System.Drawing.Size(139, 49);
+            groupBox6.TabIndex = 9;
+            groupBox6.TabStop = false;
+            groupBox6.Text = "End Date";
+            // 
+            // tbEndDate
+            // 
+            tbEndDate.Location = new System.Drawing.Point(6, 22);
+            tbEndDate.Name = "tbEndDate";
+            tbEndDate.Size = new System.Drawing.Size(130, 23);
+            tbEndDate.TabIndex = 7;
+            // 
+            // groupBox5
+            // 
+            groupBox5.Controls.Add(tbStartDate);
+            groupBox5.Location = new System.Drawing.Point(686, 6);
+            groupBox5.Name = "groupBox5";
+            groupBox5.Size = new System.Drawing.Size(139, 49);
+            groupBox5.TabIndex = 8;
+            groupBox5.TabStop = false;
+            groupBox5.Text = "Start Date";
+            // 
+            // tbStartDate
+            // 
+            tbStartDate.Location = new System.Drawing.Point(6, 22);
+            tbStartDate.Name = "tbStartDate";
+            tbStartDate.Size = new System.Drawing.Size(130, 23);
+            tbStartDate.TabIndex = 7;
             // 
             // cbUsePrevious
             // 
@@ -167,7 +202,8 @@
             // SecondaryConstrainsTableLayoutPanel
             // 
             SecondaryConstrainsTableLayoutPanel.AutoSize = true;
-            SecondaryConstrainsTableLayoutPanel.ColumnCount = 4;
+            SecondaryConstrainsTableLayoutPanel.ColumnCount = 5;
+            SecondaryConstrainsTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             SecondaryConstrainsTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             SecondaryConstrainsTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             SecondaryConstrainsTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
@@ -344,40 +380,6 @@
             label1.Text = "Column";
             label1.Click += label1_Click;
             // 
-            // tbStartDate
-            // 
-            tbStartDate.Location = new System.Drawing.Point(6, 22);
-            tbStartDate.Name = "tbStartDate";
-            tbStartDate.Size = new System.Drawing.Size(130, 23);
-            tbStartDate.TabIndex = 7;
-            // 
-            // groupBox5
-            // 
-            groupBox5.Controls.Add(tbStartDate);
-            groupBox5.Location = new System.Drawing.Point(686, 6);
-            groupBox5.Name = "groupBox5";
-            groupBox5.Size = new System.Drawing.Size(139, 49);
-            groupBox5.TabIndex = 8;
-            groupBox5.TabStop = false;
-            groupBox5.Text = "Start Date";
-            // 
-            // groupBox6
-            // 
-            groupBox6.Controls.Add(tbEndDate);
-            groupBox6.Location = new System.Drawing.Point(831, 6);
-            groupBox6.Name = "groupBox6";
-            groupBox6.Size = new System.Drawing.Size(139, 49);
-            groupBox6.TabIndex = 9;
-            groupBox6.TabStop = false;
-            groupBox6.Text = "End Date";
-            // 
-            // tbEndDate
-            // 
-            tbEndDate.Location = new System.Drawing.Point(6, 22);
-            tbEndDate.Name = "tbEndDate";
-            tbEndDate.Size = new System.Drawing.Size(130, 23);
-            tbEndDate.TabIndex = 7;
-            // 
             // CatalogueAnalysisExecutionControlUI
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -389,6 +391,10 @@
             tabPage1.ResumeLayout(false);
             tabPage2.ResumeLayout(false);
             tabPage2.PerformLayout();
+            groupBox6.ResumeLayout(false);
+            groupBox6.PerformLayout();
+            groupBox5.ResumeLayout(false);
+            groupBox5.PerformLayout();
             groupBox4.ResumeLayout(false);
             groupBox4.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
@@ -400,10 +406,6 @@
             groupBox1.PerformLayout();
             primaryConstrainsTableLayout.ResumeLayout(false);
             primaryConstrainsTableLayout.PerformLayout();
-            groupBox5.ResumeLayout(false);
-            groupBox5.PerformLayout();
-            groupBox6.ResumeLayout(false);
-            groupBox6.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -418,7 +420,6 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button btnSavePrimaryConstraints;
         private System.Windows.Forms.TabPage tabPage1;
-        private CatalogueSummary.DataQualityReporting.TimePeriodicityChart timePeriodicityChart1;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.ComboBox cbPivot;
         private System.Windows.Forms.GroupBox groupBox2;
@@ -429,7 +430,6 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Label label7;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.CheckBox cbUsePrevious;
@@ -437,5 +437,7 @@
         private System.Windows.Forms.TextBox tbEndDate;
         private System.Windows.Forms.GroupBox groupBox5;
         private System.Windows.Forms.TextBox tbStartDate;
+        private System.Windows.Forms.Label label7;
+        private CatalogueSummary.CatalogueValidationResultsUI catalogueValidationResultsui1;
     }
 }

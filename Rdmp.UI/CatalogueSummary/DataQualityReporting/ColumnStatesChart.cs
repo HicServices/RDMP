@@ -8,6 +8,7 @@ using System;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using Rdmp.Core.CatalogueAnalysisTools.Data;
 using Rdmp.Core.DataQualityEngine.Data;
 using Rdmp.UI.CatalogueSummary.DataQualityReporting.SubComponents;
 

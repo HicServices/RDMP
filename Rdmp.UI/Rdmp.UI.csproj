@@ -64,7 +64,13 @@
 		<ProjectReference Include="..\Rdmp.Core\Rdmp.Core.csproj" />
 	</ItemGroup>
 	<ItemGroup>
+		<Compile Update="CatalogueSummary\CatalogueValidationResultsUI.cs">
+		  <SubType>UserControl</SubType>
+		</Compile>
 		<Compile Update="CatalogueSummary\DataQualityReporting\AreaChartUI.cs">
+		  <SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="CatalogueSummary\DataQualityReporting\TimePeriodicityChartNoControls.cs">
 		  <SubType>UserControl</SubType>
 		</Compile>
 		<Compile Update="ChecksUI\ChecksUI.cs">

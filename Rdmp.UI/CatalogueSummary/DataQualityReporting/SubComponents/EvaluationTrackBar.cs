@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using Rdmp.Core.CatalogueAnalysisTools.Data;
 using Rdmp.Core.DataQualityEngine.Data;
 
 namespace Rdmp.UI.CatalogueSummary.DataQualityReporting.SubComponents;
@@ -25,6 +26,7 @@ namespace Rdmp.UI.CatalogueSummary.DataQualityReporting.SubComponents;
 public partial class EvaluationTrackBar : UserControl
 {
     private Evaluation[] _evaluations;
+    private CatalogueValidation[] _validations;
 
     public EvaluationTrackBar()
     {
@@ -43,11 +45,77 @@ public partial class EvaluationTrackBar : UserControl
         }
     }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    public CatalogueValidation[] Validations
+    {
+        get => _validations;
+        set
+        {
+            _validations = value;
+            RefreshUI(true);
+        }
+    }
+
     private List<Label> labels = new();
     public event EvaluationSelectedHandler EvaluationSelected;
+    public event EvaluationSelectedValidationHandler EvaluationValidationSelected;
 
-    private void RefreshUI()
+    private void RefreshUI(bool useValidations = false)
     {
+        if (useValidations)
+        {
+            if (Validations != null && Validations.Length > 0)
+            {
+                if (Validations.Length == 1)
+                {
+                    Enabled = false;
+                    EvaluationValidationSelected(this, Validations.Single());
+                }
+                else
+                {
+                    Enabled = true;
+                }
+                foreach (var label in labels)
+                {
+                    Controls.Remove(label);
+                    label.Dispose();
+                }
+
+                labels.Clear();
+
+                //if there is at least 2 evaluations done then we need to have a track bar of evaluations
+                tbEvaluation.Minimum = 0;
+                tbEvaluation.Maximum = Validations.Length - 1;
+                tbEvaluation.TickFrequency = 1;
+                tbEvaluation.Value = Validations.Length - 1;
+                tbEvaluation.LargeChange = 1;
+
+                for (var i = 0; i < Validations.Length; i++)
+                {
+                    var ratio = (double)i / (Validations.Length - 1);
+
+
+                    var x = tbEvaluation.Left + (int)(ratio * tbEvaluation.Width);
+                    var y = tbEvaluation.Bottom - 10;
+
+                    var l = new Label
+                    {
+                        Text = Validations[i].Date.ToString("d")
+                    };
+                    l.Location = new Point(x - l.PreferredWidth / 2, y);
+
+                    Controls.Add(l);
+                    l.BringToFront();
+
+                    labels.Add(l);
+                }
+
+                tbEvaluation.Value = tbEvaluation.Maximum;
+                EvaluationValidationSelected(this, Validations[tbEvaluation.Value]);
+            }
+            return;
+        }
+
         if (Evaluations == null || Evaluations.Length == 0)
         {
             Enabled = false;
@@ -107,8 +175,13 @@ public partial class EvaluationTrackBar : UserControl
     private void tbEvaluation_ValueChanged(object sender, EventArgs e)
     {
         if (tbEvaluation.Value >= 0)
-            EvaluationSelected(this, Evaluations[tbEvaluation.Value]);
+            if (Validations != null)
+            {
+                EvaluationValidationSelected(this, Validations[tbEvaluation.Value]);
+            }
+            else { EvaluationSelected(this, Evaluations[tbEvaluation.Value]); }
     }
 }
 
 public delegate void EvaluationSelectedHandler(object sender, Evaluation evaluation);
+public delegate void EvaluationSelectedValidationHandler(object sender, CatalogueValidation evaluation);

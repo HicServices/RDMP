@@ -37,6 +37,11 @@ namespace Rdmp.Core.CatalogueAnalysisTools.Data
 
             return dt;
         }
+
+        public List<string> GetPivotCategoryValues()
+        {
+            return  _dqeRepositroy.GetAllObjectsWhere<CatalogueValidationResult>("CatalogueValidation_ID", this.ID).Select(cvr => cvr.PivotCategory).Distinct().ToList();
+        }
         public Catalogue Catalogue { get => _catalogue; private set => SetField(ref _catalogue, value); }
         public DateTime Date{ get => _date; private set => SetField(ref _date, value); }
 
@@ -54,6 +59,12 @@ namespace Rdmp.Core.CatalogueAnalysisTools.Data
             _timeColumnID = int.Parse(r["TimeColumn_ID"].ToString());
             _pivotCategoryID = int.Parse(r["PivotColumn_ID"].ToString());
         }
+
+        public List<CatalogueValidationResult> GetResults()
+        {
+            return _dqeRepositroy.GetAllObjectsWhere<CatalogueValidationResult>("CatalogueValidation_ID", this.ID).ToList();
+        }
+
         public CatalogueValidation(DQERepository repository, Catalogue catalogue, ColumnInfo timeColumn, ColumnInfo pivotColumn)
         {
             _dqeRepositroy = repository;

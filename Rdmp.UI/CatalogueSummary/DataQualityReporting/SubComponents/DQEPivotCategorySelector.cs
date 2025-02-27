@@ -7,6 +7,7 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
+using Rdmp.Core.CatalogueAnalysisTools.Data;
 using Rdmp.Core.DataQualityEngine.Data;
 
 namespace Rdmp.UI.CatalogueSummary.DataQualityReporting.SubComponents;
@@ -52,6 +53,32 @@ public partial class DQEPivotCategorySelector : UserControl
             flowLayoutPanel1.Controls.Add(rb);
         }
     }
+
+    public void LoadOptions(CatalogueValidation evaluation)
+    {
+        flowLayoutPanel1.Controls.Clear();
+        SelectedPivotCategory = "ALL";
+
+        if (evaluation == null)
+            return;
+
+        foreach (var category in evaluation.GetPivotCategoryValues())
+        {
+            var rb = new RadioButton
+            {
+                Text = category,
+                Tag = category
+            };
+
+            if (rb.Text == "ALL")
+                rb.Checked = true; //always select this one by default first
+
+            rb.CheckedChanged += OnCheckedChanged;
+            flowLayoutPanel1.Controls.Add(rb);
+        }
+    }
+
+
 
     private void OnCheckedChanged(object sender, EventArgs eventArgs)
     {
