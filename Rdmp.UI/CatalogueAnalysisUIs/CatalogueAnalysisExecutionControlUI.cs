@@ -2,6 +2,7 @@
 using Rdmp.Core.CatalogueAnalysisTools.Data;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories;
+using Rdmp.UI.CatalogueAnalysisUIs.Charts;
 using Rdmp.UI.CatalogueSummary;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
@@ -113,8 +114,40 @@ public partial class CatalogueAnalysisExecutionControlUI : CatalogueAnalysisExec
                 cbPivot.SelectedIndex = columnInfos.Select(ci => ci.ID).ToList().IndexOf(evaluation.PivotColumn_ID);
             }
         }
+        var pieDT = new DataTable();
+        pieDT.Columns.Add("Y");
+        pieDT.Columns.Add("X");
+        pieDT.Rows.Add([10, 'A']);
+        pieDT.Rows.Add([20, 'B']);
+        pieDT.Rows.Add([30, 'C']);
+        pieDT.Rows.Add([40, 'D']);
+        pieDT.Rows.Add([50, 'E']);
+        pieDT.Rows.Add([60, 'F']);
+        pieDT.Rows.Add([70, 'G']);
+        pieDT.Rows.Add([80, 'H']);
+        pieDT.Rows.Add([90, 'I']);
+        pieChart1.Init(pieDT, System.Windows.Forms.DataVisualization.Charting.SeriesChartType.SplineRange, "Yonk!", "yeye");
+        multiPurposeChart1.Init(pieDT, System.Windows.Forms.DataVisualization.Charting.SeriesChartType.RangeBar);
+        multiPurposeChart2.Init(pieDT, System.Windows.Forms.DataVisualization.Charting.SeriesChartType.RangeColumn);
+        multiPurposeChart3.Init(pieDT, System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Radar);
+        multiPurposeChart4.Init(pieDT, System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Polar);
+        multiPurposeChart5.Init(pieDT, System.Windows.Forms.DataVisualization.Charting.SeriesChartType.ErrorBar);
+        multiPurposeChart6.Init(pieDT, System.Windows.Forms.DataVisualization.Charting.SeriesChartType.BoxPlot);
+        multiPurposeChart7.Init(pieDT, System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Renko);
+        multiPurposeChart8.Init(pieDT, System.Windows.Forms.DataVisualization.Charting.SeriesChartType.ThreeLineBreak);
+        multiPurposeChart9.Init(pieDT, System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Kagi);
+        multiPurposeChart10.Init(pieDT, System.Windows.Forms.DataVisualization.Charting.SeriesChartType.PointAndFigure);
+        multiPurposeChart11.Init(pieDT, System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Funnel);
 
 
+        var userDefinedCharts = _dqeRepository.GetAllObjectsWhere<UserDefinedChart>("Catalogue_ID", databaseObject.ID);
+        foreach(var udc in userDefinedCharts)
+        {
+            var chartRunner = new UserDefinedChartRunner();
+            chartRunner.Setup(udc);
+            chartRunner.Location = new Point(10, udc.ID * 100);
+            tabPage3.Controls.Add(chartRunner);
+        }
 
     }
 
@@ -235,11 +268,11 @@ public partial class CatalogueAnalysisExecutionControlUI : CatalogueAnalysisExec
             columnsCb.SelectedIndex = columnInfos.Select(ci => ci.ID).ToList().IndexOf(constraint.ColumnInfo.ID);
             constraintCb.SelectedIndex = (int)constraint.Constraint;
             consequencesCb.SelectedIndex = (int)constraint.Consequence;
-            ConstraintCb_SelectedIndexChanged(constraintCb, SecondaryConstrainsTableLayoutPanel.RowCount - 1,constraint);
+            ConstraintCb_SelectedIndexChanged(constraintCb, SecondaryConstrainsTableLayoutPanel.RowCount - 1, constraint);
         }
     }
 
-    private void ConstraintCb_SelectedIndexChanged(ComboBox cb, int rowIndex, SecondaryConstraint constraint =null)
+    private void ConstraintCb_SelectedIndexChanged(ComboBox cb, int rowIndex, SecondaryConstraint constraint = null)
     {
         var selectedType = (SecondaryConstraint.Constraints)cb.SelectedIndex;
         var argA = SecondaryConstrainsTableLayoutPanel.GetControlFromPosition(3, rowIndex);
@@ -259,10 +292,10 @@ public partial class CatalogueAnalysisExecutionControlUI : CatalogueAnalysisExec
                 tb.Width = 150;
                 tb.Height = 40;
                 tb.Name = "patternArg";
-                if(constraint != null)
+                if (constraint != null)
                 {
                     var arg = constraint.GetArguments().FirstOrDefault();
-                    if(arg != null)
+                    if (arg != null)
                     {
                         tb.Text = arg.Value;
                     }
@@ -277,7 +310,7 @@ public partial class CatalogueAnalysisExecutionControlUI : CatalogueAnalysisExec
                 lowertb.Name = "lowerArg";
                 if (constraint != null)
                 {
-                    var arg = constraint.GetArguments().Where(a => a.Key =="Lower").FirstOrDefault();
+                    var arg = constraint.GetArguments().Where(a => a.Key == "Lower").FirstOrDefault();
                     if (arg != null)
                     {
                         lowertb.Text = arg.Value;
@@ -357,6 +390,13 @@ public partial class CatalogueAnalysisExecutionControlUI : CatalogueAnalysisExec
     private void cbUsePrevious_CheckedChanged(object sender, EventArgs e)
     {
 
+    }
+
+    private void button3_Click(object sender, EventArgs e)
+    {
+        var dialog = new UserDefinedChartCreationForm();
+        dialog.Setup(Activator, _dqeRepository, _catalogue);
+        dialog.Show();
     }
 }
 

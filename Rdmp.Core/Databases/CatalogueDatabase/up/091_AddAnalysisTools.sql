@@ -83,3 +83,36 @@ CONSTRAINT [PK_SecondaryConstraintArgument] PRIMARY KEY CLUSTERED
 ) ON [PRIMARY]
 END
 GO
+
+if not exists (select 1 from sys.tables where name = 'UserDefinedChart')
+BEGIN
+CREATE TABLE [dbo].[UserDefinedChart](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[Catalogue_ID] [int] NOT NULL,
+	[ChartType] [int] NOT NULL,
+	[QueryString] [nvarchar](max) NOT NULL,
+	[Title] [nvarchar](256),
+	[SeriesName] [nvarchar](256),
+CONSTRAINT [PK_UserDefinedChart] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+END
+GO
+
+if not exists (select 1 from sys.tables where name = 'UserDefinedChartResult')
+BEGIN
+CREATE TABLE [dbo].[UserDefinedChartResult](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[UserDefinedChart_ID] [int] NOT NULL,
+	[X] [nvarchar](max) NOT NULL,
+	[Y] [nvarchar](max) NOT NULL,
+	FOREIGN KEY ([UserDefinedChart_ID]) REFERENCES [dbo].[UserDefinedChart](ID) ON DELETE CASCADE,
+CONSTRAINT [PK_UserDefinedChartResult] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+END
+GO
