@@ -29,6 +29,7 @@ internal class
     {
         string PureAssembly = typeof(PureDatasetProvider).ToString();
         string HDRAssembly = typeof(HDRDatasetProvider).ToString();
+        string JiraAssembly = typeof(JiraDatasetProvider).ToString();
         if (target.Type == PureAssembly)
         {
             ItemActivator.Activate<PureDatasetConfigurationUI,Dataset>(target);
@@ -37,6 +38,11 @@ internal class
         if (target.Type == HDRAssembly)
         {
             ItemActivator.Activate<HDRDatasetConfigurationUI, Dataset>(target);
+            return;
+        }
+        if (target.Type == JiraAssembly)
+        {
+            ItemActivator.Activate<JiraDatasetConfigurationUI, Dataset>(target);
             return;
         }
 

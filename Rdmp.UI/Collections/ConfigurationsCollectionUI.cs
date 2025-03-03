@@ -42,6 +42,13 @@ public partial class ConfigurationsCollectionUI : RDMPCollectionUI, ILifetimeSub
  {
      OverrideCommandName="Import Existing HDR Dataset", SuggestedCategory="HDR Integration"
  },
+  new ExecuteCommandCreateNewJiraConfigurationUI(_activator){
+ OverrideCommandName="Create New Jira Configuration", SuggestedCategory="Jira Integration"
+ },
+ new ExecuteCommandImportExistingJiraDatasetUI(_activator)
+ {
+     OverrideCommandName="Import Existing Jira Dataset", SuggestedCategory="Jira Integration"
+ },
  new ExecuteCommandAddNewRegexRedactionConfigurationUI(_activator)
  {
      OverrideCommandName="Add New Regex Redaction Configuration", SuggestedCategory="Regex"

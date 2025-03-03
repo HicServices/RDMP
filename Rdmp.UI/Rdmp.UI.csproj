@@ -137,7 +137,13 @@
 		<Compile Update="SimpleControls\DatabaseTypeUI.Designer.cs">
 			<DependentUpon>DatabaseTypeUI.cs</DependentUpon>
 		</Compile>
+		<Compile Update="SimpleDialogs\Datasets\CreateNewJiraConfigurationUI.cs">
+		  <SubType>Form</SubType>
+		</Compile>
 		<Compile Update="SimpleDialogs\Datasets\CreateNewHDRConfigurationUI.cs">
+		  <SubType>Form</SubType>
+		</Compile>
+		<Compile Update="SimpleDialogs\Datasets\ImportExistingJiraDatasetUI.cs">
 		  <SubType>Form</SubType>
 		</Compile>
 		<Compile Update="SimpleDialogs\Datasets\ImportExistingHDRDatasetUI.cs">
@@ -252,6 +258,9 @@
 		</Compile>
 		<Compile Update="SimpleDialogs\WideMessageBox.Designer.cs">
 			<DependentUpon>WideMessageBox.cs</DependentUpon>
+		</Compile>
+		<Compile Update="SubComponents\JiraDatasetConfigurationUI.cs">
+		  <SubType>UserControl</SubType>
 		</Compile>
 		<Compile Update="SubComponents\HDRDatasetConfigurationUI.cs">
 		  <SubType>UserControl</SubType>
