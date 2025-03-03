@@ -273,7 +273,7 @@ public class SafePrimaryKeyCollisionResolverMutilationTests : DatabaseTests
 
         Assert.Multiple(() =>
         {
-            //if you like larger values then you want 2002 thats larger than 2001
+            //if you like larger values then you want 2002 that's larger than 2001
             Assert.That(result.Rows.Cast<DataRow>().Count(r =>
                     (int)r["PK"] == 1 && Equals(r["ResolveOn"], new DateTime(2002, 01, 01)) &&
                     r["AnotherCol"] as string == "flop"), Is.EqualTo(preferLarger ? 1 : 0));
@@ -343,7 +343,7 @@ public class SafePrimaryKeyCollisionResolverMutilationTests : DatabaseTests
 
         Assert.Multiple(() =>
         {
-            //if you like larger values then you want 2002 thats larger than 2001
+            //if you like larger values then you want 2002 that's larger than 2001
             Assert.That(result.Rows.Cast<DataRow>().Count(r =>
                     (int)r["PK1"] == 1 && (int)r["PK2"] == 1 && Equals(r["ResolveOn"], new DateTime(2002, 01, 01)) &&
                     r["AnotherCol"] as string == "flop"), Is.EqualTo(preferLarger ? 1 : 0));

@@ -620,7 +620,7 @@ public class DataExportChildProvider : CatalogueChildProvider
     {
         ForbidListedSources.Add(source);
 
-        // notify being unable to reach cohorts unless user has supressed this
+        // notify being unable to reach cohorts unless user has suppressed this
         if (UserSettings.GetErrorReportingLevelFor(ErrorCodes.CouldNotReachCohort) != CheckResult.Success)
             _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs(ErrorCodes.CouldNotReachCohort, ex, source));
 
@@ -753,7 +753,7 @@ public class DataExportChildProvider : CatalogueChildProvider
     }
 
     /// <summary>
-    /// Returns all <see cref="ExtractableColumn"/> Injected with thier corresponding <see cref="ExtractionInformation"/>
+    /// Returns all <see cref="ExtractableColumn"/> Injected with their corresponding <see cref="ExtractionInformation"/>
     /// </summary>
     /// <param name="repository"></param>
     /// <returns></returns>

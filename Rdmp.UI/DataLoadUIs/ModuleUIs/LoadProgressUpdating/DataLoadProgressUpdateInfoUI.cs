@@ -18,7 +18,7 @@ namespace Rdmp.UI.DataLoadUIs.ModuleUIs.LoadProgressUpdating;
 
 /// <summary>
 /// A LoadProgress object can be used as part of a LoadMetadata to record how far through a longitudinal loading task a load is (See LoadProgressUI).  This dialog lets you specify
-/// how to update that LoadProgress after a succesful data load.  By default the data load engine will identify a window of days it wants to load (always in the past) e.g. 2001-01-01 to
+/// how to update that LoadProgress after a successful data load.  By default the data load engine will identify a window of days it wants to load (always in the past) e.g. 2001-01-01 to
 /// 2001-01-29 and the load will execute with that window available to load components.  However sometimes a load component will only find part of that date range is available e.g. the
 /// dataset fetched only contains data up until 2001-01-15.  In this case the component needs to update the progress (on success of data load) to the 2001-01-15 date instead.  This
 /// dialog lets you do that by specifying one of 4 update strategies:
@@ -31,10 +31,10 @@ namespace Rdmp.UI.DataLoadUIs.ModuleUIs.LoadProgressUpdating;
 public partial class DataLoadProgressUpdateInfoUI : Form, ICustomUI<DataLoadProgressUpdateInfo>
 {
     private const string WarningLIVE =
-        "(Must return a single date value.  IMPORTANT: Since you are targetting LIVE, you MUST fully specify all table names with the correct database e.g. [MyDatabase]..[MyTable])";
+        "(Must return a single date value.  IMPORTANT: Since you are targeting LIVE, you MUST fully specify all table names with the correct database e.g. [MyDatabase]..[MyTable])";
 
     private const string WarningRAW =
-        "(Must return a single date value.  IMPORTANT: Since you are targetting RAW, you MUST only specify table names, do not add a database qualifier e.g. [MyTable] NOT [MyLIVEDb]..[MyTable])";
+        "(Must return a single date value.  IMPORTANT: Since you are targeting RAW, you MUST only specify table names, do not add a database qualifier e.g. [MyTable] NOT [MyLIVEDb]..[MyTable])";
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Scintilla QueryEditor { get; set; }

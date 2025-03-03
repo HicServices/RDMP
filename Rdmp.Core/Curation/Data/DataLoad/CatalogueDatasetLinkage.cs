@@ -1,33 +1,46 @@
 ﻿using Rdmp.Core.Curation.Data.Datasets;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using System.Collections.Generic;
 using System.Data.Common;
 
 namespace Rdmp.Core.Curation.Data.DataLoad
 {
-    class CatalogueDatasetLinkage : DatabaseEntity
+    public class CatalogueDatasetLinkage : DatabaseEntity
     {
 
-        public Catalogue Catalogue {get;set;}
-        public Dataset Dataset { get; set; }
+        private int _catalogueID;
+        private int _datasetID;
+        private ICatalogueRepository _repository;
+
+        [NoMappingToDatabase]
+        public Catalogue Catalogue => _repository.GetObjectByID<Catalogue>(_catalogueID);
+        [NoMappingToDatabase]
+        public Dataset Dataset => _repository.GetObjectByID<Dataset>(_datasetID);
+
+        public bool AutoUpdate { get; set; }
 
         public CatalogueDatasetLinkage() { }
 
-        public CatalogueDatasetLinkage(ICatalogueRepository repository, Catalogue catalogue,Dataset dataset)
+        public CatalogueDatasetLinkage(ICatalogueRepository repository, Catalogue catalogue, Dataset dataset, bool autoupdate = false)
         {
-            Catalogue = catalogue;
-            Dataset = dataset;
+            _repository = repository;
+            _catalogueID = catalogue.ID;
+            _datasetID = dataset.ID;
             repository.InsertAndHydrate(this, new Dictionary<string, object>
             {
                 {"Catalogue_ID", catalogue.ID },
-                { "Dataset_ID", dataset.ID}
+                { "Dataset_ID", dataset.ID},
+                {"Autoupdate", autoupdate==true?'1':'0' }
             });
         }
 
-        public CatalogueDatasetLinkage(ICatalogueRepository repository, DbDataReader r): base(repository, r)
+        public CatalogueDatasetLinkage(ICatalogueRepository repository, DbDataReader r) : base(repository, r)
         {
-            Catalogue = repository.GetObjectByID<Catalogue>(int.Parse(r["Catalogue_ID"].ToString()));
-            Dataset = repository.GetObjectByID<Dataset>(int.Parse(r["Dataset_ID"].ToString()));
+            _repository = repository;
+            _catalogueID = int.Parse(r["Catalogue_ID"].ToString());
+            _datasetID = int.Parse(r["Dataset_ID"].ToString());
+            AutoUpdate = r["Autoupdate"].ToString() != "0";
         }
     }
 }

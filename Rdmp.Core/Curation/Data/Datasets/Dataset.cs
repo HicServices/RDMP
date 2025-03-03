@@ -27,7 +27,6 @@ public class Dataset : DatabaseEntity, IDataset, IHasFolder
     private string _type = null;
     private string _url = null;
     private int? _providerId = null;
-    private ICatalogueRepository _catalogueRepository;
 
     /// <inheritdoc/>
     [DoNotImportDescriptions]

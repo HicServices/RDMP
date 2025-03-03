@@ -59,7 +59,7 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
 
     /// <summary>
     /// The public network share of the Data path where the physical database files are stored if applicable.  Sharing your database directory on the network is a
-    /// terrible idea (don't do it).  You can use this to automate detatching and shipping an MDF to your researchers e.g. MsSqlReleaseSource
+    /// terrible idea (don't do it).  You can use this to automate detaching and shipping an MDF to your researchers e.g. MsSqlReleaseSource
     /// </summary>
     public string MappedDataPath
     {
@@ -274,7 +274,7 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
 
          if (WasCreatedBy(new LoggingDatabasePatcher())){
             //If you're trying to delete a logging server, remove all references to it first
-            var catalogues = Repository.GetAllObjectsWhere<Catalogue>("LiveLoggingServer_ID",base.ID);
+            var catalogues = Repository.GetAllObjectsWhere<Catalogue>("LiveLoggingServer_ID",ID);
             foreach(var catalogue in catalogues){
                 catalogue.LiveLoggingServer_ID = null;
                 catalogue.SaveToDatabase();

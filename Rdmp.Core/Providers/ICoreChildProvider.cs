@@ -133,7 +133,7 @@ public interface ICoreChildProvider : IChildProvider
     AllTemplateAggregateConfigurationsNode TemplateAggregateConfigurationsNode { get; }
 
     /// <summary>
-    /// All standard (i.e. not plugin) use cases for editting <see cref="IPipeline"/> under.
+    /// All standard (i.e. not plugin) use cases for editing <see cref="IPipeline"/> under.
     /// </summary>
     HashSet<StandardPipelineUseCaseNode> PipelineUseCases { get; }
 

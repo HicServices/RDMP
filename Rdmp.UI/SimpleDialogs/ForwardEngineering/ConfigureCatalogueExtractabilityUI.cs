@@ -84,7 +84,7 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
     private ObjectSaverButton objectSaverButton1 = new();
 
     /// <summary>
-    /// True if we are making programatic changes to values and shouldn't respond to control events (e.g. dropdown changes)
+    /// True if we are making programmatic changes to values and shouldn't respond to control events (e.g. dropdown changes)
     /// </summary>
     private bool isLoading;
 
@@ -474,7 +474,7 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
 
         ITableInfo joinFrom;
 
-        // if user is adding a second table and theres currently only 1 TableInfo
+        // if user is adding a second table and there's currently only 1 TableInfo
         // associated with the Catalogue
         if (existingTables.Length == 1)
         {

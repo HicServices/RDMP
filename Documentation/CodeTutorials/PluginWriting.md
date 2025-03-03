@@ -250,7 +250,7 @@ cd Z:\rdmp-client\
 
 In the RDMP Client edit the file import Pipeline called `BULK INSERT: CSV Import File (automated column-type detection)` by adding your plugin class:
 
-![Editting a pipeline - Version 1](Images/EditPipelineComponentVersion1.png)
+![Editing a pipeline - Version 1](Images/EditPipelineComponentVersion1.png)
 
 If your plugin doesn't appear see [Troubleshooting Plugins](#troubleshooting).
 
@@ -358,7 +358,7 @@ Laura
 Emma
 ```
 
-![Editting a pipeline - Version 2](Images/EditPipelineComponentVersion2.png)
+![Editing a pipeline - Version 2](Images/EditPipelineComponentVersion2.png)
 
 <a name="anoPluginVersion3"></a>
 ## Version 3 - Referencing a database table
@@ -481,14 +481,14 @@ And import it into RDMP as a [TableInfo] (you don't need to create a Catalogue i
 
 ![Import TableInfo - Version 3](Images/ImportExistingTableInfo.png)
 
-Test the plugin by importing demography.csv again through the pipeline with the new component implmentation
+Test the plugin by importing demography.csv again through the pipeline with the new component implementation
 
 <a name="tests"></a>
 # Tests
 
 <a name="unitTests"></a>
 ## Unit Tests 
-We definetly want to write some unit/integration tests for this component.  Create a new project called MyPipelinePluginTests.  
+We definitely want to write some unit/integration tests for this component.  Create a new project called MyPipelinePluginTests.  
 
 ```
 dotnet new classlib -n MyPipelinePluginTests -o MyPipelinePluginTests
@@ -670,7 +670,7 @@ namespace MyPipelinePluginTests
 }
 ```
 
-This has a few intersting lines in it.  Firstly we create a DataTable containing a Names column with some values then we use the base class property `GetCleanedServer` this is a database for creating test tables in.  The database is nuked before each test set is run.  `DiscoveredDatabase.CreateTable` will upload the `DataTable` to the destination and return a `DiscoveredTable`.
+This has a few interesting lines in it.  Firstly we create a DataTable containing a Names column with some values then we use the base class property `GetCleanedServer` this is a database for creating test tables in.  The database is nuked before each test set is run.  `DiscoveredDatabase.CreateTable` will upload the `DataTable` to the destination and return a `DiscoveredTable`.
 
 `Discovered[...]` is how we reference Servers / Databases / Tables / Columns as we find them at runtime.  These classes exist to provide simplified access to common tasks in a cross platform way.
 
@@ -822,7 +822,7 @@ This is not very helpful.  We can use the `ReusableLibraryCode.Checks.ICheckNoti
 notifier.OnCheckPerformed(new CheckEventArgs("Ready to start checking", CheckResult.Success, null, null));
 ```
 
-The two null arguments are for Exception (if any) and the 'proposed fix' which is a string that describes how you can immediately fix the problem in a way where you want to delegate the descision (i.e. you don't want to automatically always fix it').  The return value of OnCheckPerformed is `bool` this indicates whether the fix should be attempted.  Most `ICheckNotifier` implementations provide static answers to fixes e.g. `ReusableLibraryCode.Checks.AcceptAllCheckNotifier` will return true but throw an Exception any time there is a check that fails without a ProposedFix.  Some `ICheckNotifier` will consult the user about whether to apply a ProposedFix e.g. `ChecksUI`
+The two null arguments are for Exception (if any) and the 'proposed fix' which is a string that describes how you can immediately fix the problem in a way where you want to delegate the decision (i.e. you don't want to automatically always fix it').  The return value of OnCheckPerformed is `bool` this indicates whether the fix should be attempted.  Most `ICheckNotifier` implementations provide static answers to fixes e.g. `ReusableLibraryCode.Checks.AcceptAllCheckNotifier` will return true but throw an Exception any time there is a check that fails without a ProposedFix.  Some `ICheckNotifier` will consult the user about whether to apply a ProposedFix e.g. `ChecksUI`
   
 For now we can ignore ProposedFix because nothing that goes wrong with our component can be easily fixed.
 
@@ -1200,7 +1200,7 @@ The first test case `LoggerTestCase.ToConsole` creates a `ThrowImmediatelyDataLo
 
 ![To Console Output](Images/Version5ToConsoleOutput.png)
 
-The second test case `LoggerTestCase.ToMemory` creates a `ReusableLibraryCode.Progress.ToMemoryDataLoadEventListener`.  `ToMemoryDataLoadEventListener` records `OnProgress` and `OnNotify` messages in Dictionaries indexed by component (that sent the message).  We need a Dictionary because in practice there will usually be multiple components executing and all logging to the same `IDataLoadEventListener`.  This class is particularly useful for testing where you want to confirm that a certain message was sent or that a certain number of records was processed.  `ToMemoryDataLoadEventListener` can also be used when you want to run an entire Pipeline and make descisions based on the logging messages generated (`ProgressEventType GetWorst()` method can be helpful here).
+The second test case `LoggerTestCase.ToMemory` creates a `ReusableLibraryCode.Progress.ToMemoryDataLoadEventListener`.  `ToMemoryDataLoadEventListener` records `OnProgress` and `OnNotify` messages in Dictionaries indexed by component (that sent the message).  We need a Dictionary because in practice there will usually be multiple components executing and all logging to the same `IDataLoadEventListener`.  This class is particularly useful for testing where you want to confirm that a certain message was sent or that a certain number of records was processed.  `ToMemoryDataLoadEventListener` can also be used when you want to run an entire Pipeline and make decisions based on the logging messages generated (`ProgressEventType GetWorst()` method can be helpful here).
 
 We use the `ToMemoryDataLoadEventListener` to confirm that the final progress count of redactions as logged by the component are 4.
 

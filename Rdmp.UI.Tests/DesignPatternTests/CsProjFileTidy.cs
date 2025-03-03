@@ -140,10 +140,10 @@ internal class CsProjFileTidy
 
     private string GetSubspace(FileInfo csFile)
     {
-        var reltive = csFile.FullName.Replace(_root.FullName, "");
+        var relative = csFile.FullName.Replace(_root.FullName, "");
 
         //trim off the "\myclass.cs" bit
-        reltive = reltive[..^(csFile.Name.Length + 1)];
-        return reltive.Replace('\\', '.');
+        relative = relative[..^(csFile.Name.Length + 1)];
+        return relative.Replace('\\', '.');
     }
 }

@@ -104,7 +104,7 @@ public class ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetCon
 
     public override string GetCommandName()
     {
-        // If we're explicity overriding the command name, then use that
+        // If we're explicitly overriding the command name, then use that
         if (!string.IsNullOrWhiteSpace(OverrideCommandName))
             return base.GetCommandName();
 
@@ -185,7 +185,7 @@ public class ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetCon
         //current contents
         var contents = _targetCohortAggregateContainer.GetOrderedContents().ToArray();
 
-        //insert it at the begining of the contents
+        //insert it at the beginning of the contents
         var minimumOrder = 0;
         if (contents.Any())
             minimumOrder = contents.Min(o => o.Order);

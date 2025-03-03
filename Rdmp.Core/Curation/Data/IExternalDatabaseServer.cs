@@ -22,7 +22,7 @@ namespace Rdmp.Core.Curation.Data;
 /// 
 /// <para>ExternalDatabaseServer are really only for fixed global entities such as logging/identifier dumps etc.</para>
 /// 
-/// <para>Servers can but do not have to have usernames/passwords in which case integrated security (windows account) is used when openning connections.  Password
+/// <para>Servers can but do not have to have usernames/passwords in which case integrated security (windows account) is used when opening connections.  Password
 /// is encrypted in the same fashion as in the DataAccessCredentials table.</para>
 /// </summary>
 public interface IExternalDatabaseServer : IDataAccessPoint, INamed

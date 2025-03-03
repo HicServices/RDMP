@@ -90,6 +90,11 @@ public class ThrowImmediatelyActivator : BasicActivateItems
     {
     }
 
+    public override void ShowWarning(string message)
+    {
+    }
+
+
     public override bool TypeText(DialogArgs args, int maxLength, string initialText, out string text,
         bool requireSaneHeaderText)
     {

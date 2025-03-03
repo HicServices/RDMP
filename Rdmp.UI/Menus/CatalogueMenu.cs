@@ -24,10 +24,10 @@ internal class CatalogueMenu : RDMPContextMenuStrip
     public CatalogueMenu(RDMPContextMenuStripArgs args, Catalogue catalogue) : base(args, catalogue)
     {
         var isApiCall = catalogue.IsApiCall();
-        Add(new ExecuteCommandLinkCatalogueToDatasetUI(_activator, catalogue)
-        {
-            OverrideCommandName = "Link Catalogue to Dataset"
-        });
+        //Add(new ExecuteCommandLinkCatalogueToDatasetUI(_activator, catalogue)
+        //{
+        //    OverrideCommandName = "Link Catalogue to Dataset"
+        //});
         Add(new ExecuteCommandGenerateMetadataReport(_activator, catalogue)
         {
             Weight = -99.059f

@@ -57,7 +57,7 @@ To install an instance of the RDMP platform databases from the command line use 
 ```
 rdmp install localhost\sqlexpress RDMP_
 ```
-*Insert your sql server's name in place of localhost\sqlexpress.  Note that some terminals require an esacpe for `\` e.g. enter `localhost\\sqlexpress`*
+*Insert your sql server's name in place of localhost\sqlexpress.  Note that some terminals require an escape for `\` e.g. enter `localhost\\sqlexpress`*
 
 To see all the available options (including dropping existing databases, creating example datasets etc) run:
 

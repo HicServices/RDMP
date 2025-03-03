@@ -22,8 +22,7 @@ using System.Security;
 [assembly: AssemblyInformationalVersionAttribute("0.0.0.0")]
 [assembly: AssemblyTitleAttribute("HIC.DataManagementPlatform")]
 [assembly: AssemblyProductAttribute("HIC.DataManagementPlatform")]
-[assembly: AssemblyDescriptionAttribute("HIC.DataManagementPlatform is a product of HIC - https://github.com/HicServices/R" +
-    "DMP.git.")]
+[assembly: AssemblyDescriptionAttribute("HIC.DataManagementPlatform is a product of HIC - https://github.com/HicServices/RDMP.git.")]
 [assembly: AssemblyTrademarkAttribute("HIC.DataManagementPlatform - HIC")]
-[assembly: AssemblyCopyrightAttribute("Copyright ©  2019 HIC, - Original author or authors")]
+[assembly: AssemblyCopyrightAttribute("Copyright Â©  2019 HIC, - Original author or authors")]
 

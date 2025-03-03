@@ -157,7 +157,7 @@ public class PreExecutionChecker : ICheckable
         // Check that the raw database is not present
         if (!rawDbInfo.Exists())
         {
-            // RAW db does not exist thats usually good unless...
+            // RAW db does not exist that's usually good unless...
             if (persistentRaw)
             {
                 var shouldCreate = _notifier.OnCheckPerformed(new CheckEventArgs(

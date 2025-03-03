@@ -32,7 +32,7 @@ It is intended to be a wrapper around `Lazy<T>` that simplifies caching of these
 
 # Implementing IInjectKnown&lt;T&gt;
 
-Consider the imaginary class skeleton `AggregateTopX`, this class will be dependant on a parent class `AggregateConfiguration`
+Consider the imaginary class skeleton `AggregateTopX`, this class will be dependent on a parent class `AggregateConfiguration`
 
 ```csharp
 public class AggregateTopX: DatabaseEntity

@@ -1,19 +1,19 @@
 IsExtractionIdentifier:Indicates that an ExtractionInformation is a patient identifier e.g. a CHI / NHS number etc.  Although unusual, you can have more than one in a given dataset e.g. ParentCHI, BabyCHI,TwinBabyCHI,TripletBabyCHI.  All IsExtractionIdentifiers should have the same datatype to prevent problems doing linkage between datasets/cohorts
-OverrideFiltersByUsingParentAggregateConfigurationInstead_ID:Allows you to softlink the WHERE logic of an AggregateConfiguration to the WHERE logic of another AggregateConfiguration (prevents you having to duplicate the filters/containers etc and ensures there is only one verison of the truth).
+OverrideFiltersByUsingParentAggregateConfigurationInstead_ID:Allows you to softlink the WHERE logic of an AggregateConfiguration to the WHERE logic of another AggregateConfiguration (prevents you having to duplicate the filters/containers etc and ensures there is only one version of the truth).
 FK_DataAccessCredentials_TableInfo_DataAccessCredentials:Prevents you from deleting the credentials used to access a database when there are 1 or more TableInfo objects that are configured to use it.  You must unset all use first
 FK_Pipeline_PipelineComponent: Prevents you from deleting a component that is a Destination component of a Pipeline without first unsetting the DestinationPipelineComponent_ID field
 FK_Pipeline_SourcePipelineComponent_ID_PipelineComponent: Prevents you from deleting a component that is a Source component of a Pipeline without first unsetting the SourcePipelineComponent_ID field
 FK_SupportingSQLTable_ExternalDatabaseServer: Prevents you deleting an ExternalDatabaseServer that documents the location of a SupportingSQLTable (where the SQL should be run and optionally the credentials to use to access it)
 FK_CacheProgress_LoadSchedule:Prevents you deleting a LoadProgress that has a CacheProgress associated with it.  Deleting a CacheProgress is very dangerous as it means you loose knowing how far through a dataset you have loaded and possibly end up orphaning a Caching Pipeline so you have to do this manually yourself before deleting the LoadProgress
 FK_CacheProgress_PermissionWindow: Prevents you from deleting a PermissionWindow that is in use by one or more CacheProgress.
-FK_CohortAggregateSubContainer_CohortAggregateContainer_ParentID: Prevents deleting a container that is part of a subcontainer relationship.  Deleting containers must be done programatically from the bottom up or by nuking all subcontainer relationships and then nuking all containers
+FK_CohortAggregateSubContainer_CohortAggregateContainer_ParentID: Prevents deleting a container that is part of a subcontainer relationship.  Deleting containers must be done programmatically from the bottom up or by nuking all subcontainer relationships and then nuking all containers
 FK_CohortAggregateContainer_AggregateConfiguration_AggregateConfiguration:Prevents deleting an AggregateConfiguration which is part of a CohortIdentificationConfiguration in CohortManager
 FK_ANOTable_ExternalDatabaseServer:Prevents deleting an ExternalDatabaseServer that is configured as an ANOTable endpoint i.e. the server contains anonymous/identifiable DLE value substitutions so deleting it would result in unreachable data and orphan ANOTables
 FK_AggregateConfiguration_AggregateDimension: Prevents you deleting the AggregateDimension that is configured as the pivot column of its parent AggregateConfiguration
 FK_GovernanceDocument_GovernancePeriod:Prevents you deleting GovernancePeriods which have one or more GovernanceDocument configured on them.
 FK_GovernancePeriod_Catalogue_GovernancePeriod:Prevents you deleting GovernancePeriods which are configured to provide Governance for one or more Catalogues
 FK_GovernancePeriod_Catalogue_Catalogue:Prevents you deleting Catalogues which have explicit GovernancePeriods associated with them
-FK_OverrideRootFilterContainerToUseParents:Prevents you deleting an AggregateConfiguration which is referenced by another AggregateConfiguration as a WHERE Hijack, basically another AggregateConfiguration does not have any Filters/Containers but instead has a shortcut to the AggregateConfiguration you are tyring to delete and uses its WHERE logic instead (See OverrideFiltersByUsingParentAggregateConfigurationInstead_ID)
+FK_OverrideRootFilterContainerToUseParents:Prevents you deleting an AggregateConfiguration which is referenced by another AggregateConfiguration as a WHERE Hijack, basically another AggregateConfiguration does not have any Filters/Containers but instead has a shortcut to the AggregateConfiguration you are trying to delete and uses its WHERE logic instead (See OverrideFiltersByUsingParentAggregateConfigurationInstead_ID)
 FK_PivotCategory_ExtractionInformation_ID:Prevents you deleting the ExtractionInformation field which is the DQE Pivot column on a Catalogue
 FK_TimeCoverageCategory_ExtractionInformation_ID:Prevents you deleting the ExtractionInformation field which is the DQE TimeCoverage column on a Catalogue
 FK_AggregateFilterSubContainer_AggregateFilterContainer:Prevents you deleting an AggregateFilterContainer which is the parent of a subcontainer (another AggregateFilterContainer).  This would leave the subcontainer as an orphan, you must delete the subcontainer first
@@ -66,7 +66,7 @@ ix_PluginNamesMustBeUnique:Prevents you uploading two copies of the same plugin 
 ix_CataloguesCanOnlyBeLockedByOneAutomationJobAtATime:Prevents the Automation server from performing conflicting operations on a Catalogue e.g. trying to DQE it while also loading it.
 ix_preventMultipleExtractionInformationsPerCatalogueItem:Prevents you configuring two or more ExtractionInformations on a given CatalogueItem
 ix_eachAggregateCanOnlyBeJoinableOnOneProject:Prevents you using an AggregateConfiguration as a JoinableCohortAggregateConfiguration on multiple CohortIdentificationConfigurations simultaneously
-ix_eachAggregateCanOnlyHaveOneJoinable:Prevents you configuring multiple JoinableCohortAggregateConfigurationUse relationships i.e. tyring to use two or more AggregateConfigurations as 'patient index tables' for the same AggregateConfiguration in an CohortIdentificationConfiguration
+ix_eachAggregateCanOnlyHaveOneJoinable:Prevents you configuring multiple JoinableCohortAggregateConfigurationUse relationships i.e. trying to use two or more AggregateConfigurations as 'patient index tables' for the same AggregateConfiguration in an CohortIdentificationConfiguration
 ix_preventDuplicatePipelineNames:Prevents you naming two or more Pipelines with the same name
 ix_NamesMustBeUnique:Prevents you giving two or more DataAccessCredentials the same name
 PreventDoubleAddingCatalogueIdx:Prevents you importing the same Catalogue and marking it extractable twice (creating an ExtractableDataset) 
@@ -99,3 +99,4 @@ FK_Redaction_RedactionConfiguration_ID: Prevents you from deleting a redaction c
 FK_Redaction_ColumnInfo_ID: Prevents redactions from becoming orphaned from their associated catalogue columns
 FK_RedactionKey_Redaction_ID: Prevents redaction primary keys from being orphaned from the associated redaction
 FK_RedactionKey_ColumnInfo_ID:  Prevents redaction keys from becoming orphaned from their associated catalogue columns
+FK_LoadMetadataRootReference: Links versions of a load metadata back to the source load metadata

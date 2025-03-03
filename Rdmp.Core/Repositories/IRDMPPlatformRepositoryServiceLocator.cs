@@ -19,7 +19,7 @@ public interface IRDMPPlatformRepositoryServiceLocator : ICatalogueRepositorySer
     IDataExportRepositoryServiceLocator
 {
     /// <summary>
-    /// Cross repository method equivallent to GetObjectByID mostly used in persistence recovery (when you startup RDMP after closing it down before).  It is better
+    /// Cross repository method equivalent to GetObjectByID mostly used in persistence recovery (when you startup RDMP after closing it down before).  It is better
     /// to use the specific repository methods on the CatalogueRepository / DataExportRepository.
     /// </summary>
     /// <param name="repositoryTypeName"></param>
@@ -32,7 +32,7 @@ public interface IRDMPPlatformRepositoryServiceLocator : ICatalogueRepositorySer
     bool ArbitraryDatabaseObjectExists(string repositoryTypeName, string databaseObjectTypeName, int objectID);
 
     /// <summary>
-    ///  Cross repository method equivallent to GetObjectByID.  Only works if <typeparamref name="T"/> is a Type supported by either
+    ///  Cross repository method equivalent to GetObjectByID.  Only works if <typeparamref name="T"/> is a Type supported by either
     ///  CatalogueRepository / DataExportRepository (i.e. you can't fetch something like an <see cref="Evaluation"/> - which is a DQE object)
     /// </summary>
     /// <typeparam name="T"></typeparam>
@@ -42,7 +42,7 @@ public interface IRDMPPlatformRepositoryServiceLocator : ICatalogueRepositorySer
 
 
     /// <summary>
-    ///  Cross repository method equivallent to GetObjectByID.  Only works if <paramref name="t"/> is a Type supported by either
+    ///  Cross repository method equivalent to GetObjectByID.  Only works if <paramref name="t"/> is a Type supported by either
     ///  CatalogueRepository / DataExportRepository (i.e. you can't fetch something like an <see cref="Evaluation"/> - which is a DQE object)
     /// </summary>
     /// <param name="t"></param>

@@ -103,7 +103,7 @@ public class ExtractionInformationTests : DatabaseTests
         {
             parameter?.DeleteInDatabase();
 
-            //filters are children of extraction info with CASCADE DELETE so have to delete this one first if we want to test it programatically (although we could just skip deleting it since SQL will handle it anyway)
+            //filters are children of extraction info with CASCADE DELETE so have to delete this one first if we want to test it programmatically (although we could just skip deleting it since SQL will handle it anyway)
             filterFastThings?.DeleteInDatabase();
 
             extractInfo?.DeleteInDatabase();
@@ -129,7 +129,7 @@ public class ExtractionInformationTests : DatabaseTests
             //confirm the insert worked
             Assert.That(extractInfo.SelectSQL, Is.EqualTo("dave"));
 
-            //fetch the extraction information via the linked CatalogueItem - ColumnInfo pair (i.e. we are testing the alternate route to fetch ExtractionInformation - by ID or by colum/item pair)
+            //fetch the extraction information via the linked CatalogueItem - ColumnInfo pair (i.e. we are testing the alternate route to fetch ExtractionInformation - by ID or by column/item pair)
             var extractInfo2_CameFromLinker = cataItem.ExtractionInformation;
             Assert.Multiple(() =>
             {

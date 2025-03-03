@@ -30,7 +30,7 @@ public class RelationshipAttribute : Attribute
 
     /// <summary>
     /// Optional function name for finding compatible objects to populate this relationship.  When null all objects are considered viable
-    /// Must be a paramaterless method
+    /// Must be a parameterless method
     /// </summary>
     public string ValueGetter { get; set; }
 

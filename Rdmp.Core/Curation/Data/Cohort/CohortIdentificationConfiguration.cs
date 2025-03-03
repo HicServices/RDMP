@@ -35,7 +35,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     ICustomSearchString, IMightBeReadOnly, IHasFolder
 {
     /// <summary>
-    /// Characters that apear in front of any <see cref="AggregateConfiguration"/> which is acting as a cohort identification list or patient index table
+    /// Characters that appear in front of any <see cref="AggregateConfiguration"/> which is acting as a cohort identification list or patient index table
     /// <seealso cref="AggregateConfiguration.IsCohortIdentificationAggregate"/>.
     /// </summary>
     public const string CICPrefix = "cic_";
@@ -274,7 +274,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
 
     public bool ShouldBeReadOnly(out string reason)
     {
-        if (Frozen)
+        if (Frozen && Version is null)
         {
             reason = $"{Name} is Frozen";
             return true;
@@ -526,7 +526,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
 
     /// <summary>
     /// Delegate for handling the situation in which the user wants to create a cohort based on a given Catalogue but there are multiple IsExtractionIdentifier columns.
-    /// For example SMR02 (baby birth records) might have (Mother CHI, Father CHI, Baby CHI).  In this situation the descision on which column to use is resolved by this
+    /// For example SMR02 (baby birth records) might have (Mother CHI, Father CHI, Baby CHI).  In this situation the decision on which column to use is resolved by this
     /// class.
     /// </summary>
     /// <param name="catalogue"></param>
@@ -622,7 +622,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
             toClone.AggregateDimensions.Where(d => d.IsExtractionIdentifier).ToArray();
         IColumn extractionIdentifier = null;
 
-        //very unexpected, he had multiple IsExtractionIdentifier Dimensions all configured for simultaneous use on this Aggregate, it is very freaky and we definetly don't want to let him import it for cohort identification
+        //very unexpected, he had multiple IsExtractionIdentifier Dimensions all configured for simultaneous use on this Aggregate, it is very freaky and we definitely don't want to let him import it for cohort identification
         if (existingExtractionIdentifierDimensions.Length > 1)
             throw new NotSupportedException(
                 $"Cannot clone the AggregateConfiguration {toClone} because it has multiple IsExtractionIdentifier dimensions (must be 0 or 1)");

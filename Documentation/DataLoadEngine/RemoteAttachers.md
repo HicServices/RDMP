@@ -76,5 +76,5 @@ The Remote Database Attacher has a number of configuration options the required 
 
 ## Using Historical Loading with custom SQL
 By default, historical fetch configuration will be ignored in custome select SQL.
-To enable the use of hostorical fetching, include the string "$RDMPDefinedWhereClause" in the where clause of your query
+To enable the use of historical fetching, include the string "$RDMPDefinedWhereClause" in the where clause of your query
 e.e. "Select * from Biochemistry Where $RDMPDefinedWhereClause"

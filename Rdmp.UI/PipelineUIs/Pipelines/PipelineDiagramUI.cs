@@ -28,7 +28,7 @@ public delegate void PipelineComponentSelectedHandler(object sender, IPipelineCo
 
 /// <summary>
 /// Used to visualise an IPipeline (See ConfigurePipelineUI and ConfigureAndExecutePipelineUI for what these are).  This control has a readonly/editable setting on it.  In dialogs where
-/// you are selecting an IPipeline you will see the diagram rendered readonly.  If you are editting  (See PipelineWorkAreaUI and ConfigurePipelineUI) then you will be able to select
+/// you are selecting an IPipeline you will see the diagram rendered readonly.  If you are editing  (See PipelineWorkAreaUI and ConfigurePipelineUI) then you will be able to select
 /// and drag and drop in new components to make an IPipeline configuration.  On such a dialog you can also select a component to change the components arguments (See ArgumentCollection).
 /// </summary>
 public partial class PipelineDiagramUI : UserControl
@@ -168,7 +168,7 @@ public partial class PipelineDiagramUI : UserControl
                 if (_useCase.ExplicitSource != null)
                     AddExplicit(_useCase.ExplicitSource); //if so add it
                 else
-                //there wasn't an explicit one so there was a PipelineComponent maybe? albiet one that might be broken?
+                //there wasn't an explicit one so there was a PipelineComponent maybe? albeit one that might be broken?
                 if (pipeline.SourcePipelineComponent_ID != null)
                     AddPipelineComponent((int)pipeline.SourcePipelineComponent_ID, PipelineComponentRole.Source,
                         pipeline.Repository); //add the possibly broken PipelineComponent to the diagram
@@ -189,7 +189,7 @@ public partial class PipelineDiagramUI : UserControl
                     AddExplicit(_useCase.ExplicitDestination); //if so add it
                 }
                 else
-                //there wasn't an explicit one so there was a PipelineComponent maybe? albiet one that might be broken?
+                //there wasn't an explicit one so there was a PipelineComponent maybe? albeit one that might be broken?
                 if (pipeline.DestinationPipelineComponent_ID != null)
                 {
                     AddPipelineComponent((int)pipeline.DestinationPipelineComponent_ID,

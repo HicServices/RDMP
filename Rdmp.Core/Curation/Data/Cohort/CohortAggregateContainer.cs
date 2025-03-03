@@ -60,7 +60,7 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable, INamed, IDis
     }
 
     /// <summary>
-    /// The order within the parent <see cref="CohortAggregateContainer"/> (if it is not a Root level container / orphan).  Symantically this position is relevant only for
+    /// The order within the parent <see cref="CohortAggregateContainer"/> (if it is not a Root level container / orphan).  Semantically this position is relevant only for
     /// the <see cref="SetOperation.EXCEPT"/> which takes the first set and throws out all subsequent sets.
     /// <remarks>Also affects the order of IncludeCumulativeTotals</remarks>
     /// </summary>
@@ -355,7 +355,7 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable, INamed, IDis
                 }
             }
 
-            //its another container (a subcontainer), recursively call the clone operation on it and add that subtree to teh clone container
+            //its another container (a subcontainer), recursively call the clone operation on it and add that subtree to the clone container
             if (content is CohortAggregateContainer container)
             {
                 var cloneSubContainer =

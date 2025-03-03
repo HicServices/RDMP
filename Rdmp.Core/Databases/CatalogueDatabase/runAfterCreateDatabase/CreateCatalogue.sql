@@ -273,6 +273,23 @@ CREATE TABLE [dbo].[Catalogue](
 	[LiveLoggingServer_ID] [int] NULL,
 	[TestLoggingServer_ID] [int] NULL,
 	[SoftwareVersion] [nvarchar](50) NOT NULL,
+	[ShortDescription] [nvarchar](250) NULL,
+	[DataType] [nvarchar](255) NULL,
+	[DataSubType] [nvarchar](255) NULL,
+	[DataSource] [nvarchar](100) NULL,
+	[DataSourceSetting] [nvarchar](100) NULL,
+	[DatasetReleaseDate] [datetime] NULL,
+	[StartDate] [datetime] NULL,
+	[EndDate] [datetime] NULL,
+	[UpdateLag] [nvarchar](255) NULL,
+	[Juristiction] [nvarchar](255) NULL,
+	[DataController] [nvarchar](255) NULL,
+	[DataProcessor] [nvarchar](255) NULL,
+	[ControlledVocabulary] [nvarchar](MAX) NULL,
+	[AssociatedPeople] [nvarchar](MAX) NULL,
+	[Doi] [nvarchar](50) NULL,
+	[Purpose] [nvarchar](255) NULL,
+	[AssociatedMedia] [nvarchar](max) NULL
  CONSTRAINT [PK_Data_Catalogue] PRIMARY KEY CLUSTERED 
 (
 	[ID] ASC
@@ -601,6 +618,8 @@ CREATE TABLE [dbo].[LoadMetadata](
 	[CacheArchiveType] [int] NOT NULL,
 	[SoftwareVersion] [nvarchar](50) NOT NULL,
 	[AllowReservedPrefix] [bit] NOT NULL default 0,
+	[RootLoadMetadata_ID] [int] NULL,
+	CONSTRAINT [fk_loadMetadataRootReference] FOREIGN KEY([RootLoadMetadata_ID]) REFERENCES [dbo].[LoadMetadata](id),
  CONSTRAINT [PK_LoadMetadata] PRIMARY KEY CLUSTERED 
 (
 	[ID] ASC
@@ -1440,13 +1459,13 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Sample period 
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Geographical: EU, UK, Scotland, Tayside etc...' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Catalogue', @level2type=N'COLUMN',@level2name=N'Geographical_coverage'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Any notes on the limitation, derviations or characteristics of the data of potential interest to the users or that the complier/ curator feels guilty about' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Catalogue', @level2type=N'COLUMN',@level2name=N'Background_summary'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Any notes on the limitation, derivations or characteristics of the data of potential interest to the users or that the compiler/ curator feels guilty about' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Catalogue', @level2type=N'COLUMN',@level2name=N'Background_summary'
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Specific subject that the data deals with' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Catalogue', @level2type=N'COLUMN',@level2name=N'Search_keywords'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Period of referesh: Biannual, hourly, no fixed schedule...etc' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Catalogue', @level2type=N'COLUMN',@level2name=N'Update_freq'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Period of refresh: Biannual, hourly, no fixed schedule...etc' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Catalogue', @level2type=N'COLUMN',@level2name=N'Update_freq'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Date if bext referesh: month, week, or exact day' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Catalogue', @level2type=N'COLUMN',@level2name=N'Update_sched'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Date if bext refresh: month, week, or exact day' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Catalogue', @level2type=N'COLUMN',@level2name=N'Update_sched'
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Date range for available data in years (1989-2013)' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Catalogue', @level2type=N'COLUMN',@level2name=N'Time_coverage'
 GO
@@ -1466,7 +1485,7 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'URL to data di
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'URL for data bulk download' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Catalogue', @level2type=N'COLUMN',@level2name=N'Bulk_Download_URL'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'URL to data explorer and cohort indentifier tool' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Catalogue', @level2type=N'COLUMN',@level2name=N'Query_tool_URL'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'URL to data explorer and cohort identifier tool' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Catalogue', @level2type=N'COLUMN',@level2name=N'Query_tool_URL'
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'URL to use when crediting data source in articles' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Catalogue', @level2type=N'COLUMN',@level2name=N'Source_URL'
 GO

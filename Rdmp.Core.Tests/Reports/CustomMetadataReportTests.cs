@@ -827,7 +827,7 @@ $end");
         eval1_col1.TargetProperty = "Cata1Col1";
         eval1_col1.CountCorrect = 9;
         eval1_col1.CountDBNull =
-            3; // note that this is seperate from the other counts.  A value can be both null and correct.
+            3; // note that this is separate from the other counts.  A value can be both null and correct.
         eval1.ColumnStates = new ColumnState[] { eval1_col1 };
 
         var eval2 = Substitute.For<Evaluation>();

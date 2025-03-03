@@ -89,11 +89,11 @@ public partial class SimpleFilterUI : UserControl
             currentRowPanel.Controls.Add(p);
             p.tbValue.TextChanged += (s, e) =>
             {
-                //we are here because user is selecting a value from the dropdown not because he is editting the text field manually
+                //we are here because user is selecting a value from the dropdown not because he is editing the text field manually
                 if (_settingAKnownGoodValue)
                     return;
 
-                //user is manually editting a Parameters so it no longer matches a Known value
+                //user is manually editing a Parameters so it no longer matches a Known value
                 ddKnownGoodValues.SelectedItem = "";
             };
             parameterUis.Add(p);

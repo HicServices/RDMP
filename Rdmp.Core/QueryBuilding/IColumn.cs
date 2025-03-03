@@ -41,8 +41,8 @@ public interface IColumn : IHasRuntimeName, ICheckable, IOrderable, IMapsDirectl
     string Alias { get; }
 
     /// <summary>
-    /// True if the <see cref="ColumnInfo"/> should be wrapped with a standard hashing algorithmn (e.g. MD5) when extracted to researchers in a data extract.
-    /// <para>Hashing algorithmn must be defined in data export database</para>
+    /// True if the <see cref="ColumnInfo"/> should be wrapped with a standard hashing algorithm (e.g. MD5) when extracted to researchers in a data extract.
+    /// <para>Hashing algorithm must be defined in data export database</para>
     /// </summary>
     bool HashOnDataRelease { get; }
 

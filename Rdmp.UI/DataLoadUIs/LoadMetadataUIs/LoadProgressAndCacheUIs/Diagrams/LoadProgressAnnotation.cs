@@ -62,7 +62,7 @@ internal class LoadProgressAnnotation
         double anchorX;
         var maxY = GetMaxY(_dt);
 
-        //display the text labels half way allong the chart
+        //display the text labels half way along the chart
         var textAnchorY = maxY * fractionalHeightOfLabel;
 
         if (date == null)

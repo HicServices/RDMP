@@ -7,7 +7,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
@@ -36,10 +35,10 @@ public partial class RedactCatalogueUI : RedactCatalogueUI_Design
     public RedactCatalogueUI()
     {
         InitializeComponent();
-        this.comboBox1.Items.Clear();
+        comboBox1.Items.Clear();
         AssociatedCollection = RDMPCollection.Tables;
-        this.folv.ButtonClick += Restore;
-        this.btnNewRegex.Click += HandleNewRegex;
+        folv.ButtonClick += Restore;
+        btnNewRegex.Click += HandleNewRegex;
 
     }
 
@@ -78,7 +77,7 @@ public partial class RedactCatalogueUI : RedactCatalogueUI_Design
 
     public void Restore(object sender, CellClickEventArgs e)
     {
-        Debug.WriteLine(String.Format("Button clicked: ({0}, {1}, {2})", e.RowIndex, e.SubItem, e.Model));
+        Debug.WriteLine($"Button clicked: ({e.RowIndex}, {e.SubItem}, {e.Model})");
         var redaction = (e.Model as RegexRedaction);
         Restore(redaction);
     }
@@ -91,7 +90,7 @@ public partial class RedactCatalogueUI : RedactCatalogueUI_Design
         _activator = activator;
         _catalogue = databaseObject;
         var regexConfigurations = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<RegexRedactionConfiguration>().ToArray();
-        this.comboBox1.Items.Clear();
+        comboBox1.Items.Clear();
         comboBox1.Items.AddRange(regexConfigurations);
         comboBox1.DisplayMember = "Name";
         RefreshTable();
@@ -101,7 +100,7 @@ public partial class RedactCatalogueUI : RedactCatalogueUI_Design
 
     private void btnRedact_Click(object sender, EventArgs e)
     {
-        if (_activator.YesNo("Are you sure you want to preform redactions on the selected columns?", "Redact All matches in this catalogue"))
+        if (_activator.YesNo("Are you sure you want to perform redactions on the selected columns?", "Redact All matches in this catalogue"))
         {
             int? max = string.IsNullOrWhiteSpace(tbMaxCount.Text) ? null : int.Parse(tbMaxCount.Text);
             var columns = new List<ColumnInfo>();

@@ -21,7 +21,7 @@ namespace Rdmp.Core.Curation;
 /// Generates TableInfo entries in the ICatalogueRepository based the Table Valued Function specified on the live database server.  Table Valued Functions are Microsoft
 /// Sql Server specific, they are like Scalar functions except they return data tables.  RDMP supports building Catalogues that refer to Table Valued Functions.  These
 /// act just like regular tables when it comes to aggregates, data extraction etc except that they can have ISqlParameters declared for them.  Table Valued Functions are
-/// really not nice, especailly if they are non deterministic (return different results when given the same parameters), therefore really you should just avoid using them
+/// really not nice, especially if they are non deterministic (return different results when given the same parameters), therefore really you should just avoid using them
 /// if at all possible.
 /// </summary>
 public class TableValuedFunctionImporter : ITableInfoImporter

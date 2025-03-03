@@ -80,7 +80,7 @@ FROM
 
         var spontFilter = new SpontaneouslyInventedFilter(memoryRepository, spontContainer,
             "[biochemistry]..[Result].[OmgBob] = 'T'",
-            "My Filter", "Causes spontaneous requirement for joining compeltely", null);
+            "My Filter", "Causes spontaneous requirement for joining completely", null);
         spontContainer.AddChild(spontFilter);
 
 

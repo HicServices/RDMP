@@ -218,7 +218,7 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
     }
 
     /// <summary>
-    /// Re checks the TableInfos associated with the Catalogue incase some have changed
+    /// Re checks the TableInfos associated with the Catalogue in case some have changed
     /// </summary>
     public void RefreshTableInfos()
     {

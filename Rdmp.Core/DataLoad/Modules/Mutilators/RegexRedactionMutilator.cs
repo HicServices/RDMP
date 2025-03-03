@@ -65,7 +65,7 @@ public class RegexRedactionMutilator : MatchingTablesMutilatorWithDataLoadJob
         _discoveredPKColumns = columns.Where(c => cataloguePks.Select(cpk => cpk.Name).Contains(c.GetRuntimeName())).ToArray();
         if (_discoveredPKColumns.Length == 0)
         {
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "No Primary Keys found. Redaction cannot be perfomed without a primary key."));
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "No Primary Keys found. Redaction cannot be performed without a primary key."));
             //Don't want to fail the data load, but just let the user know
             return;
         }
@@ -136,15 +136,15 @@ public class RegexRedactionMutilator : MatchingTablesMutilatorWithDataLoadJob
                     pksToSave.Rows[i]["ID"] = i + 1;
                 }
 
-                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Creating Temporary tables"));
+                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Creating Temporary tables"));
                 var t1 = table.Database.CreateTable(nameof(RegexRedactionHelper.Constants.pksToSave_Temp), pksToSave);
                 var t2 = table.Database.CreateTable(nameof(RegexRedactionHelper.Constants.redactionsToSaveTable_Temp), redactionsToSaveTable);
-                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Saving Redactions"));
+                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Saving Redactions"));
                 var server = relatedCatalogues.First().GetDistinctLiveDatabaseServer(DataAccessContext.InternalDataProcessing, false);
                 RegexRedactionHelper.SaveRedactions(job.RepositoryLocator.CatalogueRepository, t1, t2, server, Timeout * 1000);
                 t1.Drop();
                 t2.Drop();
-                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Performing join update"));
+                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Performing join update"));
                 RegexRedactionHelper.DoJoinUpdate(columnInfo, table, table.Database.Server, redactionUpates, _discoveredPKColumns, Timeout * 1000);
                 job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Regex Redactions tool found {dt.Rows.Count} redactions."));
             }

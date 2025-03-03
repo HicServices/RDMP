@@ -150,7 +150,10 @@
 		  <SubType>Form</SubType>
 		</Compile>
 		<Compile Update="SimpleDialogs\Datasets\ImportExistingPureDatasetUI.cs">
-		  <SubType>Form</SubType>
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="SimpleControls\MultiSelectChips\DropdownOptionsChipDisplay.cs">
+		  <SubType>UserControl</SubType>
 		</Compile>
 		<Compile Update="SimpleDialogs\DataTableViewerUI.cs">
 			<SubType>UserControl</SubType>

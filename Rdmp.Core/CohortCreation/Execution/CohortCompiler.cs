@@ -133,7 +133,7 @@ public class CohortCompiler
     /// Adds all subqueries and containers that are below the current CohortIdentificationConfiguration as tasks to the compiler
     /// </summary>
     /// <param name="addSubcontainerTasks">The root container is always added to the task list but you could skip subcontainer totals if all you care about is the final total for the cohort
-    /// and you don't have a dependant UI etc.  Passing false will add all joinables, subqueries etc and the root container (final answer for who is in cohort) only.</param>
+    /// and you don't have a dependent UI etc.  Passing false will add all joinables, subqueries etc and the root container (final answer for who is in cohort) only.</param>
     /// <returns></returns>
     public List<ICompileable> AddAllTasks(bool addSubcontainerTasks = true)
     {
@@ -168,7 +168,7 @@ public class CohortCompiler
     /// <param name="globals"></param>
     /// <param name="container"></param>
     /// <param name="addSubcontainerTasks">The root container is always added to the task list but you could skip subcontainer totals if all you care about is the final total for the cohort
-    /// and you don't have a dependant UI etc.  Passing false will add all joinables, subqueries etc and the root container (final answer for who is in cohort) only.</param>
+    /// and you don't have a dependent UI etc.  Passing false will add all joinables, subqueries etc and the root container (final answer for who is in cohort) only.</param>
     /// <returns></returns>
     public List<Task<ICompileable>> AddTasksRecursivelyAsync(ISqlParameter[] globals,
         CohortAggregateContainer container, bool addSubcontainerTasks = true)
@@ -346,16 +346,16 @@ public class CohortCompiler
         return task;
     }
 
-    internal void LaunchSingleTask([NotNull] ICompileable compileable, int timeout, bool cacheOnCompletion)
+    internal void LaunchSingleTask([NotNull] ICompileable compilable, int timeout, bool cacheOnCompletion)
     {
-        if (!Tasks.TryGetValue(compileable, out var taskExecution))
+        if (!Tasks.TryGetValue(compilable, out var taskExecution))
             throw new KeyNotFoundException("Cannot launch task because it is not in the list of current Tasks");
 
-        if (compileable.State != CompilationState.NotScheduled)
+        if (compilable.State != CompilationState.NotScheduled)
             throw new ArgumentException(
-                $"Task must be in state NotScheduled but was {compileable.State}.  Crash message is:{compileable.CrashMessage?.ToString() ?? "null"}");
+                $"Task must be in state NotScheduled but was {compilable.State}.  Crash message is:{compilable.CrashMessage?.ToString() ?? "null"}");
 
-        KickOff(compileable, taskExecution, timeout, cacheOnCompletion);
+        KickOff(compilable, taskExecution, timeout, cacheOnCompletion);
     }
 
     private void KickOff(ICompileable task, CohortIdentificationTaskExecution execution, int timeout,
@@ -478,26 +478,26 @@ public class CohortCompiler
     /// Stops execution of the specified ICompileable CohortIdentificationTaskExecutions.  If it is executing an SQL query this should cancel the ongoing query.  If the
     /// ICompileable is not executing (it has crashed or finished etc) then nothing will happen.  alsoClearFromTaskList is always respected
     /// </summary>
-    /// <param name="compileable"></param>
+    /// <param name="compilable"></param>
     /// <param name="alsoClearFromTaskList">True to remove the ICompileable from the tasks list, False to leave the Tasks intact (allows you to rerun it or clear etc) </param>
-    public void CancelTask(ICompileable compileable, bool alsoClearFromTaskList)
+    public void CancelTask(ICompileable compilable, bool alsoClearFromTaskList)
     {
         lock (Tasks)
         {
-            if (Tasks.TryGetValue(compileable, out var execution))
+            if (Tasks.TryGetValue(compilable, out var execution))
             {
                 if (execution is { IsExecuting: true }) execution.Cancel();
 
                 // cancel the source
                 if (
-                    compileable.State is CompilationState.Building or CompilationState.Executing)
-                    compileable.CancellationTokenSource.Cancel();
+                    compilable.State is CompilationState.Building or CompilationState.Executing)
+                    compilable.CancellationTokenSource.Cancel();
 
 
                 if (alsoClearFromTaskList)
                 {
                     execution?.Dispose();
-                    Tasks.Remove(compileable);
+                    Tasks.Remove(compilable);
                 }
             }
         }

@@ -12,11 +12,11 @@ namespace Rdmp.Core.MapsDirectlyToDatabaseTable;
 public interface ICanBeSummarised
 {
     /// <summary>
-    /// Generates a sumary of the objects current state.  Containing only useful
+    /// Generates a summary of the objects current state.  Containing only useful
     /// information to the user to understand the objects state.
     /// </summary>
     /// <param name="includeName">true to include the name or title of the object.  False to
-    /// skip that out when sumarising (e.g. if you are inserting into a body of text which
+    /// skip that out when summarising (e.g. if you are inserting into a body of text which
     /// already has a distinguishing title)</param>
     /// <param name="includeId"></param>
     /// <returns></returns>

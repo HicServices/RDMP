@@ -30,7 +30,7 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation;
 
 /// <summary>
 /// TECHNICAL: base abstract class for all Controls which are concerned with a single root DatabaseEntity e.g. AggregateGraph is concerned only with an AggregateConfiguration
-/// and its children.  The reason this class exists is to streamline lifetime publish subscriptions (ensuring multiple tabs editting one anothers database objects happens
+/// and its children.  The reason this class exists is to streamline lifetime publish subscriptions (ensuring multiple tabs editing one another database objects happens
 /// in a seamless a way as possible).
 /// 
 /// </summary>
@@ -145,7 +145,7 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
                 ObjectSaverButton1.BeforeSave += BeforeSave_FinishCommitInProgressIfAny;
                 ObjectSaverButton1.AfterSave += AfterSave_BeginNewCommitIfApplicable;
             }
-            if (this.GetType() == typeof(ExtractionFilterUI) && UserSettings.PromptRenameOnCohortFilterChange)
+            if (GetType() == typeof(ExtractionFilterUI) && UserSettings.PromptRenameOnCohortFilterChange)
             {
                 ObjectSaverButton1.BeforeSave -= BeforeSave_PromptRenameOfExtractionFilterContainer;
                 ObjectSaverButton1.BeforeSave += BeforeSave_PromptRenameOfExtractionFilterContainer;
@@ -264,7 +264,7 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
     protected void Bind(Control c, string propertyName, string dataMember, Func<T, object> getter,
         bool formattingEnabled = true, DataSourceUpdateMode updateMode = DataSourceUpdateMode.OnPropertyChanged)
     {
-        //workaround for only comitting lists on loose focus
+        //workaround for only committing lists on loose focus
         if (c is ComboBox { DropDownStyle: ComboBoxStyle.DropDownList } box && propertyName.Equals("SelectedItem"))
             box.SelectionChangeCommitted += (s, e) => box.DataBindings["SelectedItem"].WriteValue();
 

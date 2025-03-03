@@ -89,7 +89,7 @@ public class SearchablesMatchScorer
 
     /// <summary>
     /// When the user types one of these Types (or a <see cref="ShortCodes"/> for one) they also get the value list for free.
-    /// This lets you serve up multiple object Types e.g. <see cref="IMasqueradeAs"/> objects as though they were the same as thier
+    /// This lets you serve up multiple object Types e.g. <see cref="IMasqueradeAs"/> objects as though they were the same as their
     /// Key Type.
     /// </summary>
     public static Dictionary<string, Type[]> AlsoIncludes =

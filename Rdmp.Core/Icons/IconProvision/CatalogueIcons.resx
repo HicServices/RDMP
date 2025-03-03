@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!-- 
+	<!-- 
     Microsoft ResX Schema 
     
     Version 2.0
@@ -260,6 +260,9 @@
 		<value>..\AggregateGraph.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
 	</data>
 	<data name="CatalogueFolder" type="System.Resources.ResXFileRef, System.Windows.Forms">
+		<value>..\CatalogueFolder.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</data>
+	<data name="LoadMetadataVersionNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>..\CatalogueFolder.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
 	</data>
 	<data name="CatalogueItem" type="System.Resources.ResXFileRef, System.Windows.Forms">
