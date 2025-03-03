@@ -11,6 +11,8 @@ using System.Collections.Generic;
 using System.Data.Common;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using System.Diagnostics.CodeAnalysis;
+using Rdmp.Core.Curation.Data.DataLoad;
+using System.Linq;
 
 namespace Rdmp.Core.Curation.Data.Datasets;
 
@@ -25,6 +27,7 @@ public class Dataset : DatabaseEntity, IDataset, IHasFolder
     private string _type = null;
     private string _url = null;
     private int? _providerId = null;
+    private ICatalogueRepository _catalogueRepository;
 
     /// <inheritdoc/>
     [DoNotImportDescriptions]
@@ -76,6 +79,11 @@ public class Dataset : DatabaseEntity, IDataset, IHasFolder
 
     public override string ToString() => Name;
 
+
+    public List<Catalogue> GetLinkedCatalogues()
+    {
+        return CatalogueRepository.GetAllObjectsWhere<CatalogueDatasetLinkage>("Dataset_ID", this.ID).Select(l => l.Catalogue).Distinct().ToList();
+    }
 
     public Dataset(ICatalogueRepository catalogueRepository, string name)
     {

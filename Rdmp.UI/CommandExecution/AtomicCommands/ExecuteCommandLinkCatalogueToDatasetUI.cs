@@ -14,6 +14,7 @@ using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
+using System.Linq;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
@@ -36,6 +37,7 @@ public sealed class ExecuteCommandLinkCatalogueToDatasetUI : BasicUICommandExecu
     {
         base.Execute();
         var datasets = _activateItems.RepositoryLocator.CatalogueRepository.GetAllObjects<Dataset>();
+        //todo hide already linked
         DialogArgs da = new()
         {
             WindowTitle = "Link a dataset with this catalogue",
@@ -45,8 +47,7 @@ public sealed class ExecuteCommandLinkCatalogueToDatasetUI : BasicUICommandExecu
         _selectedDataset = SelectOne(da, datasets);
         if (_selectedDataset is null) return;
 
-        var backfill = YesNo("Link all other columns that match the source table?", "Do you want to link this dataset to all other columns that reference the same table as this column?");
-        var cmd = new ExecuteCommandLinkCatalogueToDataset(_activateItems, _catalogue, _selectedDataset, backfill);
+        var cmd = new ExecuteCommandLinkCatalogueToDataset(_activateItems, _catalogue, _selectedDataset);
         cmd.Execute();
     }
 
