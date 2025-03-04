@@ -6,6 +6,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Datasets;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -20,6 +21,7 @@ namespace Rdmp.Core.Datasets
     public class HDRDatasetProvider : PluginDatasetProvider
     {
         private HttpClient _client;
+        private DatasetProviderConfiguration _configuration;
         public HDRDatasetProvider(IBasicActivateItems activator, DatasetProviderConfiguration configuration) : base(activator, configuration)
         {
             _client = new HttpClient();
@@ -27,8 +29,9 @@ namespace Rdmp.Core.Datasets
             var apiKey = credentials.GetDecryptedPassword();
             _client.DefaultRequestHeaders.Add("x-application-id", credentials.Username);
             _client.DefaultRequestHeaders.Add("x-client-id", apiKey);
+            _configuration = configuration;
         }
-        public override void AddExistingDataset(string name, string url)
+        public override Dataset AddExistingDatasetWithReturn(string name, string url)
         {
             var response = Task.Run(async () => await _client.GetAsync(url)).Result;
             if (response.StatusCode == HttpStatusCode.OK)
@@ -46,11 +49,17 @@ namespace Rdmp.Core.Datasets
                 };
                 dataset.SaveToDatabase();
                 Activator.Publish(dataset);
+                return dataset;
             }
             else
             {
                 throw new Exception("Cannot access dataset at provided url");
             }
+        }
+
+        public override void AddExistingDataset(string name, string url)
+        {
+            AddExistingDatasetWithReturn(name, url);
         }
 
         public override Dataset Create()
@@ -73,7 +82,16 @@ namespace Rdmp.Core.Datasets
 
         public override Dataset FetchDatasetByID(int id)
         {
-            throw new NotImplementedException();
+            var url = Configuration.Url + "/v1/datasets/" + id;
+            var response = Task.Run(async () => await _client.GetAsync($"{url}?schema_model=HDRUK&schema_version=3.0.0")).Result;
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                var detailsString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
+                Console.WriteLine(detailsString);
+                HDRDataset hdrDataset = JsonConvert.DeserializeObject<HDRDataset>(detailsString);
+                return hdrDataset;
+            }
+            throw new Exception("Unable to fetch HDR dataset");
         }
 
         public override List<Dataset> FetchDatasets()

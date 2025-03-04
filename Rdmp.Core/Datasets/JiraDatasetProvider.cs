@@ -42,7 +42,7 @@ public class JiraDatasetProvider : PluginDatasetProvider
         AddExistingDatasetWithReturn(name, url);
     }
 
-    public JiraDataset AddExistingDatasetWithReturn(string name, string url)
+    public override Dataset AddExistingDatasetWithReturn(string name, string url)
     {
         JiraDataset jiraDataset = (JiraDataset)FetchDatasetByID(int.Parse(url));
         var dataset = new Curation.Data.Datasets.Dataset(Repository, jiraDataset.name)
@@ -54,7 +54,7 @@ public class JiraDatasetProvider : PluginDatasetProvider
         };
         dataset.SaveToDatabase();
         Activator.Publish(dataset);
-        return (JiraDataset)dataset;
+        return dataset;
     }
 
     public override Dataset Create()

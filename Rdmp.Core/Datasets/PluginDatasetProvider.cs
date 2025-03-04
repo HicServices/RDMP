@@ -28,6 +28,8 @@ public abstract class PluginDatasetProvider : IDatasetProvider
 
     public abstract void AddExistingDataset(string name, string url);
 
+    public abstract Dataset AddExistingDatasetWithReturn(string name, string url);
+
     public abstract Curation.Data.Datasets.Dataset Create();
 
     public abstract void Update(string uuid, PluginDataset datasetUpdates);

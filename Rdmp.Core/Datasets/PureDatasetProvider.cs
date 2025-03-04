@@ -45,28 +45,7 @@ public class PureDatasetProvider : PluginDatasetProvider
 
     public override void AddExistingDataset(string name, string url)
     {
-        var uri = $"{Configuration.Url}/data-sets/{UrltoUUID(url)}";
-        var response = Task.Run(async () => await _client.GetAsync(uri)).Result;
-        if (response.StatusCode == HttpStatusCode.OK)
-        {
-            var detailsString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
-            PureDataset pd = JsonConvert.DeserializeObject<PureDataset>(detailsString);
-            var datasetName = string.IsNullOrWhiteSpace(name) ? pd.Title.En_GB : name;
-            var dataset = new Curation.Data.Datasets.Dataset(Repository, datasetName)
-            {
-                Url = url,
-                Type = this.ToString(),
-                Provider_ID = Configuration.ID,
-                DigitalObjectIdentifier = pd.DigitalObjectIdentifier,
-                Folder = $"\\{Configuration.Name}",
-            };
-            dataset.SaveToDatabase();
-            Activator.Publish(dataset);
-        }
-        else
-        {
-            throw new Exception("Cannot access dataset at provided url");
-        }
+        AddExistingDatasetWithReturn(name, url);
     }
 
     public override void Update(string uuid, PluginDataset datasetUpdates)
@@ -138,5 +117,32 @@ public class PureDatasetProvider : PluginDatasetProvider
     public override Curation.Data.Datasets.Dataset Create()
     {
         throw new NotImplementedException();
+    }
+
+    public override Dataset AddExistingDatasetWithReturn(string name, string url)
+    {
+        var uri = $"{Configuration.Url}/data-sets/{UrltoUUID(url)}";
+        var response = Task.Run(async () => await _client.GetAsync(uri)).Result;
+        if (response.StatusCode == HttpStatusCode.OK)
+        {
+            var detailsString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
+            PureDataset pd = JsonConvert.DeserializeObject<PureDataset>(detailsString);
+            var datasetName = string.IsNullOrWhiteSpace(name) ? pd.Title.En_GB : name;
+            var dataset = new Curation.Data.Datasets.Dataset(Repository, datasetName)
+            {
+                Url = url,
+                Type = this.ToString(),
+                Provider_ID = Configuration.ID,
+                DigitalObjectIdentifier = pd.DigitalObjectIdentifier,
+                Folder = $"\\{Configuration.Name}",
+            };
+            dataset.SaveToDatabase();
+            Activator.Publish(dataset);
+            return dataset;
+        }
+        else
+        {
+            throw new Exception("Cannot access dataset at provided url");
+        }
     }
 }

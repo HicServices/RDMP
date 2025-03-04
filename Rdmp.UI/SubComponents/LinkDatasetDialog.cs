@@ -52,26 +52,36 @@ namespace Rdmp.UI.SubComponents
                 {
                     dataset = provider.AddExistingDatasetWithReturn(null, tbID.Text);
                 }
-                var linkage = new CatalogueDatasetLinkage(_activator.RepositoryLocator.CatalogueRepository, _catalogue, dataset);
-                linkage.SaveToDatabase();
+                if (!_activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<CatalogueDatasetLinkage>("Dataset_ID", dataset.ID).Where(l => l.Catalogue.ID == _catalogue.ID).Any())
+                {
+                    var linkage = new CatalogueDatasetLinkage(_activator.RepositoryLocator.CatalogueRepository, _catalogue, dataset);
+                    linkage.SaveToDatabase();
+                }
                 Close();
             }
             if (((DatasetProviderConfiguration)cbPovider.SelectedItem).Type == HDRAssembly)
             {
-                //var provider = new HDRDatasetProvider(_activator, (DatasetProviderConfiguration)cbPovider.SelectedItem);
-                //Dataset dataset;
-                //var fetchedDataset = (HDRDataset)provider.FetchDatasetByID(int.Parse(tbID.Text));//todo is it always ints?
-                //if (_activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<Dataset>("Url", fetchedDataset.).Any())
-                //{
-                //    dataset = _activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<Dataset>("Url", fetchedDataset._links.self).First();
-                //}
-                //else
-                //{
-                //    dataset = provider.AddExistingDatasetWithReturn(null, tbID.Text);
-                //}
-                //var linkage = new CatalogueDatasetLinkage(_activator.RepositoryLocator.CatalogueRepository, _catalogue, dataset);
-                //linkage.SaveToDatabase();
-                //Close();
+                var provider = new HDRDatasetProvider(_activator, (DatasetProviderConfiguration)cbPovider.SelectedItem);
+
+                Dataset dataset;
+                var fetchedDataset = (HDRDataset)provider.FetchDatasetByID(int.Parse(tbID.Text));//todo is it always ints?
+                //todo check if portalurl is the correct one
+                var existingUrl = $"{((DatasetProviderConfiguration)cbPovider.SelectedItem).Url}/v1/datasets/{fetchedDataset.data.id}?schema_model=HDRUK&schema_version=3.0.0";
+                if (_activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<Dataset>("Url", existingUrl).Any())
+                {
+                    dataset = _activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<Dataset>("Url", existingUrl).First();
+                }
+                else
+                {
+                    var url = ((DatasetProviderConfiguration)cbPovider.SelectedItem).Url+ "/v1/datasets/" + tbID.Text+ "?schema_model=HDRUK&schema_version=3.0.0";
+                    dataset = provider.AddExistingDatasetWithReturn(null, url);
+                }
+                if (!_activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<CatalogueDatasetLinkage>("Dataset_ID", dataset.ID).Where(l => l.Catalogue.ID == _catalogue.ID).Any())
+                {
+                    var linkage = new CatalogueDatasetLinkage(_activator.RepositoryLocator.CatalogueRepository, _catalogue, dataset);
+                    linkage.SaveToDatabase();
+                }
+                Close();
             }
             if (((DatasetProviderConfiguration)cbPovider.SelectedItem).Type == PureAssembly)
             {
@@ -85,10 +95,14 @@ namespace Rdmp.UI.SubComponents
                 }
                 else
                 {
-                    dataset = provider.AddExistingDatasetWithReturn(null, tbID.Text);
+                    var url = ((DatasetProviderConfiguration)cbPovider.SelectedItem).Url.Split("/ws/api").First() + "/en/datasets/" + tbID.Text;
+                    dataset = provider.AddExistingDatasetWithReturn(null, url);
                 }
-                var linkage = new CatalogueDatasetLinkage(_activator.RepositoryLocator.CatalogueRepository, _catalogue, dataset);
-                linkage.SaveToDatabase();
+                if (!_activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<CatalogueDatasetLinkage>("Dataset_ID", dataset.ID).Where(l => l.Catalogue.ID == _catalogue.ID).Any())
+                {
+                    var linkage = new CatalogueDatasetLinkage(_activator.RepositoryLocator.CatalogueRepository, _catalogue, dataset);
+                    linkage.SaveToDatabase();
+                }
                 Close();
             }
 
