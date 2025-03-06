@@ -1120,7 +1120,7 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
         AssociatedMedia = r["AssociatedMedia"].ToString();
         ControlledVocabulary = r["ControlledVocabulary"].ToString();
         DataType = r["DataType"].ToString();
-        DataSubtype = r["DataSubtype"].ToString();
+        DataSubtype = r["DataSubType"].ToString();
         Doi = r["Doi"].ToString();
         var updateLag = r["UpdateLag"];
         if (updateLag == null || updateLag == DBNull.Value)
