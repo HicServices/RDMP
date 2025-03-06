@@ -1,13 +1,16 @@
 ﻿using Amazon.Runtime.Internal.Endpoints.StandardLibrary;
 using CommandLine.Text;
+using MongoDB.Bson.Serialization.Serializers;
 using Newtonsoft.Json;
 using Org.BouncyCastle.Utilities;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Datasets;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Renci.SshNet.Messages.Authentication;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -32,8 +35,14 @@ public class JiraDatasetProvider : PluginDatasetProvider
         _client = new HttpClient();
         var credentials = Repository.GetAllObjectsWhere<DataAccessCredentials>("ID", Configuration.DataAccessCredentials_ID).First();
         var apiKey = credentials.GetDecryptedPassword();
-        var code =System.Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes($"{credentials.Username}:{apiKey}"));
-        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", code);
+        var code = System.Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes($"{credentials.Username}:{apiKey}"));
+        //_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", code);
+        _client.DefaultRequestHeaders.Add("Authorization", $"Basic {code}");
+
+        _client.DefaultRequestHeaders
+              .Accept
+              .Add(new MediaTypeWithQualityHeaderValue("application/json"));//ACCEPT header
+        //_client.DefaultRequestHeaders.TryAddWithoutValidation("Content-Type", "application/json; charset=utf-8");
         _workspace = configuration.Organisation_ID;
     }
 
@@ -68,7 +77,7 @@ public class JiraDatasetProvider : PluginDatasetProvider
         if (response.StatusCode == HttpStatusCode.OK)
         {
             var detailsString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
-            JiraDataset jiraDataset= JsonConvert.DeserializeObject<JiraDataset>(detailsString);
+            JiraDataset jiraDataset = JsonConvert.DeserializeObject<JiraDataset>(detailsString);
 
             return jiraDataset;
         }
@@ -80,32 +89,124 @@ public class JiraDatasetProvider : PluginDatasetProvider
         throw new NotImplementedException();
     }
 
+    private class AtrObj
+    {
+        public List<JiraPutAttribute> Attributes;
+    }
+
     public override void Update(string uuid, PluginDataset datasetUpdates)
     {
         var ds = (JiraDataset)datasetUpdates;
-        List<JiraPutAttribute> attributes = [];
-        foreach(var attribute in ds.attributes)
+        List<JiraPutAttribute> jiraAttributes = [];
+        foreach (var attribute in ds.attributes)
         {
             var obj = new JiraPutAttribute();
             obj.objectTypeAttributeId = attribute.objectTypeAttributeId;
             obj.objectAttributeValues = new List<JiraPutAttributeValueObject>();
-            foreach(var v in attribute.objectAttributeValues)
+            foreach (var v in attribute.objectAttributeValues)
             {
-                obj.objectAttributeValues.Add(new JiraPutAttributeValueObject() { 
-                    value =v.value
+                obj.objectAttributeValues.Add(new JiraPutAttributeValueObject()
+                {
+                    value = v.value
                 });
             }
+            jiraAttributes.Add(obj);
         }
         var serializeOptions = new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             WriteIndented = true,
+            IncludeFields = true
         };
         using var stream = new MemoryStream();
-        System.Text.Json.JsonSerializer.Serialize<List<JiraPutAttribute>>(stream, attributes, serializeOptions);
+        var o = new AtrObj()
+        {
+            Attributes= jiraAttributes
+        };
+        System.Text.Json.JsonSerializer.Serialize(stream, o, serializeOptions);
         var jsonString = Encoding.UTF8.GetString(stream.ToArray());
         var httpContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
         var response = Task.Run(async () => await _client.PutAsync($"{API_URL}{_workspace}/v1/object/{uuid}", httpContent)).Result;
+        Console.WriteLine(response);
+    }
 
+    private class SchemaObject
+    {
+        public string id;
+        public string name;
+    }
+    private string GetObjectTypeAttributeID(JiraDataset dataset, string name)
+    {
+        var a = dataset.attributes.Select(a => a.objectTypeAttribute);
+        var b = a.Select(a => a.name);
+        var c = a.Where(l => l.name == name).ToList();
+        if (c.Any()) return c.First().id;
+        return null;
+    }
+
+
+    private List<SchemaObject> GetSchemaAttributes(string objectSchemaID) {
+        var response = Task.Run(async () => await _client.GetAsync($"{API_URL}{_workspace}/v1/objectschema/{objectSchemaID}/attributes")).Result;
+        if (response.StatusCode == HttpStatusCode.OK)
+        {
+            var x = new SchemaObject();
+            x.id = "1";
+            x.name = "error";
+            var detailsString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
+            List<SchemaObject> schema= JsonConvert.DeserializeObject<List<SchemaObject>>(detailsString);
+
+            return schema;
+        }
+        throw new Exception("Unable to fetch object schema");
+
+    }
+
+    private Attribute GenerateUpdateAttribute(JiraDataset dataset, Catalogue catalogue,string name, string value)
+    {
+        var otai = GetObjectTypeAttributeID(dataset, name);
+        if(otai is null)
+        {
+            var schema = GetSchemaAttributes(dataset.objectType.objectSchemaId);
+            var item = schema.Where(s => s.name == name);
+            if (item.Any())
+            {
+                otai = item.First().id;
+            }
+        }
+        return new Attribute()
+        {
+            objectTypeAttributeId = otai,
+            objectAttributeValues = new List<ObjectAttributeValue>() {
+                new ObjectAttributeValue()
+                {
+                    value = value
+                }
+            }
+        };
+    }
+
+    public override void UpdateUsingCatalogue(JiraDataset dataset, Catalogue catalogue)
+    {
+        //name
+        //acronym
+        //short desc
+
+        var updateDataset = new JiraDataset();
+        updateDataset.attributes = new List<Attribute>();
+    
+
+        updateDataset.attributes.Add(GenerateUpdateAttribute(dataset, catalogue, "Name", catalogue.Name));
+        updateDataset.attributes.Add(GenerateUpdateAttribute(dataset, catalogue, "Short Description", catalogue.ShortDescription));
+        updateDataset.attributes.Add(GenerateUpdateAttribute(dataset, catalogue, "Acronym", catalogue.Acronym));
+        updateDataset.attributes.Add(GenerateUpdateAttribute(dataset, catalogue, "DOI", catalogue.Doi));
+        updateDataset.attributes.Add(GenerateUpdateAttribute(dataset, catalogue, "Update Frequency", ((Catalogue.UpdateFrequencies)catalogue.Update_freq).ToString()));
+        updateDataset.attributes.Add(GenerateUpdateAttribute(dataset, catalogue, "Initial Release Date", catalogue.DatasetReleaseDate.ToString()));
+        updateDataset.attributes.Add(GenerateUpdateAttribute(dataset, catalogue, "Update Lag", ((Catalogue.UpdateLagTimes)catalogue.UpdateLag).ToString()));
+        updateDataset.attributes.Add(GenerateUpdateAttribute(dataset, catalogue, "RDMP_CatalogueID", catalogue.ID.ToString()));
+        updateDataset.attributes.Add(GenerateUpdateAttribute(dataset, catalogue, "RDMP_CatalogueDB", (catalogue.CatalogueRepository as TableRepository).GetConnection().Connection.ConnectionString));
+        //todo 
+        //database tables
+        // want to grab the test values of all matching db table entries
+        Update(dataset.id, updateDataset);
     }
 }

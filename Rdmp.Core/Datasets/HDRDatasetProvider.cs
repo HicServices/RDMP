@@ -140,6 +140,11 @@ namespace Rdmp.Core.Datasets
             }
         }
 
+        public override void UpdateUsingCatalogue(JiraDataset dataset, Catalogue catalogue)
+        {
+            throw new NotImplementedException();
+        }
+
         private class HDRUpdateObject
         {
             public int team_id { get; set; }

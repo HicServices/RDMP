@@ -1,4 +1,5 @@
 ﻿using Rdmp.Core.CommandExecution;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Datasets;
 using Rdmp.Core.Repositories;
 using System;
@@ -33,5 +34,6 @@ public abstract class PluginDatasetProvider : IDatasetProvider
     public abstract Curation.Data.Datasets.Dataset Create();
 
     public abstract void Update(string uuid, PluginDataset datasetUpdates);
+    public abstract void UpdateUsingCatalogue(JiraDataset dataset, Catalogue catalogue);
 
 }

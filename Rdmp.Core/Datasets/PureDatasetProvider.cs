@@ -145,4 +145,9 @@ public class PureDatasetProvider : PluginDatasetProvider
             throw new Exception("Cannot access dataset at provided url");
         }
     }
+
+    public override void UpdateUsingCatalogue(JiraDataset dataset, Catalogue catalogue)
+    {
+        throw new NotImplementedException();
+    }
 }

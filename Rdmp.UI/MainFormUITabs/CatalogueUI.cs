@@ -25,6 +25,7 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ScintillaNET;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.UI.SubComponents;
+using Rdmp.Core.Datasets;
 
 namespace Rdmp.UI.MainFormUITabs;
 
@@ -509,7 +510,13 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
 
     private void UpdateDataset(Dataset dataset)
     {
-
+        if(dataset.Type == typeof(JiraDatasetProvider).ToString())
+        {
+            var providerConfiguration = Activator.RepositoryLocator.CatalogueRepository.GetObjectByID<DatasetProviderConfiguration>((int)dataset.Provider_ID);
+            var jiraProvider = new JiraDatasetProvider(Activator,providerConfiguration);
+            var jiraDataset = (JiraDataset) jiraProvider.FetchDatasetByID(int.Parse(dataset.Url.Split('/').Last()));
+            jiraProvider.UpdateUsingCatalogue(jiraDataset, _catalogue);
+        }
     }
 
     private void btnStartDateClear_Click(object sender, EventArgs e)
