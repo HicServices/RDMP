@@ -105,8 +105,8 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
         if (status.IsProjectSpecific)
             SetImpossible("Catalogue is already Project Specific");
 
-        if (!status.IsExtractable)
-            SetImpossible("Catalogue must first be made Extractable");
+        //if (!status.IsExtractable)
+        //    SetImpossible("Catalogue must first be made Extractable");
 
         var ei = _catalogue.GetAllExtractionInformation(ExtractionCategory.Any);
         if (!ei.Any())
