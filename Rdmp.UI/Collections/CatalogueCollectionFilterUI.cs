@@ -36,7 +36,6 @@ public partial class CatalogueCollectionFilterUI : UserControl
         UserSettings.ShowInternalCatalogues = cbShowInternal.Checked;
         UserSettings.ShowDeprecatedCatalogues = cbShowDeprecated.Checked;
         UserSettings.ShowProjectSpecificCatalogues = cbProjectSpecific.Checked;
-
         FiltersChanged?.Invoke(this, EventArgs.Empty);
     }
 

@@ -98,7 +98,15 @@ public class DataExportRepository : TableRepository, IDataExportRepository
     public CatalogueExtractabilityStatus GetExtractabilityStatus(ICatalogue c)
     {
         var eds = GetAllObjectsWithParent<ExtractableDataSet>(c).SingleOrDefault();
-        return eds == null ? new CatalogueExtractabilityStatus(false, false) : eds.GetCatalogueExtractabilityStatus();
+        if(eds is null)
+        {
+            //if there is not EDS for this catalogue, it must have bee non extractable
+            eds = new ExtractableDataSet(this, c, false);
+            eds.SaveToDatabase();
+            //todo need to publish this eds
+
+        }
+        return eds.GetCatalogueExtractabilityStatus();
     }
 
     public ISelectedDataSets[] GetSelectedDatasetsWithNoExtractionIdentifiers() =>
