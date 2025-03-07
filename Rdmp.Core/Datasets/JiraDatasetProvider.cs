@@ -2,6 +2,7 @@
 using CommandLine.Text;
 using MongoDB.Bson.Serialization.Serializers;
 using Newtonsoft.Json;
+using NPOI.HSSF.Record.Chart;
 using Org.BouncyCastle.Utilities;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
@@ -36,13 +37,11 @@ public class JiraDatasetProvider : PluginDatasetProvider
         var credentials = Repository.GetAllObjectsWhere<DataAccessCredentials>("ID", Configuration.DataAccessCredentials_ID).First();
         var apiKey = credentials.GetDecryptedPassword();
         var code = System.Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes($"{credentials.Username}:{apiKey}"));
-        //_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", code);
         _client.DefaultRequestHeaders.Add("Authorization", $"Basic {code}");
 
         _client.DefaultRequestHeaders
               .Accept
               .Add(new MediaTypeWithQualityHeaderValue("application/json"));//ACCEPT header
-        //_client.DefaultRequestHeaders.TryAddWithoutValidation("Content-Type", "application/json; charset=utf-8");
         _workspace = configuration.Organisation_ID;
     }
 
@@ -121,7 +120,7 @@ public class JiraDatasetProvider : PluginDatasetProvider
         using var stream = new MemoryStream();
         var o = new AtrObj()
         {
-            Attributes= jiraAttributes
+            Attributes = jiraAttributes
         };
         System.Text.Json.JsonSerializer.Serialize(stream, o, serializeOptions);
         var jsonString = Encoding.UTF8.GetString(stream.ToArray());
@@ -145,7 +144,8 @@ public class JiraDatasetProvider : PluginDatasetProvider
     }
 
 
-    private List<SchemaObject> GetSchemaAttributes(string objectSchemaID) {
+    private List<SchemaObject> GetSchemaAttributes(string objectSchemaID)
+    {
         var response = Task.Run(async () => await _client.GetAsync($"{API_URL}{_workspace}/v1/objectschema/{objectSchemaID}/attributes")).Result;
         if (response.StatusCode == HttpStatusCode.OK)
         {
@@ -153,7 +153,7 @@ public class JiraDatasetProvider : PluginDatasetProvider
             x.id = "1";
             x.name = "error";
             var detailsString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
-            List<SchemaObject> schema= JsonConvert.DeserializeObject<List<SchemaObject>>(detailsString);
+            List<SchemaObject> schema = JsonConvert.DeserializeObject<List<SchemaObject>>(detailsString);
 
             return schema;
         }
@@ -161,10 +161,10 @@ public class JiraDatasetProvider : PluginDatasetProvider
 
     }
 
-    private Attribute GenerateUpdateAttribute(JiraDataset dataset, Catalogue catalogue,string name, string value)
+    private Attribute GenerateUpdateAttribute(JiraDataset dataset, Catalogue catalogue, string name, string value)
     {
         var otai = GetObjectTypeAttributeID(dataset, name);
-        if(otai is null)
+        if (otai is null)
         {
             var schema = GetSchemaAttributes(dataset.objectType.objectSchemaId);
             var item = schema.Where(s => s.name == name);
@@ -185,6 +185,33 @@ public class JiraDatasetProvider : PluginDatasetProvider
         };
     }
 
+
+
+    private class DatabasePUT
+    {
+        public string value;
+
+        public DatabasePUT(Database db)
+        {
+            value = db.objectKey;
+        }
+
+    }
+
+    private class Database
+    {
+        public string id;
+        public string objectKey;
+        public List<Attribute> attributes;
+
+
+    }
+
+    private class Databases
+    {
+        public List<Database> values;
+    }
+
     public override void UpdateUsingCatalogue(JiraDataset dataset, Catalogue catalogue)
     {
         //name
@@ -193,7 +220,18 @@ public class JiraDatasetProvider : PluginDatasetProvider
 
         var updateDataset = new JiraDataset();
         updateDataset.attributes = new List<Attribute>();
-    
+
+        var x = new Database()
+        {
+            id = "1",
+            objectKey = "1",
+            attributes = new List<Attribute>()
+        };
+        _ = new Databases()
+        {
+            values = new List<Database>()
+        };
+
 
         updateDataset.attributes.Add(GenerateUpdateAttribute(dataset, catalogue, "Name", catalogue.Name));
         updateDataset.attributes.Add(GenerateUpdateAttribute(dataset, catalogue, "Short Description", catalogue.ShortDescription));
@@ -202,11 +240,51 @@ public class JiraDatasetProvider : PluginDatasetProvider
         updateDataset.attributes.Add(GenerateUpdateAttribute(dataset, catalogue, "Update Frequency", ((Catalogue.UpdateFrequencies)catalogue.Update_freq).ToString()));
         updateDataset.attributes.Add(GenerateUpdateAttribute(dataset, catalogue, "Initial Release Date", catalogue.DatasetReleaseDate.ToString()));
         updateDataset.attributes.Add(GenerateUpdateAttribute(dataset, catalogue, "Update Lag", ((Catalogue.UpdateLagTimes)catalogue.UpdateLag).ToString()));
+        //updateDataset.attributes.Add(GenerateUpdateAttribute(dataset, catalogue, "Is Deprecated", catalogue.IsDeprecated.ToString()));
+        //updateDataset.attributes.Add(GenerateUpdateAttribute(dataset, catalogue, "Is Project Specific", catalogue.IsProjectSpecific(Activator.RepositoryLocator.DataExportRepository).ToString()));
         updateDataset.attributes.Add(GenerateUpdateAttribute(dataset, catalogue, "RDMP_CatalogueID", catalogue.ID.ToString()));
         updateDataset.attributes.Add(GenerateUpdateAttribute(dataset, catalogue, "RDMP_CatalogueDB", (catalogue.CatalogueRepository as TableRepository).GetConnection().Connection.ConnectionString));
         //todo 
         //database tables
-        // want to grab the test values of all matching db table entries
+        var tableInfos = catalogue.CatalogueItems.Select(ci => ci.ColumnInfo.TableInfo).ToList();
+        var databaseTableschema = GetSchemaAttributes(dataset.objectType.objectSchemaId).Where(s => s.name == "Database").First().id;
+
+        var serializeOptions = new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            WriteIndented = true,
+            IncludeFields = true
+        };
+
+        var jsonString = "{\r\n  \"qlQuery\": \"objectType = Database\"\r\n}";
+        var httpContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
+
+        var response = Task.Run(async () => await _client.PostAsync($"{API_URL}{_workspace}/v1/object/aql", httpContent)).Result;
+        if (response.StatusCode == HttpStatusCode.OK)
+        {
+            var detailsString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
+            Databases databases = JsonConvert.DeserializeObject<Databases>(detailsString);
+            var dbs = new List<Database>();
+            foreach (var ti in tableInfos)
+            {
+                var o = databases.values.FirstOrDefault(db => db.attributes.Any(a => a.objectAttributeValues.First().value.ToString() == ti.Database[1..^1]) && db.attributes.Any(a => a.objectAttributeValues.First().value.ToString() == ti.Server));
+                if (o is not null)
+                {
+                    dbs.Add(o);
+                }
+            }
+            dbs = dbs.Distinct().ToList();
+            using var stream = new MemoryStream();
+            System.Text.Json.JsonSerializer.Serialize(stream, dbs.Select(db => db.attributes.First()), serializeOptions);
+            var dbUpdatejson = Encoding.UTF8.GetString(stream.ToArray());
+            //todo
+            // need to hit the create and delete endpoint for these list attributes
+        }
+        else
+        {
+            throw new Exception("Unable to fetch object schema");
+        }
+
         Update(dataset.id, updateDataset);
     }
 }
