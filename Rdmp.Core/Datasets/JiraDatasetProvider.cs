@@ -187,14 +187,9 @@ public class JiraDatasetProvider : PluginDatasetProvider
 
 
 
-    private class DatabasePUT
+    private class DatabaseValue
     {
         public string value;
-
-        public DatabasePUT(Database db)
-        {
-            value = db.objectKey;
-        }
 
     }
 
@@ -202,14 +197,20 @@ public class JiraDatasetProvider : PluginDatasetProvider
     {
         public string id;
         public string objectKey;
+        public string label;
         public List<Attribute> attributes;
-
-
     }
 
     private class Databases
     {
         public List<Database> values;
+    }
+
+    private class DatabasePUT
+    {
+        public string objectId;
+        public string objectTypeAttributeId;
+        public List<DatabaseValue> objectAttributeValues;
     }
 
     public override void UpdateUsingCatalogue(JiraDataset dataset, Catalogue catalogue)
@@ -220,18 +221,6 @@ public class JiraDatasetProvider : PluginDatasetProvider
 
         var updateDataset = new JiraDataset();
         updateDataset.attributes = new List<Attribute>();
-
-        var x = new Database()
-        {
-            id = "1",
-            objectKey = "1",
-            attributes = new List<Attribute>()
-        };
-        _ = new Databases()
-        {
-            values = new List<Database>()
-        };
-
 
         updateDataset.attributes.Add(GenerateUpdateAttribute(dataset, catalogue, "Name", catalogue.Name));
         updateDataset.attributes.Add(GenerateUpdateAttribute(dataset, catalogue, "Short Description", catalogue.ShortDescription));
@@ -244,8 +233,6 @@ public class JiraDatasetProvider : PluginDatasetProvider
         //updateDataset.attributes.Add(GenerateUpdateAttribute(dataset, catalogue, "Is Project Specific", catalogue.IsProjectSpecific(Activator.RepositoryLocator.DataExportRepository).ToString()));
         updateDataset.attributes.Add(GenerateUpdateAttribute(dataset, catalogue, "RDMP_CatalogueID", catalogue.ID.ToString()));
         updateDataset.attributes.Add(GenerateUpdateAttribute(dataset, catalogue, "RDMP_CatalogueDB", (catalogue.CatalogueRepository as TableRepository).GetConnection().Connection.ConnectionString));
-        //todo 
-        //database tables
         var tableInfos = catalogue.CatalogueItems.Select(ci => ci.ColumnInfo.TableInfo).ToList();
         var databaseTableschema = GetSchemaAttributes(dataset.objectType.objectSchemaId).Where(s => s.name == "Database").First().id;
 
@@ -262,8 +249,33 @@ public class JiraDatasetProvider : PluginDatasetProvider
         var response = Task.Run(async () => await _client.PostAsync($"{API_URL}{_workspace}/v1/object/aql", httpContent)).Result;
         if (response.StatusCode == HttpStatusCode.OK)
         {
+
             var detailsString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
             Databases databases = JsonConvert.DeserializeObject<Databases>(detailsString);
+
+            var dbUpdate = new DatabasePUT();
+            dbUpdate.objectId = dataset.id;
+            dbUpdate.objectTypeAttributeId = "93";//todo
+            dbUpdate.objectAttributeValues = databases.values.Select(d => new DatabaseValue() { value = d.objectKey }).ToList();
+
+
+            _ = new Database()
+            {
+                id = "1",
+                objectKey = "1",
+                label = "1",
+                attributes = []
+            };
+            _ = new Databases()
+            {
+                values = []
+            };
+            _ = new DatabaseValue()
+            {
+                value = ""
+            };
+
+
             var dbs = new List<Database>();
             foreach (var ti in tableInfos)
             {
@@ -274,11 +286,17 @@ public class JiraDatasetProvider : PluginDatasetProvider
                 }
             }
             dbs = dbs.Distinct().ToList();
+
+
             using var stream = new MemoryStream();
-            System.Text.Json.JsonSerializer.Serialize(stream, dbs.Select(db => db.attributes.First()), serializeOptions);
+            System.Text.Json.JsonSerializer.Serialize(stream, dbUpdate, serializeOptions);
             var dbUpdatejson = Encoding.UTF8.GetString(stream.ToArray());
-            //todo
-            // need to hit the create and delete endpoint for these list attributes
+
+            updateDataset.attributes.Add(new Attribute()
+            {
+                objectTypeAttributeId = "93",
+                objectAttributeValues = dbs.Select(v => new ObjectAttributeValue() { value = v.objectKey }).ToList()
+            });
         }
         else
         {
