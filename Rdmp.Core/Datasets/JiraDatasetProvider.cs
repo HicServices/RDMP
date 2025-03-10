@@ -7,6 +7,7 @@ using Org.BouncyCastle.Utilities;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Datasets;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Renci.SshNet.Messages.Authentication;
 using System;
@@ -229,8 +230,8 @@ public class JiraDatasetProvider : PluginDatasetProvider
         updateDataset.attributes.Add(GenerateUpdateAttribute(dataset, catalogue, "Update Frequency", ((Catalogue.UpdateFrequencies)catalogue.Update_freq).ToString()));
         updateDataset.attributes.Add(GenerateUpdateAttribute(dataset, catalogue, "Initial Release Date", catalogue.DatasetReleaseDate.ToString()));
         updateDataset.attributes.Add(GenerateUpdateAttribute(dataset, catalogue, "Update Lag", ((Catalogue.UpdateLagTimes)catalogue.UpdateLag).ToString()));
-        //updateDataset.attributes.Add(GenerateUpdateAttribute(dataset, catalogue, "Is Deprecated", catalogue.IsDeprecated.ToString()));
-        //updateDataset.attributes.Add(GenerateUpdateAttribute(dataset, catalogue, "Is Project Specific", catalogue.IsProjectSpecific(Activator.RepositoryLocator.DataExportRepository).ToString()));
+        updateDataset.attributes.Add(GenerateUpdateAttribute(dataset, catalogue, "Is Deprecated", catalogue.IsDeprecated.ToString()));
+        updateDataset.attributes.Add(GenerateUpdateAttribute(dataset, catalogue, "Is Project Specific", catalogue.IsProjectSpecific(Activator.RepositoryLocator.DataExportRepository).ToString()));
         updateDataset.attributes.Add(GenerateUpdateAttribute(dataset, catalogue, "RDMP_CatalogueID", catalogue.ID.ToString()));
         updateDataset.attributes.Add(GenerateUpdateAttribute(dataset, catalogue, "RDMP_CatalogueDB", (catalogue.CatalogueRepository as TableRepository).GetConnection().Connection.ConnectionString));
         var tableInfos = catalogue.CatalogueItems.Select(ci => ci.ColumnInfo.TableInfo).ToList();
@@ -255,7 +256,7 @@ public class JiraDatasetProvider : PluginDatasetProvider
 
             var dbUpdate = new DatabasePUT();
             dbUpdate.objectId = dataset.id;
-            dbUpdate.objectTypeAttributeId = "93";//todo
+            dbUpdate.objectTypeAttributeId = databaseTableschema;
             dbUpdate.objectAttributeValues = databases.values.Select(d => new DatabaseValue() { value = d.objectKey }).ToList();
 
 
@@ -294,7 +295,7 @@ public class JiraDatasetProvider : PluginDatasetProvider
 
             updateDataset.attributes.Add(new Attribute()
             {
-                objectTypeAttributeId = "93",
+                objectTypeAttributeId = databaseTableschema,
                 objectAttributeValues = dbs.Select(v => new ObjectAttributeValue() { value = v.objectKey }).ToList()
             });
         }
@@ -304,5 +305,18 @@ public class JiraDatasetProvider : PluginDatasetProvider
         }
 
         Update(dataset.id, updateDataset);
+
+        //update projects
+        var projectSpecificIDs = Activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", catalogue.ID).Where(eds => eds.Project_ID != null).Select(eds => eds.Project_ID);
+        var projectSpecifics = Activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>().Where(p => projectSpecificIDs.Contains(p.ID));
+        var projectsUsedIn = Activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>().Where(p => p.ExtractionConfigurations.Any(ec => ec.GetAllExtractableDataSets().Any(eds => eds.Catalogue_ID == catalogue.ID)));
+        var linkedProjects = projectSpecifics.Concat(projectsUsedIn).ToList().Distinct();
+        foreach(var project in linkedProjects)
+        {
+            //find it in jira
+            // link this dataset to that poroject
+
+            //todo validate projects with RDMP IDs
+        }
     }
 }
