@@ -31,7 +31,7 @@ public abstract class PluginDatasetProvider : IDatasetProvider
 
     public abstract Dataset AddExistingDatasetWithReturn(string name, string url);
 
-    public abstract Curation.Data.Datasets.Dataset Create();
+    public abstract Curation.Data.Datasets.Dataset Create(Catalogue catalogue);
 
     public abstract void Update(string uuid, PluginDataset datasetUpdates);
     public abstract void UpdateUsingCatalogue(JiraDataset dataset, Catalogue catalogue);

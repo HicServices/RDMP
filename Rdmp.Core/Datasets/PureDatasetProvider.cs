@@ -114,7 +114,7 @@ public class PureDatasetProvider : PluginDatasetProvider
 
     //}
 
-    public override Curation.Data.Datasets.Dataset Create()
+    public override Curation.Data.Datasets.Dataset Create(Catalogue catalogue)
     {
         throw new NotImplementedException();
     }

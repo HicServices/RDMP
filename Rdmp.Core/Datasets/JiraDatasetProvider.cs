@@ -3,6 +3,7 @@ using CommandLine.Text;
 using MongoDB.Bson.Serialization.Serializers;
 using Newtonsoft.Json;
 using NPOI.HSSF.Record.Chart;
+using NPOI.XWPF.UserModel;
 using Org.BouncyCastle.Utilities;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
@@ -66,9 +67,79 @@ public class JiraDatasetProvider : PluginDatasetProvider
         return dataset;
     }
 
-    public override Dataset Create()
+    private class CreateAtrObj
     {
-        throw new NotImplementedException();
+        public string objectTypeId;
+        public List<JiraPutAttribute> Attributes;
+    }
+
+    public override Dataset Create(Catalogue catalogue)
+    {
+        var url = $"{API_URL}{_workspace}/v1/object/create";
+        var serializeOptions = new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            WriteIndented = true,
+            IncludeFields = true
+        };
+        using var stream = new MemoryStream();
+
+
+        //var schemaResponse = Task.Run(async () => await _client.GetAsync($"{API_URL}{_workspace}/v1/objectschema/list")).Result;
+
+
+
+        string objectTypeId = "1";
+        string nameAttributeId = "2";
+        //if (schemaResponse.StatusCode == HttpStatusCode.OK)
+        //{
+        //    var x = new SchemaObject();
+        //    x.id = "1";
+        //    x.name = "error";
+        //    _ = new SchemaList()
+        //    {
+        //        values = []
+        //    };
+
+        //    var detailsString = Task.Run(async () => await schemaResponse.Content.ReadAsStringAsync()).Result;
+        //    SchemaList schemas = JsonConvert.DeserializeObject<SchemaList>(detailsString);
+        //    var s = schemas.values.First(s => s.name == "TEST").id;//todo should be HIC
+        //    //objectTypeId = schemas.values.First(s => s.name == "Dataset").id;
+        //    //nameAttributeId = GetSchemaAttributes(objectTypeId).First(s => s.name == "Name").id;
+        //}
+        //else
+        //{
+        //    throw new Exception("Unable to fetch schemas");
+        //}
+
+        var o = new CreateAtrObj()
+        {
+            objectTypeId = objectTypeId,
+            Attributes = new List<JiraPutAttribute>() { new JiraPutAttribute() {
+                objectTypeAttributeId=nameAttributeId,
+                objectAttributeValues = new List<JiraPutAttributeValueObject>(){
+                    new JiraPutAttributeValueObject(){value=catalogue.Name}
+                }
+            } }
+        };
+
+
+        System.Text.Json.JsonSerializer.Serialize(stream, o, serializeOptions);
+        var jsonString = Encoding.UTF8.GetString(stream.ToArray());
+        var httpContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
+        var response = Task.Run(async () => await _client.PostAsync(url, httpContent)).Result;
+        if (response.StatusCode == HttpStatusCode.Created)
+        {
+            var detailsString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
+            JiraDataset jiraDataset = JsonConvert.DeserializeObject<JiraDataset>(detailsString);
+            jiraDataset = FetchDatasetByID(int.Parse(jiraDataset.id)) as JiraDataset;
+            UpdateUsingCatalogue(jiraDataset, catalogue);
+            return jiraDataset;
+        }
+        else
+        {
+            throw new Exception("Unable to create");
+        }
     }
 
     public override Dataset FetchDatasetByID(int id)
@@ -137,11 +208,18 @@ public class JiraDatasetProvider : PluginDatasetProvider
     }
     private string GetObjectTypeAttributeID(JiraDataset dataset, string name)
     {
-        var a = dataset.attributes.Select(a => a.objectTypeAttribute);
-        var b = a.Select(a => a.name);
-        var c = a.Where(l => l.name == name).ToList();
-        if (c.Any()) return c.First().id;
-        return null;
+        try
+        {
+            var a = dataset.attributes.Select(a => a.objectTypeAttribute);
+            var b = a.Select(a => a.name);
+            var c = a.Where(l => l.name == name).ToList();
+            if (c.Any()) return c.First().id;
+            return null;
+        }
+        catch (Exception)
+        {
+            return null;
+        }
     }
 
 
@@ -216,10 +294,6 @@ public class JiraDatasetProvider : PluginDatasetProvider
 
     public override void UpdateUsingCatalogue(JiraDataset dataset, Catalogue catalogue)
     {
-        //name
-        //acronym
-        //short desc
-
         var updateDataset = new JiraDataset();
         updateDataset.attributes = new List<Attribute>();
 
@@ -311,7 +385,7 @@ public class JiraDatasetProvider : PluginDatasetProvider
         var projectSpecifics = Activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>().Where(p => projectSpecificIDs.Contains(p.ID));
         var projectsUsedIn = Activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>().Where(p => p.ExtractionConfigurations.Any(ec => ec.GetAllExtractableDataSets().Any(eds => eds.Catalogue_ID == catalogue.ID)));
         var linkedProjects = projectSpecifics.Concat(projectsUsedIn).ToList().Distinct();
-        foreach(var project in linkedProjects)
+        foreach (var project in linkedProjects)
         {
             //find it in jira
             // link this dataset to that poroject

@@ -1,4 +1,5 @@
-﻿using Rdmp.Core.Curation.Data;
+﻿using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Datasets;
 using Rdmp.Core.Datasets;
 using Rdmp.UI.ItemActivation;
@@ -64,6 +65,13 @@ namespace Rdmp.UI.SimpleDialogs.Datasets
             var config = new DatasetProviderConfiguration(_activator.RepositoryLocator.CatalogueRepository, tbName.Text, typeof(JiraDatasetProvider).ToString(), tbUrl.Text, ((DataAccessCredentials)cbCredentials.SelectedItem).ID, tbOrganisationId.Text);
             config.SaveToDatabase();
             _activator.Publish(config);
+
+            if(cbImportCatalogues.Checked || cbImportProjectSpecific.Checked || cbIncludeInternal.Checked || cbImportDeprecated.Checked)
+            {
+                var cmd = new ExecuteCommandImportExistingCataloguesIntoExternalDatasetProvider(_activator, new JiraDatasetProvider(_activator,config), cbImportCatalogues.Checked, cbIncludeInternal.Checked, cbImportProjectSpecific.Checked, cbImportDeprecated.Checked);
+                cmd.Execute();
+            }
+
             Close();
             _activator.Show($"Dataset Provider '{tbName.Text}' has successfully been created");
         }

@@ -1124,6 +1124,7 @@ namespace Rdmp.UI.MainFormUITabs
             // 
             // tableLayoutPanel3
             // 
+            tableLayoutPanel3.AutoSize = true;
             tableLayoutPanel3.CellBorderStyle = TableLayoutPanelCellBorderStyle.Single;
             tableLayoutPanel3.ColumnCount = 5;
             tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle());
@@ -1271,6 +1272,7 @@ namespace Rdmp.UI.MainFormUITabs
             groupBox25.ResumeLayout(false);
             groupBox25.PerformLayout();
             tabPage8.ResumeLayout(false);
+            tabPage8.PerformLayout();
             tableLayoutPanel3.ResumeLayout(false);
             tableLayoutPanel3.PerformLayout();
             ResumeLayout(false);

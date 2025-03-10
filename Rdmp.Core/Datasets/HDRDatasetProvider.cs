@@ -62,7 +62,7 @@ namespace Rdmp.Core.Datasets
             AddExistingDatasetWithReturn(name, url);
         }
 
-        public override Dataset Create()
+        public override Dataset Create(Catalogue catalogue)
         {
             throw new NotImplementedException();
         }

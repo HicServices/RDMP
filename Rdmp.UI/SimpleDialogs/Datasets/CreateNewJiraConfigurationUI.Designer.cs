@@ -37,6 +37,14 @@
             tbOrganisationId = new System.Windows.Forms.TextBox();
             cbCredentials = new System.Windows.Forms.ComboBox();
             btnSave = new System.Windows.Forms.Button();
+            cbImportCatalogues = new System.Windows.Forms.CheckBox();
+            cbIncludeInternal = new System.Windows.Forms.CheckBox();
+            cbImportProjectSpecific = new System.Windows.Forms.CheckBox();
+            cbImportDeprecated = new System.Windows.Forms.CheckBox();
+            aiImportAll = new Rdmp.UI.SimpleControls.AdditionalInfomationUI();
+            aiInternal = new Rdmp.UI.SimpleControls.AdditionalInfomationUI();
+            aiProjectSpecific = new Rdmp.UI.SimpleControls.AdditionalInfomationUI();
+            aiDeprecated = new Rdmp.UI.SimpleControls.AdditionalInfomationUI();
             SuspendLayout();
             // 
             // label1
@@ -111,7 +119,7 @@
             // btnSave
             // 
             btnSave.Enabled = false;
-            btnSave.Location = new System.Drawing.Point(464, 192);
+            btnSave.Location = new System.Drawing.Point(464, 318);
             btnSave.Name = "btnSave";
             btnSave.Size = new System.Drawing.Size(75, 23);
             btnSave.TabIndex = 8;
@@ -119,11 +127,87 @@
             btnSave.UseVisualStyleBackColor = true;
             btnSave.Click += Save;
             // 
-            // CreateNewPureConfigurationUI
+            // cbImportCatalogues
+            // 
+            cbImportCatalogues.AutoSize = true;
+            cbImportCatalogues.Location = new System.Drawing.Point(337, 188);
+            cbImportCatalogues.Name = "cbImportCatalogues";
+            cbImportCatalogues.Size = new System.Drawing.Size(202, 19);
+            cbImportCatalogues.TabIndex = 9;
+            cbImportCatalogues.Text = "Import All Extractable Catalogues";
+            cbImportCatalogues.UseVisualStyleBackColor = true;
+            // 
+            // cbIncludeInternal
+            // 
+            cbIncludeInternal.AutoSize = true;
+            cbIncludeInternal.Location = new System.Drawing.Point(337, 213);
+            cbIncludeInternal.Name = "cbIncludeInternal";
+            cbIncludeInternal.Size = new System.Drawing.Size(184, 19);
+            cbIncludeInternal.TabIndex = 10;
+            cbIncludeInternal.Text = "Import All Internal Catalogues";
+            cbIncludeInternal.UseVisualStyleBackColor = true;
+            // 
+            // cbImportProjectSpecific
+            // 
+            cbImportProjectSpecific.AutoSize = true;
+            cbImportProjectSpecific.Location = new System.Drawing.Point(337, 238);
+            cbImportProjectSpecific.Name = "cbImportProjectSpecific";
+            cbImportProjectSpecific.Size = new System.Drawing.Size(225, 19);
+            cbImportProjectSpecific.TabIndex = 11;
+            cbImportProjectSpecific.Text = "Import All Project Sepcific Catalogues";
+            cbImportProjectSpecific.UseVisualStyleBackColor = true;
+            // 
+            // cbImportDeprecated
+            // 
+            cbImportDeprecated.AutoSize = true;
+            cbImportDeprecated.Location = new System.Drawing.Point(337, 263);
+            cbImportDeprecated.Name = "cbImportDeprecated";
+            cbImportDeprecated.Size = new System.Drawing.Size(204, 19);
+            cbImportDeprecated.TabIndex = 12;
+            cbImportDeprecated.Text = "Import All Deprecated Catalogues";
+            cbImportDeprecated.UseVisualStyleBackColor = true;
+            // 
+            // aiImportAll
+            // 
+            aiImportAll.Location = new System.Drawing.Point(542, 188);
+            aiImportAll.Name = "aiImportAll";
+            aiImportAll.Size = new System.Drawing.Size(20, 20);
+            aiImportAll.TabIndex = 13;
+            // 
+            // aiInternal
+            // 
+            aiInternal.Location = new System.Drawing.Point(521, 213);
+            aiInternal.Name = "aiInternal";
+            aiInternal.Size = new System.Drawing.Size(20, 20);
+            aiInternal.TabIndex = 14;
+            // 
+            // aiProjectSpecific
+            // 
+            aiProjectSpecific.Location = new System.Drawing.Point(559, 237);
+            aiProjectSpecific.Name = "aiProjectSpecific";
+            aiProjectSpecific.Size = new System.Drawing.Size(20, 20);
+            aiProjectSpecific.TabIndex = 15;
+            // 
+            // aiDeprecated
+            // 
+            aiDeprecated.Location = new System.Drawing.Point(542, 263);
+            aiDeprecated.Name = "aiDeprecated";
+            aiDeprecated.Size = new System.Drawing.Size(20, 20);
+            aiDeprecated.TabIndex = 16;
+            // 
+            // CreateNewJiraConfigurationUI
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(800, 450);
+            Controls.Add(aiDeprecated);
+            Controls.Add(aiProjectSpecific);
+            Controls.Add(aiInternal);
+            Controls.Add(aiImportAll);
+            Controls.Add(cbImportDeprecated);
+            Controls.Add(cbImportProjectSpecific);
+            Controls.Add(cbIncludeInternal);
+            Controls.Add(cbImportCatalogues);
             Controls.Add(btnSave);
             Controls.Add(cbCredentials);
             Controls.Add(tbOrganisationId);
@@ -133,7 +217,7 @@
             Controls.Add(label3);
             Controls.Add(label2);
             Controls.Add(label1);
-            Name = "CreateNewPureConfigurationUI";
+            Name = "CreateNewJiraConfigurationUI";
             Text = "Create Pure Configuration";
             ResumeLayout(false);
             PerformLayout();
@@ -150,5 +234,13 @@
         private System.Windows.Forms.TextBox tbOrganisationId;
         private System.Windows.Forms.ComboBox cbCredentials;
         private System.Windows.Forms.Button btnSave;
+        private System.Windows.Forms.CheckBox cbImportCatalogues;
+        private System.Windows.Forms.CheckBox cbIncludeInternal;
+        private System.Windows.Forms.CheckBox cbImportProjectSpecific;
+        private System.Windows.Forms.CheckBox cbImportDeprecated;
+        private SimpleControls.AdditionalInfomationUI aiImportAll;
+        private SimpleControls.AdditionalInfomationUI aiInternal;
+        private SimpleControls.AdditionalInfomationUI aiProjectSpecific;
+        private SimpleControls.AdditionalInfomationUI aiDeprecated;
     }
 }
