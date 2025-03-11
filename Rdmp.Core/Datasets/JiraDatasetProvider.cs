@@ -1,14 +1,17 @@
 ﻿using Amazon.Runtime.Internal.Endpoints.StandardLibrary;
+using Azure;
 using CommandLine.Text;
 using MongoDB.Bson.Serialization.Serializers;
 using Newtonsoft.Json;
 using NPOI.HSSF.Record.Chart;
+using NPOI.OpenXmlFormats.Spreadsheet;
 using NPOI.XWPF.UserModel;
 using Org.BouncyCastle.Utilities;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Datasets;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.Datasets.JiraItems;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Renci.SshNet.Messages.Authentication;
 using System;
@@ -22,6 +25,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using static Rdmp.Core.Datasets.JiraItems.JiraAPIObjects;
 
 namespace Rdmp.Core.Datasets;
 
@@ -29,9 +33,8 @@ public class JiraDatasetProvider : PluginDatasetProvider
 {
     private readonly string _workspace;
     private readonly HttpClient _client;
-
     private readonly string API_URL = "https://api.atlassian.com/jsm/assets/workspace/";
-
+    private readonly string OBJECT_SCHEMA = "1";//todo make this configurable
 
     public JiraDatasetProvider(IBasicActivateItems activator, DatasetProviderConfiguration configuration) : base(activator, configuration)
     {
@@ -45,6 +48,7 @@ public class JiraDatasetProvider : PluginDatasetProvider
               .Accept
               .Add(new MediaTypeWithQualityHeaderValue("application/json"));//ACCEPT header
         _workspace = configuration.Organisation_ID;
+
     }
 
     public override void AddExistingDataset(string name, string url)
@@ -60,7 +64,7 @@ public class JiraDatasetProvider : PluginDatasetProvider
             Url = jiraDataset._links.self,
             Type = this.ToString(),
             Provider_ID = Configuration.ID,
-            Folder = $"\\{Configuration.Name}",
+            Folder = $"\\Jira\\{Configuration.Name}",
         };
         dataset.SaveToDatabase();
         Activator.Publish(dataset);
@@ -70,7 +74,7 @@ public class JiraDatasetProvider : PluginDatasetProvider
     private class CreateAtrObj
     {
         public string objectTypeId;
-        public List<JiraPutAttribute> Attributes;
+        public List<Attribute> Attributes;
     }
 
     public override Dataset Create(Catalogue catalogue)
@@ -84,41 +88,16 @@ public class JiraDatasetProvider : PluginDatasetProvider
         };
         using var stream = new MemoryStream();
 
-
-        //var schemaResponse = Task.Run(async () => await _client.GetAsync($"{API_URL}{_workspace}/v1/objectschema/list")).Result;
-
-
-
         string objectTypeId = "1";
         string nameAttributeId = "2";
-        //if (schemaResponse.StatusCode == HttpStatusCode.OK)
-        //{
-        //    var x = new SchemaObject();
-        //    x.id = "1";
-        //    x.name = "error";
-        //    _ = new SchemaList()
-        //    {
-        //        values = []
-        //    };
-
-        //    var detailsString = Task.Run(async () => await schemaResponse.Content.ReadAsStringAsync()).Result;
-        //    SchemaList schemas = JsonConvert.DeserializeObject<SchemaList>(detailsString);
-        //    var s = schemas.values.First(s => s.name == "TEST").id;//todo should be HIC
-        //    //objectTypeId = schemas.values.First(s => s.name == "Dataset").id;
-        //    //nameAttributeId = GetSchemaAttributes(objectTypeId).First(s => s.name == "Name").id;
-        //}
-        //else
-        //{
-        //    throw new Exception("Unable to fetch schemas");
-        //}
 
         var o = new CreateAtrObj()
         {
             objectTypeId = objectTypeId,
-            Attributes = new List<JiraPutAttribute>() { new JiraPutAttribute() {
+            Attributes = new List<Attribute>() { new Attribute() {
                 objectTypeAttributeId=nameAttributeId,
-                objectAttributeValues = new List<JiraPutAttributeValueObject>(){
-                    new JiraPutAttributeValueObject(){value=catalogue.Name}
+                objectAttributeValues = new List<ObjectAttributeValue>(){
+                    new ObjectAttributeValue(){value=catalogue.Name}
                 }
             } }
         };
@@ -160,23 +139,21 @@ public class JiraDatasetProvider : PluginDatasetProvider
         throw new NotImplementedException();
     }
 
-    private class AtrObj
-    {
-        public List<JiraPutAttribute> Attributes;
-    }
+
+
 
     public override void Update(string uuid, PluginDataset datasetUpdates)
     {
         var ds = (JiraDataset)datasetUpdates;
-        List<JiraPutAttribute> jiraAttributes = [];
+        List<Attribute> jiraAttributes = [];
         foreach (var attribute in ds.attributes)
         {
-            var obj = new JiraPutAttribute();
+            var obj = new Attribute();
             obj.objectTypeAttributeId = attribute.objectTypeAttributeId;
-            obj.objectAttributeValues = new List<JiraPutAttributeValueObject>();
+            obj.objectAttributeValues = new List<ObjectAttributeValue>();
             foreach (var v in attribute.objectAttributeValues)
             {
-                obj.objectAttributeValues.Add(new JiraPutAttributeValueObject()
+                obj.objectAttributeValues.Add(new ObjectAttributeValue()
                 {
                     value = v.value
                 });
@@ -190,9 +167,9 @@ public class JiraDatasetProvider : PluginDatasetProvider
             IncludeFields = true
         };
         using var stream = new MemoryStream();
-        var o = new AtrObj()
+        var o = new JiraAPIObjects.UpdateAttributes()
         {
-            Attributes = jiraAttributes
+            attributes = jiraAttributes
         };
         System.Text.Json.JsonSerializer.Serialize(stream, o, serializeOptions);
         var jsonString = Encoding.UTF8.GetString(stream.ToArray());
@@ -201,11 +178,6 @@ public class JiraDatasetProvider : PluginDatasetProvider
         Console.WriteLine(response);
     }
 
-    private class SchemaObject
-    {
-        public string id;
-        public string name;
-    }
     private string GetObjectTypeAttributeID(JiraDataset dataset, string name)
     {
         try
@@ -223,16 +195,13 @@ public class JiraDatasetProvider : PluginDatasetProvider
     }
 
 
-    private List<SchemaObject> GetSchemaAttributes(string objectSchemaID)
+    private List<ReferenceType> GetSchemaAttributes(string objectSchemaID)
     {
         var response = Task.Run(async () => await _client.GetAsync($"{API_URL}{_workspace}/v1/objectschema/{objectSchemaID}/attributes")).Result;
         if (response.StatusCode == HttpStatusCode.OK)
         {
-            var x = new SchemaObject();
-            x.id = "1";
-            x.name = "error";
             var detailsString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
-            List<SchemaObject> schema = JsonConvert.DeserializeObject<List<SchemaObject>>(detailsString);
+            List<ReferenceType> schema = JsonConvert.DeserializeObject<List<ReferenceType>>(detailsString);
 
             return schema;
         }
@@ -264,32 +233,9 @@ public class JiraDatasetProvider : PluginDatasetProvider
         };
     }
 
-
-
-    private class DatabaseValue
+    private string GetDatasetKey(Dataset ds)
     {
-        public string value;
-
-    }
-
-    private class Database
-    {
-        public string id;
-        public string objectKey;
-        public string label;
-        public List<Attribute> attributes;
-    }
-
-    private class Databases
-    {
-        public List<Database> values;
-    }
-
-    private class DatabasePUT
-    {
-        public string objectId;
-        public string objectTypeAttributeId;
-        public List<DatabaseValue> objectAttributeValues;
+        return "";
     }
 
     public override void UpdateUsingCatalogue(JiraDataset dataset, Catalogue catalogue)
@@ -326,32 +272,15 @@ public class JiraDatasetProvider : PluginDatasetProvider
         {
 
             var detailsString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
-            Databases databases = JsonConvert.DeserializeObject<Databases>(detailsString);
+            JiraAPIObjects.AQLResult databases = JsonConvert.DeserializeObject<JiraAPIObjects.AQLResult>(detailsString);
 
-            var dbUpdate = new DatabasePUT();
+            var dbUpdate = new Attribute();
             dbUpdate.objectId = dataset.id;
             dbUpdate.objectTypeAttributeId = databaseTableschema;
-            dbUpdate.objectAttributeValues = databases.values.Select(d => new DatabaseValue() { value = d.objectKey }).ToList();
+            dbUpdate.objectAttributeValues = databases.values.Select(d => new ObjectAttributeValue() { value = d.objectKey }).ToList();
 
 
-            _ = new Database()
-            {
-                id = "1",
-                objectKey = "1",
-                label = "1",
-                attributes = []
-            };
-            _ = new Databases()
-            {
-                values = []
-            };
-            _ = new DatabaseValue()
-            {
-                value = ""
-            };
-
-
-            var dbs = new List<Database>();
+            var dbs = new List<JiraAPIObjects.Value>();
             foreach (var ti in tableInfos)
             {
                 var o = databases.values.FirstOrDefault(db => db.attributes.Any(a => a.objectAttributeValues.First().value.ToString() == ti.Database[1..^1]) && db.attributes.Any(a => a.objectAttributeValues.First().value.ToString() == ti.Server));
@@ -385,12 +314,87 @@ public class JiraDatasetProvider : PluginDatasetProvider
         var projectSpecifics = Activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>().Where(p => projectSpecificIDs.Contains(p.ID));
         var projectsUsedIn = Activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>().Where(p => p.ExtractionConfigurations.Any(ec => ec.GetAllExtractableDataSets().Any(eds => eds.Catalogue_ID == catalogue.ID)));
         var linkedProjects = projectSpecifics.Concat(projectsUsedIn).ToList().Distinct();
-        foreach (var project in linkedProjects)
-        {
-            //find it in jira
-            // link this dataset to that poroject
 
-            //todo validate projects with RDMP IDs
+        response = Task.Run(async () => await _client.GetAsync($"{API_URL}{_workspace}/v1/objectschema/{OBJECT_SCHEMA}")).Result;
+        if (response.StatusCode == HttpStatusCode.OK)
+        {
+            var detailsString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
+            Console.WriteLine(detailsString);
         }
+        else
+        {
+            throw new Exception("Unable to fetch schema");
+        }
+
+        response = Task.Run(async () => await _client.GetAsync($"{API_URL}{_workspace}/v1/objectschema/{OBJECT_SCHEMA}/objecttypes")).Result;
+        if (response.StatusCode == HttpStatusCode.OK)
+        {
+            var detailsString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
+            List<ObjectType> objectSchemaTypes = JsonConvert.DeserializeObject<List<ObjectType>>(detailsString);
+            var t = objectSchemaTypes.FirstOrDefault(e => e.name == "Project");
+
+
+
+            foreach (var project in linkedProjects)
+            {
+                var catalogues = project.GetAllProjectCatalogues();//is this all of them?
+                List<Dataset> datasets = catalogue.GetLinkedDatasets().Where(ds  => ds.Provider_ID == Configuration.ID).ToList();
+
+
+
+                jsonString = $"{{\r\n  \"qlQuery\": \"objectType = Project and \\\"Project ID\\\" endsWith {project.ID}\"\r\n}}";
+                httpContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
+                response = Task.Run(async () => await _client.PostAsync($"{API_URL}{_workspace}/v1/object/aql", httpContent)).Result;
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+
+                    detailsString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
+                    JiraAPIObjects.AQLResult projects = JsonConvert.DeserializeObject<JiraAPIObjects.AQLResult>(detailsString);//rename databases to aql object
+                    var datasetID = projects.objectTypeAttributes.First(ota => ota.name == "Dataset").id;
+                    foreach (var jiraAssetProject in projects.values)
+                    {
+                        List<Attribute> jiraAttributes = [];
+                        jiraAttributes.Add(new Attribute()
+                        {
+                            objectTypeAttributeId = datasetID,
+                            objectAttributeValues = datasets.Select(ds => new ObjectAttributeValue() { value = ((JiraDataset)FetchDatasetByID(int.Parse(ds.Url.Split('/').Last()))).objectKey }).ToList()
+
+                        });
+                        serializeOptions = new JsonSerializerOptions
+                        {
+                            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                            WriteIndented = true,
+                            IncludeFields = true
+                        };
+                        using var stream = new MemoryStream();
+                        var o = new JiraAPIObjects.UpdateAttributes()
+                        {
+                            attributes = jiraAttributes
+                        };
+                        System.Text.Json.JsonSerializer.Serialize(stream, o, serializeOptions);
+                        jsonString = Encoding.UTF8.GetString(stream.ToArray());
+                        httpContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
+                        response = Task.Run(async () => await _client.PutAsync($"{API_URL}{_workspace}/v1/object/{jiraAssetProject.id}", httpContent)).Result;
+                        Console.WriteLine(response);
+                    }
+                }
+                else
+                {
+                    throw new Exception("Bad project search");
+                }
+                ////find it in jira
+                //// link this dataset to that poroject
+
+                ////todo validate projects with RDMP IDs
+            }
+
+
+        }
+        else
+        {
+            throw new Exception("Unable to fetch schema");
+        }
+
+
     }
 }

@@ -177,14 +177,4 @@ namespace Rdmp.Core.Datasets
         public string name { get; set; }
 
     }
-
-    public class JiraPutAttributeValueObject{
-        public object value;
-    }
-    public class JiraPutAttribute
-    {
-        public string objectTypeAttributeId;
-        public List<JiraPutAttributeValueObject> objectAttributeValues;
-
-    }
 }
