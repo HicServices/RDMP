@@ -146,7 +146,7 @@ public class PureDatasetProvider : PluginDatasetProvider
         }
     }
 
-    public override void UpdateUsingCatalogue(JiraDataset dataset, Catalogue catalogue)
+    public override void UpdateUsingCatalogue(PluginDataset dataset, Catalogue catalogue)
     {
         throw new NotImplementedException();
     }

@@ -517,6 +517,14 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
             var jiraDataset = (JiraDataset) jiraProvider.FetchDatasetByID(int.Parse(dataset.Url.Split('/').Last()));
             jiraProvider.UpdateUsingCatalogue(jiraDataset, _catalogue);
         }
+        if (dataset.Type == typeof(HDRDatasetProvider).ToString())
+        {
+            var providerConfiguration = Activator.RepositoryLocator.CatalogueRepository.GetObjectByID<DatasetProviderConfiguration>((int)dataset.Provider_ID);
+            var hdrProvider = new HDRDatasetProvider(Activator, providerConfiguration);
+            var x = dataset.Url.Split('?')[0].Split('/').Last();
+            var hdrDataset = (HDRDataset)hdrProvider.FetchDatasetByID(int.Parse(dataset.Url.Split('?')[0].Split('/').Last()));
+            hdrProvider.UpdateUsingCatalogue(hdrDataset, _catalogue);
+        }
     }
 
     private void btnStartDateClear_Click(object sender, EventArgs e)
