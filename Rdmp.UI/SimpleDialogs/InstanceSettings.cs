@@ -28,6 +28,7 @@ namespace Rdmp.UI.SimpleDialogs
             RegisterCheckbox(cbAutoSuggestProjectNumbers, "AutoSuggestProjectNumbers");
             RegisterCheckbox(cbCohortVersioningOnCommit, "PromptForVersionOnCohortCommit");
             RegisterCheckbox(cbYesNoAll, "ToggleYestoAllNotoAlldataloadcheck");
+            RegisterCheckbox(cbExtracttonPipelineQuickEdit, "ExtracttonPipelineQuickEdit");
             _loaded = true;
         }
 

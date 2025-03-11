@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [8.4.4] - Ureleased 
 
 - Re-add AggregateGraph functionality
+- Add ability to show/hide quick edit pipeline controls during extractions
 
 ## [8.4.3] - 2025-02-24
 

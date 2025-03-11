@@ -13,6 +13,7 @@ using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Annotations;
+using Rdmp.Core.Setting;
 using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.PipelineUIs.Pipelines;
@@ -130,6 +131,12 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
 
         ddPipelines.DrawMode = DrawMode.OwnerDrawFixed;
         ddPipelines.DrawItem += cmb_Type_DrawItem;
+        var showButtonsSetting = activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Setting>().FirstOrDefault(static s => s.Key == "ExtracttonPipelineQuickEdit");
+        var showbuttons = showButtonsSetting != null && Convert.ToBoolean(showButtonsSetting.Value);
+        btnClonePipeline.Visible = showbuttons;
+        btnCreateNewPipeline.Visible = showbuttons;
+        btnDeletePipeline.Visible = showbuttons;
+        btnEditPipeline.Visible = showbuttons;
     }
 
     private void cmb_Type_DrawItem(object sender, DrawItemEventArgs e)
