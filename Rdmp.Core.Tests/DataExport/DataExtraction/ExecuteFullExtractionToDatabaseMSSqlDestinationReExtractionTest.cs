@@ -10,7 +10,7 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using SynthEHR;
-using SynthEHR.Datasets;    
+using SynthEHR.Datasets;
 using FAnsi.Discovery;
 using NUnit.Framework;
 using Rdmp.Core.CommandExecution;
@@ -533,7 +533,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
 
         dt = destinationTable.GetDataTable();
 
-        Assert.That(dt.Rows, Has.Count.EqualTo(2)); 
+        Assert.That(dt.Rows, Has.Count.EqualTo(2));
     }
 
     [Test]
@@ -1191,14 +1191,14 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
         newCohortCmd.Execute();
         var extractableCohort = new ExtractableCohort(DataExportRepository, newExternal, 1);
 
-        var ec = new ExtractionConfiguration(DataExportRepository, project)
+        var ec = DataExportRepository.GetAllObjectsWhere<ExtractionConfiguration>("Cohort_ID", extractableCohort.ID).FirstOrDefault() ?? new ExtractionConfiguration(DataExportRepository, project)
         {
             Name = "ext1",
             Cohort_ID = extractableCohort.ID
         };
         ec.AddDatasetToConfiguration(new ExtractableDataSet(DataExportRepository, catalogue));
 
-        ec.SaveToDatabase();
+        //ec.SaveToDatabase();
 
         var extractionPipeline = new Pipeline(CatalogueRepository, "Empty extraction pipeline 4");
         var component = new PipelineComponent(CatalogueRepository, extractionPipeline,
