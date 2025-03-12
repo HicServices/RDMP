@@ -34,7 +34,7 @@
             label1 = new System.Windows.Forms.Label();
             cbCohortVersioningOnCommit = new System.Windows.Forms.CheckBox();
             cbYesNoAll = new System.Windows.Forms.CheckBox();
-            cbExtracttonPipelineQuickEdit = new System.Windows.Forms.CheckBox();
+            cbExtractionPipelineQuickEdit = new System.Windows.Forms.CheckBox();
             SuspendLayout();
             // 
             // cbAutoSuggestProjectNumbers
@@ -78,22 +78,22 @@
             cbYesNoAll.UseVisualStyleBackColor = true;
             cbYesNoAll.CheckedChanged += checkBox1_CheckedChanged;
             // 
-            // cbExtracttonPipelineQuickEdit
+            // cbExtractionPipelineQuickEdit
             // 
-            cbExtracttonPipelineQuickEdit.AutoSize = true;
-            cbExtracttonPipelineQuickEdit.Location = new System.Drawing.Point(13, 115);
-            cbExtracttonPipelineQuickEdit.Name = "cbExtracttonPipelineQuickEdit";
-            cbExtracttonPipelineQuickEdit.Size = new System.Drawing.Size(366, 19);
-            cbExtracttonPipelineQuickEdit.TabIndex = 5;
-            cbExtracttonPipelineQuickEdit.Text = "Show Pipeline Clone/Edit functionality from within an extraction";
-            cbExtracttonPipelineQuickEdit.UseVisualStyleBackColor = true;
+            cbExtractionPipelineQuickEdit.AutoSize = true;
+            cbExtractionPipelineQuickEdit.Location = new System.Drawing.Point(13, 115);
+            cbExtractionPipelineQuickEdit.Name = "cbExtractionPipelineQuickEdit";
+            cbExtractionPipelineQuickEdit.Size = new System.Drawing.Size(366, 19);
+            cbExtractionPipelineQuickEdit.TabIndex = 5;
+            cbExtractionPipelineQuickEdit.Text = "Show Pipeline Clone/Edit functionality from within an extraction";
+            cbExtractionPipelineQuickEdit.UseVisualStyleBackColor = true;
             // 
             // InstanceSettings
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(800, 450);
-            Controls.Add(cbExtracttonPipelineQuickEdit);
+            Controls.Add(cbExtractionPipelineQuickEdit);
             Controls.Add(cbYesNoAll);
             Controls.Add(cbCohortVersioningOnCommit);
             Controls.Add(label1);
@@ -111,6 +111,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.CheckBox cbCohortVersioningOnCommit;
         private System.Windows.Forms.CheckBox cbYesNoAll;
-        private System.Windows.Forms.CheckBox cbExtracttonPipelineQuickEdit;
+        private System.Windows.Forms.CheckBox cbExtractionPipelineQuickEdit;
     }
 }
