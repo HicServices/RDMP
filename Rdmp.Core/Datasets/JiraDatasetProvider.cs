@@ -34,7 +34,7 @@ public class JiraDatasetProvider : PluginDatasetProvider
     private readonly string _workspace;
     private readonly HttpClient _client;
     private readonly string API_URL = "https://api.atlassian.com/jsm/assets/workspace/";
-    private readonly string OBJECT_SCHEMA = "1";//todo make this configurable
+    private readonly string OBJECT_SCHEMA = "4";//todo make this configurable
 
     public JiraDatasetProvider(IBasicActivateItems activator, DatasetProviderConfiguration configuration) : base(activator, configuration)
     {
@@ -88,8 +88,8 @@ public class JiraDatasetProvider : PluginDatasetProvider
         };
         using var stream = new MemoryStream();
 
-        string objectTypeId = "1";
-        string nameAttributeId = "2";
+        string objectTypeId = "186";
+        string nameAttributeId = "993";
 
         var o = new CreateAtrObj()
         {
