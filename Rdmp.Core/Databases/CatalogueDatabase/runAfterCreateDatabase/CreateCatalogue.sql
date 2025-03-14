@@ -1429,7 +1429,7 @@ CREATE TABLE [dbo].[CatalogueDatasetLinkage](
 	[Catalogue_ID] [int] NOT NULL,
 	[Dataset_ID] [int] NOT NULL,
 	[Autoupdate] [int] NOT NULL DEFAULT 0,
-	CONSTRAINT FK_CatalogueDatasetLinkage_Catalogue_ID FOREIGN KEY (Catalogue_ID) REFERENCES Catalogue_(ID)  ON DELETE CASCADE,
+	CONSTRAINT FK_CatalogueDatasetLinkage_Catalogue_ID FOREIGN KEY (Catalogue_ID) REFERENCES Catalogue(ID)  ON DELETE CASCADE,
 	CONSTRAINT FK_CatalogueDatasetLinkage_Dataset_ID FOREIGN KEY (Dataset_ID) REFERENCES Dataset(ID),
 CONSTRAINT [PK_CatalogueDatasetLinkage] PRIMARY KEY CLUSTERED 
 (
