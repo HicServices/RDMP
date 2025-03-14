@@ -363,7 +363,7 @@ public class JiraDatasetProvider : PluginDatasetProvider
 
 
 
-                jsonString = $"{{\r\n  \"qlQuery\": \"objectType = Project and \\\"Project ID\\\" endsWith {project.ID}\"\r\n}}";
+                jsonString = $"{{\r\n  \"qlQuery\": \"objectType = Project and \\\"Project ID\\\" startswith \\\"Project {project.ProjectNumber} \\\"\"\r\n}}";
                 httpContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
                 response = Task.Run(async () => await _client.PostAsync($"{API_URL}{_workspace}/v1/object/aql", httpContent)).Result;
                 if (response.StatusCode == HttpStatusCode.OK)

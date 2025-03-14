@@ -20,6 +20,7 @@ using Rdmp.Core.Curation.Data.Datasets;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Serialization;
+using Rdmp.Core.Datasets;
 using Rdmp.Core.Logging;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
@@ -1144,6 +1145,26 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
 
     /// <inheritdoc/>
     public override string ToString() => Name;
+
+
+    public override void SaveToDatabase()
+    {
+        base.SaveToDatabase();
+        string PureAssembly = typeof(PureDatasetProvider).ToString();
+        string HDRAssembly = typeof(HDRDatasetProvider).ToString();
+        string JiraAssembly = typeof(JiraDatasetProvider).ToString();
+        foreach (var dataset in CatalogueRepository.GetAllObjectsWhere<CatalogueDatasetLinkage>("Catalogue_ID", this.ID).Where(cdl => cdl.AutoUpdate).Select(cld => cld.Dataset))
+        {
+            var provider = CatalogueRepository.GetObjectByID<DatasetProviderConfiguration>((int)dataset.Provider_ID);
+            //if (dataset.Type == typeof(JiraDatasetProvider).ToString())
+            //{
+            //    var providerConfiguration = CatalogueRepository.GetObjectByID<DatasetProviderConfiguration>((int)dataset.Provider_ID);
+            //    var jiraProvider = new JiraDatasetProvider(activator, providerConfiguration);
+            //    var jiraDataset = (JiraDataset)jiraProvider.FetchDatasetByID(int.Parse(dataset.Url.Split('/').Last()));
+            //    jiraProvider.UpdateUsingCatalogue(jiraDataset, this);
+            //}
+        }
+    }
 
     public List<Dataset> GetLinkedDatasets()
     {
