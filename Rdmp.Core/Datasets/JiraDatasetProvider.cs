@@ -13,6 +13,7 @@ using Rdmp.Core.Curation.Data.Datasets;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Datasets.JiraItems;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.Repositories;
 using Renci.SshNet.Messages.Authentication;
 using System;
 using System.Collections.Generic;
@@ -34,7 +35,6 @@ public class JiraDatasetProvider : PluginDatasetProvider
     private readonly string _workspace;
     private readonly HttpClient _client;
     private readonly string API_URL = "https://api.atlassian.com/jsm/assets/workspace/";
-    //private readonly string OBJECT_SCHEMA = Configu
 
     public JiraDatasetProvider(IBasicActivateItems activator, DatasetProviderConfiguration configuration) : base(activator, configuration)
     {

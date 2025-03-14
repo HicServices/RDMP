@@ -14,6 +14,7 @@ using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.CohortCreation.Execution;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Datasets;
@@ -968,6 +969,7 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
     internal Catalogue(ICatalogueRepository repository, DbDataReader r)
         : base(repository, r)
     {
+        Repository = repository;
         Acronym = r["Acronym"].ToString();
         Name = r["Name"].ToString();
         Description = r["Description"].ToString();
@@ -1163,6 +1165,7 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
             //    var jiraDataset = (JiraDataset)jiraProvider.FetchDatasetByID(int.Parse(dataset.Url.Split('/').Last()));
             //    jiraProvider.UpdateUsingCatalogue(jiraDataset, this);
             //}
+            //todo figure out how to do autoupdate
         }
     }
 
