@@ -34,7 +34,7 @@ public class JiraDatasetProvider : PluginDatasetProvider
     private readonly string _workspace;
     private readonly HttpClient _client;
     private readonly string API_URL = "https://api.atlassian.com/jsm/assets/workspace/";
-    private readonly string OBJECT_SCHEMA = "4";//todo make this configurable
+    //private readonly string OBJECT_SCHEMA = Configu
 
     public JiraDatasetProvider(IBasicActivateItems activator, DatasetProviderConfiguration configuration) : base(activator, configuration)
     {
@@ -195,33 +195,44 @@ public class JiraDatasetProvider : PluginDatasetProvider
     }
 
 
+    private List<ReferencedObject> _schemaObjects = [];
+
     private List<ReferencedObject> GetSchemaAttributes(string objectSchemaID)
     {
-        //var response = Task.Run(async () => await _client.GetAsync($"{API_URL}{_workspace}/v1/objectschema/{objectSchemaID}/attributes")).Result;
-        //if (response.StatusCode == HttpStatusCode.OK)
-        //{
-        //    var detailsString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
-        //    List<ReferenceType> schema = JsonConvert.DeserializeObject<List<ReferenceType>>(detailsString);
 
-        //    return schema;
-        //}
-        //throw new Exception("Unable to fetch object schema");
-        var response = Task.Run(async () => await _client.GetAsync($"{API_URL}{_workspace}/v1/objectschema/{objectSchemaID}/objecttypes")).Result;
-        if (response.StatusCode == HttpStatusCode.OK)
+        if (_schemaObjects.Any()) return _schemaObjects;
+
+        var otresponse = Task.Run(async () => await _client.GetAsync($"{API_URL}{_workspace}/v1/objectschema/{objectSchemaID}/objecttypes")).Result;
+        if (otresponse.StatusCode == HttpStatusCode.OK)
         {
-            var detailsString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
-            List<Entry> otl = JsonConvert.DeserializeObject<List<Entry>>(detailsString);
-            var o = otl.FirstOrDefault(o => o.name == "Dataset");
-            if(o is not null)
+            var otdetailsString = Task.Run(async () => await otresponse.Content.ReadAsStringAsync()).Result;
+            var _objectEntires = JsonConvert.DeserializeObject<List<Entry>>(otdetailsString);
+            var o = _objectEntires.FirstOrDefault(o => o.name == "Dataset");
+            if (o is not null)
             {
                 var id = o.id;
-                response = Task.Run(async () => await _client.GetAsync($"{API_URL}{_workspace}/v1/objecttype/{id}/attributes")).Result;
-                detailsString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
-                List<ReferencedObject> schema = JsonConvert.DeserializeObject<List<ReferencedObject>>(detailsString);
-                return schema;
+                var response = Task.Run(async () => await _client.GetAsync($"{API_URL}{_workspace}/v1/objecttype/{id}/attributes")).Result;
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    var detailsString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
+                    _schemaObjects = JsonConvert.DeserializeObject<List<ReferencedObject>>(detailsString);
+                    return _schemaObjects;
+                }
+                else
+                {
+                    throw new Exception("Unable to fetch object attributes");
+                }
             }
+            throw new Exception("Unable to find Dataset object");
         }
-        throw new Exception("Unable to fetch object schema");
+        else
+        {
+            throw new Exception("Unable to fetch object schema");
+
+        }
+
+
+
     }
 
     private Attribute GenerateUpdateAttribute(JiraDataset dataset, Catalogue catalogue, string name, string value)
@@ -246,11 +257,6 @@ public class JiraDatasetProvider : PluginDatasetProvider
                 }
             }
         };
-    }
-
-    private string GetDatasetKey(Dataset ds)
-    {
-        return "";
     }
 
     public override void UpdateUsingCatalogue(JiraDataset dataset, Catalogue catalogue)
@@ -330,7 +336,7 @@ public class JiraDatasetProvider : PluginDatasetProvider
         var projectsUsedIn = Activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>().Where(p => p.ExtractionConfigurations.Any(ec => ec.GetAllExtractableDataSets().Any(eds => eds.Catalogue_ID == catalogue.ID)));
         var linkedProjects = projectSpecifics.Concat(projectsUsedIn).ToList().Distinct();
 
-        response = Task.Run(async () => await _client.GetAsync($"{API_URL}{_workspace}/v1/objectschema/{OBJECT_SCHEMA}")).Result;
+        response = Task.Run(async () => await _client.GetAsync($"{API_URL}{_workspace}/v1/objectschema/{Configuration.Url}")).Result;
         if (response.StatusCode == HttpStatusCode.OK)
         {
             var detailsString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
@@ -341,7 +347,7 @@ public class JiraDatasetProvider : PluginDatasetProvider
             throw new Exception("Unable to fetch schema");
         }
 
-        response = Task.Run(async () => await _client.GetAsync($"{API_URL}{_workspace}/v1/objectschema/{OBJECT_SCHEMA}/objecttypes")).Result;
+        response = Task.Run(async () => await _client.GetAsync($"{API_URL}{_workspace}/v1/objectschema/{Configuration.Url}/objecttypes")).Result;
         if (response.StatusCode == HttpStatusCode.OK)
         {
             var detailsString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
@@ -353,7 +359,7 @@ public class JiraDatasetProvider : PluginDatasetProvider
             foreach (var project in linkedProjects)
             {
                 var catalogues = project.GetAllProjectCatalogues();//is this all of them?
-                List<Dataset> datasets = catalogue.GetLinkedDatasets().Where(ds  => ds.Provider_ID == Configuration.ID).ToList();
+                List<Dataset> datasets = catalogue.GetLinkedDatasets().Where(ds => ds.Provider_ID == Configuration.ID).ToList();
 
 
 
@@ -397,10 +403,6 @@ public class JiraDatasetProvider : PluginDatasetProvider
                 {
                     throw new Exception("Bad project search");
                 }
-                ////find it in jira
-                //// link this dataset to that poroject
-
-                ////todo validate projects with RDMP IDs
             }
 
 
