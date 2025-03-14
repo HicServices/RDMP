@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Re-add AggregateGraph functionality
 - Add ability to show/hide quick edit pipeline controls during extractions
+- Fix issue with columnForbidder crashing when no Regex specified
 
 ## [8.4.3] - 2025-02-24
 
