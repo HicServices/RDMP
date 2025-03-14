@@ -31,7 +31,7 @@ public class ColumnForbidder : IPluginDataFlowComponent<DataTable>
     public Regex CrashIfAnyColumnMatches
     {
         get => _crashIfAnyColumnMatches;
-        set => _crashIfAnyColumnMatches = value != null?new Regex(value.ToString(), value.Options | RegexOptions.IgnoreCase):null;
+        set => _crashIfAnyColumnMatches = value != null ? new Regex(value.ToString(), value.Options | RegexOptions.IgnoreCase) : null;
     }
 
     [DemandsInitialization(
@@ -46,7 +46,7 @@ public class ColumnForbidder : IPluginDataFlowComponent<DataTable>
 
     public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,
         GracefulCancellationToken cancellationToken)
-    { 
+    {
         var checkPattern = _reCache ??= _crashIfAnyColumnMatches ?? new Regex(GetPattern(), RegexOptions.IgnoreCase);
 
         foreach (var c in toProcess.Columns.Cast<DataColumn>().Select(c => c.ColumnName))
