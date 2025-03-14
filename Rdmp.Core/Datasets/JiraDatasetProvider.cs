@@ -195,18 +195,33 @@ public class JiraDatasetProvider : PluginDatasetProvider
     }
 
 
-    private List<ReferenceType> GetSchemaAttributes(string objectSchemaID)
+    private List<ReferencedObject> GetSchemaAttributes(string objectSchemaID)
     {
-        var response = Task.Run(async () => await _client.GetAsync($"{API_URL}{_workspace}/v1/objectschema/{objectSchemaID}/attributes")).Result;
+        //var response = Task.Run(async () => await _client.GetAsync($"{API_URL}{_workspace}/v1/objectschema/{objectSchemaID}/attributes")).Result;
+        //if (response.StatusCode == HttpStatusCode.OK)
+        //{
+        //    var detailsString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
+        //    List<ReferenceType> schema = JsonConvert.DeserializeObject<List<ReferenceType>>(detailsString);
+
+        //    return schema;
+        //}
+        //throw new Exception("Unable to fetch object schema");
+        var response = Task.Run(async () => await _client.GetAsync($"{API_URL}{_workspace}/v1/objectschema/{objectSchemaID}/objecttypes")).Result;
         if (response.StatusCode == HttpStatusCode.OK)
         {
             var detailsString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
-            List<ReferenceType> schema = JsonConvert.DeserializeObject<List<ReferenceType>>(detailsString);
-
-            return schema;
+            List<Entry> otl = JsonConvert.DeserializeObject<List<Entry>>(detailsString);
+            var o = otl.FirstOrDefault(o => o.name == "Dataset");
+            if(o is not null)
+            {
+                var id = o.id;
+                response = Task.Run(async () => await _client.GetAsync($"{API_URL}{_workspace}/v1/objecttype/{id}/attributes")).Result;
+                detailsString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
+                List<ReferencedObject> schema = JsonConvert.DeserializeObject<List<ReferencedObject>>(detailsString);
+                return schema;
+            }
         }
         throw new Exception("Unable to fetch object schema");
-
     }
 
     private Attribute GenerateUpdateAttribute(JiraDataset dataset, Catalogue catalogue, string name, string value)
