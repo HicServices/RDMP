@@ -300,7 +300,7 @@ namespace Rdmp.UI.SimpleDialogs
         private System.Windows.Forms.TextBox tbFind;
         private System.Windows.Forms.CheckBox cbRegex;
         private System.Windows.Forms.Panel panel2;
-        private BrightIdeasSoftware.ObjectListView folv;
+        private BrightIdeasSoftware.FastObjectListView folv;
         private OLVColumn olvName;
         private OLVColumn olvHierarchy;
         private OLVColumn olvID;
