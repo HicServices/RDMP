@@ -36,7 +36,7 @@
     <PackageVersion Include="NUnit" Version="4.3.2" />
     <PackageVersion Include="ObjectListView.Repack.NET6Plus" Version="2.9.5" />
     <PackageVersion Include="Scintilla.NET" Version="5.3.2.9" />
-    <PackageVersion Include="System.Resources.Extensions" Version="9.0.2" />
+    <PackageVersion Include="System.Resources.Extensions" Version="9.0.3" />
     <PackageVersion Include="VPKSoft.ScintillaLexers.NET" Version="1.1.16" />
     <PackageVersion Include="HIC.System.Windows.Forms.DataVisualization" Version="1.0.1" />
     <PackageVersion Include="NUnit3TestAdapter" Version="4.6.0" />
