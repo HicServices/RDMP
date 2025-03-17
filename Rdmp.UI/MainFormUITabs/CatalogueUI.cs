@@ -473,10 +473,10 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
                     label.AutoSize = true;
                     tableLayoutPanel3.Controls.Add(label, 0, tableLayoutPanel3.RowCount - 1);
                     var cb = new CheckBox();
-                    cb.Checked = linkage.AutoUpdate;
+                    cb.Checked = linkage.Autoupdate;
                     cb.CheckedChanged += (object sender, EventArgs e) =>
                     {
-                        linkage.AutoUpdate = !linkage.AutoUpdate;
+                        linkage.Autoupdate = !linkage.Autoupdate;
                         linkage.SaveToDatabase();
                         Publish(linkage);
                     };
@@ -524,6 +524,14 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
             var jiraProvider = new JiraDatasetProvider(Activator,providerConfiguration);
             var jiraDataset = (JiraDataset) jiraProvider.FetchDatasetByID(int.Parse(dataset.Url.Split('/').Last()));
             jiraProvider.UpdateUsingCatalogue(jiraDataset, _catalogue);
+        }
+        if (dataset.Type == typeof(HDRDatasetProvider).ToString())
+        {
+            var providerConfiguration = Activator.RepositoryLocator.CatalogueRepository.GetObjectByID<DatasetProviderConfiguration>((int)dataset.Provider_ID);
+            var hdrProvider = new HDRDatasetProvider(Activator, providerConfiguration);
+            var x = dataset.Url.Split('?')[0].Split('/').Last();
+            var hdrDataset = (HDRDataset)hdrProvider.FetchDatasetByID(int.Parse(dataset.Url.Split('?')[0].Split('/').Last()));
+            hdrProvider.UpdateUsingCatalogue(hdrDataset, _catalogue);
         }
     }
 

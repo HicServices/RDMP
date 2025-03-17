@@ -281,24 +281,27 @@ public class JiraDatasetProvider : PluginDatasetProvider
         };
     }
 
-    public override void UpdateUsingCatalogue(JiraDataset dataset, Catalogue catalogue)
+
+
+    public override void UpdateUsingCatalogue(PluginDataset dataset, Catalogue catalogue)
     {
+        var jiraDataset = (JiraDataset)dataset;
         var updateDataset = new JiraDataset();
         updateDataset.attributes = new List<Attribute>();
 
-        updateDataset.attributes.Add(GenerateUpdateAttribute(dataset, catalogue, "Name", catalogue.Name));
-        updateDataset.attributes.Add(GenerateUpdateAttribute(dataset, catalogue, "Short Description", catalogue.ShortDescription));
-        updateDataset.attributes.Add(GenerateUpdateAttribute(dataset, catalogue, "Acronym", catalogue.Acronym));
-        updateDataset.attributes.Add(GenerateUpdateAttribute(dataset, catalogue, "DOI", catalogue.Doi));
-        updateDataset.attributes.Add(GenerateUpdateAttribute(dataset, catalogue, "Update Frequency", ((Catalogue.UpdateFrequencies)catalogue.Update_freq).ToString()));
-        updateDataset.attributes.Add(GenerateUpdateAttribute(dataset, catalogue, "Initial Release Date", catalogue.DatasetReleaseDate.ToString()));
-        updateDataset.attributes.Add(GenerateUpdateAttribute(dataset, catalogue, "Update Lag", ((Catalogue.UpdateLagTimes)catalogue.UpdateLag).ToString()));
-        updateDataset.attributes.Add(GenerateUpdateAttribute(dataset, catalogue, "Is Deprecated", catalogue.IsDeprecated.ToString()));
-        updateDataset.attributes.Add(GenerateUpdateAttribute(dataset, catalogue, "Is Project Specific", catalogue.IsProjectSpecific(Activator.RepositoryLocator.DataExportRepository).ToString()));
-        updateDataset.attributes.Add(GenerateUpdateAttribute(dataset, catalogue, "RDMP_CatalogueID", catalogue.ID.ToString()));
-        updateDataset.attributes.Add(GenerateUpdateAttribute(dataset, catalogue, "RDMP_CatalogueDB", (catalogue.CatalogueRepository as TableRepository).GetConnection().Connection.ConnectionString));
+        updateDataset.attributes.Add(GenerateUpdateAttribute(jiraDataset, catalogue, "Name", catalogue.Name));
+        updateDataset.attributes.Add(GenerateUpdateAttribute(jiraDataset, catalogue, "Short Description", catalogue.ShortDescription));
+        updateDataset.attributes.Add(GenerateUpdateAttribute(jiraDataset, catalogue, "Acronym", catalogue.Acronym));
+        updateDataset.attributes.Add(GenerateUpdateAttribute(jiraDataset, catalogue, "DOI", catalogue.Doi));
+        updateDataset.attributes.Add(GenerateUpdateAttribute(jiraDataset, catalogue, "Update Frequency", ((Catalogue.UpdateFrequencies)catalogue.Update_freq).ToString()));
+        updateDataset.attributes.Add(GenerateUpdateAttribute(jiraDataset, catalogue, "Initial Release Date", catalogue.DatasetReleaseDate.ToString()));
+        updateDataset.attributes.Add(GenerateUpdateAttribute(jiraDataset, catalogue, "Update Lag", ((Catalogue.UpdateLagTimes)catalogue.UpdateLag).ToString()));
+        updateDataset.attributes.Add(GenerateUpdateAttribute(jiraDataset, catalogue, "Is Deprecated", catalogue.IsDeprecated.ToString()));
+        updateDataset.attributes.Add(GenerateUpdateAttribute(jiraDataset, catalogue, "Is Project Specific", catalogue.IsProjectSpecific(Activator.RepositoryLocator.DataExportRepository).ToString()));
+        updateDataset.attributes.Add(GenerateUpdateAttribute(jiraDataset, catalogue, "RDMP_CatalogueID", catalogue.ID.ToString()));
+        updateDataset.attributes.Add(GenerateUpdateAttribute(jiraDataset, catalogue, "RDMP_CatalogueDB", (catalogue.CatalogueRepository as TableRepository).GetConnection().Connection.ConnectionString));
         var tableInfos = catalogue.CatalogueItems.Select(ci => ci.ColumnInfo.TableInfo).ToList();
-        var databaseTableschema = GetSchemaAttributes(dataset.objectType.objectSchemaId).Where(s => s.name == "Database").First().id;
+        var databaseTableschema = GetSchemaAttributes(jiraDataset.objectType.objectSchemaId).Where(s => s.name == "Database").First().id;
 
         var serializeOptions = new JsonSerializerOptions
         {
@@ -318,7 +321,7 @@ public class JiraDatasetProvider : PluginDatasetProvider
             JiraAPIObjects.AQLResult databases = JsonConvert.DeserializeObject<JiraAPIObjects.AQLResult>(detailsString);
 
             var dbUpdate = new Attribute();
-            dbUpdate.objectId = dataset.id;
+            dbUpdate.objectId = jiraDataset.id;
             dbUpdate.objectTypeAttributeId = databaseTableschema;
             dbUpdate.objectAttributeValues = databases.values.Select(d => new ObjectAttributeValue() { value = d.objectKey }).ToList();
 
@@ -350,7 +353,7 @@ public class JiraDatasetProvider : PluginDatasetProvider
             throw new Exception($"{response.StatusCode}: Unable to fetch Jira Database Object");
         }
 
-        Update(dataset.id, updateDataset);
+        Update(jiraDataset.id, updateDataset);
 
         //update projects
         var projectSpecificIDs = Activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", catalogue.ID).Where(eds => eds.Project_ID != null).Select(eds => eds.Project_ID);

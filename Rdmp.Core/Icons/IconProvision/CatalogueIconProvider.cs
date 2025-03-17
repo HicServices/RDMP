@@ -14,7 +14,9 @@ using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.Curation.Data.Dashboarding;
+using Rdmp.Core.Curation.Data.Datasets;
 using Rdmp.Core.DataFlowPipeline.Requirements;
+using Rdmp.Core.Datasets;
 using Rdmp.Core.Icons.IconOverlays;
 using Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
@@ -195,6 +197,11 @@ public class CatalogueIconProvider : ICoreIconProvider
                 return cmd.GetImage(this);
         }
 
+        switch (concept)
+        {
+            case Dataset:
+                return GetImageImpl(RDMPConcept.Dataset);
+        }
 
         return ImageUnknown;
     }

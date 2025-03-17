@@ -276,7 +276,9 @@ public class Team
 
 public class Temporal
 {
-    public object endDate { get; set; }
+    [JsonConverter(typeof(CustomDateTimeConverterThreeMilliseconds))]
+
+    public DateTime? endDate { get; set; }
 
     [JsonConverter(typeof(CustomDateTimeConverterThreeMilliseconds))]
     public DateTime startDate { get; set; }

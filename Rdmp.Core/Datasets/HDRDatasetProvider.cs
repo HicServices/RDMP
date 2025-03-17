@@ -1,5 +1,6 @@
 ﻿using Amazon.Runtime.Internal.Endpoints.StandardLibrary;
 using Newtonsoft.Json;
+using NPOI.OpenXmlFormats.Wordprocessing;
 using Org.BouncyCastle.Asn1.Cms;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
@@ -104,7 +105,7 @@ namespace Rdmp.Core.Datasets
             var serializeOptions = new JsonSerializerOptions
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                WriteIndented = true,
+                WriteIndented = true
             };
             serializeOptions.Converters.Add(new CustomDateTimeConverter());
             serializeOptions.Converters.Add(new CustomDateTimeConverterThreeMilliseconds());
@@ -118,18 +119,12 @@ namespace Rdmp.Core.Datasets
             var update = (HDRDataset)datasetUpdates;
             var updateObj = new HDRUpdateObject()
             {
-                team_id = update.data.team_id,
-                user_id = update.data.user_id,
-                create_origin = update.data.create_origin,
                 metadata = (new HDRDatasetPatch((HDRDataset)datasetUpdates)).metadata.metadata
             };
-            //update.data.versions.First().metadata.metadata
-
-
-            //System.Text.Json.JsonSerializer.Serialize<PatchMetadata>(stream, (new HDRDatasetPatch((HDRDataset)datasetUpdates)).metadata, serializeOptions);
             System.Text.Json.JsonSerializer.Serialize<PatchSubMetadata>(stream, updateObj.metadata, serializeOptions);
-            var jsonString = Encoding.UTF8.GetString(stream.ToArray());
-            var uri = $"{Configuration.Url}/v1/integrations/datasets/{uuid}?schema_model=HDRUK&schema_version=3.0.0";
+            var jsonString = "{\"metadata\":{\"metadata\":" + Encoding.UTF8.GetString(stream.ToArray()) + "}}";
+            //var uri = $"{Configuration.Url}/v1/integrations/datasets/{uuid}?schema_model=HDRUK&schema_version=3.0.0";
+            var uri = $"{Configuration.Url}/v1/integrations/datasets/{uuid}?input_schema=HDRUK&input_version=3.0.0";
             var httpContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
 
             var response = Task.Run(async () => await _client.PutAsync(uri, httpContent)).Result;
@@ -140,9 +135,113 @@ namespace Rdmp.Core.Datasets
             }
         }
 
-        public override void UpdateUsingCatalogue(JiraDataset dataset, Catalogue catalogue)
+        private string MapDataTypeToHDRDataType(string dt)
         {
-            throw new NotImplementedException();
+            switch (dt)
+            {
+                case "HealthcareAndDisease":
+                    return "Healthcare and disease";
+                case "TreatmentsAndInterventions":
+                    return "Treatments/Interventions";
+                case "MeasurementsAndTests":
+                    return "Measurements/Tests";
+                case "ImagingTypes":
+                    return "Imaging types";
+                case "ImagingAreaOfTheBody":
+                    return "Imaging area of the body";
+                case "Omics":
+                    return "Omics";
+                case "Socioeconomic":
+                    return "Socioeconomic";
+                case "Lifestyle":
+                    return "Lifestyle";
+                case "Registry":
+                    return "Registry";
+                case "EnvironmentalAndEnergy":
+                    return "Environmental and energy";
+                case "InformationAndCommunication":
+                    return "Information and communication";
+                case "Politics":
+                    return "Politics";
+                default:
+                    return dt;
+            }
+        }
+
+        private string AddSpacesToSentence(string text, bool preserveAcronyms)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+                return string.Empty;
+            StringBuilder newText = new StringBuilder(text.Length * 2);
+            newText.Append(text[0]);
+            for (int i = 1; i < text.Length; i++)
+            {
+                if (char.IsUpper(text[i]) && ((text[i - 1] != ' ' && !char.IsUpper(text[i - 1])) ||
+                        (preserveAcronyms && char.IsUpper(text[i - 1]) &&
+                         i < text.Length - 1 && !char.IsUpper(text[i + 1]))))
+                    newText.Append(' ');
+                newText.Append(text[i]);
+            }
+            return newText.ToString();
+        }
+
+        private string MapDataSubTypeToHDR(string dst)
+        {
+            if (dst == "ResearchDiseaseRegistry") return "Disease registry (research)";
+            return AddSpacesToSentence(dst, true);
+        }
+
+        private string MapTimeLagToHDR(string tl)
+        {
+            switch (tl)
+            {
+                case "LessThanAWeek":
+                    return "Less than 1 week";
+                case "OneToTwoWeeks":
+                    return "1-2 weeks";
+                case "TwoToFourWeeks":
+                    return "2-4 weeks";
+                case "OneToTwoMonths":
+                    return "1-2 months";
+                case "TwoToSixMonths":
+                    return "2-6 months";
+                case "SixMonthsPlus":
+                    return "More than 6 months";
+                case "NotApplicable":
+                    return "Not applicable";
+                default:
+                    return tl;
+            }
+        }
+
+        public override void UpdateUsingCatalogue(PluginDataset dataset, Catalogue catalogue)
+        {
+            var hdrDataset = (HDRDataset)dataset;
+            hdrDataset.data.versions.First().metadata.metadata.summary.title = catalogue.Name;
+            hdrDataset.data.versions.First().metadata.metadata.summary.@abstract = catalogue.ShortDescription;
+            hdrDataset.data.versions.First().metadata.metadata.summary.contactPoint = catalogue.Administrative_contact_email;
+            hdrDataset.data.versions.First().metadata.metadata.summary.keywords = catalogue.Search_keywords.Split(',').Cast<object>().ToList();
+            hdrDataset.data.versions.First().metadata.metadata.summary.doiName = catalogue.Doi;
+
+            hdrDataset.data.versions.First().metadata.metadata.documentation.description = catalogue.Description;
+            hdrDataset.data.versions.First().metadata.metadata.documentation.associatedMedia = catalogue.AssociatedMedia;
+
+            hdrDataset.data.versions.First().metadata.metadata.coverage.spatial = catalogue.Geographical_coverage;
+
+            hdrDataset.data.versions.First().metadata.metadata.provenance.origin.datasetType = catalogue.DataType.Split(",").Select(MapDataTypeToHDRDataType).ToList();
+            hdrDataset.data.versions.First().metadata.metadata.provenance.origin.datasetSubType = catalogue.DataSubtype.Split(",").Select(MapDataSubTypeToHDR).ToList();
+            hdrDataset.data.versions.First().metadata.metadata.provenance.temporal.endDate = catalogue.EndDate.Value;
+            hdrDataset.data.versions.First().metadata.metadata.provenance.temporal.startDate = catalogue.StartDate.Value;
+            hdrDataset.data.versions.First().metadata.metadata.provenance.temporal.timeLag = MapTimeLagToHDR(((Catalogue.UpdateLagTimes)catalogue.UpdateLag).ToString());
+            hdrDataset.data.versions.First().metadata.metadata.provenance.temporal.publishingFrequency = ((Catalogue.UpdateFrequencies)catalogue.Update_freq).ToString();
+
+            hdrDataset.data.versions.First().metadata.metadata.accessibility.access.jurisdiction = catalogue.Juristiction.Split(",").ToList();
+            hdrDataset.data.versions.First().metadata.metadata.accessibility.access.dataController = catalogue.DataController;
+            hdrDataset.data.versions.First().metadata.metadata.accessibility.access.dataProcessor = catalogue.DataProcessor;
+
+            hdrDataset.data.versions.First().metadata.metadata.identifier = "05ec5a13-3955-45a3-b449-8aba78622113";// hdrDataset.data.versions.First().metadata.identifier;
+
+            Update(hdrDataset.data.id.ToString(), hdrDataset);
         }
 
         private class HDRUpdateObject
@@ -150,9 +249,9 @@ namespace Rdmp.Core.Datasets
             public int team_id { get; set; }
             public int user_id { get; set; }
             public string create_origin { get; set; }
-            public  PatchSubMetadata metadata { get; set; }
+            public PatchSubMetadata metadata { get; set; }
         }
     }
 
-    
+
 }

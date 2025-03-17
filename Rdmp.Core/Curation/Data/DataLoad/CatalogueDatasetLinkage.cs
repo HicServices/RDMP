@@ -18,7 +18,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad
         [NoMappingToDatabase]
         public Dataset Dataset => _repository.GetObjectByID<Dataset>(_datasetID);
 
-        public bool AutoUpdate { get; set; }
+        public bool Autoupdate { get; set; }
 
         public CatalogueDatasetLinkage() { }
 
@@ -40,7 +40,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad
             _repository = repository;
             _catalogueID = int.Parse(r["Catalogue_ID"].ToString());
             _datasetID = int.Parse(r["Dataset_ID"].ToString());
-            AutoUpdate = r["Autoupdate"].ToString() != "0";
+            Autoupdate = r["Autoupdate"].ToString() != "0";
         }
     }
 }
