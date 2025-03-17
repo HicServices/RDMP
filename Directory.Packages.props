@@ -39,7 +39,7 @@
     <PackageVersion Include="System.Resources.Extensions" Version="9.0.3" />
     <PackageVersion Include="VPKSoft.ScintillaLexers.NET" Version="1.1.16" />
     <PackageVersion Include="HIC.System.Windows.Forms.DataVisualization" Version="1.0.1" />
-    <PackageVersion Include="NUnit3TestAdapter" Version="4.6.0" />
+    <PackageVersion Include="NUnit3TestAdapter" Version="5.0.0" />
     <PackageVersion Include="NUnit.Analyzers" Version="4.6.0" />
     <PackageVersion Include="NSubstitute" Version="5.3.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
