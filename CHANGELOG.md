@@ -5,11 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## [8.4.4] - Ureleased 
 
 - Re-add AggregateGraph functionality
+- Add ability to show/hide quick edit pipeline controls during extractions
+- Fix issue with columnForbidder crashing when no Regex specified
+- Add contextual global search (CRTL+f)
 
-## [8.4.3] - 2024-02-24
+## [8.4.3] - 2025-02-24
 
 - Build on and target .Net 9 rather than 8
 - Simplify DB Patching Interface

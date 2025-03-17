@@ -446,7 +446,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
     private void newFindToolStripMenuItem_Click(object sender, EventArgs e)
     {
         var focusItem = _windowManager.GetAllWindows<RDMPUserControl>().Where(c => c.ContainsFocus).FirstOrDefault();
-        var nf = new NewfindUI(Activator, false,focusItem);
+        var nf = new NewfindUI(Activator, false, focusItem);
         nf.ShowDialog();
     }
     private void newReplaceToolStripMenuItem_Click(object sender, EventArgs e)
@@ -521,6 +521,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
 
     private void NewToolStripMenuItem_Click(object sender, EventArgs e)
     {
+
         var dlg = new SelectDialog<IAtomicCommand>(new DialogArgs
         {
             WindowTitle = "Create New",
