@@ -29,37 +29,36 @@
         private void InitializeComponent()
         {
             columnButtonRenderer1 = new BrightIdeasSoftware.ColumnButtonRenderer();
-            btnViewOnJira = new System.Windows.Forms.Button();
+            label1 = new System.Windows.Forms.Label();
             SuspendLayout();
             // 
             // columnButtonRenderer1
             // 
             columnButtonRenderer1.ButtonPadding = new System.Drawing.Size(10, 10);
             // 
-            // btnViewOnJira
+            // label1
             // 
-            btnViewOnJira.Enabled = false;
-            btnViewOnJira.Location = new System.Drawing.Point(29, 26);
-            btnViewOnJira.Name = "btnViewOnJira";
-            btnViewOnJira.Size = new System.Drawing.Size(121, 23);
-            btnViewOnJira.TabIndex = 1;
-            btnViewOnJira.Text = "View on Jira";
-            btnViewOnJira.UseVisualStyleBackColor = true;
-            btnViewOnJira.Click += btnViewOnPure_Click;
+            label1.AutoSize = true;
+            label1.Location = new System.Drawing.Point(28, 24);
+            label1.Name = "label1";
+            label1.Size = new System.Drawing.Size(247, 15);
+            label1.TabIndex = 0;
+            label1.Text = "This Jira Dataset is controlled via automation. ";
             // 
             // JiraDatasetConfigurationUI
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            Controls.Add(btnViewOnJira);
+            Controls.Add(label1);
             Name = "JiraDatasetConfigurationUI";
             Size = new System.Drawing.Size(955, 648);
             Load += PureDatasetConfigurationUI_Load;
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
         private BrightIdeasSoftware.ColumnButtonRenderer columnButtonRenderer1;
-        private System.Windows.Forms.Button btnViewOnJira;
+        private System.Windows.Forms.Label label1;
     }
 }

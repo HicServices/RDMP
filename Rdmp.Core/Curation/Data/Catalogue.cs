@@ -33,6 +33,7 @@ using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Annotations;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
+using Rdmp.Core.Startup;
 using Rdmp.Core.Ticketing;
 
 namespace Rdmp.Core.Curation.Data;
@@ -1158,13 +1159,15 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
         foreach (var dataset in CatalogueRepository.GetAllObjectsWhere<CatalogueDatasetLinkage>("Catalogue_ID", this.ID).Where(cdl => cdl.AutoUpdate).Select(cld => cld.Dataset))
         {
             var provider = CatalogueRepository.GetObjectByID<DatasetProviderConfiguration>((int)dataset.Provider_ID);
-            //if (dataset.Type == typeof(JiraDatasetProvider).ToString())
-            //{
-            //    var providerConfiguration = CatalogueRepository.GetObjectByID<DatasetProviderConfiguration>((int)dataset.Provider_ID);
-            //    var jiraProvider = new JiraDatasetProvider(activator, providerConfiguration);
-            //    var jiraDataset = (JiraDataset)jiraProvider.FetchDatasetByID(int.Parse(dataset.Url.Split('/').Last()));
-            //    jiraProvider.UpdateUsingCatalogue(jiraDataset, this);
-            //}
+            if (dataset.Type == typeof(JiraDatasetProvider).ToString())
+            {
+                var providerConfiguration = CatalogueRepository.GetObjectByID<DatasetProviderConfiguration>((int)dataset.Provider_ID);
+                var repositoryProvider = new UserSettingsRepositoryFinder();// new RepositoryProvider(CatalogueRepository,);
+                var activator = new ThrowImmediatelyActivator(repositoryProvider, ThrowImmediatelyCheckNotifier.Quiet);
+                var jiraProvider = new JiraDatasetProvider(activator, providerConfiguration);
+                var jiraDataset = (JiraDataset)jiraProvider.FetchDatasetByID(int.Parse(dataset.Url.Split('/').Last()));
+                jiraProvider.UpdateUsingCatalogue(jiraDataset, this);
+            }
             //todo figure out how to do autoupdate
         }
     }

@@ -38,10 +38,6 @@ public partial class JiraDatasetConfigurationUI : DatsetConfigurationUI_Design, 
         base.SetDatabaseObject(activator, databaseObject);
         _provider = new JiraDatasetProvider(activator, activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<DatasetProviderConfiguration>("ID", databaseObject.Provider_ID).First());
         _dataset = (JiraDataset)_provider.FetchDatasetByID(int.Parse(databaseObject.Url.Split("/").Last()));
-        if (_dataset._links.self is not null)
-        {
-            btnViewOnJira.Enabled = true;
-        }
     }
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
