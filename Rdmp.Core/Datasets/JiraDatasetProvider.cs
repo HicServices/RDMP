@@ -34,9 +34,9 @@ public class JiraDatasetProvider : PluginDatasetProvider
     private readonly String PROJECT = "Project";
     private readonly String NAME = "Name";
 
-    public JiraDatasetProvider(IBasicActivateItems activator, DatasetProviderConfiguration configuration) : base(activator, configuration)
+    public JiraDatasetProvider(IBasicActivateItems activator, DatasetProviderConfiguration configuration, HttpClient httpClient=null) : base(activator, configuration)
     {
-        _client = new HttpClient();
+        _client = httpClient??new HttpClient();
         var credentials = Repository.GetAllObjectsWhere<DataAccessCredentials>("ID", Configuration.DataAccessCredentials_ID).First();
         var apiKey = credentials.GetDecryptedPassword();
         var code = System.Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes($"{credentials.Username}:{apiKey}"));
