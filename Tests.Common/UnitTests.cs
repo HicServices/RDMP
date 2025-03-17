@@ -16,6 +16,7 @@ using FAnsi.Implementations.MicrosoftSQL;
 using FAnsi.Implementations.MySql;
 using FAnsi.Implementations.Oracle;
 using FAnsi.Implementations.PostgreSql;
+using NSubstitute.Exceptions;
 using NUnit.Framework;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine.Interactive;
@@ -628,12 +629,13 @@ public class UnitTests
         }
         if (typeof(T) == typeof(HDRDataset))
         {
-            return (T)(object)new HDRDataset();
+            return (T)(object)(new HDRDataset(repository, "HDR Dataset"));
         }
 
         if (typeof(T) == typeof(JiraDataset))
         {
-            return (T)(object)new JiraDataset();
+            return (T)(object)(new JiraDataset(repository, "Jira Dataset"));
+
         }
         if (typeof(T) == typeof(CatalogueDatasetLinkage))
         {

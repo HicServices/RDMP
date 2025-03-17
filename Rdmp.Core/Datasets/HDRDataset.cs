@@ -1,4 +1,5 @@
 ﻿using Rdmp.Core.Datasets.HDRItems;
+using Rdmp.Core.Repositories;
 namespace Rdmp.Core.Datasets;
 
 /// <summary>
@@ -6,6 +7,10 @@ namespace Rdmp.Core.Datasets;
 /// </summary>
 public class HDRDataset:PluginDataset
 {
+    public HDRDataset(ICatalogueRepository catalogueRepository, string name) : base(catalogueRepository, name)
+    {
+    }
+
     public Data data { get; set; }
 }
 

@@ -1,6 +1,7 @@
 ﻿using Amazon.S3.Model;
 using Newtonsoft.Json;
 using Rdmp.Core.Datasets.JiraItems;
+using Rdmp.Core.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,16 +10,19 @@ using System.Threading.Tasks;
 
 namespace Rdmp.Core.Datasets
 {
-
-    
-
-    
-
     /// <summary>
-    /// 
+    /// Mapping of Jira API Asset object to C#
     /// </summary>
     public class JiraDataset : PluginDataset
     {
+        public JiraDataset()
+        {
+
+        }
+        public JiraDataset(ICatalogueRepository catalogueRepository, string name) : base(catalogueRepository, name)
+        {
+        }
+
         public string workspaceId { get; set; }
         public string globalId { get; set; }
         public string id { get; set; }
