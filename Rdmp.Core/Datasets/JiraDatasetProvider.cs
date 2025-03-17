@@ -1,6 +1,7 @@
 ﻿using Amazon.Runtime.Internal.Endpoints.StandardLibrary;
 using Azure;
 using CommandLine.Text;
+using CsvHelper.Configuration.Attributes;
 using MongoDB.Bson.Serialization.Serializers;
 using Newtonsoft.Json;
 using NPOI.HSSF.Record.Chart;
@@ -26,6 +27,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Terminal.Gui;
 using static Rdmp.Core.Datasets.JiraItems.JiraAPIObjects;
 
 namespace Rdmp.Core.Datasets;
@@ -88,37 +90,58 @@ public class JiraDatasetProvider : PluginDatasetProvider
         };
         using var stream = new MemoryStream();
 
-        string objectTypeId = "186";
-        string nameAttributeId = "993";
-
-        var o = new CreateAtrObj()
+        var response = Task.Run(async () => await _client.GetAsync($"{API_URL}{_workspace}/v1/objectschema/{Configuration.Url}/objecttypes")).Result;
+        if (response.StatusCode == HttpStatusCode.OK)
         {
-            objectTypeId = objectTypeId,
-            Attributes = new List<Attribute>() { new Attribute() {
+            var detailsString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
+            List<ObjectType> objectSchemaTypes = JsonConvert.DeserializeObject<List<ObjectType>>(detailsString);
+            var t = objectSchemaTypes.FirstOrDefault(e => e.name == "Dataset");
+            string objectTypeId = t.id;
+            string nameAttributeId = "";
+            var schema = GetSchemaAttributes(t.objectSchemaId);
+            var item = schema.Where(s => s.name == "Name");
+            if (item.Any())
+            {
+                nameAttributeId = item.First().id;
+            }
+            else
+            {
+                throw new Exception("Unable to find Name");
+            }
+            var o = new CreateAtrObj()
+            {
+                objectTypeId = objectTypeId,
+                Attributes = new List<Attribute>() { new Attribute() {
                 objectTypeAttributeId=nameAttributeId,
                 objectAttributeValues = new List<ObjectAttributeValue>(){
                     new ObjectAttributeValue(){value=catalogue.Name}
                 }
-            } }
-        };
+                } }
+            };
 
 
-        System.Text.Json.JsonSerializer.Serialize(stream, o, serializeOptions);
-        var jsonString = Encoding.UTF8.GetString(stream.ToArray());
-        var httpContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
-        var response = Task.Run(async () => await _client.PostAsync(url, httpContent)).Result;
-        if (response.StatusCode == HttpStatusCode.Created)
-        {
-            var detailsString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
-            JiraDataset jiraDataset = JsonConvert.DeserializeObject<JiraDataset>(detailsString);
-            jiraDataset = FetchDatasetByID(int.Parse(jiraDataset.id)) as JiraDataset;
-            UpdateUsingCatalogue(jiraDataset, catalogue);
-            return jiraDataset;
+            System.Text.Json.JsonSerializer.Serialize(stream, o, serializeOptions);
+            var jsonString = Encoding.UTF8.GetString(stream.ToArray());
+            var httpContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
+            response = Task.Run(async () => await _client.PostAsync(url, httpContent)).Result;
+            if (response.StatusCode == HttpStatusCode.Created)
+            {
+                detailsString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
+                JiraDataset jiraDataset = JsonConvert.DeserializeObject<JiraDataset>(detailsString);
+                jiraDataset = FetchDatasetByID(int.Parse(jiraDataset.id)) as JiraDataset;
+                UpdateUsingCatalogue(jiraDataset, catalogue);
+                return jiraDataset;
+            }
+            else
+            {
+                throw new Exception("Unable to create");
+            }
         }
         else
         {
-            throw new Exception("Unable to create");
+            throw new Exception("Unable to contact ");
         }
+
     }
 
     public override Dataset FetchDatasetByID(int id)
@@ -336,16 +359,16 @@ public class JiraDatasetProvider : PluginDatasetProvider
         var projectsUsedIn = Activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>().Where(p => p.ExtractionConfigurations.Any(ec => ec.GetAllExtractableDataSets().Any(eds => eds.Catalogue_ID == catalogue.ID)));
         var linkedProjects = projectSpecifics.Concat(projectsUsedIn).ToList().Distinct();
 
-        response = Task.Run(async () => await _client.GetAsync($"{API_URL}{_workspace}/v1/objectschema/{Configuration.Url}")).Result;
-        if (response.StatusCode == HttpStatusCode.OK)
-        {
-            var detailsString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
-            Console.WriteLine(detailsString);
-        }
-        else
-        {
-            throw new Exception("Unable to fetch schema");
-        }
+        //response = Task.Run(async () => await _client.GetAsync($"{API_URL}{_workspace}/v1/objectschema/{Configuration.Url}")).Result;
+        //if (response.StatusCode == HttpStatusCode.OK)
+        //{
+        //    var detailsString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
+        //    Console.WriteLine(detailsString);
+        //}
+        //else
+        //{
+        //    throw new Exception("Unable to fetch schema");
+        //}
 
         response = Task.Run(async () => await _client.GetAsync($"{API_URL}{_workspace}/v1/objectschema/{Configuration.Url}/objecttypes")).Result;
         if (response.StatusCode == HttpStatusCode.OK)

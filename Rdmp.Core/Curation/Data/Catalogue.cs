@@ -1162,13 +1162,14 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
             if (dataset.Type == typeof(JiraDatasetProvider).ToString())
             {
                 var providerConfiguration = CatalogueRepository.GetObjectByID<DatasetProviderConfiguration>((int)dataset.Provider_ID);
-                var repositoryProvider = new UserSettingsRepositoryFinder();// new RepositoryProvider(CatalogueRepository,);
+                var repositoryProvider = new UserSettingsRepositoryFinder();
                 var activator = new ThrowImmediatelyActivator(repositoryProvider, ThrowImmediatelyCheckNotifier.Quiet);
                 var jiraProvider = new JiraDatasetProvider(activator, providerConfiguration);
                 var jiraDataset = (JiraDataset)jiraProvider.FetchDatasetByID(int.Parse(dataset.Url.Split('/').Last()));
                 jiraProvider.UpdateUsingCatalogue(jiraDataset, this);
             }
-            //todo figure out how to do autoupdate
+            //TODO HDR
+            //TODO Pure
         }
     }
 
