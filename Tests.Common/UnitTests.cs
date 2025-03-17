@@ -609,11 +609,11 @@ public class UnitTests
         }
         if (typeof(T) == typeof(PluginDataset))
         {
-            return (T)(object)new PluginDataset(repository,"Plugin Dataset");
+            return (T)(object)new PluginDataset(repository, "Plugin Dataset");
         }
         if (typeof(T) == typeof(PureDataset))
         {
-            return (T)(object)  new PureDataset(repository,"Pure Dataset");
+            return (T)(object)new PureDataset(repository, "Pure Dataset");
         }
         if (typeof(T) == typeof(DatasetProviderConfiguration))
         {
@@ -624,7 +624,7 @@ public class UnitTests
 
         if (typeof(T) == typeof(Dataset))
         {
-            return (T)(object)new Dataset(repository,"Dataset");
+            return (T)(object)new Dataset(repository, "Dataset");
         }
         if (typeof(T) == typeof(HDRDataset))
         {
@@ -637,7 +637,11 @@ public class UnitTests
         }
         if (typeof(T) == typeof(CatalogueDatasetLinkage))
         {
-            return (T)(object)new CatalogueDatasetLinkage(repository, WhenIHaveA<Catalogue>(repository), WhenIHaveA<Dataset>(repository));
+            var cata = WhenIHaveA<Catalogue>(repository);
+            cata.SaveToDatabase();
+            var ds = WhenIHaveA<Dataset>(repository);
+            ds.SaveToDatabase();
+            return (T)(object)new CatalogueDatasetLinkage(repository, cata, ds);
         }
 
 

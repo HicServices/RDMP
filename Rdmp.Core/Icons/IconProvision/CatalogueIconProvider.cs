@@ -14,6 +14,7 @@ using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.Curation.Data.Dashboarding;
+using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Datasets;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.Datasets;
@@ -201,6 +202,8 @@ public class CatalogueIconProvider : ICoreIconProvider
         {
             case Dataset:
                 return GetImageImpl(RDMPConcept.Dataset);
+            case CatalogueDatasetLinkage:
+                return GetImageImpl(RDMPConcept.Catalogue);
         }
 
         return ImageUnknown;

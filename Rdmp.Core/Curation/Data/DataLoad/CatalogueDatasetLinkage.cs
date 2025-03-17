@@ -15,8 +15,13 @@ namespace Rdmp.Core.Curation.Data.DataLoad
 
         [NoMappingToDatabase]
         public Catalogue Catalogue => _repository.GetObjectByID<Catalogue>(_catalogueID);
+
+        public int Catalogue_ID { get => _catalogueID; set => SetField(ref _catalogueID, value); }
+
         [NoMappingToDatabase]
         public Dataset Dataset => _repository.GetObjectByID<Dataset>(_datasetID);
+
+        public int Dataset_ID { get => _datasetID; set => SetField(ref _datasetID, value); }
 
         public bool Autoupdate { get; set; }
 
@@ -31,7 +36,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad
             {
                 {"Catalogue_ID", catalogue.ID },
                 { "Dataset_ID", dataset.ID},
-                {"Autoupdate", autoupdate==true?'1':'0' }
+                {"Autoupdate", autoupdate==true?1:0 }
             });
         }
 

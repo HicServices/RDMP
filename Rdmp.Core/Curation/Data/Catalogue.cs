@@ -1156,7 +1156,7 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
         string PureAssembly = typeof(PureDatasetProvider).ToString();
         string HDRAssembly = typeof(HDRDatasetProvider).ToString();
         string JiraAssembly = typeof(JiraDatasetProvider).ToString();
-        foreach (var dataset in CatalogueRepository.GetAllObjectsWhere<CatalogueDatasetLinkage>("Catalogue_ID", this.ID).Where(cdl => cdl.AutoUpdate).Select(cld => cld.Dataset))
+        foreach (var dataset in CatalogueRepository.GetAllObjectsWhere<CatalogueDatasetLinkage>("Catalogue_ID", this.ID).Where(cdl => cdl.Autoupdate).Select(cld => cld.Dataset))
         {
             var provider = CatalogueRepository.GetObjectByID<DatasetProviderConfiguration>((int)dataset.Provider_ID);
             if (dataset.Type == typeof(JiraDatasetProvider).ToString())
