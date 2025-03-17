@@ -622,6 +622,24 @@ public class UnitTests
             return (T)(object)new DatasetProviderConfiguration(repository, "test configuration", "RDMP.Unkown.Provider", "google.com", creds.ID, "unknown");
         }
 
+        if (typeof(T) == typeof(Dataset))
+        {
+            return (T)(object)new Dataset(repository,"Dataset");
+        }
+        if (typeof(T) == typeof(HDRDataset))
+        {
+            return (T)(object)new HDRDataset();
+        }
+
+        if (typeof(T) == typeof(JiraDataset))
+        {
+            return (T)(object)new JiraDataset();
+        }
+        if (typeof(T) == typeof(CatalogueDatasetLinkage))
+        {
+            return (T)(object)new CatalogueDatasetLinkage(repository, WhenIHaveA<Catalogue>(repository), WhenIHaveA<Dataset>(repository));
+        }
+
 
         throw new TestCaseNotWrittenYetException(typeof(T));
     }

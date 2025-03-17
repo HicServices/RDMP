@@ -472,10 +472,10 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
                     label.AutoSize = true;
                     tableLayoutPanel3.Controls.Add(label, 0, tableLayoutPanel3.RowCount - 1);
                     var cb = new CheckBox();
-                    cb.Checked = linkage.AutoUpdate;
+                    cb.Checked = linkage.Autoupdate;
                     cb.CheckedChanged += (object sender, EventArgs e) =>
                     {
-                        linkage.AutoUpdate = !linkage.AutoUpdate;
+                        linkage.Autoupdate = !linkage.Autoupdate;
                         linkage.SaveToDatabase();
                         Publish(linkage);
                     };
