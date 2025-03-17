@@ -964,7 +964,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         }
 
         var select = new SelectDialog<IMapsDirectlyToDatabaseTable>(
-            args, this, CoreChildProvider.GetAllSearchables().Select(k => k.Key), false);
+            args, this, CoreChildProvider.GetAllSearchables().Select(k => k.Key), false, _windowManager.GetFocusedCollection());
 
         if (select.ShowDialog() == DialogResult.OK && select.Selected != null) callback(select.Selected);
     }
