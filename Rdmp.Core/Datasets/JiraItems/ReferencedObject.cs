@@ -1,23 +1,15 @@
-﻿using Amazon.S3.Model;
-using Newtonsoft.Json;
-using Rdmp.Core.Datasets.JiraItems;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Rdmp.Core.Datasets
+namespace Rdmp.Core.Datasets.JiraItems
 {
-
-    
-
-    
-
     /// <summary>
     /// 
     /// </summary>
-    public class JiraDataset : PluginDataset
+    public class ReferencedObject
     {
         public string workspaceId { get; set; }
         public string globalId { get; set; }
@@ -27,10 +19,9 @@ namespace Rdmp.Core.Datasets
         public ObjectType objectType { get; set; }
         public DateTime created { get; set; }
         public DateTime updated { get; set; }
-        public List<JiraItems.Attribute> attributes { get; set; }
-        public ExtendedInfo extendedInfo { get; set; }
+        public bool hasAvatar { get; set; }
+        public object timestamp { get; set; }
         public Links _links { get; set; }
         public string name { get; set; }
-
     }
 }

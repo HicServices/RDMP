@@ -7,6 +7,9 @@
 
 namespace Rdmp.Core.Datasets.PureItems;
 
+/// <summary>
+/// Link to a PURE object
+/// </summary>
 public class PureLink
 {
 

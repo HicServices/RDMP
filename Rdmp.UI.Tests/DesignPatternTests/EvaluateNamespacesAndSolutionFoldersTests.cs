@@ -34,11 +34,7 @@ public class EvaluateNamespacesAndSolutionFoldersTests : DatabaseTests
         "ProjectInstaller.cs",
         "ProjectInstaller.Designer.cs",
         "TableView.cs",
-        "TreeView.cs",
-        "JiraDataset.cs",
-        "JiraAPIObjects.cs",
-        "HDRDataset.cs",
-        "HDRDatasetPatch.cs"
+        "TreeView.cs"
     };
 
     [Test]

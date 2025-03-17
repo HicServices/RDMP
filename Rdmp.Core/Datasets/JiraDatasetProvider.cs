@@ -1,4 +1,10 @@
-﻿using Amazon.Runtime.Internal.Endpoints.StandardLibrary;
+﻿// Copyright (c) The University of Dundee 2025-2025
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using Amazon.Runtime.Internal.Endpoints.StandardLibrary;
 using Azure;
 using CommandLine.Text;
 using Newtonsoft.Json;
@@ -25,6 +31,9 @@ using static Rdmp.Core.Datasets.JiraItems.JiraAPIObjects;
 
 namespace Rdmp.Core.Datasets;
 
+/// <summary>
+/// Provider for ocnnection to a Jira Assets Instance
+/// </summary>
 public class JiraDatasetProvider : PluginDatasetProvider
 {
     private readonly string _workspace;
@@ -72,7 +81,7 @@ public class JiraDatasetProvider : PluginDatasetProvider
     private class CreateAtrObj
     {
         public string objectTypeId;
-        public List<Attribute> Attributes;
+        public List<JiraItems.Attribute> Attributes;
     }
 
     public override Dataset Create(Catalogue catalogue)
@@ -90,7 +99,7 @@ public class JiraDatasetProvider : PluginDatasetProvider
         if (response.StatusCode == HttpStatusCode.OK)
         {
             var detailsString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
-            List<ObjectType> objectSchemaTypes = JsonConvert.DeserializeObject<List<ObjectType>>(detailsString);
+            List<JiraItems.ObjectType> objectSchemaTypes = JsonConvert.DeserializeObject<List<JiraItems.ObjectType>>(detailsString);
             var t = objectSchemaTypes.FirstOrDefault(e => e.name == DATASET);
             string objectTypeId = t.id;
             string nameAttributeId = "";
@@ -107,9 +116,9 @@ public class JiraDatasetProvider : PluginDatasetProvider
             var o = new CreateAtrObj()
             {
                 objectTypeId = objectTypeId,
-                Attributes = new List<Attribute>() { new Attribute() {
+                Attributes = new List<JiraItems.Attribute>() { new JiraItems.Attribute() {
                 objectTypeAttributeId=nameAttributeId,
-                objectAttributeValues = new List<ObjectAttributeValue>(){
+                objectAttributeValues = new List<JiraItems.ObjectAttributeValue>(){
                     new(){value=catalogue.Name}
                 }
                 } }
@@ -164,15 +173,15 @@ public class JiraDatasetProvider : PluginDatasetProvider
     public override void Update(string uuid, PluginDataset datasetUpdates)
     {
         var ds = (JiraDataset)datasetUpdates;
-        List<Attribute> jiraAttributes = [];
+        List<JiraItems.Attribute> jiraAttributes = [];
         foreach (var attribute in ds.attributes)
         {
-            var obj = new Attribute();
+            var obj = new JiraItems.Attribute();
             obj.objectTypeAttributeId = attribute.objectTypeAttributeId;
-            obj.objectAttributeValues = new List<ObjectAttributeValue>();
+            obj.objectAttributeValues = new List<JiraItems.ObjectAttributeValue>();
             foreach (var v in attribute.objectAttributeValues)
             {
-                obj.objectAttributeValues.Add(new ObjectAttributeValue()
+                obj.objectAttributeValues.Add(new JiraItems.ObjectAttributeValue()
                 {
                     value = v.value
                 });
@@ -257,7 +266,7 @@ public class JiraDatasetProvider : PluginDatasetProvider
 
     }
 
-    private Attribute GenerateUpdateAttribute(JiraDataset dataset, Catalogue catalogue, string name, string value)
+    private JiraItems.Attribute GenerateUpdateAttribute(JiraDataset dataset, Catalogue catalogue, string name, string value)
     {
         var otai = GetObjectTypeAttributeID(dataset, name);
         if (otai is null)
@@ -269,11 +278,11 @@ public class JiraDatasetProvider : PluginDatasetProvider
                 otai = item.First().id;
             }
         }
-        return new Attribute()
+        return new JiraItems.Attribute()
         {
             objectTypeAttributeId = otai,
-            objectAttributeValues = new List<ObjectAttributeValue>() {
-                new ObjectAttributeValue()
+            objectAttributeValues = new List<JiraItems.ObjectAttributeValue>() {
+                new JiraItems.ObjectAttributeValue()
                 {
                     value = value
                 }
@@ -287,7 +296,7 @@ public class JiraDatasetProvider : PluginDatasetProvider
     {
         var jiraDataset = (JiraDataset)dataset;
         var updateDataset = new JiraDataset();
-        updateDataset.attributes = new List<Attribute>();
+        updateDataset.attributes = new List<JiraItems.Attribute>();
 
         updateDataset.attributes.Add(GenerateUpdateAttribute(jiraDataset, catalogue, "Name", catalogue.Name));
         updateDataset.attributes.Add(GenerateUpdateAttribute(jiraDataset, catalogue, "Short Description", catalogue.ShortDescription));
@@ -320,10 +329,10 @@ public class JiraDatasetProvider : PluginDatasetProvider
             var detailsString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
             JiraAPIObjects.AQLResult databases = JsonConvert.DeserializeObject<JiraAPIObjects.AQLResult>(detailsString);
 
-            var dbUpdate = new Attribute();
+            var dbUpdate = new JiraItems.Attribute();
             dbUpdate.objectId = jiraDataset.id;
             dbUpdate.objectTypeAttributeId = databaseTableschema;
-            dbUpdate.objectAttributeValues = databases.values.Select(d => new ObjectAttributeValue() { value = d.objectKey }).ToList();
+            dbUpdate.objectAttributeValues = databases.values.Select(d => new JiraItems.ObjectAttributeValue() { value = d.objectKey }).ToList();
 
 
             var dbs = new List<JiraAPIObjects.Value>();
@@ -342,10 +351,10 @@ public class JiraDatasetProvider : PluginDatasetProvider
             System.Text.Json.JsonSerializer.Serialize(stream, dbUpdate, serializeOptions);
             var dbUpdatejson = Encoding.UTF8.GetString(stream.ToArray());
 
-            updateDataset.attributes.Add(new Attribute()
+            updateDataset.attributes.Add(new JiraItems.Attribute()
             {
                 objectTypeAttributeId = databaseTableschema,
-                objectAttributeValues = dbs.Select(v => new ObjectAttributeValue() { value = v.objectKey }).ToList()
+                objectAttributeValues = dbs.Select(v => new JiraItems.ObjectAttributeValue() { value = v.objectKey }).ToList()
             });
         }
         else
@@ -365,7 +374,7 @@ public class JiraDatasetProvider : PluginDatasetProvider
         if (response.StatusCode == HttpStatusCode.OK)
         {
             var detailsString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
-            List<ObjectType> objectSchemaTypes = JsonConvert.DeserializeObject<List<ObjectType>>(detailsString);
+            List<JiraItems.ObjectType> objectSchemaTypes = JsonConvert.DeserializeObject<List<JiraItems.ObjectType>>(detailsString);
             var t = objectSchemaTypes.FirstOrDefault(e => e.name == PROJECT);
 
 
@@ -388,11 +397,11 @@ public class JiraDatasetProvider : PluginDatasetProvider
                     var datasetID = projects.objectTypeAttributes.First(ota => ota.name == DATASET).id;
                     foreach (var jiraAssetProject in projects.values)
                     {
-                        List<Attribute> jiraAttributes = [];
-                        jiraAttributes.Add(new Attribute()
+                        List<JiraItems.Attribute> jiraAttributes = [];
+                        jiraAttributes.Add(new JiraItems.Attribute()
                         {
                             objectTypeAttributeId = datasetID,
-                            objectAttributeValues = datasets.Select(ds => new ObjectAttributeValue() { value = ((JiraDataset)FetchDatasetByID(int.Parse(ds.Url.Split('/').Last()))).objectKey }).ToList()
+                            objectAttributeValues = datasets.Select(ds => new JiraItems.ObjectAttributeValue() { value = ((JiraDataset)FetchDatasetByID(int.Parse(ds.Url.Split('/').Last()))).objectKey }).ToList()
 
                         });
                         serializeOptions = new JsonSerializerOptions
