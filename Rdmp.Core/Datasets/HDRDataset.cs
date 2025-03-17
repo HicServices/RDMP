@@ -7,6 +7,8 @@ namespace Rdmp.Core.Datasets;
 /// </summary>
 public class HDRDataset:PluginDataset
 {
+
+    public HDRDataset():base() { }
     public HDRDataset(ICatalogueRepository catalogueRepository, string name) : base(catalogueRepository, name)
     {
     }
