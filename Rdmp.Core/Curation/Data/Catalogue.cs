@@ -14,12 +14,14 @@ using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.CohortCreation.Execution;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Datasets;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Serialization;
+using Rdmp.Core.Datasets;
 using Rdmp.Core.Logging;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
@@ -31,6 +33,7 @@ using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Annotations;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
+using Rdmp.Core.Startup;
 using Rdmp.Core.Ticketing;
 
 namespace Rdmp.Core.Curation.Data;
@@ -967,6 +970,7 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
     internal Catalogue(ICatalogueRepository repository, DbDataReader r)
         : base(repository, r)
     {
+        Repository = repository;
         Acronym = r["Acronym"].ToString();
         Name = r["Name"].ToString();
         Description = r["Description"].ToString();
@@ -1144,6 +1148,30 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
 
     /// <inheritdoc/>
     public override string ToString() => Name;
+
+
+    public override void SaveToDatabase()
+    {
+        base.SaveToDatabase();
+        string PureAssembly = typeof(PureDatasetProvider).ToString();
+        string HDRAssembly = typeof(HDRDatasetProvider).ToString();
+        string JiraAssembly = typeof(JiraDatasetProvider).ToString();
+        foreach (var dataset in CatalogueRepository.GetAllObjectsWhere<CatalogueDatasetLinkage>("Catalogue_ID", this.ID).Where(cdl => cdl.Autoupdate).Select(cld => cld.Dataset))
+        {
+            var provider = CatalogueRepository.GetObjectByID<DatasetProviderConfiguration>((int)dataset.Provider_ID);
+            if (dataset.Type == typeof(JiraDatasetProvider).ToString())
+            {
+                var providerConfiguration = CatalogueRepository.GetObjectByID<DatasetProviderConfiguration>((int)dataset.Provider_ID);
+                var repositoryProvider = new UserSettingsRepositoryFinder();
+                var activator = new ThrowImmediatelyActivator(repositoryProvider, ThrowImmediatelyCheckNotifier.Quiet);
+                var jiraProvider = new JiraDatasetProvider(activator, providerConfiguration);
+                var jiraDataset = (JiraDataset)jiraProvider.FetchDatasetByID(int.Parse(dataset.Url.Split('/').Last()));
+                jiraProvider.UpdateUsingCatalogue(jiraDataset, this);
+            }
+            //TODO HDR
+            //TODO Pure
+        }
+    }
 
     public List<Dataset> GetLinkedDatasets()
     {

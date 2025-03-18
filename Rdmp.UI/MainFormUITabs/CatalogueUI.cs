@@ -26,6 +26,7 @@ using ScintillaNET;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.UI.SubComponents;
 using Rdmp.Core.Datasets;
+using Rdmp.Core.Repositories;
 
 namespace Rdmp.UI.MainFormUITabs;
 
@@ -484,10 +485,13 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
                     btn.Text = "Update Now";
                     btn.Click += (object sender, EventArgs e) => UpdateDataset(dataset);
                     tableLayoutPanel3.Controls.Add(btn, 2, tableLayoutPanel3.RowCount - 1);
-                    var btn2 = new Button();
-                    btn2.Text = "View";
-                    btn2.Click += (object sender, EventArgs e) => UsefulStuff.OpenUrl(dataset.Url);
-                    tableLayoutPanel3.Controls.Add(btn2, 3, tableLayoutPanel3.RowCount - 1);
+                    if (dataset.Type != typeof(JiraDatasetProvider).ToString())
+                    {
+                        var btn2 = new Button();
+                        btn2.Text = "View";
+                        btn2.Click += (object sender, EventArgs e) => UsefulStuff.OpenUrl(dataset.Url);
+                        tableLayoutPanel3.Controls.Add(btn2, 3, tableLayoutPanel3.RowCount - 1);
+                    }
                     var btn3 = new Button();
                     btn3.Text = "Remove Link to Dataset";
                     btn3.Click += (object sender, EventArgs e) =>
@@ -498,6 +502,10 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
                         }
                     };
                     tableLayoutPanel3.Controls.Add(btn3, 4, tableLayoutPanel3.RowCount - 1);
+                    var labelType = new Label();
+                    labelType.Text = _catalogue.CatalogueRepository.GetObjectByID<DatasetProviderConfiguration>((int)dataset.Provider_ID).Name;
+                    labelType.AutoSize = true;
+                    tableLayoutPanel3.Controls.Add(labelType, 5, tableLayoutPanel3.RowCount - 1);
 
                 }
                 break;

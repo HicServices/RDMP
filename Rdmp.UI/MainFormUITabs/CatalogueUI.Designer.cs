@@ -129,6 +129,7 @@ namespace Rdmp.UI.MainFormUITabs
             ffAssociatedMedia = new Rdmp.UI.SimpleControls.MultiSelectChips.FreeFormTextChipDisplay();
             tabPage8 = new TabPage();
             tableLayoutPanel3 = new TableLayoutPanel();
+            label6 = new Label();
             label4 = new Label();
             label3 = new Label();
             label1 = new Label();
@@ -1126,12 +1127,14 @@ namespace Rdmp.UI.MainFormUITabs
             // 
             tableLayoutPanel3.AutoSize = true;
             tableLayoutPanel3.CellBorderStyle = TableLayoutPanelCellBorderStyle.Single;
-            tableLayoutPanel3.ColumnCount = 5;
+            tableLayoutPanel3.ColumnCount = 6;
             tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle());
             tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle());
             tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle());
             tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle());
             tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel3.Controls.Add(label6, 5, 0);
             tableLayoutPanel3.Controls.Add(label4, 3, 0);
             tableLayoutPanel3.Controls.Add(label3, 2, 0);
             tableLayoutPanel3.Controls.Add(label1, 0, 0);
@@ -1145,6 +1148,15 @@ namespace Rdmp.UI.MainFormUITabs
             tableLayoutPanel3.Size = new System.Drawing.Size(619, 100);
             tableLayoutPanel3.TabIndex = 2;
             tableLayoutPanel3.Paint += tableLayoutPanel3_Paint;
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Location = new System.Drawing.Point(346, 1);
+            label6.Name = "label6";
+            label6.Size = new System.Drawing.Size(51, 15);
+            label6.TabIndex = 7;
+            label6.Text = "Provider";
             // 
             // label4
             // 
@@ -1382,5 +1394,6 @@ namespace Rdmp.UI.MainFormUITabs
         private Label label2;
         private Label label4;
         private Label label5;
+        private Label label6;
     }
 }

@@ -1198,7 +1198,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
         };
         ec.AddDatasetToConfiguration(new ExtractableDataSet(DataExportRepository, catalogue));
 
-        //ec.SaveToDatabase();
+        ec.SaveToDatabase();
 
         var extractionPipeline = new Pipeline(CatalogueRepository, "Empty extraction pipeline 4");
         var component = new PipelineComponent(CatalogueRepository, extractionPipeline,

@@ -28,7 +28,9 @@ internal class CsProjFileTidy
         "Attributes.cs", "AssemblyInfo.cs", "Annotations.cs", "StageArgs.cs", "ICustomUI.cs",
         "MapsDirectlyToDatabaseTableStatelessDefinition.cs",
         "IObjectUsedByOtherObjectNode.cs", "IInjectKnown.cs", "Themes.cs", "TableView.cs", "TreeView.cs",
-        "MemoryCatalogueRepository.cs"
+        "MemoryCatalogueRepository.cs",
+        "JiraAPIObjects.cs",
+        "HDRDatasetPatch.cs"
     };
 
     public CsProjFileTidy(FileInfo csProjFile)

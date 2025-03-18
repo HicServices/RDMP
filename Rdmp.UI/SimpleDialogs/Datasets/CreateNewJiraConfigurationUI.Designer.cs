@@ -50,11 +50,11 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new System.Drawing.Point(136, 76);
+            label1.Location = new System.Drawing.Point(57, 76);
             label1.Name = "label1";
-            label1.Size = new System.Drawing.Size(25, 15);
+            label1.Size = new System.Drawing.Size(104, 15);
             label1.TabIndex = 0;
-            label1.Text = "Url:";
+            label1.Text = "Object Schema ID:";
             // 
             // label2
             // 
