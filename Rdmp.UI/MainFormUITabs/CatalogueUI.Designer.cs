@@ -136,6 +136,7 @@ namespace Rdmp.UI.MainFormUITabs
             label2 = new Label();
             label5 = new Label();
             button2 = new Button();
+            button1 = new Button();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
@@ -1115,6 +1116,7 @@ namespace Rdmp.UI.MainFormUITabs
             // tabPage8
             // 
             tabPage8.BackColor = System.Drawing.Color.WhiteSmoke;
+            tabPage8.Controls.Add(button1);
             tabPage8.Controls.Add(tableLayoutPanel3);
             tabPage8.Controls.Add(button2);
             tabPage8.Location = new System.Drawing.Point(4, 24);
@@ -1208,11 +1210,21 @@ namespace Rdmp.UI.MainFormUITabs
             // 
             button2.Location = new System.Drawing.Point(7, 12);
             button2.Name = "button2";
-            button2.Size = new System.Drawing.Size(126, 23);
+            button2.Size = new System.Drawing.Size(150, 23);
             button2.TabIndex = 1;
-            button2.Text = "Link Dataset";
+            button2.Text = "Link to Existing Dataset";
             button2.UseVisualStyleBackColor = true;
             button2.Click += button2_Click;
+            // 
+            // button1
+            // 
+            button1.Location = new System.Drawing.Point(163, 12);
+            button1.Name = "button1";
+            button1.Size = new System.Drawing.Size(183, 23);
+            button1.TabIndex = 3;
+            button1.Text = "Create using External Provider";
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
             // 
             // CatalogueUI
             // 
@@ -1395,5 +1407,6 @@ namespace Rdmp.UI.MainFormUITabs
         private Label label4;
         private Label label5;
         private Label label6;
+        private Button button1;
     }
 }

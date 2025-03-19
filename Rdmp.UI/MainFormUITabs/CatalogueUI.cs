@@ -518,11 +518,11 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
 
     private void UpdateDataset(Dataset dataset)
     {
-        if(dataset.Type == typeof(JiraDatasetProvider).ToString())
+        if (dataset.Type == typeof(JiraDatasetProvider).ToString())
         {
             var providerConfiguration = Activator.RepositoryLocator.CatalogueRepository.GetObjectByID<DatasetProviderConfiguration>((int)dataset.Provider_ID);
-            var jiraProvider = new JiraDatasetProvider(Activator,providerConfiguration);
-            var jiraDataset = (JiraDataset) jiraProvider.FetchDatasetByID(int.Parse(dataset.Url.Split('/').Last()));
+            var jiraProvider = new JiraDatasetProvider(Activator, providerConfiguration);
+            var jiraDataset = (JiraDataset)jiraProvider.FetchDatasetByID(int.Parse(dataset.Url.Split('/').Last()));
             jiraProvider.UpdateUsingCatalogue(jiraDataset, _catalogue);
         }
         if (dataset.Type == typeof(HDRDatasetProvider).ToString())
@@ -618,7 +618,14 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
     private void button2_Click(object sender, EventArgs e)
     {
         var dialog = new LinkDatasetDialog();
-        dialog.Setup(Activator,_catalogue);
+        dialog.Setup(Activator, _catalogue);
+        dialog.Show();
+    }
+
+    private void button1_Click(object sender, EventArgs e)
+    {
+        var dialog = new CreateExternalDatasetDialog();
+        dialog.Setup(Activator, _catalogue);
         dialog.Show();
     }
 }
