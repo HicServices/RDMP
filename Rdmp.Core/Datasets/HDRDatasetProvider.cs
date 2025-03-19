@@ -73,7 +73,37 @@ namespace Rdmp.Core.Datasets
 
         public override Dataset Create(Catalogue catalogue)
         {
-            throw new NotImplementedException();
+            var url = Configuration.Url + "/v1/datasets";
+            var serializeOptions = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                WriteIndented = true,
+                IncludeFields = true
+            };
+            using var stream = new MemoryStream();
+            var ds = new HDRDatasetPatch();
+            ds.metadata = new PatchMetadata()
+            {
+                schemaModel = "HDRUK",
+                schemaVersion = "3.0.0",
+                metadata = new PatchSubMetadata(new Metadata()
+                {
+                    summary = new Summary()
+                    {
+                        title = catalogue.Name
+                    }
+                })
+            };
+            System.Text.Json.JsonSerializer.Serialize(stream, ds, serializeOptions);
+            var jsonString = Encoding.UTF8.GetString(stream.ToArray());
+            var httpContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
+            var response = Task.Run(async () => await _client.PostAsync(url, httpContent)).Result;
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+
+            }
+            throw new Exception("q");
+
         }
 
         public HDRDataset FetchHDRDataset(Dataset dataset)

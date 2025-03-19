@@ -55,10 +55,20 @@ public class ExecuteCommandImportExistingCataloguesIntoExternalDatasetProvider :
             var dataset = _provider.Create(catalogue);
 
             //jira
-            var jds = (JiraDataset)dataset;
-            var ds = _provider.AddExistingDatasetWithReturn(null, jds.id);
-            var cmd = new ExecuteCommandLinkCatalogueToDataset(_activator, catalogue, ds);
-            cmd.Execute();
+            if (_provider is JiraDatasetProvider)
+            {
+                var jds = (JiraDataset)dataset;
+                var ds = _provider.AddExistingDatasetWithReturn(null, jds.id);
+                var cmd = new ExecuteCommandLinkCatalogueToDataset(_activator, catalogue, ds);
+                cmd.Execute();
+            }
+            if (_provider is HDRDatasetProvider)
+            {
+                var hdrds = (HDRDataset)dataset;
+                var ds = _provider.AddExistingDatasetWithReturn(null, hdrds.data.id.ToString());
+                var cmd = new ExecuteCommandLinkCatalogueToDataset(_activator, catalogue, ds);
+                cmd.Execute();
+            }
         }
     }
 }

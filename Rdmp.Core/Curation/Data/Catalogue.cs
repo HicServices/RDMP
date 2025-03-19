@@ -1168,7 +1168,15 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
                 var jiraDataset = (JiraDataset)jiraProvider.FetchDatasetByID(int.Parse(dataset.Url.Split('/').Last()));
                 jiraProvider.UpdateUsingCatalogue(jiraDataset, this);
             }
-            //TODO HDR
+            if (dataset.Type == typeof(HDRDatasetProvider).ToString())
+            {
+                var providerConfiguration = CatalogueRepository.GetObjectByID<DatasetProviderConfiguration>((int)dataset.Provider_ID);
+                var repositoryProvider = new UserSettingsRepositoryFinder();
+                var activator = new ThrowImmediatelyActivator(repositoryProvider, ThrowImmediatelyCheckNotifier.Quiet);
+                var HDRProvider = new HDRDatasetProvider(activator, providerConfiguration);
+                var HDRDataset = (HDRDataset)HDRProvider.FetchDatasetByID(int.Parse(dataset.Url.Split('/').Last().Split('?').First()));
+                HDRProvider.UpdateUsingCatalogue(HDRDataset, this);
+            }
             //TODO Pure
         }
     }
