@@ -92,6 +92,9 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
     [DemandsInitialization("When performing an extracton, copy the cohort into a temporary table to improve extraction speed", defaultValue: false)]
     public bool UseTempTablesWhenExtractingCohort { get; set; }
 
+    [DemandsInitialization("When set to true, the system will respect case sensitivity when evaluation primary keys etc. You will likely want to enable this if your source data collation is case-sensitive", defaultValue: false)]
+    public bool EnableCaseSensitivity { get; set; }
+
 
     /// <summary>
     /// This is a dictionary containing all the CatalogueItems used in the query, the underlying datatype in the origin database and the
@@ -298,6 +301,10 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
         {
             chunk = _hostedSource.GetChunk(listener, cancellationToken);
 
+            if (chunk is not null && EnableCaseSensitivity)
+            {
+                chunk.CaseSensitive = true;
+            }
 
             chunk = _peeker.AddPeekedRowsIfAny(chunk);
 
@@ -439,6 +446,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
         _timeSpentCalculatingDISTINCT.Stop();
         pks.AddRange(Request.ColumnsToExtract.Where(static c => ((ExtractableColumn)c).CatalogueExtractionInformation.IsPrimaryKey).Select(static column => ((ExtractableColumn)column).CatalogueExtractionInformation.ToString()).Select(name => chunk.Columns[name]));
+
         chunk.PrimaryKey = pks.ToArray();
 
         return chunk;
