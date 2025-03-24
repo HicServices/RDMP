@@ -83,6 +83,9 @@ public class PlatformDatabaseCreationOptions
             "Optional connection string keywords to use e.g. \"Key1=Value1; Key2=Value2\".  When using this option you must manually specify IntegratedSecurity if required.")]
     public string OtherKeywords { get; set; }
 
+    [Option(Required = false, HelpText = "The collation to use for the databases. Will override any other collation settings")]
+    public string Collation { get; set; }
+
 
     [Usage]
     public static IEnumerable<Example> Examples

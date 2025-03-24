@@ -595,10 +595,10 @@ SET ANSI_PADDING ON
 GO
 CREATE TABLE [dbo].[LoadMetadata](
 	[ID] [int] IDENTITY(1,1) NOT NULL,
-	LocationOfForLoadingDirectory [varchar](3000) NULL,
-	LocationOfForArchivingDirectory [varchar](3000) NULL,
-	LocationOfExecutablesDirectory [varchar](3000) NULL,
-	LocationOfCacheDirectory [varchar](3000) NULL,
+	[LocationOfForLoadingDirectory] [varchar](3000) NULL,
+	[LocationOfForArchivingDirectory] [varchar](3000) NULL,
+	[LocationOfExecutablesDirectory] [varchar](3000) NULL,
+	[LocationOfCacheDirectory] [varchar](3000) NULL,
 	[IncludeDataset] [bit] NOT NULL,
 	[UsesStandardisedLoadProcess] [bit] NOT NULL,
 	[ScheduleStartDate] [datetime] NULL,
@@ -619,7 +619,7 @@ CREATE TABLE [dbo].[LoadMetadata](
 	[SoftwareVersion] [nvarchar](50) NOT NULL,
 	[AllowReservedPrefix] [bit] NOT NULL default 0,
 	[RootLoadMetadata_ID] [int] NULL,
-	CONSTRAINT [fk_loadMetadataRootReference] FOREIGN KEY([RootLoadMetadata_ID]) REFERENCES [dbo].[LoadMetadata](id),
+	CONSTRAINT [fk_loadMetadataRootReference] FOREIGN KEY([RootLoadMetadata_ID]) REFERENCES [dbo].[LoadMetadata](ID),
  CONSTRAINT [PK_LoadMetadata] PRIMARY KEY CLUSTERED 
 (
 	[ID] ASC
