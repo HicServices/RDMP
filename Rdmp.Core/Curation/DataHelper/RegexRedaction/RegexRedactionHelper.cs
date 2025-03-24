@@ -115,7 +115,7 @@ namespace Rdmp.Core.Curation.DataHelper.RegexRedaction
         {
             var sql = $@"
                 DECLARE @output TABLE (id1 int, inc int IDENTITY(1,1))
-                INSERT INTO RegexRedaction(RedactionConfiguration_ID,ColumnInfo_ID,StartingIndex,ReplacementValue,RedactedValue) OUTPUT inserted.id as id1 INTO @output
+                INSERT INTO RegexRedaction(RedactionConfiguration_ID,ColumnInfo_ID,StartingIndex,ReplacementValue,RedactedValue) OUTPUT inserted.ID as id1 INTO @output
                 SELECT RedactionConfiguration_ID,ColumnInfo_ID,StartingIndex,ReplacementValue,RedactedValue FROM {redactionsToSaveTable.GetFullyQualifiedName()};
 				
 				DECLARE @IDMATCHER TABLE (RegexRedaction_ID int,ColumnInfo_ID int ,Value varchar(max),ID int , id1 int , inc int)
