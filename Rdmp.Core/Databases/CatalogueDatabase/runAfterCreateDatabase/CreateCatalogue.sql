@@ -619,7 +619,7 @@ CREATE TABLE [dbo].[LoadMetadata](
 	[SoftwareVersion] [nvarchar](50) NOT NULL,
 	[AllowReservedPrefix] [bit] NOT NULL default 0,
 	[RootLoadMetadata_ID] [int] NULL,
-	CONSTRAINT [fk_loadMetadataRootReference] FOREIGN KEY([RootLoadMetadata_ID]) REFERENCES [dbo].[LoadMetadata](id),
+	CONSTRAINT [fk_loadMetadataRootReference] FOREIGN KEY([RootLoadMetadata_ID]) REFERENCES [dbo].[LoadMetadata](ID),
  CONSTRAINT [PK_LoadMetadata] PRIMARY KEY CLUSTERED 
 (
 	[ID] ASC
