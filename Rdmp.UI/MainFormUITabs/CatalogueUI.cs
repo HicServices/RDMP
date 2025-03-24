@@ -285,7 +285,7 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
                 Bind(cb_resourceType, "SelectedItem", "Type", c => c.Type);
                 Bind(cbPurpose, "SelectedItem", "Purpose", c => c.Purpose);
                 Bind(ddDatasetType, "Value", "DataType", c => c.DataType);
-                Bind(ddDatasetSubtype, "Value", "DataSubtype", c => c.DataSubtype);
+                Bind(ddDatasetSubtype, "Value", "DataSubType", c => c.DataSubType);
                 Bind(ddDataSource, "Value", "DataSource", c => c.DataSource);
                 Bind(ddDataSourceSetting, "Value", "DataSourceSetting", c => c.DataSourceSetting);
                 aiKeywords.TooltipText = CatalogueUIHelperText.Keywords;

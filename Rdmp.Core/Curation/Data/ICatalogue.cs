@@ -105,7 +105,7 @@ public interface ICatalogue : IHasDependencies, IHasQuerySyntaxHelper, INamed, I
 
     string ShortDescription { get;set; }
     string DataType { get; set; }
-    string DataSubtype { get; set; }
+    string DataSubType { get; set; }
     DateTime? DatasetReleaseDate { get; set; }
     DateTime? StartDate { get; set; }
     DateTime? EndDate { get; set; }
