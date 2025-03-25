@@ -41,7 +41,7 @@ internal class ExtendedPropertyTests : DatabaseTests
             Assert.That(prop.IsReferenceTo(cata));
         });
 
-        var prop2 = CatalogueRepository.GetObjectByID<ExtendedProperty>(prop.ID);
+        CatalogueRepository.GetObjectByID<ExtendedProperty>(prop.ID);
         Assert.Multiple(() =>
         {
             Assert.That(prop.GetValueAsSystemType(), Is.EqualTo(10));

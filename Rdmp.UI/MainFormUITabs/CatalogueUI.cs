@@ -25,16 +25,25 @@ using ScintillaNET;
 namespace Rdmp.UI.MainFormUITabs;
 
 /// <summary>
-/// Allows you to modify the descriptive data stored in the RDMP database about the selected Catalogue (dataset).  Pressing Ctrl+S will save any changes.  You should make sure that you
-/// provide as much background about your datasets as possible since this is the information that will be given to researchers when you extract the dataset (as well as being a great
-/// reference for when you find a dataset and you're not quite sure about what it contains or how it got there or who supplied it etc).
-/// 
-/// <para>The collection of fields for documentation were chosen by committee and based on the 'Dublin Core'.  Realistically though just entering all the information into 'Resource
-/// Description' is probably a more realistic goal.  Documentation may be boring but it is absolutely vital for handling providence of research datasets especially if you frequently
-/// get given small datasets from researchers (e.g. questionnaire data they have collected) for use in cohort generation etc).</para>
-/// 
-/// <para>There is also a box for storing a ticket number, this will let you reference a ticket in your ticketing system (e.g. Jira, Fogbugz etc).  This requires selecting/writing a compatible
-/// plugin for your ticketing system and configuring it (see TicketingSystemConfigurationUI)</para>
+///     Allows you to modify the descriptive data stored in the RDMP database about the selected Catalogue (dataset).
+///     Pressing Ctrl+S will save any changes.  You should make sure that you
+///     provide as much background about your datasets as possible since this is the information that will be given to
+///     researchers when you extract the dataset (as well as being a great
+///     reference for when you find a dataset and you're not quite sure about what it contains or how it got there or who
+///     supplied it etc).
+///     <para>
+///         The collection of fields for documentation were chosen by committee and based on the 'Dublin Core'.
+///         Realistically though just entering all the information into 'Resource
+///         Description' is probably a more realistic goal.  Documentation may be boring but it is absolutely vital for
+///         handling providence of research datasets especially if you frequently
+///         get given small datasets from researchers (e.g. questionnaire data they have collected) for use in cohort
+///         generation etc).
+///     </para>
+///     <para>
+///         There is also a box for storing a ticket number, this will let you reference a ticket in your ticketing system
+///         (e.g. Jira, Fogbugz etc).  This requires selecting/writing a compatible
+///         plugin for your ticketing system and configuring it (see TicketingSystemConfigurationUI)
+///     </para>
 /// </summary>
 public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
 {
@@ -57,16 +66,17 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
     {
         if (string.IsNullOrWhiteSpace(text))
             return string.Empty;
-        StringBuilder newText = new StringBuilder(text.Length * 2);
+        var newText = new StringBuilder(text.Length * 2);
         newText.Append(text[0]);
-        for (int i = 1; i < text.Length; i++)
+        for (var i = 1; i < text.Length; i++)
         {
             if (char.IsUpper(text[i]) && ((text[i - 1] != ' ' && !char.IsUpper(text[i - 1])) ||
-                    (preserveAcronyms && char.IsUpper(text[i - 1]) &&
-                     i < text.Length - 1 && !char.IsUpper(text[i + 1]))))
+                                          (preserveAcronyms && char.IsUpper(text[i - 1]) &&
+                                           i < text.Length - 1 && !char.IsUpper(text[i + 1]))))
                 newText.Append(' ');
             newText.Append(text[i]);
         }
+
         return newText.ToString();
     }
 
@@ -104,7 +114,7 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
         base.SetDatabaseObject(activator, databaseObject);
 
         _catalogue = databaseObject;
-        var associatedDatasets = _catalogue.CatalogueItems
+        _catalogue.CatalogueItems
             .Select(static catalogueItem => catalogueItem.ColumnInfo.Dataset_ID)
             .Where(static datasetId => datasetId != null)
             .Select(datasetId =>
@@ -117,7 +127,6 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
         editableFolder.Title = "Folder";
         editableFolder.Icon = CatalogueIcons.CatalogueFolder.ImageToBitmap();
         RefreshUIFromDatabase();
-
     }
 
     protected override void SetBindings(BinderWithErrorProviderFactory rules, Catalogue databaseObject)
@@ -129,7 +138,6 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
         Bind(editableCatalogueName, "TextValue", "Name", c => c.Name);
         Bind(editableFolder, "TextValue", "Folder", c => c.Folder);
         tabControl1_SelectedIndexChanged(tabControl1, null);
-
     }
 
     public override void SetItemActivator(IActivateItems activator)
@@ -153,7 +161,6 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
         ticketingControl1.Enabled = true;
 
         ticketingControl1.TicketText = _catalogue.Ticket;
-
     }
 
 
@@ -197,17 +204,14 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
 
     private void ticketingControl1_Load(object sender, EventArgs e)
     {
-
     }
 
     private void checkBox2_CheckedChanged(object sender, EventArgs e)
     {
-
     }
 
     private void splitContainer1_Panel1_Paint(object sender, PaintEventArgs e)
     {
-
     }
 
     private readonly List<int> setTabBindings = new();
@@ -241,6 +245,7 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
     {
         e.Value = AddSpacesToSentence(e.ListItem.ToString(), true);
     }
+
     private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
     {
         var tabControl = (TabControl)sender;
@@ -249,10 +254,7 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
         switch (selectedIndex)
         {
             case 0:
-                foreach (Control item in tabPage1.Controls)
-                {
-                    item.Visible = false;
-                }
+                foreach (Control item in tabPage1.Controls) item.Visible = false;
                 Bind(tbAcronym, "Text", "Acronym", c => c.Acronym);
                 Bind(tbAbstract, "Text", "ShortDescription", c => c.ShortDescription);
                 Bind(tbDescription, "Text", "Description", c => c.Description);
@@ -262,16 +264,10 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
                 aiShortDescription.SetItemActivator(Activator);
                 aiDescription.TooltipText = CatalogueUIHelperText.Description;
                 aiDescription.SetItemActivator(Activator);
-                foreach (Control item in tabPage1.Controls)
-                {
-                    item.Visible = true;
-                }
+                foreach (Control item in tabPage1.Controls) item.Visible = true;
                 break;
             case 1:
-                foreach (Control item in tabPage2.Controls)
-                {
-                    item.Visible = false;
-                }
+                foreach (Control item in tabPage2.Controls) item.Visible = false;
                 cb_resourceType.DataSource = Enum.GetValues(typeof(Catalogue.CatalogueType));
                 cb_resourceType.Format += comboBox1_Format;
                 cbPurpose.DataSource = Enum.GetValues(typeof(Catalogue.DatasetPurpose));
@@ -309,16 +305,10 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
                 aiDataSourceSetting.TooltipText = CatalogueUIHelperText.DataSourceSetting;
                 aiDataSourceSetting.SetItemActivator(Activator);
 
-                foreach (Control item in tabPage2.Controls)
-                {
-                    item.Visible = true;
-                }
+                foreach (Control item in tabPage2.Controls) item.Visible = true;
                 break;
             case 2:
-                foreach (Control item in tabPage3.Controls)
-                {
-                    item.Visible = false;
-                }
+                foreach (Control item in tabPage3.Controls) item.Visible = false;
                 Bind(tbGeoCoverage, "Text", "Geographical_coverage", c => c.Geographical_coverage);
                 cb_granularity.DataSource = Enum.GetValues(typeof(Catalogue.CatalogueGranularity));
                 cb_granularity.Format += comboBox1_Format;
@@ -328,21 +318,13 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
                 dtpEndDate.Format = DateTimePickerFormat.Custom;
                 dtpEndDate.CustomFormat = _catalogue.EndDate != null ? "dd/MM/yyyy" : " ";
                 if (_catalogue.StartDate != null)
-                {
                     Bind(dtpStart, "Value", "StartDate", c => c.StartDate);
-                }
                 else
-                {
                     dtpStart.ValueChanged += UpdateStartDate;
-                }
                 if (_catalogue.EndDate != null)
-                {
                     Bind(dtpEndDate, "Value", "EndDate", c => c.EndDate);
-                }
                 else
-                {
                     dtpEndDate.ValueChanged += UpdateEndDate;
-                }
                 aiGeographicalCoverage.TooltipText = CatalogueUIHelperText.GeographicalCoverage;
                 aiGeographicalCoverage.SetItemActivator(Activator);
 
@@ -356,16 +338,10 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
                 aiEndDate.SetItemActivator(Activator);
 
 
-                foreach (Control item in tabPage3.Controls)
-                {
-                    item.Visible = true;
-                }
+                foreach (Control item in tabPage3.Controls) item.Visible = true;
                 break;
             case 3:
-                foreach (Control item in tabPage4.Controls)
-                {
-                    item.Visible = false;
-                }
+                foreach (Control item in tabPage4.Controls) item.Visible = false;
                 Bind(tbAccessContact, "Text", "Administrative_contact_email", c => c.Administrative_contact_email);
                 Bind(tbDataController, "Text", "DataController", c => c.DataController);
                 Bind(tbDataProcessor, "Text", "DataProcessor", c => c.DataProcessor);
@@ -383,16 +359,10 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
                 aiJuristiction.SetItemActivator(Activator);
 
 
-                foreach (Control item in tabPage4.Controls)
-                {
-                    item.Visible = true;
-                }
+                foreach (Control item in tabPage4.Controls) item.Visible = true;
                 break;
             case 4:
-                foreach (Control item in tabPage5.Controls)
-                {
-                    item.Visible = false;
-                }
+                foreach (Control item in tabPage5.Controls) item.Visible = false;
                 Bind(ffcPeople, "Value", "AssociatedPeople", c => c.AssociatedPeople);
                 Bind(fftControlledVocab, "Value", "ControlledVocabulary", c => c.ControlledVocabulary);
                 Bind(tbDOI, "Text", "Doi", c => c.Doi);
@@ -406,16 +376,10 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
                 aiDOI.SetItemActivator(Activator);
 
 
-                foreach (Control item in tabPage5.Controls)
-                {
-                    item.Visible = true;
-                }
+                foreach (Control item in tabPage5.Controls) item.Visible = true;
                 break;
             case 5:
-                foreach (Control item in tabPage6.Controls)
-                {
-                    item.Visible = false;
-                }
+                foreach (Control item in tabPage6.Controls) item.Visible = false;
 
                 cb_updateFrequency.DataSource = Enum.GetValues(typeof(Catalogue.UpdateFrequencies));
                 cb_updateFrequency.Format += comboBox1_Format;
@@ -426,13 +390,9 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
                 dtpReleaseDate.Format = DateTimePickerFormat.Custom;
                 dtpReleaseDate.CustomFormat = _catalogue.DatasetReleaseDate != null ? "dd/MM/yyyy" : " ";
                 if (_catalogue.DatasetReleaseDate != null)
-                {
                     Bind(dtpReleaseDate, "Value", "DatasetReleaseDate", c => c.DatasetReleaseDate);
-                }
                 else
-                {
                     dtpReleaseDate.ValueChanged += UpdateReleaseDate;
-                }
                 aiUpdateLag.TooltipText = CatalogueUIHelperText.UpdateLag;
                 aiUpdateLag.SetItemActivator(Activator);
 
@@ -442,10 +402,7 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
                 aiInitialReleaseDate.TooltipText = CatalogueUIHelperText.InitialReleaseDate;
                 aiInitialReleaseDate.SetItemActivator(Activator);
 
-                foreach (Control item in tabPage6.Controls)
-                {
-                    item.Visible = true;
-                }
+                foreach (Control item in tabPage6.Controls) item.Visible = true;
                 break;
             case 6:
                 Bind(ffAssociatedMedia, "Value", "AssociatedMedia", c => c.AssociatedMedia);
@@ -453,9 +410,8 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
                 aiAssociatedMedia.SetItemActivator(Activator);
 
                 break;
-            default:
-                break;
         }
+
         setTabBindings.Add(selectedIndex);
     }
 
@@ -483,18 +439,19 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
         dtpReleaseDate.ValueChanged += UpdateReleaseDate;
     }
 
-    string AddSpacesToSentence(string text)
+    private string AddSpacesToSentence(string text)
     {
         if (string.IsNullOrWhiteSpace(text))
             return "";
-        StringBuilder newText = new StringBuilder(text.Length * 2);
+        var newText = new StringBuilder(text.Length * 2);
         newText.Append(text[0]);
-        for (int i = 1; i < text.Length; i++)
+        for (var i = 1; i < text.Length; i++)
         {
             if (char.IsUpper(text[i]) && text[i - 1] != ' ')
                 newText.Append(' ');
             newText.Append(text[i]);
         }
+
         return newText.ToString();
     }
 
@@ -506,27 +463,22 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
 
     private void label18_Click(object sender, EventArgs e)
     {
-
     }
 
     private void tbDOI_TextChanged(object sender, EventArgs e)
     {
-
     }
 
     private void groupBox1_Enter(object sender, EventArgs e)
     {
-
     }
 
     private void tabPage1_Click(object sender, EventArgs e)
     {
-
     }
 
     private void freeFormTextChipDisplay1_Load(object sender, EventArgs e)
     {
-
     }
 }
 

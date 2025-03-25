@@ -21,17 +21,17 @@ using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs.RegexRedactionConfigurationForm;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
-
 namespace Rdmp.UI.SimpleDialogs;
 
 /// <summary>
-/// Lets you check for and redact entries in a catalogue
+///     Lets you check for and redact entries in a catalogue
 /// </summary>
 public partial class RedactCatalogueUI : RedactCatalogueUI_Design
 {
     private IActivateItems _activator;
     private Catalogue _catalogue;
     private List<RegexRedaction> _redactions;
+
     public RedactCatalogueUI()
     {
         InitializeComponent();
@@ -39,7 +39,6 @@ public partial class RedactCatalogueUI : RedactCatalogueUI_Design
         AssociatedCollection = RDMPCollection.Tables;
         folv.ButtonClick += Restore;
         btnNewRegex.Click += HandleNewRegex;
-
     }
 
     public override string GetTabName()
@@ -51,7 +50,7 @@ public partial class RedactCatalogueUI : RedactCatalogueUI_Design
     {
         //_activator
         var ui = new CreateNewRegexRedactionConfigurationUI(_activator);
-        var res = ui.ShowDialog();
+        ui.ShowDialog();
         var cmd = new ExecuteCommandRefreshObject(_activator, _catalogue);
         cmd.Execute();
     }
@@ -59,7 +58,8 @@ public partial class RedactCatalogueUI : RedactCatalogueUI_Design
     public void RefreshTable()
     {
         var columnIds = _catalogue.CatalogueItems.Select(c => c.ColumnInfo_ID).ToList();
-        _redactions = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<RegexRedaction>().Where(r => columnIds.Contains(r.ColumnInfo_ID)).ToList();
+        _redactions = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<RegexRedaction>()
+            .Where(r => columnIds.Contains(r.ColumnInfo_ID)).ToList();
         folv.ClearObjects();
         folv.AddObjects(_redactions);
         btnRestoreAll.Enabled = _redactions.Count != 0;
@@ -78,7 +78,7 @@ public partial class RedactCatalogueUI : RedactCatalogueUI_Design
     public void Restore(object sender, CellClickEventArgs e)
     {
         Debug.WriteLine($"Button clicked: ({e.RowIndex}, {e.SubItem}, {e.Model})");
-        var redaction = (e.Model as RegexRedaction);
+        var redaction = e.Model as RegexRedaction;
         Restore(redaction);
     }
 
@@ -89,7 +89,8 @@ public partial class RedactCatalogueUI : RedactCatalogueUI_Design
 
         _activator = activator;
         _catalogue = databaseObject;
-        var regexConfigurations = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<RegexRedactionConfiguration>().ToArray();
+        var regexConfigurations = _activator.RepositoryLocator.CatalogueRepository
+            .GetAllObjects<RegexRedactionConfiguration>().ToArray();
         comboBox1.Items.Clear();
         comboBox1.Items.AddRange(regexConfigurations);
         comboBox1.DisplayMember = "Name";
@@ -100,15 +101,14 @@ public partial class RedactCatalogueUI : RedactCatalogueUI_Design
 
     private void btnRedact_Click(object sender, EventArgs e)
     {
-        if (_activator.YesNo("Are you sure you want to perform redactions on the selected columns?", "Redact All matches in this catalogue"))
+        if (_activator.YesNo("Are you sure you want to perform redactions on the selected columns?",
+                "Redact All matches in this catalogue"))
         {
             int? max = string.IsNullOrWhiteSpace(tbMaxCount.Text) ? null : int.Parse(tbMaxCount.Text);
             var columns = new List<ColumnInfo>();
-            foreach (object item in checkedListBox1.CheckedItems)
-            {
-                columns.Add(((CatalogueItem)item).ColumnInfo);
-            }
-            var cmd = new ExecuteCommandPerformRegexRedactionOnCatalogue(_activator, _catalogue, (RegexRedactionConfiguration)comboBox1.SelectedItem, columns, max);
+            foreach (var item in checkedListBox1.CheckedItems) columns.Add(((CatalogueItem)item).ColumnInfo);
+            var cmd = new ExecuteCommandPerformRegexRedactionOnCatalogue(_activator, _catalogue,
+                (RegexRedactionConfiguration)comboBox1.SelectedItem, columns, max);
             Cursor.Current = Cursors.WaitCursor;
             cmd.Execute();
             Cursor.Current = Cursors.Default;
@@ -119,7 +119,7 @@ public partial class RedactCatalogueUI : RedactCatalogueUI_Design
 
     private void btnRestoreAll_Click(object sender, EventArgs e)
     {
-        foreach (RegexRedaction redaction in _redactions)
+        foreach (var redaction in _redactions)
         {
             try
             {
@@ -127,9 +127,11 @@ public partial class RedactCatalogueUI : RedactCatalogueUI_Design
             }
             catch (Exception ex)
             {
-                _activator.GlobalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs(ex.Message, CheckResult.Fail,ex));
+                _activator.GlobalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs(ex.Message, CheckResult.Fail,
+                    ex));
             }
-            _redactions = new();
+
+            _redactions = new List<RegexRedaction>();
             RefreshTable();
         }
     }

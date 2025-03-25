@@ -5,6 +5,9 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
 using System.Threading;
 using FAnsi;
 using FAnsi.Discovery;
@@ -12,13 +15,10 @@ using NUnit.Framework;
 using Rdmp.Core.DataLoad.Triggers;
 using Rdmp.Core.DataLoad.Triggers.Exceptions;
 using Rdmp.Core.DataLoad.Triggers.Implementations;
-using Tests.Common;
-using System.Collections.Generic;
-using TypeGuesser;
-using System.Linq;
-using System.Data;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Exceptions;
+using Tests.Common;
+using TypeGuesser;
 
 namespace Rdmp.Core.Tests.Curation.Integration;
 
@@ -42,8 +42,10 @@ public class TriggerTests : DatabaseTests
         _archiveTable = _database.ExpectTable("TriggerTests_Archive");
     }
 
-    private ITriggerImplementer GetImplementer() =>
-        new TriggerImplementerFactory(_database.Server.DatabaseType).Create(_table);
+    private ITriggerImplementer GetImplementer()
+    {
+        return new TriggerImplementerFactory(_database.Server.DatabaseType).Create(_table);
+    }
 
     [TestCaseSource(typeof(All), nameof(All.DatabaseTypes))]
     public void NoTriggerExists(DatabaseType dbType)
@@ -73,7 +75,7 @@ public class TriggerTests : DatabaseTests
     {
         CreateTable(dbType);
 
-        _table.CreatePrimaryKey(new[] { _table.DiscoverColumn("name") });
+        _table.CreatePrimaryKey(_table.DiscoverColumn("name"));
         GetImplementer().CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
 
         Assert.Multiple(() =>
@@ -148,27 +150,35 @@ public class TriggerTests : DatabaseTests
         Assert.Multiple(() =>
         {
             //new value is 99
-            Assert.That(ExecuteScalar("Select bubbles FROM {0} where name = 'Franky'", _table.GetFullyQualifiedName()), Is.EqualTo(99));
+            Assert.That(ExecuteScalar("Select bubbles FROM {0} where name = 'Franky'", _table.GetFullyQualifiedName()),
+                Is.EqualTo(99));
             //archived value is 3
-            Assert.That(ExecuteScalar("Select bubbles FROM {0} where name = 'Franky'", _archiveTable.GetFullyQualifiedName()), Is.EqualTo(3));
+            Assert.That(
+                ExecuteScalar("Select bubbles FROM {0} where name = 'Franky'", _archiveTable.GetFullyQualifiedName()),
+                Is.EqualTo(3));
         });
 
         //Legacy table valued function only works for MicrosoftSQLServer
         if (dbType == DatabaseType.MicrosoftSQLServer)
-        {
             Assert.Multiple(() =>
             {
                 //legacy in 2001-01-01 it didn't exist
-                Assert.That(ExecuteScalar("Select bubbles FROM TriggerTests_Legacy('2001-01-01') where name = 'Franky'"), Is.Null);
+                Assert.That(
+                    ExecuteScalar("Select bubbles FROM TriggerTests_Legacy('2001-01-01') where name = 'Franky'"),
+                    Is.Null);
                 //legacy in 2001-01-03 it did exist and was 3
-                Assert.That(ExecuteScalar("Select bubbles FROM TriggerTests_Legacy('2001-01-03') where name = 'Franky'"), Is.EqualTo(3));
+                Assert.That(
+                    ExecuteScalar("Select bubbles FROM TriggerTests_Legacy('2001-01-03') where name = 'Franky'"),
+                    Is.EqualTo(3));
                 //legacy boundary case?
-                Assert.That(ExecuteScalar("Select bubbles FROM TriggerTests_Legacy('2001-01-02') where name = 'Franky'"), Is.EqualTo(3));
+                Assert.That(
+                    ExecuteScalar("Select bubbles FROM TriggerTests_Legacy('2001-01-02') where name = 'Franky'"),
+                    Is.EqualTo(3));
 
                 //legacy today it is 99
-                Assert.That(ExecuteScalar("Select bubbles FROM TriggerTests_Legacy(GETDATE()) where name = 'Franky'"), Is.EqualTo(99));
+                Assert.That(ExecuteScalar("Select bubbles FROM TriggerTests_Legacy(GETDATE()) where name = 'Franky'"),
+                    Is.EqualTo(99));
             });
-        }
 
         // Live row should now reflect that it is validFrom today
         var liveNewRow = _table.GetDataTable().Rows.Cast<DataRow>().Single(r => r["bubbles"] as int? == 99);
@@ -216,7 +226,7 @@ public class TriggerTests : DatabaseTests
             Assert.That(_archiveTable.GetRowCount(), Is.EqualTo(4));
         });
 
-        Import(_table, out var ti, out var cols);
+        Import(_table, out var ti, out _);
         var fetcher = new DiffDatabaseDataFetcher(1, ti, 7, 100);
 
         fetcher.FetchData(new AcceptAllCheckNotifier());

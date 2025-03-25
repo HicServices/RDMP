@@ -16,27 +16,36 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.QueryBuilding;
 
 /// <summary>
-/// Allows you to generate adjusted AggregateBuilders in which a basic AggregateBuilder from an AggregateConfiguration is adjusted to include an inception WHERE statement
-/// which restricts the results to only those patients who are in a cohort (the cohort is the list of private identifiers returned by the AggregateConfiguration passed
-/// into the constructor as the 'cohort' argument)
+///     Allows you to generate adjusted AggregateBuilders in which a basic AggregateBuilder from an AggregateConfiguration
+///     is adjusted to include an inception WHERE statement
+///     which restricts the results to only those patients who are in a cohort (the cohort is the list of private
+///     identifiers returned by the AggregateConfiguration passed
+///     into the constructor as the 'cohort' argument)
 /// </summary>
 public class CohortSummaryQueryBuilder
 {
-    private AggregateConfiguration _summary;
+    private readonly AggregateConfiguration _summary;
 
-    private ISqlParameter[] _globals;
-    private IColumn _extractionIdentifierColumn;
+    private readonly ISqlParameter[] _globals;
+    private readonly IColumn _extractionIdentifierColumn;
 
-    private AggregateConfiguration _cohort;
+    private readonly AggregateConfiguration _cohort;
     private readonly ICoreChildProvider _childProvider;
-    private CohortAggregateContainer _cohortContainer;
+    private readonly CohortAggregateContainer _cohortContainer;
 
     /// <summary>
-    /// Read class description to see what the class does, use this constructor to specify an Aggregate graph and a cohort with which to restrict it.  The cohort
-    /// aggregate must return a list of private identifiers.  The parameters must belong to the same Catalogue (dataset).
+    ///     Read class description to see what the class does, use this constructor to specify an Aggregate graph and a cohort
+    ///     with which to restrict it.  The cohort
+    ///     aggregate must return a list of private identifiers.  The parameters must belong to the same Catalogue (dataset).
     /// </summary>
-    /// <param name="summary">A basic aggregate that you want to restrict by cohort e.g. a pivot on drugs prescribed over time with an axis interval of year</param>
-    /// <param name="cohort">A cohort aggregate that has a single AggregateDimension which must be an IsExtractionIdentifier and must follow the correct cohort aggregate naming conventions (See IsCohortIdentificationAggregate)</param>
+    /// <param name="summary">
+    ///     A basic aggregate that you want to restrict by cohort e.g. a pivot on drugs prescribed over time
+    ///     with an axis interval of year
+    /// </param>
+    /// <param name="cohort">
+    ///     A cohort aggregate that has a single AggregateDimension which must be an IsExtractionIdentifier
+    ///     and must follow the correct cohort aggregate naming conventions (See IsCohortIdentificationAggregate)
+    /// </param>
     /// <param name="childProvider"></param>
     public CohortSummaryQueryBuilder(AggregateConfiguration summary, AggregateConfiguration cohort,
         ICoreChildProvider childProvider)
@@ -99,16 +108,23 @@ public class CohortSummaryQueryBuilder
     }
 
     /// <summary>
-    /// Functions in two modes
-    /// 
-    /// <para>WhereExtractionIdentifiersIn:
-    /// Returns a adjusted AggregateBuilder that is based on the summary AggregateConfiguration but which has an inception WHERE statement that restricts the IsExtractionIdentifier column
-    /// by those values returned by the Cohort query.  In order that this query doesn't become super insane we require that the Cohort be cached so that it is just a simple single
-    /// like IFilter e.g. conceptually: WHERE CHI IN (Select CHI from IndexedExtractionIdentifierList_AggregateConfiguration5)</para>
-    /// 
-    /// <para>WhereRecordsIn
-    /// Returns an adjusted AggregateBuilder that is based on the summary AggregateConfiguration but which has an root AND container which includes both the container tree of the summary
-    /// and the cohort (resulting in a graphing of the RECORDS returned by the cohort set query instead of a master set of all those patients records - as above does).</para>
+    ///     Functions in two modes
+    ///     <para>
+    ///         WhereExtractionIdentifiersIn:
+    ///         Returns a adjusted AggregateBuilder that is based on the summary AggregateConfiguration but which has an
+    ///         inception WHERE statement that restricts the IsExtractionIdentifier column
+    ///         by those values returned by the Cohort query.  In order that this query doesn't become super insane we require
+    ///         that the Cohort be cached so that it is just a simple single
+    ///         like IFilter e.g. conceptually: WHERE CHI IN (Select CHI from
+    ///         IndexedExtractionIdentifierList_AggregateConfiguration5)
+    ///     </para>
+    ///     <para>
+    ///         WhereRecordsIn
+    ///         Returns an adjusted AggregateBuilder that is based on the summary AggregateConfiguration but which has an root
+    ///         AND container which includes both the container tree of the summary
+    ///         and the cohort (resulting in a graphing of the RECORDS returned by the cohort set query instead of a master set
+    ///         of all those patients records - as above does).
+    ///     </para>
     /// </summary>
     /// <returns></returns>
     public AggregateBuilder GetAdjustedAggregateBuilder(CohortSummaryAdjustment adjustment,
@@ -160,8 +176,6 @@ public class CohortSummaryQueryBuilder
             //get sql for the join table
             var builder = new CohortQueryBuilder(joinTo, _globals, null);
             var joinableSql = new CohortQueryBuilderDependencySql(builder.SQL, builder.ParameterManager);
-
-            var helper = new CohortQueryBuilderHelper();
 
             var extractionIdentifierColumn = _summary.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any)
                 .Where(ei => ei.IsExtractionIdentifier).ToArray();

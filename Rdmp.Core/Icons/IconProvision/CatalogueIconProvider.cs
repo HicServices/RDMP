@@ -36,7 +36,7 @@ public class CatalogueIconProvider : ICoreIconProvider
 
     protected readonly EnumImageCollection<RDMPConcept> ImagesCollection;
     protected readonly CatalogueStateBasedIconProvider CatalogueStateBasedIconProvider;
-    private DatabaseTypeIconProvider _databaseTypeIconProvider = new();
+    private readonly DatabaseTypeIconProvider _databaseTypeIconProvider = new();
 
     public Image<Rgba32> ImageUnknown => ImagesCollection[RDMPConcept.NoIconAvailable];
 
@@ -71,10 +71,12 @@ public class CatalogueIconProvider : ICoreIconProvider
         StateBasedIconProviders.Add(new ExtractCommandStateBasedIconProvider());
     }
 
-    public virtual Image<Rgba32> GetImage(object concept, OverlayKind kind = OverlayKind.None) =>
-        concept is IDisableable { IsDisabled: true }
+    public virtual Image<Rgba32> GetImage(object concept, OverlayKind kind = OverlayKind.None)
+    {
+        return concept is IDisableable { IsDisabled: true }
             ? IconOverlayProvider.GetGreyscale(GetImageImpl(concept, kind))
             : GetImageImpl(concept, kind);
+    }
 
     protected virtual Image<Rgba32> GetImageImpl(object concept, OverlayKind kind = OverlayKind.None)
     {
@@ -87,7 +89,7 @@ public class CatalogueIconProvider : ICoreIconProvider
             case string str when Enum.TryParse(str, true, out RDMPConcept result):
                 concept = result;
                 break;
-            case string str:
+            case string:
                 return null; //it's a string but an unhandled one so give them null back
         }
 
@@ -182,15 +184,15 @@ public class CatalogueIconProvider : ICoreIconProvider
         {
             //if the object is masquerading as something else
             case IMasqueradeAs @as:
-                {
-                    //get what it's masquerading as
-                    var masqueradingAs = @as.MasqueradingAs();
+            {
+                //get what it's masquerading as
+                var masqueradingAs = @as.MasqueradingAs();
 
-                    //provided we don't have a circular reference here!
-                    if (masqueradingAs is not IMasqueradeAs)
-                        return GetImageImpl(masqueradingAs, kind); //get an image for what your pretending to be
-                    break;
-                }
+                //provided we don't have a circular reference here!
+                if (masqueradingAs is not IMasqueradeAs)
+                    return GetImageImpl(masqueradingAs, kind); //get an image for what your pretending to be
+                break;
+            }
             case IAtomicCommand cmd:
                 return cmd.GetImage(this);
         }
@@ -211,8 +213,11 @@ public class CatalogueIconProvider : ICoreIconProvider
         return false;
     }
 
-    /// <inheritdoc/>
-    public bool HasIcon(object o) => GetImage(o) != ImagesCollection[RDMPConcept.NoIconAvailable];
+    /// <inheritdoc />
+    public bool HasIcon(object o)
+    {
+        return GetImage(o) != ImagesCollection[RDMPConcept.NoIconAvailable];
+    }
 
     public static RDMPConcept GetConceptForCollection(RDMPCollection rdmpCollection)
     {
@@ -232,19 +237,26 @@ public class CatalogueIconProvider : ICoreIconProvider
     }
 
     /// <summary>
-    /// Returns true if the <paramref name="concept"/> is an instance of, System.Type or assignable to Type <paramref name="t"/>
+    ///     Returns true if the <paramref name="concept" /> is an instance of, System.Type or assignable to Type
+    ///     <paramref name="t" />
     /// </summary>
     /// <param name="t"></param>
     /// <param name="concept"></param>
     /// <returns></returns>
-    public static bool ConceptIs(Type t, object concept) =>
-        t.IsInstanceOfType(concept) || (concept is Type type && t.IsAssignableFrom(type));
+    public static bool ConceptIs(Type t, object concept)
+    {
+        return t.IsInstanceOfType(concept) || (concept is Type type && t.IsAssignableFrom(type));
+    }
 
 
     /// <summary>
-    /// Returns an image list dictionary with string keys that correspond to the names of all the RDMPConcept Enums.
+    ///     Returns an image list dictionary with string keys that correspond to the names of all the RDMPConcept Enums.
     /// </summary>
-    /// <param name="addFavouritesOverlayKeysToo">Pass true to also generate Images for every concept with a star overlay with the key being EnumNameFavourite (where EnumName is the RDMPConcept name e.g. CatalogueFavourite for the icon RDMPConcept.Catalogue and the favourite star)</param>
+    /// <param name="addFavouritesOverlayKeysToo">
+    ///     Pass true to also generate Images for every concept with a star overlay with
+    ///     the key being EnumNameFavourite (where EnumName is the RDMPConcept name e.g. CatalogueFavourite for the icon
+    ///     RDMPConcept.Catalogue and the favourite star)
+    /// </param>
     /// <returns></returns>
     public Dictionary<string, Image<Rgba32>> GetImageList(bool addFavouritesOverlayKeysToo)
     {
@@ -262,6 +274,8 @@ public class CatalogueIconProvider : ICoreIconProvider
         return imageList;
     }
 
-    private static Image<Rgba32> GetActualImage(Image<Rgba32> img, OverlayKind kind) =>
-        kind == OverlayKind.None ? img : IconOverlayProvider.GetOverlay(img, kind);
+    private static Image<Rgba32> GetActualImage(Image<Rgba32> img, OverlayKind kind)
+    {
+        return kind == OverlayKind.None ? img : IconOverlayProvider.GetOverlay(img, kind);
+    }
 }

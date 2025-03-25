@@ -12,18 +12,18 @@ using Rdmp.Core.Curation.Data.DataLoad;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Creates the expected and required flat file layout for a <see cref="LoadMetadata"/>
+///     Creates the expected and required flat file layout for a <see cref="LoadMetadata" />
 /// </summary>
 public class ExecuteCommandCreateNewDataLoadDirectory : BasicCommandExecution
 {
     /// <summary>
-    /// The load if any to create the folder structure for
+    ///     The load if any to create the folder structure for
     /// </summary>
     public LoadMetadata LoadMetadata { get; }
 
     /// <summary>
-    /// The directory to create or null to do the operation
-    /// interactively.
+    ///     The directory to create or null to do the operation
+    ///     interactively.
     /// </summary>
     public DirectoryInfo Dir { get; }
 
@@ -59,10 +59,9 @@ public class ExecuteCommandCreateNewDataLoadDirectory : BasicCommandExecution
             if (!BasicActivator.TypeText("New Folder Name", "Name", 255, null, out newFolderName, false)) return;
         }
 
-        var loadDir =
-            string.IsNullOrWhiteSpace(newFolderName)
-                ? LoadDirectory.CreateDirectoryStructure(d.Parent, d.Name, true, LoadMetadata)
-                : LoadDirectory.CreateDirectoryStructure(d, newFolderName, true, LoadMetadata);
+        _ = string.IsNullOrWhiteSpace(newFolderName)
+            ? LoadDirectory.CreateDirectoryStructure(d.Parent, d.Name, true, LoadMetadata)
+            : LoadDirectory.CreateDirectoryStructure(d, newFolderName, true, LoadMetadata);
 
         // if we have a load then update the path to this location we just created
         if (LoadMetadata != null)

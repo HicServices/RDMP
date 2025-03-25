@@ -9,37 +9,36 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
-using SynthEHR;
-using SynthEHR.Datasets;    
+using FAnsi;
 using FAnsi.Discovery;
+using FAnsi.Discovery.QuerySyntax;
 using NUnit.Framework;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
+using Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
+using Rdmp.Core.CommandLine.DatabaseCreation;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources;
 using Rdmp.Core.DataFlowPipeline;
+using Rdmp.Core.DataLoad.Triggers;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
+using SynthEHR;
+using SynthEHR.Datasets;
 using Tests.Common;
-using Rdmp.Core.Curation.Data.Cohort;
-using Rdmp.Core.Curation.Data.Aggregation;
-using Rdmp.Core.CommandLine.DatabaseCreation;
-using Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
-using FAnsi;
-using FAnsi.Discovery.QuerySyntax;
 using TypeGuesser;
-using Rdmp.Core.DataLoad.Triggers;
 
 namespace Rdmp.Core.Tests.DataExport.DataExtraction;
 
 public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : DatabaseTests
 {
-
     private FileInfo CreateFileInForLoading(string filename, int rows, Random r)
     {
         var fi = new FileInfo(Path.Combine(Path.GetTempPath(), Path.GetFileName(filename)));
@@ -70,9 +69,9 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
 
         if (pipe is null)
         {
-            creator.CreatePipelines(new PlatformDatabaseCreationOptions { });
+            creator.CreatePipelines(new PlatformDatabaseCreationOptions());
             pipe = CatalogueRepository.GetAllObjects<Pipeline>().OrderByDescending(p => p.ID)
-            .FirstOrDefault(p => p.Name.Contains("BULK INSERT: CSV Import File (automated column-type detection)"));
+                .FirstOrDefault(p => p.Name.Contains("BULK INSERT: CSV Import File (automated column-type detection)"));
         }
 
         // run an import of the file using the pipeline
@@ -119,54 +118,55 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
             _cohortDatabase.Create();
 
         var definitionTable = _cohortDatabase.CreateTable("CohortDefinition", new[]
-           {
-                new DatabaseColumnRequest("id", new DatabaseTypeRequest(typeof(int)))
-                    { AllowNulls = false, IsAutoIncrement = true, IsPrimaryKey = true },
-                new DatabaseColumnRequest("projectNumber", new DatabaseTypeRequest(typeof(int))) { AllowNulls = false },
-                new DatabaseColumnRequest("version", new DatabaseTypeRequest(typeof(int))) { AllowNulls = false },
-                new DatabaseColumnRequest("description", new DatabaseTypeRequest(typeof(string), 3000))
-                    { AllowNulls = false },
-                new DatabaseColumnRequest("dtCreated", new DatabaseTypeRequest(typeof(DateTime)))
-                    { AllowNulls = false, Default = MandatoryScalarFunctions.GetTodaysDate }
-            });
-        var idColumn = definitionTable.DiscoverColumn("id");
+        {
+            new DatabaseColumnRequest("id", new DatabaseTypeRequest(typeof(int)))
+                { AllowNulls = false, IsAutoIncrement = true, IsPrimaryKey = true },
+            new DatabaseColumnRequest("projectNumber", new DatabaseTypeRequest(typeof(int))) { AllowNulls = false },
+            new DatabaseColumnRequest("version", new DatabaseTypeRequest(typeof(int))) { AllowNulls = false },
+            new DatabaseColumnRequest("description", new DatabaseTypeRequest(typeof(string), 3000))
+                { AllowNulls = false },
+            new DatabaseColumnRequest("dtCreated", new DatabaseTypeRequest(typeof(DateTime)))
+                { AllowNulls = false, Default = MandatoryScalarFunctions.GetTodaysDate }
+        });
+        definitionTable.DiscoverColumn("id");
         var foreignKey =
             new DatabaseColumnRequest(DefinitionTableForeignKeyField, new DatabaseTypeRequest(typeof(int)), false)
-            { IsPrimaryKey = true };
+                { IsPrimaryKey = true };
 
         _cohortDatabase.CreateTable("Cohort", new[]
         {
-                    new DatabaseColumnRequest("chi",
-                        new DatabaseTypeRequest(typeof(string)), false)
-                    {
-                        IsPrimaryKey = true,
+            new DatabaseColumnRequest("chi",
+                new DatabaseTypeRequest(typeof(string)), false)
+            {
+                IsPrimaryKey = true,
 
-                        // if there is a single collation amongst private identifier prototype references we must use that collation
-                        // when creating the private column so that the DBMS can link them no bother
-                        Collation = null
-                    },
-                    new DatabaseColumnRequest(ReleaseIdentifierFieldName, new DatabaseTypeRequest(typeof(string), 300))
-                        { AllowNulls = true },
-                    foreignKey
-                });
+                // if there is a single collation amongst private identifier prototype references we must use that collation
+                // when creating the private column so that the DBMS can link them no bother
+                Collation = null
+            },
+            new DatabaseColumnRequest(ReleaseIdentifierFieldName, new DatabaseTypeRequest(typeof(string), 300))
+                { AllowNulls = true },
+            foreignKey
+        });
 
         var newExternal =
-                    new ExternalCohortTable(DataExportRepository, "TestExternalCohort", DatabaseType.MicrosoftSQLServer)
-                    {
-                        Database = CohortDatabaseName,
-                        Server = _cohortDatabase.Server.Name,
-                        DefinitionTableName = definitionTableName,
-                        TableName = cohortTableName,
-                        Name = ExternalCohortTableNameInCatalogue,
-                        Username = _cohortDatabase.Server.ExplicitUsernameIfAny,
-                        Password = _cohortDatabase.Server.ExplicitPasswordIfAny,
-                        PrivateIdentifierField = "chi",
-                        ReleaseIdentifierField = "ReleaseId",
-                        DefinitionTableForeignKeyField = "cohortDefinition_id"
-                    };
+            new ExternalCohortTable(DataExportRepository, "TestExternalCohort", DatabaseType.MicrosoftSQLServer)
+            {
+                Database = CohortDatabaseName,
+                Server = _cohortDatabase.Server.Name,
+                DefinitionTableName = definitionTableName,
+                TableName = cohortTableName,
+                Name = ExternalCohortTableNameInCatalogue,
+                Username = _cohortDatabase.Server.ExplicitUsernameIfAny,
+                Password = _cohortDatabase.Server.ExplicitPasswordIfAny,
+                PrivateIdentifierField = "chi",
+                ReleaseIdentifierField = "ReleaseId",
+                DefinitionTableForeignKeyField = "cohortDefinition_id"
+            };
 
         newExternal.SaveToDatabase();
-        var cohortPipeline = CatalogueRepository.GetAllObjects<Pipeline>().First(static p => p.Name == "CREATE COHORT:By Executing Cohort Identification Configuration");
+        var cohortPipeline = CatalogueRepository.GetAllObjects<Pipeline>().First(static p =>
+            p.Name == "CREATE COHORT:By Executing Cohort Identification Configuration");
         var newCohortCmd = new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(
             new ThrowImmediatelyActivator(RepositoryLocator),
             cic,
@@ -249,7 +249,6 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
         Assert.That(returnCode, Is.EqualTo(0), "Return code from runner was non zero");
 
 
-
         var destinationTable = dbToExtractTo.ExpectTable("ext1_bob");
         Assert.That(destinationTable.Exists());
 
@@ -278,8 +277,6 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
         dt = destinationTable.GetDataTable();
 
         Assert.That(dt.Rows, Has.Count.EqualTo(1));
-
-
     }
 
     [Test]
@@ -298,10 +295,11 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
             .FirstOrDefault(p => p.Name.Contains("BULK INSERT: CSV Import File (automated column-type detection)"));
         if (pipe is null)
         {
-            creator.CreatePipelines(new PlatformDatabaseCreationOptions { });
+            creator.CreatePipelines(new PlatformDatabaseCreationOptions());
             pipe = CatalogueRepository.GetAllObjects<Pipeline>().OrderByDescending(p => p.ID)
-            .FirstOrDefault(p => p.Name.Contains("BULK INSERT: CSV Import File (automated column-type detection)"));
+                .FirstOrDefault(p => p.Name.Contains("BULK INSERT: CSV Import File (automated column-type detection)"));
         }
+
         // run an import of the file using the pipeline
         var cmd = new ExecuteCommandCreateNewCatalogueByImportingFile(
             new ThrowImmediatelyActivator(RepositoryLocator),
@@ -345,54 +343,55 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
         else
             _cohortDatabase.Create();
 
-        var definitionTable = _cohortDatabase.CreateTable("CohortDefinition", new[]
-           {
-                new DatabaseColumnRequest("id", new DatabaseTypeRequest(typeof(int)))
-                    { AllowNulls = false, IsAutoIncrement = true, IsPrimaryKey = true },
-                new DatabaseColumnRequest("projectNumber", new DatabaseTypeRequest(typeof(int))) { AllowNulls = false },
-                new DatabaseColumnRequest("version", new DatabaseTypeRequest(typeof(int))) { AllowNulls = false },
-                new DatabaseColumnRequest("description", new DatabaseTypeRequest(typeof(string), 3000))
-                    { AllowNulls = false },
-                new DatabaseColumnRequest("dtCreated", new DatabaseTypeRequest(typeof(DateTime)))
-                    { AllowNulls = false, Default = MandatoryScalarFunctions.GetTodaysDate }
-            });
+        _cohortDatabase.CreateTable("CohortDefinition", new[]
+        {
+            new DatabaseColumnRequest("id", new DatabaseTypeRequest(typeof(int)))
+                { AllowNulls = false, IsAutoIncrement = true, IsPrimaryKey = true },
+            new DatabaseColumnRequest("projectNumber", new DatabaseTypeRequest(typeof(int))) { AllowNulls = false },
+            new DatabaseColumnRequest("version", new DatabaseTypeRequest(typeof(int))) { AllowNulls = false },
+            new DatabaseColumnRequest("description", new DatabaseTypeRequest(typeof(string), 3000))
+                { AllowNulls = false },
+            new DatabaseColumnRequest("dtCreated", new DatabaseTypeRequest(typeof(DateTime)))
+                { AllowNulls = false, Default = MandatoryScalarFunctions.GetTodaysDate }
+        });
         var foreignKey =
             new DatabaseColumnRequest(DefinitionTableForeignKeyField, new DatabaseTypeRequest(typeof(int)), false)
-            { IsPrimaryKey = true };
+                { IsPrimaryKey = true };
 
         _cohortDatabase.CreateTable("Cohort", new[]
         {
-                    new DatabaseColumnRequest("chi",
-                        new DatabaseTypeRequest(typeof(string)), false)
-                    {
-                        IsPrimaryKey = true,
+            new DatabaseColumnRequest("chi",
+                new DatabaseTypeRequest(typeof(string)), false)
+            {
+                IsPrimaryKey = true,
 
-                        // if there is a single collation amongst private identifier prototype references we must use that collation
-                        // when creating the private column so that the DBMS can link them no bother
-                        Collation = null
-                    },
-                    new DatabaseColumnRequest(ReleaseIdentifierFieldName, new DatabaseTypeRequest(typeof(string), 300))
-                        { AllowNulls = true },
-                    foreignKey
-                });
+                // if there is a single collation amongst private identifier prototype references we must use that collation
+                // when creating the private column so that the DBMS can link them no bother
+                Collation = null
+            },
+            new DatabaseColumnRequest(ReleaseIdentifierFieldName, new DatabaseTypeRequest(typeof(string), 300))
+                { AllowNulls = true },
+            foreignKey
+        });
 
         var newExternal =
-                    new ExternalCohortTable(DataExportRepository, "TestExternalCohort", DatabaseType.MicrosoftSQLServer)
-                    {
-                        Database = CohortDatabaseName,
-                        Server = _cohortDatabase.Server.Name,
-                        DefinitionTableName = definitionTableName,
-                        TableName = cohortTableName,
-                        Name = ExternalCohortTableNameInCatalogue,
-                        Username = _cohortDatabase.Server.ExplicitUsernameIfAny,
-                        Password = _cohortDatabase.Server.ExplicitPasswordIfAny,
-                        PrivateIdentifierField = "chi",
-                        ReleaseIdentifierField = "ReleaseId",
-                        DefinitionTableForeignKeyField = "cohortDefinition_id"
-                    };
+            new ExternalCohortTable(DataExportRepository, "TestExternalCohort", DatabaseType.MicrosoftSQLServer)
+            {
+                Database = CohortDatabaseName,
+                Server = _cohortDatabase.Server.Name,
+                DefinitionTableName = definitionTableName,
+                TableName = cohortTableName,
+                Name = ExternalCohortTableNameInCatalogue,
+                Username = _cohortDatabase.Server.ExplicitUsernameIfAny,
+                Password = _cohortDatabase.Server.ExplicitPasswordIfAny,
+                PrivateIdentifierField = "chi",
+                ReleaseIdentifierField = "ReleaseId",
+                DefinitionTableForeignKeyField = "cohortDefinition_id"
+            };
 
         newExternal.SaveToDatabase();
-        var cohortPipeline = CatalogueRepository.GetAllObjects<Pipeline>().First(static p => p.Name == "CREATE COHORT:By Executing Cohort Identification Configuration");
+        var cohortPipeline = CatalogueRepository.GetAllObjects<Pipeline>().First(static p =>
+            p.Name == "CREATE COHORT:By Executing Cohort Identification Configuration");
         var newCohortCmd = new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(
             new ThrowImmediatelyActivator(RepositoryLocator),
             cic,
@@ -475,7 +474,6 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
         Assert.That(returnCode, Is.EqualTo(0), "Return code from runner was non zero");
 
 
-
         var destinationTable = dbToExtractTo.ExpectTable("ext1_bob");
         Assert.That(destinationTable.Exists());
 
@@ -487,13 +485,13 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
         var tbl = db.DiscoverTables(false).First();
         tbl.Insert(new Dictionary<string, object>
         {
-            { "chi","1111111111"},
-            {"notes","T"},
-            {"dtCreated", new DateTime(2001, 1, 2) },
-            {"century",19},
-            {"surname","1234"},
-            {"forename","yes"},
-            {"sex","M"},
+            { "chi", "1111111111" },
+            { "notes", "T" },
+            { "dtCreated", new DateTime(2001, 1, 2) },
+            { "century", 19 },
+            { "surname", "1234" },
+            { "forename", "yes" },
+            { "sex", "M" }
         });
 
         var cic2 = new CohortIdentificationConfiguration(CatalogueRepository, "Cohort1");
@@ -533,7 +531,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
 
         dt = destinationTable.GetDataTable();
 
-        Assert.That(dt.Rows, Has.Count.EqualTo(2)); 
+        Assert.That(dt.Rows, Has.Count.EqualTo(2));
     }
 
     [Test]
@@ -554,9 +552,9 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
 
         if (pipe is null)
         {
-            creator.CreatePipelines(new PlatformDatabaseCreationOptions { });
+            creator.CreatePipelines(new PlatformDatabaseCreationOptions());
             pipe = CatalogueRepository.GetAllObjects<Pipeline>().OrderByDescending(p => p.ID)
-            .FirstOrDefault(p => p.Name.Contains("BULK INSERT: CSV Import File (automated column-type detection)"));
+                .FirstOrDefault(p => p.Name.Contains("BULK INSERT: CSV Import File (automated column-type detection)"));
         }
 
         // run an import of the file using the pipeline
@@ -607,54 +605,55 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
         else
             _cohortDatabase.Create();
 
-        var definitionTable = _cohortDatabase.CreateTable("CohortDefinition", new[]
-           {
-                new DatabaseColumnRequest("id", new DatabaseTypeRequest(typeof(int)))
-                    { AllowNulls = false, IsAutoIncrement = true, IsPrimaryKey = true },
-                new DatabaseColumnRequest("projectNumber", new DatabaseTypeRequest(typeof(int))) { AllowNulls = false },
-                new DatabaseColumnRequest("version", new DatabaseTypeRequest(typeof(int))) { AllowNulls = false },
-                new DatabaseColumnRequest("description", new DatabaseTypeRequest(typeof(string), 3000))
-                    { AllowNulls = false },
-                new DatabaseColumnRequest("dtCreated", new DatabaseTypeRequest(typeof(DateTime)))
-                    { AllowNulls = false, Default = MandatoryScalarFunctions.GetTodaysDate }
-            });
+        _cohortDatabase.CreateTable("CohortDefinition", new[]
+        {
+            new DatabaseColumnRequest("id", new DatabaseTypeRequest(typeof(int)))
+                { AllowNulls = false, IsAutoIncrement = true, IsPrimaryKey = true },
+            new DatabaseColumnRequest("projectNumber", new DatabaseTypeRequest(typeof(int))) { AllowNulls = false },
+            new DatabaseColumnRequest("version", new DatabaseTypeRequest(typeof(int))) { AllowNulls = false },
+            new DatabaseColumnRequest("description", new DatabaseTypeRequest(typeof(string), 3000))
+                { AllowNulls = false },
+            new DatabaseColumnRequest("dtCreated", new DatabaseTypeRequest(typeof(DateTime)))
+                { AllowNulls = false, Default = MandatoryScalarFunctions.GetTodaysDate }
+        });
         var foreignKey =
             new DatabaseColumnRequest(DefinitionTableForeignKeyField, new DatabaseTypeRequest(typeof(int)), false)
-            { IsPrimaryKey = true };
+                { IsPrimaryKey = true };
 
         _cohortDatabase.CreateTable("Cohort", new[]
         {
-                    new DatabaseColumnRequest("chi",
-                        new DatabaseTypeRequest(typeof(string)), false)
-                    {
-                        IsPrimaryKey = true,
+            new DatabaseColumnRequest("chi",
+                new DatabaseTypeRequest(typeof(string)), false)
+            {
+                IsPrimaryKey = true,
 
-                        // if there is a single collation amongst private identifier prototype references we must use that collation
-                        // when creating the private column so that the DBMS can link them no bother
-                        Collation = null
-                    },
-                    new DatabaseColumnRequest(ReleaseIdentifierFieldName, new DatabaseTypeRequest(typeof(string), 300))
-                        { AllowNulls = true },
-                    foreignKey
-                });
+                // if there is a single collation amongst private identifier prototype references we must use that collation
+                // when creating the private column so that the DBMS can link them no bother
+                Collation = null
+            },
+            new DatabaseColumnRequest(ReleaseIdentifierFieldName, new DatabaseTypeRequest(typeof(string), 300))
+                { AllowNulls = true },
+            foreignKey
+        });
 
         var newExternal =
-                    new ExternalCohortTable(DataExportRepository, "TestExternalCohort", DatabaseType.MicrosoftSQLServer)
-                    {
-                        Database = CohortDatabaseName,
-                        Server = _cohortDatabase.Server.Name,
-                        DefinitionTableName = definitionTableName,
-                        TableName = cohortTableName,
-                        Name = ExternalCohortTableNameInCatalogue,
-                        Username = _cohortDatabase.Server.ExplicitUsernameIfAny,
-                        Password = _cohortDatabase.Server.ExplicitPasswordIfAny,
-                        PrivateIdentifierField = "chi",
-                        ReleaseIdentifierField = "ReleaseId",
-                        DefinitionTableForeignKeyField = "cohortDefinition_id"
-                    };
+            new ExternalCohortTable(DataExportRepository, "TestExternalCohort", DatabaseType.MicrosoftSQLServer)
+            {
+                Database = CohortDatabaseName,
+                Server = _cohortDatabase.Server.Name,
+                DefinitionTableName = definitionTableName,
+                TableName = cohortTableName,
+                Name = ExternalCohortTableNameInCatalogue,
+                Username = _cohortDatabase.Server.ExplicitUsernameIfAny,
+                Password = _cohortDatabase.Server.ExplicitPasswordIfAny,
+                PrivateIdentifierField = "chi",
+                ReleaseIdentifierField = "ReleaseId",
+                DefinitionTableForeignKeyField = "cohortDefinition_id"
+            };
 
         newExternal.SaveToDatabase();
-        var cohortPipeline = CatalogueRepository.GetAllObjects<Pipeline>().First(static p => p.Name == "CREATE COHORT:By Executing Cohort Identification Configuration");
+        var cohortPipeline = CatalogueRepository.GetAllObjects<Pipeline>().First(static p =>
+            p.Name == "CREATE COHORT:By Executing Cohort Identification Configuration");
         var newCohortCmd = new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(
             new ThrowImmediatelyActivator(RepositoryLocator),
             cic,
@@ -737,7 +736,6 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
         Assert.That(returnCode, Is.EqualTo(0), "Return code from runner was non zero");
 
 
-
         var destinationTable = dbToExtractTo.ExpectTable("ext1_bob");
         Assert.That(destinationTable.Exists());
 
@@ -749,13 +747,13 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
         var tbl = db.DiscoverTables(false).First();
         tbl.Insert(new Dictionary<string, object>
         {
-            { "chi","1111111111"},
-            {"notes","T"},
-            {"dtCreated", new DateTime(2001, 1, 2) },
-            {"century",19},
-            {"surname","1234"},
-            {"forename","yes"},
-            {"sex","M"},
+            { "chi", "1111111111" },
+            { "notes", "T" },
+            { "dtCreated", new DateTime(2001, 1, 2) },
+            { "century", 19 },
+            { "surname", "1234" },
+            { "forename", "yes" },
+            { "sex", "M" }
         });
 
         var cic2 = new CohortIdentificationConfiguration(CatalogueRepository, "Cohort1");
@@ -823,9 +821,9 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
 
         if (pipe is null)
         {
-            creator.CreatePipelines(new PlatformDatabaseCreationOptions { });
+            creator.CreatePipelines(new PlatformDatabaseCreationOptions());
             pipe = CatalogueRepository.GetAllObjects<Pipeline>().OrderByDescending(p => p.ID)
-            .FirstOrDefault(p => p.Name.Contains("BULK INSERT: CSV Import File (automated column-type detection)"));
+                .FirstOrDefault(p => p.Name.Contains("BULK INSERT: CSV Import File (automated column-type detection)"));
         }
 
         // run an import of the file using the pipeline
@@ -873,54 +871,55 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
             _cohortDatabase.Create();
 
         var definitionTable = _cohortDatabase.CreateTable("CohortDefinition", new[]
-           {
-                new DatabaseColumnRequest("id", new DatabaseTypeRequest(typeof(int)))
-                    { AllowNulls = false, IsAutoIncrement = true, IsPrimaryKey = true },
-                new DatabaseColumnRequest("projectNumber", new DatabaseTypeRequest(typeof(int))) { AllowNulls = false },
-                new DatabaseColumnRequest("version", new DatabaseTypeRequest(typeof(int))) { AllowNulls = false },
-                new DatabaseColumnRequest("description", new DatabaseTypeRequest(typeof(string), 3000))
-                    { AllowNulls = false },
-                new DatabaseColumnRequest("dtCreated", new DatabaseTypeRequest(typeof(DateTime)))
-                    { AllowNulls = false, Default = MandatoryScalarFunctions.GetTodaysDate }
-            });
-        var idColumn = definitionTable.DiscoverColumn("id");
+        {
+            new DatabaseColumnRequest("id", new DatabaseTypeRequest(typeof(int)))
+                { AllowNulls = false, IsAutoIncrement = true, IsPrimaryKey = true },
+            new DatabaseColumnRequest("projectNumber", new DatabaseTypeRequest(typeof(int))) { AllowNulls = false },
+            new DatabaseColumnRequest("version", new DatabaseTypeRequest(typeof(int))) { AllowNulls = false },
+            new DatabaseColumnRequest("description", new DatabaseTypeRequest(typeof(string), 3000))
+                { AllowNulls = false },
+            new DatabaseColumnRequest("dtCreated", new DatabaseTypeRequest(typeof(DateTime)))
+                { AllowNulls = false, Default = MandatoryScalarFunctions.GetTodaysDate }
+        });
+        definitionTable.DiscoverColumn("id");
         var foreignKey =
             new DatabaseColumnRequest(DefinitionTableForeignKeyField, new DatabaseTypeRequest(typeof(int)), false)
-            { IsPrimaryKey = true };
+                { IsPrimaryKey = true };
 
         _cohortDatabase.CreateTable("Cohort", new[]
         {
-                    new DatabaseColumnRequest("chi",
-                        new DatabaseTypeRequest(typeof(string)), false)
-                    {
-                        IsPrimaryKey = true,
+            new DatabaseColumnRequest("chi",
+                new DatabaseTypeRequest(typeof(string)), false)
+            {
+                IsPrimaryKey = true,
 
-                        // if there is a single collation amongst private identifier prototype references we must use that collation
-                        // when creating the private column so that the DBMS can link them no bother
-                        Collation = null
-                    },
-                    new DatabaseColumnRequest(ReleaseIdentifierFieldName, new DatabaseTypeRequest(typeof(string), 300))
-                        { AllowNulls = true },
-                    foreignKey
-                });
+                // if there is a single collation amongst private identifier prototype references we must use that collation
+                // when creating the private column so that the DBMS can link them no bother
+                Collation = null
+            },
+            new DatabaseColumnRequest(ReleaseIdentifierFieldName, new DatabaseTypeRequest(typeof(string), 300))
+                { AllowNulls = true },
+            foreignKey
+        });
 
         var newExternal =
-                    new ExternalCohortTable(DataExportRepository, "TestExternalCohort", DatabaseType.MicrosoftSQLServer)
-                    {
-                        Database = CohortDatabaseName,
-                        Server = _cohortDatabase.Server.Name,
-                        DefinitionTableName = definitionTableName,
-                        TableName = cohortTableName,
-                        Name = ExternalCohortTableNameInCatalogue,
-                        Username = _cohortDatabase.Server.ExplicitUsernameIfAny,
-                        Password = _cohortDatabase.Server.ExplicitPasswordIfAny,
-                        PrivateIdentifierField = "chi",
-                        ReleaseIdentifierField = "ReleaseId",
-                        DefinitionTableForeignKeyField = "cohortDefinition_id"
-                    };
+            new ExternalCohortTable(DataExportRepository, "TestExternalCohort", DatabaseType.MicrosoftSQLServer)
+            {
+                Database = CohortDatabaseName,
+                Server = _cohortDatabase.Server.Name,
+                DefinitionTableName = definitionTableName,
+                TableName = cohortTableName,
+                Name = ExternalCohortTableNameInCatalogue,
+                Username = _cohortDatabase.Server.ExplicitUsernameIfAny,
+                Password = _cohortDatabase.Server.ExplicitPasswordIfAny,
+                PrivateIdentifierField = "chi",
+                ReleaseIdentifierField = "ReleaseId",
+                DefinitionTableForeignKeyField = "cohortDefinition_id"
+            };
 
         newExternal.SaveToDatabase();
-        var cohortPipeline = CatalogueRepository.GetAllObjects<Pipeline>().First(static p => p.Name == "CREATE COHORT:By Executing Cohort Identification Configuration");
+        var cohortPipeline = CatalogueRepository.GetAllObjects<Pipeline>().First(static p =>
+            p.Name == "CREATE COHORT:By Executing Cohort Identification Configuration");
         var newCohortCmd = new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(
             new ThrowImmediatelyActivator(RepositoryLocator),
             cic,
@@ -1003,7 +1002,6 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
         Assert.That(returnCode, Is.EqualTo(0), "Return code from runner was non zero");
 
 
-
         var destinationTable = dbToExtractTo.ExpectTable("ext1_bob");
         Assert.That(destinationTable.Exists());
 
@@ -1015,13 +1013,13 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
         var tbl = db.DiscoverTables(false).First();
         tbl.Insert(new Dictionary<string, object>
         {
-            { "chi","1111111111"},
-            {"notes","T"},
-            {"dtCreated", new DateTime(2001, 1, 2) },
-            {"century",19},
-            {"surname","1234"},
-            {"forename","yes"},
-            {"sex","M"},
+            { "chi", "1111111111" },
+            { "notes", "T" },
+            { "dtCreated", new DateTime(2001, 1, 2) },
+            { "century", 19 },
+            { "surname", "1234" },
+            { "forename", "yes" },
+            { "sex", "M" }
         });
 
         var cic2 = new CohortIdentificationConfiguration(CatalogueRepository, "Cohort1");
@@ -1082,9 +1080,9 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
 
         if (pipe is null)
         {
-            creator.CreatePipelines(new PlatformDatabaseCreationOptions { });
+            creator.CreatePipelines(new PlatformDatabaseCreationOptions());
             pipe = CatalogueRepository.GetAllObjects<Pipeline>().OrderByDescending(p => p.ID)
-            .FirstOrDefault(p => p.Name.Contains("BULK INSERT: CSV Import File (automated column-type detection)"));
+                .FirstOrDefault(p => p.Name.Contains("BULK INSERT: CSV Import File (automated column-type detection)"));
         }
 
         // run an import of the file using the pipeline
@@ -1132,54 +1130,55 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
             _cohortDatabase.Create();
 
         var definitionTable = _cohortDatabase.CreateTable("CohortDefinition", new[]
-           {
-                new DatabaseColumnRequest("id", new DatabaseTypeRequest(typeof(int)))
-                    { AllowNulls = false, IsAutoIncrement = true, IsPrimaryKey = true },
-                new DatabaseColumnRequest("projectNumber", new DatabaseTypeRequest(typeof(int))) { AllowNulls = false },
-                new DatabaseColumnRequest("version", new DatabaseTypeRequest(typeof(int))) { AllowNulls = false },
-                new DatabaseColumnRequest("description", new DatabaseTypeRequest(typeof(string), 3000))
-                    { AllowNulls = false },
-                new DatabaseColumnRequest("dtCreated", new DatabaseTypeRequest(typeof(DateTime)))
-                    { AllowNulls = false, Default = MandatoryScalarFunctions.GetTodaysDate }
-            });
-        var idColumn = definitionTable.DiscoverColumn("id");
+        {
+            new DatabaseColumnRequest("id", new DatabaseTypeRequest(typeof(int)))
+                { AllowNulls = false, IsAutoIncrement = true, IsPrimaryKey = true },
+            new DatabaseColumnRequest("projectNumber", new DatabaseTypeRequest(typeof(int))) { AllowNulls = false },
+            new DatabaseColumnRequest("version", new DatabaseTypeRequest(typeof(int))) { AllowNulls = false },
+            new DatabaseColumnRequest("description", new DatabaseTypeRequest(typeof(string), 3000))
+                { AllowNulls = false },
+            new DatabaseColumnRequest("dtCreated", new DatabaseTypeRequest(typeof(DateTime)))
+                { AllowNulls = false, Default = MandatoryScalarFunctions.GetTodaysDate }
+        });
+        definitionTable.DiscoverColumn("id");
         var foreignKey =
             new DatabaseColumnRequest(DefinitionTableForeignKeyField, new DatabaseTypeRequest(typeof(int)), false)
-            { IsPrimaryKey = true };
+                { IsPrimaryKey = true };
 
         _cohortDatabase.CreateTable("Cohort", new[]
         {
-                    new DatabaseColumnRequest("chi",
-                        new DatabaseTypeRequest(typeof(string)), false)
-                    {
-                        IsPrimaryKey = true,
+            new DatabaseColumnRequest("chi",
+                new DatabaseTypeRequest(typeof(string)), false)
+            {
+                IsPrimaryKey = true,
 
-                        // if there is a single collation amongst private identifier prototype references we must use that collation
-                        // when creating the private column so that the DBMS can link them no bother
-                        Collation = null
-                    },
-                    new DatabaseColumnRequest(ReleaseIdentifierFieldName, new DatabaseTypeRequest(typeof(string), 300))
-                        { AllowNulls = true },
-                    foreignKey
-                });
+                // if there is a single collation amongst private identifier prototype references we must use that collation
+                // when creating the private column so that the DBMS can link them no bother
+                Collation = null
+            },
+            new DatabaseColumnRequest(ReleaseIdentifierFieldName, new DatabaseTypeRequest(typeof(string), 300))
+                { AllowNulls = true },
+            foreignKey
+        });
 
         var newExternal =
-                    new ExternalCohortTable(DataExportRepository, "TestExternalCohort", DatabaseType.MicrosoftSQLServer)
-                    {
-                        Database = CohortDatabaseName,
-                        Server = _cohortDatabase.Server.Name,
-                        DefinitionTableName = definitionTableName,
-                        TableName = cohortTableName,
-                        Name = ExternalCohortTableNameInCatalogue,
-                        Username = _cohortDatabase.Server.ExplicitUsernameIfAny,
-                        Password = _cohortDatabase.Server.ExplicitPasswordIfAny,
-                        PrivateIdentifierField = "chi",
-                        ReleaseIdentifierField = "ReleaseId",
-                        DefinitionTableForeignKeyField = "cohortDefinition_id"
-                    };
+            new ExternalCohortTable(DataExportRepository, "TestExternalCohort", DatabaseType.MicrosoftSQLServer)
+            {
+                Database = CohortDatabaseName,
+                Server = _cohortDatabase.Server.Name,
+                DefinitionTableName = definitionTableName,
+                TableName = cohortTableName,
+                Name = ExternalCohortTableNameInCatalogue,
+                Username = _cohortDatabase.Server.ExplicitUsernameIfAny,
+                Password = _cohortDatabase.Server.ExplicitPasswordIfAny,
+                PrivateIdentifierField = "chi",
+                ReleaseIdentifierField = "ReleaseId",
+                DefinitionTableForeignKeyField = "cohortDefinition_id"
+            };
 
         newExternal.SaveToDatabase();
-        var cohortPipeline = CatalogueRepository.GetAllObjects<Pipeline>().First(static p => p.Name == "CREATE COHORT:By Executing Cohort Identification Configuration");
+        var cohortPipeline = CatalogueRepository.GetAllObjects<Pipeline>().First(static p =>
+            p.Name == "CREATE COHORT:By Executing Cohort Identification Configuration");
         var newCohortCmd = new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(
             new ThrowImmediatelyActivator(RepositoryLocator),
             cic,
@@ -1263,7 +1262,6 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
         Assert.That(returnCode, Is.EqualTo(0), "Return code from runner was non zero");
 
 
-
         var destinationTable = dbToExtractTo.ExpectTable("ext1_bob");
         Assert.That(destinationTable.Exists());
 
@@ -1277,13 +1275,13 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
         var tbl = db.DiscoverTables(false).First();
         tbl.Insert(new Dictionary<string, object>
         {
-            { "chi","1111111111"},
-            {"notes","T"},
-            {"dtCreated", new DateTime(2001, 1, 2) },
-            {"century",19},
-            {"surname","1234"},
-            {"forename","yes"},
-            {"sex","M"},
+            { "chi", "1111111111" },
+            { "notes", "T" },
+            { "dtCreated", new DateTime(2001, 1, 2) },
+            { "century", 19 },
+            { "surname", "1234" },
+            { "forename", "yes" },
+            { "sex", "M" }
         });
 
         var cic2 = new CohortIdentificationConfiguration(CatalogueRepository, "Cohort1");

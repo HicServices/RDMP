@@ -4,9 +4,9 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using Microsoft.Data.SqlClient;
 using System.Linq;
 using FAnsi.Discovery;
+using Microsoft.Data.SqlClient;
 using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
@@ -44,7 +44,7 @@ public class ShareLoadMetadataTests : UnitTests
     public void GatherAndShare_LoadMetadata_WithCatalogue()
     {
         //create an object
-        LoadMetadata lmd1 = WhenIHaveA<LoadMetadata>();
+        var lmd1 = WhenIHaveA<LoadMetadata>();
         var lmd2 = ShareToNewRepository(lmd1);
 
         var cata1 = lmd1.GetAllCatalogues().Single();
@@ -62,7 +62,7 @@ public class ShareLoadMetadataTests : UnitTests
     }
 
     /// <summary>
-    /// Tests sharing a basic process task load metadata
+    ///     Tests sharing a basic process task load metadata
     /// </summary>
     [Test]
     public void GatherAndShare_LoadMetadata_WithProcessTask()
@@ -86,7 +86,7 @@ public class ShareLoadMetadataTests : UnitTests
     }
 
     /// <summary>
-    /// Tests sharing a more advanced loadmetadata with an actual class behind the ProcessTask
+    ///     Tests sharing a more advanced loadmetadata with an actual class behind the ProcessTask
     /// </summary>
     [Test]
     public void GatherAndShare_LoadMetadata_WithRealProcessTask()
@@ -121,8 +121,6 @@ public class ShareLoadMetadataTests : UnitTests
 
         AssertAreEqual(pt1.GetAllArguments(), pt2.GetAllArguments());
 
-        var f = new RuntimeTaskFactory(Repository);
-
         var stg = Substitute.For<IStageArgs>();
         stg.LoadStage.Returns(LoadStage.Mounting);
 
@@ -131,8 +129,8 @@ public class ShareLoadMetadataTests : UnitTests
 
 
     /// <summary>
-    /// Tests sharing a <see cref="LoadMetadata"/> with a <see cref="ProcessTask"/> which has a reference argument (to
-    /// another object in the database.
+    ///     Tests sharing a <see cref="LoadMetadata" /> with a <see cref="ProcessTask" /> which has a reference argument (to
+    ///     another object in the database.
     /// </summary>
     [Test]
     public void GatherAndShare_LoadMetadata_WithReferenceProcessTaskArgument()
@@ -140,7 +138,6 @@ public class ShareLoadMetadataTests : UnitTests
         //create an object
         var lmd1 = WhenIHaveA<LoadMetadata>();
 
-        var f = new RuntimeTaskFactory(Repository);
         var stg = Substitute.For<IStageArgs>();
         stg.LoadStage.Returns(LoadStage.Mounting);
         stg.DbInfo.Returns(new DiscoveredServer(new SqlConnectionStringBuilder()).ExpectDatabase("d"));
@@ -162,13 +159,13 @@ public class ShareLoadMetadataTests : UnitTests
 
         //check that reflection can assemble the master ProcessTask
         var t = (MutilateDataTablesRuntimeTask)RuntimeTaskFactory.Create(pt1, stg);
-        Assert.That(((SafePrimaryKeyCollisionResolverMutilation)t.MEFPluginClassInstance).ColumnToResolveOn, Is.Not.Null);
+        Assert.That(((SafePrimaryKeyCollisionResolverMutilation)t.MEFPluginClassInstance).ColumnToResolveOn,
+            Is.Not.Null);
 
         //share to the second repository (which won't have that ColumnInfo)
         var lmd2 = ShareToNewRepository(lmd1);
 
         //create a new reflection factory for the new repo
-        var f2 = new RuntimeTaskFactory(lmd2.CatalogueRepository);
 
         //when we create the shared instance it should not have a valid value for ColumnInfo (since it wasn't - and shouldn't be shared)
         var t2 = (MutilateDataTablesRuntimeTask)RuntimeTaskFactory.Create(lmd2.ProcessTasks.Single(), stg);
@@ -182,7 +179,7 @@ public class ShareLoadMetadataTests : UnitTests
         Assert.That(gatherer.CanGatherDependencies(lmd));
         var rootObj = gatherer.GatherDependencies(lmd);
 
-        var sm = new ShareManager(RepositoryLocator, null);
+        var sm = new ShareManager(RepositoryLocator);
         var shareDefinition = rootObj.ToShareDefinitionWithChildren(sm);
 
         var repo2 = new MemoryDataExportRepository();

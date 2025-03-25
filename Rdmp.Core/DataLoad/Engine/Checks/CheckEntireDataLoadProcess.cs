@@ -16,7 +16,7 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.DataLoad.Engine.Checks;
 
 /// <summary>
-/// Checks a LoadMetadata it is in a fit state to be executed (does it have primary keys, backup trigger etc).
+///     Checks a LoadMetadata it is in a fit state to be executed (does it have primary keys, backup trigger etc).
 /// </summary>
 public class CheckEntireDataLoadProcess : ICheckable
 {
@@ -26,7 +26,8 @@ public class CheckEntireDataLoadProcess : ICheckable
 
     public ILoadMetadata LoadMetadata { get; set; }
 
-    public CheckEntireDataLoadProcess(IBasicActivateItems activator, ILoadMetadata loadMetadata, HICDatabaseConfiguration databaseConfiguration,
+    public CheckEntireDataLoadProcess(IBasicActivateItems activator, ILoadMetadata loadMetadata,
+        HICDatabaseConfiguration databaseConfiguration,
         HICLoadConfigurationFlags loadConfigurationFlags)
     {
         _activator = activator;
@@ -40,7 +41,7 @@ public class CheckEntireDataLoadProcess : ICheckable
         var catalogueLoadChecks =
             new CatalogueLoadChecks(LoadMetadata, _loadConfigurationFlags, _databaseConfiguration);
         var metadataLoggingConfigurationChecks = new MetadataLoggingConfigurationChecks(LoadMetadata);
-        var processTaskChecks = new ProcessTaskChecks(LoadMetadata,_activator);
+        var processTaskChecks = new ProcessTaskChecks(LoadMetadata, _activator);
         var preExecutionChecks = new PreExecutionChecker(LoadMetadata, _databaseConfiguration);
 
         //If the load is a progressable (loaded over time) then make sure any associated caches are compatible with the load ProcessTasks
@@ -52,7 +53,6 @@ public class CheckEntireDataLoadProcess : ICheckable
             if (cp != null)
                 try
                 {
-                    var f = new CacheLayoutFactory();
                     CacheLayoutFactory.CreateCacheLayout(loadProgress, LoadMetadata);
                 }
                 catch (Exception e)

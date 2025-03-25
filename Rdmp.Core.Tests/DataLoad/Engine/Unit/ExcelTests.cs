@@ -31,7 +31,7 @@ public class ExcelTests
     public const string FreakyTestFile = "FreakyBook1.xlsx";
     public const string OddFormatsFile = "OddFormats.xls";
 
-    private Dictionary<string, FileInfo> _fileLocations = new();
+    private readonly Dictionary<string, FileInfo> _fileLocations = new();
     public static FileInfo TestFileInfo;
     public static FileInfo FreakyTestFileInfo;
     public static FileInfo OddFormatsFileInfo;
@@ -206,7 +206,8 @@ public class ExcelTests
             Assert.That(dt.Columns[1].ColumnName, Is.EqualTo("Category"));
             Assert.That(dt.Columns[2].ColumnName, Is.EqualTo("Age"));
             Assert.That(dt.Columns[3].ColumnName, Is.EqualTo("Wage"));
-            Assert.That(dt.Columns[4].ColumnName, Is.EqualTo("Invisibre")); //this column is hidden in the spreadsheet but we still load it
+            Assert.That(dt.Columns[4].ColumnName,
+                Is.EqualTo("Invisibre")); //this column is hidden in the spreadsheet but we still load it
 
             Assert.That(dt.Rows[0][0], Is.EqualTo("Frank"));
             Assert.That(dt.Rows[0][1], Is.EqualTo("Upper, Left"));
@@ -248,7 +249,7 @@ public class ExcelTests
 
         source.PreInitialize(new FlatFileToLoad(_fileLocations[FreakyTestFile]),
             ThrowImmediatelyDataLoadEventListener.Quiet);
-        var dt = source.GetChunk(messages, new GracefulCancellationToken());
+        source.GetChunk(messages, new GracefulCancellationToken());
 
         var args = messages.EventsReceivedBySender[source];
 
@@ -318,7 +319,8 @@ public class ExcelTests
         var source = new ExcelDataFlowSource();
         source.PreInitialize(new FlatFileToLoad(new FileInfo("bob.csv")), ThrowImmediatelyDataLoadEventListener.Quiet);
         var ex = Assert.Throws<Exception>(() => source.Check(ThrowImmediatelyCheckNotifier.QuietPicky));
-        Assert.That(ex?.Message, Is.EqualTo("File extension bob.csv has an invalid extension:.csv (this class only accepts:.xlsx,.xls)"));
+        Assert.That(ex?.Message,
+            Is.EqualTo("File extension bob.csv has an invalid extension:.csv (this class only accepts:.xlsx,.xls)"));
     }
 
     [TestCase(true)]
@@ -352,7 +354,8 @@ public class ExcelTests
         var contents = File.ReadAllText(file.FullName);
 
         Assert.That(
-contents.Trim(new[] { ',', '\r', '\n', ' ', '\t' }), Is.EqualTo(@"Participant,Score,IsEvil,DateField,DoubleField,MixedField
+            contents.Trim(',', '\r', '\n', ' ', '\t'), Is.EqualTo(
+                @"Participant,Score,IsEvil,DateField,DoubleField,MixedField
 Bob,3,yes,2001-01-01,0.1,10:30:00
 Frank,1.1,no,2001-01-01 10:30:00,0.51,11:30:00
 Hank,2.1,no,2002-01-01 11:30:00,0.22,0.1

@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Data;
 using System.IO;
 using System.Linq;
@@ -27,7 +28,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction;
 public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAnExtractionConfiguration
 {
     //C24D365B7C271E2C1BC884B5801C2961
-    private Regex reghex = new(@"^HASHED: [A-F\d]{32}");
+    private readonly Regex reghex = new(@"^HASHED: [A-F\d]{32}");
 
     [SetUp]
     protected override void SetUp()
@@ -80,7 +81,7 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
     [Test]
     public void Test_CatalogueItems_NonExtractedPrimaryKey_AreRespected()
     {
-        var request = SetupExtractDatasetCommand("NonExtractedPrimaryKey_AreRespected", System.Array.Empty<string>(),
+        var request = SetupExtractDatasetCommand("NonExtractedPrimaryKey_AreRespected", Array.Empty<string>(),
             new[] { "DateOfBirth" });
 
         var source = new ExecutePkSynthesizerDatasetExtractionSource();
@@ -103,7 +104,7 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
     [Test]
     public void Test_CatalogueItems_NonExtractedPrimaryKey_MultiTable_PksAreMerged()
     {
-        var request = SetupExtractDatasetCommand("MultiTable_PksAreMerged", System.Array.Empty<string>(),
+        var request = SetupExtractDatasetCommand("MultiTable_PksAreMerged", Array.Empty<string>(),
             new[] { "DateOfBirth" }, true, true);
 
         var source = new ExecutePkSynthesizerDatasetExtractionSource();
@@ -129,7 +130,7 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
     [Test]
     public void Test_CatalogueItems_NonExtractedPrimaryKey_LookupsOnly_IsRespected()
     {
-        var request = SetupExtractDatasetCommand("LookupsOnly_IsRespected", System.Array.Empty<string>(),
+        var request = SetupExtractDatasetCommand("LookupsOnly_IsRespected", Array.Empty<string>(),
             new[] { "DateOfBirth" }, true);
 
         var source = new ExecutePkSynthesizerDatasetExtractionSource();
@@ -159,7 +160,7 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
         dt.Columns.Add("Name");
         dt.Columns.Add("Description");
 
-        dt.Rows.Add(new object[] { "Dave", "Is a maniac" });
+        dt.Rows.Add("Dave", "Is a maniac");
 
         var tbl = Database.CreateTable("SimpleJoin", dt,
             new[]
@@ -190,7 +191,7 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
         dt.Columns.Add("Name");
         dt.Columns.Add("Description");
 
-        dt.Rows.Add(new object[] { "Dave", "Is a maniac" });
+        dt.Rows.Add("Dave", "Is a maniac");
 
         var tbl = Database.CreateTable("SimpleLookup", dt,
             new[] { new DatabaseColumnRequest("Name", new DatabaseTypeRequest(typeof(string), 50)) });
@@ -221,13 +222,13 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
             dt.PrimaryKey =
                 dt.Columns.Cast<DataColumn>().Where(col => pkColumnInfos.Contains(col.ColumnName)).ToArray();
 
-        dt.Rows.Add(new object[] { _cohortKeysGenerated.Keys.First(), "Dave", "2001-01-01" });
+        dt.Rows.Add(_cohortKeysGenerated.Keys.First(), "Dave", "2001-01-01");
 
         var tbl = Database.CreateTable(testTableName,
             dt,
             new[] { new DatabaseColumnRequest("Name", new DatabaseTypeRequest(typeof(string), 50)) });
 
-        _catalogue = Import(tbl, out var tableInfo, out var columnInfos, out var cataItems,
+        _catalogue = Import(tbl, out _, out _, out _,
             out var extractionInformations);
 
         var privateID = extractionInformations.First(e => e.GetRuntimeName().Equals("PrivateID"));
@@ -251,7 +252,7 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
         }
 
         SetupDataExport(testTableName, _catalogue,
-            out var configuration, out var extractableDataSet, out var project);
+            out var configuration, out var extractableDataSet, out _);
 
         configuration.Cohort_ID = _extractableCohort.ID;
         configuration.SaveToDatabase();

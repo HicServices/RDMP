@@ -82,13 +82,15 @@ public class PasswordEncryptionKeyLocationTests : DatabaseTests
 
         var keyLocation = new PasswordEncryptionKeyLocation(CatalogueRepository);
         keyLocation.CreateNewKeyFile(Path.Combine(TestContext.CurrentContext.TestDirectory, "my.key"));
-        var p = keyLocation.OpenKeyFile();
+        keyLocation.OpenKeyFile();
 
         CatalogueRepository.EncryptionManager.ClearAllInjections();
 
         var s = CatalogueRepository.EncryptionManager.GetEncrypter();
         var exception = Assert.Throws<CryptographicException>(() => s.Decrypt(encrypter.Value));
-        Assert.That(exception.Message, Does.StartWith("Could not decrypt an encrypted string, possibly you are trying to decrypt it after having changed the PrivateKey "));
+        Assert.That(exception.Message,
+            Does.StartWith(
+                "Could not decrypt an encrypted string, possibly you are trying to decrypt it after having changed the PrivateKey "));
 
         var encrypted = s.Encrypt(value);
         Console.WriteLine($"Encrypted (with key) is:{encrypted}");

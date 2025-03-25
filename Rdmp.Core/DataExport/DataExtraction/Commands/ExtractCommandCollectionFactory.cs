@@ -13,14 +13,14 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.DataExport.DataExtraction.Commands;
 
 /// <summary>
-/// Identifies all extractable components of a given ExtractionConfiguration (all datasets).  These are returned as an ExtractCommandCollection.
+///     Identifies all extractable components of a given ExtractionConfiguration (all datasets).  These are returned as an
+///     ExtractCommandCollection.
 /// </summary>
 public class ExtractCommandCollectionFactory
 {
     public static ExtractCommandCollection Create(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
         ExtractionConfiguration configuration)
     {
-        var cohort = configuration.Cohort;
         var datasets = configuration.GetAllExtractableDataSets();
 
         var datasetBundles = datasets.Select(ds => CreateDatasetCommand(repositoryLocator, ds, configuration));
@@ -51,6 +51,9 @@ public class ExtractCommandCollectionFactory
     }
 
     public static ExtractDatasetCommand Create(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
-        ISelectedDataSets selectedDataSets) => CreateDatasetCommand(repositoryLocator,
-        selectedDataSets.ExtractableDataSet, selectedDataSets.ExtractionConfiguration);
+        ISelectedDataSets selectedDataSets)
+    {
+        return CreateDatasetCommand(repositoryLocator,
+            selectedDataSets.ExtractableDataSet, selectedDataSets.ExtractionConfiguration);
+    }
 }

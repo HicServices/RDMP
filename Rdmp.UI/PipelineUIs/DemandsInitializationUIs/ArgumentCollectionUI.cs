@@ -22,10 +22,14 @@ using ViewSourceCodeDialog = Rdmp.UI.SimpleDialogs.ViewSourceCodeDialog;
 namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs;
 
 /// <summary>
-/// Allows you to specify values for any IArgumentHost class.  This control is used by the user at 'design time' (e.g. when they are building a data load configuration) and the values
-/// are then populated into instantiated runtime instances (not that this control cares about how that happens).  You will see a list of all properties marked with [DemandsInitialization]
-/// on the argument host class.  Selecting the Argument will display the help text associated with the argument (user friendly message telling them what they are supposed to put in for that
-/// property) and an appropriate user control for providing a value (for example an enum will show a dropdown while a string property will show a text box - See ArgumentUI).
+///     Allows you to specify values for any IArgumentHost class.  This control is used by the user at 'design time' (e.g.
+///     when they are building a data load configuration) and the values
+///     are then populated into instantiated runtime instances (not that this control cares about how that happens).  You
+///     will see a list of all properties marked with [DemandsInitialization]
+///     on the argument host class.  Selecting the Argument will display the help text associated with the argument (user
+///     friendly message telling them what they are supposed to put in for that
+///     property) and an appropriate user control for providing a value (for example an enum will show a dropdown while a
+///     string property will show a text box - See ArgumentUI).
 /// </summary>
 public partial class ArgumentCollectionUI : UserControl
 {
@@ -42,10 +46,14 @@ public partial class ArgumentCollectionUI : UserControl
     }
 
     /// <summary>
-    /// Reconfigures this UI (can be called multiple times throughout controls lifetime) to facilitate the population of DemandsInitialization
-    /// properties on an underlying type (e.g. if your collection is ProcessTask and your argument type is ProcessTaskArgument then your underlying type could
-    /// be AnySeparatorFileAttacher or MDFAttacher).  Note that while T is IArgumentHost, it also should be tied to one or more interfaces (e.g. IAttacher) and able to host
-    /// any child of that interface of which argumentsAreForUnderlyingType is the currently configured concrete class (e.g. AnySeparatorFileAttacher).
+    ///     Reconfigures this UI (can be called multiple times throughout controls lifetime) to facilitate the population of
+    ///     DemandsInitialization
+    ///     properties on an underlying type (e.g. if your collection is ProcessTask and your argument type is
+    ///     ProcessTaskArgument then your underlying type could
+    ///     be AnySeparatorFileAttacher or MDFAttacher).  Note that while T is IArgumentHost, it also should be tied to one or
+    ///     more interfaces (e.g. IAttacher) and able to host
+    ///     any child of that interface of which argumentsAreForUnderlyingType is the currently configured concrete class (e.g.
+    ///     AnySeparatorFileAttacher).
     /// </summary>
     /// <param name="activator"></param>
     /// <param name="parent"></param>
@@ -90,7 +98,6 @@ public partial class ArgumentCollectionUI : UserControl
 
     private void RefreshArgumentList()
     {
-        var argumentFactory = new ArgumentFactory();
         DemandDictionary = ArgumentFactory.GetDemandDictionary(_parent, _argumentsAreFor);
         lblNoArguments.Visible = !DemandDictionary.Any();
         pArguments.Visible = DemandDictionary.Any();
@@ -169,7 +176,6 @@ public partial class ArgumentCollectionUI : UserControl
         }
         catch (Exception e)
         {
-
             //add the text value value and report the error
             args.InitialValue = ArgumentValueUIFactory.CanHandleInvalidStringData(args.Type) ? argument.Value : null;
 
@@ -235,7 +241,10 @@ public partial class ArgumentCollectionUI : UserControl
         p.BringToFront();
     }
 
-    private static string GetSystemTypeName(Type type) => typeof(Enum).IsAssignableFrom(type) ? "Enum" : type?.Name;
+    private static string GetSystemTypeName(Type type)
+    {
+        return typeof(Enum).IsAssignableFrom(type) ? "Enum" : type?.Name;
+    }
 
     private void btnViewSourceCode_Click(object sender, EventArgs e)
     {

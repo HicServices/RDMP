@@ -22,7 +22,7 @@ namespace Rdmp.Core.Tests.Curation.Unit;
 internal class IColumnTests
 {
     /// <summary>
-    /// For tests
+    ///     For tests
     /// </summary>
     private class TestColumn : SpontaneousObject, IColumn
     {
@@ -95,7 +95,7 @@ internal class IColumnTests
             SelectSQL = "MangleQuery([mydb]..[myExcitingField])"
         };
 
-        var ex = Assert.Throws<RuntimeNameException>(() => tc.GetRuntimeName());
+        Assert.Throws<RuntimeNameException>(() => tc.GetRuntimeName());
     }
 
 

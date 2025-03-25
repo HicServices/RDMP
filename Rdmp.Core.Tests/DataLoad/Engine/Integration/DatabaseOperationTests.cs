@@ -6,9 +6,9 @@
 
 using System;
 using System.Collections.Generic;
-using Microsoft.Data.SqlClient;
 using FAnsi;
 using FAnsi.Discovery;
+using Microsoft.Data.SqlClient;
 using NUnit.Framework;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
@@ -24,7 +24,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
 
 internal class DatabaseOperationTests : DatabaseTests
 {
-    private Stack<IDeleteable> toCleanUp = new();
+    private readonly Stack<IDeleteable> toCleanUp = new();
 
     [Test]
     // This no longer copies between servers, but the original test didn't guarantee that would happen anyway
@@ -63,7 +63,7 @@ internal class DatabaseOperationTests : DatabaseTests
         var cloner = new DatabaseCloner(dbConfiguration);
         try
         {
-            var cloneDb = cloner.CreateDatabaseForStage(LoadBubble.Raw);
+            cloner.CreateDatabaseForStage(LoadBubble.Raw);
 
             //confirm database appeared
             Assert.That(DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(
@@ -75,7 +75,7 @@ internal class DatabaseOperationTests : DatabaseTests
             //now clone the catalogue data structures to MachineName
             foreach (TableInfo tableInfo in cata.GetTableInfoList(false))
                 cloner.CreateTablesInDatabaseFromCatalogueInfo(ThrowImmediatelyDataLoadEventListener.Quiet, tableInfo,
-                    LoadBubble.Raw,false);
+                    LoadBubble.Raw, false);
 
             Assert.Multiple(() =>
             {

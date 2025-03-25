@@ -37,7 +37,8 @@ public class NormalDataExtractionTests : TestsRequiringAnExtractionConfiguration
             Assert.That(File.ReadAllText(r.OutputFile).Trim(), Is.EqualTo($@"ReleaseID,Name,DateOfBirth
 {_cohortKeysGenerated[_cohortKeysGenerated.Keys.First()]},Dave,2001-01-01"));
 
-            Assert.That(_request.QueryBuilder.SelectColumns.Count(c => c.IColumn is ReleaseIdentifierSubstitution), Is.EqualTo(1));
+            Assert.That(_request.QueryBuilder.SelectColumns.Count(c => c.IColumn is ReleaseIdentifierSubstitution),
+                Is.EqualTo(1));
         });
         File.Delete(r.OutputFile);
     }
@@ -60,11 +61,13 @@ public class NormalDataExtractionTests : TestsRequiringAnExtractionConfiguration
 
             var ex = Assert.Throws<NotSupportedException>(() =>
             {
-                var dir = extractionDirectory.GetDirectoryForDataset(_extractableDataSet);
+                extractionDirectory.GetDirectoryForDataset(_extractableDataSet);
             });
 
             Assert.That(
-                ex.Message, Is.EqualTo("Cannot extract dataset Fish;#:::FishFish because it points at Catalogue with an invalid name, name is invalid because:The following invalid characters were found:'#'"));
+                ex.Message,
+                Is.EqualTo(
+                    "Cannot extract dataset Fish;#:::FishFish because it points at Catalogue with an invalid name, name is invalid because:The following invalid characters were found:'#'"));
         }
         finally
         {

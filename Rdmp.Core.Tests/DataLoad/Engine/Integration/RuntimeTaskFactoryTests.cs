@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using FAnsi;
 using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.Curation;
@@ -25,8 +26,6 @@ public class RuntimeTaskFactoryTests : DatabaseTests
         var lmd = new LoadMetadata(CatalogueRepository);
         var task = new ProcessTask(CatalogueRepository, lmd, LoadStage.GetFiles);
 
-        var f = new RuntimeTaskFactory(CatalogueRepository);
-
         task.Path = className;
         task.ProcessTaskType = ProcessTaskType.DataProvider;
         task.SaveToDatabase();
@@ -34,9 +33,11 @@ public class RuntimeTaskFactoryTests : DatabaseTests
         try
         {
             var ex = Assert.Throws<Exception>(() => RuntimeTaskFactory.Create(task,
-                new StageArgs(LoadStage.AdjustRaw, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer),
+                new StageArgs(LoadStage.AdjustRaw, GetCleanedServer(DatabaseType.MicrosoftSQLServer),
                     Substitute.For<ILoadDirectory>())));
-            Assert.That(ex.InnerException.Message, Does.Contain("marked with DemandsInitialization but no corresponding argument was provided in ArgumentCollection"));
+            Assert.That(ex.InnerException.Message,
+                Does.Contain(
+                    "marked with DemandsInitialization but no corresponding argument was provided in ArgumentCollection"));
         }
         finally
         {

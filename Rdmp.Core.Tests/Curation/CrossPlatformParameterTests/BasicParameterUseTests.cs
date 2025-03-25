@@ -58,7 +58,7 @@ public class BasicParameterUseTests : DatabaseTests
             importer.DoImport(out var ti, out var ci);
 
             var engineer = new ForwardEngineerCatalogue(ti, ci);
-            engineer.ExecuteForwardEngineering(out var cata, out var cis, out var ei);
+            engineer.ExecuteForwardEngineering(out _, out _, out var ei);
             /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
             /////////////////////////////////THE ACTUAL PROPER TEST////////////////////////////////////

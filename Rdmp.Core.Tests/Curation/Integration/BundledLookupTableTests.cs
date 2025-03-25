@@ -32,7 +32,7 @@ public class BundledLookupTableTests : UnitTests
         var t = l.PrimaryKey.TableInfo;
 
         var engineer = new ForwardEngineerCatalogue(t, t.ColumnInfos);
-        engineer.ExecuteForwardEngineering(out var cata, out _, out var eis);
+        engineer.ExecuteForwardEngineering(out _, out _, out var eis);
 
         var bundle = new BundledLookupTable(t);
         Assert.That(bundle.GetDataTableFetchSql(), Is.EqualTo(@"
@@ -65,6 +65,8 @@ ChildTable"));
         // so now there are no columns at all that are extractable
         var ex = Assert.Throws<QueryBuildingException>(() => bundle.GetDataTableFetchSql());
         Assert.That(
-            ex.Message, Is.EqualTo("Lookup table 'ChildTable' has a Catalogue defined 'ChildTable' but it has no Core extractable columns"));
+            ex.Message,
+            Is.EqualTo(
+                "Lookup table 'ChildTable' has a Catalogue defined 'ChildTable' but it has no Core extractable columns"));
     }
 }

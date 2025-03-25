@@ -7,6 +7,7 @@
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
+using FAnsi;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
@@ -63,7 +64,7 @@ public class ValidationXMLObscureDependencyFinderTests : DatabaseTests
         {
             Validator.LocatorForXMLDeserialization = RepositoryLocator;
 
-            var worked = Validator.LoadFromXml(testData.catalogue.ValidatorXML);
+            Validator.LoadFromXml(testData.catalogue.ValidatorXML);
 
             //notice that it is the ID of the referenced column that is maintained not the name of it! that is because we need to use a data access portal to get the contents of the column which might be in a different table (and normally would be)
             Assert.That(testData.catalogue.ValidatorXML, Does.Not.Contain("previous_address_L2"));
@@ -154,7 +155,7 @@ public class ValidationXMLObscureDependencyFinderTests : DatabaseTests
     private BulkTestsData SetupTestData(out ColumnInfo l2ColumnInfo)
     {
         //Setup test data
-        var testData = new BulkTestsData(CatalogueRepository, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer));
+        var testData = new BulkTestsData(CatalogueRepository, GetCleanedServer(DatabaseType.MicrosoftSQLServer));
         testData.SetupTestData();
         testData.ImportAsCatalogue();
 

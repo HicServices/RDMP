@@ -44,7 +44,7 @@ internal class ColumnSwapperTests : DatabaseTests
 
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
 
-        Import(db.CreateTable("Map", dt), out var map, out var mapCols);
+        Import(db.CreateTable("Map", dt), out _, out var mapCols);
 
         var swapper = new ColumnSwapper
         {
@@ -81,14 +81,12 @@ internal class ColumnSwapperTests : DatabaseTests
         Assert.That(resultDt.Rows[2]["Name"], Is.EqualTo("Frank"));
 
         if (keepInputColumnToo)
-        {
             Assert.Multiple(() =>
             {
                 Assert.That(resultDt.Rows[0]["In"], Is.EqualTo("A"));
                 Assert.That(resultDt.Rows[1]["In"], Is.EqualTo("A"));
                 Assert.That(resultDt.Rows[2]["In"], Is.EqualTo("B"));
             });
-        }
     }
 
     [TestCase(true)]
@@ -108,7 +106,7 @@ internal class ColumnSwapperTests : DatabaseTests
 
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
 
-        Import(db.CreateTable("Map", dtMap), out var map, out var mapCols);
+        Import(db.CreateTable("Map", dtMap), out _, out var mapCols);
 
         var swapper = new ColumnSwapper
         {
@@ -154,14 +152,12 @@ internal class ColumnSwapperTests : DatabaseTests
         Assert.That(resultDt.Rows[2]["Name"], Is.EqualTo("Frank"));
 
         if (keepInputColumnToo)
-        {
             Assert.Multiple(() =>
             {
                 Assert.That(resultDt.Rows[0]["In2"], Is.EqualTo("A"));
                 Assert.That(resultDt.Rows[1]["In2"], Is.EqualTo("A"));
                 Assert.That(resultDt.Rows[2]["In2"], Is.EqualTo("B"));
             });
-        }
     }
 
 
@@ -182,7 +178,7 @@ internal class ColumnSwapperTests : DatabaseTests
 
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
 
-        Import(db.CreateTable("Map", dtMap), out var map, out var mapCols);
+        Import(db.CreateTable("Map", dtMap), out _, out var mapCols);
 
         var swapper = new ColumnSwapper
         {
@@ -240,7 +236,7 @@ internal class ColumnSwapperTests : DatabaseTests
 
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
 
-        Import(db.CreateTable("Map", dt), out var map, out var mapCols);
+        Import(db.CreateTable("Map", dt), out _, out var mapCols);
 
         var swapper = new ColumnSwapper
         {
@@ -306,7 +302,7 @@ internal class ColumnSwapperTests : DatabaseTests
 
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
 
-        Import(db.CreateTable("Map", dt), out var map, out var mapCols);
+        Import(db.CreateTable("Map", dt), out _, out var mapCols);
 
         var swapper = new ColumnSwapper
         {
@@ -359,7 +355,7 @@ internal class ColumnSwapperTests : DatabaseTests
 
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
 
-        Import(db.CreateTable("Map", dt), out var map, out var mapCols);
+        Import(db.CreateTable("Map", dt), out _, out var mapCols);
 
         var swapper = new ColumnSwapper
         {
@@ -395,7 +391,7 @@ internal class ColumnSwapperTests : DatabaseTests
     }
 
     /// <summary>
-    /// Tests ColumnSwapper when there are null values in the input <see cref="DataTable"/> being processed
+    ///     Tests ColumnSwapper when there are null values in the input <see cref="DataTable" /> being processed
     /// </summary>
     [Test]
     public void TestColumnSwapper_InputTableNulls()
@@ -409,7 +405,7 @@ internal class ColumnSwapperTests : DatabaseTests
 
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
 
-        Import(db.CreateTable("Map", dt), out var map, out var mapCols);
+        Import(db.CreateTable("Map", dt), out _, out var mapCols);
 
         var swapper = new ColumnSwapper
         {
@@ -440,7 +436,7 @@ internal class ColumnSwapperTests : DatabaseTests
     }
 
     /// <summary>
-    /// Tests ColumnSwapper when there are null values in the database mapping table
+    ///     Tests ColumnSwapper when there are null values in the database mapping table
     /// </summary>
     [Test]
     public void TestColumnSwapper_MappingTableNulls()
@@ -455,7 +451,7 @@ internal class ColumnSwapperTests : DatabaseTests
 
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
 
-        Import(db.CreateTable("Map", dt), out var map, out var mapCols);
+        Import(db.CreateTable("Map", dt), out _, out var mapCols);
 
         var swapper = new ColumnSwapper
         {
@@ -481,7 +477,9 @@ internal class ColumnSwapperTests : DatabaseTests
         Assert.Multiple(() =>
         {
             //this is the primary thing we are testing here
-            Assert.That(toMem.GetAllMessagesByProgressEventType()[ProgressEventType.Warning].Select(m => m.Message).ToArray(), Does.Contain("Discarded 1 Null key values read from mapping table"));
+            Assert.That(
+                toMem.GetAllMessagesByProgressEventType()[ProgressEventType.Warning].Select(m => m.Message).ToArray(),
+                Does.Contain("Discarded 1 Null key values read from mapping table"));
 
             Assert.That(resultDt.Rows, Has.Count.EqualTo(2));
         });
@@ -493,7 +491,7 @@ internal class ColumnSwapperTests : DatabaseTests
     }
 
     /// <summary>
-    /// Tests the systems ability to compare an integer in the input data table with a string in the database
+    ///     Tests the systems ability to compare an integer in the input data table with a string in the database
     /// </summary>
     [Test]
     public void TestColumnSwapper_MixedDatatypes_StringInDatabase()
@@ -511,7 +509,7 @@ internal class ColumnSwapperTests : DatabaseTests
 
         DiscoveredTable mapTbl;
 
-        Import(mapTbl = db.CreateTable("Map", dt), out var map, out var mapCols);
+        Import(mapTbl = db.CreateTable("Map", dt), out _, out var mapCols);
 
         Assert.That(mapTbl.DiscoverColumn("In").DataType.GetCSharpDataType(), Is.EqualTo(typeof(string)),
             "Expected map to be of string datatype");
@@ -540,7 +538,7 @@ internal class ColumnSwapperTests : DatabaseTests
 
 
     /// <summary>
-    /// Tests the systems ability to compare a string input data table with an integer in the database
+    ///     Tests the systems ability to compare a string input data table with an integer in the database
     /// </summary>
     [Test]
     public void TestColumnSwapper_MixedDatatypes_IntegerInDatabase()
@@ -557,7 +555,7 @@ internal class ColumnSwapperTests : DatabaseTests
 
         DiscoveredTable mapTbl;
 
-        Import(mapTbl = db.CreateTable("Map", dt), out var map, out var mapCols);
+        Import(mapTbl = db.CreateTable("Map", dt), out _, out var mapCols);
 
         Assert.That(mapTbl.DiscoverColumn("In").DataType.GetCSharpDataType(), Is.EqualTo(typeof(int)),
             "Expected map to be of int datatype");

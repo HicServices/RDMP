@@ -4,10 +4,10 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.QueryBuilding;
-using System;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.Integration.QueryBuildingTests.QueryBuilderTests;
@@ -30,10 +30,7 @@ internal class QueryBuilderUnitTests : UnitTests
         builder.AddColumn(new ColumnInfoToIColumn(Repository, c1));
         builder.AddColumn(new ColumnInfoToIColumn(Repository, c2));
 
-        var ex = Assert.Throws<QueryBuildingException>(() =>
-        {
-            var s = builder.SQL;
-        });
+        var ex = Assert.Throws<QueryBuildingException>(() => { });
 
         Assert.That(ex.Message, Does.Contain("There are multiple tables marked as IsPrimaryExtractionTable"));
     }
@@ -106,7 +103,6 @@ internal class QueryBuilderUnitTests : UnitTests
         var j1 = new JoinInfo(Repository, c2, c1, ExtractionJoinType.Inner, null);
         var j2 = new JoinInfo(Repository, c3, c1, ExtractionJoinType.Inner, null);
         var j3 = new JoinInfo(Repository, c4, c2, ExtractionJoinType.Inner, null);
-        var j4 = new JoinInfo(Repository, c4, c3, ExtractionJoinType.Inner, null);
 
 
         var builder = new QueryBuilder(null, null);

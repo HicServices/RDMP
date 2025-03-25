@@ -1,21 +1,21 @@
-﻿using FAnsi;
-using NUnit.Framework;
-using Rdmp.Core.CommandExecution.AtomicCommands;
-using Rdmp.Core.CommandLine.Interactive;
-using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Curation.DataHelper.RegexRedaction;
-using Rdmp.Core.Curation;
-using Rdmp.Core.ReusableLibraryCode.Checks;
+﻿using System;
 using System.Data;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Tests.Common;
+using FAnsi;
 using FAnsi.Discovery;
-using System;
+using NUnit.Framework;
+using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.CommandLine.Interactive;
+using Rdmp.Core.Curation;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.DataHelper.RegexRedaction;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Tests.Common;
 
 namespace Rdmp.Core.Tests.CommandExecution;
 
-public class ExecuteCommandRestoreRegexRedactedValueInCatalogueTests: DatabaseTests
+public class ExecuteCommandRestoreRegexRedactedValueInCatalogueTests : DatabaseTests
 {
     private DataTable GetRedactionTestDataTable()
     {
@@ -30,15 +30,16 @@ public class ExecuteCommandRestoreRegexRedactedValueInCatalogueTests: DatabaseTe
     private (Catalogue, ColumnInfo[]) CreateTable(DiscoveredDatabase db, DataTable dt, bool[] pks = null)
     {
         if (pks is null) pks = new[] { false, true, false };
-        db.CreateTable("RedactionTest", dt, new DatabaseColumnRequest[] {
-                new DatabaseColumnRequest("DischargeDate","datetime",false){IsPrimaryKey=pks[0]},
-                new DatabaseColumnRequest("Condition1","varchar(400)",false){IsPrimaryKey=pks[1]},
-                new DatabaseColumnRequest("Condition2","varchar(400)",false){IsPrimaryKey=pks[2]},
-            });
+        db.CreateTable("RedactionTest", dt, new[]
+        {
+            new DatabaseColumnRequest("DischargeDate", "datetime", false) { IsPrimaryKey = pks[0] },
+            new DatabaseColumnRequest("Condition1", "varchar(400)", false) { IsPrimaryKey = pks[1] },
+            new DatabaseColumnRequest("Condition2", "varchar(400)", false) { IsPrimaryKey = pks[2] }
+        });
         var table = db.ExpectTable("RedactionTest");
         var catalogue = new Catalogue(CatalogueRepository, "RedactionTest");
         var importer = new TableInfoImporter(CatalogueRepository, table);
-        importer.DoImport(out var _tableInfo, out var _columnInfos);
+        importer.DoImport(out _, out var _columnInfos);
         foreach (var columnInfo in _columnInfos)
         {
             var ci = new CatalogueItem(CatalogueRepository, catalogue, columnInfo.GetRuntimeName());
@@ -46,6 +47,7 @@ public class ExecuteCommandRestoreRegexRedactedValueInCatalogueTests: DatabaseTe
             var ei = new ExtractionInformation(CatalogueRepository, ci, columnInfo, "");
             ei.SaveToDatabase();
         }
+
         return (catalogue, _columnInfos);
     }
 
@@ -59,6 +61,7 @@ public class ExecuteCommandRestoreRegexRedactedValueInCatalogueTests: DatabaseTe
             using var da = db.Server.GetDataAdapter(fetchCmd);
             da.Fill(dt);
         }
+
         return dt;
     }
 
@@ -67,13 +70,15 @@ public class ExecuteCommandRestoreRegexRedactedValueInCatalogueTests: DatabaseTe
     {
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
         var dt = GetRedactionTestDataTable();
-        dt.Rows.Add(new object[] { DateTime.Now, '1', "1234TEST1234" });
-        (Catalogue catalogue, ColumnInfo[] _columnInfos) = CreateTable(db, dt);
-       
+        dt.Rows.Add(DateTime.Now, '1', "1234TEST1234");
+        var (catalogue, _columnInfos) = CreateTable(db, dt);
+
         var activator = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet);
-        var regexConfiguration = new RegexRedactionConfiguration(CatalogueRepository, "TestReplacer", new Regex("TEST"), "GG", "Replace TEST with GG");
+        var regexConfiguration = new RegexRedactionConfiguration(CatalogueRepository, "TestReplacer", new Regex("TEST"),
+            "GG", "Replace TEST with GG");
         regexConfiguration.SaveToDatabase();
-        var cmd = new ExecuteCommandPerformRegexRedactionOnCatalogue(activator, catalogue, regexConfiguration, _columnInfos.Where(c => c.GetRuntimeName() == "Condition2").ToList());
+        var cmd = new ExecuteCommandPerformRegexRedactionOnCatalogue(activator, catalogue, regexConfiguration,
+            _columnInfos.Where(c => c.GetRuntimeName() == "Condition2").ToList());
         Assert.DoesNotThrow(() => cmd.Execute());
         dt = Retrieve(db);
         Assert.That(dt.Rows.Count, Is.EqualTo(1));
@@ -81,24 +86,28 @@ public class ExecuteCommandRestoreRegexRedactedValueInCatalogueTests: DatabaseTe
         var redaction = CatalogueRepository.GetAllObjects<RegexRedaction>().Last();
         var revert = new ExecuteCommandRestoreRegexRedactedValueInCatalogue(activator, redaction);
         Assert.DoesNotThrow(() => revert.Execute());
-        var foundRedaction = CatalogueRepository.GetAllObjectsWhere<RegexRedaction>("RedactionConfiguration_ID", regexConfiguration.ID).ToList();
+        var foundRedaction = CatalogueRepository
+            .GetAllObjectsWhere<RegexRedaction>("RedactionConfiguration_ID", regexConfiguration.ID).ToList();
         Assert.That(foundRedaction.Count, Is.EqualTo(0));
         dt = Retrieve(db);
         Assert.That(dt.Rows.Count, Is.EqualTo(1));
         Assert.That(dt.Rows[0].ItemArray[0], Is.EqualTo("1234TEST1234"));
     }
+
     [Test]
     public void RedactionRestore_RestoreTwice()
     {
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
         var dt = GetRedactionTestDataTable();
-        dt.Rows.Add(new object[] { DateTime.Now, '1', "1234TEST1234" });
-        (Catalogue catalogue, ColumnInfo[] _columnInfos) = CreateTable(db, dt);
+        dt.Rows.Add(DateTime.Now, '1', "1234TEST1234");
+        var (catalogue, _columnInfos) = CreateTable(db, dt);
 
         var activator = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet);
-        var regexConfiguration = new RegexRedactionConfiguration(CatalogueRepository, "TestReplacer", new Regex("TEST"), "GG", "Replace TEST with GG");
+        var regexConfiguration = new RegexRedactionConfiguration(CatalogueRepository, "TestReplacer", new Regex("TEST"),
+            "GG", "Replace TEST with GG");
         regexConfiguration.SaveToDatabase();
-        var cmd = new ExecuteCommandPerformRegexRedactionOnCatalogue(activator, catalogue, regexConfiguration, _columnInfos.Where(c => c.GetRuntimeName() == "Condition2").ToList());
+        var cmd = new ExecuteCommandPerformRegexRedactionOnCatalogue(activator, catalogue, regexConfiguration,
+            _columnInfos.Where(c => c.GetRuntimeName() == "Condition2").ToList());
         Assert.DoesNotThrow(() => cmd.Execute());
         dt = Retrieve(db);
         Assert.That(dt.Rows.Count, Is.EqualTo(1));
@@ -106,12 +115,14 @@ public class ExecuteCommandRestoreRegexRedactedValueInCatalogueTests: DatabaseTe
         var redaction = CatalogueRepository.GetAllObjects<RegexRedaction>().Last();
         var revert = new ExecuteCommandRestoreRegexRedactedValueInCatalogue(activator, redaction);
         Assert.DoesNotThrow(() => revert.Execute());
-        var foundRedaction = CatalogueRepository.GetAllObjectsWhere<RegexRedaction>("RedactionConfiguration_ID", regexConfiguration.ID).ToList();
+        var foundRedaction = CatalogueRepository
+            .GetAllObjectsWhere<RegexRedaction>("RedactionConfiguration_ID", regexConfiguration.ID).ToList();
         Assert.That(foundRedaction.Count, Is.EqualTo(0));
         dt = Retrieve(db);
         Assert.That(dt.Rows.Count, Is.EqualTo(1));
         Assert.That(dt.Rows[0].ItemArray[0], Is.EqualTo("1234TEST1234"));
-        cmd = new ExecuteCommandPerformRegexRedactionOnCatalogue(activator, catalogue, regexConfiguration, _columnInfos.Where(c => c.GetRuntimeName() == "Condition2").ToList());
+        cmd = new ExecuteCommandPerformRegexRedactionOnCatalogue(activator, catalogue, regexConfiguration,
+            _columnInfos.Where(c => c.GetRuntimeName() == "Condition2").ToList());
         Assert.DoesNotThrow(() => cmd.Execute());
         dt = Retrieve(db);
         Assert.That(dt.Rows.Count, Is.EqualTo(1));
@@ -119,7 +130,8 @@ public class ExecuteCommandRestoreRegexRedactedValueInCatalogueTests: DatabaseTe
         redaction = CatalogueRepository.GetAllObjects<RegexRedaction>().Last();
         revert = new ExecuteCommandRestoreRegexRedactedValueInCatalogue(activator, redaction);
         Assert.DoesNotThrow(() => revert.Execute());
-        foundRedaction = CatalogueRepository.GetAllObjectsWhere<RegexRedaction>("RedactionConfiguration_ID", regexConfiguration.ID).ToList();
+        foundRedaction = CatalogueRepository
+            .GetAllObjectsWhere<RegexRedaction>("RedactionConfiguration_ID", regexConfiguration.ID).ToList();
         Assert.That(foundRedaction.Count, Is.EqualTo(0));
         dt = Retrieve(db);
         Assert.That(dt.Rows.Count, Is.EqualTo(1));
@@ -132,13 +144,15 @@ public class ExecuteCommandRestoreRegexRedactedValueInCatalogueTests: DatabaseTe
     {
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
         var dt = GetRedactionTestDataTable();
-        dt.Rows.Add(new object[] { DateTime.Now, '1', "1234TEST1234TEST1234" });
-        (Catalogue catalogue, ColumnInfo[] _columnInfos) = CreateTable(db, dt);
+        dt.Rows.Add(DateTime.Now, '1', "1234TEST1234TEST1234");
+        var (catalogue, _columnInfos) = CreateTable(db, dt);
 
         var activator = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet);
-        var regexConfiguration = new RegexRedactionConfiguration(CatalogueRepository, "TestReplacer", new Regex("TEST"), "DB", "Replace TEST with DB");
+        var regexConfiguration = new RegexRedactionConfiguration(CatalogueRepository, "TestReplacer", new Regex("TEST"),
+            "DB", "Replace TEST with DB");
         regexConfiguration.SaveToDatabase();
-        var cmd = new ExecuteCommandPerformRegexRedactionOnCatalogue(activator, catalogue, regexConfiguration, _columnInfos.Where(c => c.GetRuntimeName() == "Condition2").ToList());
+        var cmd = new ExecuteCommandPerformRegexRedactionOnCatalogue(activator, catalogue, regexConfiguration,
+            _columnInfos.Where(c => c.GetRuntimeName() == "Condition2").ToList());
         Assert.DoesNotThrow(() => cmd.Execute());
         dt = Retrieve(db);
         Assert.That(dt.Rows.Count, Is.EqualTo(1));
@@ -150,7 +164,8 @@ public class ExecuteCommandRestoreRegexRedactedValueInCatalogueTests: DatabaseTe
         //restore the second one
         var revert = new ExecuteCommandRestoreRegexRedactedValueInCatalogue(activator, redactions[1]);
         Assert.DoesNotThrow(() => revert.Execute());
-        var foundRedaction = CatalogueRepository.GetAllObjectsWhere<RegexRedaction>("RedactionConfiguration_ID", regexConfiguration.ID).ToList();
+        var foundRedaction = CatalogueRepository
+            .GetAllObjectsWhere<RegexRedaction>("RedactionConfiguration_ID", regexConfiguration.ID).ToList();
         Assert.That(foundRedaction.Count, Is.EqualTo(1));
         dt = Retrieve(db);
         Assert.That(dt.Rows.Count, Is.EqualTo(1));
@@ -158,11 +173,11 @@ public class ExecuteCommandRestoreRegexRedactedValueInCatalogueTests: DatabaseTe
         //restore the first one
         revert = new ExecuteCommandRestoreRegexRedactedValueInCatalogue(activator, redactions[0]);
         Assert.DoesNotThrow(() => revert.Execute());
-        foundRedaction = CatalogueRepository.GetAllObjectsWhere<RegexRedaction>("RedactionConfiguration_ID", regexConfiguration.ID).ToList();
+        foundRedaction = CatalogueRepository
+            .GetAllObjectsWhere<RegexRedaction>("RedactionConfiguration_ID", regexConfiguration.ID).ToList();
         Assert.That(foundRedaction.Count, Is.EqualTo(0));
         dt = Retrieve(db);
         Assert.That(dt.Rows.Count, Is.EqualTo(1));
         Assert.That(dt.Rows[0].ItemArray[0], Is.EqualTo("1234TEST1234TEST1234"));
     }
-
 }

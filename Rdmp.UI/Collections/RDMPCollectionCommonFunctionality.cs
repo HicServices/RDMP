@@ -37,13 +37,14 @@ using Rdmp.UI.TreeHelper;
 namespace Rdmp.UI.Collections;
 
 /// <summary>
-/// Provides centralised functionality for all RDMPCollectionUI classes.  This includes configuring TreeListView to use the correct icons, have the correct row
-/// height, child nodes etc.
+///     Provides centralised functionality for all RDMPCollectionUI classes.  This includes configuring TreeListView to use
+///     the correct icons, have the correct row
+///     height, child nodes etc.
 /// </summary>
 public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 {
     /// <summary>
-    /// The collection if any that this <see cref="Tree"/> represents in the UI
+    ///     The collection if any that this <see cref="Tree" /> represents in the UI
     /// </summary>
     public RDMPCollection Collection { get; private set; }
 
@@ -73,9 +74,11 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     public OLVColumn CheckColumn { get; set; }
 
     /// <summary>
-    /// List of Types for which the children should not be returned.  By default the IActivateItems child provider knows all objects children all the way down
-    /// You can cut off any branch with this property, just specify the Types to stop descending at and you will get that object Type (assuming you normally would)
-    /// but no further children.
+    ///     List of Types for which the children should not be returned.  By default the IActivateItems child provider knows
+    ///     all objects children all the way down
+    ///     You can cut off any branch with this property, just specify the Types to stop descending at and you will get that
+    ///     object Type (assuming you normally would)
+    ///     but no further children.
     /// </summary>
     public Type[] AxeChildren { get; set; }
 
@@ -97,9 +100,9 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     };
 
     /// <summary>
-    /// Sets up width and visibility tracking on the given <paramref name="col"/>.  Each logically different
-    /// column should have its own unique Guid.  But it is ok for the same column (e.g. ID) in two different
-    /// collection windows to share the same Guid in order to persist user preference of visibility of the concept.
+    ///     Sets up width and visibility tracking on the given <paramref name="col" />.  Each logically different
+    ///     column should have its own unique Guid.  But it is ok for the same column (e.g. ID) in two different
+    ///     collection windows to share the same Guid in order to persist user preference of visibility of the concept.
     /// </summary>
     /// <param name="col"></param>
     /// <param name="g"></param>
@@ -113,7 +116,7 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         SetupColumnTracking(Tree, col, columnUniqueIdentifier);
     }
 
-    /// <inheritdoc cref="SetupColumnTracking(OLVColumn, Guid)"/>
+    /// <inheritdoc cref="SetupColumnTracking(OLVColumn, Guid)" />
     public static void SetupColumnTracking(ObjectListView view, OLVColumn col, Guid g)
     {
         col.Width = UserSettings.GetColumnWidth(g);
@@ -159,7 +162,7 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     }
 
     /// <summary>
-    /// Sets up common functionality for an RDMPCollectionUI with the default settings
+    ///     Sets up common functionality for an RDMPCollectionUI with the default settings
     /// </summary>
     /// <param name="collection"></param>
     /// <param name="tree">The main tree in the collection UI</param>
@@ -168,14 +171,14 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     /// <param name="renameableColumn">Nullable field for specifying which column supports renaming on F2</param>
     /// <param name="filter">Optional TextBox Filter</param>
     public void SetUp(RDMPCollection collection, TreeListView tree, IActivateItems activator, OLVColumn iconColumn,
-        OLVColumn renameableColumn,TextBox filter = null)
+        OLVColumn renameableColumn, TextBox filter = null)
     {
         SetUp(collection, tree, activator, iconColumn, renameableColumn,
-            new RDMPCollectionCommonFunctionalitySettings(),filter);
+            new RDMPCollectionCommonFunctionalitySettings(), filter);
     }
 
     /// <summary>
-    /// Sets up common functionality for an RDMPCollectionUI
+    ///     Sets up common functionality for an RDMPCollectionUI
     /// </summary>
     /// <param name="collection"></param>
     /// <param name="tree">The main tree in the collection UI</param>
@@ -184,7 +187,6 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     /// <param name="renameableColumn">Nullable field for specifying which column supports renaming on F2</param>
     /// <param name="settings">Customise which common behaviours are turned on</param>
     /// <param name="filter">Optional TextBox Filter</param>
-
     public void SetUp(RDMPCollection collection, TreeListView tree, IActivateItems activator, OLVColumn iconColumn,
         OLVColumn renameableColumn, RDMPCollectionCommonFunctionalitySettings settings, TextBox filter = null)
     {
@@ -204,14 +206,14 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         Tree.CellToolTip.InitialDelay = UserSettings.TooltipAppearDelay;
         Tree.CellToolTipShowing += (s, e) => Tree_CellToolTipShowing(activator, e);
 
-        if(Filter is not null)
+        if (Filter is not null)
         {
             Filter.TextChanged += HandleFilter;
             Filter.Text = FilterText;
             Filter.GotFocus += RemoveText;
             Filter.LostFocus += AddText;
         }
-      
+
 
         Tree.RevealAfterExpand = true;
 
@@ -307,12 +309,10 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
 
     private readonly string FilterText = "Filter...";
+
     public void RemoveText(object sender, EventArgs e)
     {
-        if (Filter.Text == FilterText)
-        {
-            Filter.Text = "";
-        }
+        if (Filter.Text == FilterText) Filter.Text = "";
     }
 
     public void AddText(object sender, EventArgs e)
@@ -320,15 +320,17 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         if (string.IsNullOrWhiteSpace(Filter.Text))
             Filter.Text = FilterText;
     }
+
     private void HandleFilter(object sender, EventArgs e)
     {
         var text = Filter.Text;
-        if(text == FilterText)
+        if (text == FilterText)
         {
             Tree.ModelFilter = TextMatchFilter.Contains(Tree, "");
             Tree.UseFiltering = true;
             return;
         }
+
         Tree.ModelFilter = TextMatchFilter.Contains(Tree, text);
         Tree.UseFiltering = true;
     }
@@ -352,7 +354,7 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     }
 
     /// <summary>
-    /// Returns true if it is possible to generate tool tip style info on the given <paramref name="model"/>
+    ///     Returns true if it is possible to generate tool tip style info on the given <paramref name="model" />
     /// </summary>
     /// <param name="activator"></param>
     /// <param name="model"></param>
@@ -387,8 +389,10 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         return false;
     }
 
-    private static string GetToolTipTitle(object model) =>
-        model is IMapsDirectlyToDatabaseTable d ? $"{model} (ID: {d.ID})" : model?.ToString();
+    private static string GetToolTipTitle(object model)
+    {
+        return model is IMapsDirectlyToDatabaseTable d ? $"{model} (ID: {d.ID})" : model?.ToString();
+    }
 
     private static DateTime nextInvalidateCache = DateTime.Now.AddSeconds(10);
     private static readonly Dictionary<object, string> cache = new();
@@ -401,7 +405,9 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
             nextInvalidateCache = DateTime.Now.AddSeconds(10);
         }
         else if (cache.TryGetValue(sum, out var body))
+        {
             return body;
+        }
 
         var sb = new StringBuilder();
         sb.AppendLine(sum.GetSummary(false, false));
@@ -410,7 +416,8 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         try
         {
             var associatedObjects = gotoF.GetCommands(sum).OfType<ExecuteCommandShow>()
-                .ToDictionary(static cmd => cmd.GetCommandName(), static cmd => cmd.GetObjects().Where(static o => o != null));
+                .ToDictionary(static cmd => cmd.GetCommandName(),
+                    static cmd => cmd.GetObjects().Where(static o => o != null));
 
             foreach (var (key, value) in associatedObjects)
             {
@@ -508,15 +515,17 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         }
     }
 
-    private TreeListView.Tree TreeFactoryGetter(TreeListView view) =>
-        new RDMPCollectionCommonFunctionalityTreeHijacker(view);
+    private TreeListView.Tree TreeFactoryGetter(TreeListView view)
+    {
+        return new RDMPCollectionCommonFunctionalityTreeHijacker(view);
+    }
 
     // Tracks when RefreshContextMenuStrip is called to prevent rebuilding on select and right click in rapid succession
     private object _lastMenuObject;
     private DateTime _lastMenuBuilt = DateTime.Now;
     private ContextMenuStrip _menu;
 
-    private HashSet<Keys> _shortcutKeys = new()
+    private readonly HashSet<Keys> _shortcutKeys = new()
     {
         Keys.I,
         Keys.Delete,
@@ -612,7 +621,7 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     }
 
     /// <summary>
-    /// Expands the current object (which must exist/be visible in the UI) to the given depth
+    ///     Expands the current object (which must exist/be visible in the UI) to the given depth
     /// </summary>
     /// <param name="expansionDepth"></param>
     /// <param name="currentObject"></param>
@@ -627,9 +636,12 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
             ExpandToDepth(expansionDepth - 1, o);
     }
 
-    private IEnumerable ChildrenGetter(object model) => AxeChildren != null && AxeChildren.Contains(model.GetType())
-        ? Array.Empty<object>()
-        : (IEnumerable)CoreChildProvider.GetChildren(model);
+    private IEnumerable ChildrenGetter(object model)
+    {
+        return AxeChildren != null && AxeChildren.Contains(model.GetType())
+            ? Array.Empty<object>()
+            : (IEnumerable)CoreChildProvider.GetChildren(model);
+    }
 
     private bool CanExpandGetter(object model)
     {
@@ -640,21 +652,16 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
     private Bitmap ImageGetter(object rowObject)
     {
-        if (rowObject == null)
-        {
-            return CoreIconProvider.ImageUnknown.ImageToBitmap();
-        }
+        if (rowObject == null) return CoreIconProvider.ImageUnknown.ImageToBitmap();
         var hasProblems = _activator.HasProblem(rowObject);
 
         return CoreIconProvider.GetImage(rowObject, hasProblems ? OverlayKind.Problem : OverlayKind.None)
             .ImageToBitmap();
-
     }
 
     /// <summary>
-    /// Creates a menu compatible with object <paramref name="o"/>.  Returns null if no compatible menu exists.
-    /// Errors are reported to <see cref="IBasicActivateItems.GlobalErrorCheckNotifier"/> (if set up).
-    /// 
+    ///     Creates a menu compatible with object <paramref name="o" />.  Returns null if no compatible menu exists.
+    ///     Errors are reported to <see cref="IBasicActivateItems.GlobalErrorCheckNotifier" /> (if set up).
     /// </summary>
     /// <param name="o"></param>
     /// <returns></returns>
@@ -717,8 +724,6 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
             {
                 //it's a right click in whitespace (nothing right clicked)
-
-                var factory = new AtomicCommandUIFactory(_activator);
 
                 if (WhitespaceRightClickMenuCommandsGetter != null)
                 {

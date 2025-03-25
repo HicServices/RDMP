@@ -1,4 +1,9 @@
-﻿using FAnsi;
+﻿using System;
+using System.Data;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
+using FAnsi;
 using FAnsi.Discovery;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data.DataLoad;
@@ -14,18 +19,12 @@ using Rdmp.Core.Logging;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using Rdmp.Core.Tests.DataLoad.Engine.Integration;
-using System;
-using System.Data;
-using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
 using TypeGuesser;
 
 namespace Rdmp.Core.Tests.DataLoad.Modules.Mutilators;
 
 internal class RegexRedactionMutilatorTests : DataLoadEngineTestsBase
 {
-
     [Test]
     public void RedactionMutilator_BasicTest()
     {
@@ -50,13 +49,13 @@ internal class RegexRedactionMutilatorTests : DataLoadEngineTestsBase
         dt.Rows.Add("Frank", "2001-01-01", "Orange");
 
         var nameCol = new DatabaseColumnRequest("Name", new DatabaseTypeRequest(typeof(string), 20), false)
-        { IsPrimaryKey = true };
-        DiscoveredTable tbl = db.CreateTable("MyTable", dt, new[]
-                {
-                    nameCol,
-                    new DatabaseColumnRequest("DateOfBirth", new DatabaseTypeRequest(typeof(DateTime)), false)
-                        { IsPrimaryKey = true }
-                });
+            { IsPrimaryKey = true };
+        var tbl = db.CreateTable("MyTable", dt, new[]
+        {
+            nameCol,
+            new DatabaseColumnRequest("DateOfBirth", new DatabaseTypeRequest(typeof(DateTime)), false)
+                { IsPrimaryKey = true }
+        });
 
         Assert.That(tbl.GetRowCount(), Is.EqualTo(2));
 
@@ -95,10 +94,10 @@ internal class RegexRedactionMutilatorTests : DataLoadEngineTestsBase
             @"Name,DateOfBirth,FavouriteColour
 MrMurder,2001-01-01,Yella");
 
-        var dbConfig = new HICDatabaseConfiguration(lmd, null);
+        var dbConfig = new HICDatabaseConfiguration(lmd);
 
         var job = new DataLoadJob(RepositoryLocator, "Go go go!", logManager, lmd, projectDirectory,
-                ThrowImmediatelyDataLoadEventListener.Quiet, dbConfig);
+            ThrowImmediatelyDataLoadEventListener.Quiet, dbConfig);
 
         var loadFactory = new HICDataLoadFactory(
             lmd,
@@ -110,8 +109,8 @@ MrMurder,2001-01-01,Yella");
 
         var exe = loadFactory.Create(ThrowImmediatelyDataLoadEventListener.Quiet);
 
-        var exitCode = exe.Run(
-          job,
+        exe.Run(
+            job,
             new GracefulCancellationToken());
 
         var redactions = CatalogueRepository.GetAllObjects<RegexRedaction>();
@@ -123,14 +122,8 @@ MrMurder,2001-01-01,Yella");
 
         var redactionKeys = CatalogueRepository.GetAllObjects<RegexRedactionKey>();
         Assert.That(redactionKeys.Length, Is.EqualTo(2));
-        foreach (var r in redactions)
-        {
-            r.DeleteInDatabase();
-        }
-        foreach (var r in redactionKeys)
-        {
-            r.DeleteInDatabase();
-        }
+        foreach (var r in redactions) r.DeleteInDatabase();
+        foreach (var r in redactionKeys) r.DeleteInDatabase();
     }
 
     [Test]
@@ -157,13 +150,13 @@ MrMurder,2001-01-01,Yella");
         dt.Rows.Add("Frank", "2001-01-01", "Orange");
 
         var nameCol = new DatabaseColumnRequest("Name", new DatabaseTypeRequest(typeof(string), 20), false)
-        { IsPrimaryKey = true };
-        DiscoveredTable tbl = db.CreateTable("MyTable", dt, new[]
-                {
-                    nameCol,
-                    new DatabaseColumnRequest("DateOfBirth", new DatabaseTypeRequest(typeof(DateTime)), false)
-                        { IsPrimaryKey = true }
-                });
+            { IsPrimaryKey = true };
+        var tbl = db.CreateTable("MyTable", dt, new[]
+        {
+            nameCol,
+            new DatabaseColumnRequest("DateOfBirth", new DatabaseTypeRequest(typeof(DateTime)), false)
+                { IsPrimaryKey = true }
+        });
 
         Assert.That(tbl.GetRowCount(), Is.EqualTo(2));
 
@@ -202,10 +195,10 @@ MrMurder,2001-01-01,Yella");
             @"Name,DateOfBirth,FavouriteColour
 MrMurder,2001-01-01,Yella");
 
-        var dbConfig = new HICDatabaseConfiguration(lmd, null);
+        var dbConfig = new HICDatabaseConfiguration(lmd);
 
         var job = new DataLoadJob(RepositoryLocator, "Go go go!", logManager, lmd, projectDirectory,
-                ThrowImmediatelyDataLoadEventListener.Quiet, dbConfig);
+            ThrowImmediatelyDataLoadEventListener.Quiet, dbConfig);
 
         var loadFactory = new HICDataLoadFactory(
             lmd,
@@ -217,8 +210,8 @@ MrMurder,2001-01-01,Yella");
 
         var exe = loadFactory.Create(ThrowImmediatelyDataLoadEventListener.Quiet);
 
-        var exitCode = exe.Run(
-          job,
+        exe.Run(
+            job,
             new GracefulCancellationToken());
 
         var redactions = CatalogueRepository.GetAllObjects<RegexRedaction>();
@@ -230,14 +223,8 @@ MrMurder,2001-01-01,Yella");
 
         var redactionKeys = CatalogueRepository.GetAllObjects<RegexRedactionKey>();
         Assert.That(redactionKeys.Length, Is.EqualTo(2));
-        foreach (var r in redactions)
-        {
-            r.DeleteInDatabase();
-        }
-        foreach (var r in redactionKeys)
-        {
-            r.DeleteInDatabase();
-        }
+        foreach (var r in redactions) r.DeleteInDatabase();
+        foreach (var r in redactionKeys) r.DeleteInDatabase();
     }
 
     [Test]
@@ -264,13 +251,13 @@ MrMurder,2001-01-01,Yella");
         dt.Rows.Add("Frank", "2001-01-01", "Orange");
 
         var nameCol = new DatabaseColumnRequest("Name", new DatabaseTypeRequest(typeof(string), 20), false)
-        { IsPrimaryKey = true };
-        DiscoveredTable tbl = db.CreateTable("MyTable", dt, new[]
-                {
-                    nameCol,
-                    new DatabaseColumnRequest("DateOfBirth", new DatabaseTypeRequest(typeof(DateTime)), false)
-                        { IsPrimaryKey = true }
-                });
+            { IsPrimaryKey = true };
+        var tbl = db.CreateTable("MyTable", dt, new[]
+        {
+            nameCol,
+            new DatabaseColumnRequest("DateOfBirth", new DatabaseTypeRequest(typeof(DateTime)), false)
+                { IsPrimaryKey = true }
+        });
 
         Assert.That(tbl.GetRowCount(), Is.EqualTo(2));
 
@@ -309,10 +296,10 @@ MrMurder,2001-01-01,Yella");
             @"Name,DateOfBirth,FavouriteColour
 MrMurder,2001-01-01,Yella");
 
-        var dbConfig = new HICDatabaseConfiguration(lmd, null);
+        var dbConfig = new HICDatabaseConfiguration(lmd);
 
         var job = new DataLoadJob(RepositoryLocator, "Go go go!", logManager, lmd, projectDirectory,
-                ThrowImmediatelyDataLoadEventListener.Quiet, dbConfig);
+            ThrowImmediatelyDataLoadEventListener.Quiet, dbConfig);
 
         var loadFactory = new HICDataLoadFactory(
             lmd,
@@ -324,8 +311,8 @@ MrMurder,2001-01-01,Yella");
 
         var exe = loadFactory.Create(ThrowImmediatelyDataLoadEventListener.Quiet);
 
-        var exitCode = exe.Run(
-          job,
+        exe.Run(
+            job,
             new GracefulCancellationToken());
 
         var redactions = CatalogueRepository.GetAllObjects<RegexRedaction>();
@@ -359,13 +346,13 @@ MrMurder,2001-01-01,Yella");
         dt.Rows.Add("Frank", "2001-01-01", "Orange");
 
         var nameCol = new DatabaseColumnRequest("Name", new DatabaseTypeRequest(typeof(string), 20), false)
-        { IsPrimaryKey = true };
-        DiscoveredTable tbl = db.CreateTable("MyTable", dt, new[]
-                {
-                    nameCol,
-                    new DatabaseColumnRequest("DateOfBirth", new DatabaseTypeRequest(typeof(DateTime)), false)
-                        { IsPrimaryKey = true }
-                });
+            { IsPrimaryKey = true };
+        var tbl = db.CreateTable("MyTable", dt, new[]
+        {
+            nameCol,
+            new DatabaseColumnRequest("DateOfBirth", new DatabaseTypeRequest(typeof(DateTime)), false)
+                { IsPrimaryKey = true }
+        });
 
         Assert.That(tbl.GetRowCount(), Is.EqualTo(2));
 
@@ -404,10 +391,10 @@ MrMurder,2001-01-01,Yella");
             @"Name,DateOfBirth,FavouriteColour
 MrMurder,2001-01-01,Yella");
 
-        var dbConfig = new HICDatabaseConfiguration(lmd, null);
+        var dbConfig = new HICDatabaseConfiguration(lmd);
 
         var job = new DataLoadJob(RepositoryLocator, "Go go go!", logManager, lmd, projectDirectory,
-                ThrowImmediatelyDataLoadEventListener.Quiet, dbConfig);
+            ThrowImmediatelyDataLoadEventListener.Quiet, dbConfig);
 
         var loadFactory = new HICDataLoadFactory(
             lmd,
@@ -419,8 +406,8 @@ MrMurder,2001-01-01,Yella");
 
         var exe = loadFactory.Create(ThrowImmediatelyDataLoadEventListener.Quiet);
 
-        var exitCode = exe.Run(
-          job,
+        exe.Run(
+            job,
             new GracefulCancellationToken());
 
         var redactions = CatalogueRepository.GetAllObjects<RegexRedaction>();
@@ -454,13 +441,13 @@ MrMurder,2001-01-01,Yella");
         dt.Rows.Add("Frank", "2001-01-01", "Orange");
 
         var nameCol = new DatabaseColumnRequest("Name", new DatabaseTypeRequest(typeof(string), 20), false)
-        { IsPrimaryKey = true };
-        DiscoveredTable tbl = db.CreateTable("MyTable", dt, new[]
-                {
-                    nameCol,
-                    new DatabaseColumnRequest("DateOfBirth", new DatabaseTypeRequest(typeof(DateTime)), false)
-                        { IsPrimaryKey = false }
-                });
+            { IsPrimaryKey = true };
+        var tbl = db.CreateTable("MyTable", dt, new[]
+        {
+            nameCol,
+            new DatabaseColumnRequest("DateOfBirth", new DatabaseTypeRequest(typeof(DateTime)), false)
+                { IsPrimaryKey = false }
+        });
 
         Assert.That(tbl.GetRowCount(), Is.EqualTo(2));
 
@@ -499,10 +486,10 @@ MrMurder,2001-01-01,Yella");
             @"Name,DateOfBirth,FavouriteColour
 MrMurder,2001-01-01,Yella");
 
-        var dbConfig = new HICDatabaseConfiguration(lmd, null);
+        var dbConfig = new HICDatabaseConfiguration(lmd);
 
         var job = new DataLoadJob(RepositoryLocator, "Go go go!", logManager, lmd, projectDirectory,
-                ThrowImmediatelyDataLoadEventListener.Quiet, dbConfig);
+            ThrowImmediatelyDataLoadEventListener.Quiet, dbConfig);
 
         var loadFactory = new HICDataLoadFactory(
             lmd,
@@ -514,8 +501,8 @@ MrMurder,2001-01-01,Yella");
 
         var exe = loadFactory.Create(ThrowImmediatelyDataLoadEventListener.Quiet);
 
-        var exitCode = exe.Run(
-          job,
+        exe.Run(
+            job,
             new GracefulCancellationToken());
 
         var redactions = CatalogueRepository.GetAllObjects<RegexRedaction>();
@@ -549,13 +536,13 @@ MrMurder,2001-01-01,Yella");
         dt.Rows.Add("Frank", "2001-01-01", "OrangeOrangeOrange");
 
         var nameCol = new DatabaseColumnRequest("Name", new DatabaseTypeRequest(typeof(string), 20), false)
-        { IsPrimaryKey = true };
-        DiscoveredTable tbl = db.CreateTable("MyTable", dt, new[]
-                {
-                    nameCol,
-                    new DatabaseColumnRequest("DateOfBirth", new DatabaseTypeRequest(typeof(DateTime)), false)
-                        { IsPrimaryKey = true }
-                });
+            { IsPrimaryKey = true };
+        var tbl = db.CreateTable("MyTable", dt, new[]
+        {
+            nameCol,
+            new DatabaseColumnRequest("DateOfBirth", new DatabaseTypeRequest(typeof(DateTime)), false)
+                { IsPrimaryKey = true }
+        });
 
         Assert.That(tbl.GetRowCount(), Is.EqualTo(2));
 
@@ -594,10 +581,10 @@ MrMurder,2001-01-01,Yella");
             @"Name,DateOfBirth,FavouriteColour
 MrMurder,2001-01-01,YellaUUUYella");
 
-        var dbConfig = new HICDatabaseConfiguration(lmd, null);
+        var dbConfig = new HICDatabaseConfiguration(lmd);
 
         var job = new DataLoadJob(RepositoryLocator, "Go go go!", logManager, lmd, projectDirectory,
-                ThrowImmediatelyDataLoadEventListener.Quiet, dbConfig);
+            ThrowImmediatelyDataLoadEventListener.Quiet, dbConfig);
 
         var loadFactory = new HICDataLoadFactory(
             lmd,
@@ -609,8 +596,8 @@ MrMurder,2001-01-01,YellaUUUYella");
 
         var exe = loadFactory.Create(ThrowImmediatelyDataLoadEventListener.Quiet);
 
-        var exitCode = exe.Run(
-          job,
+        exe.Run(
+            job,
             new GracefulCancellationToken());
 
         var redactions = CatalogueRepository.GetAllObjects<RegexRedaction>();
@@ -626,14 +613,8 @@ MrMurder,2001-01-01,YellaUUUYella");
 
         var redactionKeys = CatalogueRepository.GetAllObjects<RegexRedactionKey>();
         Assert.That(redactionKeys.Length, Is.EqualTo(4));
-        foreach (var r in redactions)
-        {
-            r.DeleteInDatabase();
-        }
-        foreach (var r in redactionKeys)
-        {
-            r.DeleteInDatabase();
-        }
+        foreach (var r in redactions) r.DeleteInDatabase();
+        foreach (var r in redactionKeys) r.DeleteInDatabase();
     }
 
     [Test]
@@ -660,13 +641,13 @@ MrMurder,2001-01-01,YellaUUUYella");
         dt.Rows.Add("Frank", "2001-01-01", "Orange");
 
         var nameCol = new DatabaseColumnRequest("Name", new DatabaseTypeRequest(typeof(string), 20), false)
-        { IsPrimaryKey = true };
-        DiscoveredTable tbl = db.CreateTable("MyTable", dt, new[]
-                {
-                    nameCol,
-                    new DatabaseColumnRequest("DateOfBirth", new DatabaseTypeRequest(typeof(DateTime)), false)
-                        { IsPrimaryKey = true }
-                });
+            { IsPrimaryKey = true };
+        var tbl = db.CreateTable("MyTable", dt, new[]
+        {
+            nameCol,
+            new DatabaseColumnRequest("DateOfBirth", new DatabaseTypeRequest(typeof(DateTime)), false)
+                { IsPrimaryKey = true }
+        });
 
         Assert.That(tbl.GetRowCount(), Is.EqualTo(2));
 
@@ -712,10 +693,10 @@ MrMurder,2001-01-01,Yella
         File.AppendAllLines(Path.Combine(projectDirectory.ForLoading.FullName, "LoadMe.csv"), data);
 
 
-        var dbConfig = new HICDatabaseConfiguration(lmd, null);
+        var dbConfig = new HICDatabaseConfiguration(lmd);
 
         var job = new DataLoadJob(RepositoryLocator, "Go go go!", logManager, lmd, projectDirectory,
-                ThrowImmediatelyDataLoadEventListener.Quiet, dbConfig);
+            ThrowImmediatelyDataLoadEventListener.Quiet, dbConfig);
 
         var loadFactory = new HICDataLoadFactory(
             lmd,
@@ -726,9 +707,8 @@ MrMurder,2001-01-01,Yella
         );
 
         var exe = loadFactory.Create(ThrowImmediatelyDataLoadEventListener.Quiet);
-        var exitCode = exe.Run(
-          job,
+        exe.Run(
+            job,
             new GracefulCancellationToken());
-
     }
 }

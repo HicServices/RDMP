@@ -5,8 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using Microsoft.Data.SqlClient;
 using System.Linq;
+using Microsoft.Data.SqlClient;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories.Managers;
@@ -272,7 +272,9 @@ public class CredentialsTests : DatabaseTests
             var ex = Assert.Throws<CredentialsInUseException>(creds
                 .DeleteInDatabase); //the bit that fails (because tables are there)
             Assert.That(
-                ex.Message, Is.EqualTo("Cannot delete credentials bob because it is in use by one or more TableInfo objects(Dependency1,Dependency2)"));
+                ex.Message,
+                Is.EqualTo(
+                    "Cannot delete credentials bob because it is in use by one or more TableInfo objects(Dependency1,Dependency2)"));
         }
         finally
         {
@@ -318,8 +320,6 @@ public class CredentialsTests : DatabaseTests
             "GetConnectionStringFromCatalogueWhereOneTableInfoUsesACredentialsOverride");
         var t = new TableInfo(CatalogueRepository, "Test");
         var col = new ColumnInfo(CatalogueRepository, "[mydatabase].[dbo].test.col", "varchar(10)", t);
-
-        var extractionInformation = new ExtractionInformation(CatalogueRepository, ci, col, col.Name);
 
         DataAccessCredentials cred = null;
         try

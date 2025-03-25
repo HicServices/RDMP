@@ -7,6 +7,7 @@
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
+using FAnsi;
 using FAnsi.Discovery;
 using NUnit.Framework;
 using Rdmp.Core.Curation;
@@ -47,7 +48,7 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
 
         db.Create(true);
 
-        var bulk = new BulkTestsData(CatalogueRepository, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer), 100);
+        var bulk = new BulkTestsData(CatalogueRepository, GetCleanedServer(DatabaseType.MicrosoftSQLServer), 100);
         bulk.SetupTestData();
         bulk.ImportAsCatalogue();
 
@@ -100,7 +101,7 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
 
         db.Create(true);
 
-        var bulk = new BulkTestsData(CatalogueRepository, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer), 100);
+        var bulk = new BulkTestsData(CatalogueRepository, GetCleanedServer(DatabaseType.MicrosoftSQLServer), 100);
         bulk.SetupTestData();
         bulk.ImportAsCatalogue();
 
@@ -144,13 +145,13 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         db.Create(true);
 
         //Create this table in the scratch database
-        var tbl = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).CreateTable("MyTable", new[]
+        var tbl = GetCleanedServer(DatabaseType.MicrosoftSQLServer).CreateTable("MyTable", new[]
         {
             new DatabaseColumnRequest("id", "int identity(1,1)", false) { IsPrimaryKey = true },
             new DatabaseColumnRequest("Name", new DatabaseTypeRequest(typeof(string), 10), false)
         });
 
-        var cata = Import(tbl, out var ti, out var cols);
+        var cata = Import(tbl, out _, out var cols);
 
         var planManager = new ForwardEngineerANOCataloguePlanManager(RepositoryLocator, cata)
         {
@@ -233,17 +234,17 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         if (tableInfoAlreadyExistsForSkippedTable)
         {
             var i3 = new TableInfoImporter(CatalogueRepository, tblToNeck);
-            i3.DoImport(out var toNecksTableInfo, out var toNecksColumnInfo);
+            i3.DoImport(out _, out _);
         }
 
         //Create a JoinInfo so the query builder knows how to connect the tables
-        _=new JoinInfo(CatalogueRepository,
+        _ = new JoinInfo(CatalogueRepository,
             fromHeadsColumnInfo.Single(c => c.GetRuntimeName().Equals("Vertebrae")),
             fromNeckColumnInfo.Single(c => c.GetRuntimeName().Equals("Vertebrae")), ExtractionJoinType.Inner, null
         );
 
         var cataEngineer = new ForwardEngineerCatalogue(fromHeadsTableInfo, fromHeadsColumnInfo);
-        cataEngineer.ExecuteForwardEngineering(out var cata, out var cataItems, out var extractionInformations);
+        cataEngineer.ExecuteForwardEngineering(out var cata, out _, out _);
 
         var cataEngineer2 = new ForwardEngineerCatalogue(fromNeckTableInfo, fromNeckColumnInfo);
         cataEngineer2.ExecuteForwardEngineering(cata);
@@ -318,7 +319,8 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
                     .Contains("Vertebrae"))); //actually there will be 2 copies of this one from Necks one from Heads
 
             //new ColumnInfo should have a reference to the anotable
-            Assert.That(newCataItems.Single(ci => ci.Name.Equals("ANOSkullColor")).ColumnInfo.ANOTable_ID, Is.EqualTo(anoTable.ID));
+            Assert.That(newCataItems.Single(ci => ci.Name.Equals("ANOSkullColor")).ColumnInfo.ANOTable_ID,
+                Is.EqualTo(anoTable.ID));
         });
 
 
@@ -337,12 +339,12 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
 
         db.Create(true);
 
-        var bulk = new BulkTestsData(CatalogueRepository, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer), 100);
+        var bulk = new BulkTestsData(CatalogueRepository, GetCleanedServer(DatabaseType.MicrosoftSQLServer), 100);
         bulk.SetupTestData();
         bulk.ImportAsCatalogue();
 
         //Create a lookup table on the server
-        var lookupTbl = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).CreateTable("z_sexLookup", new[]
+        var lookupTbl = GetCleanedServer(DatabaseType.MicrosoftSQLServer).CreateTable("z_sexLookup", new[]
         {
             new DatabaseColumnRequest("Code", "varchar(1)") { IsPrimaryKey = true },
             new DatabaseColumnRequest("hb_Code", "varchar(1)") { IsPrimaryKey = true },
@@ -351,7 +353,7 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
 
         //import a reference to the table
         var importer = new TableInfoImporter(CatalogueRepository, lookupTbl);
-        importer.DoImport(out var lookupTableInfo, out var lookupColumnInfos);
+        importer.DoImport(out _, out var lookupColumnInfos);
 
         //Create a Lookup reference
         var ciSex = bulk.catalogue.CatalogueItems.Single(c => c.Name == "sex");
@@ -466,13 +468,13 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
             "Both the new and the ANO catalogue should have the same number of ExtractionInformations (extractable columns)");
 
         for (var i = 0; i < eiSource.Length; i++)
-        {
             Assert.Multiple(() =>
             {
                 Assert.That(eiDestination[i].Order, Is.EqualTo(eiSource[i].Order),
-                            "ExtractionInformations in the source and destination Catalogue should have the same order");
+                    "ExtractionInformations in the source and destination Catalogue should have the same order");
 
-                Assert.That(eiDestination[i].GetRuntimeName().Replace("ANO", ""), Is.EqualTo(eiSource[i].GetRuntimeName()),
+                Assert.That(eiDestination[i].GetRuntimeName().Replace("ANO", ""),
+                    Is.EqualTo(eiSource[i].GetRuntimeName()),
                     "ExtractionInformations in the source and destination Catalogue should have the same names (excluding ANO prefix)");
 
                 Assert.That(eiDestination[i].ExtractionCategory, Is.EqualTo(eiSource[i].ExtractionCategory),
@@ -484,7 +486,6 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
                 Assert.That(eiDestination[i].IsPrimaryKey, Is.EqualTo(eiSource[i].IsPrimaryKey),
                     "Old / New ANO ExtractionInformations did not match on IsPrimaryKey");
             });
-        }
 
         //check it worked
         var qbdestination = new QueryBuilder(null, null);
@@ -497,7 +498,8 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
             .Single(ei => ei.GetRuntimeName().Equals("MyMutilatedColumn"));
 
         //The transform on postcode should have been refactored to the new table name and preserve the scalar function LEFT...
-        Assert.That(anoEiPostcode.SelectSQL, Is.EqualTo($"LEFT(10,{anoEiPostcode.ColumnInfo.TableInfo.GetFullyQualifiedName()}.[current_postcode])"));
+        Assert.That(anoEiPostcode.SelectSQL,
+            Is.EqualTo($"LEFT(10,{anoEiPostcode.ColumnInfo.TableInfo.GetFullyQualifiedName()}.[current_postcode])"));
 
         var anoEiComboCol = anoCatalogue.GetAllExtractionInformation(ExtractionCategory.Any)
             .Single(ei => ei.GetRuntimeName().Equals("ComboColumn"));
@@ -506,7 +508,9 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         {
             //The transform on postcode should have been refactored to the new table name and preserve the scalar function LEFT...
             Assert.That(
-                anoEiComboCol.SelectSQL, Is.EqualTo($"{anoEiPostcode.ColumnInfo.TableInfo.GetFullyQualifiedName()}.[forename] + ' ' + {anoEiPostcode.ColumnInfo.TableInfo.GetFullyQualifiedName()}.[surname]"));
+                anoEiComboCol.SelectSQL,
+                Is.EqualTo(
+                    $"{anoEiPostcode.ColumnInfo.TableInfo.GetFullyQualifiedName()}.[forename] + ' ' + {anoEiPostcode.ColumnInfo.TableInfo.GetFullyQualifiedName()}.[surname]"));
 
             //there should be 2 tables involved in the query [z_sexLookup] and [BulkData]
             Assert.That(qbdestination.TablesUsedInQuery, Has.Count.EqualTo(2));
@@ -520,9 +524,11 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
 
         Assert.Multiple(() =>
         {
-            Assert.That(qbdestination.GetDistinctRequiredLookups().Single().GetSupplementalJoins().Count(), Is.EqualTo(1),
-                    "The new Lookup did not have the composite join key (sex/hb_extract)");
-            Assert.That(qbdestination.GetDistinctRequiredLookups().Single().GetSupplementalJoins(), Is.Not.EqualTo(compositeLookup),
+            Assert.That(qbdestination.GetDistinctRequiredLookups().Single().GetSupplementalJoins().Count(),
+                Is.EqualTo(1),
+                "The new Lookup did not have the composite join key (sex/hb_extract)");
+            Assert.That(qbdestination.GetDistinctRequiredLookups().Single().GetSupplementalJoins(),
+                Is.Not.EqualTo(compositeLookup),
                 "New query builder for ano catalogue identified the OLD LookupCompositeJoinInfo!");
         });
 

@@ -48,8 +48,6 @@ internal class MemoryRepositoryTests
         var ti = new TableInfo(_repo, "My table");
         var col = new ColumnInfo(_repo, "Mycol", "varchar(10)", ti);
 
-        var ei = new ExtractionInformation(_repo, myCol, col, col.Name);
-
         Assert.That(_repo.GetObjectByID<Catalogue>(memCatalogue.ID), Is.EqualTo(memCatalogue));
 
         var qb = new QueryBuilder(null, null);

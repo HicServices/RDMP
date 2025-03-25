@@ -17,16 +17,17 @@ using Rdmp.Core.Repositories.Construction;
 namespace Rdmp.Core.Repositories;
 
 /// <summary>
-/// Provides support for downloading Plugins out of the Catalogue Database, identifying Exports and building the
-/// <see cref="SafeDirectoryCatalog"/>.  It also includes methods for creating instances of the exported Types.
-/// 
-/// <para>The class name MEF is a misnomer because historically we used the Managed Extensibility Framework (but now we
-/// just grab everything with reflection)</para>
+///     Provides support for downloading Plugins out of the Catalogue Database, identifying Exports and building the
+///     <see cref="SafeDirectoryCatalog" />.  It also includes methods for creating instances of the exported Types.
+///     <para>
+///         The class name MEF is a misnomer because historically we used the Managed Extensibility Framework (but now we
+///         just grab everything with reflection)
+///     </para>
 /// </summary>
 public static class MEF
 {
     // TODO: Cache/preload this for AOT later; figure out generic support
-    private static Lazy<ReadOnlyDictionary<string, Type>> _types = null;
+    private static Lazy<ReadOnlyDictionary<string, Type>> _types;
     private static readonly ConcurrentDictionary<Type, Type[]> TypeCache = new();
     private static readonly Dictionary<string, Exception> badAssemblies = new();
 
@@ -47,7 +48,7 @@ public static class MEF
     //private static readonly Regex ExcludeAssembly = new(@"^(<|Interop\+|Microsoft|System|MongoDB|NPOI|SixLabors|NUnit|OracleInternal|Npgsql|Amazon|Castle|Newtonsoft|SharpCompress|Terminal|YamlDotNet|Moq|BrightIdeasSoftware|MySqlConnector|Azure|ZstdSharp|CommandLine|FAnsi|Internal|Mono|DnsClient|Oracle|MS|NuGet|Unix)", RegexOptions.Compiled|RegexOptions.CultureInvariant);
     private static ReadOnlyDictionary<string, Type> PopulateUnique()
     {
-        var sw = Stopwatch.StartNew();
+        Stopwatch.StartNew();
         var typeByName = new Dictionary<string, Type>();
         foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
         {
@@ -55,18 +56,18 @@ public static class MEF
             try
             {
                 foreach (var type in assembly.GetTypes())
-                    foreach (var alias in new[]
-                             {
+                foreach (var alias in new[]
+                         {
                              Tail(type.FullName), type.FullName, Tail(type.FullName).ToUpperInvariant(),
                              type.FullName?.ToUpperInvariant()
                          }.Where(static x => x is not null).Distinct())
-                        if (!typeByName.TryAdd(alias, type) &&
-                            type.FullName?.StartsWith("Rdmp.Core", StringComparison.OrdinalIgnoreCase) == true)
-                        {
-                            // Simple hack so Rdmp.Core types like ColumnInfo take precedence over others like System.Data.Select+ColumnInfo
-                            typeByName.Remove(alias);
-                            typeByName.Add(alias, type);
-                        }
+                    if (!typeByName.TryAdd(alias, type) &&
+                        type.FullName?.StartsWith("Rdmp.Core", StringComparison.OrdinalIgnoreCase) == true)
+                    {
+                        // Simple hack so Rdmp.Core types like ColumnInfo take precedence over others like System.Data.Select+ColumnInfo
+                        typeByName.Remove(alias);
+                        typeByName.Add(alias, type);
+                    }
             }
             catch (Exception e)
             {
@@ -90,11 +91,12 @@ public static class MEF
 
 
     /// <summary>
-    /// Looks up the given Type in all loaded assemblies (during <see cref="Startup.Startup"/>).  Returns null
-    /// if the Type is not found.
-    /// 
-    /// <para>This method supports both fully qualified Type names and Name only (although this is slower).  Answers
-    /// are cached.</para>
+    ///     Looks up the given Type in all loaded assemblies (during <see cref="Startup.Startup" />).  Returns null
+    ///     if the Type is not found.
+    ///     <para>
+    ///         This method supports both fully qualified Type names and Name only (although this is slower).  Answers
+    ///         are cached.
+    ///     </para>
     /// </summary>
     /// <param name="typeName"></param>
     /// <returns></returns>
@@ -129,12 +131,15 @@ public static class MEF
     }
 
     /// <summary>
-    /// 
-    /// <para>Turns the legit C# name:
-    /// DataLoadEngine.DataFlowPipeline.IDataFlowSource`1[[System.Data.DataTable, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]</para>
-    /// 
-    /// <para>Into a proper C# code:
-    /// IDataFlowSource&lt;DataTable&gt;</para>
+    ///     <para>
+    ///         Turns the legit C# name:
+    ///         DataLoadEngine.DataFlowPipeline.IDataFlowSource`1[[System.Data.DataTable, System.Data, Version=4.0.0.0,
+    ///         Culture=neutral, PublicKeyToken=b77a5c561934e089]]
+    ///     </para>
+    ///     <para>
+    ///         Into a proper C# code:
+    ///         IDataFlowSource&lt;DataTable&gt;
+    ///     </para>
     /// </summary>
     /// <param name="t"></param>
     /// <returns></returns>
@@ -155,11 +160,14 @@ public static class MEF
         return $"{genericTypeName}<{underlyingType}>";
     }
 
-    public static IEnumerable<Type> GetTypes<T>() => GetTypes(typeof(T));
+    public static IEnumerable<Type> GetTypes<T>()
+    {
+        return GetTypes(typeof(T));
+    }
 
     /// <summary>
-    /// Returns MEF exported Types which inherit or implement <paramref name="type"/>.  E.g. pass IAttacher to see
-    /// all exported implementers
+    ///     Returns MEF exported Types which inherit or implement <paramref name="type" />.  E.g. pass IAttacher to see
+    ///     all exported implementers
     /// </summary>
     /// <param name="type"></param>
     /// <returns></returns>
@@ -171,7 +179,7 @@ public static class MEF
     }
 
     /// <summary>
-    /// Returns all MEF exported classes decorated with the specified generic export e.g.
+    ///     Returns all MEF exported classes decorated with the specified generic export e.g.
     /// </summary>
     /// <param name="genericType"></param>
     /// <param name="typeOfT"></param>
@@ -183,10 +191,13 @@ public static class MEF
             .Distinct();
     }
 
-    public static IEnumerable<Type> GetAllTypes() => _types.Value.Values.Distinct().AsEnumerable();
+    public static IEnumerable<Type> GetAllTypes()
+    {
+        return _types.Value.Values.Distinct().AsEnumerable();
+    }
 
     /// <summary>
-    /// Creates an instance of the named class with the provided constructor arguments
+    ///     Creates an instance of the named class with the provided constructor arguments
     /// </summary>
     /// <typeparam name="T">The base/interface of the Type you want to create e.g. IAttacher</typeparam>
     /// <returns></returns>

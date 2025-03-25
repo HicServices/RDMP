@@ -92,7 +92,6 @@ public class EvaluateNamespacesAndSolutionFoldersTests : DatabaseTests
 
         ExplicitDatabaseNameChecker.FindProblems(_csFilesFound);
 
-        var noMappingToDatabaseComments = new AutoCommentsEvaluator();
         AutoCommentsEvaluator.FindProblems(_csFilesFound);
 
         CopyrightHeaderEvaluator.FindProblems(_csFilesFound);
@@ -240,7 +239,8 @@ public class CopyrightHeaderEvaluator
                 suggestedNewFileContents.Add(file, sbSuggestedText.ToString());
         }
 
-        Assert.That(suggestedNewFileContents, Is.Empty, $"The following files did not contain copyright:{Environment.NewLine}{string.Join(Environment.NewLine, suggestedNewFileContents.Keys.Select(Path.GetFileName))}");
+        Assert.That(suggestedNewFileContents, Is.Empty,
+            $"The following files did not contain copyright:{Environment.NewLine}{string.Join(Environment.NewLine, suggestedNewFileContents.Keys.Select(Path.GetFileName))}");
 
         //drag your debugger stack pointer to here to mess up all your files to match the suggestedNewFileContents :)
         foreach (var suggestedNewFileContent in suggestedNewFileContents)
@@ -365,9 +365,7 @@ public partial class AutoCommentsEvaluator
         if (suggestedNewFileContents.Count == 0)
             Assert.Pass();
         else
-        {
             Console.WriteLine($"Replacing file contents in {string.Join(";", suggestedNewFileContents.Keys)}");
-        }
         foreach (var suggestedNewFileContent in suggestedNewFileContents)
             File.WriteAllText(suggestedNewFileContent.Key, suggestedNewFileContent.Value);
 

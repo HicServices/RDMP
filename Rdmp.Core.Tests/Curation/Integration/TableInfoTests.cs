@@ -100,8 +100,10 @@ internal class TableInfoTests : DatabaseTests
                 Assert.That(table.GetRuntimeName(LoadBubble.Raw), Is.EqualTo("TestTableName"));
                 Assert.That(table.GetRuntimeName(LoadBubble.Staging), Is.EqualTo("TestDB_TestTableName_STAGING"));
 
-                Assert.That(table.GetRuntimeName(LoadBubble.Staging, new SuffixBasedNamer()), Is.EqualTo("TestTableName_STAGING"));
-                Assert.That(table.GetRuntimeName(LoadBubble.Staging, new FixedStagingDatabaseNamer("TestDB")), Is.EqualTo("TestDB_TestTableName_STAGING"));
+                Assert.That(table.GetRuntimeName(LoadBubble.Staging, new SuffixBasedNamer()),
+                    Is.EqualTo("TestTableName_STAGING"));
+                Assert.That(table.GetRuntimeName(LoadBubble.Staging, new FixedStagingDatabaseNamer("TestDB")),
+                    Is.EqualTo("TestDB_TestTableName_STAGING"));
 
                 Assert.That(table.GetRuntimeName(LoadBubble.Live), Is.EqualTo("TestTableName"));
             });
@@ -184,7 +186,7 @@ internal class TableInfoTests : DatabaseTests
         Assert.That(tvf.Exists());
 
         var importerTvf = new TableValuedFunctionImporter(CatalogueRepository, tvf);
-        importerTvf.DoImport(out var tvfTi, out var tvfCols);
+        importerTvf.DoImport(out var tvfTi, out _);
 
         Assert.That(tvfTi.Schema, Is.EqualTo("Omg"));
 
@@ -209,7 +211,8 @@ internal class TableInfoTests : DatabaseTests
         Assert.Multiple(() =>
         {
             Assert.That(tblInfo.Discover(DataAccessContext.InternalDataProcessing).Exists());
-            Assert.That(tblInfo.Discover(DataAccessContext.InternalDataProcessing).TableType, Is.EqualTo(TableType.Table));
+            Assert.That(tblInfo.Discover(DataAccessContext.InternalDataProcessing).TableType,
+                Is.EqualTo(TableType.Table));
         });
 
         var viewName = "MyView";
@@ -246,7 +249,8 @@ FROM {1}",
         Assert.Multiple(() =>
         {
             Assert.That(viewInfo.Discover(DataAccessContext.InternalDataProcessing).Exists());
-            Assert.That(viewInfo.Discover(DataAccessContext.InternalDataProcessing).TableType, Is.EqualTo(TableType.View));
+            Assert.That(viewInfo.Discover(DataAccessContext.InternalDataProcessing).TableType,
+                Is.EqualTo(TableType.View));
         });
 
         view.Drop();

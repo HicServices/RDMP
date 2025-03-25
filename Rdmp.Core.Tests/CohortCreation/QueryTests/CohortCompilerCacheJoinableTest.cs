@@ -4,27 +4,27 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
+using System.Data;
+using System.Linq;
+using System.Threading;
 using NUnit.Framework;
 using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
-using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.Databases;
-using System;
-using System.Data;
-using System.Linq;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
-using Tests.Common.Scenarios;
 using Rdmp.Core.QueryCaching.Aggregation;
 using Rdmp.Core.ReusableLibraryCode.Checks;
+using Tests.Common.Scenarios;
 using static Rdmp.Core.CohortCreation.Execution.CohortCompilerRunner;
 
 namespace Rdmp.Core.Tests.CohortCreation.QueryTests;
 
 /// <summary>
-/// Tests caching the results of an <see cref="AggregateConfiguration"/> which hits up multiple underlying tables.
+///     Tests caching the results of an <see cref="AggregateConfiguration" /> which hits up multiple underlying tables.
 /// </summary>
 internal class CohortCompilerCacheJoinableTest : FromToDatabaseTests
 {
@@ -74,14 +74,6 @@ internal class CohortCompilerCacheJoinableTest : FromToDatabaseTests
         //Should now be 1 Catalogue with all the columns (tables will have to be joined to build the query though)
         Assert.That(cata.GetAllExtractionInformation(ExtractionCategory.Core), Has.Length.EqualTo(8));
 
-        var ji = new JoinInfo(CatalogueRepository,
-            rTi.ColumnInfos.Single(ci =>
-                ci.GetRuntimeName().Equals("Header_ID", StringComparison.CurrentCultureIgnoreCase)),
-            hTi.ColumnInfos.Single(ci => ci.GetRuntimeName().Equals("ID", StringComparison.CurrentCultureIgnoreCase)),
-            ExtractionJoinType.Right,
-            null
-        );
-
         //setup a cic that uses the cache
         var cic = new CohortIdentificationConfiguration(CatalogueRepository, "MyCic");
         cic.CreateRootContainerIfNotExists();
@@ -105,8 +97,6 @@ internal class CohortCompilerCacheJoinableTest : FromToDatabaseTests
 
         cic.EnsureNamingConvention(acPatIndex);
 
-        var joinable = new JoinableCohortAggregateConfiguration(CatalogueRepository, cic, acPatIndex);
-
         Assert.Multiple(() =>
         {
             Assert.That(acPatIndex.IsCohortIdentificationAggregate);
@@ -117,7 +107,7 @@ internal class CohortCompilerCacheJoinableTest : FromToDatabaseTests
 
         var runner = new CohortCompilerRunner(compiler, 50);
 
-        var cancellation = new System.Threading.CancellationToken();
+        var cancellation = new CancellationToken();
         runner.Run(cancellation);
 
         Assert.Multiple(() =>
@@ -141,7 +131,8 @@ internal class CohortCompilerCacheJoinableTest : FromToDatabaseTests
             Assert.That(cacheTable.DiscoverColumns(), Has.Length.EqualTo(3));
 
             //healthboard should be a string
-            Assert.That(cacheTable.DiscoverColumn("Healthboard").DataType.GetCSharpDataType(), Is.EqualTo(typeof(string)));
+            Assert.That(cacheTable.DiscoverColumn("Healthboard").DataType.GetCSharpDataType(),
+                Is.EqualTo(typeof(string)));
 
             /*  Query Cache contains this:
              *

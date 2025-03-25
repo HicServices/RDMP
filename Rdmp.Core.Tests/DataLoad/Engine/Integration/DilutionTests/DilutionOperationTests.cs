@@ -32,7 +32,7 @@ public class DilutionOperationTests : DatabaseTests
     public void TestRoundDateToMiddleOfQuarter(string input, string expectedDilute)
     {
         var tbl = Substitute.For<ITableInfo>();
-        tbl.GetRuntimeName(LoadStage.AdjustStaging, null).Returns("DateRoundingTests");
+        tbl.GetRuntimeName(LoadStage.AdjustStaging).Returns("DateRoundingTests");
         var col = Substitute.For<IPreLoadDiscardedColumn>();
         col.TableInfo.Returns(tbl);
         col.GetRuntimeName().Returns("TestField");
@@ -93,7 +93,7 @@ INSERT INTO DateRoundingTests VALUES ({insert})", con).ExecuteNonQuery();
     public void TestExcludeRight3OfUKPostcodes(string input, string expectedDilute)
     {
         var tbl = Substitute.For<ITableInfo>();
-        tbl.GetRuntimeName(LoadStage.AdjustStaging, null).Returns("ExcludeRight3OfPostcodes");
+        tbl.GetRuntimeName(LoadStage.AdjustStaging).Returns("ExcludeRight3OfPostcodes");
         var col = Substitute.For<IPreLoadDiscardedColumn>();
         col.TableInfo.Returns(tbl);
         col.GetRuntimeName().Returns("TestField");
@@ -138,7 +138,7 @@ INSERT INTO DateRoundingTests VALUES ({insert})", con).ExecuteNonQuery();
     public void DiluteToBitFlag(string input, string inputDataType, bool expectedDilute)
     {
         var tbl = Substitute.For<ITableInfo>();
-        tbl.GetRuntimeName(LoadStage.AdjustStaging, null).Returns("DiluteToBitFlagTests");
+        tbl.GetRuntimeName(LoadStage.AdjustStaging).Returns("DiluteToBitFlagTests");
         var col = Substitute.For<IPreLoadDiscardedColumn>();
         col.TableInfo.Returns(tbl);
         col.GetRuntimeName().Returns("TestField");
@@ -177,10 +177,10 @@ INSERT INTO DiluteToBitFlagTests VALUES ({insert})", con).ExecuteNonQuery();
 
         var dt = new DataTable();
         dt.Columns.Add("Bob");
-        dt.Rows.Add(new[] { "Fish" });
+        dt.Rows.Add("Fish");
 
         var tbl = db.CreateTable("DilutionNamerTest", dt);
-        Import(tbl, out var ti, out var cols);
+        Import(tbl, out var ti, out _);
 
         tbl.Rename("AAAA");
         var namer = RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(db, "AAAA");

@@ -22,14 +22,15 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Sources;
 
 public class SourceTests : DatabaseTests
 {
-    private ICatalogueRepository mockRepo = new MemoryCatalogueRepository();
+    private readonly ICatalogueRepository mockRepo = new MemoryCatalogueRepository();
 
     [Test]
     public void RetrieveChunks()
     {
         var source = new DbDataCommandDataFlowSource("Select top 3 * from master.sys.tables", "Query Sys tables",
             DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Builder, 30);
-        Assert.That(source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken()).Rows, Has.Count.EqualTo(3));
+        Assert.That(source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken()).Rows,
+            Has.Count.EqualTo(3));
     }
 
 
@@ -72,7 +73,8 @@ public class SourceTests : DatabaseTests
 
         var ex = Assert.Throws<Exception>(() =>
             context.PreInitialize(ThrowImmediatelyDataLoadEventListener.Quiet, component, ci));
-        Assert.That(ex.Message, Does.Contain("The following expected types were not passed to PreInitialize:TableInfo"));
+        Assert.That(ex.Message,
+            Does.Contain("The following expected types were not passed to PreInitialize:TableInfo"));
     }
 
     [Test]
@@ -86,7 +88,9 @@ public class SourceTests : DatabaseTests
         var ex = Assert.Throws<Exception>(() =>
             context.PreInitialize(ThrowImmediatelyDataLoadEventListener.Quiet, component, ti));
         Assert.That(
-            ex.Message, Does.Contain("Type TableInfo is not an allowable PreInitialize parameters type under the current DataFlowPipelineContext (check which flags you passed to the DataFlowPipelineContextFactory and the interfaces IPipelineRequirement<> that your components implement) "));
+            ex.Message,
+            Does.Contain(
+                "Type TableInfo is not an allowable PreInitialize parameters type under the current DataFlowPipelineContext (check which flags you passed to the DataFlowPipelineContextFactory and the interfaces IPipelineRequirement<> that your components implement) "));
     }
 
     [Test]
@@ -106,7 +110,9 @@ public class SourceTests : DatabaseTests
         var ex = Assert.Throws<Exception>(() =>
             context.PreInitialize(ThrowImmediatelyDataLoadEventListener.Quiet, component, testTableInfo));
         Assert.That(
-            ex.Message, Does.Contain($"The following expected types were not passed to PreInitialize:LoadModuleAssembly{Environment.NewLine}The object types passed were:{Environment.NewLine}Rdmp.Core.Curation.Data.TableInfo:Test Table Info"));
+            ex.Message,
+            Does.Contain(
+                $"The following expected types were not passed to PreInitialize:LoadModuleAssembly{Environment.NewLine}The object types passed were:{Environment.NewLine}Rdmp.Core.Curation.Data.TableInfo:Test Table Info"));
     }
 
     [Test]
@@ -117,7 +123,6 @@ public class SourceTests : DatabaseTests
                                             PipelineUsage.LoadsSingleTableInfo);
 
         var pipeline = new Pipeline(CatalogueRepository, "DeleteMePipeline");
-        var component = new PipelineComponent(CatalogueRepository, pipeline, typeof(TestObject_RequiresTableInfo), 0);
 
         Assert.That(context.IsAllowable(pipeline));
 
@@ -147,7 +152,9 @@ public class SourceTests : DatabaseTests
             Assert.That(rejection, Is.False, reason);
 
             Assert.That(
-                reason, Is.EqualTo("Component TestPipeComponent implements a forbidden type (IPipelineRequirement<TableInfo>) under the pipeline usage context"));
+                reason,
+                Is.EqualTo(
+                    "Component TestPipeComponent implements a forbidden type (IPipelineRequirement<TableInfo>) under the pipeline usage context"));
         });
 
         pipeline.DeleteInDatabase();
@@ -184,7 +191,10 @@ public class SourceTests : DatabaseTests
         public TableInfo PreInitToThis { get; private set; }
 
         public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,
-            GracefulCancellationToken cancellationToken) => throw new NotImplementedException();
+            GracefulCancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
 
         public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
         {
@@ -208,7 +218,10 @@ public class SourceTests : DatabaseTests
         public TableInfo PreInitToThis { get; private set; }
 
         public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,
-            GracefulCancellationToken cancellationToken) => throw new NotImplementedException();
+            GracefulCancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
 
         public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
         {
@@ -236,7 +249,10 @@ public class SourceTests : DatabaseTests
 public class TestObjectNoRequirements : IDataFlowComponent<DataTable>
 {
     public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,
-        GracefulCancellationToken cancellationToken) => throw new NotImplementedException();
+        GracefulCancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
 
     public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
     {
@@ -254,8 +270,10 @@ public class TestObject_Suspicious : IDataFlowComponent<DataTable>, IPipelineReq
     public object Object { get; set; }
 
     public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,
-        GracefulCancellationToken cancellationToken) =>
+        GracefulCancellationToken cancellationToken)
+    {
         throw new NotImplementedException();
+    }
 
     public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
     {
@@ -279,8 +297,10 @@ public class TestObject_ExtraSuspicious : IDataFlowComponent<DataTable>, IPipeli
     public object Object { get; set; }
 
     public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,
-        GracefulCancellationToken cancellationToken) =>
+        GracefulCancellationToken cancellationToken)
+    {
         throw new NotImplementedException();
+    }
 
     public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
     {

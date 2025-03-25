@@ -42,7 +42,7 @@ internal class PredictionValidationTest
         var prediction = new Prediction();
         var v = CreateInitialisedValidator(prediction);
 
-        var ex = Assert.Throws<InvalidOperationException>(() => v.Validate(TestConstants.ValidChiAndInconsistentSex));
+        Assert.Throws<InvalidOperationException>(() => v.Validate(TestConstants.ValidChiAndInconsistentSex));
     }
 
     [Test]
@@ -65,7 +65,7 @@ internal class PredictionValidationTest
             TargetColumn = "chi"
         };
         var v = CreateInitialisedValidator(prediction);
-        var ex = Assert.Throws<InvalidOperationException>(() => v.Validate(TestConstants.ValidChiAndInconsistentSex));
+        Assert.Throws<InvalidOperationException>(() => v.Validate(TestConstants.ValidChiAndInconsistentSex));
     }
 
     #endregion

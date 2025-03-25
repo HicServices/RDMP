@@ -108,7 +108,6 @@ public class AggregateDataBasedTests : DatabaseTests
     }
 
 
-
     private static void AddWHEREToBuilder_CategoryIsTOrNumberGreaterThan42(AggregateBuilder builder, DatabaseType type)
     {
         var syntaxHelper = QuerySyntaxHelperFactory.Create(type);
@@ -182,7 +181,7 @@ public class AggregateDataBasedTests : DatabaseTests
     //[TestCase(DatabaseType.Oracle)]// doesn't quite work yet :) needs full implementation of database abstraction layer for Oracle to work
     public void Count_CorrectNumberOfRowsCalculated(DatabaseType type)
     {
-        var tbl = UploadTestDataAsTableToServer(type, out var catalogue, out var extractionInformations,
+        var tbl = UploadTestDataAsTableToServer(type, out var catalogue, out _,
             out var tableInfo);
 
         var builder = new AggregateBuilder(null, "count(*)", null, new[] { tableInfo });
@@ -538,8 +537,10 @@ public class AggregateDataBasedTests : DatabaseTests
 
 
     /// <summary>
-    /// A test which checks the behaviour of Aggregate Building when there is an axis, a pivot and a TopX in which the TopX selection is the 'Top 2 count column'
-    /// This translates as 'identify the top 2 pivot values which have the highest counts matching the WHERE condition and pivot those categories only (for all data)'
+    ///     A test which checks the behaviour of Aggregate Building when there is an axis, a pivot and a TopX in which the TopX
+    ///     selection is the 'Top 2 count column'
+    ///     This translates as 'identify the top 2 pivot values which have the highest counts matching the WHERE condition and
+    ///     pivot those categories only (for all data)'
     /// </summary>
     /// <param name="type"></param>
     [Test]
@@ -602,8 +603,10 @@ public class AggregateDataBasedTests : DatabaseTests
     }
 
     /// <summary>
-    /// A test which checks the behaviour of Aggregate Building when there is an axis, a pivot and a TopX in which the TopX selection is the 'Top 2 count column'
-    /// This translates as 'identify the top 2 pivot values which have the highest counts matching the WHERE condition and pivot those categories only (for all data)'
+    ///     A test which checks the behaviour of Aggregate Building when there is an axis, a pivot and a TopX in which the TopX
+    ///     selection is the 'Top 2 count column'
+    ///     This translates as 'identify the top 2 pivot values which have the highest counts matching the WHERE condition and
+    ///     pivot those categories only (for all data)'
     /// </summary>
     /// <param name="type"></param>
     [Test]
@@ -670,7 +673,7 @@ public class AggregateDataBasedTests : DatabaseTests
     }
 
     /// <summary>
-    /// Assemble an aggregate which returns the top 1 pivot dimension HAVING count(*) less than 2
+    ///     Assemble an aggregate which returns the top 1 pivot dimension HAVING count(*) less than 2
     /// </summary>
     /// <param name="type"></param>
     [Test]

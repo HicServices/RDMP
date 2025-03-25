@@ -5,12 +5,12 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using FAnsi;
 using FAnsi.Connections;
 using FAnsi.Discovery;
 using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.DataLoad.Engine.Migration;
-using Rdmp.Core.DataLoad.Engine.Migration.QueryBuilding;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
@@ -20,13 +20,12 @@ internal class MigrationStrategyTests : DatabaseTests
     [Test]
     public void OverwriteMigrationStrategy_NoPrimaryKey()
     {
-        var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
 
         var from = db.CreateTable("Bob", new[] { new DatabaseColumnRequest("Field", "int") });
         var to = db.CreateTable("Frank", new[] { new DatabaseColumnRequest("Field", "int") });
 
         var connection = Substitute.For<IManagedConnection>();
-        var strategy = new OverwriteMigrationStrategy(connection);
 
         var migrationFieldProcessor = Substitute.For<IMigrationFieldProcessor>();
 

@@ -23,7 +23,7 @@ internal class CatalogueItemUITests : UITests
     {
         //when I have two CatalogueItems that have the same name
         var catalogueItem = WhenIHaveA<CatalogueItem>();
-        var catalogueItem2 = WhenIHaveA<CatalogueItem>();
+        WhenIHaveA<CatalogueItem>();
 
         var ui = AndLaunch<CatalogueItemUI>(catalogueItem);
 
@@ -43,14 +43,15 @@ internal class CatalogueItemUITests : UITests
             //and the UI should have shown the Propagate changes dialog
             Assert.That(ItemActivator.Results.WindowsShown, Has.Count.EqualTo(1));
         });
-        Assert.That(ItemActivator.Results.WindowsShown.Single(), Is.InstanceOf(typeof(PropagateCatalogueItemChangesToSimilarNamedUI)));
+        Assert.That(ItemActivator.Results.WindowsShown.Single(),
+            Is.InstanceOf(typeof(PropagateCatalogueItemChangesToSimilarNamedUI)));
 
-        AssertNoErrors(ExpectedErrorType.Any);
+        AssertNoErrors();
     }
 
     /// <summary>
-    /// Tests that <see cref="INamedTab.GetTabName"/> works even when half way through a call
-    /// to <see cref="IRDMPSingleDatabaseObjectControl.SetDatabaseObject"/>
+    ///     Tests that <see cref="INamedTab.GetTabName" /> works even when half way through a call
+    ///     to <see cref="IRDMPSingleDatabaseObjectControl.SetDatabaseObject" />
     /// </summary>
     [Test]
     [UITimeout(20000)]

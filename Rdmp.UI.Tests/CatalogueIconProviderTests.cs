@@ -12,6 +12,7 @@ using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.Tests;
@@ -24,7 +25,7 @@ internal class CatalogueIconProviderTests : UITests
     {
         var provider = new CatalogueIconProvider(RepositoryLocator, null);
 
-        var img = provider.GetImage(new object(), OverlayKind.None);
+        provider.GetImage(new object());
 
         Assert.That(provider.HasIcon(new object()), Is.False);
     }
@@ -37,7 +38,7 @@ internal class CatalogueIconProviderTests : UITests
 
         foreach (var obj in WhenIHaveAll())
         {
-            var img = provider.GetImage(obj, OverlayKind.None);
+            provider.GetImage(obj);
 
             if (obj is IDisableable d)
             {
@@ -74,7 +75,7 @@ internal class CatalogueIconProviderTests : UITests
 
 
     /// <summary>
-    /// Exposes a potential infinite loop / stack overflow where an object is masquerading as an IMasquerade
+    ///     Exposes a potential infinite loop / stack overflow where an object is masquerading as an IMasquerade
     /// </summary>
     [Test]
     public void Test_ObjectMasqueradingAsSelf()
@@ -89,11 +90,14 @@ internal class CatalogueIconProviderTests : UITests
 
     private class IAmMe : IMasqueradeAs
     {
-        public object MasqueradingAs() => this;
+        public object MasqueradingAs()
+        {
+            return this;
+        }
     }
 
 
-    private static bool IsBlackAndWhite(SixLabors.ImageSharp.Image<Rgba32> img)
+    private static bool IsBlackAndWhite(Image<Rgba32> img)
     {
         var foundColoured = false;
         img.ProcessPixelRows(pixels =>

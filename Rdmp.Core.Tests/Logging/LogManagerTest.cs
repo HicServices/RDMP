@@ -6,15 +6,15 @@
 
 using System;
 using System.Linq;
+using FAnsi;
 using FAnsi.Discovery;
 using NUnit.Framework;
-using Rdmp.Core.Logging;
-using Tests.Common;
-using FAnsi;
 using Rdmp.Core.Databases;
+using Rdmp.Core.Logging;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
+using Tests.Common;
 
 namespace Rdmp.Core.Tests.Logging;
 
@@ -32,7 +32,7 @@ public class LogManagerTest : DatabaseTests
 
 
     /// <summary>
-    /// Add a bunch of data load runs for the tests in this fixture
+    ///     Add a bunch of data load runs for the tests in this fixture
     /// </summary>
     [OneTimeSetUp]
     protected override void OneTimeSetUp()
@@ -106,11 +106,14 @@ public class LogManagerTest : DatabaseTests
 
         Assert.Multiple(() =>
         {
-            Assert.That(loadHistoryForTask.Count(static load => load.Errors.Count > 0), Is.GreaterThan(0)); //some with some errors
-            Assert.That(loadHistoryForTask.Count(static load => load.Progress.Count > 0), Is.GreaterThan(0)); //some with some progress
+            Assert.That(loadHistoryForTask.Count(static load => load.Errors.Count > 0),
+                Is.GreaterThan(0)); //some with some errors
+            Assert.That(loadHistoryForTask.Count(static load => load.Progress.Count > 0),
+                Is.GreaterThan(0)); //some with some progress
 
 
-            Assert.That(loadHistoryForTask.Count(static load => load.TableLoadInfos.Count == 1), Is.GreaterThan(0)); //some with some table loads
+            Assert.That(loadHistoryForTask.Count(static load => load.TableLoadInfos.Count == 1),
+                Is.GreaterThan(0)); //some with some table loads
         });
     }
 
@@ -170,8 +173,8 @@ public class LogManagerTest : DatabaseTests
     }
 
     /// <summary>
-    /// Tests the ability of the logging database / API to maintain only one set of tasks not
-    /// one upper case and one lower or otherwise mixed cases.
+    ///     Tests the ability of the logging database / API to maintain only one set of tasks not
+    ///     one upper case and one lower or otherwise mixed cases.
     /// </summary>
     [Test]
     public void TestLogging_CreateTasks_MixedCases()
@@ -182,17 +185,20 @@ public class LogManagerTest : DatabaseTests
 
         lm.CreateNewLoggingTaskIfNotExists("ff");
 
-        Assert.That(lm.ListDataSets().Count(s => s.Equals("ff", StringComparison.CurrentCultureIgnoreCase)), Is.EqualTo(1));
+        Assert.That(lm.ListDataSets().Count(s => s.Equals("ff", StringComparison.CurrentCultureIgnoreCase)),
+            Is.EqualTo(1));
 
         //don't create another one just because it's changed case
         lm.CreateNewLoggingTaskIfNotExists("FF");
 
-        Assert.That(lm.ListDataSets().Count(s => s.Equals("ff", StringComparison.CurrentCultureIgnoreCase)), Is.EqualTo(1));
+        Assert.That(lm.ListDataSets().Count(s => s.Equals("ff", StringComparison.CurrentCultureIgnoreCase)),
+            Is.EqualTo(1));
 
-        var dli1 = lm.CreateDataLoadInfo("ff", "tests", "hi there", null, true);
-        var dli2 = lm.CreateDataLoadInfo("FF", "tests", "hi there", null, true);
+        lm.CreateDataLoadInfo("ff", "tests", "hi there", null, true);
+        lm.CreateDataLoadInfo("FF", "tests", "hi there", null, true);
 
-        Assert.That(lm.ListDataSets().Count(s => s.Equals("ff", StringComparison.CurrentCultureIgnoreCase)), Is.EqualTo(1));
+        Assert.That(lm.ListDataSets().Count(s => s.Equals("ff", StringComparison.CurrentCultureIgnoreCase)),
+            Is.EqualTo(1));
     }
 
     [TestCaseSource(typeof(All), nameof(All.DatabaseTypes))]

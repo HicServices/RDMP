@@ -36,38 +36,51 @@ using Rdmp.UI.Tutorials;
 namespace Rdmp.UI.SimpleDialogs.ForwardEngineering;
 
 /// <summary>
-/// This dialog is shown when the RDMP learns about a new data table in your data repository that you want it to curate.  This can be either following a the successful flat file import
-/// or after selecting an existing table for importing metadata from (See ImportSQLTable).
-/// 
-/// <para>If you click 'Cancel' then no dataset (Catalogue) will be created and you will only have the TableInfo/ColumnInfo collection stored in your RDMP database, you will need to manually wire
-/// these up to a Catalogue or delete them if you decied you want to make the dataset extractable later on. </para>
-/// 
-/// <para>Alternatively you can create a new Catalogue, this will result in a Catalogue (dataset) of the same name as the table and a CatalogueItem being created for each ColumnInfo imported.
-/// If you choose to you can make these CatalogueItems extractable by creating ExtractionInformation too or you may choose to do this by hand later on (in CatalogueItemUI).  It is likely that
-/// you don't want to release every column in the dataset to researchers so make sure to review the extractability of the columns created. </para>
-/// 
-/// <para>You can choose a single extractable column to be the Patient Identifier (e.g. CHI / NHS number etc). This column must be the same (logically/datatype) across all your datasets i.e.
-/// you can use either CHI number or NHS Number but you can't mix and match (but you could have fields with different names e.g. PatCHI, PatientCHI, MotherCHI, FatherChiNo etc).</para>
-/// 
-/// <para>The final alternative is to add the imported Columns to another already existing Catalogue.  Only use this option if you know it is possible to join the new table with the other
-/// table(s) that underlie the selected Catalogue (e.g. if you are importing a Results table which joins to a Header table in the dataset Biochemistry on primary/foreign key LabNumber).
-/// If you choose this option you must configure the JoinInfo logic (See JoinConfiguration)</para>
+///     This dialog is shown when the RDMP learns about a new data table in your data repository that you want it to
+///     curate.  This can be either following a the successful flat file import
+///     or after selecting an existing table for importing metadata from (See ImportSQLTable).
+///     <para>
+///         If you click 'Cancel' then no dataset (Catalogue) will be created and you will only have the
+///         TableInfo/ColumnInfo collection stored in your RDMP database, you will need to manually wire
+///         these up to a Catalogue or delete them if you decied you want to make the dataset extractable later on.
+///     </para>
+///     <para>
+///         Alternatively you can create a new Catalogue, this will result in a Catalogue (dataset) of the same name as the
+///         table and a CatalogueItem being created for each ColumnInfo imported.
+///         If you choose to you can make these CatalogueItems extractable by creating ExtractionInformation too or you may
+///         choose to do this by hand later on (in CatalogueItemUI).  It is likely that
+///         you don't want to release every column in the dataset to researchers so make sure to review the extractability
+///         of the columns created.
+///     </para>
+///     <para>
+///         You can choose a single extractable column to be the Patient Identifier (e.g. CHI / NHS number etc). This
+///         column must be the same (logically/datatype) across all your datasets i.e.
+///         you can use either CHI number or NHS Number but you can't mix and match (but you could have fields with
+///         different names e.g. PatCHI, PatientCHI, MotherCHI, FatherChiNo etc).
+///     </para>
+///     <para>
+///         The final alternative is to add the imported Columns to another already existing Catalogue.  Only use this
+///         option if you know it is possible to join the new table with the other
+///         table(s) that underlie the selected Catalogue (e.g. if you are importing a Results table which joins to a
+///         Header table in the dataset Biochemistry on primary/foreign key LabNumber).
+///         If you choose this option you must configure the JoinInfo logic (See JoinConfiguration)
+///     </para>
 /// </summary>
 public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
 {
     private object[] _extractionCategories;
 
-    private string NotExtractable = "Not Extractable";
+    private readonly string NotExtractable = "Not Extractable";
     private ICatalogue _catalogue;
     private ITableInfo _tableInfo;
     private bool _choicesFinalised;
     private HelpWorkflow _workflow;
     private CatalogueItem[] _catalogueItems;
     private bool _ddChangeAllChanged;
-    private bool _importedNewTable;
+    private readonly bool _importedNewTable;
 
     /// <summary>
-    /// the Project to associate the Catalogue with to make it ProjectSpecific (probably null)
+    ///     the Project to associate the Catalogue with to make it ProjectSpecific (probably null)
     /// </summary>
     private IProject _projectSpecific;
 
@@ -81,10 +94,11 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
     public string TargetFolder { get; set; }
 
     private BinderWithErrorProviderFactory _binder;
-    private ObjectSaverButton objectSaverButton1 = new();
+    private readonly ObjectSaverButton objectSaverButton1 = new();
 
     /// <summary>
-    /// True if we are making programmatic changes to values and shouldn't respond to control events (e.g. dropdown changes)
+    ///     True if we are making programmatic changes to values and shouldn't respond to control events (e.g. dropdown
+    ///     changes)
     /// </summary>
     private bool isLoading;
 
@@ -100,7 +114,7 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
     public ConfigureCatalogueExtractabilityUI(IActivateItems activator, ITableInfoImporter importer,
         string initialDescription, IProject projectSpecificIfAny) : this(activator)
     {
-        importer.DoImport(out _tableInfo, out var cols);
+        importer.DoImport(out _tableInfo, out _);
 
         _importedNewTable = true;
 
@@ -220,7 +234,7 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
         if (n.ExtractionInformation == null)
             MakeExtractable(n, true, ExtractionCategory.Core);
 
-        Debug.Assert(n.ExtractionInformation != null, "n.ExtractionInformation != null");
+        Debug.Assert(n.ExtractionInformation != null);
         n.ExtractionInformation.IsExtractionIdentifier = (bool)newvalue;
         n.ExtractionInformation.SaveToDatabase();
 
@@ -272,7 +286,7 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
         if (n.ExtractionInformation == null)
             MakeExtractable(n, true, ExtractionCategory.Core);
 
-        Debug.Assert(n.ExtractionInformation != null, "n.ExtractionInformation != null");
+        Debug.Assert(n.ExtractionInformation != null);
         n.ExtractionInformation.HashOnDataRelease = (bool)newvalue;
 
         // if we are turning on hashing then ensure the column has an alias
@@ -362,7 +376,7 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
 
             cbx.Items.AddRange(_extractionCategories);
             cbx.SelectedItem = n.ExtractionInformation != null
-                ? (object)n.ExtractionInformation.ExtractionCategory
+                ? n.ExtractionInformation.ExtractionCategory
                 : NotExtractable;
             cellEditEventArgs.Control = cbx;
         }
@@ -377,7 +391,7 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
             var cbx = (ComboBox)cellEditEventArgs.Control;
 
             if (Equals(cbx.SelectedItem, NotExtractable))
-                MakeExtractable(n, false, null);
+                MakeExtractable(n, false);
             else
                 MakeExtractable(n, true, (ExtractionCategory)cbx.SelectedItem);
         }
@@ -398,7 +412,10 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
     {
         var filteredObjects = olvColumnExtractability.FilteredObjects.Cast<ColPair>().ToArray();
         var toChangeTo = ddCategoriseMany.SelectedItem;
-        var itemsToChange = filteredObjects.Where(obj => obj.ExtractionInformation is null || !obj.ExtractionInformation.ExtractionCategory.Equals(toChangeTo)).Select(static cp => cp.CatalogueItem.Name).ToArray();
+        var itemsToChange = filteredObjects
+            .Where(obj =>
+                obj.ExtractionInformation is null || !obj.ExtractionInformation.ExtractionCategory.Equals(toChangeTo))
+            .Select(static cp => cp.CatalogueItem.Name).ToArray();
         var columnChangeDetails = itemsToChange.Length < 3
             ? new StringBuilder().AppendJoin(", ", itemsToChange[..^1])
                 .Append(itemsToChange.Length > 1 ? " and " : "").Append(itemsToChange[^1]).ToString()
@@ -443,10 +460,10 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
         }
 
         if (Activator.SelectObject(new DialogArgs
-        {
-            TaskDescription =
+            {
+                TaskDescription =
                     "You are about to add the newly imported table columns to an existing Catalogue.  This will mean that your Catalogue draws data from 2+ tables.  You will need to also create a join between the underlying columns for this to work properly."
-        }, Activator.CoreChildProvider.AllCatalogues, out var selected))
+            }, Activator.CoreChildProvider.AllCatalogues, out var selected))
             AddToExistingCatalogue(selected, eis);
     }
 
@@ -650,8 +667,8 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
 
     private class ColPair
     {
-        public CatalogueItem CatalogueItem;
-        public ColumnInfo ColumnInfo;
+        public readonly CatalogueItem CatalogueItem;
+        public readonly ColumnInfo ColumnInfo;
         public ExtractionInformation ExtractionInformation;
 
         public ColPair(CatalogueItem ci, ColumnInfo col, ExtractionInformation ei)
@@ -661,7 +678,10 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
             ExtractionInformation = ei;
         }
 
-        public override string ToString() => CatalogueItem.Name;
+        public override string ToString()
+        {
+            return CatalogueItem.Name;
+        }
     }
 
     private void SelectProject(IProject projectSpecificIfAny)
@@ -689,10 +709,10 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
         else
         {
             if (Activator.SelectObject(new DialogArgs
-            {
-                TaskDescription =
+                    {
+                        TaskDescription =
                             "Which Project should this Catalogue be associated with? ProjectSpecific Catalogues can only be extracted in extractions of that Project and will not appear in the main Catalogues tree."
-            }, Activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>().ToArray(),
+                    }, Activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>().ToArray(),
                     out var selected))
                 SelectProject(selected);
         }
@@ -717,7 +737,7 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
             if (n.ExtractionInformation == null)
                 MakeExtractable(n, true, ExtractionCategory.Core);
 
-            Debug.Assert(n.ExtractionInformation != null, "n.ExtractionInformation != null");
+            Debug.Assert(n.ExtractionInformation != null);
             n.ExtractionInformation.IsExtractionIdentifier = true;
             n.ExtractionInformation.SaveToDatabase();
         }
@@ -725,7 +745,10 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
         olvColumnExtractability.RebuildColumns();
     }
 
-    public ObjectSaverButton GetObjectSaverButton() => objectSaverButton1;
+    public ObjectSaverButton GetObjectSaverButton()
+    {
+        return objectSaverButton1;
+    }
 
     private void BtnRenameTableInfo_Click(object sender, EventArgs e)
     {

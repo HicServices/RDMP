@@ -79,8 +79,6 @@ public class SelectSQLRefactorerTests : UnitTests
         tableInfo.Name = "[database]..[table]";
         tableInfo.SaveToDatabase();
 
-        var refactorer = new SelectSQLRefactorer();
-
         Assert.That(SelectSQLRefactorer.IsRefactorable(ei), Is.EqualTo(expectedToBeRefactorable));
 
         if (expectedToBeRefactorable)
@@ -122,7 +120,6 @@ public class SelectSQLRefactorerTests : UnitTests
         foreach (IDeleteable d in ti.ColumnInfos)
             d.DeleteInDatabase();
 
-        var refactorer = new SelectSQLRefactorer();
         Assert.That(SelectSQLRefactorer.IsRefactorable(ti), Is.False);
 
         var ex = Assert.Throws<RefactoringException>(() => SelectSQLRefactorer.RefactorTableName(ti, newName));
@@ -131,14 +128,16 @@ public class SelectSQLRefactorerTests : UnitTests
 
 
     /// <summary>
-    /// Tests when the Column name does not exactly match the search/replace table name pattern during refactoring.
+    ///     Tests when the Column name does not exactly match the search/replace table name pattern during refactoring.
     /// </summary>
     /// <example>
-    /// Refactor columns belonging to [Fish].[dbo].[TableA] to now belong in [Fish].[dbo].[TableB]
-    /// 
-    /// BUT column name is [Fish]..[TableA].[MyCol].  In this case it should be refactored to [Fish].[dbo].[TableB].[MyCol]
+    ///     Refactor columns belonging to [Fish].[dbo].[TableA] to now belong in [Fish].[dbo].[TableB]
+    ///     BUT column name is [Fish]..[TableA].[MyCol].  In this case it should be refactored to [Fish].[dbo].[TableB].[MyCol]
     /// </example>
-    /// <param name="columnName">A column that belongs to <paramref name="findTableName"/> which should be refactored even if its name isn't an exact match to the table name</param>
+    /// <param name="columnName">
+    ///     A column that belongs to <paramref name="findTableName" /> which should be refactored even if
+    ///     its name isn't an exact match to the table name
+    /// </param>
     /// <param name="findTableName">The table being renamed, will be renamed MyTbl to MyNewTbl</param>
     [TestCase("[Fish]..[MyTbl].[A]", "[Fish]..[MyTbl]")]
     [TestCase("[Fish].[dbo].[MyTbl].[A]", "[Fish]..[MyTbl]")]

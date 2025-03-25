@@ -30,7 +30,6 @@ public class TableInfoJoiningQueryBuilderTests : DatabaseTests
         var result = new TableInfo(CatalogueRepository, "[biochemistry]..[Result]");
         var col3 = new ColumnInfo(CatalogueRepository, "FK", "int", result);
         var col4 = new ColumnInfo(CatalogueRepository, "Code", "varchar(10)", result);
-        var col5 = new ColumnInfo(CatalogueRepository, "[biochemistry]..[Result].[OmgBob]", "varchar(10)", result);
 
         //we can join on col2 = col3
         new JoinInfo(CatalogueRepository, col3, col2, ExtractionJoinType.Right, "");
@@ -43,7 +42,7 @@ public class TableInfoJoiningQueryBuilderTests : DatabaseTests
         };
         queryBuilder.AddColumn(icol1);
 
-        var tablesUsed = SqlQueryBuilderHelper.GetTablesUsedInQuery(queryBuilder, out _, null);
+        var tablesUsed = SqlQueryBuilderHelper.GetTablesUsedInQuery(queryBuilder, out _);
 
         Assert.That(tablesUsed, Has.Count.EqualTo(1));
         Assert.That(tablesUsed[0], Is.EqualTo(head));
@@ -58,7 +57,7 @@ public class TableInfoJoiningQueryBuilderTests : DatabaseTests
         };
         queryBuilder.AddColumn(icol4);
 
-        tablesUsed = SqlQueryBuilderHelper.GetTablesUsedInQuery(queryBuilder, out _, null);
+        tablesUsed = SqlQueryBuilderHelper.GetTablesUsedInQuery(queryBuilder, out _);
 
         Assert.That(tablesUsed, Has.Count.EqualTo(2));
         Assert.Multiple(() =>
@@ -89,7 +88,7 @@ FROM
         queryBuilder.AddColumn(new ColumnInfoToIColumn(memory, col1));
 
         //without the filter
-        tablesUsed = SqlQueryBuilderHelper.GetTablesUsedInQuery(queryBuilder, out _, null);
+        tablesUsed = SqlQueryBuilderHelper.GetTablesUsedInQuery(queryBuilder, out _);
         Assert.That(tablesUsed, Has.Count.EqualTo(1));
 
         //set the filter
@@ -100,7 +99,7 @@ FROM
         queryBuilder.ParameterManager.ClearNonGlobals();
 
         //with the filter
-        tablesUsed = SqlQueryBuilderHelper.GetTablesUsedInQuery(queryBuilder, out _, null);
+        tablesUsed = SqlQueryBuilderHelper.GetTablesUsedInQuery(queryBuilder, out _);
         Assert.That(tablesUsed, Has.Count.EqualTo(2));
     }
 }

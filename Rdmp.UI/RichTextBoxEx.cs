@@ -13,7 +13,7 @@ using System.Windows.Forms;
 namespace Rdmp.UI;
 
 /// <summary>
-/// Text box with support for hyperlinks.
+///     Text box with support for hyperlinks.
 /// </summary>
 public partial class RichTextBoxEx : RichTextBox
 {
@@ -47,13 +47,14 @@ public partial class RichTextBoxEx : RichTextBox
         public byte bReserved1;
     }
 
-    [LibraryImport("user32.dll", SetLastError = true, EntryPoint = "SendMessageW", StringMarshalling = StringMarshalling.Utf16)]
+    [LibraryImport("user32.dll", SetLastError = true, EntryPoint = "SendMessageW",
+        StringMarshalling = StringMarshalling.Utf16)]
     private static partial IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
 
     private const int WM_USER = 0x0400;
     private const int EM_GETCHARFORMAT = WM_USER + 58;
     private const int EM_SETCHARFORMAT = WM_USER + 68;
-    
+
     private const int SCF_SELECTION = 0x0001;
     private const int SCF_WORD = 0x0002;
     private const int SCF_ALL = 0x0004;
@@ -136,7 +137,7 @@ public partial class RichTextBoxEx : RichTextBox
     }
 
     /// <summary>
-    /// Insert a given text as a link into the RichTextBox at the current insert position.
+    ///     Insert a given text as a link into the RichTextBox at the current insert position.
     /// </summary>
     /// <param name="text">Text to be inserted</param>
     public void InsertLink(string text)
@@ -145,7 +146,7 @@ public partial class RichTextBoxEx : RichTextBox
     }
 
     /// <summary>
-    /// Insert a given text at a given position as a link.
+    ///     Insert a given text at a given position as a link.
     /// </summary>
     /// <param name="text">Text to be inserted</param>
     /// <param name="position">Insert position</param>
@@ -162,11 +163,11 @@ public partial class RichTextBoxEx : RichTextBox
     }
 
     /// <summary>
-    /// Insert a given text at at the current input position as a link.
-    /// The link text is followed by a hash (#) and the given hyperlink text, both of
-    /// them invisible.
-    /// When clicked on, the whole link text and hyperlink string are given in the
-    /// LinkClickedEventArgs.
+    ///     Insert a given text at at the current input position as a link.
+    ///     The link text is followed by a hash (#) and the given hyperlink text, both of
+    ///     them invisible.
+    ///     When clicked on, the whole link text and hyperlink string are given in the
+    ///     LinkClickedEventArgs.
     /// </summary>
     /// <param name="text">Text to be inserted</param>
     /// <param name="hyperlink">Invisible hyperlink string to be inserted</param>
@@ -176,10 +177,10 @@ public partial class RichTextBoxEx : RichTextBox
     }
 
     /// <summary>
-    /// Insert a given text at a given position as a link. The link text is followed by
-    /// a hash (#) and the given hyperlink text, both of them invisible.
-    /// When clicked on, the whole link text and hyperlink string are given in the
-    /// LinkClickedEventArgs.
+    ///     Insert a given text at a given position as a link. The link text is followed by
+    ///     a hash (#) and the given hyperlink text, both of them invisible.
+    ///     When clicked on, the whole link text and hyperlink string are given in the
+    ///     LinkClickedEventArgs.
     /// </summary>
     /// <param name="text">Text to be inserted</param>
     /// <param name="hyperlink">Invisible hyperlink string to be inserted</param>
@@ -205,7 +206,7 @@ public partial class RichTextBoxEx : RichTextBox
     }
 
     /// <summary>
-    /// Set the current selection's link style
+    ///     Set the current selection's link style
     /// </summary>
     /// <param name="link">true: set link style, false: clear link style</param>
     public void SetSelectionLink(bool link)
@@ -214,10 +215,13 @@ public partial class RichTextBoxEx : RichTextBox
     }
 
     /// <summary>
-    /// Get the link style for the current selection
+    ///     Get the link style for the current selection
     /// </summary>
     /// <returns>0: link style not set, 1: link style set, -1: mixed</returns>
-    public int GetSelectionLink() => GetSelectionStyle(CFM_LINK, CFE_LINK);
+    public int GetSelectionLink()
+    {
+        return GetSelectionStyle(CFM_LINK, CFE_LINK);
+    }
 
 
     private void SetSelectionStyle(uint mask, uint effect)
@@ -231,7 +235,7 @@ public partial class RichTextBoxEx : RichTextBox
         var lpar = Marshal.AllocCoTaskMem(Marshal.SizeOf(cf));
         Marshal.StructureToPtr(cf, lpar, false);
 
-        var res = SendMessage(Handle, EM_SETCHARFORMAT, wpar, lpar);
+        SendMessage(Handle, EM_SETCHARFORMAT, wpar, lpar);
 
         Marshal.FreeCoTaskMem(lpar);
     }
@@ -246,7 +250,7 @@ public partial class RichTextBoxEx : RichTextBox
         var lpar = Marshal.AllocCoTaskMem(Marshal.SizeOf(cf));
         Marshal.StructureToPtr(cf, lpar, false);
 
-        var res = SendMessage(Handle, EM_GETCHARFORMAT, wpar, lpar);
+        SendMessage(Handle, EM_GETCHARFORMAT, wpar, lpar);
 
         cf = (CHARFORMAT2_STRUCT)Marshal.PtrToStructure(lpar, typeof(CHARFORMAT2_STRUCT));
 

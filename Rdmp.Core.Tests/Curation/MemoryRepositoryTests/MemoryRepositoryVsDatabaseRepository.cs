@@ -14,7 +14,6 @@ using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Repositories;
-using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.MemoryRepositoryTests;
@@ -91,19 +90,19 @@ internal class MemoryRepositoryVsDatabaseRepository : DatabaseTests
 
         var memoryRepository = new MemoryCatalogueRepository(CatalogueRepository);
 
-        var importer1 = new TableInfoImporter(memoryRepository, tbl, DataAccessContext.Any);
+        var importer1 = new TableInfoImporter(memoryRepository, tbl);
 
         importer1.DoImport(out var memTableInfo, out var memColumnInfos);
         var forwardEngineer1 = new ForwardEngineerCatalogue(memTableInfo, memColumnInfos);
-        forwardEngineer1.ExecuteForwardEngineering(out var memCatalogue, out var memCatalogueItems,
-            out var memExtractionInformations);
+        forwardEngineer1.ExecuteForwardEngineering(out var memCatalogue, out _,
+            out _);
 
 
-        var importerdb = new TableInfoImporter(CatalogueRepository, tbl, DataAccessContext.Any);
+        var importerdb = new TableInfoImporter(CatalogueRepository, tbl);
         importerdb.DoImport(out var dbTableInfo, out var dbColumnInfos);
         var forwardEngineer2 = new ForwardEngineerCatalogue(dbTableInfo, dbColumnInfos);
-        forwardEngineer2.ExecuteForwardEngineering(out var dbCatalogue, out var dbCatalogueItems,
-            out var dbExtractionInformations);
+        forwardEngineer2.ExecuteForwardEngineering(out var dbCatalogue, out _,
+            out _);
 
 
         UnitTests.AssertAreEqual(memCatalogue, dbCatalogue);

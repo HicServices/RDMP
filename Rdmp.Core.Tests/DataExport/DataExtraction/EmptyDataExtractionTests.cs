@@ -45,7 +45,7 @@ public class EmptyDataExtractionTests : TestsRequiringAnExtractionConfiguration
         var host = new ExtractionPipelineUseCase(new ThrowImmediatelyActivator(RepositoryLocator),
             _request.Configuration.Project, _request, p, DataLoadInfo.Empty);
 
-        var engine = host.GetEngine(p, ThrowImmediatelyDataLoadEventListener.Quiet);
+        host.GetEngine(p, ThrowImmediatelyDataLoadEventListener.Quiet);
         host.Source.AllowEmptyExtractions = allowEmptyDatasetExtractions;
 
         var token = new GracefulCancellationToken();
@@ -66,7 +66,8 @@ public class EmptyDataExtractionTests : TestsRequiringAnExtractionConfiguration
             var exception = Assert.Throws<Exception>(() =>
                 host.Source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, token));
 
-            Assert.That(exception.Message, Does.StartWith("There is no data to load, query returned no rows, query was"));
+            Assert.That(exception.Message,
+                Does.StartWith("There is no data to load, query returned no rows, query was"));
         }
 
         p.DeleteInDatabase();
@@ -89,7 +90,8 @@ public class EmptyDataExtractionTests : TestsRequiringAnExtractionConfiguration
             //this should be what is in the file, the private identifier and the 1 that was put into the table in the first place (see parent class for the test data setup)
             Assert.That(File.ReadAllText(r.OutputFile).Trim(), Is.EqualTo(@"ReleaseID,Name,DateOfBirth"));
 
-            Assert.That(_request.QueryBuilder.SelectColumns.Count(c => c.IColumn is ReleaseIdentifierSubstitution), Is.EqualTo(1));
+            Assert.That(_request.QueryBuilder.SelectColumns.Count(c => c.IColumn is ReleaseIdentifierSubstitution),
+                Is.EqualTo(1));
         });
         File.Delete(r.OutputFile);
     }

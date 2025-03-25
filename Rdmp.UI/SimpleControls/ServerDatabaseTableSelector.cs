@@ -25,7 +25,8 @@ namespace Rdmp.UI.SimpleControls;
 public delegate void IntegratedSecurityUseChangedHandler(bool use);
 
 /// <summary>
-/// Lets you select a server database or table.  Includes auto population of database/table lists.  This is a reusable component.
+///     Lets you select a server database or table.  Includes auto population of database/table lists.  This is a reusable
+///     component.
 /// </summary>
 public partial class ServerDatabaseTableSelector : UserControl
 {
@@ -78,11 +79,11 @@ public partial class ServerDatabaseTableSelector : UserControl
     public event Action SelectionChanged;
     private IDiscoveredServerHelper _helper;
 
-    private BackgroundWorker _workerRefreshDatabases = new();
+    private readonly BackgroundWorker _workerRefreshDatabases = new();
     private CancellationTokenSource _workerRefreshDatabasesToken;
     private string[] _listDatabasesAsyncResult;
 
-    private BackgroundWorker _workerRefreshTables = new();
+    private readonly BackgroundWorker _workerRefreshTables = new();
     private CancellationTokenSource _workerRefreshTablesToken;
     private List<DiscoveredTable> _listTablesAsyncResult;
 
@@ -105,10 +106,8 @@ public partial class ServerDatabaseTableSelector : UserControl
         _workerRefreshTables.WorkerSupportsCancellation = true;
         _workerRefreshTables.RunWorkerCompleted += UpdateTablesAsyncCompleted;
 
-        var r = new RecentHistoryOfControls(cbxServer, new Guid("01ccc304-0686-4145-86a5-cc0468d40027"));
         RecentHistoryOfControls.AddHistoryAsItemsToComboBox(cbxServer);
 
-        var r2 = new RecentHistoryOfControls(cbxDatabase, new Guid("e1a4e7a8-3f7a-4018-8ff5-2fd661ee06a3"));
         RecentHistoryOfControls.AddHistoryAsItemsToComboBox(cbxDatabase);
 
         _helper = DatabaseCommandHelper.For(DatabaseType);
@@ -124,9 +123,7 @@ public partial class ServerDatabaseTableSelector : UserControl
     {
         var builder = (DbConnectionStringBuilder)((object[])e.Argument)[0];
         if (!string.IsNullOrWhiteSpace(Timeout) && int.TryParse(Timeout, out var _timeout))
-        {
             builder["Timeout"] = _timeout;
-        }
 
         var database = (string)((object[])e.Argument)[1];
 
@@ -184,19 +181,16 @@ public partial class ServerDatabaseTableSelector : UserControl
     {
         var builder = (DbConnectionStringBuilder)((object[])e.Argument)[0];
         if (!string.IsNullOrWhiteSpace(Timeout) && int.TryParse(Timeout, out var _timeout) && _timeout > 0)
-        {
             builder["Timeout"] = _timeout;
-        }
         else
-        {
             builder["Timeout"] = 30000;
-        }
         ResetState();
 
         _workerRefreshDatabasesToken = new CancellationTokenSource();
         try
         {
-            _listDatabasesAsyncResult = _helper.ListDatabasesAsync(builder, _workerRefreshDatabasesToken.Token).ToBlockingEnumerable(_workerRefreshDatabasesToken.Token).ToArray();
+            _listDatabasesAsyncResult = _helper.ListDatabasesAsync(builder, _workerRefreshDatabasesToken.Token)
+                .ToBlockingEnumerable(_workerRefreshDatabasesToken.Token).ToArray();
         }
         catch (OperationCanceledException)
         {
@@ -486,8 +480,10 @@ public partial class ServerDatabaseTableSelector : UserControl
         return null;
     }
 
-    public DbConnectionStringBuilder GetBuilder() =>
-        _helper.GetConnectionStringBuilder(cbxServer.Text, cbxDatabase.Text, tbUsername.Text, tbPassword.Text);
+    public DbConnectionStringBuilder GetBuilder()
+    {
+        return _helper.GetConnectionStringBuilder(cbxServer.Text, cbxDatabase.Text, tbUsername.Text, tbPassword.Text);
+    }
 
     private void llLoading_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
@@ -576,6 +572,5 @@ public partial class ServerDatabaseTableSelector : UserControl
 
     private void label3_Click(object sender, EventArgs e)
     {
-
     }
 }

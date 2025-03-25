@@ -4,15 +4,15 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataFlowPipeline;
-using Rdmp.Core.Repositories;
-using System.Collections.Generic;
-using System.Linq;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using Tests.Common;
@@ -34,8 +34,8 @@ public class AbstractBaseRunnerTests : UnitTests
         var c = WhenIHaveA<Catalogue>();
         WhenIHaveA<Catalogue>();
         WhenIHaveA<Catalogue>();
-        var r = new TestRunner();
-        Assert.That(TestRunner.GetObjectFromCommandLineString<Catalogue>(RepositoryLocator, c.ID.ToString()), Is.EqualTo(c));
+        Assert.That(TestRunner.GetObjectFromCommandLineString<Catalogue>(RepositoryLocator, c.ID.ToString()),
+            Is.EqualTo(c));
     }
 
     [Test]
@@ -47,8 +47,8 @@ public class AbstractBaseRunnerTests : UnitTests
 
         WhenIHaveA<Catalogue>();
         WhenIHaveA<Catalogue>();
-        var r = new TestRunner();
-        Assert.That(TestRunner.GetObjectFromCommandLineString<Catalogue>(RepositoryLocator, "Catalogue:*go*"), Is.EqualTo(c));
+        Assert.That(TestRunner.GetObjectFromCommandLineString<Catalogue>(RepositoryLocator, "Catalogue:*go*"),
+            Is.EqualTo(c));
     }
 
     [Test]
@@ -57,8 +57,8 @@ public class AbstractBaseRunnerTests : UnitTests
         var c = WhenIHaveA<Project>();
         WhenIHaveA<Project>();
         WhenIHaveA<Project>();
-        var r = new TestRunner();
-        Assert.That(TestRunner.GetObjectFromCommandLineString<Project>(RepositoryLocator, c.ID.ToString()), Is.EqualTo(c));
+        Assert.That(TestRunner.GetObjectFromCommandLineString<Project>(RepositoryLocator, c.ID.ToString()),
+            Is.EqualTo(c));
     }
 
     [Test]
@@ -70,13 +70,13 @@ public class AbstractBaseRunnerTests : UnitTests
 
         WhenIHaveA<Project>();
         WhenIHaveA<Project>();
-        var r = new TestRunner();
-        Assert.That(TestRunner.GetObjectFromCommandLineString<Project>(RepositoryLocator, "Project:*go*"), Is.EqualTo(c));
+        Assert.That(TestRunner.GetObjectFromCommandLineString<Project>(RepositoryLocator, "Project:*go*"),
+            Is.EqualTo(c));
     }
 
     /// <summary>
-    /// Tests that things the user might enter for a parameter (or default parameter values specified in RDMP
-    /// are going to be interpreted as null correctly
+    ///     Tests that things the user might enter for a parameter (or default parameter values specified in RDMP
+    ///     are going to be interpreted as null correctly
     /// </summary>
     /// <param name="expression"></param>
     [TestCase(null)]
@@ -91,12 +91,11 @@ public class AbstractBaseRunnerTests : UnitTests
 
         WhenIHaveA<Catalogue>();
         WhenIHaveA<Catalogue>();
-        var r = new TestRunner();
         Assert.That(TestRunner.GetObjectFromCommandLineString<Catalogue>(RepositoryLocator, expression), Is.Null);
     }
 
     /// <summary>
-    /// This test is for the IEnumerable version
+    ///     This test is for the IEnumerable version
     /// </summary>
     /// <param name="expression"></param>
     [TestCase(null)]
@@ -111,7 +110,6 @@ public class AbstractBaseRunnerTests : UnitTests
 
         WhenIHaveA<Catalogue>();
         WhenIHaveA<Catalogue>();
-        var r = new TestRunner();
         Assert.That(TestRunner.GetObjectsFromCommandLineString<Catalogue>(RepositoryLocator, expression), Is.Empty);
     }
 
@@ -122,7 +120,6 @@ public class AbstractBaseRunnerTests : UnitTests
         var c = WhenIHaveA<Catalogue>();
         var c2 = WhenIHaveA<Catalogue>();
         WhenIHaveA<Catalogue>();
-        var r = new TestRunner();
 
         var results = TestRunner.GetObjectsFromCommandLineString<Catalogue>(RepositoryLocator, $"{c.ID},{c2.ID}")
             .ToArray();
@@ -148,7 +145,6 @@ public class AbstractBaseRunnerTests : UnitTests
 
         WhenIHaveA<Catalogue>();
 
-        var r = new TestRunner();
         var results = TestRunner.GetObjectsFromCommandLineString<Catalogue>(RepositoryLocator, "Catalogue:*go*")
             .ToArray();
 
@@ -160,13 +156,22 @@ public class AbstractBaseRunnerTests : UnitTests
     private class TestRunner : Runner
     {
         public new static T GetObjectFromCommandLineString<T>(IRDMPPlatformRepositoryServiceLocator locator, string arg)
-            where T : IMapsDirectlyToDatabaseTable => Runner.GetObjectFromCommandLineString<T>(locator, arg);
+            where T : IMapsDirectlyToDatabaseTable
+        {
+            return Runner.GetObjectFromCommandLineString<T>(locator, arg);
+        }
 
         public new static IEnumerable<T>
             GetObjectsFromCommandLineString<T>(IRDMPPlatformRepositoryServiceLocator locator, string arg)
-            where T : IMapsDirectlyToDatabaseTable => Runner.GetObjectsFromCommandLineString<T>(locator, arg);
+            where T : IMapsDirectlyToDatabaseTable
+        {
+            return Runner.GetObjectsFromCommandLineString<T>(locator, arg);
+        }
 
         public override int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
-            IDataLoadEventListener listener, ICheckNotifier checkNotifier, GracefulCancellationToken token) => 0;
+            IDataLoadEventListener listener, ICheckNotifier checkNotifier, GracefulCancellationToken token)
+        {
+            return 0;
+        }
     }
 }

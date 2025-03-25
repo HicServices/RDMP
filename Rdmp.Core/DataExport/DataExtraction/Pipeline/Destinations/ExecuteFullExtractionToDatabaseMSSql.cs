@@ -30,7 +30,8 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
 
 /// <summary>
-/// Alternate extraction pipeline destination in which the DataTable containing the extracted dataset is written to an Sql Server database
+///     Alternate extraction pipeline destination in which the DataTable containing the extracted dataset is written to an
+///     Sql Server database
 /// </summary>
 public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
 {
@@ -83,10 +84,12 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
     public bool MakeFinalTableDistinctWhenBatchResuming { get; set; } = true;
 
 
-    [DemandsInitialization("If this extraction has already been run, it will append the extraction data into the database. There is no duplication protection with this functionality.")]
+    [DemandsInitialization(
+        "If this extraction has already been run, it will append the extraction data into the database. There is no duplication protection with this functionality.")]
     public bool AppendDataIfTableExists { get; set; } = false;
 
-    [DemandsInitialization("If checked, a column names 'extraction_timestamp' will be included in the extraction that denotes the time the record was added to the extraction.")]
+    [DemandsInitialization(
+        "If checked, a column names 'extraction_timestamp' will be included in the extraction that denotes the time the record was added to the extraction.")]
     public bool IncludeTimeStamp { get; set; } = false;
 
 
@@ -101,7 +104,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
          $a - Dataset acronym (e.g. 'Presc') 
 
          You must have either $a or $d
-         ",DefaultValue = "Index_$c_$d")]
+         ", DefaultValue = "Index_$c_$d")]
     public string IndexNamingPattern { get; set; }
 
     [DemandsInitialization("An optional list of columns to index on e.g \"Column1, Column2\"")]
@@ -211,7 +214,8 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                     "Failed to inspect destination for already existing datatables", e));
         }
 
-        _destination = new DataTableUploadDestination(((IExtractDatasetCommand)_request).ExtractableCohort.ExternalCohortTable);
+        _destination =
+            new DataTableUploadDestination(((IExtractDatasetCommand)_request).ExtractableCohort.ExternalCohortTable);
 
         PrimeDestinationTypesBasedOnCatalogueTypes(listener, toProcess);
 
@@ -322,7 +326,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
 
     private string GetIndexName()
     {
-        string indexName = IndexNamingPattern;
+        var indexName = IndexNamingPattern;
         var project = _request.Configuration.Project;
         indexName = indexName.Replace("$p", project.Name);
         indexName = indexName.Replace("$n", project.ProjectNumber.ToString());
@@ -340,7 +344,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         }
 
 
-        return indexName.Replace(" ","");
+        return indexName.Replace(" ", "");
     }
 
     private string GetTableName(string suffix = null)
@@ -467,7 +471,10 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
     }
 
 
-    public override string GetDestinationDescription() => GetDestinationDescription("");
+    public override string GetDestinationDescription()
+    {
+        return GetDestinationDescription();
+    }
 
     private string GetDestinationDescription(string suffix = "")
     {
@@ -481,18 +488,28 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         return $"{TargetDatabaseServer.ID}|{dbName}|{tblName}";
     }
 
-    public static DestinationType GetDestinationType() => DestinationType.Database;
+    public static DestinationType GetDestinationType()
+    {
+        return DestinationType.Database;
+    }
 
     public override ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
-        ISelectedDataSets selectedDataSet) => new MsSqlExtractionReleasePotential(repositoryLocator, selectedDataSet);
+        ISelectedDataSets selectedDataSet)
+    {
+        return new MsSqlExtractionReleasePotential(repositoryLocator, selectedDataSet);
+    }
 
-    public override FixedReleaseSource<ReleaseAudit> GetReleaseSource(ICatalogueRepository catalogueRepository) =>
-        new MsSqlReleaseSource(catalogueRepository);
+    public override FixedReleaseSource<ReleaseAudit> GetReleaseSource(ICatalogueRepository catalogueRepository)
+    {
+        return new MsSqlReleaseSource(catalogueRepository);
+    }
 
     public override GlobalReleasePotential GetGlobalReleasabilityEvaluator(
         IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISupplementalExtractionResults globalResult,
-        IMapsDirectlyToDatabaseTable globalToCheck) =>
-        new MsSqlGlobalsReleasePotential(repositoryLocator, globalResult, globalToCheck);
+        IMapsDirectlyToDatabaseTable globalToCheck)
+    {
+        return new MsSqlGlobalsReleasePotential(repositoryLocator, globalResult, globalToCheck);
+    }
 
     protected override void TryExtractSupportingSQLTableImpl(SupportingSQLTable sqlTable, DirectoryInfo directory,
         IExtractionConfiguration configuration, IDataLoadEventListener listener, out int linesWritten,
@@ -510,7 +527,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         using (var cmd = DatabaseCommandHelper.GetCommand(sqlTable.SQL, con))
         using (var da = DatabaseCommandHelper.GetDataAdapter(cmd))
         {
-            var sw = Stopwatch.StartNew();
+            Stopwatch.StartNew();
             dt.BeginLoadData();
             da.Fill(dt);
             dt.EndLoadData();
@@ -701,7 +718,8 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                 }
 
                 // if the expected table exists and we are not doing a batch resume or allowing data appending
-                if (tables.Any(t => t.GetRuntimeName().Equals(tableName)) && !_request.IsBatchResume && !AppendDataIfTableExists)
+                if (tables.Any(t => t.GetRuntimeName().Equals(tableName)) && !_request.IsBatchResume &&
+                    !AppendDataIfTableExists)
                     notifier.OnCheckPerformed(new CheckEventArgs(ErrorCodes.ExistingExtractionTableInDatabase,
                         tableName, database));
             }

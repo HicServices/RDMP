@@ -30,18 +30,22 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 namespace Rdmp.UI.CatalogueSummary.LoadEvents;
 
 /// <summary>
-/// Shows the longitudinal history of all data loads of a given object (e.g. data load).  This is an expandable tree including all progress messages, errors, table load notifications
-/// etc.
-/// 
-/// <para>Right clicking on red error messages will allow you to resolve them into yellow state (error has been investigated and did not result in any serious problems / data integrity loss etc).
-/// This launches the ResolveFatalErrors dialog.  You can resolve multiple errors at the same time by selecting all the errors at once and then right clicking one of them.</para>
+///     Shows the longitudinal history of all data loads of a given object (e.g. data load).  This is an expandable tree
+///     including all progress messages, errors, table load notifications
+///     etc.
+///     <para>
+///         Right clicking on red error messages will allow you to resolve them into yellow state (error has been
+///         investigated and did not result in any serious problems / data integrity loss etc).
+///         This launches the ResolveFatalErrors dialog.  You can resolve multiple errors at the same time by selecting all
+///         the errors at once and then right clicking one of them.
+///     </para>
 /// </summary>
 public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionControl
 {
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public LoadEventsTreeViewObjectCollection Collection { get; set; }
 
-    private BackgroundWorker _populateLoadHistory = new();
+    private readonly BackgroundWorker _populateLoadHistory = new();
     private ArchivalDataLoadInfo[] _populateLoadHistoryResults = Array.Empty<ArchivalDataLoadInfo>();
     private CancellationTokenSource _populateLoadHistoryCancel;
 
@@ -113,7 +117,10 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
         };
     }
 
-    private static string WithCommas(int? i) => !i.HasValue ? @"N\A" : i.Value.ToString("N0");
+    private static string WithCommas(int? i)
+    {
+        return !i.HasValue ? @"N\A" : i.Value.ToString("N0");
+    }
 
     private static object olvDate_AspectGetter(object rowObject)
     {
@@ -181,10 +188,16 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
             AssociatedTable = associatedTable;
         }
 
-        public override string ToString() => $"{_name} ({Children.Length})";
+        public override string ToString()
+        {
+            return $"{_name} ({Children.Length})";
+        }
     }
 
-    private static bool CanExpandGetter(object model) => model is ArchivalDataLoadInfo or LoadEventsTreeView_Category;
+    private static bool CanExpandGetter(object model)
+    {
+        return model is ArchivalDataLoadInfo or LoadEventsTreeView_Category;
+    }
 
     //it is a child of a thing in a category, so a leaf
     private void _populateLoadHistory_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -322,7 +335,7 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
                 RightClickMenu.Items.Add(mi);
             }
 
-        if (e.Model is ArchivalFatalError fatalError && _logManager != null)
+        if (e.Model is ArchivalFatalError && _logManager != null)
         {
             var toResolve = treeView1.SelectedObjects.OfType<ArchivalFatalError>().ToArray();
             RightClickMenu.Items.Add("Resolve Fatal Error(s)", null, (a, b) =>
@@ -377,11 +390,20 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
     }
 
 
-    public IPersistableObjectCollection GetCollection() => Collection;
+    public IPersistableObjectCollection GetCollection()
+    {
+        return Collection;
+    }
 
-    public string GetTabName() => $"Logs:{Collection?.RootObject}";
+    public string GetTabName()
+    {
+        return $"Logs:{Collection?.RootObject}";
+    }
 
-    public string GetTabToolTip() => null;
+    public string GetTabToolTip()
+    {
+        return null;
+    }
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {

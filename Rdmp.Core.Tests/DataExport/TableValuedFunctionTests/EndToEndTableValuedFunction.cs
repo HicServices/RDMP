@@ -9,7 +9,6 @@ using System.Linq;
 using FAnsi;
 using FAnsi.Discovery;
 using NUnit.Framework;
-using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.CohortCommitting;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CohortCommitting.Pipeline.Destinations;
@@ -24,6 +23,7 @@ using Rdmp.Core.DataExport.DataExtraction.Commands;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources;
 using Rdmp.Core.DataExport.DataExtraction.UserPicks;
 using Rdmp.Core.DataFlowPipeline;
+using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.Core.ReusableLibraryCode.Progress;
@@ -218,7 +218,7 @@ end
         importer.DoImport(out var tbl, out var cols);
 
         var engineer = new ForwardEngineerCatalogue(tbl, cols);
-        engineer.ExecuteForwardEngineering(out var cata, out var cis, out var eis);
+        engineer.ExecuteForwardEngineering(out var cata, out _, out var eis);
 
         Assert.That(eis[0].GetRuntimeName(), Is.EqualTo("chi"));
         eis[0].IsExtractionIdentifier = true;
@@ -248,7 +248,7 @@ end
         importer.DoImport(out var tbl, out var cols);
 
         var engineer = new ForwardEngineerCatalogue(tbl, cols);
-        engineer.ExecuteForwardEngineering(out var cata, out var cis, out var eis);
+        engineer.ExecuteForwardEngineering(out var cata, out _, out var eis);
 
         _nonTvfExtractionIdentifier = eis.Single();
         _nonTvfExtractionIdentifier.IsExtractionIdentifier = true;
@@ -375,7 +375,8 @@ end
             {
                 Assert.That(r.Read());
 
-                Assert.That(r[1], Is.EqualTo(1)); //should now only have 1 record being returned and counted when executing
+                Assert.That(r[1],
+                    Is.EqualTo(1)); //should now only have 1 record being returned and counted when executing
             });
 
             Assert.That(r.Read(), Is.False);

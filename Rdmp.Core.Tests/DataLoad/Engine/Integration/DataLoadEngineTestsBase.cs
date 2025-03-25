@@ -21,7 +21,8 @@ using Tests.Common;
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
 
 /// <summary>
-/// Base class for tests that want to run data loads contains helper methods for setting up a valid DLE load configuration and running it
+///     Base class for tests that want to run data loads contains helper methods for setting up a valid DLE load
+///     configuration and running it
 /// </summary>
 internal class DataLoadEngineTestsBase : DatabaseTests
 {
@@ -33,7 +34,7 @@ internal class DataLoadEngineTestsBase : DatabaseTests
         Assert.Multiple(() =>
         {
             Assert.That(o, Is.Not.EqualTo(DBNull.Value),
-                    "A row which was expected to have a hic_dataLoadRunID had DBNull.Value instead");
+                "A row which was expected to have a hic_dataLoadRunID had DBNull.Value instead");
             Assert.That((int)o, Is.GreaterThanOrEqualTo(0));
         });
 
@@ -42,7 +43,7 @@ internal class DataLoadEngineTestsBase : DatabaseTests
         Assert.Multiple(() =>
         {
             Assert.That(d, Is.Not.EqualTo(DBNull.Value),
-                    "A row which was expected to have a hic_validFrom had DBNull.Value instead");
+                "A row which was expected to have a hic_validFrom had DBNull.Value instead");
 
             //expect validFrom to be after 2 hours ago (to handle UTC / BST nonsense)
             Assert.That((DateTime)d, Is.GreaterThanOrEqualTo(DateTime.Now.Subtract(new TimeSpan(2, 0, 0))));
@@ -71,7 +72,7 @@ internal class DataLoadEngineTestsBase : DatabaseTests
     {
         var projectDirectory =
             LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),
-                "MyLoadDir", true,lmd);
+                "MyLoadDir", true, lmd);
 
         lmd.SaveToDatabase();
 
@@ -88,11 +89,12 @@ internal class DataLoadEngineTestsBase : DatabaseTests
 
         //create Catalogue
         var forwardEngineer = new ForwardEngineerCatalogue(ti, cis);
-        forwardEngineer.ExecuteForwardEngineering(out var cata, out var cataItems, out var eis);
+        forwardEngineer.ExecuteForwardEngineering(out var cata, out _, out _);
 
         //make the catalogue use the load configuration
         cata.LoggingDataTask = lmd.Name;
-        Assert.That(cata.LiveLoggingServer_ID, Is.Not.Null); //catalogue should have one of these because of system defaults
+        Assert.That(cata.LiveLoggingServer_ID,
+            Is.Not.Null); //catalogue should have one of these because of system defaults
         cata.SaveToDatabase();
         lmd.LinkToCatalogue(cata);
         return ti;

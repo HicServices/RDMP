@@ -40,7 +40,7 @@ public class SafePrimaryKeyCollisionResolverMutilationTests : DatabaseTests
 
         var tbl = db.CreateTable("MyTable", dt);
 
-        Import(tbl, out var ti, out var cis);
+        Import(tbl, out _, out var cis);
 
         var pk = cis.Single(c => c.GetRuntimeName().Equals("PK"));
         pk.IsPrimaryKey = true;
@@ -82,7 +82,7 @@ public class SafePrimaryKeyCollisionResolverMutilationTests : DatabaseTests
 
         var tbl = db.CreateTable("MyTable", dt);
 
-        Import(tbl, out var ti, out var cis);
+        Import(tbl, out _, out var cis);
 
         var pk = cis.Single(c => c.GetRuntimeName().Equals("PK"));
         pk.IsPrimaryKey = true;
@@ -107,11 +107,13 @@ public class SafePrimaryKeyCollisionResolverMutilationTests : DatabaseTests
         {
             //if you prefer nulls you shouldn't want this one
             Assert.That(result.Rows.Cast<DataRow>().Count(r =>
-                    (int)r["PK"] == 1 && r["ResolveOn"] as string == "fish" && r["AnotherCol"] as string == "flop"), Is.EqualTo(preferNulls ? 0 : 1));
+                    (int)r["PK"] == 1 && r["ResolveOn"] as string == "fish" && r["AnotherCol"] as string == "flop"),
+                Is.EqualTo(preferNulls ? 0 : 1));
 
             //if you prefer nulls you should have this one
             Assert.That(result.Rows.Cast<DataRow>().Count(r =>
-                    (int)r["PK"] == 1 && r["ResolveOn"] == DBNull.Value && r["AnotherCol"] as string == "cat"), Is.EqualTo(preferNulls ? 1 : 0));
+                    (int)r["PK"] == 1 && r["ResolveOn"] == DBNull.Value && r["AnotherCol"] as string == "cat"),
+                Is.EqualTo(preferNulls ? 1 : 0));
         });
     }
 
@@ -161,11 +163,13 @@ public class SafePrimaryKeyCollisionResolverMutilationTests : DatabaseTests
         {
             //if you prefer nulls you shouldn't want this one
             Assert.That(result.Rows.Cast<DataRow>().Count(r =>
-                    (int)r["PK"] == 1 && r["ResolveOn"] as string == "fish" && r["AnotherCol"] as string == "flop"), Is.EqualTo(0));
+                    (int)r["PK"] == 1 && r["ResolveOn"] as string == "fish" && r["AnotherCol"] as string == "flop"),
+                Is.EqualTo(0));
 
             //if you prefer nulls you should have this one
             Assert.That(result.Rows.Cast<DataRow>().Count(r =>
-                    (int)r["PK"] == 1 && r["ResolveOn"] == DBNull.Value && r["AnotherCol"] as string == "cat"), Is.EqualTo(1));
+                    (int)r["PK"] == 1 && r["ResolveOn"] == DBNull.Value && r["AnotherCol"] as string == "cat"),
+                Is.EqualTo(1));
         });
     }
 
@@ -192,7 +196,7 @@ public class SafePrimaryKeyCollisionResolverMutilationTests : DatabaseTests
 
         var tbl = db.CreateTable("MyTable", dt);
 
-        Import(tbl, out var ti, out var cis);
+        Import(tbl, out _, out var cis);
 
         var pk = cis.Single(c => c.GetRuntimeName().Equals("PK"));
         pk.IsPrimaryKey = true;
@@ -217,13 +221,16 @@ public class SafePrimaryKeyCollisionResolverMutilationTests : DatabaseTests
         {
             //if you like larger values (alphabetically) then you want the 'b'
             Assert.That(result.Rows.Cast<DataRow>().Count(r =>
-                    (int)r["PK"] == 1 && r["ResolveOn"] as string == "b" && r["AnotherCol"] as string == "flop"), Is.EqualTo(preferLarger ? 1 : 0));
+                    (int)r["PK"] == 1 && r["ResolveOn"] as string == "b" && r["AnotherCol"] as string == "flop"),
+                Is.EqualTo(preferLarger ? 1 : 0));
             Assert.That(result.Rows.Cast<DataRow>().Count(r =>
-                    (int)r["PK"] == 1 && r["ResolveOn"] as string == "a" && r["AnotherCol"] as string == "flop"), Is.EqualTo(preferLarger ? 0 : 1));
+                    (int)r["PK"] == 1 && r["ResolveOn"] as string == "a" && r["AnotherCol"] as string == "flop"),
+                Is.EqualTo(preferLarger ? 0 : 1));
 
             //either way you shouldn't have the null one
             Assert.That(result.Rows.Cast<DataRow>().Count(r =>
-                    (int)r["PK"] == 1 && r["ResolveOn"] == DBNull.Value && r["AnotherCol"] as string == "cat"), Is.EqualTo(0));
+                    (int)r["PK"] == 1 && r["ResolveOn"] == DBNull.Value && r["AnotherCol"] as string == "cat"),
+                Is.EqualTo(0));
         });
     }
 
@@ -250,7 +257,7 @@ public class SafePrimaryKeyCollisionResolverMutilationTests : DatabaseTests
 
         var tbl = db.CreateTable("MyTable", dt);
 
-        Import(tbl, out var ti, out var cis);
+        Import(tbl, out _, out var cis);
 
         var pk = cis.Single(c => c.GetRuntimeName().Equals("PK"));
         pk.IsPrimaryKey = true;
@@ -275,15 +282,16 @@ public class SafePrimaryKeyCollisionResolverMutilationTests : DatabaseTests
         {
             //if you like larger values then you want 2002 that's larger than 2001
             Assert.That(result.Rows.Cast<DataRow>().Count(r =>
-                    (int)r["PK"] == 1 && Equals(r["ResolveOn"], new DateTime(2002, 01, 01)) &&
-                    r["AnotherCol"] as string == "flop"), Is.EqualTo(preferLarger ? 1 : 0));
+                (int)r["PK"] == 1 && Equals(r["ResolveOn"], new DateTime(2002, 01, 01)) &&
+                r["AnotherCol"] as string == "flop"), Is.EqualTo(preferLarger ? 1 : 0));
             Assert.That(result.Rows.Cast<DataRow>().Count(r =>
-                    (int)r["PK"] == 1 && Equals(r["ResolveOn"], new DateTime(2001, 01, 01)) &&
-                    r["AnotherCol"] as string == "flop"), Is.EqualTo(preferLarger ? 0 : 1));
+                (int)r["PK"] == 1 && Equals(r["ResolveOn"], new DateTime(2001, 01, 01)) &&
+                r["AnotherCol"] as string == "flop"), Is.EqualTo(preferLarger ? 0 : 1));
 
             //either way you shouldn't have the null one
             Assert.That(result.Rows.Cast<DataRow>().Count(r =>
-                    (int)r["PK"] == 1 && r["ResolveOn"] == DBNull.Value && r["AnotherCol"] as string == "cat"), Is.EqualTo(0));
+                    (int)r["PK"] == 1 && r["ResolveOn"] == DBNull.Value && r["AnotherCol"] as string == "cat"),
+                Is.EqualTo(0));
         });
     }
 
@@ -316,7 +324,7 @@ public class SafePrimaryKeyCollisionResolverMutilationTests : DatabaseTests
 
         var tbl = db.CreateTable("MyTable", dt);
 
-        Import(tbl, out var ti, out var cis);
+        Import(tbl, out _, out var cis);
 
         var pk = cis.Single(c => c.GetRuntimeName().Equals("PK1"));
         pk.IsPrimaryKey = true;
@@ -345,16 +353,16 @@ public class SafePrimaryKeyCollisionResolverMutilationTests : DatabaseTests
         {
             //if you like larger values then you want 2002 that's larger than 2001
             Assert.That(result.Rows.Cast<DataRow>().Count(r =>
-                    (int)r["PK1"] == 1 && (int)r["PK2"] == 1 && Equals(r["ResolveOn"], new DateTime(2002, 01, 01)) &&
-                    r["AnotherCol"] as string == "flop"), Is.EqualTo(preferLarger ? 1 : 0));
+                (int)r["PK1"] == 1 && (int)r["PK2"] == 1 && Equals(r["ResolveOn"], new DateTime(2002, 01, 01)) &&
+                r["AnotherCol"] as string == "flop"), Is.EqualTo(preferLarger ? 1 : 0));
             Assert.That(result.Rows.Cast<DataRow>().Count(r =>
-                    (int)r["PK1"] == 1 && (int)r["PK2"] == 1 && Equals(r["ResolveOn"], new DateTime(2001, 01, 01)) &&
-                    r["AnotherCol"] as string == "flop"), Is.EqualTo(preferLarger ? 0 : 1));
+                (int)r["PK1"] == 1 && (int)r["PK2"] == 1 && Equals(r["ResolveOn"], new DateTime(2001, 01, 01)) &&
+                r["AnotherCol"] as string == "flop"), Is.EqualTo(preferLarger ? 0 : 1));
 
             //either way you shouldn't have the null one
             Assert.That(result.Rows.Cast<DataRow>().Count(r =>
-                    (int)r["PK1"] == 1 && (int)r["PK2"] == 1 && r["ResolveOn"] == DBNull.Value &&
-                    r["AnotherCol"] as string == "cat"), Is.EqualTo(0));
+                (int)r["PK1"] == 1 && (int)r["PK2"] == 1 && r["ResolveOn"] == DBNull.Value &&
+                r["AnotherCol"] as string == "cat"), Is.EqualTo(0));
         });
     }
 }

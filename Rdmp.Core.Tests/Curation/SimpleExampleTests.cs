@@ -57,7 +57,7 @@ public class SimpleExampleTests : DatabaseTests
         });
 
         //create a reference to the table in RMDP
-        Import(tbl, out var tableInfo, out var columnInfos);
+        Import(tbl, out var tableInfo, out _);
 
         //setup credentials for the table in RDMP (this will be Inconclusive if you have not enabled it in TestDatabases.txt
         SetupLowPrivilegeUserRightsFor(tableInfo, TestLowPrivilegePermissions.Reader);
@@ -71,7 +71,8 @@ public class SimpleExampleTests : DatabaseTests
         Assert.Multiple(() =>
         {
             //the credentials should be different
-            Assert.That(newTbl.Database.Server.ExplicitUsernameIfAny, Is.Not.EqualTo(tbl.Database.Server.ExplicitUsernameIfAny));
+            Assert.That(newTbl.Database.Server.ExplicitUsernameIfAny,
+                Is.Not.EqualTo(tbl.Database.Server.ExplicitUsernameIfAny));
 
             //try re-reading the data
             Assert.That(newTbl.GetRowCount(), Is.EqualTo(1));

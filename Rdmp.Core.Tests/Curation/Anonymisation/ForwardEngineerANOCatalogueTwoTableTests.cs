@@ -113,14 +113,12 @@ GO";
         var colTestId = c1.Single(c => c.GetRuntimeName().Equals("TestId"));
         ciTestId.ColumnInfo_ID = colTestId.ID;
         ciTestId.SaveToDatabase();
-        var eiTestId = new ExtractionInformation(CatalogueRepository, ciTestId, colTestId, colTestId.Name);
 
         //Measure
         var ciMeasure = new CatalogueItem(CatalogueRepository, _comboCata, "Measuree");
         var colMeasure = c2.Single(c => c.GetRuntimeName().Equals("Measure"));
         ciMeasure.ColumnInfo_ID = colMeasure.ID;
         ciMeasure.SaveToDatabase();
-        var eiMeasure = new ExtractionInformation(CatalogueRepository, ciMeasure, colMeasure, colMeasure.Name);
 
         //Date
         var ciDate = new CatalogueItem(CatalogueRepository, _comboCata, "Dat");
@@ -128,7 +126,6 @@ GO";
         var colDate = c1.Single(c => c.GetRuntimeName().Equals("Date"));
         ciDate.ColumnInfo_ID = colDate.ID;
         ciDate.SaveToDatabase();
-        var eiDate = new ExtractionInformation(CatalogueRepository, ciDate, colDate, colDate.Name);
 
         _destinationDatabase = To;
     }

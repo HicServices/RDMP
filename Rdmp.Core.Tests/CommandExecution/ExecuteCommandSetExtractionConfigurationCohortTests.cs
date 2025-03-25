@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.Linq;
 using Microsoft.Data.SqlClient;
 using NUnit.Framework;
 using Rdmp.Core.CohortCommitting.Pipeline;
@@ -11,14 +12,12 @@ using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Interactive;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.ReusableLibraryCode.Checks;
-using System.Linq;
 using Tests.Common.Scenarios;
 
 namespace Rdmp.Core.Tests.CommandExecution;
 
 public class ExecuteCommandSetExtractionConfigurationCohortTests : TestsRequiringACohort
 {
-
     [SetUp]
     protected override void SetUp()
     {
@@ -73,10 +72,11 @@ public class ExecuteCommandSetExtractionConfigurationCohortTests : TestsRequirin
         };
         ec1.SaveToDatabase();
         var activator = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet)
-        { DisallowInput = true };
+            { DisallowInput = true };
         var cmd = new ExecuteCommandSetExtractionConfigurationCohort(activator, ec1, cohort999);
         Assert.DoesNotThrow(() => cmd.Execute());
-        var updatedExt = DataExportRepository.GetAllObjects<ExtractionConfiguration>().Where(ei => ei.ID == ec1.ID).ToList();
+        var updatedExt = DataExportRepository.GetAllObjects<ExtractionConfiguration>().Where(ei => ei.ID == ec1.ID)
+            .ToList();
         Assert.That(updatedExt.Count, Is.EqualTo(1));
         Assert.That(updatedExt.First().Cohort_ID, Is.EqualTo(cohort999.ID));
     }
@@ -93,7 +93,6 @@ public class ExecuteCommandSetExtractionConfigurationCohortTests : TestsRequirin
         // we are replacing this imaginary cohort
         var definition998 = new CohortDefinition(null, "CommittingNewCohorts", 1, 999, _externalCohortTable);
         // with this one (v2)
-        var definition999 = new CohortDefinition(null, "CommittingNewCohorts", 2, 999, _externalCohortTable);
 
         // Create a basic cohort first
         var request1 = new CohortCreationRequest(proj, definition998, DataExportRepository, "fish");
@@ -116,8 +115,8 @@ public class ExecuteCommandSetExtractionConfigurationCohortTests : TestsRequirin
         };
         ec1.SaveToDatabase();
         var activator = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet)
-        { DisallowInput = true };
-        var cmd = new ExecuteCommandSetExtractionConfigurationCohort(activator, ec1, new ExtractableCohort()
+            { DisallowInput = true };
+        var cmd = new ExecuteCommandSetExtractionConfigurationCohort(activator, ec1, new ExtractableCohort
         {
             ID = -1
         });

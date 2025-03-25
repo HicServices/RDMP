@@ -189,7 +189,9 @@ public class ProcessTaskArgumentTests : DatabaseTests
                 //then surprise! heres a TableInfo!
                 var ex = Assert.Throws<Exception>(() => pta.SetValue(tableInfo));
                 Assert.That(
-                    ex.Message, Does.Contain("has an incompatible Type specified (Rdmp.Core.Curation.Data.DataLoad.PreLoadDiscardedColumn)"));
+                    ex.Message,
+                    Does.Contain(
+                        "has an incompatible Type specified (Rdmp.Core.Curation.Data.DataLoad.PreLoadDiscardedColumn)"));
             }
             finally
             {
@@ -276,12 +278,11 @@ public class ProcessTaskArgumentTests : DatabaseTests
         pipe.SaveToDatabase();
 
         //some of the DemandsInitialization on BasicDataReleaseDestination should be nested
-        var f = new ArgumentFactory();
         Assert.Multiple(() =>
         {
             Assert.That(
-                    ArgumentFactory.GetRequiredProperties(typeof(BasicDataReleaseDestination))
-                        .Any(r => r.ParentPropertyInfo != null));
+                ArgumentFactory.GetRequiredProperties(typeof(BasicDataReleaseDestination))
+                    .Any(r => r.ParentPropertyInfo != null));
 
             //new pc should have no arguments
             Assert.That(pc.GetAllArguments(), Is.Empty);
@@ -297,7 +298,7 @@ public class ProcessTaskArgumentTests : DatabaseTests
         match.SetValue(true);
         match.SaveToDatabase();
 
-        var useCase = ReleaseUseCase.DesignTime();
+        ReleaseUseCase.DesignTime();
 
         var destInstance = DataFlowPipelineEngineFactory.CreateDestinationIfExists(pipe);
 

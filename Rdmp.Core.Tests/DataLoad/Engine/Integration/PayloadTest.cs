@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.IO;
+using FAnsi;
 using NUnit.Framework;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data.DataLoad;
@@ -33,14 +34,14 @@ public class PayloadTest : DatabaseTests
     [Test]
     public void TestPayloadInjection()
     {
-        var b = new BulkTestsData(CatalogueRepository, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer), 10);
+        var b = new BulkTestsData(CatalogueRepository, GetCleanedServer(DatabaseType.MicrosoftSQLServer), 10);
         b.SetupTestData();
         b.ImportAsCatalogue();
 
         var lmd = new LoadMetadata(CatalogueRepository, "Loading");
-        var filePath = LoadDirectory
-                .CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), "delme", true,lmd)
-                .RootPath.FullName;
+        _ = LoadDirectory
+            .CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), "delme", true, lmd)
+            .RootPath.FullName;
         lmd.SaveToDatabase();
 
         MEF.AddTypeToCatalogForTesting(typeof(TestPayloadAttacher));
@@ -58,7 +59,7 @@ public class PayloadTest : DatabaseTests
         };
         pt.SaveToDatabase();
 
-        var config = new HICDatabaseConfiguration(GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).Server);
+        var config = new HICDatabaseConfiguration(GetCleanedServer(DatabaseType.MicrosoftSQLServer).Server);
         var factory = new HICDataLoadFactory(lmd, config, new HICLoadConfigurationFlags(), CatalogueRepository, lm);
         var execution = factory.Create(ThrowImmediatelyDataLoadEventListener.Quiet);
 

@@ -20,7 +20,8 @@ using SixLabors.ImageSharp.PixelFormats;
 namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
 
 /// <summary>
-/// Generates and runs an SQL query based on a <see cref="CohortIdentificationConfiguration"/> and pipes the resulting private identifier list to create a new <see cref="ExtractableCohort"/>.
+///     Generates and runs an SQL query based on a <see cref="CohortIdentificationConfiguration" /> and pipes the resulting
+///     private identifier list to create a new <see cref="ExtractableCohort" />.
 /// </summary>
 public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration : CohortCreationCommandExecution
 {
@@ -57,8 +58,11 @@ public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfig
         _cic = cic;
     }
 
-    public override string GetCommandHelp() =>
-        "Run the cohort identification configuration (query) and save the resulting final cohort identifier list into a saved cohort database";
+    public override string GetCommandHelp()
+    {
+        return
+            "Run the cohort identification configuration (query) and save the resulting final cohort identifier list into a saved cohort database";
+    }
 
     public override void Execute()
     {
@@ -72,9 +76,13 @@ public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfig
         if (BasicActivator.IsInteractive)
         {
             var promptForVersionOnCohortCommit = false;
-            var promptForVersionOnCohortCommitSetting = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Setting.Setting>().FirstOrDefault(static s => s.Key == "PromptForVersionOnCohortCommit");
-            if (promptForVersionOnCohortCommitSetting is not null) promptForVersionOnCohortCommit = Convert.ToBoolean(promptForVersionOnCohortCommitSetting.Value);
-            if (promptForVersionOnCohortCommit && BasicActivator.YesNo("It is recommended to save your cohort as a new version before committing. Would you like to do this?", "Save cohort as new version before committing?"))
+            var promptForVersionOnCohortCommitSetting = BasicActivator.RepositoryLocator.CatalogueRepository
+                .GetAllObjects<Setting.Setting>().FirstOrDefault(static s => s.Key == "PromptForVersionOnCohortCommit");
+            if (promptForVersionOnCohortCommitSetting is not null)
+                promptForVersionOnCohortCommit = Convert.ToBoolean(promptForVersionOnCohortCommitSetting.Value);
+            if (promptForVersionOnCohortCommit && BasicActivator.YesNo(
+                    "It is recommended to save your cohort as a new version before committing. Would you like to do this?",
+                    "Save cohort as new version before committing?"))
             {
                 var newVersion = new ExecuteCommandCreateVersionOfCohortConfiguration(BasicActivator, cic);
                 newVersion.Execute();
@@ -90,7 +98,6 @@ public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfig
             if (projAssociations.Length == 1) Project = projAssociations[0].Project;
         }
 
-        var auditLogBuilder = new ExtractableCohortAuditLogBuilder();
         var request = GetCohortCreationRequest(ExtractableCohortAuditLogBuilder.GetDescription(cic));
 
         //user choose to cancel the cohort creation request dialogue
@@ -117,8 +124,10 @@ public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfig
             cmd.Execute();
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Import);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Import);
+    }
 
     public override IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
     {

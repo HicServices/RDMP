@@ -15,6 +15,7 @@ using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataFlowPipeline;
+using Rdmp.Core.DataLoad;
 using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
 using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments;
@@ -35,7 +36,7 @@ internal class ExecuteSqlFileRuntimeTaskTests : DatabaseTests
     {
         var dt = new DataTable();
         dt.Columns.Add("Lawl");
-        dt.Rows.Add(new object[] { 2 });
+        dt.Rows.Add(2);
 
         var db = GetCleanedServer(dbType);
 
@@ -71,13 +72,13 @@ internal class ExecuteSqlFileRuntimeTaskTests : DatabaseTests
     {
         var dt = new DataTable();
         dt.Columns.Add("Lawl");
-        dt.Rows.Add(new object[] { 2 });
+        dt.Rows.Add(2);
 
         var db = GetCleanedServer(dbType);
 
         var tbl = db.CreateTable("Fish", dt);
 
-        Import(tbl, out var ti, out var cols);
+        Import(tbl, out var ti, out _);
 
         var f = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "Bob.sql"));
 
@@ -105,7 +106,7 @@ internal class ExecuteSqlFileRuntimeTaskTests : DatabaseTests
             task.Run(job, new GracefulCancellationToken()));
         Assert.That(ex.Message, Does.Contain("Failed to find a TableInfo in the load with ID 0"));
 
-        task.LoadCompletedSoDispose(Core.DataLoad.ExitCodeType.Success, ThrowImmediatelyDataLoadEventListener.Quiet);
+        task.LoadCompletedSoDispose(ExitCodeType.Success, ThrowImmediatelyDataLoadEventListener.Quiet);
     }
 
     [TestCase(DatabaseType.MySql)]
@@ -114,13 +115,13 @@ internal class ExecuteSqlFileRuntimeTaskTests : DatabaseTests
     {
         var dt = new DataTable();
         dt.Columns.Add("Lawl");
-        dt.Rows.Add(new object[] { 2 });
+        dt.Rows.Add(2);
 
         var db = GetCleanedServer(dbType);
 
         var tbl = db.CreateTable("Fish", dt);
 
-        Import(tbl, out var ti, out var cols);
+        Import(tbl, out var ti, out _);
 
         var sql = @"UPDATE {T:0} Set {C:0} = 1";
 
@@ -130,9 +131,9 @@ internal class ExecuteSqlFileRuntimeTaskTests : DatabaseTests
         _arg.Name.Returns("Sql");
         _arg.Value.Returns(sql);
         _arg.GetValueAsSystemType().Returns(sql);
-        var sqlArg = new IArgument[]
+        var sqlArg = new[]
         {
-          _arg
+            _arg
         };
         var args = new RuntimeArgumentCollection(sqlArg, new StageArgs(LoadStage.AdjustRaw, db, dir));
 
@@ -160,7 +161,7 @@ internal class ExecuteSqlFileRuntimeTaskTests : DatabaseTests
             Assert.That(ex.InnerException.Message, Does.Contain("Failed to find a TableInfo in the load with ID 0"));
         });
 
-        task.LoadCompletedSoDispose(Core.DataLoad.ExitCodeType.Success, ThrowImmediatelyDataLoadEventListener.Quiet);
+        task.LoadCompletedSoDispose(ExitCodeType.Success, ThrowImmediatelyDataLoadEventListener.Quiet);
     }
 
     [TestCase(DatabaseType.MySql)]
@@ -169,7 +170,7 @@ internal class ExecuteSqlFileRuntimeTaskTests : DatabaseTests
     {
         var dt = new DataTable();
         dt.Columns.Add("Lawl");
-        dt.Rows.Add(new object[] { 2 });
+        dt.Rows.Add(2);
 
         var db = GetCleanedServer(dbType);
 

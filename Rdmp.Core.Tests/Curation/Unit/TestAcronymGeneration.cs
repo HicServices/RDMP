@@ -21,8 +21,6 @@ public class TestAcronymGeneration : DatabaseTests
     [TestCase("Datashet DMP 32", "DDMP32")]
     public void Predict(string name, string predictedAcronym)
     {
-        var extractor = new DitaCatalogueExtractor(CatalogueRepository, null);
-
         var suggestion = DitaCatalogueExtractor.GetAcronymSuggestionFromCatalogueName(name);
 
         Assert.That(suggestion, Is.EqualTo(predictedAcronym));

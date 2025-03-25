@@ -27,22 +27,35 @@ using ScintillaNET;
 namespace Rdmp.UI.ExtractionUIs.FilterUIs;
 
 /// <summary>
-/// One major problem with research data curation/provision is that data analysts who routinely work with datasets build up an in-depth knowledge of the data and how to identify
-/// interesting subsets (e.g. 'How to identify all lab test codes for Creatinine').  This can involve complicated SQL which can end up buried in undocumented extraction scripts
-/// or kept in the head of the data analyst and lost if he ever leaves the organisation.
-/// 
-/// <para>RDMP Filters are an attempt to reduce this risk by centralising SQL 'WHERE' logic into clearly defined and documented reusable blocks (called Filters).  These named filters can
-/// then be combined/used by new data analyst who don't necessarily understand the exact implementation.  For this to work it is vital that you accurately name and describe what each
-/// filter does, including any peculiarities and that you robustly test the SQL in the implementation to make sure it actually works.</para>
-/// 
-/// <para>To write the actual implementation type into the SQL prompt (omitting the 'WHERE' keyword).  For example you could create a Filter called 'Active Records Only' with a description
-/// 'This filter throws out all records which have expired because a clinician has deleted them or the patient has withdrawn consent' and implementation SQL of 'MyTable.IActive=1'. Make
-/// sure to fully specify the names of columns in your WHERE SQL in case the filter is used as part of a join across multiple tables with columns that contain the same name (e.g. it might
-/// be that many other tables also include a field called IsActive).  Make sure you fully explore your dataset before finalising your filter and consider edge cases e.g. what does it mean
-/// when IsActive is null? are there any values above 1? and if so what does that mean?</para>
-/// 
-/// <para>If you want to parameterise your query (e.g. a filter for 'Approved name of drug like X') then just type a parameter like you normally would e.g. 'Prescription.DrugName like @drugName'
-/// and save. This will automatically create an empty parameter (See ParameterCollectionUI).</para>
+///     One major problem with research data curation/provision is that data analysts who routinely work with datasets
+///     build up an in-depth knowledge of the data and how to identify
+///     interesting subsets (e.g. 'How to identify all lab test codes for Creatinine').  This can involve complicated SQL
+///     which can end up buried in undocumented extraction scripts
+///     or kept in the head of the data analyst and lost if he ever leaves the organisation.
+///     <para>
+///         RDMP Filters are an attempt to reduce this risk by centralising SQL 'WHERE' logic into clearly defined and
+///         documented reusable blocks (called Filters).  These named filters can
+///         then be combined/used by new data analyst who don't necessarily understand the exact implementation.  For this
+///         to work it is vital that you accurately name and describe what each
+///         filter does, including any peculiarities and that you robustly test the SQL in the implementation to make sure
+///         it actually works.
+///     </para>
+///     <para>
+///         To write the actual implementation type into the SQL prompt (omitting the 'WHERE' keyword).  For example you
+///         could create a Filter called 'Active Records Only' with a description
+///         'This filter throws out all records which have expired because a clinician has deleted them or the patient has
+///         withdrawn consent' and implementation SQL of 'MyTable.IActive=1'. Make
+///         sure to fully specify the names of columns in your WHERE SQL in case the filter is used as part of a join
+///         across multiple tables with columns that contain the same name (e.g. it might
+///         be that many other tables also include a field called IsActive).  Make sure you fully explore your dataset
+///         before finalising your filter and consider edge cases e.g. what does it mean
+///         when IsActive is null? are there any values above 1? and if so what does that mean?
+///     </para>
+///     <para>
+///         If you want to parameterise your query (e.g. a filter for 'Approved name of drug like X') then just type a
+///         parameter like you normally would e.g. 'Prescription.DrugName like @drugName'
+///         and save. This will automatically create an empty parameter (See ParameterCollectionUI).
+///     </para>
 /// </summary>
 public partial class ExtractionFilterUI : ExtractionFilterUI_Design, ILifetimeSubscriber, ISaveableUI
 {
@@ -74,7 +87,6 @@ public partial class ExtractionFilterUI : ExtractionFilterUI_Design, ILifetimeSu
 
     private void FigureOutGlobalsAndAutoComplete()
     {
-        var factory = new FilterUIOptionsFactory();
         var options = FilterUIOptionsFactory.Create(_extractionFilter);
         GlobalFilterParameters = options.GetGlobalParametersInFilterScope();
 
@@ -133,7 +145,8 @@ public partial class ExtractionFilterUI : ExtractionFilterUI_Design, ILifetimeSu
     }
 
     /// <summary>
-    /// Scans the query text for line comments and replaces any with block comments so the query will still work when flattened to a single line
+    ///     Scans the query text for line comments and replaces any with block comments so the query will still work when
+    ///     flattened to a single line
     /// </summary>
     private void SubstituteQueryEditorTextIfContainsLineComments()
     {
@@ -178,7 +191,7 @@ public partial class ExtractionFilterUI : ExtractionFilterUI_Design, ILifetimeSu
         parameterCollectionUI1.SetUp(options, Activator);
 
         CommonFunctionality.AddToMenu(
-            new ExecuteCommandViewFilterMatchData(Activator, databaseObject, ViewType.TOP_100));
+            new ExecuteCommandViewFilterMatchData(Activator, databaseObject));
         CommonFunctionality.AddToMenu(
             new ExecuteCommandViewFilterMatchData(Activator, databaseObject, ViewType.Aggregate));
         CommonFunctionality.AddToMenu(new ExecuteCommandViewFilterMatchGraph(Activator, databaseObject));
@@ -211,7 +224,7 @@ public partial class ExtractionFilterUI : ExtractionFilterUI_Design, ILifetimeSu
     }
 
     /// <summary>
-    /// Used for publishing IFilters created here back to the main Catalogue
+    ///     Used for publishing IFilters created here back to the main Catalogue
     /// </summary>
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Catalogue Catalogue { get; set; }

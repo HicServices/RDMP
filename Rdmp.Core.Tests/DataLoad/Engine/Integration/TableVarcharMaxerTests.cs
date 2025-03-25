@@ -38,7 +38,7 @@ public class TableVarcharMaxerTests : DatabaseTests
             new DatabaseColumnRequest("Frank", new DatabaseTypeRequest(typeof(int)))
         });
 
-        Import(tbl, out var ti, out var cols);
+        Import(tbl, out var ti, out _);
 
         var maxer = new TableVarcharMaxer
         {
@@ -53,7 +53,7 @@ public class TableVarcharMaxerTests : DatabaseTests
 
         var job = Substitute.For<IDataLoadJob>();
         job.RegularTablesToLoad.Returns(new List<ITableInfo> { ti });
-        job.Configuration.Returns(new HICDatabaseConfiguration(db.Server, null, null, null));
+        job.Configuration.Returns(new HICDatabaseConfiguration(db.Server));
 
         maxer.Mutilate(job);
 
@@ -61,15 +61,18 @@ public class TableVarcharMaxerTests : DatabaseTests
         {
             case DatabaseType.MicrosoftSQLServer:
                 Assert.That(tbl.DiscoverColumn("Dave").DataType.SQLType, Is.EqualTo("varchar(max)"));
-                Assert.That(tbl.DiscoverColumn("Frank").DataType.SQLType, Is.EqualTo(allDataTypes ? "varchar(max)" : "int"));
+                Assert.That(tbl.DiscoverColumn("Frank").DataType.SQLType,
+                    Is.EqualTo(allDataTypes ? "varchar(max)" : "int"));
                 break;
             case DatabaseType.MySql:
                 Assert.That(tbl.DiscoverColumn("Dave").DataType.SQLType, Is.EqualTo("longtext"));
-                Assert.That(tbl.DiscoverColumn("Frank").DataType.SQLType, Is.EqualTo(allDataTypes ? "longtext" : "int"));
+                Assert.That(tbl.DiscoverColumn("Frank").DataType.SQLType,
+                    Is.EqualTo(allDataTypes ? "longtext" : "int"));
                 break;
             case DatabaseType.Oracle:
                 Assert.That(tbl.DiscoverColumn("Dave").DataType.SQLType, Is.EqualTo("varchar(max)"));
-                Assert.That(tbl.DiscoverColumn("Frank").DataType.SQLType, Is.EqualTo(allDataTypes ? "varchar(max)" : "int"));
+                Assert.That(tbl.DiscoverColumn("Frank").DataType.SQLType,
+                    Is.EqualTo(allDataTypes ? "varchar(max)" : "int"));
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(dbType));
@@ -88,7 +91,7 @@ public class TableVarcharMaxerTests : DatabaseTests
             new DatabaseColumnRequest("Frrrrr ##' ank", new DatabaseTypeRequest(typeof(int)))
         });
 
-        Import(tbl, out var ti, out var cols);
+        Import(tbl, out var ti, out _);
 
         var maxer = new TableVarcharMaxer
         {
@@ -103,7 +106,7 @@ public class TableVarcharMaxerTests : DatabaseTests
         var job = new ThrowImmediatelyDataLoadJob
         {
             RegularTablesToLoad = new List<ITableInfo> { ti },
-            Configuration = new HICDatabaseConfiguration(db.Server, null, null, null)
+            Configuration = new HICDatabaseConfiguration(db.Server)
         };
 
         maxer.Mutilate(job);
