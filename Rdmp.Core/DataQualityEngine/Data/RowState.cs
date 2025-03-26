@@ -25,6 +25,17 @@ public class RowState
     public string PivotCategory { get; private set; }
 
 
+    public RowState(int dataLoadRunID, int correct, int missing, int wrong, int invalid,
+        string validatorXml, string pivotCategory)
+    {
+        Correct = correct;
+        Missing = missing;
+        Wrong = wrong;
+        Invalid = invalid;
+        ValidatorXML = validatorXml;
+        DataLoadRunID = dataLoadRunID;
+    }
+
     public RowState(DbDataReader r)
     {
         Correct = Convert.ToInt32(r["Correct"]);

@@ -145,8 +145,7 @@ public class ColumnState
             DatabaseCommandHelper.AddParameterWithValueToCommand("@PivotCategory", cmd, pivotCategory);
             cmd.ExecuteNonQuery();
         }
-
-
+            
         IsCommitted = true;
     }
 }

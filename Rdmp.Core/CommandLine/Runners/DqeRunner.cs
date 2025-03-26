@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using Org.BouncyCastle.Security.Certificates;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
@@ -29,12 +30,19 @@ internal class DqeRunner : Runner
         ICheckNotifier checkNotifier, GracefulCancellationToken token)
     {
         var catalogue = GetObjectFromCommandLineString<Catalogue>(repositoryLocator, _options.Catalogue);
+        int? dataLoadID = null;
+        if (_options.DataLoadUpdateID != null)
+            dataLoadID = int.Parse(_options.DataLoadUpdateID);
+
         var report = new CatalogueConstraintReport(catalogue, SpecialFieldNames.DataLoadRunID);
 
         switch (_options.Command)
         {
             case CommandLineActivity.run:
-                report.GenerateReport(catalogue, listener, token.AbortToken);
+                if (dataLoadID is not null)
+                    report.UpdateReport(catalogue, (int)dataLoadID, _options.CommandTimeout, listener, token.AbortToken);
+                else
+                    report.GenerateReport(catalogue, listener, token.AbortToken);
                 return 0;
 
             case CommandLineActivity.check:

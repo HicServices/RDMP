@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [8.4.3] - 2025-02-24
 
 - Build on and target .Net 9 rather than 8
+- Add DQE Updater Mutilator for Data Loads see [DQE Post Load runner](./Documentation/DataLoadEngine/DQEPostLoadRunner.md)
 - Simplify DB Patching Interface
 - Fix issue with Simple File Extractor pipeline component checking
 - Update Catalogue metadata options
