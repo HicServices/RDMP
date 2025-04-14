@@ -11,7 +11,7 @@
     <PackageVersion Include="HIC.SynthEHR" Version="2.0.1" />
     <PackageVersion Include="HIC.FAnsiSql" Version="3.2.7" />
     <PackageVersion Include="LibArchive.Net" Version="0.1.5" />
-    <PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="9.0.3" />
+    <PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="9.0.4" />
     <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="8.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
