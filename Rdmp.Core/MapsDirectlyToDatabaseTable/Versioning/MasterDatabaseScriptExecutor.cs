@@ -44,7 +44,7 @@ public class MasterDatabaseScriptExecutor
         Database = database;
     }
 
-    public bool BinaryCollation { get; set; }
+    public string  Collation{ get; set; }
 
     public bool CreateDatabase(Patch initialCreationPatch, ICheckNotifier notifier)
     {
@@ -67,13 +67,13 @@ public class MasterDatabaseScriptExecutor
             }
             else
             {
-                if (Database.Server.DatabaseType == DatabaseType.MicrosoftSQLServer && BinaryCollation)
+                if (Database.Server.DatabaseType == DatabaseType.MicrosoftSQLServer && Collation != null)
                 {
                     var master = Database.Server.ExpectDatabase("master");
                     using var con = master.Server.GetConnection();
                     con.Open();
                     using var cmd = Database.Server.GetCommand(
-                        $"CREATE DATABASE {Database} COLLATE Latin1_General_BIN2", con);
+                        $"CREATE DATABASE {Database} COLLATE {Collation}", con);
                     cmd.ExecuteNonQuery();
                 }
                 else

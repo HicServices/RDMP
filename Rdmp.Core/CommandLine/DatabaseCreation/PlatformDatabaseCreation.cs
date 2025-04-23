@@ -81,7 +81,7 @@ public class PlatformDatabaseCreation
 
         var executor = new MasterDatabaseScriptExecutor(db)
         {
-            BinaryCollation = options.BinaryCollation
+            Collation = options.Collation??(options.BinaryCollation? "Latin1_General_BIN2" : null)
         };
         executor.CreateAndPatchDatabase(patcher, new AcceptAllCheckNotifier());
         Console.WriteLine($"Created {builder.InitialCatalog} on server {builder.DataSource}");
