@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -39,6 +40,7 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Settings;
 using Rdmp.UI.AggregationUIs;
 using Rdmp.UI.CatalogueSummary.LoadEvents;
+using Rdmp.UI.CohortUI.CreateHoldoutLookup;
 using Rdmp.UI.CohortUI.ImportCustomData;
 using Rdmp.UI.Collections;
 using Rdmp.UI.Collections.Providers;
@@ -71,8 +73,9 @@ using Rectangle = System.Drawing.Rectangle;
 namespace ResearchDataManagementPlatform.WindowManagement;
 
 /// <summary>
-/// Central class for RDMP main application, this class provides access to all the main systems in RDMP user interface such as Emphasis, the RefreshBus, Child
-/// provision etc.  See IActivateItems for full details
+///     Central class for RDMP main application, this class provides access to all the main systems in RDMP user interface
+///     such as Emphasis, the RefreshBus, Child
+///     provision etc.  See IActivateItems for full details
 /// </summary>
 public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubscriber
 {
@@ -173,7 +176,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
     {
         // if on wrong Thread
         if (_mainDockPanel?.InvokeRequired ?? false)
-            return _mainDockPanel.Invoke<Form>(() => ShowWindow(singleControlForm, asDocument));
+            return _mainDockPanel.Invoke(() => ShowWindow(singleControlForm, asDocument));
 
         var width = singleControlForm.Size.Width + SystemInformation.BorderSize.Width;
         var height = singleControlForm.Size.Height + SystemInformation.BorderSize.Height;
@@ -246,7 +249,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         if (_mainDockPanel?.InvokeRequired ?? false)
         {
             Enum result = default;
-            var rtn = _mainDockPanel.Invoke<bool>(() => SelectEnum(args, enumType, out result));
+            var rtn = _mainDockPanel.Invoke(() => SelectEnum(args, enumType, out result));
             chosen = result;
             return rtn;
         }
@@ -254,10 +257,15 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         return SelectObject(args, Enum.GetValues(enumType).Cast<Enum>().ToArray(), out chosen);
     }
 
-    public override bool SelectType(DialogArgs args, Type[] available, out Type chosen) =>
-        SelectObject(args, available, out chosen);
+    public override bool SelectType(DialogArgs args, Type[] available, out Type chosen)
+    {
+        return SelectObject(args, available, out chosen);
+    }
 
-    public override bool CanActivate(object target) => CommandExecutionFactory.CanActivate(target);
+    public override bool CanActivate(object target)
+    {
+        return CommandExecutionFactory.CanActivate(target);
+    }
 
     protected override void ActivateImpl(object o)
     {
@@ -272,12 +280,14 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
             CommandExecutionFactory.Activate(o);
     }
 
-    public bool IsRootObjectOfCollection(RDMPCollection collection, object rootObject) =>
+    public bool IsRootObjectOfCollection(RDMPCollection collection, object rootObject)
+    {
         //if the collection an arbitrary one then it is definitely not the root collection for anyone
-        collection != RDMPCollection.None && _windowManager.GetCollectionForRootObject(rootObject) == collection;
+        return collection != RDMPCollection.None && _windowManager.GetCollectionForRootObject(rootObject) == collection;
+    }
 
     /// <summary>
-    /// Consults all currently configured IProblemProviders and returns true if any report a problem with the object
+    ///     Consults all currently configured IProblemProviders and returns true if any report a problem with the object
     /// </summary>
     /// <param name="model"></param>
     /// <returns></returns>
@@ -287,8 +297,9 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
     }
 
     /// <summary>
-    /// Consults all currently configured IProblemProviders and returns the first Problem reported by any about the object or null
-    /// if there are no problems reported.
+    ///     Consults all currently configured IProblemProviders and returns the first Problem reported by any about the object
+    ///     or null
+    ///     if there are no problems reported.
     /// </summary>
     /// <param name="model"></param>
     /// <returns></returns>
@@ -297,8 +308,10 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         return ProblemProviders.Select(p => p.DescribeProblem(model)).FirstOrDefault(desc => desc != null);
     }
 
-    public string GetDocumentation(Type type) =>
-        RepositoryLocator.CatalogueRepository.CommentStore.GetTypeDocumentationIfExists(type);
+    public string GetDocumentation(Type type)
+    {
+        return RepositoryLocator.CatalogueRepository.CommentStore.GetTypeDocumentationIfExists(type);
+    }
 
     public string CurrentDirectory => Environment.CurrentDirectory;
 
@@ -342,18 +355,22 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
     }
 
     /// <summary>
-    /// Asks the user if they want to reload a fresh copy with a Yes/No message box.
+    ///     Asks the user if they want to reload a fresh copy with a Yes/No message box.
     /// </summary>
     /// <param name="databaseEntity"></param>
     /// <returns></returns>
-    public bool ShouldReloadFreshCopy(DatabaseEntity databaseEntity) =>
-        YesNo($"{databaseEntity} is out of date with database, would you like to reload a fresh copy?",
+    public bool ShouldReloadFreshCopy(DatabaseEntity databaseEntity)
+    {
+        return YesNo($"{databaseEntity} is out of date with database, would you like to reload a fresh copy?",
             "Object Changed");
+    }
 
     public T Activate<T, T2>(T2 databaseObject)
         where T : RDMPSingleDatabaseObjectControl<T2>, new()
-        where T2 : DatabaseEntity =>
-        Activate<T, T2>(databaseObject, CoreIconProvider.GetImage(databaseObject));
+        where T2 : DatabaseEntity
+    {
+        return Activate<T, T2>(databaseObject, CoreIconProvider.GetImage(databaseObject));
+    }
 
     public T Activate<T>(IPersistableObjectCollection collection)
         where T : Control, IObjectCollectionControl, new()
@@ -391,7 +408,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         if (panel is not null)
         {
             var contents = panel.Contents;
-            insertIndex = contents.IndexOf(panel.ActiveContent)+1;
+            insertIndex = contents.IndexOf(panel.ActiveContent) + 1;
         }
 
         floatable.Show(_mainDockPanel, DockState.Document);
@@ -399,9 +416,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         uiInstance.SetDatabaseObject(this, databaseObject);
 
         if (insertIndex is not null && _mainDockPanel.ActivePane is not null)
-        {
             _mainDockPanel.ActivePane.SetContentIndex(floatable, (int)insertIndex);
-        }
 
         SetTabText(floatable, uiInstance);
 
@@ -454,7 +469,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
             throw new ArgumentException(
                 "DeserializeInstruction cannot have both a DatabaseObject and an ObjectCollection");
 
-        var c = (Control)UIObjectConstructor.Construct(instruction.UIControlType, activator, true);
+        var c = (Control)UIObjectConstructor.Construct(instruction.UIControlType, activator);
 
         switch (c)
         {
@@ -463,32 +478,32 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
             case IObjectCollectionControl uiCollection:
                 return Activate(uiCollection, instruction.ObjectCollection);
             case IRDMPSingleDatabaseObjectControl uiInstance:
+            {
+                var databaseObject = instruction.DatabaseObject;
+
+                //the database object is gone? deleted maybe
+                if (databaseObject == null)
+                    return null;
+
+                DockContent floatable = WindowFactory.Create(this, RefreshBus, uiInstance,
+                    CoreIconProvider.GetImage(databaseObject), databaseObject);
+
+                floatable.Show(_mainDockPanel, DockState.Document);
+                try
                 {
-                    var databaseObject = instruction.DatabaseObject;
-
-                    //the database object is gone? deleted maybe
-                    if (databaseObject == null)
-                        return null;
-
-                    DockContent floatable = WindowFactory.Create(this, RefreshBus, uiInstance,
-                        CoreIconProvider.GetImage(databaseObject), databaseObject);
-
-                    floatable.Show(_mainDockPanel, DockState.Document);
-                    try
-                    {
-                        uiInstance.SetDatabaseObject(this, (DatabaseEntity)databaseObject);
-                        SetTabText(floatable, uiInstance);
-                    }
-                    catch (Exception e)
-                    {
-                        floatable.Close();
-                        throw new Exception(
-                            $"SetDatabaseObject failed on Control of Type '{instruction.UIControlType.Name}', control closed, see inner Exception for details",
-                            e);
-                    }
-
-                    return floatable;
+                    uiInstance.SetDatabaseObject(this, (DatabaseEntity)databaseObject);
+                    SetTabText(floatable, uiInstance);
                 }
+                catch (Exception e)
+                {
+                    floatable.Close();
+                    throw new Exception(
+                        $"SetDatabaseObject failed on Control of Type '{instruction.UIControlType.Name}', control closed, see inner Exception for details",
+                        e);
+                }
+
+                return floatable;
+            }
             default:
                 return (DockContent)activator.ShowWindow(c, true);
         }
@@ -535,14 +550,14 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
             p.RefreshProblems(CoreChildProvider);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public override bool YesNo(DialogArgs args, out bool chosen)
     {
         // if on wrong Thread
         if (_mainDockPanel?.InvokeRequired ?? false)
         {
             bool result = default;
-            var rtn = _mainDockPanel.Invoke<bool>(() => YesNo(args, out result));
+            var rtn = _mainDockPanel.Invoke(() => YesNo(args, out result));
             chosen = result;
             return rtn;
         }
@@ -564,7 +579,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         if (_mainDockPanel?.InvokeRequired ?? false)
         {
             string result = default;
-            var rtn = _mainDockPanel.Invoke<bool>(() =>
+            var rtn = _mainDockPanel.Invoke(() =>
                 TypeText(args, maxLength, initialText, out result, requireSaneHeaderText));
             text = result;
             return rtn;
@@ -672,7 +687,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         if (_mainDockPanel?.InvokeRequired ?? false)
         {
             T result = default;
-            var rtn = _mainDockPanel.Invoke<bool>(() => SelectObject(args, available, out result));
+            var rtn = _mainDockPanel.Invoke(() => SelectObject(args, available, out result));
             selected = result;
             return rtn;
         }
@@ -695,7 +710,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         if (_mainDockPanel?.InvokeRequired ?? false)
         {
             T[] result = default;
-            var rtn = _mainDockPanel.Invoke<bool>(() => SelectObjects(args, available, out result));
+            var rtn = _mainDockPanel.Invoke(() => SelectObjects(args, available, out result));
             selected = result;
             return rtn;
         }
@@ -770,7 +785,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         if (_mainDockPanel?.InvokeRequired ?? false)
         {
             object result = default;
-            var rtn = _mainDockPanel.Invoke<bool>(() => SelectValueTypeImpl(args, paramType, initialValue, out result));
+            var rtn = _mainDockPanel.Invoke(() => SelectValueTypeImpl(args, paramType, initialValue, out result));
             chosen = result;
             return rtn;
         }
@@ -806,7 +821,8 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
             AllowMultiSelect = true
         };
 
-        if (selectDialog.ShowDialog() != DialogResult.OK) return null;
+        if (!new List<DialogResult> { DialogResult.OK, DialogResult.Cancel }.Contains(selectDialog.ShowDialog()))
+            return null;
         var ms = selectDialog.MultiSelected.ToList();
         var toReturn = Array.CreateInstance(arrayElementType, ms.Count);
 
@@ -854,16 +870,15 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
     }
 
 
-    /// <inheritdoc/>
-    public IEnumerable<SessionCollectionUI> GetSessions() => _windowManager.GetAllWindows<SessionCollectionUI>();
+    /// <inheritdoc />
+    public IEnumerable<SessionCollectionUI> GetSessions()
+    {
+        return _windowManager.GetAllWindows<SessionCollectionUI>();
+    }
 
     public override IPipelineRunner GetPipelineRunner(DialogArgs args, IPipelineUseCase useCase, IPipeline pipeline)
     {
-
-        if (useCase is not null && pipeline is not null)
-        {
-            return new PipelineRunner(useCase, pipeline);
-        }
+        if (useCase is not null && pipeline is not null) return new PipelineRunner(useCase, pipeline);
         var configureAndExecuteDialog = new ConfigureAndExecutePipelineUI(args, useCase, this)
         {
             Dock = DockStyle.Fill
@@ -888,14 +903,15 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         return ui.ShowDialog() == DialogResult.OK ? ui.Result : null;
     }
 
-    public override CohortHoldoutLookupRequest GetCohortHoldoutLookupRequest(ExternalCohortTable externalCohortTable, IProject project, CohortIdentificationConfiguration cic)
+    public override CohortHoldoutLookupRequest GetCohortHoldoutLookupRequest(ExternalCohortTable externalCohortTable,
+        IProject project, CohortIdentificationConfiguration cic)
     {
         // if on wrong Thread
         if (_mainDockPanel?.InvokeRequired ?? false)
             return _mainDockPanel.Invoke(() =>
                 GetCohortHoldoutLookupRequest(externalCohortTable, project, cic));
 
-        var ui = new Rdmp.UI.CohortUI.CreateHoldoutLookup.CreateHoldoutLookupUI(this, externalCohortTable, cic);
+        var ui = new CreateHoldoutLookupUI(this, externalCohortTable, cic);
 
         if (!string.IsNullOrWhiteSpace(cic.Description))
             ui.CohortDescription = $"{cic.Description} ({Environment.UserName} - {DateTime.Now})";
@@ -906,9 +922,8 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         ColumnInfo[] extractionIdentifierColumns, string initialDescription, IProject projectSpecific, string folder)
     {
         if (extractionIdentifierColumns is not null)
-        {
-            return base.CreateAndConfigureCatalogue(tableInfo, extractionIdentifierColumns, initialDescription, projectSpecific, folder);
-        }
+            return base.CreateAndConfigureCatalogue(tableInfo, extractionIdentifierColumns, initialDescription,
+                projectSpecific, folder);
         // if on wrong Thread
         if (_mainDockPanel?.InvokeRequired ?? false)
             return _mainDockPanel.Invoke(() => CreateAndConfigureCatalogue(tableInfo, extractionIdentifierColumns,
@@ -941,7 +956,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         if (_mainDockPanel?.InvokeRequired ?? false)
         {
             CohortIdentificationConfiguration result = default;
-            var rtn = _mainDockPanel.Invoke<bool>(() => ShowCohortWizard(out result));
+            var rtn = _mainDockPanel.Invoke(() => ShowCohortWizard(out result));
             cic = result;
             return rtn;
         }
@@ -964,7 +979,8 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         }
 
         var select = new SelectDialog<IMapsDirectlyToDatabaseTable>(
-            args, this, CoreChildProvider.GetAllSearchables().Select(k => k.Key), false, _windowManager.GetFocusedCollection());
+            args, this, CoreChildProvider.GetAllSearchables().Select(k => k.Key), false,
+            _windowManager.GetFocusedCollection());
 
         if (select.ShowDialog() == DialogResult.OK && select.Selected != null) callback(select.Selected);
     }
@@ -1035,7 +1051,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         ctrl.StartProcess(startInfo);
     }
 
-    public override void ShowData(System.Data.DataTable table)
+    public override void ShowData(DataTable table)
     {
         // if on wrong Thread
         if (_mainDockPanel?.InvokeRequired ?? false)
