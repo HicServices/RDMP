@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add ability to show/hide quick edit pipeline controls during extractions
 - Fix issue with columnForbidder crashing when no Regex specified
 - Add contextual global search (CRTL+f)
+- Fix Issue with Multiselect cancel dialog
 - Improve UI Tab ordering
 - Add ability to specify DB collation on new DB creation
 

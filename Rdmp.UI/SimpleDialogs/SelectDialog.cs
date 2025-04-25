@@ -40,7 +40,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
     private readonly AttributePropertyFinder<UsefulPropertyAttribute> _usefulPropertyFinder;
 
     private const int MaxMatches = 500;
-    private object oMatches = new();
+    private readonly object oMatches = new();
 
     private Task _lastFetchTask;
     private CancellationTokenSource _lastCancellationToken;
@@ -54,13 +54,13 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
     private Type _alwaysFilterOn;
     private ToolStripTextBox _lblId;
     private readonly DialogArgs _args;
-    private IActivateItems _activator;
-    private bool _allowDeleting;
+    private readonly IActivateItems _activator;
+    private readonly bool _allowDeleting;
 
     /// <summary>
-    /// All the objects when T is not an IMapsDirectlyToDatabaseTable.
+    ///     All the objects when T is not an IMapsDirectlyToDatabaseTable.
     /// </summary>
-    private T[] _allObjects;
+    private readonly T[] _allObjects;
 
     private List<T> _objectsToDisplay = new();
     private List<IMapsDirectlyToDatabaseTable> _tempMatches;
@@ -68,18 +68,22 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
     private bool stateChanged = true;
 
     private bool _isClosed;
-    private RecentHistoryOfControls recentHistoryOfSearches;
+    private readonly RecentHistoryOfControls recentHistoryOfSearches;
 
     /// <summary>
-    /// The users final selection when not using multi select mode
+    ///     The users final selection when not using multi select mode
     /// </summary>
     public T Selected;
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public HashSet<T> MultiSelected { get; private set; }
 
+
+    private HashSet<T> DefaultMultiSelected { get; }
+    private T DefaultSelected { get; }
+
     /// <summary>
-    /// Hides the Type selection toggle buttons and forces results to only appear matching the given Type
+    ///     Hides the Type selection toggle buttons and forces results to only appear matching the given Type
     /// </summary>
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Type AlwaysFilterOn
@@ -119,9 +123,9 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
     }
 
     /// <summary>
-    /// Object types that appear in the task bar as filterable types
+    ///     Object types that appear in the task bar as filterable types
     /// </summary>
-    private Dictionary<Type, RDMPCollection> EasyFilterTypesAndAssociatedCollections = new()
+    private readonly Dictionary<Type, RDMPCollection> EasyFilterTypesAndAssociatedCollections = new()
     {
         { typeof(Catalogue), RDMPCollection.Catalogue },
         { typeof(CatalogueItem), RDMPCollection.Catalogue },
@@ -137,7 +141,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
 
     /// <summary>
-    /// Identifies which Types are checked by default when the dialog is shown when the given RDMPCollection has focus
+    ///     Identifies which Types are checked by default when the dialog is shown when the given RDMPCollection has focus
     /// </summary>
     public Dictionary<RDMPCollection, Type[]> StartingEasyFilters
         = new()
@@ -285,6 +289,8 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         }
 
         pbLoading.Visible = IsDatabaseObjects();
+        DefaultMultiSelected = new HashSet<T>(MultiSelected);
+        //DefaultSelected = new T(Selected);
     }
 
     private void AddUsefulPropertiesIfHomogeneousTypes(T[] mapsDirectlyToDatabaseTables)
@@ -415,6 +421,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
                         toolStrip1.Items.Add(b);
                     }
+
                     break;
                 default:
                     toolStripLabel1.Visible = false;
@@ -532,29 +539,24 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         };
 
         if (_lblId != null && int.TryParse(_lblId.Text, out var requireId)) scorer.ID = requireId;
-        var _filtered = new Dictionary<IMapsDirectlyToDatabaseTable,DescendancyList>(_searchables);
-        foreach(var key in showOnlyEnums.Keys)
-        {
+        var _filtered = new Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList>(_searchables);
+        foreach (var key in showOnlyEnums.Keys)
             switch (key.Name)
             {
                 case "CatalogueItem":
-                    foreach(var k in _filtered.Keys)
+                    foreach (var k in _filtered.Keys)
                     {
                         showOnlyEnums.TryGetValue(k.GetType(), out var v1);
-                        if (showOnlyEnums.TryGetValue(k.GetType(),out var v) &&
-                            (v.Count >0 &&!v.Contains(((CatalogueItem)k).ExtractionInformation.ExtractionCategory.ToString()))
-
-                            )
-                        {
+                        if (showOnlyEnums.TryGetValue(k.GetType(), out var v) &&
+                            v.Count > 0 &&
+                            !v.Contains(((CatalogueItem)k).ExtractionInformation.ExtractionCategory.ToString())
+                           )
                             _filtered.Remove(k);
-                        }
                     }
-                    break;
-                default:
+
                     break;
             }
 
-        }
         if (AlwaysFilterOn != null) showOnlyTypes = new List<Type>(new[] { AlwaysFilterOn });
 
         var scores = scorer.ScoreMatches(_filtered, text, showOnlyTypes, cancellationToken);
@@ -665,9 +667,11 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
     {
         var button = (ToolStripButton)sender;
 
-        var togglingType = (Type)button.Tag; ;
+        var togglingType = (Type)button.Tag;
+        ;
 
         if (button.Checked)
+        {
             if (showOnlyEnums.TryGetValue(togglingType, out var value))
             {
                 value.Add(button.Text);
@@ -675,21 +679,23 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
             }
             else
             {
-                showOnlyEnums[togglingType] = new List<string>() { button.Text };
+                showOnlyEnums[togglingType] = new List<string> { button.Text };
             }
-        else
-            if (showOnlyEnums.TryGetValue(togglingType, out var value))
+        }
+        else if (showOnlyEnums.TryGetValue(togglingType, out var value))
         {
             value = value.Where(v => v != button.Text).ToList();
             showOnlyEnums[togglingType] = value;
-
         }
 
         //refresh the objects showing
         tbFilter_TextChanged(null, null);
     }
 
-    private static bool IsDatabaseObjects() => typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(typeof(T));
+    private static bool IsDatabaseObjects()
+    {
+        return typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(typeof(T));
+    }
 
     private void tbFilter_TextChanged(object sender, EventArgs e)
     {
@@ -768,7 +774,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
                     var toDisplay =
                         new List<IMapsDirectlyToDatabaseTable>(MultiSelected.Cast<IMapsDirectlyToDatabaseTable>());
 
-                    toDisplay.AddRange(_matches.Cast<IMapsDirectlyToDatabaseTable>().Except(toDisplay));
+                    toDisplay.AddRange(_matches.Except(toDisplay));
                     _objectsToDisplay = toDisplay.Cast<T>().ToList();
                 }
                 else
@@ -793,7 +799,10 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         return terms.All(t => arg.ToString().Contains(t, StringComparison.CurrentCultureIgnoreCase));
     }
 
-    public int GetObjectIndex(object model) => _objectsToDisplay.IndexOf((T)model);
+    public int GetObjectIndex(object model)
+    {
+        return _objectsToDisplay.IndexOf((T)model);
+    }
 
     public void InsertObjects(int index, ICollection modelObjects)
     {
@@ -807,9 +816,11 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
     {
     }
 
-    public int SearchText(string value, int first, int last, OLVColumn column) =>
+    public int SearchText(string value, int first, int last, OLVColumn column)
+    {
         // TODO: figure this out
-        0;
+        return 0;
+    }
 
     public void SetObjects(IEnumerable collection)
     {
@@ -862,8 +873,8 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
     private void btnCancel_Click(object sender, EventArgs e)
     {
-        Selected = default;
-        MultiSelected = new HashSet<T>();
+        Selected = DefaultSelected;
+        MultiSelected = DefaultMultiSelected;
         DialogResult = DialogResult.Cancel;
         Close();
     }
