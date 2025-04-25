@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add contextual global search (CRTL+f)
 - Improve UI Tab ordering
 - Add ability to specify DB collation on new DB creation
+- Display warnings about pipeline issues in the tables(advanced) tree
 
 ## [8.4.3] - 2025-02-24
 
