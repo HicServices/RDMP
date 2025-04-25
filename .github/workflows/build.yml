@@ -49,7 +49,7 @@ jobs:
         run: dotnet build --configuration Release --verbosity minimal
       - name: Initialise RDMP
         run: |
-          dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- install --createdatabasetimeout 180 "(localdb)\MSSQLLocalDB" TEST_ -e
+          dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- install --createdatabasetimeout 180 --collation "Latin1_General_CS_AI" "(localdb)\MSSQLLocalDB" TEST_ -e
       - name: Create MySql Logging, DQE and Cohort Building Cache Db
         run: |
           dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- createnewexternaldatabaseserver LiveLoggingServer_ID "DatabaseType:MySQL:Server=127.0.0.1;Uid=root;Pwd=YourStrong!Passw0rd;Database=rdmp_logging2" --dir ~/rdmp/rdmp-yaml/
@@ -216,7 +216,7 @@ jobs:
 
 
       - name: Install Perl dependencies
-        uses: shogo82148/actions-setup-perl@v1.33.0
+        uses: shogo82148/actions-setup-perl@v1.34.0
         with:
           install-modules-with: cpanm
           install-modules: Archive::Zip Archive::Tar
