@@ -1,6 +1,4 @@
 ﻿using Rdmp.Core.CommandExecution;
-using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Curation.Data.Datasets;
 using Rdmp.Core.Repositories;
 using System;
 using System.Collections.Generic;
@@ -8,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Rdmp.Core.Datasets;
+namespace Rdmp.Core.Curation.Data.Datasets;
 
 public abstract class PluginDatasetProvider : IDatasetProvider
 {

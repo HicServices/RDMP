@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Rdmp.Core.Datasets;
+namespace Rdmp.Core.Curation.Data.Datasets;
 /// <summary>
 /// Base interface for dataset providers to impliment
 /// </summary>

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Rdmp.Core.Datasets;
+namespace Rdmp.Core.Curation.Data.Datasets;
 
 /// <summary>
 /// Provider for internal datasets

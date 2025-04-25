@@ -2,7 +2,7 @@
 using System.Data.Common;
 
 
-namespace Rdmp.Core.Datasets
+namespace Rdmp.Core.Curation.Data.Datasets
 {
     /// <summary>
     /// Base class to allow all plugin dataset types to be based off
