@@ -75,9 +75,6 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
 
         ddPipelines.Items.AddRange(allPipelines.Where(_useCase.IsAllowable).ToArray());
 
-        var na = (allPipelines.Where(o => !_useCase.IsAllowable(o)).ToArray());
-        var a = (allPipelines.Where(o => _useCase.IsAllowable(o)).ToArray());
-
         if (_extractionConfiguration is not null)
         {
             var toReselect = ddPipelines.Items.OfType<Pipeline>()

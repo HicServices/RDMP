@@ -29,4 +29,4 @@ internal class ExecuteCommandDeleteDatasetTest: CommandCliTests
         Assert.Throws<NullReferenceException>(() => delCmd.Execute());
         Assert.That(GetMockActivator().RepositoryLocator.CatalogueRepository.GetAllObjects<Rdmp.Core.Curation.Data.Dataset>(), Is.Empty);
     }
-}
+}   
