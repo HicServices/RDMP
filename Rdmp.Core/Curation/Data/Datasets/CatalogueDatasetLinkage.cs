@@ -11,6 +11,9 @@ using System.Data.Common;
 
 namespace Rdmp.Core.Curation.Data.Datasets
 {
+    /// <summary>
+    /// Linkage between a <see cref="Catalogue"/> and a <see cref="Dataset"/>.  This is used to link datasets to catalogues in the RDMP system.
+    /// </summary>
     public class CatalogueDatasetLinkage: DatabaseEntity
     {
         private int _catalogueID;
