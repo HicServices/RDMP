@@ -129,11 +129,16 @@ public class AtomicCommandFactory : CommandFactoryBase
             };
             if (!isApiCall)
             {
-                yield return new ExecuteCommandChangeExtractability(_activator, c)
-                {
-                    Weight = -99.0010f,
-                    SuggestedCategory = Extraction
-                };
+                yield return c.IsInternalDataset ?
+                    new ExecuteCommandMakeCatalogueNotInternal(_activator, c)
+                    {
+                        Weight = -99.0008f,
+                        SuggestedCategory = Extraction
+                    } : new ExecuteCommandMakeCatalogueInternal(_activator, c)
+                    {
+                        Weight = -99.0008f,
+                        SuggestedCategory = Extraction
+                    };
 
                 yield return c.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository)
                     ? new ExecuteCommandMakeProjectSpecificCatalogueNormalAgain(_activator, c)

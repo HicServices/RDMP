@@ -31,7 +31,7 @@ public class CatalogueCollectionFilter : IModelFilter
         _isDeprecated = UserSettings.ShowDeprecatedCatalogues;
         _isColdStorage = UserSettings.ShowColdStorageCatalogues;
         _isProjectSpecific = UserSettings.ShowProjectSpecificCatalogues;
-        _isNonExtractable = UserSettings.ShowNonExtractableCatalogues;
+        _isNonExtractable = true;
     }
 
     public bool Filter(object modelObject) => SearchablesMatchScorer.Filter(modelObject,

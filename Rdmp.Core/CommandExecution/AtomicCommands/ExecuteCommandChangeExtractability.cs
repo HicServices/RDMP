@@ -65,7 +65,18 @@ public sealed class ExecuteCommandChangeExtractability : BasicCommandExecution
             }
             else
             {
-                new ExtractableDataSet(BasicActivator.RepositoryLocator.DataExportRepository, _catalogue);
+                var extractabilityRecord =
+                ((DataExportChildProvider)BasicActivator.CoreChildProvider).ExtractableDataSets.SingleOrDefault(ds =>
+                    ds.Catalogue_ID == _catalogue.ID);
+                if (extractabilityRecord != null)
+                {
+                    extractabilityRecord.DisableExtraction = false;
+                    extractabilityRecord.SaveToDatabase();
+                }
+                else
+                {
+                    new ExtractableDataSet(BasicActivator.RepositoryLocator.DataExportRepository, _catalogue);
+                }
                 Publish(_catalogue);
             }
         }
@@ -80,7 +91,8 @@ public sealed class ExecuteCommandChangeExtractability : BasicCommandExecution
             }
             else
             {
-                extractabilityRecord.DeleteInDatabase();
+                extractabilityRecord.DisableExtraction = true;
+                extractabilityRecord.SaveToDatabase();
                 Publish(_catalogue);
             }
         }
