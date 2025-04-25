@@ -13,6 +13,7 @@ using System.Text;
 using System.Windows.Forms;
 using Rdmp.Core;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Datasets;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Rules;

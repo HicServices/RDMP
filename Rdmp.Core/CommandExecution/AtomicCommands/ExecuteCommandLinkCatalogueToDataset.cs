@@ -13,9 +13,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 public sealed class ExecuteCommandLinkCatalogueToDataset : BasicCommandExecution
 {
     private readonly Catalogue _catalogue;
-    private readonly Curation.Data.Dataset _dataset;
+    private readonly Curation.Data.Datasets.Dataset _dataset;
     private readonly bool _linkAll;
-    public ExecuteCommandLinkCatalogueToDataset(IBasicActivateItems activator, [DemandsInitialization("The catalogue To link")]Catalogue catalogue, [DemandsInitialization("The dataset to link to")]Curation.Data.Dataset dataset, bool linkAllOtherColumns = true) : base(activator)
+    public ExecuteCommandLinkCatalogueToDataset(IBasicActivateItems activator, [DemandsInitialization("The catalogue To link")]Catalogue catalogue, [DemandsInitialization("The dataset to link to")]Curation.Data.Datasets.Dataset dataset, bool linkAllOtherColumns = true) : base(activator)
     {
         _catalogue = catalogue;
         _dataset = dataset;

@@ -7,6 +7,7 @@ using Rdmp.UI.Refreshing;
 using Rdmp.Core.Dataset;
 using Rdmp.Core.Curation.Data;
 using Rdmp.UI.ItemActivation;
+using Rdmp.Core.Curation.Data.Datasets;
 
 namespace Rdmp.UI.SubComponents;
 public partial class DatasetConfigurationUI : DatsetConfigurationUI_Design, IRefreshBusSubscriber

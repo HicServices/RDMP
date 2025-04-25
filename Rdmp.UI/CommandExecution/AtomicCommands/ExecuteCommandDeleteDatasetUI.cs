@@ -1,4 +1,4 @@
-﻿using Rdmp.Core.Curation.Data;
+﻿using Rdmp.Core.Curation.Data.Datasets;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;

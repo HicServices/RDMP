@@ -820,6 +820,7 @@ public class DataExportChildProvider : CatalogueChildProvider
             AllDatasetsNode = dxOther.AllDatasetsNode;
             AllRegexRedactionConfigurations = dxOther.AllRegexRedactionConfigurations;
             AllRegexRedactionConfigurationsNode = dxOther.AllRegexRedactionConfigurationsNode;
+            AllDatasetProviderConfigurationsNode = dxOther.AllDatasetProviderConfigurationsNode;
         }
     }
 
