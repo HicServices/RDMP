@@ -100,3 +100,7 @@ FK_Redaction_ColumnInfo_ID: Prevents redactions from becoming orphaned from thei
 FK_RedactionKey_Redaction_ID: Prevents redaction primary keys from being orphaned from the associated redaction
 FK_RedactionKey_ColumnInfo_ID:  Prevents redaction keys from becoming orphaned from their associated catalogue columns
 FK_LoadMetadataRootReference: Links versions of a load metadata back to the source load metadata
+FK_CatalogueDatasetLinkage_Catalogue_ID:Linkage to Catalogue
+FK_CatalogueDatasetLinkage_Dataset_ID: Linkage ot Dataset
+FK_DatasetProviderConfiguration_DataAccessCredentials: Linkage to DataAccess Credentials
+FK_DatasetProviderDatasetProviderCredentials: Links dataset to dataset provider
