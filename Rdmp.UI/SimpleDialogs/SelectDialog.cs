@@ -874,9 +874,8 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
     private void btnCancel_Click(object sender, EventArgs e)
     {
         Selected = DefaultSelected;
-        MultiSelected = DefaultMultiSelected; //new HashSet<T>();
+        MultiSelected = DefaultMultiSelected;
         DialogResult = DialogResult.Cancel;
-        //DialogResult = DialogResult.OK;
         Close();
     }
 
