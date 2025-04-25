@@ -95,7 +95,7 @@ public class CatalogueProblemProvider : ProblemProvider
         };
     }
 
-    public string DescibeProblem(PipelineComponent pipelineComponent)
+    public string DescibeProblem(IPipelineComponent pipelineComponent)
     {
         var value = DataFlowPipelineEngineFactory.TryCreateComponent(pipelineComponent, out var exConstruction);
         if (exConstruction is not null)
@@ -128,6 +128,14 @@ public class CatalogueProblemProvider : ProblemProvider
         if(!useCase.IsAllowable(pipeline))
         {
             return "Something is wrong with this pipeline";
+        }
+        foreach(var component in pipeline.PipelineComponents)
+        {
+            var componentProblem = DescibeProblem(component);
+            if (componentProblem != null)
+            {
+                return componentProblem;
+            }
         }
         return null;
     }
