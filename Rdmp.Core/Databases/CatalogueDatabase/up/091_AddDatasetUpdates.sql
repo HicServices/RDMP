@@ -39,7 +39,6 @@ BEGIN
 ALTER TABLE [dbo].[Dataset]
 ADD [Type] [varchar](256) NULL,
 	[Url] [varchar](256) NULL,
-	[Provider_ID] [int] NULL,
-	CONSTRAINT FK_DatasetProviderDatasetProviderCredentials FOREIGN KEY (Provider_ID) REFERENCES DatasetProviderConfiguration(ID)
+	[Provider_ID] [int] NULL
 END
 GO
