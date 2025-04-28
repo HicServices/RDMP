@@ -79,7 +79,7 @@ public class Dataset : DatabaseEntity, IDataset, IHasFolder
     {
         return ID.ToString();
     }
-    public string GetURL()
+    public virtual string GetURL()
     {
         return Url.ToString();
     }

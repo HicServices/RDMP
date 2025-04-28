@@ -18,5 +18,9 @@ namespace Rdmp.Core.Curation.Data.Datasets
         {
             return ID.ToString();
         }
+        public override string GetURL()
+        {
+            return ID.ToString();
+        }
     }
 }

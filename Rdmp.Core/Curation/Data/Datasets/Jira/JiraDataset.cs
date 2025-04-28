@@ -24,6 +24,10 @@ namespace Rdmp.Core.Curation.Data.Datasets.Jira
         {
             return id;
         }
+        public override string GetURL()
+        {
+            return _links.self;
+        }
 
         public string workspaceId { get; set; }
         public string globalId { get; set; }
