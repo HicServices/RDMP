@@ -19,6 +19,9 @@ public interface IDatasetProvider
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    Curation.Data.Datasets.Dataset FetchDatasetByID(int id);
+    Dataset FetchDatasetByID(int id);
+    void UpdateUsingCatalogue(Dataset dataset, Catalogue catalogue);
+    Dataset Create(Catalogue catalogue);
 
+    Dataset AddExistingDatasetWithReturn(string name, string url);
 }

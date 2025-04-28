@@ -15,11 +15,13 @@ using Rdmp.Core;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Datasets;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Rules;
 using Rdmp.UI.ScintillaHelper;
 using Rdmp.UI.SimpleControls;
 using Rdmp.UI.SimpleDialogs;
+using Rdmp.UI.SubComponents;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ScintillaNET;
 
@@ -452,12 +454,93 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
                 Bind(ffAssociatedMedia, "Value", "AssociatedMedia", c => c.AssociatedMedia);
                 aiAssociatedMedia.TooltipText = CatalogueUIHelperText.AssociatedMedia;
                 aiAssociatedMedia.SetItemActivator(Activator);
+                break;
+            case 7:
+                var datasets = _catalogue.GetLinkedDatasets();
+                for (int i = 1; i < tableLayoutPanel3.RowCount; i++)
+                {
+                    tableLayoutPanel3.RowStyles.RemoveAt(i);
+                }
+                foreach (var dataset in datasets)
+                {
+                    var linkage = _catalogue.CatalogueRepository.GetAllObjectsWhere<CatalogueDatasetLinkage>("Dataset_ID", dataset.ID).First(l => l.Catalogue.ID == _catalogue.ID);
+                    tableLayoutPanel3.RowCount++;
+                    var label = new Label();
+                    label.Text = dataset.Name;
+                    label.AutoSize = true;
+                    tableLayoutPanel3.Controls.Add(label, 0, tableLayoutPanel3.RowCount - 1);
+                    var cb = new CheckBox();
+                    cb.Checked = linkage.Autoupdate;
+                    cb.CheckedChanged += (object sender, EventArgs e) =>
+                    {
+                        linkage.Autoupdate = !linkage.Autoupdate;
+                        linkage.SaveToDatabase();
+                        Publish(linkage);
+                    };
+                    tableLayoutPanel3.Controls.Add(cb, 1, tableLayoutPanel3.RowCount - 1);
+                    var btn = new Button();
+                    btn.Text = "Update Now";
+                    btn.Click += (object sender, EventArgs e) => UpdateDataset(dataset);
+                    tableLayoutPanel3.Controls.Add(btn, 2, tableLayoutPanel3.RowCount - 1);
+                    //if (dataset.Type != typeof(JiraDatasetProvider).ToString())
+                    //{
+                    //    var btn2 = new Button();
+                    //    btn2.Text = "View";
+                    //    btn2.Click += (object sender, EventArgs e) => UsefulStuff.OpenUrl(dataset.Url);
+                    //    tableLayoutPanel3.Controls.Add(btn2, 3, tableLayoutPanel3.RowCount - 1);
+                    //}
+                    var btn3 = new Button();
+                    btn3.Text = "Remove Link to Dataset";
+                    btn3.Click += (object sender, EventArgs e) =>
+                    {
+                        if (Activator.YesNo("Are you sure?", "Remove Linkage"))
+                        {
+                            linkage.DeleteInDatabase();
+                        }
+                    };
+                    tableLayoutPanel3.Controls.Add(btn3, 4, tableLayoutPanel3.RowCount - 1);
+                    var labelType = new Label();
+                    labelType.Text = _catalogue.CatalogueRepository.GetObjectByID<DatasetProviderConfiguration>((int)dataset.Provider_ID).Name;
+                    labelType.AutoSize = true;
+                    tableLayoutPanel3.Controls.Add(labelType, 5, tableLayoutPanel3.RowCount - 1);
 
+                }
                 break;
             default:
                 break;
         }
         setTabBindings.Add(selectedIndex);
+    }
+
+    private void UpdateDataset(Dataset dataset)
+    {
+        var providerConfiguration = Activator.RepositoryLocator.CatalogueRepository.GetObjectByID<DatasetProviderConfiguration>((int)dataset.Provider_ID);
+        var provider = providerConfiguration.GetProviderInstance();
+        var ds = provider.FetchDatasetByID(int.Parse(dataset.Url.Split('/').Last())); //todo this id may change
+        provider.UpdateUsingCatalogue(ds, _catalogue);
+    }
+    private void tableLayoutPanel3_Paint(object sender, PaintEventArgs e)
+    {
+
+    }
+
+    private void label3_Click(object sender, EventArgs e)
+    {
+
+    }
+
+    private void button2_Click(object sender, EventArgs e)
+    {
+        var dialog = new LinkDatasetDialog();
+        dialog.Setup(Activator, _catalogue);
+        dialog.Show();
+    }
+
+    private void button1_Click(object sender, EventArgs e)
+    {
+        var dialog = new CreateExternalDatasetDialog();
+        dialog.Setup(Activator, _catalogue);
+        dialog.Show();
     }
 
     private void btnStartDateClear_Click(object sender, EventArgs e)

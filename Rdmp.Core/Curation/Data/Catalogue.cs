@@ -14,8 +14,10 @@ using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.CohortCreation.Execution;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.Curation.Data.Datasets;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Serialization;
@@ -30,6 +32,7 @@ using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Annotations;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
+using Rdmp.Core.Startup;
 using Rdmp.Core.Ticketing;
 
 namespace Rdmp.Core.Curation.Data;
@@ -1146,6 +1149,26 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
 
     /// <inheritdoc/>
     public override string ToString() => Name;
+
+    public List<Datasets.Dataset> GetLinkedDatasets()
+    {
+        return CatalogueRepository.GetAllObjectsWhere<CatalogueDatasetLinkage>("Catalogue_ID", this.ID).Select(l => l.Dataset).Distinct().ToList();
+    }
+
+    public override void SaveToDatabase()
+    {
+        base.SaveToDatabase();
+        foreach (var dataset in CatalogueRepository.GetAllObjectsWhere<CatalogueDatasetLinkage>("Catalogue_ID", this.ID).Where(cdl => cdl.Autoupdate).Select(cld => cld.Dataset))
+        {
+            var provider = CatalogueRepository.GetObjectByID<DatasetProviderConfiguration>((int)dataset.Provider_ID);
+            var providerConfiguration = CatalogueRepository.GetObjectByID<DatasetProviderConfiguration>((int)dataset.Provider_ID);
+            var repositoryProvider = new UserSettingsRepositoryFinder();
+            var activator = new ThrowImmediatelyActivator(repositoryProvider, ThrowImmediatelyCheckNotifier.Quiet);
+            var providerInstance = providerConfiguration.GetProviderInstance();
+            var ds = providerInstance.FetchDatasetByID(int.Parse(dataset.Url.Split('/').Last()));
+            providerInstance.UpdateUsingCatalogue(ds, this);
+        }
+    }
 
     /// <summary>
     /// Sorts alphabetically based on <see cref="Name"/>

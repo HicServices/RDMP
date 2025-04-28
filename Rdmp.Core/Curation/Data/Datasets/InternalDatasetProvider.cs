@@ -15,6 +15,16 @@ public class InternalDatasetProvider : IDatasetProvider
         _activator = activator;
     }
 
+    public Dataset AddExistingDatasetWithReturn(string name, string url)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public Dataset Create(Catalogue catalogue)
+    {
+        throw new System.NotImplementedException();
+    }
+
     /// <inheritdoc/>
     public Curation.Data.Datasets.Dataset FetchDatasetByID(int id)
     {
@@ -25,5 +35,10 @@ public class InternalDatasetProvider : IDatasetProvider
     public List<Curation.Data.Datasets.Dataset> FetchDatasets()
     {
         return _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Curation.Data.Datasets.Dataset>().ToList();
+    }
+
+    public void UpdateUsingCatalogue(Dataset dataset, Catalogue catalogue)
+    {
+        throw new System.NotImplementedException();
     }
 }

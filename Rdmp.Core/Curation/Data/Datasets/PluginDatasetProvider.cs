@@ -34,4 +34,13 @@ public abstract class PluginDatasetProvider : IDatasetProvider
     public abstract void Update(string uuid, PluginDataset datasetUpdates);
     public abstract void UpdateUsingCatalogue(PluginDataset dataset, Catalogue catalogue);
 
+    public void UpdateUsingCatalogue(Dataset dataset, Catalogue catalogue)
+    {
+        throw new NotImplementedException();
+    }
+
+    Dataset IDatasetProvider.Create(Catalogue catalogue)
+    {
+        throw new NotImplementedException();
+    }
 }

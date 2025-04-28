@@ -7,6 +7,7 @@
 using System;
 using Rdmp.Core.Curation.Data;
 using System.Linq;
+using Rdmp.Core.Curation.Data.Datasets;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
@@ -29,21 +30,9 @@ public sealed class ExecuteCommandLinkCatalogueToDataset : BasicCommandExecution
     public override void Execute()
     {
         base.Execute();
-        var items = _catalogue.CatalogueItems.ToList();
-        foreach (var ci in items.Select(static item => item.ColumnInfo).Where(ci => ci?.Dataset_ID != _dataset.ID))
-        {
-            ci.Dataset_ID = _dataset.ID;
-            ci.SaveToDatabase();
-            if (!_linkAll) continue;
-
-            var databaseName = ci.Name[..ci.Name.LastIndexOf('.')];
-            var catalogueItems = ci.CatalogueRepository.GetAllObjects<ColumnInfo>().Where(ci => ci.Name[..ci.Name.LastIndexOf(".", StringComparison.Ordinal)] == databaseName).ToList();
-            foreach (var aci in catalogueItems)
-            {
-                aci.Dataset_ID = _dataset.ID;
-                aci.SaveToDatabase();
-            }
-        }
+        var linkage = new CatalogueDatasetLinkage(_catalogue.CatalogueRepository, _catalogue, _dataset);
+        linkage.SaveToDatabase();
+        Publish(linkage);
 
     }
 }
