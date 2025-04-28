@@ -34,6 +34,10 @@ public partial class ConfigurationsCollectionUI : RDMPCollectionUI, ILifetimeSub
             new ExecuteCommandCreateNewJiraConfigurationUI(_activator){
  OverrideCommandName="Create New Jira Configuration", SuggestedCategory="Jira Integration"
  },
+            new ExecuteCommandImportExistingJiraDatasetUI(_activator)
+ {
+     OverrideCommandName="Import Existing Jira Dataset", SuggestedCategory="Jira Integration"
+ },
 
         };
     }
@@ -50,7 +54,7 @@ public partial class ConfigurationsCollectionUI : RDMPCollectionUI, ILifetimeSub
         tlvConfigurations.AddObject(Activator.CoreChildProvider.AllDatasetProviderConfigurationsNode);
         tlvConfigurations.AddObject(Activator.CoreChildProvider.AllRegexRedactionConfigurationsNode);
         tlvConfigurations.Refresh();
-        }
+    }
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {
