@@ -516,7 +516,7 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
     {
         var providerConfiguration = Activator.RepositoryLocator.CatalogueRepository.GetObjectByID<DatasetProviderConfiguration>((int)dataset.Provider_ID);
         var provider = providerConfiguration.GetProviderInstance(Activator);
-        var ds = provider.FetchDatasetByID(int.Parse(dataset.Url.Split('/').Last())); //todo this id may change
+        var ds = provider.FetchDatasetByID(int.Parse(dataset.GetRemoteID())); //todo this id may change
         provider.UpdateUsingCatalogue(ds, _catalogue);
     }
     private void tableLayoutPanel3_Paint(object sender, PaintEventArgs e)

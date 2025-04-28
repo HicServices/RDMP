@@ -34,9 +34,9 @@ namespace Rdmp.UI.SubComponents
             var provider = ((DatasetProviderConfiguration)cbPovider.SelectedItem).GetProviderInstance(_activator);
             Dataset dataset;
             var fetchedDataset = provider.FetchDatasetByID(int.Parse(tbID.Text));//todo is it always ints?
-            if (_activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<Dataset>("Url", fetchedDataset.GetURL()).Any())
+            if (_activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<Dataset>("Url", fetchedDataset.Url).Any())
             {
-                dataset = _activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<Dataset>("Url", fetchedDataset.GetURL()).First();
+                dataset = _activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<Dataset>("Url", fetchedDataset.Url).First();
             }
             else
             {
