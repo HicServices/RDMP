@@ -75,6 +75,11 @@ public class Dataset : DatabaseEntity, IDataset, IHasFolder
     }
     public override string ToString() => Name;
 
+    public string GetID()
+    {
+        return ID.ToString();
+    }
+
     public List<Catalogue> GetLinkedCatalogues()
     {
         return CatalogueRepository.GetAllObjectsWhere<CatalogueDatasetLinkage>("Dataset_ID", this.ID).Select(l => l.Catalogue).Distinct().ToList();
