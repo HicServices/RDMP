@@ -79,9 +79,9 @@ public class Dataset : DatabaseEntity, IDataset, IHasFolder
     {
         return ID.ToString();
     }
-    public virtual string GetURL()
+    public virtual string GetRemoteID()
     {
-        return Url.ToString();
+        return ID.ToString();
     }
 
     public List<Catalogue> GetLinkedCatalogues()
