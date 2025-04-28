@@ -13,5 +13,14 @@ namespace Rdmp.Core.Curation.Data.Datasets
         public PluginDataset() { }
 
         public PluginDataset(ICatalogueRepository repository, DbDataReader r) : base(repository, r) { }
+
+        public override string GetID()
+        {
+            return ID.ToString();
+        }
+        public override string GetURL()
+        {
+            return ID.ToString();
+        }
     }
 }
