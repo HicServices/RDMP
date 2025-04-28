@@ -16,6 +16,9 @@ using System.Threading.Tasks;
 
 namespace Rdmp.Core.Curation.Data.Datasets.Jira
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class JiraDatasetProvider : PluginDatasetProvider
     {
         private readonly string _workspace;

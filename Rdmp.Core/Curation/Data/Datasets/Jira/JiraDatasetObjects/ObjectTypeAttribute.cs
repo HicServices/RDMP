@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Rdmp.Core.Curation.Data.Datasets.Jira.JiraDatasetObjects
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class ObjectTypeAttribute
     {
         public string workspaceId { get; set; }
