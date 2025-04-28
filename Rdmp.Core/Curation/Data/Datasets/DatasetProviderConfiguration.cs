@@ -53,7 +53,7 @@ public class DatasetProviderConfiguration : DatabaseEntity, IDatasetProviderConf
             var type = assembly.GetTypes().FirstOrDefault(t => t.FullName == Type);
             if (type != null)
             {
-                return (IDatasetProvider)Activator.CreateInstance(type, activator, this);
+                return (IDatasetProvider)Activator.CreateInstance(type, activator, this,null);
             }
         }
         return null;
