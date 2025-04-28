@@ -39,4 +39,6 @@ public interface IDataset: IMapsDirectlyToDatabaseTable
     /// The URL to access the dataset
     /// </summary>
     string Url { get; }
+
+    public abstract string GetID();
 }

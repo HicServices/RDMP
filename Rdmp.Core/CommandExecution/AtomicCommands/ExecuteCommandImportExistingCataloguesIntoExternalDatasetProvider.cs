@@ -20,11 +20,10 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         private readonly bool _includeDeprecated;
         private readonly string _id;
 
-        public ExecuteCommandImportExistingCataloguesIntoExternalDatasetProvider(IBasicActivateItems activator, PluginDatasetProvider provider, string id, bool includeExtractable, bool includeInternal, bool includeProjectSpecific, bool includeDeprecated)
+        public ExecuteCommandImportExistingCataloguesIntoExternalDatasetProvider(IBasicActivateItems activator, PluginDatasetProvider provider, bool includeExtractable, bool includeInternal, bool includeProjectSpecific, bool includeDeprecated)
         {
             _activator = activator;
             _provider = provider;
-            _id = id;
             _includeExtractable = includeExtractable;
             _includeInternal = includeInternal;
             _includeProjectSpecific = includeProjectSpecific;
@@ -55,9 +54,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             foreach (var catalogue in catalogues)
             {
                 var dataset = _provider.Create(catalogue);
-                    var ds = _provider.AddExistingDatasetWithReturn(null, _id);
-                    var cmd = new ExecuteCommandLinkCatalogueToDataset(_activator, catalogue, ds);
-                    cmd.Execute();
+                var ds = _provider.AddExistingDatasetWithReturn(null, dataset.GetID());
+                var cmd = new ExecuteCommandLinkCatalogueToDataset(_activator, catalogue, ds);
+                cmd.Execute();
             }
         }
     }
