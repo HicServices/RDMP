@@ -18,7 +18,6 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         private readonly bool _includeInternal;
         private readonly bool _includeProjectSpecific;
         private readonly bool _includeDeprecated;
-        private readonly string _id;
 
         public ExecuteCommandImportExistingCataloguesIntoExternalDatasetProvider(IBasicActivateItems activator, PluginDatasetProvider provider, bool includeExtractable, bool includeInternal, bool includeProjectSpecific, bool includeDeprecated)
         {
