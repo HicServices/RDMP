@@ -279,7 +279,7 @@ namespace Rdmp.Core.Curation.Data.Datasets.Jira
 
         public override void UpdateUsingCatalogue(Dataset dataset, Catalogue catalogue)
         {
-            var jiraDataset = (JiraDataset)dataset;
+            var jiraDataset = (JiraDataset)FetchDatasetByID(int.Parse(dataset.Url.Split("/").Last()));
             var updateDataset = new JiraDataset();
             updateDataset.attributes = new List<JiraDatasetObjects.Attribute>();
 
@@ -424,5 +424,6 @@ namespace Rdmp.Core.Curation.Data.Datasets.Jira
                 throw new Exception($"{response.StatusCode}: Unable to fetch Object types");
             }
         }
+
     }
 }
