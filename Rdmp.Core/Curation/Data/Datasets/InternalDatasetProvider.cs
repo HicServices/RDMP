@@ -1,6 +1,7 @@
 ﻿using Rdmp.Core.CommandExecution;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 
 namespace Rdmp.Core.Curation.Data.Datasets;
 
@@ -10,7 +11,7 @@ namespace Rdmp.Core.Curation.Data.Datasets;
 public class InternalDatasetProvider : IDatasetProvider
 {
     private readonly IBasicActivateItems _activator;
-    public InternalDatasetProvider(IBasicActivateItems activator)
+    public InternalDatasetProvider(IBasicActivateItems activator, DatasetProviderConfiguration configuration = null, HttpClient client = null)
     {
         _activator = activator;
     }

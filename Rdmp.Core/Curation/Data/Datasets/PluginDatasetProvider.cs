@@ -3,6 +3,7 @@ using Rdmp.Core.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,7 +15,7 @@ public abstract class PluginDatasetProvider : IDatasetProvider
     protected ICatalogueRepository Repository { get; }
     protected IBasicActivateItems Activator { get; }
 
-    protected PluginDatasetProvider(IBasicActivateItems activator, DatasetProviderConfiguration configuration)
+    protected PluginDatasetProvider(IBasicActivateItems activator, DatasetProviderConfiguration configuration, HttpClient client = null)
     {
         Configuration = configuration;
         Activator = activator;
