@@ -376,34 +376,37 @@ namespace Rdmp.Core.Curation.Data.Datasets.Jira
 
                         detailsString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
                         AQLResult projects = JsonConvert.DeserializeObject<AQLResult>(detailsString);
-                        var datasetID = projects.objectTypeAttributes.First(ota => ota.name == DATASET).id;
-                        foreach (var jiraAssetProject in projects.values)
+                        if (projects.objectTypeAttributes.Any())
                         {
-                            List<JiraDatasetObjects.Attribute> jiraAttributes = [];
-                            jiraAttributes.Add(new JiraDatasetObjects.Attribute()
+                            var datasetID = projects.objectTypeAttributes.First(ota => ota.name == DATASET).id;
+                            foreach (var jiraAssetProject in projects.values)
                             {
-                                objectTypeAttributeId = datasetID,
-                                objectAttributeValues = datasets.Select(ds => new JiraDatasetObjects.ObjectAttributeValue() { value = ((JiraDataset)FetchDatasetByID(int.Parse(ds.Url.Split('/').Last()))).objectKey }).ToList()
+                                List<JiraDatasetObjects.Attribute> jiraAttributes = [];
+                                jiraAttributes.Add(new JiraDatasetObjects.Attribute()
+                                {
+                                    objectTypeAttributeId = datasetID,
+                                    objectAttributeValues = datasets.Select(ds => new JiraDatasetObjects.ObjectAttributeValue() { value = ((JiraDataset)FetchDatasetByID(int.Parse(ds.Url.Split('/').Last()))).objectKey }).ToList()
 
-                            });
-                            serializeOptions = new JsonSerializerOptions
-                            {
-                                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                                WriteIndented = true,
-                                IncludeFields = true
-                            };
-                            using var stream = new MemoryStream();
-                            var o = new UpdateAttributes()
-                            {
-                                attributes = jiraAttributes
-                            };
-                            System.Text.Json.JsonSerializer.Serialize(stream, o, serializeOptions);
-                            jsonString = Encoding.UTF8.GetString(stream.ToArray());
-                            httpContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
-                            response = Task.Run(async () => await _client.PutAsync($"{API_URL}{_workspace}/v1/object/{jiraAssetProject.id}", httpContent)).Result;
-                            if (response.StatusCode != HttpStatusCode.OK)
-                            {
-                                throw new Exception($"{response.StatusCode}: Unable to Link Dataset to project {jiraAssetProject.id}");
+                                });
+                                serializeOptions = new JsonSerializerOptions
+                                {
+                                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                                    WriteIndented = true,
+                                    IncludeFields = true
+                                };
+                                using var stream = new MemoryStream();
+                                var o = new UpdateAttributes()
+                                {
+                                    attributes = jiraAttributes
+                                };
+                                System.Text.Json.JsonSerializer.Serialize(stream, o, serializeOptions);
+                                jsonString = Encoding.UTF8.GetString(stream.ToArray());
+                                httpContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
+                                response = Task.Run(async () => await _client.PutAsync($"{API_URL}{_workspace}/v1/object/{jiraAssetProject.id}", httpContent)).Result;
+                                if (response.StatusCode != HttpStatusCode.OK)
+                                {
+                                    throw new Exception($"{response.StatusCode}: Unable to Link Dataset to project {jiraAssetProject.id}");
+                                }
                             }
                         }
                     }

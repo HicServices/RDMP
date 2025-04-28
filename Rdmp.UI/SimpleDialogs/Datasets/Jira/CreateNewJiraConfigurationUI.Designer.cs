@@ -218,7 +218,7 @@
             Controls.Add(label2);
             Controls.Add(label1);
             Name = "CreateNewJiraConfigurationUI";
-            Text = "Create Pure Configuration";
+            Text = "Create Jira Configuration";
             ResumeLayout(false);
             PerformLayout();
         }

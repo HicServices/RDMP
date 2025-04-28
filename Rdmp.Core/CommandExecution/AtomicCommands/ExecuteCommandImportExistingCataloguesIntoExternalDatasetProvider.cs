@@ -53,6 +53,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             foreach (var catalogue in catalogues)
             {
                 var dataset = _provider.Create(catalogue);
+
                 var ds = _provider.AddExistingDatasetWithReturn(null, dataset.GetID());
                 var cmd = new ExecuteCommandLinkCatalogueToDataset(_activator, catalogue, ds);
                 cmd.Execute();

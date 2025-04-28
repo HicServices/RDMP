@@ -75,7 +75,7 @@ public class Dataset : DatabaseEntity, IDataset, IHasFolder
     }
     public override string ToString() => Name;
 
-    public string GetID()
+    public virtual string GetID()
     {
         return ID.ToString();
     }
