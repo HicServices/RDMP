@@ -24,9 +24,9 @@ namespace Rdmp.Core.Curation.Data.Datasets.Jira
         {
             return id;
         }
-        public override string GetURL()
+        public override string GetRemoteID()
         {
-            return _links.self;
+            return _links.self.Split("/").Last();
         }
 
         public string workspaceId { get; set; }
