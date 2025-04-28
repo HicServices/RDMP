@@ -16,6 +16,7 @@ using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.Curation.Data.Datasets;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Serialization;
@@ -1146,6 +1147,12 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
 
     /// <inheritdoc/>
     public override string ToString() => Name;
+
+
+    public List<Datasets.Dataset> GetLinkedDatasets()
+    {
+        return CatalogueRepository.GetAllObjectsWhere<CatalogueDatasetLinkage>("Catalogue_ID", this.ID).Select(l => l.Dataset).Distinct().ToList();
+    }
 
     /// <summary>
     /// Sorts alphabetically based on <see cref="Name"/>

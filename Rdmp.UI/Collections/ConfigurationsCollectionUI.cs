@@ -30,7 +30,11 @@ public partial class ConfigurationsCollectionUI : RDMPCollectionUI, ILifetimeSub
             new ExecuteCommandAddNewRegexRedactionConfigurationUI(_activator)
             {
                 OverrideCommandName="Add New Regex Redaction Configuration"
-            }
+            },
+            new ExecuteCommandCreateNewJiraConfigurationUI(_activator){
+ OverrideCommandName="Create New Jira Configuration", SuggestedCategory="Jira Integration"
+ },
+
         };
     }
 
