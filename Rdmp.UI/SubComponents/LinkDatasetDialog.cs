@@ -31,7 +31,7 @@ namespace Rdmp.UI.SubComponents
 
         private void button1_Click(object sender, EventArgs e)
         {
-            var provider = ((DatasetProviderConfiguration)cbPovider.SelectedItem).GetProviderInstance();
+            var provider = ((DatasetProviderConfiguration)cbPovider.SelectedItem).GetProviderInstance(_activator);
             Dataset dataset;
             var fetchedDataset = provider.FetchDatasetByID(int.Parse(tbID.Text));//todo is it always ints?
             if (_activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<Dataset>("Url", fetchedDataset.GetURL()).Any())

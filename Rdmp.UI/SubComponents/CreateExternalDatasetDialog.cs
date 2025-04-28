@@ -33,7 +33,7 @@ namespace Rdmp.UI.SubComponents
 
         private void button1_Click(object sender, EventArgs e)
         {
-            var provider = ((DatasetProviderConfiguration)cbPovider.SelectedItem).GetProviderInstance();
+            var provider = ((DatasetProviderConfiguration)cbPovider.SelectedItem).GetProviderInstance(_activator);
             var dataset = provider.Create(_catalogue);
 
             if (!_activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<CatalogueDatasetLinkage>("Dataset_ID", dataset.ID).Where(l => l.Catalogue.ID == _catalogue.ID).Any())

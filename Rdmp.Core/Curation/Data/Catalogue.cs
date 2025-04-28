@@ -1164,7 +1164,7 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
             var providerConfiguration = CatalogueRepository.GetObjectByID<DatasetProviderConfiguration>((int)dataset.Provider_ID);
             var repositoryProvider = new UserSettingsRepositoryFinder();
             var activator = new ThrowImmediatelyActivator(repositoryProvider, ThrowImmediatelyCheckNotifier.Quiet);
-            var providerInstance = providerConfiguration.GetProviderInstance();
+            var providerInstance = providerConfiguration.GetProviderInstance(activator);
             var ds = providerInstance.FetchDatasetByID(int.Parse(dataset.Url.Split('/').Last()));
             providerInstance.UpdateUsingCatalogue(ds, this);
         }
