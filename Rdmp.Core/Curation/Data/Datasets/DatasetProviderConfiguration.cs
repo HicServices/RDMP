@@ -1,4 +1,5 @@
 ﻿using MongoDB.Driver;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Repositories;
 using System;
@@ -44,7 +45,7 @@ public class DatasetProviderConfiguration : DatabaseEntity, IDatasetProviderConf
     }
 
 
-    public IDatasetProvider GetProviderInstance()
+    public IDatasetProvider GetProviderInstance(IBasicActivateItems activator)
     {
         var assemblies = AppDomain.CurrentDomain.GetAssemblies();
         foreach (var assembly in assemblies)
@@ -52,7 +53,7 @@ public class DatasetProviderConfiguration : DatabaseEntity, IDatasetProviderConf
             var type = assembly.GetTypes().FirstOrDefault(t => t.FullName == Type);
             if (type != null)
             {
-                return (IDatasetProvider)Activator.CreateInstance(type);
+                return (IDatasetProvider)Activator.CreateInstance(type, activator, this);
             }
         }
         return null;
