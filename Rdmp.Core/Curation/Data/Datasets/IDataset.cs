@@ -41,4 +41,5 @@ public interface IDataset: IMapsDirectlyToDatabaseTable
     string Url { get; }
 
     public abstract string GetID();
+    public abstract string GetURL();
 }

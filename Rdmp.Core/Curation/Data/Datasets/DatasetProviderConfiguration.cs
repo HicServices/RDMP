@@ -44,6 +44,20 @@ public class DatasetProviderConfiguration : DatabaseEntity, IDatasetProviderConf
     }
 
 
+    public IDatasetProvider GetProviderInstance()
+    {
+        var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+        foreach (var assembly in assemblies)
+        {
+            var type = assembly.GetTypes().FirstOrDefault(t => t.FullName == Type);
+            if (type != null)
+            {
+                return (IDatasetProvider)Activator.CreateInstance(type);
+            }
+        }
+        return null;
+    }
+
     public override string ToString()
     {
         return _name;
