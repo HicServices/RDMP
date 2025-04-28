@@ -4,6 +4,7 @@ using Rdmp.UI.ItemActivation;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using System;
 using Rdmp.Core.Curation.Data.Datasets.Jira;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 
 namespace Rdmp.UI.SimpleDialogs.Datasets.Jira
 {

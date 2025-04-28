@@ -66,7 +66,7 @@ namespace Rdmp.Core.Curation.Data.Datasets.Jira
             public List<JiraDatasetObjects.Attribute> Attributes;
         }
 
-        public override Dataset Create(Catalogue catalogue)
+        public override JiraDataset Create(Catalogue catalogue)
         {
             var url = $"{API_URL}{_workspace}/v1/object/create";
             var serializeOptions = new JsonSerializerOptions

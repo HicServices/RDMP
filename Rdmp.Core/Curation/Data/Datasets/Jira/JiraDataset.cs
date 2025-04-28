@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Rdmp.Core.Curation.Data.Datasets.Jira
 {
-    class JiraDataset: PluginDataset
+    public class JiraDataset: PluginDataset
     {
         public JiraDataset()
         {
