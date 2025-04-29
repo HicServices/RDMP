@@ -24,4 +24,5 @@ public interface IDatasetProvider
     Dataset Create(Catalogue catalogue);
 
     Dataset AddExistingDatasetWithReturn(string name, string url);
+    void AddExistingDataset(string name, string url);
 }
