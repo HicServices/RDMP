@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Rdmp.Core.Curation.Data.Datasets.HDR.Helpers;
 using Rdmp.Core.Curation.Data.Datasets.HDR.HDRDatasetItems;
+using MongoDB.Bson;
 
 namespace Rdmp.Core.Curation.Data.Datasets.HDR
 {
@@ -22,7 +23,7 @@ namespace Rdmp.Core.Curation.Data.Datasets.HDR
     {
         private HttpClient _client;
         private DatasetProviderConfiguration _configuration;
-        public HDRDatasetProvider(IBasicActivateItems activator, DatasetProviderConfiguration configuration) : base(activator, configuration)
+        public HDRDatasetProvider(IBasicActivateItems activator, DatasetProviderConfiguration configuration, HttpClient client = null) : base(activator, configuration)
         {
             _client = new HttpClient();
             var credentials = Repository.GetAllObjectsWhere<DataAccessCredentials>("ID", Configuration.DataAccessCredentials_ID).First();
@@ -33,28 +34,19 @@ namespace Rdmp.Core.Curation.Data.Datasets.HDR
         }
         public override Dataset AddExistingDatasetWithReturn(string name, string url)
         {
-            var response = Task.Run(async () => await _client.GetAsync(url)).Result;
-            if (response.StatusCode == HttpStatusCode.OK)
+            HDRDataset hdrDataset = (HDRDataset)FetchDatasetByID(int.Parse(url));
+            var datasetName = string.IsNullOrWhiteSpace(name) ? hdrDataset?.data.versions?.First().metadata.metadata.summary.title : name;
+            var dataset = new Dataset(Repository, datasetName)
             {
-                var detailsString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
-                HDRDataset hdrDataset = JsonConvert.DeserializeObject<HDRDataset>(detailsString);
-                var datasetName = string.IsNullOrWhiteSpace(name) ? hdrDataset?.data.versions?.First().metadata.metadata.summary.title : name;
-                var dataset = new Dataset(Repository, datasetName)
-                {
-                    Url = url,
-                    Type = ToString(),
-                    Provider_ID = Configuration.ID,
-                    //DigitalObjectIdentifier = hdrDataset.data.versions.First().metadata.metadata.summary.doiName.ToString(),
-                    Folder = $"\\{Configuration.Name}",
-                };
-                dataset.SaveToDatabase();
-                Activator.Publish(dataset);
-                return dataset;
-            }
-            else
-            {
-                throw new Exception("Cannot access dataset at provided url");
-            }
+                Url = url,
+                Type = ToString(),
+                Provider_ID = Configuration.ID,
+                //DigitalObjectIdentifier = hdrDataset.data.versions.First().metadata.metadata.summary.doiName.ToString(),
+                Folder = $"\\{Configuration.Name}",
+            };
+            dataset.SaveToDatabase();
+            Activator.Publish(dataset);
+            return dataset;
         }
 
         public override void AddExistingDataset(string name, string url)
@@ -62,38 +54,39 @@ namespace Rdmp.Core.Curation.Data.Datasets.HDR
             AddExistingDatasetWithReturn(name, url);
         }
 
+        private class CreateDatasetResponse
+        {
+            public int  data{ get; set; }
+        }
+
         public override Dataset Create(Catalogue catalogue)
         {
-            var url = Configuration.Url + "/v1/datasets";
+            var url = Configuration.Url + "/v1/integrations/datasets?input_schema=HDRUK&input_version=3.0.0";
             var serializeOptions = new JsonSerializerOptions
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 WriteIndented = true,
-                IncludeFields = true
+                IncludeFields = true,
+                DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
             };
             using var stream = new MemoryStream();
-            var ds = new HDRDatasetPatch();
-            ds.metadata = new PatchMetadata()
-            {
-                schemaModel = "HDRUK",
-                schemaVersion = "3.0.0",
-                metadata = new PatchSubMetadata(new Metadata()
-                {
-                    summary = new Summary()
-                    {
-                        title = catalogue.Name
-                    }
-                })
-            };
-            System.Text.Json.JsonSerializer.Serialize(stream, ds, serializeOptions);
-            var jsonString = Encoding.UTF8.GetString(stream.ToArray());
+            var ds = new HDRDatasetPost(catalogue);
+           
+            var jsonString = System.Text.Json.JsonSerializer.Serialize(ds, serializeOptions);
             var httpContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
             var response = Task.Run(async () => await _client.PostAsync(url, httpContent)).Result;
-            if (response.StatusCode == HttpStatusCode.OK)
+            if (response.StatusCode == HttpStatusCode.Created)
             {
-
+               var content = Task.Run(async ()=> await response.Content.ReadAsStringAsync()).Result;
+                var responseJson = JsonConvert.DeserializeObject<CreateDatasetResponse>(content);
+                var dataset =  FetchDatasetByID(responseJson.data) as HDRDataset;
+                //UpdateUsingCatalogue(dataset, catalogue);//todo wll have to test this
+                return dataset;
             }
-            throw new Exception("q");
+            else
+            {
+                throw new Exception("q");
+            }
 
         }
 
@@ -249,7 +242,7 @@ namespace Rdmp.Core.Curation.Data.Datasets.HDR
             hdrDataset.data.versions.First().metadata.metadata.summary.title = catalogue.Name;
             hdrDataset.data.versions.First().metadata.metadata.summary.@abstract = catalogue.ShortDescription;
             hdrDataset.data.versions.First().metadata.metadata.summary.contactPoint = catalogue.Administrative_contact_email;
-            hdrDataset.data.versions.First().metadata.metadata.summary.keywords = catalogue.Search_keywords.Split(',').Cast<object>().ToList();
+            hdrDataset.data.versions.First().metadata.metadata.summary.keywords = (catalogue.Search_keywords??"").Split(',').Cast<object>().ToList();
             hdrDataset.data.versions.First().metadata.metadata.summary.doiName = catalogue.Doi;
 
             hdrDataset.data.versions.First().metadata.metadata.documentation.description = catalogue.Description;

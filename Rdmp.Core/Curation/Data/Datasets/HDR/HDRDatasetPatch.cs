@@ -18,7 +18,7 @@ namespace Rdmp.Core.Curation.Data.Datasets.HDR
 
 
         public PatchMetadata() { }
-        public PatchMetadata(Metadata existingMetadata)
+        public PatchMetadata(HDRDatasetItems.Metadata existingMetadata)
         {
 
             metadata = existingMetadata.metadata != null ? new PatchSubMetadata(existingMetadata.metadata) : null;
@@ -50,7 +50,7 @@ namespace Rdmp.Core.Curation.Data.Datasets.HDR
 
         public string version { get; set; }
 
-        public PatchSubMetadata(Metadata existingMetadata)
+        public PatchSubMetadata(HDRDatasetItems.Metadata existingMetadata)
         {
             accessibility = existingMetadata.accessibility;
             observations = existingMetadata.observations;

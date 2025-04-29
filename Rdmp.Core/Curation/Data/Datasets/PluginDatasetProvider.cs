@@ -30,13 +30,11 @@ public abstract class PluginDatasetProvider : IDatasetProvider
 
     public abstract Curation.Data.Datasets.Dataset AddExistingDatasetWithReturn(string name, string url);
 
-    public abstract Curation.Data.Datasets.IDataset Create(Catalogue catalogue);
-
     public abstract void Update(string uuid, PluginDataset datasetUpdates);
 
     public abstract void UpdateUsingCatalogue(Dataset dataset, Catalogue catalogue);
 
-    Dataset IDatasetProvider.Create(Catalogue catalogue)
+    public virtual Dataset Create(Catalogue catalogue)
     {
         throw new NotImplementedException();
     }
