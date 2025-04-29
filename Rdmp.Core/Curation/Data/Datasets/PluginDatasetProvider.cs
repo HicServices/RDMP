@@ -38,7 +38,7 @@ public abstract class PluginDatasetProvider : IDatasetProvider
         throw new NotImplementedException();
     }
 
-    public virtual Dataset AddExistingDataset(string name, string url)
+    public virtual void AddExistingDataset(string name, string url)
     {
         throw new NotImplementedException();
     }
