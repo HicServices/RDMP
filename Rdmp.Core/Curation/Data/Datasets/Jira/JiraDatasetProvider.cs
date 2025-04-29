@@ -119,7 +119,7 @@ namespace Rdmp.Core.Curation.Data.Datasets.Jira
                     detailsString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
                     JiraDataset jiraDataset = JsonConvert.DeserializeObject<JiraDataset>(detailsString);
                     jiraDataset = FetchDatasetByID(int.Parse(jiraDataset.id)) as JiraDataset;
-                    UpdateUsingCatalogue(jiraDataset, catalogue);
+                    //UpdateUsingCatalogue(jiraDataset, catalogue);
                     return jiraDataset;
                 }
                 else

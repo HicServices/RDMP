@@ -34,26 +34,18 @@ public partial class ConfigurationsCollectionUI : RDMPCollectionUI, ILifetimeSub
             new ExecuteCommandAddNewRegexRedactionConfigurationUI(_activator)
             {
                 OverrideCommandName="Add New Regex Redaction Configuration"
-            },
-            new ExecuteCommandCreateNewJiraConfigurationUI(_activator){
- OverrideCommandName="Create New Jira Configuration", SuggestedCategory="Jira Integration"
- },
-            new ExecuteCommandImportExistingJiraDatasetUI(_activator)
- {
-     OverrideCommandName="Import Existing Jira Dataset", SuggestedCategory="Jira Integration"
- },
-
+            }
         };
-        foreach(var provider in datasetProviders)
+        foreach (var provider in datasetProviders)
         {
-            options = options.Append(new ExecuteCommandAddNewDatasetProviderUI(_activator,provider)
+            options = options.Append(new ExecuteCommandAddNewDatasetProviderUI(_activator, provider)
             {
                 OverrideCommandName = $"Add New {System.Text.RegularExpressions.Regex.Replace(provider.Name, "([A-Z])", " $1", System.Text.RegularExpressions.RegexOptions.Compiled).Trim()}",
                 SuggestedCategory = "Dataset Provider Configurations"
             }).ToArray();
             options = options.Append(new ExecuteCommandAddNewDatasetUI(_activator, provider)
             {
-                OverrideCommandName = $"Add Existing {System.Text.RegularExpressions.Regex.Replace(provider.Name, "([A-Z])", " $1", System.Text.RegularExpressions.RegexOptions.Compiled).Trim().Replace("Provider","")}",
+                OverrideCommandName = $"Add Existing {System.Text.RegularExpressions.Regex.Replace(provider.Name, "([A-Z])", " $1", System.Text.RegularExpressions.RegexOptions.Compiled).Trim().Replace("Provider", "")}",
                 SuggestedCategory = "Datasets"
             }).ToArray();
         }
