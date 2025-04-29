@@ -1165,8 +1165,7 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
             var repositoryProvider = new UserSettingsRepositoryFinder();
             var activator = new ThrowImmediatelyActivator(repositoryProvider, ThrowImmediatelyCheckNotifier.Quiet);
             var providerInstance = providerConfiguration.GetProviderInstance(activator);
-            var ds = providerInstance.FetchDatasetByID(int.Parse(dataset.GetRemoteID()));
-            providerInstance.UpdateUsingCatalogue(ds, this);
+            providerInstance.UpdateUsingCatalogue(dataset, this);
         }
     }
 

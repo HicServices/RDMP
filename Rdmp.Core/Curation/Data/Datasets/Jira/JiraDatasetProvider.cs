@@ -119,8 +119,6 @@ namespace Rdmp.Core.Curation.Data.Datasets.Jira
                 {
                     detailsString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
                     JiraDataset jiraDataset = JsonConvert.DeserializeObject<JiraDataset>(detailsString);
-                    jiraDataset = FetchDatasetByID(int.Parse(jiraDataset.GetRemoteID())) as JiraDataset;
-                    jiraDataset.Url = jiraDataset.GetRemoteID();//hack to force the correct id when fetching the mew dataset by ID
                     UpdateUsingCatalogue(jiraDataset, catalogue);
                     return jiraDataset;
                 }
@@ -275,7 +273,7 @@ namespace Rdmp.Core.Curation.Data.Datasets.Jira
 
         public override void UpdateUsingCatalogue(Dataset dataset, Catalogue catalogue)
         {
-            var jiraDataset = (JiraDataset)FetchDatasetByID(int.Parse(dataset.Url.Split("/").Last()));
+            var jiraDataset = (JiraDataset)FetchDatasetByID(int.Parse(dataset.GetRemoteID()));
             var updateDataset = new JiraDataset();
             updateDataset.attributes = new List<JiraDatasetObjects.Attribute>();
 
