@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Rdmp.Core.Curation.Data.Datasets.Jira
 {
     /// <summary>
-    /// 
+    /// Mapping of Jira API Asset object to C#
     /// </summary>
     public class JiraDataset : PluginDataset
     {
