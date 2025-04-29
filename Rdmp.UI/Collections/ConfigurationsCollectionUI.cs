@@ -30,7 +30,14 @@ public partial class ConfigurationsCollectionUI : RDMPCollectionUI, ILifetimeSub
             new ExecuteCommandAddNewRegexRedactionConfigurationUI(_activator)
             {
                 OverrideCommandName="Add New Regex Redaction Configuration"
-            }
+            },
+            new ExecuteCommandCreateNewHDRConfigurationUI(_activator){
+ OverrideCommandName="Create New HDR Configuration", SuggestedCategory="HDR Integration"
+ },
+            new ExecuteCommandImportExistingHDRDatasetUI(_activator)
+ {
+     OverrideCommandName="Import Existing HDR Dataset", SuggestedCategory="HDR Integration"
+ },
         };
     }
 
