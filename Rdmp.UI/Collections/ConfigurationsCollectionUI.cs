@@ -7,6 +7,8 @@ using System.Linq;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Curation.DataHelper.RegexRedaction;
 using Rdmp.Core.Curation.Data.Datasets;
+using System;
+using static Rdmp.Core.Curation.Data.Catalogue;
 
 namespace Rdmp.UI.Collections;
 
@@ -22,7 +24,9 @@ public partial class ConfigurationsCollectionUI : RDMPCollectionUI, ILifetimeSub
 
     private IAtomicCommand[] GetWhitespaceRightClickMenu()
     {
-        return new IAtomicCommand[]
+        var datasetProviders = AppDomain.CurrentDomain.GetAssemblies().SelectMany(s => s.GetTypes()).Where(p => typeof(PluginDatasetProvider).IsAssignableFrom(p) && !p.IsAbstract);
+
+        var options = new IAtomicCommand[]
         {
             new ExecuteCommandCreateNewDatasetUI(_activator){
                 OverrideCommandName="Add New Dataset"
@@ -40,6 +44,21 @@ public partial class ConfigurationsCollectionUI : RDMPCollectionUI, ILifetimeSub
  },
 
         };
+        foreach(var provider in datasetProviders)
+        {
+            options = options.Append(new ExecuteCommandAddNewDatasetProviderUI(_activator,provider)
+            {
+                OverrideCommandName = $"Add New {System.Text.RegularExpressions.Regex.Replace(provider.Name, "([A-Z])", " $1", System.Text.RegularExpressions.RegexOptions.Compiled).Trim()}",
+                SuggestedCategory = "Dataset Provider Configurations"
+            }).ToArray();
+            options = options.Append(new ExecuteCommandAddNewDatasetUI(_activator, provider)
+            {
+                OverrideCommandName = $"Add Existing {System.Text.RegularExpressions.Regex.Replace(provider.Name, "([A-Z])", " $1", System.Text.RegularExpressions.RegexOptions.Compiled).Trim().Replace("Provider","")}",
+                SuggestedCategory = "Datasets"
+            }).ToArray();
+        }
+
+        return options;
     }
 
     public override void SetItemActivator(IActivateItems activator)

@@ -25,4 +25,5 @@ public interface IDatasetProvider
 
     Dataset AddExistingDatasetWithReturn(string name, string url);
 
+    Dataset AddExistingDataset(string name, string url);
 }

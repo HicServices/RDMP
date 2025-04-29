@@ -22,21 +22,23 @@ public abstract class PluginDatasetProvider : IDatasetProvider
         Repository = activator.RepositoryLocator.CatalogueRepository;
     }
 
-    public abstract Curation.Data.Datasets.Dataset FetchDatasetByID(int id);
+    public abstract Dataset FetchDatasetByID(int id);
 
-    public abstract List<Curation.Data.Datasets.Dataset> FetchDatasets();
+    public abstract List<Dataset> FetchDatasets();
 
-    public abstract void AddExistingDataset(string name, string url);
+    public abstract Dataset AddExistingDatasetWithReturn(string name, string url);
 
-    public abstract Curation.Data.Datasets.Dataset AddExistingDatasetWithReturn(string name, string url);
-
-    public abstract Curation.Data.Datasets.IDataset Create(Catalogue catalogue);
 
     public abstract void Update(string uuid, PluginDataset datasetUpdates);
 
     public abstract void UpdateUsingCatalogue(Dataset dataset, Catalogue catalogue);
 
-    Dataset IDatasetProvider.Create(Catalogue catalogue)
+    public virtual Dataset Create(Catalogue catalogue)
+    {
+        throw new NotImplementedException();
+    }
+
+    public virtual Dataset AddExistingDataset(string name, string url)
     {
         throw new NotImplementedException();
     }
