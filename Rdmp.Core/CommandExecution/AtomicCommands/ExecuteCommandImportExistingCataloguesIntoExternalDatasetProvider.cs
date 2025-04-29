@@ -13,13 +13,13 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
     {
 
         private readonly IBasicActivateItems _activator;
-        private readonly PluginDatasetProvider _provider;
+        private readonly IDatasetProvider _provider;
         private readonly bool _includeExtractable;
         private readonly bool _includeInternal;
         private readonly bool _includeProjectSpecific;
         private readonly bool _includeDeprecated;
 
-        public ExecuteCommandImportExistingCataloguesIntoExternalDatasetProvider(IBasicActivateItems activator, PluginDatasetProvider provider, bool includeExtractable, bool includeInternal, bool includeProjectSpecific, bool includeDeprecated)
+        public ExecuteCommandImportExistingCataloguesIntoExternalDatasetProvider(IBasicActivateItems activator, IDatasetProvider provider, bool includeExtractable, bool includeInternal, bool includeProjectSpecific, bool includeDeprecated)
         {
             _activator = activator;
             _provider = provider;
