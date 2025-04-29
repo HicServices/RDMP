@@ -28,6 +28,13 @@ namespace Rdmp.Core.Curation.Data.Datasets.Jira
         private readonly String PROJECT = "Project";
         private readonly String NAME = "Name";
 
+        private readonly JsonSerializerOptions serializeOptions = new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            WriteIndented = true,
+            IncludeFields = true
+        };
+
 
         public JiraDatasetProvider(IBasicActivateItems activator, DatasetProviderConfiguration configuration, HttpClient httpClient = null) : base(activator, configuration)
         {
@@ -51,7 +58,7 @@ namespace Rdmp.Core.Curation.Data.Datasets.Jira
         public override Dataset AddExistingDatasetWithReturn(string name, string url)
         {
             JiraDataset jiraDataset = (JiraDataset)FetchDatasetByID(int.Parse(url));
-            var dataset = new Curation.Data.Datasets.Dataset(Repository, jiraDataset.name)
+            var dataset = new Dataset(Repository, jiraDataset.name)
             {
                 Url = jiraDataset._links.self,
                 Type = this.ToString(),
@@ -72,12 +79,6 @@ namespace Rdmp.Core.Curation.Data.Datasets.Jira
         public override JiraDataset Create(Catalogue catalogue)
         {
             var url = $"{API_URL}{_workspace}/v1/object/create";
-            var serializeOptions = new JsonSerializerOptions
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                WriteIndented = true,
-                IncludeFields = true
-            };
             using var stream = new MemoryStream();
 
             var response = Task.Run(async () => await _client.GetAsync($"{API_URL}{_workspace}/v1/objectschema/{Configuration.Url}/objecttypes")).Result;
@@ -118,8 +119,9 @@ namespace Rdmp.Core.Curation.Data.Datasets.Jira
                 {
                     detailsString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
                     JiraDataset jiraDataset = JsonConvert.DeserializeObject<JiraDataset>(detailsString);
-                    jiraDataset = FetchDatasetByID(int.Parse(jiraDataset.id)) as JiraDataset;
-                    //UpdateUsingCatalogue(jiraDataset, catalogue);
+                    jiraDataset = FetchDatasetByID(int.Parse(jiraDataset.GetRemoteID())) as JiraDataset;
+                    jiraDataset.Url = jiraDataset.GetRemoteID();//hack to force the correct id when fetching the mew dataset by ID
+                    UpdateUsingCatalogue(jiraDataset, catalogue);
                     return jiraDataset;
                 }
                 else
@@ -173,12 +175,6 @@ namespace Rdmp.Core.Curation.Data.Datasets.Jira
                 }
                 jiraAttributes.Add(obj);
             }
-            var serializeOptions = new JsonSerializerOptions
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                WriteIndented = true,
-                IncludeFields = true
-            };
             using var stream = new MemoryStream();
             var o = new UpdateAttributes()
             {
@@ -297,13 +293,6 @@ namespace Rdmp.Core.Curation.Data.Datasets.Jira
             var tableInfos = catalogue.CatalogueItems.Select(ci => ci.ColumnInfo.TableInfo).ToList();
             var databaseTableschema = GetSchemaAttributes(jiraDataset.objectType.objectSchemaId).Where(s => s.name == "Database").First().id;
 
-            var serializeOptions = new JsonSerializerOptions
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                WriteIndented = true,
-                IncludeFields = true
-            };
-
             var jsonString = "{\r\n  \"qlQuery\": \"objectType = Database\"\r\n}";
             var httpContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
 
@@ -391,12 +380,6 @@ namespace Rdmp.Core.Curation.Data.Datasets.Jira
                                     objectAttributeValues = datasets.Select(ds => new JiraDatasetObjects.ObjectAttributeValue() { value = ((JiraDataset)FetchDatasetByID(int.Parse(ds.Url.Split('/').Last()))).objectKey }).ToList()
 
                                 });
-                                serializeOptions = new JsonSerializerOptions
-                                {
-                                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                                    WriteIndented = true,
-                                    IncludeFields = true
-                                };
                                 using var stream = new MemoryStream();
                                 var o = new UpdateAttributes()
                                 {
