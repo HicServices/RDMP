@@ -80,12 +80,13 @@ namespace Rdmp.Core.Curation.Data.Datasets.HDR
                var content = Task.Run(async ()=> await response.Content.ReadAsStringAsync()).Result;
                 var responseJson = JsonConvert.DeserializeObject<CreateDatasetResponse>(content);
                 var dataset =  FetchDatasetByID(responseJson.data) as HDRDataset;
-                //UpdateUsingCatalogue(dataset, catalogue);//todo wll have to test this
+                //(dataset, catalogue);//todo wll have to test this
                 return dataset;
             }
             else
             {
-                throw new Exception("q");
+                var content = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
+                throw new Exception(content);
             }
 
         }
@@ -145,7 +146,6 @@ namespace Rdmp.Core.Curation.Data.Datasets.HDR
             };
             System.Text.Json.JsonSerializer.Serialize<PatchSubMetadata>(stream, updateObj.metadata, serializeOptions);
             var jsonString = "{\"metadata\":{\"metadata\":" + Encoding.UTF8.GetString(stream.ToArray()) + "}}";
-            //var uri = $"{Configuration.Url}/v1/integrations/datasets/{uuid}?schema_model=HDRUK&schema_version=3.0.0";
             var uri = $"{Configuration.Url}/v1/integrations/datasets/{uuid}?input_schema=HDRUK&input_version=3.0.0";
             var httpContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
 
