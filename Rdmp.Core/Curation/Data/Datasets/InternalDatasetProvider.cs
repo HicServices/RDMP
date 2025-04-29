@@ -16,7 +16,7 @@ public class InternalDatasetProvider : IDatasetProvider
         _activator = activator;
     }
 
-    public Dataset AddExistingDataset(string name, string url)
+    public void AddExistingDataset(string name, string url)
     {
         throw new System.NotImplementedException();
     }
