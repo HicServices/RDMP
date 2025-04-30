@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Rdmp.Core.Curation.Data.Datasets.HDR.HDRDatasetItems
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class PostMetadata
     {
 

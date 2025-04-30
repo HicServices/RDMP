@@ -27,5 +27,14 @@ namespace Rdmp.Core.Curation.Data.Datasets.HDR
         {
             return Url.Split('?')[0].Split('/').Last();
         }
+
+        public string GetDOI()
+        {
+            var version = data?.versions?.FirstOrDefault();
+            if (version != null) {
+                return version.metadata?.metadata?.summary?.doiName?.ToString();
+            }
+            return null;
+        }
     }
 }

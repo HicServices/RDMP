@@ -29,8 +29,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             _includeDeprecated = includeDeprecated;
         }
 
-
-        public override void Execute()
+        public List<Catalogue> GetCatalogues()
         {
             var catalogues = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>().ToList();
             if (!_includeInternal)
@@ -49,6 +48,13 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             {
                 catalogues = catalogues.Where(c => !c.GetExtractabilityStatus(_activator.RepositoryLocator.DataExportRepository).IsExtractable).ToList();
             }
+            return catalogues;
+        }
+
+
+        public override void Execute()
+        {
+            var catalogues = GetCatalogues();
             //todo check this catalogue filtering works
             foreach (var catalogue in catalogues)
             {
