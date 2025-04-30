@@ -134,28 +134,10 @@ namespace Rdmp.Core.Curation.Data.Datasets.HDR
             named_entities = existingDataset.data.named_entities;
             collections = existingDataset.data.collections;
             team = existingDataset.data.team;
-            //metadata = new PatchMetadata(existingDataset.data.metadata);
             metadata = new PatchMetadata(existingDataset.data.versions.First().metadata);
-            //if(metadata.metadata.accessibility.access.jurisdiction is string)
-            //    metadata.metadata.accessibility.access.jurisdiction = metadata.metadata.accessibility.access.jurisdiction.ToString().Split(";,;");
-
-            //if (metadata.metadata.accessibility.formatAndStandards.conformsTo is string)
-            //    metadata.metadata.accessibility.formatAndStandards.conformsTo = metadata.metadata.accessibility.formatAndStandards.conformsTo.ToString().Split(";,;");
-            //if (metadata.metadata.accessibility.formatAndStandards.formats is string)
-            //    metadata.metadata.accessibility.formatAndStandards.formats = metadata.metadata.accessibility.formatAndStandards.formats.ToString().Split(";,;");
-            //if (metadata.metadata.accessibility.formatAndStandards.languages is string)
-            //    metadata.metadata.accessibility.formatAndStandards.languages = metadata.metadata.accessibility.formatAndStandards.languages.ToString().Split(";,;");
-            //if (metadata.metadata.accessibility.formatAndStandards.vocabularyEncodingSchemes is string)
-            //    metadata.metadata.accessibility.formatAndStandards.vocabularyEncodingSchemes = metadata.metadata.accessibility.formatAndStandards.vocabularyEncodingSchemes.ToString().Split(";,;");
-
-            //if (metadata.metadata.accessibility.usage.dataUseLimitation is string)
-            //    metadata.metadata.accessibility.usage.dataUseLimitation = metadata.metadata.accessibility.usage.dataUseLimitation.ToString().Split(";,;");
             if (metadata.metadata.accessibility.usage.dataUseRequirements is null)
                 metadata.metadata.accessibility.usage.dataUseRequirements = [];
-
             metadata.metadata.coverage.materialType = new List<string>() { "Other" };
-            //metadata.metadata.summary.dataCustodian.description = "Test";
-            //metadata.metadata.summary.dataCustodian.logo = "https://cdn.britannica.com/92/100692-050-5B69B59B/Mallard.jpg";
         }
     }
 }
