@@ -36,16 +36,16 @@ public partial class ConfigurationsCollectionUI : RDMPCollectionUI, ILifetimeSub
                 OverrideCommandName="Add New Regex Redaction Configuration"
             }
         };
-        foreach(var provider in datasetProviders)
+        foreach (var provider in datasetProviders)
         {
-            options = options.Append(new ExecuteCommandAddNewDatasetProviderUI(_activator,provider)
+            options = options.Append(new ExecuteCommandAddNewDatasetProviderUI(_activator, provider)
             {
-                OverrideCommandName = $"Add New {System.Text.RegularExpressions.Regex.Replace(provider.Name, "([A-Z])", " $1", System.Text.RegularExpressions.RegexOptions.Compiled).Trim()}",
+                OverrideCommandName = $"Add New {System.Text.RegularExpressions.Regex.Replace(provider.Name, "(?<=[a-z])([A-Z])", " $1", System.Text.RegularExpressions.RegexOptions.Compiled).Trim()}",
                 SuggestedCategory = "Dataset Provider Configurations"
             }).ToArray();
             options = options.Append(new ExecuteCommandAddNewDatasetUI(_activator, provider)
             {
-                OverrideCommandName = $"Add Existing {System.Text.RegularExpressions.Regex.Replace(provider.Name, "([A-Z])", " $1", System.Text.RegularExpressions.RegexOptions.Compiled).Trim().Replace("Provider","")}",
+                OverrideCommandName = $"Add Existing {System.Text.RegularExpressions.Regex.Replace(provider.Name, "(?<=[a-z])([A-Z])", " $1", System.Text.RegularExpressions.RegexOptions.Compiled).Trim().Replace("Provider", "")}",
                 SuggestedCategory = "Datasets"
             }).ToArray();
         }
@@ -65,7 +65,7 @@ public partial class ConfigurationsCollectionUI : RDMPCollectionUI, ILifetimeSub
         tlvConfigurations.AddObject(Activator.CoreChildProvider.AllDatasetProviderConfigurationsNode);
         tlvConfigurations.AddObject(Activator.CoreChildProvider.AllRegexRedactionConfigurationsNode);
         tlvConfigurations.Refresh();
-        }
+    }
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {
