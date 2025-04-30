@@ -40,12 +40,12 @@ public partial class ConfigurationsCollectionUI : RDMPCollectionUI, ILifetimeSub
         {
             options = options.Append(new ExecuteCommandAddNewDatasetProviderUI(_activator, provider)
             {
-                OverrideCommandName = $"Add New {System.Text.RegularExpressions.Regex.Replace(provider.Name, "([A-Z])", " $1", System.Text.RegularExpressions.RegexOptions.Compiled).Trim()}",
+                OverrideCommandName = $"Add New {System.Text.RegularExpressions.Regex.Replace(provider.Name, "(?<=[a-z])([A-Z])", " $1", System.Text.RegularExpressions.RegexOptions.Compiled).Trim()}",
                 SuggestedCategory = "Dataset Provider Configurations"
             }).ToArray();
             options = options.Append(new ExecuteCommandAddNewDatasetUI(_activator, provider)
             {
-                OverrideCommandName = $"Add Existing {System.Text.RegularExpressions.Regex.Replace(provider.Name, "([A-Z])", " $1", System.Text.RegularExpressions.RegexOptions.Compiled).Trim().Replace("Provider", "")}",
+                OverrideCommandName = $"Add Existing {System.Text.RegularExpressions.Regex.Replace(provider.Name, "(?<=[a-z])([A-Z])", " $1", System.Text.RegularExpressions.RegexOptions.Compiled).Trim().Replace("Provider", "")}",
                 SuggestedCategory = "Datasets"
             }).ToArray();
         }
