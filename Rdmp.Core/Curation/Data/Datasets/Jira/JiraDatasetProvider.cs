@@ -398,10 +398,5 @@ namespace Rdmp.Core.Curation.Data.Datasets.Jira
                 throw new Exception($"{response.StatusCode}: Unable to fetch Object types");
             }
         }
-
-        public override List<Dataset> FetchDatasets()
-        {
-            throw new NotImplementedException();
-        }
     }
 }
