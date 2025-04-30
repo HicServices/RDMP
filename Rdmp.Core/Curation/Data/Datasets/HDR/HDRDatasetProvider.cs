@@ -80,7 +80,7 @@ namespace Rdmp.Core.Curation.Data.Datasets.HDR
                 var content = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
                 var responseJson = JsonConvert.DeserializeObject<CreateDatasetResponse>(content);
                 var dataset = FetchDatasetByID(responseJson.data) as HDRDataset;
-                //(dataset, catalogue);//todo wll have to test this
+                UpdateUsingCatalogue(dataset, catalogue);
                 return dataset;
             }
             else
