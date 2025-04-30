@@ -58,7 +58,7 @@ namespace Rdmp.Core.Curation.Data.Datasets.Jira
         public override Dataset AddExistingDatasetWithReturn(string name, string url)
         {
             JiraDataset jiraDataset = (JiraDataset)FetchDatasetByID(int.Parse(url));
-            var dataset = new Dataset(Repository, jiraDataset.name)
+            var dataset = new Dataset(Repository, name??jiraDataset.name)
             {
                 Url = jiraDataset._links.self,
                 Type = this.ToString(),
@@ -97,7 +97,7 @@ namespace Rdmp.Core.Curation.Data.Datasets.Jira
                 }
                 else
                 {
-                    throw new Exception($"{response.StatusCode}: Unable to fetch Object Types");
+                    throw new Exception($"{response.StatusCode}: No matching Schema found for {NAME}");
                 }
                 var o = new CreateAtrObj()
                 {
@@ -146,14 +146,6 @@ namespace Rdmp.Core.Curation.Data.Datasets.Jira
             }
             throw new Exception($"{response.StatusCode}: Unable to fetch Dataset by ID {id}");
         }
-
-        public override List<Dataset> FetchDatasets()
-        {
-            throw new NotImplementedException();
-        }
-
-
-
 
         public override void Update(string uuid, PluginDataset datasetUpdates)
         {
@@ -407,5 +399,9 @@ namespace Rdmp.Core.Curation.Data.Datasets.Jira
             }
         }
 
+        public override List<Dataset> FetchDatasets()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
