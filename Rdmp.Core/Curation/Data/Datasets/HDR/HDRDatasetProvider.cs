@@ -56,7 +56,7 @@ namespace Rdmp.Core.Curation.Data.Datasets.HDR
 
         private class CreateDatasetResponse
         {
-            public int  data{ get; set; }
+            public int data { get; set; }
         }
 
         public override Dataset Create(Catalogue catalogue)
@@ -71,15 +71,15 @@ namespace Rdmp.Core.Curation.Data.Datasets.HDR
             };
             using var stream = new MemoryStream();
             var ds = new HDRDatasetPost(catalogue);
-           
+
             var jsonString = System.Text.Json.JsonSerializer.Serialize(ds, serializeOptions);
             var httpContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
             var response = Task.Run(async () => await _client.PostAsync(url, httpContent)).Result;
             if (response.StatusCode == HttpStatusCode.Created)
             {
-               var content = Task.Run(async ()=> await response.Content.ReadAsStringAsync()).Result;
+                var content = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
                 var responseJson = JsonConvert.DeserializeObject<CreateDatasetResponse>(content);
-                var dataset =  FetchDatasetByID(responseJson.data) as HDRDataset;
+                var dataset = FetchDatasetByID(responseJson.data) as HDRDataset;
                 //(dataset, catalogue);//todo wll have to test this
                 return dataset;
             }
@@ -238,11 +238,11 @@ namespace Rdmp.Core.Curation.Data.Datasets.HDR
 
         public override void UpdateUsingCatalogue(Dataset dataset, Catalogue catalogue)
         {
-            var hdrDataset = (HDRDataset)dataset;
+            var hdrDataset = (HDRDataset)FetchDatasetByID(int.Parse(dataset.Url));
             hdrDataset.data.versions.First().metadata.metadata.summary.title = catalogue.Name;
-            hdrDataset.data.versions.First().metadata.metadata.summary.@abstract = catalogue.ShortDescription;
+            hdrDataset.data.versions.First().metadata.metadata.summary.@abstract = catalogue.ShortDescription.Length <5? catalogue.ShortDescription.PadRight(5): catalogue.ShortDescription;
             hdrDataset.data.versions.First().metadata.metadata.summary.contactPoint = catalogue.Administrative_contact_email;
-            hdrDataset.data.versions.First().metadata.metadata.summary.keywords = (catalogue.Search_keywords??"").Split(',').Cast<object>().ToList();
+            hdrDataset.data.versions.First().metadata.metadata.summary.keywords = (catalogue.Search_keywords ?? "").Split(',').Cast<string>().Where(k => k != "").Cast<object>().ToList();
             hdrDataset.data.versions.First().metadata.metadata.summary.doiName = catalogue.Doi;
 
             hdrDataset.data.versions.First().metadata.metadata.documentation.description = catalogue.Description;
@@ -250,14 +250,17 @@ namespace Rdmp.Core.Curation.Data.Datasets.HDR
 
             hdrDataset.data.versions.First().metadata.metadata.coverage.spatial = catalogue.Geographical_coverage;
 
-            hdrDataset.data.versions.First().metadata.metadata.provenance.origin.datasetType = catalogue.DataType.Split(",").Select(MapDataTypeToHDRDataType).ToList();
-            hdrDataset.data.versions.First().metadata.metadata.provenance.origin.datasetSubType = catalogue.DataSubType.Split(",").Select(MapDataSubTypeToHDR).ToList();
-            hdrDataset.data.versions.First().metadata.metadata.provenance.temporal.endDate = catalogue.EndDate.Value;
-            hdrDataset.data.versions.First().metadata.metadata.provenance.temporal.startDate = catalogue.StartDate.Value;
+            if(catalogue.DataType != null)
+                hdrDataset.data.versions.First().metadata.metadata.provenance.origin.datasetType = catalogue.DataType.Split(",").Select(MapDataTypeToHDRDataType).ToList();
+            if (catalogue.DataSubType != null)
+                hdrDataset.data.versions.First().metadata.metadata.provenance.origin.datasetSubType = catalogue.DataSubType.Split(",").Select(MapDataSubTypeToHDR).ToList();
+            hdrDataset.data.versions.First().metadata.metadata.provenance.temporal.endDate = catalogue.EndDate != null ? catalogue.EndDate.Value : null;
+            if (catalogue.StartDate != null)
+                hdrDataset.data.versions.First().metadata.metadata.provenance.temporal.startDate = catalogue.StartDate.Value;
             hdrDataset.data.versions.First().metadata.metadata.provenance.temporal.timeLag = MapTimeLagToHDR(catalogue.UpdateLag.ToString());
             hdrDataset.data.versions.First().metadata.metadata.provenance.temporal.publishingFrequency = catalogue.Update_freq.ToString();
 
-            hdrDataset.data.versions.First().metadata.metadata.accessibility.access.jurisdiction = catalogue.Juristiction.Split(",").ToList();
+            hdrDataset.data.versions.First().metadata.metadata.accessibility.access.jurisdiction = (catalogue.Juristiction ?? "").Split(",").Where(k => k != "").ToList();
             hdrDataset.data.versions.First().metadata.metadata.accessibility.access.dataController = catalogue.DataController;
             hdrDataset.data.versions.First().metadata.metadata.accessibility.access.dataProcessor = catalogue.DataProcessor;
 
