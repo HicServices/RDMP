@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace Rdmp.Core.Curation.Data.Datasets.HDR
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class HDRDatasetPost
     {
      
