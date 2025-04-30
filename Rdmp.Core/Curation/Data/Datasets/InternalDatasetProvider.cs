@@ -37,12 +37,6 @@ public class InternalDatasetProvider : IDatasetProvider
         return _activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<Curation.Data.Datasets.Dataset>("ID", id).FirstOrDefault();
     }
 
-    /// <inheritdoc/>
-    public List<Curation.Data.Datasets.Dataset> FetchDatasets()
-    {
-        return _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Curation.Data.Datasets.Dataset>().ToList();
-    }
-
     public void UpdateUsingCatalogue(Dataset dataset, Catalogue catalogue)
     {
         throw new System.NotImplementedException();
