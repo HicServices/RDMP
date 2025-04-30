@@ -118,11 +118,6 @@ namespace Rdmp.Core.Curation.Data.Datasets.HDR
             throw new Exception("Unable to fetch HDR dataset");
         }
 
-        public override List<Dataset> FetchDatasets()
-        {
-            throw new NotImplementedException();
-        }
-
         public override void Update(string uuid, PluginDataset datasetUpdates)
         {
             var serializeOptions = new JsonSerializerOptions
