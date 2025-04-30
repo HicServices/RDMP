@@ -8,23 +8,10 @@ using System.Threading.Tasks;
 
 namespace Rdmp.Core.Curation.Data.Datasets.HDR
 {
-    public class Metadata
-    {
-        public Metadata() { }
-        public string identifier = "";
-        public string version = "1.0.0";
-        public List<Revision> revisions = new List<Revision>();
-        public string modified;
-        public string issued;
-        public Summary summary = new Summary();
-        public Accessibility accessibility = new Accessibility();
-        public List<object> observations = new List<object>();
-        public Provenance provenance = new Provenance();
-    }
     public class HDRDatasetPost
     {
      
-        public Metadata metadata = new Metadata();
+        public PostMetadata metadata = new PostMetadata();
         public HDRDatasetPost(Catalogue catalogue) {
             metadata.identifier = "";
             metadata.version = "1.0.0";
@@ -32,7 +19,7 @@ namespace Rdmp.Core.Curation.Data.Datasets.HDR
             metadata.modified = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
             metadata.issued = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
             metadata.summary.title=catalogue.Name;
-            metadata.summary.@abstract = "";// catalogue.ShortDescription;
+            metadata.summary.@abstract = catalogue.ShortDescription.Length>4?catalogue.ShortDescription:"";// catalogue.ShortDescription;
             metadata.summary.dataCustodian = new DataCustodian();
             metadata.summary.dataCustodian.identifier= "unknown";
             metadata.summary.dataCustodian.name = "name";
