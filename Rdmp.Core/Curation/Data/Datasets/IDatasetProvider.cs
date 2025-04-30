@@ -8,13 +8,6 @@ public interface IDatasetProvider
 {
 
     /// <summary>
-    /// Fetch known datasets
-    /// </summary>
-    /// <returns></returns>
-    List<Curation.Data.Datasets.Dataset> FetchDatasets();
-
-
-    /// <summary>
     /// Fetch a specific dataset by its ID
     /// </summary>
     /// <param name="id"></param>

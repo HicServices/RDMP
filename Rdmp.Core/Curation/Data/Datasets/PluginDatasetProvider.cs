@@ -24,8 +24,6 @@ public abstract class PluginDatasetProvider : IDatasetProvider
 
     public abstract Dataset FetchDatasetByID(int id);
 
-    public abstract List<Dataset> FetchDatasets();
-
     public abstract Dataset AddExistingDatasetWithReturn(string name, string url);
 
     public abstract void Update(string uuid, PluginDataset datasetUpdates);
