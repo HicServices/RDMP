@@ -28,7 +28,7 @@ namespace Rdmp.Core.Curation.Data.Datasets.HDR
         private readonly string _inputVersion = "3.0.0";
         public HDRDatasetProvider(IBasicActivateItems activator, DatasetProviderConfiguration configuration, HttpClient client = null) : base(activator, configuration)
         {
-            _client = client??new HttpClient();
+            _client = client ?? new HttpClient();
             var credentials = Repository.GetAllObjectsWhere<DataAccessCredentials>("ID", Configuration.DataAccessCredentials_ID).First();
             var apiKey = credentials.GetDecryptedPassword();
             _client.DefaultRequestHeaders.Add("x-application-id", credentials.Username);
@@ -145,10 +145,10 @@ namespace Rdmp.Core.Curation.Data.Datasets.HDR
                 metadata = new HDRDatasetPatch((HDRDataset)datasetUpdates).metadata.metadata
             };
             System.Text.Json.JsonSerializer.Serialize<PatchSubMetadata>(stream, updateObj.metadata, serializeOptions);
-            var jsonString = "{\"metadata\":{\"metadata\":" + Encoding.UTF8.GetString(stream.ToArray()) + "}}";
-            var uri = $"{Configuration.Url}/v1/integrations/datasets/{uuid}?input_schema={_inputSchema}&schema_version={_inputVersion}";
-            var httpContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
 
+            var jsonString = "{\"metadata\":" + Encoding.UTF8.GetString(stream.ToArray()) + "}";
+            var uri = $"{Configuration.Url}/v1/integrations/datasets/{uuid}?input_schema={_inputSchema}&input_version={_inputVersion}";
+            var httpContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
             var response = Task.Run(async () => await _client.PutAsync(uri, httpContent)).Result;
             if (response.StatusCode != HttpStatusCode.OK)
             {
@@ -240,7 +240,7 @@ namespace Rdmp.Core.Curation.Data.Datasets.HDR
         {
             var hdrDataset = (HDRDataset)FetchDatasetByID(int.Parse(dataset.Url));
             hdrDataset.data.versions.First().metadata.metadata.summary.title = catalogue.Name;
-            hdrDataset.data.versions.First().metadata.metadata.summary.@abstract = catalogue.ShortDescription != null && catalogue.ShortDescription.Length <5? catalogue.ShortDescription.PadRight(5): catalogue.ShortDescription;
+            hdrDataset.data.versions.First().metadata.metadata.summary.@abstract = catalogue.ShortDescription != null && catalogue.ShortDescription.Length < 5 ? catalogue.ShortDescription.PadRight(5) : catalogue.ShortDescription;
             hdrDataset.data.versions.First().metadata.metadata.summary.contactPoint = catalogue.Administrative_contact_email;
             hdrDataset.data.versions.First().metadata.metadata.summary.keywords = (catalogue.Search_keywords ?? "").Split(',').Cast<string>().Where(k => k != "").Cast<object>().ToList();
             hdrDataset.data.versions.First().metadata.metadata.summary.doiName = catalogue.Doi;
@@ -250,7 +250,7 @@ namespace Rdmp.Core.Curation.Data.Datasets.HDR
 
             hdrDataset.data.versions.First().metadata.metadata.coverage.spatial = catalogue.Geographical_coverage;
 
-            if(catalogue.DataType != null)
+            if (catalogue.DataType != null)
                 hdrDataset.data.versions.First().metadata.metadata.provenance.origin.datasetType = catalogue.DataType.Split(",").Select(MapDataTypeToHDRDataType).ToList();
             if (catalogue.DataSubType != null)
                 hdrDataset.data.versions.First().metadata.metadata.provenance.origin.datasetSubType = catalogue.DataSubType.Split(",").Select(MapDataSubTypeToHDR).ToList();
@@ -265,6 +265,7 @@ namespace Rdmp.Core.Curation.Data.Datasets.HDR
             hdrDataset.data.versions.First().metadata.metadata.accessibility.access.dataProcessor = catalogue.DataProcessor;
 
             hdrDataset.data.versions.First().metadata.metadata.identifier = "05ec5a13-3955-45a3-b449-8aba78622113";// hdrDataset.data.versions.First().metadata.identifier;
+
 
             Update(hdrDataset.data.id.ToString(), hdrDataset);
         }
