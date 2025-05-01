@@ -35,10 +35,10 @@ namespace Rdmp.UI.SubComponents
         {
             var provider = ((DatasetProviderConfiguration)cbPovider.SelectedItem).GetProviderInstance(_activator);
             var dataset = provider.Create(_catalogue);
-
-            if (!_activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<CatalogueDatasetLinkage>("Dataset_ID", dataset.ID).Where(l => l.Catalogue.ID == _catalogue.ID).Any())
+            var ds = provider.AddExistingDatasetWithReturn(null, dataset.GetID());
+            if (!_activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<CatalogueDatasetLinkage>("Dataset_ID", ds.ID).Where(l => l.Catalogue.ID == _catalogue.ID).Any())
             {
-                var linkage = new CatalogueDatasetLinkage(_activator.RepositoryLocator.CatalogueRepository, _catalogue, dataset);
+                var linkage = new CatalogueDatasetLinkage(_activator.RepositoryLocator.CatalogueRepository, _catalogue, ds);
                 linkage.SaveToDatabase();
             }
             Close();
