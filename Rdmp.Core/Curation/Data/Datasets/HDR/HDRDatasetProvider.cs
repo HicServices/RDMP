@@ -84,6 +84,7 @@ namespace Rdmp.Core.Curation.Data.Datasets.HDR
                 var content = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
                 var responseJson = JsonConvert.DeserializeObject<CreateDatasetResponse>(content);
                 var dataset = FetchDatasetByID(responseJson.data) as HDRDataset;
+                dataset.Url = dataset.data.id.ToString();
                 UpdateUsingCatalogue(dataset, catalogue);
                 return dataset;
             }
@@ -239,7 +240,7 @@ namespace Rdmp.Core.Curation.Data.Datasets.HDR
         {
             var hdrDataset = (HDRDataset)FetchDatasetByID(int.Parse(dataset.Url));
             hdrDataset.data.versions.First().metadata.metadata.summary.title = catalogue.Name;
-            hdrDataset.data.versions.First().metadata.metadata.summary.@abstract = catalogue.ShortDescription.Length <5? catalogue.ShortDescription.PadRight(5): catalogue.ShortDescription;
+            hdrDataset.data.versions.First().metadata.metadata.summary.@abstract = catalogue.ShortDescription != null && catalogue.ShortDescription.Length <5? catalogue.ShortDescription.PadRight(5): catalogue.ShortDescription;
             hdrDataset.data.versions.First().metadata.metadata.summary.contactPoint = catalogue.Administrative_contact_email;
             hdrDataset.data.versions.First().metadata.metadata.summary.keywords = (catalogue.Search_keywords ?? "").Split(',').Cast<string>().Where(k => k != "").Cast<object>().ToList();
             hdrDataset.data.versions.First().metadata.metadata.summary.doiName = catalogue.Doi;
@@ -263,7 +264,7 @@ namespace Rdmp.Core.Curation.Data.Datasets.HDR
             hdrDataset.data.versions.First().metadata.metadata.accessibility.access.dataController = catalogue.DataController;
             hdrDataset.data.versions.First().metadata.metadata.accessibility.access.dataProcessor = catalogue.DataProcessor;
 
-            hdrDataset.data.versions.First().metadata.metadata.identifier = "FROM_RDMP";//"05ec5a13-3955-45a3-b449-8aba78622113";// hdrDataset.data.versions.First().metadata.identifier;
+            hdrDataset.data.versions.First().metadata.metadata.identifier = "05ec5a13-3955-45a3-b449-8aba78622113";// hdrDataset.data.versions.First().metadata.identifier;
 
             Update(hdrDataset.data.id.ToString(), hdrDataset);
         }

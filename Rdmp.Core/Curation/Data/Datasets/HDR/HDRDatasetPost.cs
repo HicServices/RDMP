@@ -22,7 +22,7 @@ namespace Rdmp.Core.Curation.Data.Datasets.HDR
             metadata.modified = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
             metadata.issued = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
             metadata.summary.title=catalogue.Name;
-            metadata.summary.@abstract = catalogue.ShortDescription.Length>4?catalogue.ShortDescription:"";
+            metadata.summary.@abstract = catalogue.ShortDescription!= null && catalogue.ShortDescription.Length>4?catalogue.ShortDescription:"";
             metadata.summary.dataCustodian = new DataCustodian();
             metadata.summary.dataCustodian.identifier= "unknown";
             metadata.summary.dataCustodian.name = "name";
