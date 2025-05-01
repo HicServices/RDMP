@@ -32,7 +32,8 @@ namespace Rdmp.Core.Curation.Data.Datasets.Jira
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             WriteIndented = true,
-            IncludeFields = true
+            IncludeFields = true,
+            DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
         };
 
 
@@ -119,6 +120,7 @@ namespace Rdmp.Core.Curation.Data.Datasets.Jira
                 {
                     detailsString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
                     JiraDataset jiraDataset = JsonConvert.DeserializeObject<JiraDataset>(detailsString);
+                    jiraDataset.Url = jiraDataset._links.self;
                     UpdateUsingCatalogue(jiraDataset, catalogue);
                     return jiraDataset;
                 }
@@ -265,7 +267,7 @@ namespace Rdmp.Core.Curation.Data.Datasets.Jira
 
         public override void UpdateUsingCatalogue(Dataset dataset, Catalogue catalogue)
         {
-            var jiraDataset = (JiraDataset)FetchDatasetByID(int.Parse(dataset.GetRemoteID()));
+            var jiraDataset = (JiraDataset)FetchDatasetByID(int.Parse(dataset.Url.Split("/").Last()));
             var updateDataset = new JiraDataset();
             updateDataset.attributes = new List<JiraDatasetObjects.Attribute>() {
               GenerateUpdateAttribute(jiraDataset, catalogue, "Name", catalogue.Name),
@@ -327,7 +329,7 @@ namespace Rdmp.Core.Curation.Data.Datasets.Jira
                 throw new Exception($"{response.StatusCode}: Unable to fetch Jira Database Object");
             }
 
-            Update(jiraDataset.id, updateDataset);
+            Update(jiraDataset.GetRemoteID(), updateDataset);
 
             //update projects
             var projectSpecificIDs = Activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", catalogue.ID).Where(eds => eds.Project_ID != null).Select(eds => eds.Project_ID);
