@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Rdmp.Core.Curation.Data.Datasets.HDR
 {
     /// <summary>
-    /// 
+    /// Mapping of HDR Dataset object to C#
     /// </summary>
     public class HDRDataset : PluginDataset
     {
