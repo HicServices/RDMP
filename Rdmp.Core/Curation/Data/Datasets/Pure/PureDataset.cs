@@ -16,7 +16,7 @@ namespace Rdmp.Core.Curation.Data.Datasets.Pure
     /// <summary>
     /// Used for mapping Pure datasets from the API into a C# object.
     /// </summary>
-    class PureDataset : PluginDataset
+    public class PureDataset : PluginDataset
     {
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public int? PureId { get; set; }
