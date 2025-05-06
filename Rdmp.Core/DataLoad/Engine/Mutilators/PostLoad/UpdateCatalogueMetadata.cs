@@ -90,9 +90,14 @@ Some variables are available:
                 if (UpdateDescription)
                 {
                     var description = catalogue.Description;
-                    description = description + "\n\r" + DescriptionUpdateText.Replace("%d", DateTime.Now.ToString("dd/MM/yyyy")).Replace("%c", $"{newRecordsCount}").Replace("%s", $"{earliestDate.Day}/{earliestDate.Month}/{earliestDate.Year}").Replace("%l", $"{latestDate.Day}/{latestDate.Month}/{latestDate.Year}");
+                    description = description + "\n\r" + DescriptionUpdateText
+                        .Replace("%d", DateTime.Now.ToString("dd/MM/yyyy"))
+                        .Replace("%c", $"{newRecordsCount}")
+                        .Replace("%s", $"{earliestDate.Day}/{earliestDate.Month}/{earliestDate.Year}")
+                        .Replace("%l", $"{latestDate.Day}/{latestDate.Month}/{latestDate.Year}");
                 }
                 catalogue.SaveToDatabase();
+                dt.Dispose();
             }
 
             return ExitCodeType.Success;
