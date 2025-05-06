@@ -18,8 +18,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         private readonly bool _includeInternal;
         private readonly bool _includeProjectSpecific;
         private readonly bool _includeDeprecated;
+        private readonly bool _autoUpdate;
 
-        public ExecuteCommandImportExistingCataloguesIntoExternalDatasetProvider(IBasicActivateItems activator, IDatasetProvider provider, bool includeExtractable, bool includeInternal, bool includeProjectSpecific, bool includeDeprecated)
+        public ExecuteCommandImportExistingCataloguesIntoExternalDatasetProvider(IBasicActivateItems activator, IDatasetProvider provider, bool includeExtractable, bool includeInternal, bool includeProjectSpecific, bool includeDeprecated, bool autoUpdate)
         {
             _activator = activator;
             _provider = provider;
@@ -27,6 +28,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             _includeInternal = includeInternal;
             _includeProjectSpecific = includeProjectSpecific;
             _includeDeprecated = includeDeprecated;
+            _autoUpdate = autoUpdate;
         }
 
 
@@ -49,12 +51,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             {
                 catalogues = catalogues.Where(c => !c.GetExtractabilityStatus(_activator.RepositoryLocator.DataExportRepository).IsExtractable).ToList();
             }
-            //todo check this catalogue filtering works
             foreach (var catalogue in catalogues)
             {
                 var dataset = _provider.Create(catalogue);
                 var ds = _provider.AddExistingDatasetWithReturn(null, dataset.GetID());
-                var cmd = new ExecuteCommandLinkCatalogueToDataset(_activator, catalogue, ds);
+                var cmd = new ExecuteCommandLinkCatalogueToDataset(_activator, catalogue, ds,_autoUpdate);
                 cmd.Execute();
             }
         }

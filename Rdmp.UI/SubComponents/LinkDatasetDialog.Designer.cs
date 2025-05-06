@@ -91,7 +91,7 @@
             Controls.Add(groupBox3);
             Controls.Add(groupBox2);
             Name = "LinkDatasetDialog";
-            Text = "Link Dataset";
+            Text = "Link Existing Dataset";
             groupBox2.ResumeLayout(false);
             groupBox2.PerformLayout();
             groupBox3.ResumeLayout(false);

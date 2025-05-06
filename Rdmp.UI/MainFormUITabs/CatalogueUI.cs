@@ -456,6 +456,7 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
                 aiAssociatedMedia.SetItemActivator(Activator);
                 break;
             case 7:
+                tableLayoutPanel3.SuspendLayout();
                 var datasets = _catalogue.GetLinkedDatasets();
                 for (int i = 1; i < tableLayoutPanel3.RowCount; i++)
                 {
@@ -482,13 +483,6 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
                     btn.Text = "Update Now";
                     btn.Click += (object sender, EventArgs e) => UpdateDataset(dataset);
                     tableLayoutPanel3.Controls.Add(btn, 2, tableLayoutPanel3.RowCount - 1);
-                    //if (dataset.Type != typeof(JiraDatasetProvider).ToString())
-                    //{
-                    //    var btn2 = new Button();
-                    //    btn2.Text = "View";
-                    //    btn2.Click += (object sender, EventArgs e) => UsefulStuff.OpenUrl(dataset.Url);
-                    //    tableLayoutPanel3.Controls.Add(btn2, 3, tableLayoutPanel3.RowCount - 1);
-                    //}
                     var btn3 = new Button();
                     btn3.Text = "Remove Link to Dataset";
                     btn3.Click += (object sender, EventArgs e) =>
@@ -505,6 +499,7 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
                     tableLayoutPanel3.Controls.Add(labelType, 5, tableLayoutPanel3.RowCount - 1);
 
                 }
+                tableLayoutPanel3.ResumeLayout();
                 break;
             default:
                 break;
@@ -517,6 +512,7 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
         var providerConfiguration = Activator.RepositoryLocator.CatalogueRepository.GetObjectByID<DatasetProviderConfiguration>((int)dataset.Provider_ID);
         var provider = providerConfiguration.GetProviderInstance(Activator);
         provider.UpdateUsingCatalogue(dataset, _catalogue);
+        Publish(_catalogue);
     }
     private void tableLayoutPanel3_Paint(object sender, PaintEventArgs e)
     {

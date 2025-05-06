@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Security.Policy;
 
 namespace Rdmp.UI.SubComponents
 {
@@ -47,6 +48,7 @@ namespace Rdmp.UI.SubComponents
                 var linkage = new CatalogueDatasetLinkage(_activator.RepositoryLocator.CatalogueRepository, _catalogue, dataset);
                 linkage.SaveToDatabase();
             }
+            _activator.Publish(_catalogue);
             Close();
 
         }
