@@ -19,12 +19,6 @@ namespace Rdmp.UI.SimpleDialogs.Datasets
     {
         private readonly IActivateItems _activator;
         private readonly Type _providerType;
-
-        private readonly string[] _visibilities = { "FREE", "CAMPUS", "BACKEND", "CONFIDENTIAL" };
-
-        private DatasetProviderConfiguration _providerConfiguration;
-        //private JiraDatasetProvider _datasetProvider;
-
         public ImportExistingDatasetUI(IActivateItems activator, Type providerType) : base(activator)
         {
             _activator = activator;
@@ -67,10 +61,6 @@ namespace Rdmp.UI.SimpleDialogs.Datasets
 
         private void cbProviders_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (cbProviders.SelectedItem is DatasetProviderConfiguration config)
-            {
-                _providerConfiguration = config;
-            }
         }
     }
 }

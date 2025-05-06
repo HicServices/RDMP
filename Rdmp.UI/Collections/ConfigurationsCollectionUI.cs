@@ -9,6 +9,7 @@ using Rdmp.Core.Curation.DataHelper.RegexRedaction;
 using Rdmp.Core.Curation.Data.Datasets;
 using System;
 using static Rdmp.Core.Curation.Data.Catalogue;
+using System.Text;
 
 namespace Rdmp.UI.Collections;
 
@@ -22,15 +23,45 @@ public partial class ConfigurationsCollectionUI : RDMPCollectionUI, ILifetimeSub
         InitializeComponent();
     }
 
+    private static string FormatPascalAndAcronym(string input)
+    {
+        var builder = new StringBuilder(input[0].ToString());
+        if (builder.Length > 0)
+        {
+            for (var index = 1; index < input.Length; index++)
+            {
+                char prevChar = input[index - 1];
+                char nextChar = index + 1 < input.Length ? input[index + 1] : '\0';
+
+                bool isNextLower = Char.IsLower(nextChar);
+                bool isNextUpper = Char.IsUpper(nextChar);
+                bool isPresentUpper = Char.IsUpper(input[index]);
+                bool isPrevLower = Char.IsLower(prevChar);
+                bool isPrevUpper = Char.IsUpper(prevChar);
+
+                if (!string.IsNullOrWhiteSpace(prevChar.ToString()) &&
+                    ((isPrevUpper && isPresentUpper && isNextLower) ||
+                    (isPrevLower && isPresentUpper && isNextLower) ||
+                    (isPrevLower && isPresentUpper && isNextUpper)))
+                {
+                    builder.Append(' ');
+                    builder.Append(input[index]);
+                }
+                else
+                {
+                    builder.Append(input[index]);
+                }
+            }
+        }
+        return builder.ToString();
+    }
+
     private IAtomicCommand[] GetWhitespaceRightClickMenu()
     {
         var datasetProviders = AppDomain.CurrentDomain.GetAssemblies().SelectMany(s => s.GetTypes()).Where(p => typeof(PluginDatasetProvider).IsAssignableFrom(p) && !p.IsAbstract);
 
         var options = new IAtomicCommand[]
         {
-            new ExecuteCommandCreateNewDatasetUI(_activator){
-                OverrideCommandName="Add New Dataset"
-            },
             new ExecuteCommandAddNewRegexRedactionConfigurationUI(_activator)
             {
                 OverrideCommandName="Add New Regex Redaction Configuration"
@@ -40,12 +71,12 @@ public partial class ConfigurationsCollectionUI : RDMPCollectionUI, ILifetimeSub
         {
             options = options.Append(new ExecuteCommandAddNewDatasetProviderUI(_activator, provider)
             {
-                OverrideCommandName = $"Add New {System.Text.RegularExpressions.Regex.Replace(provider.Name, "([A-Z])", " $1", System.Text.RegularExpressions.RegexOptions.Compiled).Trim()}",
+                OverrideCommandName = $"Add New {FormatPascalAndAcronym(provider.Name).Trim()}",
                 SuggestedCategory = "Dataset Provider Configurations"
             }).ToArray();
             options = options.Append(new ExecuteCommandAddNewDatasetUI(_activator, provider)
             {
-                OverrideCommandName = $"Add Existing {System.Text.RegularExpressions.Regex.Replace(provider.Name, "([A-Z])", " $1", System.Text.RegularExpressions.RegexOptions.Compiled).Trim().Replace("Provider", "")}",
+                OverrideCommandName = $"Add Existing {FormatPascalAndAcronym(provider.Name).Trim().Replace("Provider", "")}",
                 SuggestedCategory = "Datasets"
             }).ToArray();
         }

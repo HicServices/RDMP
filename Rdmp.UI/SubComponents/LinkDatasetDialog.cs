@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Security.Policy;
 
 namespace Rdmp.UI.SubComponents
 {
@@ -33,7 +34,7 @@ namespace Rdmp.UI.SubComponents
         {
             var provider = ((DatasetProviderConfiguration)cbPovider.SelectedItem).GetProviderInstance(_activator);
             Dataset dataset;
-            var fetchedDataset = provider.FetchDatasetByID(int.Parse(tbID.Text));//todo is it always ints?
+            var fetchedDataset = provider.FetchDatasetByID(int.Parse(tbID.Text));
             if (_activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<Dataset>("Url", fetchedDataset.Url).Any())
             {
                 dataset = _activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<Dataset>("Url", fetchedDataset.Url).First();
@@ -47,6 +48,7 @@ namespace Rdmp.UI.SubComponents
                 var linkage = new CatalogueDatasetLinkage(_activator.RepositoryLocator.CatalogueRepository, _catalogue, dataset);
                 linkage.SaveToDatabase();
             }
+            _activator.Publish(_catalogue);
             Close();
 
         }

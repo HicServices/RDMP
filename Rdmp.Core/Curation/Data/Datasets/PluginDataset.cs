@@ -1,4 +1,5 @@
-﻿using Rdmp.Core.Repositories;
+﻿using NPOI.OpenXmlFormats.Dml;
+using Rdmp.Core.Repositories;
 using System.Data.Common;
 
 
@@ -14,8 +15,7 @@ namespace Rdmp.Core.Curation.Data.Datasets
 
         public PluginDataset(ICatalogueRepository repository, DbDataReader r) : base(repository, r) { }
 
-        public override string GetID()
-        {
+        public override string GetID() {
             return ID.ToString();
         }
         public override string GetRemoteID()

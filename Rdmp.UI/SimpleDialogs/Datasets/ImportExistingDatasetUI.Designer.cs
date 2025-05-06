@@ -113,7 +113,7 @@
             Controls.Add(btnCancel);
             Controls.Add(btnCreate);
             Name = "ImportExistingPureDatasetUI";
-            Text = "Import Existing HDR Dataset";
+            Text = "Import Existing Dataset";
             Load += ImportExistingPureDatasetUI_Load;
             ResumeLayout(false);
             PerformLayout();
