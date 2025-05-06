@@ -30,12 +30,10 @@ public class BetweenCatalogueAndDataExportObscureDependencyFinderTests : Databas
         var dataset = new ExtractableDataSet(DataExportRepository, cata);
 
         //and suddenly we cannot delete the catalogue
-        var ex = Assert.Throws<Exception>(() => obscura.ThrowIfDeleteDisallowed(cata));
-        Assert.That(ex.Message, Does.Contain("Cannot delete Catalogue MyCata because there are ExtractableDataSets which depend on them "));
+        Assert.DoesNotThrow(() => obscura.ThrowIfDeleteDisallowed(cata));
 
         //also if we try to force through a delete it should behave in identical manner
-        var ex2 = Assert.Throws<Exception>(cata.DeleteInDatabase);
-        Assert.That(ex2.Message, Does.Contain("Cannot delete Catalogue MyCata because there are ExtractableDataSets which depend on them "));
+        Assert.DoesNotThrow(cata.DeleteInDatabase);
 
         //now we delete the linked dataset
         dataset.DeleteInDatabase();
@@ -65,9 +63,7 @@ public class BetweenCatalogueAndDataExportObscureDependencyFinderTests : Databas
         var cata = new Catalogue(CatalogueRepository, "MyCata");
         var dataset = new ExtractableDataSet(DataExportRepository, cata);
 
-        //we cannot delete it because there is a dependency
-        var ex = Assert.Throws<Exception>(() => obscura1.ThrowIfDeleteDisallowed(cata));
-        Assert.That(ex.Message, Does.Contain("Cannot delete Catalogue MyCata because there are ExtractableDataSets which depend on them "));
+        Assert.DoesNotThrow(() => obscura1.ThrowIfDeleteDisallowed(cata));
 
         //the second finder simulates when the repository locator doesn't have a record of the data export repository so it is unable to check it so it will let you delete it just fine
         Assert.DoesNotThrow(() => obscura2.ThrowIfDeleteDisallowed(cata));

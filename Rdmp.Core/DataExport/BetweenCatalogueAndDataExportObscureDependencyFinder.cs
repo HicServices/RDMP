@@ -46,10 +46,10 @@ public class BetweenCatalogueAndDataExportObscureDependencyFinder : IObscureDepe
             var dependencies = _serviceLocator.DataExportRepository
                 .GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", cata.ID).ToArray();
 
-            //we have any dependent catalogues?
-            if (dependencies.Any())
-                throw new Exception(
-                    $"Cannot delete Catalogue {cata} because there are ExtractableDataSets which depend on them (IDs={string.Join(",", dependencies.Select(ds => ds.ID.ToString()))})");
+            foreach (var dependency in dependencies)
+            {
+                dependency.DeleteInDatabase();
+            }
         }
     }
 

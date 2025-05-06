@@ -184,10 +184,7 @@ public class DataExportChildProvider : CatalogueChildProvider
         var cataToEds = new Dictionary<int, ExtractableDataSet>(ExtractableDataSets.ToDictionary(k => k.Catalogue_ID));
 
         //inject extractability into Catalogues
-        foreach (var catalogue in AllCatalogues)
-            catalogue.InjectKnown(cataToEds.TryGetValue(catalogue.ID, out var result)
-                ? result.GetCatalogueExtractabilityStatus()
-                : new CatalogueExtractabilityStatus(false, false));
+        foreach (var catalogue in AllCatalogues) catalogue.GetExtractabilityStatus(repositoryLocator.DataExportRepository);
 
         ReportProgress("Catalogue extractability injection");
 

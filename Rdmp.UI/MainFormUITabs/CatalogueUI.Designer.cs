@@ -33,92 +33,91 @@ namespace Rdmp.UI.MainFormUITabs
         private void InitializeComponent()
         {
             splitContainer1 = new SplitContainer();
-            cbColdStorage = new CheckBox();
             cbInternal = new CheckBox();
             cbDeprecated = new CheckBox();
-            editableFolder = new SimpleControls.EditableLabelUI();
-            editableCatalogueName = new SimpleControls.EditableLabelUI();
+            editableFolder = new Rdmp.UI.SimpleControls.EditableLabelUI();
+            editableCatalogueName = new Rdmp.UI.SimpleControls.EditableLabelUI();
             ticketingControl1 = new TicketingControlUI();
             tabControl1 = new TabControl();
             tabPage1 = new TabPage();
             groupBox23 = new GroupBox();
-            aiAcronym = new SimpleControls.AdditionalInfomationUI();
+            aiAcronym = new Rdmp.UI.SimpleControls.AdditionalInfomationUI();
             tbAcronym = new TextBox();
             groupBox16 = new GroupBox();
-            aiDescription = new SimpleControls.AdditionalInfomationUI();
+            aiDescription = new Rdmp.UI.SimpleControls.AdditionalInfomationUI();
             tbDescription = new TextBox();
             groupBox15 = new GroupBox();
-            aiShortDescription = new SimpleControls.AdditionalInfomationUI();
+            aiShortDescription = new Rdmp.UI.SimpleControls.AdditionalInfomationUI();
             tbAbstract = new TextBox();
             tabPage2 = new TabPage();
             tableLayoutPanel2 = new TableLayoutPanel();
             groupBox18 = new GroupBox();
-            aiDatasetType = new SimpleControls.AdditionalInfomationUI();
-            ddDatasetType = new SimpleControls.MultiSelectChips.DropdownOptionsChipDisplay();
+            aiDatasetType = new Rdmp.UI.SimpleControls.AdditionalInfomationUI();
+            ddDatasetType = new Rdmp.UI.SimpleControls.MultiSelectChips.DropdownOptionsChipDisplay();
             groupBox22 = new GroupBox();
-            aiKeywords = new SimpleControls.AdditionalInfomationUI();
-            ffcKeywords = new SimpleControls.MultiSelectChips.FreeFormTextChipDisplay();
+            aiKeywords = new Rdmp.UI.SimpleControls.AdditionalInfomationUI();
+            ffcKeywords = new Rdmp.UI.SimpleControls.MultiSelectChips.FreeFormTextChipDisplay();
             groupBox19 = new GroupBox();
-            aiDatasetSubtype = new SimpleControls.AdditionalInfomationUI();
-            ddDatasetSubtype = new SimpleControls.MultiSelectChips.DropdownOptionsChipDisplay();
+            aiDatasetSubtype = new Rdmp.UI.SimpleControls.AdditionalInfomationUI();
+            ddDatasetSubtype = new Rdmp.UI.SimpleControls.MultiSelectChips.DropdownOptionsChipDisplay();
             groupBox21 = new GroupBox();
-            ddDataSourceSetting = new SimpleControls.MultiSelectChips.DropdownOptionsChipDisplay();
-            aiDataSourceSetting = new SimpleControls.AdditionalInfomationUI();
+            ddDataSourceSetting = new Rdmp.UI.SimpleControls.MultiSelectChips.DropdownOptionsChipDisplay();
+            aiDataSourceSetting = new Rdmp.UI.SimpleControls.AdditionalInfomationUI();
             groupBox20 = new GroupBox();
-            ddDataSource = new SimpleControls.MultiSelectChips.DropdownOptionsChipDisplay();
-            aiDataSource = new SimpleControls.AdditionalInfomationUI();
-            groupBox24 = new GroupBox();
-            aiPurposeOfDataset = new SimpleControls.AdditionalInfomationUI();
-            cbPurpose = new ComboBox();
+            ddDataSource = new Rdmp.UI.SimpleControls.MultiSelectChips.DropdownOptionsChipDisplay();
+            aiDataSource = new Rdmp.UI.SimpleControls.AdditionalInfomationUI();
             groupBox17 = new GroupBox();
-            aiResourceType = new SimpleControls.AdditionalInfomationUI();
+            aiResourceType = new Rdmp.UI.SimpleControls.AdditionalInfomationUI();
             cb_resourceType = new ComboBox();
+            groupBox24 = new GroupBox();
+            aiPurposeOfDataset = new Rdmp.UI.SimpleControls.AdditionalInfomationUI();
+            cbPurpose = new ComboBox();
             tabPage3 = new TabPage();
             groupBox14 = new GroupBox();
-            aiEndDate = new SimpleControls.AdditionalInfomationUI();
+            aiEndDate = new Rdmp.UI.SimpleControls.AdditionalInfomationUI();
             dtpEndDate = new DateTimePicker();
             btnEndDateClear = new Button();
             groupBox13 = new GroupBox();
-            aiStartDate = new SimpleControls.AdditionalInfomationUI();
+            aiStartDate = new Rdmp.UI.SimpleControls.AdditionalInfomationUI();
             dtpStart = new DateTimePicker();
             btnStartDateClear = new Button();
             groupBox12 = new GroupBox();
-            aiGranularity = new SimpleControls.AdditionalInfomationUI();
+            aiGranularity = new Rdmp.UI.SimpleControls.AdditionalInfomationUI();
             cb_granularity = new ComboBox();
             groupBox11 = new GroupBox();
-            aiGeographicalCoverage = new SimpleControls.AdditionalInfomationUI();
+            aiGeographicalCoverage = new Rdmp.UI.SimpleControls.AdditionalInfomationUI();
             tbGeoCoverage = new TextBox();
             tabPage4 = new TabPage();
             groupBox10 = new GroupBox();
-            aiJuristiction = new SimpleControls.AdditionalInfomationUI();
+            aiJuristiction = new Rdmp.UI.SimpleControls.AdditionalInfomationUI();
             tbJuristiction = new TextBox();
             groupBox9 = new GroupBox();
-            aiDataProcessor = new SimpleControls.AdditionalInfomationUI();
+            aiDataProcessor = new Rdmp.UI.SimpleControls.AdditionalInfomationUI();
             tbDataProcessor = new TextBox();
             groupBox8 = new GroupBox();
-            aiDataController = new SimpleControls.AdditionalInfomationUI();
+            aiDataController = new Rdmp.UI.SimpleControls.AdditionalInfomationUI();
             tbDataController = new TextBox();
             groupBox7 = new GroupBox();
-            aiAccessContact = new SimpleControls.AdditionalInfomationUI();
+            aiAccessContact = new Rdmp.UI.SimpleControls.AdditionalInfomationUI();
             tbAccessContact = new TextBox();
             tabPage5 = new TabPage();
             groupBox3 = new GroupBox();
-            aiDOI = new SimpleControls.AdditionalInfomationUI();
+            aiDOI = new Rdmp.UI.SimpleControls.AdditionalInfomationUI();
             tbDOI = new TextBox();
             tableLayoutPanel1 = new TableLayoutPanel();
             groupBox2 = new GroupBox();
-            aiControlledGroup = new SimpleControls.AdditionalInfomationUI();
-            fftControlledVocab = new SimpleControls.MultiSelectChips.FreeFormTextChipDisplay();
+            aiControlledGroup = new Rdmp.UI.SimpleControls.AdditionalInfomationUI();
+            fftControlledVocab = new Rdmp.UI.SimpleControls.MultiSelectChips.FreeFormTextChipDisplay();
             groupBox1 = new GroupBox();
-            aiPeople = new SimpleControls.AdditionalInfomationUI();
-            ffcPeople = new SimpleControls.MultiSelectChips.FreeFormTextChipDisplay();
+            aiPeople = new Rdmp.UI.SimpleControls.AdditionalInfomationUI();
+            ffcPeople = new Rdmp.UI.SimpleControls.MultiSelectChips.FreeFormTextChipDisplay();
             tabPage6 = new TabPage();
-            aiUpdateFrequency = new SimpleControls.AdditionalInfomationUI();
+            aiUpdateFrequency = new Rdmp.UI.SimpleControls.AdditionalInfomationUI();
             groupBox6 = new GroupBox();
-            aiUpdateLag = new SimpleControls.AdditionalInfomationUI();
+            aiUpdateLag = new Rdmp.UI.SimpleControls.AdditionalInfomationUI();
             cbUpdateLag = new ComboBox();
             groupBox5 = new GroupBox();
-            aiInitialReleaseDate = new SimpleControls.AdditionalInfomationUI();
+            aiInitialReleaseDate = new Rdmp.UI.SimpleControls.AdditionalInfomationUI();
             dtpReleaseDate = new DateTimePicker();
             btnReleaseDateClear = new Button();
             groupBox4 = new GroupBox();
@@ -153,8 +152,8 @@ namespace Rdmp.UI.MainFormUITabs
             groupBox19.SuspendLayout();
             groupBox21.SuspendLayout();
             groupBox20.SuspendLayout();
-            groupBox24.SuspendLayout();
             groupBox17.SuspendLayout();
+            groupBox24.SuspendLayout();
             tabPage3.SuspendLayout();
             groupBox14.SuspendLayout();
             groupBox13.SuspendLayout();
@@ -189,7 +188,6 @@ namespace Rdmp.UI.MainFormUITabs
             // 
             // splitContainer1.Panel1
             // 
-            splitContainer1.Panel1.Controls.Add(cbColdStorage);
             splitContainer1.Panel1.Controls.Add(cbInternal);
             splitContainer1.Panel1.Controls.Add(cbDeprecated);
             splitContainer1.Panel1.Controls.Add(editableFolder);
@@ -202,16 +200,6 @@ namespace Rdmp.UI.MainFormUITabs
             splitContainer1.Size = new System.Drawing.Size(881, 1085);
             splitContainer1.SplitterDistance = 158;
             splitContainer1.TabIndex = 0;
-            // 
-            // cbColdStorage
-            // 
-            cbColdStorage.AutoSize = true;
-            cbColdStorage.Location = new System.Drawing.Point(695, 75);
-            cbColdStorage.Name = "cbColdStorage";
-            cbColdStorage.Size = new System.Drawing.Size(94, 19);
-            cbColdStorage.TabIndex = 5;
-            cbColdStorage.Text = "Cold Storage";
-            cbColdStorage.UseVisualStyleBackColor = true;
             // 
             // cbInternal
             // 
@@ -555,33 +543,6 @@ namespace Rdmp.UI.MainFormUITabs
             aiDataSource.Size = new System.Drawing.Size(20, 20);
             aiDataSource.TabIndex = 24;
             // 
-            // groupBox24
-            // 
-            groupBox24.AutoSize = true;
-            groupBox24.Controls.Add(aiPurposeOfDataset);
-            groupBox24.Controls.Add(cbPurpose);
-            groupBox24.Location = new System.Drawing.Point(207, 6);
-            groupBox24.Name = "groupBox24";
-            groupBox24.Size = new System.Drawing.Size(194, 67);
-            groupBox24.TabIndex = 20;
-            groupBox24.TabStop = false;
-            groupBox24.Text = "Purpose of Dataset";
-            // 
-            // aiPurposeOfDataset
-            // 
-            aiPurposeOfDataset.Location = new System.Drawing.Point(114, 0);
-            aiPurposeOfDataset.Name = "aiPurposeOfDataset";
-            aiPurposeOfDataset.Size = new System.Drawing.Size(20, 20);
-            aiPurposeOfDataset.TabIndex = 27;
-            // 
-            // cbPurpose
-            // 
-            cbPurpose.FormattingEnabled = true;
-            cbPurpose.Location = new System.Drawing.Point(6, 22);
-            cbPurpose.Name = "cbPurpose";
-            cbPurpose.Size = new System.Drawing.Size(182, 23);
-            cbPurpose.TabIndex = 1;
-            // 
             // groupBox17
             // 
             groupBox17.AutoSize = true;
@@ -608,6 +569,33 @@ namespace Rdmp.UI.MainFormUITabs
             cb_resourceType.Name = "cb_resourceType";
             cb_resourceType.Size = new System.Drawing.Size(182, 23);
             cb_resourceType.TabIndex = 0;
+            // 
+            // groupBox24
+            // 
+            groupBox24.AutoSize = true;
+            groupBox24.Controls.Add(aiPurposeOfDataset);
+            groupBox24.Controls.Add(cbPurpose);
+            groupBox24.Location = new System.Drawing.Point(207, 6);
+            groupBox24.Name = "groupBox24";
+            groupBox24.Size = new System.Drawing.Size(194, 67);
+            groupBox24.TabIndex = 20;
+            groupBox24.TabStop = false;
+            groupBox24.Text = "Purpose of Dataset";
+            // 
+            // aiPurposeOfDataset
+            // 
+            aiPurposeOfDataset.Location = new System.Drawing.Point(114, 0);
+            aiPurposeOfDataset.Name = "aiPurposeOfDataset";
+            aiPurposeOfDataset.Size = new System.Drawing.Size(20, 20);
+            aiPurposeOfDataset.TabIndex = 27;
+            // 
+            // cbPurpose
+            // 
+            cbPurpose.FormattingEnabled = true;
+            cbPurpose.Location = new System.Drawing.Point(6, 22);
+            cbPurpose.Name = "cbPurpose";
+            cbPurpose.Size = new System.Drawing.Size(182, 23);
+            cbPurpose.TabIndex = 1;
             // 
             // tabPage3
             // 
@@ -1261,8 +1249,8 @@ namespace Rdmp.UI.MainFormUITabs
             groupBox21.PerformLayout();
             groupBox20.ResumeLayout(false);
             groupBox20.PerformLayout();
-            groupBox24.ResumeLayout(false);
             groupBox17.ResumeLayout(false);
+            groupBox24.ResumeLayout(false);
             tabPage3.ResumeLayout(false);
             groupBox14.ResumeLayout(false);
             groupBox13.ResumeLayout(false);
@@ -1307,7 +1295,6 @@ namespace Rdmp.UI.MainFormUITabs
         private TicketingControlUI ticketingControl1;
         private SimpleControls.EditableLabelUI editableFolder;
         private SimpleControls.EditableLabelUI editableCatalogueName;
-        private CheckBox cbColdStorage;
         private CheckBox cbInternal;
         private CheckBox cbDeprecated;
         private TabControl tabControl1;

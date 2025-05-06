@@ -153,7 +153,7 @@ public class ExtractableDataSet : DatabaseEntity, IExtractableDataSet, IInjectKn
     /// Returns an object indicating whether the dataset is project specific or not
     /// </summary>
     /// <returns></returns>
-    public CatalogueExtractabilityStatus GetCatalogueExtractabilityStatus() => new(true, Project_ID != null);
+    public CatalogueExtractabilityStatus GetCatalogueExtractabilityStatus() => new(!DisableExtraction, Project_ID != null);
 
     private Lazy<ICatalogue> _catalogue;
 

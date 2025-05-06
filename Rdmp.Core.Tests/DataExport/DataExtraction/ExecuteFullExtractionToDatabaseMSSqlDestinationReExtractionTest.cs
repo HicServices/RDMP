@@ -183,7 +183,9 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
             Name = "ext1",
             Cohort_ID = extractableCohort.ID
         };
-        ec.AddDatasetToConfiguration(new ExtractableDataSet(DataExportRepository, catalogue));
+        var existingExtractableDataSet = DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", catalogue.ID).FirstOrDefault();
+
+        ec.AddDatasetToConfiguration( existingExtractableDataSet ?? new ExtractableDataSet(DataExportRepository, catalogue));
 
         ec.SaveToDatabase();
 
@@ -409,7 +411,9 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
             Name = "ext1",
             Cohort_ID = extractableCohort.ID
         };
-        ec.AddDatasetToConfiguration(new ExtractableDataSet(DataExportRepository, catalogue));
+        var existingExtractableDataSet = DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", catalogue.ID).FirstOrDefault();
+
+        ec.AddDatasetToConfiguration( existingExtractableDataSet ?? new ExtractableDataSet(DataExportRepository, catalogue));
 
         ec.SaveToDatabase();
 
@@ -671,7 +675,9 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
             Name = "ext1",
             Cohort_ID = extractableCohort.ID
         };
-        ec.AddDatasetToConfiguration(new ExtractableDataSet(DataExportRepository, catalogue));
+        var existingExtractableDataSet = DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", catalogue.ID).FirstOrDefault();
+
+        ec.AddDatasetToConfiguration(existingExtractableDataSet ??  new ExtractableDataSet(DataExportRepository, catalogue));
 
         ec.SaveToDatabase();
 
@@ -937,7 +943,9 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
             Name = "ext1",
             Cohort_ID = extractableCohort.ID
         };
-        ec.AddDatasetToConfiguration(new ExtractableDataSet(DataExportRepository, catalogue));
+        var existingExtractableDataSet = DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", catalogue.ID).FirstOrDefault();
+
+        ec.AddDatasetToConfiguration(existingExtractableDataSet??new ExtractableDataSet(DataExportRepository, catalogue));
 
         ec.SaveToDatabase();
 
@@ -1196,7 +1204,9 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
             Name = "ext1",
             Cohort_ID = extractableCohort.ID
         };
-        ec.AddDatasetToConfiguration(new ExtractableDataSet(DataExportRepository, catalogue));
+        var existingExtractableDataSet = DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", catalogue.ID).FirstOrDefault();
+
+        ec.AddDatasetToConfiguration(existingExtractableDataSet??new ExtractableDataSet(DataExportRepository, catalogue));
 
         ec.SaveToDatabase();
 
