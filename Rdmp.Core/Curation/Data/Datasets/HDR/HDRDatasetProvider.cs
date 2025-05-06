@@ -23,6 +23,7 @@ namespace Rdmp.Core.Curation.Data.Datasets.HDR
     {
         private HttpClient _client;
         private DatasetProviderConfiguration _configuration;
+        private readonly string _url;
 
         private readonly string _inputSchema = "HDRUK";
         private readonly string _inputVersion = "3.0.0";
@@ -34,6 +35,7 @@ namespace Rdmp.Core.Curation.Data.Datasets.HDR
             _client.DefaultRequestHeaders.Add("x-application-id", credentials.Username);
             _client.DefaultRequestHeaders.Add("x-client-id", apiKey);
             _configuration = configuration;
+            _url = Configuration.Url.TrimEnd('/');
         }
         public override Dataset AddExistingDatasetWithReturn(string name, string url)
         {
@@ -45,7 +47,7 @@ namespace Rdmp.Core.Curation.Data.Datasets.HDR
                 Type = ToString(),
                 Provider_ID = Configuration.ID,
                 DigitalObjectIdentifier = hdrDataset.GetDOI(),
-                Folder = $"\\{Configuration.Name}",
+                Folder = $"\\HDR\\{Configuration.Name}",
             };
             dataset.SaveToDatabase();
             Activator.Publish(dataset);
@@ -65,7 +67,7 @@ namespace Rdmp.Core.Curation.Data.Datasets.HDR
 
         public override Dataset Create(Catalogue catalogue)
         {
-            var url = Configuration.Url + $"/v1/integrations/datasets?input_schema={_inputSchema}&input_version={_inputVersion}";
+            var url = _url + $"/v1/integrations/datasets?input_schema={_inputSchema}&input_version={_inputVersion}";
             var serializeOptions = new JsonSerializerOptions
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
@@ -111,7 +113,7 @@ namespace Rdmp.Core.Curation.Data.Datasets.HDR
 
         public override Dataset FetchDatasetByID(int id)
         {
-            var url = Configuration.Url + "/v1/datasets/" + id;
+            var url = _url + "/v1/datasets/" + id;
             var response = Task.Run(async () => await _client.GetAsync($"{url}?schema_model={_inputSchema}&schema_version={_inputVersion}")).Result;
             if (response.StatusCode == HttpStatusCode.OK)
             {
@@ -147,13 +149,13 @@ namespace Rdmp.Core.Curation.Data.Datasets.HDR
             System.Text.Json.JsonSerializer.Serialize<PatchSubMetadata>(stream, updateObj.metadata, serializeOptions);
 
             var jsonString = "{\"metadata\":" + Encoding.UTF8.GetString(stream.ToArray()) + "}";
-            var uri = $"{Configuration.Url}/v1/integrations/datasets/{uuid}?input_schema={_inputSchema}&input_version={_inputVersion}";
+            var uri = $"{_url}/v1/integrations/datasets/{uuid}?input_schema={_inputSchema}&input_version={_inputVersion}";
             var httpContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
             var response = Task.Run(async () => await _client.PutAsync(uri, httpContent)).Result;
             if (response.StatusCode != HttpStatusCode.OK)
             {
-                var x = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
-                throw new Exception(x);
+                var errorMessage = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
+                throw new Exception(errorMessage);
             }
         }
 
@@ -264,7 +266,7 @@ namespace Rdmp.Core.Curation.Data.Datasets.HDR
             hdrDataset.data.versions.First().metadata.metadata.accessibility.access.dataController = catalogue.DataController;
             hdrDataset.data.versions.First().metadata.metadata.accessibility.access.dataProcessor = catalogue.DataProcessor;
 
-            hdrDataset.data.versions.First().metadata.metadata.identifier = "05ec5a13-3955-45a3-b449-8aba78622113";// hdrDataset.data.versions.First().metadata.identifier;
+            hdrDataset.data.versions.First().metadata.metadata.identifier = Guid.NewGuid().ToString();
 
 
             Update(hdrDataset.data.id.ToString(), hdrDataset);

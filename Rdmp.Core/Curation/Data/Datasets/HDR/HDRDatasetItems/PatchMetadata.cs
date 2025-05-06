@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Rdmp.Core.Curation.Data.Datasets.HDR.HDRDatasetItems
 {
     /// <summary>
-    /// 
+    /// Used to map patch updates to HDR API
     /// </summary>
     public class PatchMetadata
     {

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Rdmp.Core.Curation.Data.Datasets.HDR.HDRDatasetItems
 {
     /// <summary>
-    /// 
+    /// Mapping from HDR API
     /// </summary>
     public class Metadata
     {
