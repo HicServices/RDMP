@@ -18,4 +18,6 @@ public interface IDatasetProvider
 
     Dataset AddExistingDatasetWithReturn(string name, string url);
     void AddExistingDataset(string name, string url);
+
+    string GetRemoteURL(Dataset dataset);
 }
