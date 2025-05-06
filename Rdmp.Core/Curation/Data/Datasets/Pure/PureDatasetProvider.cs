@@ -171,6 +171,11 @@ namespace Rdmp.Core.Curation.Data.Datasets.Pure
             return FetchDatasetByID(pd.PureId.Value);
         }
 
+        public override string GetRemoteURL(Dataset dataset)
+        {
+            var existingDataset = (PureDataset)FetchDatasetByID(int.Parse(dataset.Url.Split("/").Last()));
+            return existingDataset.PortalURL;
+        }
         private static string UrltoUUID(string url) => url.Split("/").Last();
     }
 }
