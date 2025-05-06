@@ -75,7 +75,8 @@ public class RunUITests : DatabaseTests
             typeof(ExecuteCommandSetArgument),
             typeof(ExecuteCommandAddToSession),
             typeof(ExecuteCommandDeletePlugin),
-            typeof(ExecuteCommandPerformRegexRedactionOnCatalogue)
+            typeof(ExecuteCommandPerformRegexRedactionOnCatalogue),
+            typeof(ExecuteCommandImportExistingCataloguesIntoExternalDatasetProvider)
         });
 
     [Test]

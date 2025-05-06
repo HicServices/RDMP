@@ -57,7 +57,7 @@ public class WordDataWriter : DocXHelper
 
 
     [NotNull]
-    private static string GetDoi([NotNull] Curation.Data.Dataset ds)
+    private static string GetDoi([NotNull] Curation.Data.Datasets.Dataset ds)
     {
         return !string.IsNullOrWhiteSpace(ds.DigitalObjectIdentifier) ? $" (DOI: {ds.DigitalObjectIdentifier})" : "";
     }
@@ -163,7 +163,7 @@ public class WordDataWriter : DocXHelper
 
             if (foundDatasets.Count > 0)
             {
-                var datasets = Executer.Source.Request.Catalogue.Repository.GetAllObjects<Curation.Data.Dataset>().ToList();
+                var datasets = Executer.Source.Request.Catalogue.Repository.GetAllObjects<Curation.Data.Datasets.Dataset>().ToList();
 
                 var datasetString = string.Join(", ",
                     foundDatasets
