@@ -69,7 +69,8 @@ namespace Rdmp.UI.SimpleDialogs.Datasets
             if (cbImportCatalogues.Checked || cbImportProjectSpecific.Checked || cbIncludeInternal.Checked || cbImportDeprecated.Checked)
             {
                 var provider = config.GetProviderInstance(_activator);
-                var cmd = new ExecuteCommandImportExistingCataloguesIntoExternalDatasetProvider(_activator, provider, cbImportCatalogues.Checked, cbIncludeInternal.Checked, cbImportProjectSpecific.Checked, cbImportDeprecated.Checked);
+                var autoUpdate = _activator.YesNo("Do you want these dataset to be updated automatically?", "Automatically Update Datasets?");
+                var cmd = new ExecuteCommandImportExistingCataloguesIntoExternalDatasetProvider(_activator, provider, cbImportCatalogues.Checked, cbIncludeInternal.Checked, cbImportProjectSpecific.Checked, cbImportDeprecated.Checked, autoUpdate);
                 cmd.Execute();
             }
 

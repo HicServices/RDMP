@@ -54,7 +54,7 @@
             label1.Name = "label1";
             label1.Size = new System.Drawing.Size(104, 15);
             label1.TabIndex = 0;
-            label1.Text = "Object Schema ID:";
+            label1.Text = "URL/ID:";
             // 
             // label2
             // 
@@ -218,7 +218,7 @@
             Controls.Add(label2);
             Controls.Add(label1);
             Name = "CreateNewJiraConfigurationUI";
-            Text = "Create Jira Configuration";
+            Text = "Create New Dataset Provider Configuration";
             ResumeLayout(false);
             PerformLayout();
         }
