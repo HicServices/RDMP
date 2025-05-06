@@ -263,7 +263,11 @@ namespace Rdmp.Core.Curation.Data.Datasets.Jira
             };
         }
 
-
+        public override string GetRemoteURL(Dataset dataset)
+        {
+            Activator.Show("Unable to open URL for Jira Assets. Please visit your Atlassian instance to access this Dataset");
+            return null;
+        }
 
         public override void UpdateUsingCatalogue(Dataset dataset, Catalogue catalogue)
         {
