@@ -29,6 +29,7 @@ using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Datasets;
+using Rdmp.Core.Curation.Data.Datasets.Pure;
 using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Pipelines;
@@ -621,6 +622,10 @@ public class UnitTests
         if (typeof(T) == typeof(DatasetProviderConfiguration))
         {
             return (T)(object)new DatasetProviderConfiguration(repository.CatalogueRepository, "","","",WhenIHaveA<DataAccessCredentials>(repository).ID,"");
+        }
+        if (typeof(T) == typeof(PureDataset))
+        {
+            return (T)(object)new PureDataset(repository.CatalogueRepository, "Pure Dataset");
         }
 
         throw new TestCaseNotWrittenYetException(typeof(T));
