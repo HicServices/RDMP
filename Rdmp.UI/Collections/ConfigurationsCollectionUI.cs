@@ -62,9 +62,6 @@ public partial class ConfigurationsCollectionUI : RDMPCollectionUI, ILifetimeSub
 
         var options = new IAtomicCommand[]
         {
-            new ExecuteCommandCreateNewDatasetUI(_activator){
-                OverrideCommandName="Add New Dataset"
-            },
             new ExecuteCommandAddNewRegexRedactionConfigurationUI(_activator)
             {
                 OverrideCommandName="Add New Regex Redaction Configuration"

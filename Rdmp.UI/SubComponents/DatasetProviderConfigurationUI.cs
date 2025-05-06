@@ -32,11 +32,6 @@ public partial class DatasetProviderConfigurationUI : DatasetProviderConfigurati
         tbName.Text = _configuration.Name;
         tbOrgId.Text = _configuration.Organisation_ID;
         tbType.Text = _configuration.Type;
-        //if (_configuration.Type == typeof(JiraDatasetProvider).ToString())
-        //{
-        //    label3.Text = "Object Schema:";
-        //    label3.Location = new Point(label3.Location.X - 50, label3.Location.Y);
-        //}
         tbUrl.Text = _configuration.Url;
         cbAccessCredentials.Items.Clear();
         var credentials = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<DataAccessCredentials>().ToArray();

@@ -31,8 +31,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             _autoUpdate = autoUpdate;
         }
 
-
-        public override void Execute()
+        public List<Catalogue> GetCatalogues()
         {
             var catalogues = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>().ToList();
             if (!_includeInternal)
@@ -51,6 +50,13 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             {
                 catalogues = catalogues.Where(c => !c.GetExtractabilityStatus(_activator.RepositoryLocator.DataExportRepository).IsExtractable).ToList();
             }
+            return catalogues;
+        }
+
+
+        public override void Execute()
+        {
+            var catalogues = GetCatalogues();
             foreach (var catalogue in catalogues)
             {
                 var dataset = _provider.Create(catalogue);
