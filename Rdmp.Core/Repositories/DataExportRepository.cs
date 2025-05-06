@@ -100,7 +100,7 @@ public class DataExportRepository : TableRepository, IDataExportRepository
         var eds = GetAllObjectsWithParent<ExtractableDataSet>(c).SingleOrDefault();
         if (eds is null)
         {
-            //if there is not EDS for this catalogue, it must have bee non extractable
+            //if there is not EDS for this catalogue, it must have been non extractable
             eds = new ExtractableDataSet(this, c, false);
             eds.SaveToDatabase();
             //todo need to publish this eds

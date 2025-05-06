@@ -388,11 +388,10 @@ public abstract class BasicActivateItems : IBasicActivateItems
                             var selectedDatasets = RepositoryLocator.DataExportRepository.GetAllObjectsWhere<SelectedDataSets>("ExtractableDataSet_ID", ds.ID);
                             if (selectedDatasets.Any())
                             {
-                                this.Show("Catalogue Is Used in a number of projects. Remove this catalogue from all projects to allow deletion");
+                                this.Show("Catalogue is used in a number of projects. Remove this catalogue from all projects to allow deletion");
                                 return false;
                             }
                         }
-                        //not used anywhere, we can dlete it
                         foreach (var ds in extractableDataSets) ds.DeleteInDatabase();
                     }
                     break;
