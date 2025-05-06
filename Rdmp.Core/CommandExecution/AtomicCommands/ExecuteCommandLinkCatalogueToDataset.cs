@@ -15,12 +15,12 @@ public sealed class ExecuteCommandLinkCatalogueToDataset : BasicCommandExecution
 {
     private readonly Catalogue _catalogue;
     private readonly Curation.Data.Datasets.Dataset _dataset;
-    private readonly bool _linkAll;
-    public ExecuteCommandLinkCatalogueToDataset(IBasicActivateItems activator, [DemandsInitialization("The catalogue To link")]Catalogue catalogue, [DemandsInitialization("The dataset to link to")]Curation.Data.Datasets.Dataset dataset, bool linkAllOtherColumns = true) : base(activator)
+    private readonly bool _autoUpdate;
+    public ExecuteCommandLinkCatalogueToDataset(IBasicActivateItems activator, [DemandsInitialization("The catalogue To link")]Catalogue catalogue, [DemandsInitialization("The dataset to link to")]Curation.Data.Datasets.Dataset dataset, bool autoUpdate = true) : base(activator)
     {
         _catalogue = catalogue;
         _dataset = dataset;
-        _linkAll = linkAllOtherColumns;
+        _autoUpdate = autoUpdate;
 
         if (_catalogue is null) SetImpossible("No Catalogue Selected");
         if (_dataset is null) SetImpossible("No Dataset Selected");
@@ -30,7 +30,7 @@ public sealed class ExecuteCommandLinkCatalogueToDataset : BasicCommandExecution
     public override void Execute()
     {
         base.Execute();
-        var linkage = new CatalogueDatasetLinkage(_catalogue.CatalogueRepository, _catalogue, _dataset);
+        var linkage = new CatalogueDatasetLinkage(_catalogue.CatalogueRepository, _catalogue, _dataset,_autoUpdate);
         linkage.SaveToDatabase();
         Publish(linkage);
 
