@@ -272,6 +272,11 @@ namespace Rdmp.Core.Curation.Data.Datasets.HDR
             Update(hdrDataset.data.id.ToString(), hdrDataset);
         }
 
+        public override string GetRemoteURL(Dataset dataset)
+        {
+            return $"{_url.Replace("api.", "web.").Replace("/api", "/en")}/dataset/{dataset.Url}";
+        }
+
         private class HDRUpdateObject
         {
             public int team_id { get; set; }
