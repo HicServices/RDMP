@@ -35,6 +35,7 @@ public interface IDataset: IMapsDirectlyToDatabaseTable
     /// </summary>
     string Type { get; }
 
+
     /// <summary>
     /// The URL to access the dataset
     /// </summary>
@@ -42,4 +43,5 @@ public interface IDataset: IMapsDirectlyToDatabaseTable
 
     public abstract string GetID();
     public abstract string GetRemoteID();
+
 }
