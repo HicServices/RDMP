@@ -40,4 +40,9 @@ public abstract class PluginDatasetProvider : IDatasetProvider
     {
         throw new NotImplementedException();
     }
+
+    public virtual string GetRemoteURL(Dataset dataset)
+    {
+        throw new NotImplementedException();
+    }
 }

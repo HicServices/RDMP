@@ -37,6 +37,11 @@ public class InternalDatasetProvider : IDatasetProvider
         return _activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<Curation.Data.Datasets.Dataset>("ID", id).FirstOrDefault();
     }
 
+    public string GetRemoteURL(Dataset dataset)
+    {
+        throw new System.NotImplementedException();
+    }
+
     public void UpdateUsingCatalogue(Dataset dataset, Catalogue catalogue)
     {
         throw new System.NotImplementedException();
