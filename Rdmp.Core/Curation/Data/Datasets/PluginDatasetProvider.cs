@@ -26,7 +26,6 @@ public abstract class PluginDatasetProvider : IDatasetProvider
 
     public abstract Dataset AddExistingDatasetWithReturn(string name, string url);
 
-
     public abstract void Update(string uuid, PluginDataset datasetUpdates);
 
     public abstract void UpdateUsingCatalogue(Dataset dataset, Catalogue catalogue);
@@ -41,7 +40,7 @@ public abstract class PluginDatasetProvider : IDatasetProvider
         throw new NotImplementedException();
     }
 
-    public string GetRemoteURL(Dataset dataset)
+    public virtual string GetRemoteURL(Dataset dataset)
     {
         throw new NotImplementedException();
     }
