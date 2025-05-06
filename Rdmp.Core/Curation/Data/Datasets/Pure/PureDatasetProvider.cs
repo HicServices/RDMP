@@ -20,12 +20,14 @@ namespace Rdmp.Core.Curation.Data.Datasets.Pure
     class PureDatasetProvider : PluginDatasetProvider
     {
         private HttpClient _client;
+        private readonly string _url;
         public PureDatasetProvider(IBasicActivateItems activator, DatasetProviderConfiguration configuration, HttpClient client = null) : base(activator, configuration)
         {
             _client = new HttpClient();
             var credentials = Repository.GetAllObjectsWhere<DataAccessCredentials>("ID", Configuration.DataAccessCredentials_ID).First();
             var apiKey = credentials.GetDecryptedPassword();
             _client.DefaultRequestHeaders.Add("api-key", apiKey);
+            _url = Configuration.Url.TrimEnd('/');
         }
         public override void AddExistingDataset(string name, string url)
         {
@@ -34,7 +36,7 @@ namespace Rdmp.Core.Curation.Data.Datasets.Pure
 
         public override Dataset AddExistingDatasetWithReturn(string name, string url)
         {
-            var uri = $"{Configuration.Url}/data-sets/{UrltoUUID(url)}";
+            var uri = $"{_url}/data-sets/{UrltoUUID(url)}";
             var response = Task.Run(async () => await _client.GetAsync(uri)).Result;
             if (response.StatusCode == HttpStatusCode.OK)
             {
@@ -61,7 +63,7 @@ namespace Rdmp.Core.Curation.Data.Datasets.Pure
 
         public override Dataset FetchDatasetByID(int id)
         {
-            var uri = $"{Configuration.Url}/data-sets/{UrltoUUID(id.ToString())}";
+            var uri = $"{_url}/data-sets/{UrltoUUID(id.ToString())}";
             var response = Task.Run(async () => await _client.GetAsync(uri)).Result;
             if (response.StatusCode != HttpStatusCode.OK)
             {
@@ -138,7 +140,7 @@ namespace Rdmp.Core.Curation.Data.Datasets.Pure
 
         public override Dataset Create(Catalogue catalogue)
         {
-            var uri = $"{Configuration.Url}/data-sets/";
+            var uri = $"{_url}/data-sets/";
             var newDataset = new PureDataset();
             newDataset.Title = new ENGBWrapper(catalogue.Name);
 
