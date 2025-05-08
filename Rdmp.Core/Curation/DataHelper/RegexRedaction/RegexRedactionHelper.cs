@@ -25,7 +25,7 @@ namespace Rdmp.Core.Curation.DataHelper.RegexRedaction
             ID,
             RedactionConfiguration_ID,
             ColumnInfo_ID,
-            startingIndex,
+            StartingIndex,
             ReplacementValue,
             RedactedValue, 
             RegexRedaction_ID,
@@ -39,7 +39,7 @@ namespace Rdmp.Core.Curation.DataHelper.RegexRedaction
             DataTable redactionsToSaveTable = new DataTable();
             redactionsToSaveTable.Columns.Add(nameof(Constants.RedactionConfiguration_ID));
             redactionsToSaveTable.Columns.Add(nameof(Constants.ColumnInfo_ID));
-            redactionsToSaveTable.Columns.Add(nameof(Constants.startingIndex));
+            redactionsToSaveTable.Columns.Add(nameof(Constants.StartingIndex));
             redactionsToSaveTable.Columns.Add(nameof(Constants.ReplacementValue));
             redactionsToSaveTable.Columns.Add(nameof(Constants.RedactedValue));
             return redactionsToSaveTable;
@@ -115,8 +115,8 @@ namespace Rdmp.Core.Curation.DataHelper.RegexRedaction
         {
             var sql = $@"
                 DECLARE @output TABLE (id1 int, inc int IDENTITY(1,1))
-                INSERT INTO RegexRedaction(RedactionConfiguration_ID,ColumnInfo_ID,startingIndex,ReplacementValue,RedactedValue) OUTPUT inserted.id as id1 INTO @output
-                SELECT RedactionConfiguration_ID,ColumnInfo_ID,startingIndex,ReplacementValue,RedactedValue FROM {redactionsToSaveTable.GetFullyQualifiedName()};
+                INSERT INTO RegexRedaction(RedactionConfiguration_ID,ColumnInfo_ID,StartingIndex,ReplacementValue,RedactedValue) OUTPUT inserted.ID as id1 INTO @output
+                SELECT RedactionConfiguration_ID,ColumnInfo_ID,StartingIndex,ReplacementValue,RedactedValue FROM {redactionsToSaveTable.GetFullyQualifiedName()};
 				
 				DECLARE @IDMATCHER TABLE (RegexRedaction_ID int,ColumnInfo_ID int ,Value varchar(max),ID int , id1 int , inc int)
 				insert into @IDMATCHER(RegexRedaction_ID, ColumnInfo_ID,Value,ID,id1,inc)

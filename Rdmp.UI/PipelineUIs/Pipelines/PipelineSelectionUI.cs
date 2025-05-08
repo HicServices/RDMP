@@ -13,6 +13,7 @@ using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Annotations;
+using Rdmp.Core.Setting;
 using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.PipelineUIs.Pipelines;
@@ -21,7 +22,7 @@ namespace Rdmp.UI.PipelineUIs.Pipelines;
 public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
 {
     private readonly IActivateItems _activator;
-    private IPipelineUseCase _useCase;
+    private readonly IPipelineUseCase _useCase;
     private readonly ICatalogueRepository _repository;
 
     private IPipeline _pipeline;
@@ -32,10 +33,7 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
 
     private readonly IExtractionConfiguration _extractionConfiguration;
 
-    private ToolTip tt = new();
-
-    private const string ShowAll = "Show All/Incompatible Pipelines";
-    public bool showAll = false;
+    private readonly ToolTip tt = new();
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public IPipeline Pipeline
@@ -64,7 +62,7 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
     }
 
     /// <summary>
-    /// Refresh the list of pipeline components
+    ///     Refresh the list of pipeline components
     /// </summary>
     private void RefreshPipelineList()
     {
@@ -76,14 +74,11 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
         ddPipelines.Items.Add("<<None>>");
 
         ddPipelines.Items.AddRange(allPipelines.Where(_useCase.IsAllowable).ToArray());
-        ddPipelines.Items.Add(ShowAll);
 
-        if (showAll)
-            ddPipelines.Items.AddRange(allPipelines.Where(o => !_useCase.IsAllowable(o)).ToArray());
-
-        if(_extractionConfiguration is not null)
+        if (_extractionConfiguration is not null)
         {
-            var toReselect = ddPipelines.Items.OfType<Pipeline>().SingleOrDefault(p => p.ID == _extractionConfiguration.DefaultPipeline_ID);
+            var toReselect = ddPipelines.Items.OfType<Pipeline>()
+                .SingleOrDefault(p => p.ID == _extractionConfiguration.DefaultPipeline_ID);
 
             //if we can reselect the users previously selected one
             if (toReselect != null)
@@ -112,12 +107,13 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
             : "<<None>>";
     }
 
-    public PipelineSelectionUI(IActivateItems activator, IPipelineUseCase useCase, ICatalogueRepository repository, IExtractionConfiguration extractionConfiguration=null)
+    public PipelineSelectionUI(IActivateItems activator, IPipelineUseCase useCase, ICatalogueRepository repository,
+        IExtractionConfiguration extractionConfiguration = null)
     {
         _activator = activator;
         _useCase = useCase;
         _repository = repository;
-        _extractionConfiguration=extractionConfiguration;
+        _extractionConfiguration = extractionConfiguration;
         InitializeComponent();
 
         if (LicenseManager.UsageMode == LicenseUsageMode.Designtime) //don't connect to database in design mode
@@ -130,6 +126,13 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
 
         ddPipelines.DrawMode = DrawMode.OwnerDrawFixed;
         ddPipelines.DrawItem += cmb_Type_DrawItem;
+        var showButtonsSetting = activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Setting>()
+            .FirstOrDefault(static s => s.Key == "ExtractionPipelineQuickEdit");
+        var showbuttons = showButtonsSetting != null && Convert.ToBoolean(showButtonsSetting.Value);
+        btnClonePipeline.Visible = showbuttons;
+        btnCreateNewPipeline.Visible = showbuttons;
+        btnDeletePipeline.Visible = showbuttons;
+        btnEditPipeline.Visible = showbuttons;
     }
 
     private void cmb_Type_DrawItem(object sender, DrawItemEventArgs e)
@@ -148,26 +151,10 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
         }
 
         var render = ddPipelines.Items[e.Index].ToString();
-        var isIncompatible = e.Index > ddPipelines.Items.IndexOf(ShowAll);
 
+        TextRenderer.DrawText(e.Graphics, render, ddPipelines.Font, e.Bounds,
+            ddPipelines.ForeColor, TextFormatFlags.Left);
 
-        if (Equals(ddPipelines.Items[e.Index], ShowAll))
-        {
-            // draw a line along the top
-            e.Graphics.DrawLine(Pens.CornflowerBlue, new Point(e.Bounds.Left, e.Bounds.Top + 1),
-                new Point(e.Bounds.Right, e.Bounds.Top + 1));
-
-            if (showAll) render = $"\u2713 {render}";
-
-            TextRenderer.DrawText(e.Graphics, render, italic,
-                new Rectangle(new Point(e.Bounds.Left, e.Bounds.Top + 1), e.Bounds.Size), Color.CornflowerBlue,
-                TextFormatFlags.Left);
-        }
-        else
-        {
-            TextRenderer.DrawText(e.Graphics, render, isIncompatible ? italic : ddPipelines.Font, e.Bounds,
-                ddPipelines.ForeColor, TextFormatFlags.Left);
-        }
 
         e.DrawFocusRectangle();
     }
@@ -178,15 +165,6 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
 
     private void ddPipelines_SelectedIndexChanged(object sender, EventArgs e)
     {
-        if (Equals(ddPipelines.SelectedItem, ShowAll))
-        {
-            // toggle show all
-            showAll = !showAll;
-            RefreshPipelineList();
-            // Force dropdown to show again with newly refreshed list
-            ddPipelines.DroppedDown = true;
-            return;
-        }
 
         Pipeline = ddPipelines.SelectedItem as Pipeline;
 
@@ -259,7 +237,7 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
 
 
     /// <summary>
-    /// Turns the control into a single line ui control
+    ///     Turns the control into a single line ui control
     /// </summary>
     [UsedImplicitly]
     public void CollapseToSingleLineMode()

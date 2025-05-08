@@ -27,11 +27,11 @@ public class ColumnForbidder : IPluginDataFlowComponent<DataTable>
 {
     private Regex _crashIfAnyColumnMatches;
 
-    [DemandsInitialization("Crashes the load if any column name matches this regex")]
+    [DemandsInitialization("Crashes the load if any column name matches this regex. This option takes precedence over any selected Standard Regex")]
     public Regex CrashIfAnyColumnMatches
     {
         get => _crashIfAnyColumnMatches;
-        set => _crashIfAnyColumnMatches = new Regex(value.ToString(), value.Options | RegexOptions.IgnoreCase);
+        set => _crashIfAnyColumnMatches = value != null ? new Regex(value.ToString(), value.Options | RegexOptions.IgnoreCase) : null;
     }
 
     [DemandsInitialization(

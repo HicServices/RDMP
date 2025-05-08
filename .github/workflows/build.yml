@@ -19,7 +19,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
       - name: setup .NET
-        uses: actions/setup-dotnet@v4.3.0
+        uses: actions/setup-dotnet@v4.3.1
       - name: Populate Databases.yaml
         shell: bash
         run: |
@@ -49,7 +49,7 @@ jobs:
         run: dotnet build --configuration Release --verbosity minimal
       - name: Initialise RDMP
         run: |
-          dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- install --createdatabasetimeout 180 "(localdb)\MSSQLLocalDB" TEST_ -e
+          dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- install --createdatabasetimeout 180 --collation "Latin1_General_CS_AI" "(localdb)\MSSQLLocalDB" TEST_ -e
       - name: Create MySql Logging, DQE and Cohort Building Cache Db
         run: |
           dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- createnewexternaldatabaseserver LiveLoggingServer_ID "DatabaseType:MySQL:Server=127.0.0.1;Uid=root;Pwd=YourStrong!Passw0rd;Database=rdmp_logging2" --dir ~/rdmp/rdmp-yaml/
@@ -86,7 +86,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
       - name: setup .NET
-        uses: actions/setup-dotnet@v4.3.0
+        uses: actions/setup-dotnet@v4.3.1
       - name: Populate Databases.yaml
         shell: bash
         run: |
@@ -154,13 +154,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
       - name: setup .NET
-        uses: actions/setup-dotnet@v4.3.0
+        uses: actions/setup-dotnet@v4.3.1
       - name: Determine RDMP build version
         id: version
         shell: bash
         run: perl -ne "print \"rdmpversion=\$1\n\" if /AssemblyInformationalVersion\(\"([0-9a-z.-]+)\"\)/;" SharedAssemblyInfo.cs >> $GITHUB_OUTPUT
       - name: Setup .NET Core
-        uses: actions/setup-dotnet@v4.3.0
+        uses: actions/setup-dotnet@v4.3.1
         with:
           dotnet-version: 7.0.x
       - name: BundleSource
@@ -216,7 +216,7 @@ jobs:
 
 
       - name: Install Perl dependencies
-        uses: shogo82148/actions-setup-perl@v1.33.0
+        uses: shogo82148/actions-setup-perl@v1.34.0
         with:
           install-modules-with: cpanm
           install-modules: Archive::Zip Archive::Tar
@@ -293,7 +293,7 @@ jobs:
           path: ${{ github.workspace }}/
           key: ${{ github.sha }}-your-cache-key-bundled
       - name: setup .NET
-        uses: actions/setup-dotnet@v4.3.0
+        uses: actions/setup-dotnet@v4.3.1
       - name: Determine RDMP build version
         id: version
         shell: bash
