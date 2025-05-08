@@ -50,24 +50,38 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
         base.Execute();
 
         var eds = BasicActivator.RepositoryLocator.DataExportRepository
-            .GetAllObjectsWithParent<ExtractableDataSet>(_catalogue).SingleOrDefault();
+            .GetAllObjectsWithParent<ExtractableDataSet>(_catalogue).Where(e => e.Project_ID is null).SingleOrDefault();
 
-        var alreadyInConfiguration = eds.ExtractionConfigurations.FirstOrDefault(ec => ec.Project_ID != _project.ID);
-
-        if (alreadyInConfiguration != null)
-            throw new Exception(
-                $"Cannot make {_catalogue} Project Specific because it is already a part of ExtractionConfiguration {alreadyInConfiguration} (Project={alreadyInConfiguration.Project}) and possibly others");
-
-        eds.Project_ID = _project.ID;
-        foreach (var ei in _catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Where(ei => ei.ExtractionCategory is ExtractionCategory.Core))
+        if (eds is not null)
         {
-            ei.ExtractionCategory = ExtractionCategory.ProjectSpecific;
-            ei.SaveToDatabase();
+            var alreadyInConfiguration = eds.ExtractionConfigurations.FirstOrDefault(ec => ec.Project_ID != _project.ID);
+
+            if (alreadyInConfiguration != null)
+                throw new Exception(
+                    $"Cannot make {_catalogue} Project Specific because it is already a part of ExtractionConfiguration {alreadyInConfiguration} (Project={alreadyInConfiguration.Project}) and possibly others");
+
+            eds.Project_ID = _project.ID;
+            foreach (var ei in _catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Where(ei => ei.ExtractionCategory is ExtractionCategory.Core))
+            {
+                ei.ExtractionCategory = ExtractionCategory.ProjectSpecific;
+                ei.SaveToDatabase();
+            }
+
+            eds.SaveToDatabase();
+        }
+        else
+        {
+            eds = new ExtractableDataSet(BasicActivator.RepositoryLocator.DataExportRepository, _catalogue);
+            eds.Project_ID = _project.ID;
+            foreach (var ei in _catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Where(ei => ei.ExtractionCategory is ExtractionCategory.Core))
+            {
+                ei.ExtractionCategory = ExtractionCategory.ProjectSpecific;
+                ei.SaveToDatabase();
+            }
+            eds.SaveToDatabase();
         }
 
-        eds.SaveToDatabase();
-
-        Publish(_catalogue);
+            Publish(_catalogue);
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
@@ -102,8 +116,8 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
 
         var status = _catalogue.GetExtractabilityStatus(BasicActivator.RepositoryLocator.DataExportRepository);
 
-        if (status.IsProjectSpecific)
-            SetImpossible("Catalogue is already Project Specific");
+        //if (status.IsProjectSpecific)
+        //    SetImpossible("Catalogue is already Project Specific");
 
         if (!status.IsExtractable)
             SetImpossible("Catalogue must first be made Extractable");
