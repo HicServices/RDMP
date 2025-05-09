@@ -134,17 +134,17 @@ public class AtomicCommandFactory : CommandFactoryBase
                     Weight = -99.0010f,
                     SuggestedCategory = Extraction
                 };
-
-                yield return new ExecuteCommandMakeProjectSpecificCatalogueNormalAgain(_activator, c)
-                {
-                    Weight = -99.0009f,
-                    SuggestedCategory = Extraction
-                };
-                yield return new ExecuteCommandMakeCatalogueProjectSpecific(_activator, c, null)
-                {
-                    Weight = -99.0009f,
-                    SuggestedCategory = Extraction
-                };
+                //todo want a toggle UI
+                //yield return new ExecuteCommandMakeProjectSpecificCatalogueNormalAgain(_activator, c)
+                //{
+                //    Weight = -99.0009f,
+                //    SuggestedCategory = Extraction
+                //};
+                //yield return new ExecuteCommandMakeCatalogueProjectSpecific(_activator, c, null)
+                //{
+                //    Weight = -99.0009f,
+                //    SuggestedCategory = Extraction
+                //};
 
                 yield return new ExecuteCommandSetExtractionIdentifier(_activator, c, null, null)
                 {

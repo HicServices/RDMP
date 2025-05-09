@@ -98,7 +98,7 @@ public class DataExportRepository : TableRepository, IDataExportRepository
     public CatalogueExtractabilityStatus GetExtractabilityStatus(ICatalogue c)
     {
         var eds = GetAllObjectsWithParent<ExtractableDataSet>(c).ToList();
-        return eds.Count ==0 ? new CatalogueExtractabilityStatus(false, false) : new CatalogueExtractabilityStatus(false,eds.Count >1?true:eds.First().Project_ID != null);
+        return eds.Count ==0 ? new CatalogueExtractabilityStatus(false, false) : new CatalogueExtractabilityStatus(true,eds.Count >1?true:eds.First().Project_ID != null);
     }
 
     public ISelectedDataSets[] GetSelectedDatasetsWithNoExtractionIdentifiers() =>
