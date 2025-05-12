@@ -8,6 +8,7 @@ using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
@@ -17,12 +18,14 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 public class ExecuteCommandMakeProjectSpecificCatalogueNormalAgain : BasicCommandExecution, IAtomicCommand
 {
     private Catalogue _catalogue;
+    private Project _project;
     private ExtractableDataSet _extractableDataSet;
 
-    public ExecuteCommandMakeProjectSpecificCatalogueNormalAgain(IBasicActivateItems activator, Catalogue catalogue) :
+    public ExecuteCommandMakeProjectSpecificCatalogueNormalAgain(IBasicActivateItems activator, Catalogue catalogue, Project project) :
         base(activator)
     {
         _catalogue = catalogue;
+        _project = project;
 
         var dataExportRepository = BasicActivator.RepositoryLocator.DataExportRepository;
         if (dataExportRepository == null)
@@ -31,7 +34,7 @@ public class ExecuteCommandMakeProjectSpecificCatalogueNormalAgain : BasicComman
             return;
         }
 
-        _extractableDataSet = dataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(catalogue)
+        _extractableDataSet = dataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(catalogue).Where(eds => eds.Project_ID == project.ID)
             .SingleOrDefault();
 
         if (_extractableDataSet == null)
@@ -45,6 +48,18 @@ public class ExecuteCommandMakeProjectSpecificCatalogueNormalAgain : BasicComman
             SetImpossible("Catalogue is not a project specific Catalogue");
             return;
         }
+
+        var usedInSelectedDatasets = dataExportRepository.GetAllObjectsWhere<SelectedDataSets>("ExtractableDataSet_ID", _extractableDataSet.ID).ToList();
+        foreach (var selectedDataset in usedInSelectedDatasets)
+        {
+            var pid = selectedDataset.ExtractionConfiguration.Project_ID;
+            if (pid != _extractableDataSet.Project_ID)
+            {
+                SetImpossible($"Catalogue is used in multiple Project Specific Catalogue. Remove this catalogue from and extractions in {_project.Name}");
+                return;
+            }
+        }
+
     }
 
     public override string GetCommandHelp() =>
@@ -54,8 +69,7 @@ public class ExecuteCommandMakeProjectSpecificCatalogueNormalAgain : BasicComman
     {
         base.Execute();
 
-        _extractableDataSet.Project_ID = null;
-        _extractableDataSet.SaveToDatabase();
+        _extractableDataSet.DeleteInDatabase();
 
         foreach (var ei in _catalogue.GetAllExtractionInformation(ExtractionCategory.ProjectSpecific))
         {

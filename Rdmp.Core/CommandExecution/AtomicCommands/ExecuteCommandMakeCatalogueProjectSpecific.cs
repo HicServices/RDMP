@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
@@ -29,6 +30,9 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
         _project = project;
     }
 
+
+    public List<int> projectIdsToIgnore = [];
+
     public ExecuteCommandMakeCatalogueProjectSpecific(IBasicActivateItems itemActivator) : base(itemActivator)
     {
         UseTripleDotSuffix = true;
@@ -50,22 +54,36 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
         base.Execute();
 
         var eds = BasicActivator.RepositoryLocator.DataExportRepository
-            .GetAllObjectsWithParent<ExtractableDataSet>(_catalogue).SingleOrDefault();
+            .GetAllObjectsWithParent<ExtractableDataSet>(_catalogue).Where(e => e.Project_ID is null).SingleOrDefault();
 
-        var alreadyInConfiguration = eds.ExtractionConfigurations.FirstOrDefault(ec => ec.Project_ID != _project.ID);
-
-        if (alreadyInConfiguration != null)
-            throw new Exception(
-                $"Cannot make {_catalogue} Project Specific because it is already a part of ExtractionConfiguration {alreadyInConfiguration} (Project={alreadyInConfiguration.Project}) and possibly others");
-
-        eds.Project_ID = _project.ID;
-        foreach (var ei in _catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Where(ei => ei.ExtractionCategory is ExtractionCategory.Core))
+        if (eds is not null)
         {
-            ei.ExtractionCategory = ExtractionCategory.ProjectSpecific;
-            ei.SaveToDatabase();
-        }
+            var alreadyInConfiguration = eds.ExtractionConfigurations.FirstOrDefault(ec => ec.Project_ID != _project.ID && !projectIdsToIgnore.Contains(ec.Project_ID));
 
-        eds.SaveToDatabase();
+            if (alreadyInConfiguration != null)
+                throw new Exception(
+                    $"Cannot make {_catalogue} Project Specific because it is already a part of ExtractionConfiguration {alreadyInConfiguration} (Project={alreadyInConfiguration.Project}) and possibly others");
+
+            eds.Project_ID = _project.ID;
+            foreach (var ei in _catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Where(ei => ei.ExtractionCategory is ExtractionCategory.Core))
+            {
+                ei.ExtractionCategory = ExtractionCategory.ProjectSpecific;
+                ei.SaveToDatabase();
+            }
+
+            eds.SaveToDatabase();
+        }
+        else
+        {
+            eds = new ExtractableDataSet(BasicActivator.RepositoryLocator.DataExportRepository, _catalogue);
+            eds.Project_ID = _project.ID;
+            foreach (var ei in _catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Where(ei => ei.ExtractionCategory is ExtractionCategory.Core))
+            {
+                ei.ExtractionCategory = ExtractionCategory.ProjectSpecific;
+                ei.SaveToDatabase();
+            }
+            eds.SaveToDatabase();
+        }
 
         Publish(_catalogue);
     }
@@ -102,9 +120,21 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
 
         var status = _catalogue.GetExtractabilityStatus(BasicActivator.RepositoryLocator.DataExportRepository);
 
-        if (status.IsProjectSpecific)
-            SetImpossible("Catalogue is already Project Specific");
+        var eds = BasicActivator.RepositoryLocator.DataExportRepository
+         .GetAllObjectsWithParent<ExtractableDataSet>(_catalogue).Where(e => e.Project_ID is null).SingleOrDefault();
 
+        if (eds is not null)
+        {
+            var alreadyInConfiguration = eds.ExtractionConfigurations.Where(ec => ec.Project_ID != _project.ID && !projectIdsToIgnore.Contains(ec.Project_ID));
+
+            if (alreadyInConfiguration != null)
+                foreach (var aic in alreadyInConfiguration)
+                {
+                    SetImpossible(
+                         $"Cannot make {_catalogue} Project Specific because it is already a part of ExtractionConfiguration {aic} (Project={aic.Project}) and possibly others");
+                }
+
+        }
         if (!status.IsExtractable)
             SetImpossible("Catalogue must first be made Extractable");
 

@@ -135,18 +135,6 @@ public class AtomicCommandFactory : CommandFactoryBase
                     SuggestedCategory = Extraction
                 };
 
-                yield return c.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository)
-                    ? new ExecuteCommandMakeProjectSpecificCatalogueNormalAgain(_activator, c)
-                    {
-                        Weight = -99.0009f,
-                        SuggestedCategory = Extraction
-                    }
-                    : new ExecuteCommandMakeCatalogueProjectSpecific(_activator, c, null)
-                    {
-                        Weight = -99.0009f,
-                        SuggestedCategory = Extraction
-                    };
-
                 yield return new ExecuteCommandSetExtractionIdentifier(_activator, c, null, null)
                 {
                     Weight = -99.0008f,

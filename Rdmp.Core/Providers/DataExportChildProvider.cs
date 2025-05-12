@@ -180,15 +180,18 @@ public class DataExportChildProvider : CatalogueChildProvider
 
         ReportProgress("Projects");
 
-        //work out all the Catalogues that are extractable (Catalogues are extractable if there is an ExtractableDataSet with the Catalogue_ID that matches them)
-        var cataToEds = new Dictionary<int, ExtractableDataSet>(ExtractableDataSets.ToDictionary(k => k.Catalogue_ID));
-
         //inject extractability into Catalogues
         foreach (var catalogue in AllCatalogues)
-            catalogue.InjectKnown(cataToEds.TryGetValue(catalogue.ID, out var result)
-                ? result.GetCatalogueExtractabilityStatus()
-                : new CatalogueExtractabilityStatus(false, false));
-
+        {
+            var eds = ExtractableDataSets.Where(e => e.Catalogue_ID == catalogue.ID).ToList();
+            if (!eds.Any()) {
+                catalogue.InjectKnown(new CatalogueExtractabilityStatus(false, false));
+            }
+            else
+            {
+                catalogue.InjectKnown(new CatalogueExtractabilityStatus(false, eds.First().Project_ID != null));
+            }
+        }
         ReportProgress("Catalogue extractability injection");
 
         try

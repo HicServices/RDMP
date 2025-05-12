@@ -28,11 +28,8 @@ public class MemoryDataExportRepository : MemoryCatalogueRepository, IDataExport
 
     public CatalogueExtractabilityStatus GetExtractabilityStatus(ICatalogue c)
     {
-        var eds = GetAllObjectsWithParent<ExtractableDataSet>(c).SingleOrDefault();
-
-        return eds == null
-            ? new CatalogueExtractabilityStatus(false, false)
-            : new CatalogueExtractabilityStatus(true, eds.Project_ID != null);
+        var eds = GetAllObjectsWithParent<ExtractableDataSet>(c).ToList();
+        return eds.Count == 0 ? new CatalogueExtractabilityStatus(false, false) : new CatalogueExtractabilityStatus(true, eds.Count > 1 ? true : eds.First().Project_ID != null);
     }
 
     public ISelectedDataSets[] GetSelectedDatasetsWithNoExtractionIdentifiers()
