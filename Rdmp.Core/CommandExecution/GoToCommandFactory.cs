@@ -279,89 +279,62 @@ public class GoToCommandFactory : CommandFactoryBase
             if (_activator.CoreChildProvider is DataExportChildProvider exp)
             {
                 //TODO
-                //var cataEds = exp.ExtractableDataSets.SingleOrDefault(d => d.Catalogue_ID == catalogue.ID);
+                var cataEds = exp.ExtractableDataSets.Where(d => d.Catalogue_ID == catalogue.ID);
 
-                //if (cataEds != null)
-                //{
-                //    if (cataEds.Project_ID != null)
-                //    {
-                //        yield return new ExecuteCommandShow(_activator,
-                //            () =>
-                //            {
-                //                return new[]
-                //                {
-                //                    _activator.RepositoryLocator.DataExportRepository.GetObjectByID<Project>(
-                //                        cataEds.Project_ID.Value)
-                //                };
-                //            }
-                //        )
-                //        {
-                //            OverrideCommandName = "Associated Project",
-                //            OverrideIcon = GetImage(RDMPConcept.Project)
-                //        };
-                //    }
-                //    else
-                //    {
-                //        yield return new ExecuteCommandShow(_activator,
-                //          () =>
-                //          {
-                //              return new Project[]
-                //              {
-                //              };
-                //          }
-                //      )
-                //        {
-                //            OverrideCommandName = "No Associated Project",
-                //            OverrideIcon = GetImage(RDMPConcept.Project)
-                //        };
-                //    }
-
-                //    yield return new ExecuteCommandShow(_activator,
-                //        () => cataEds.ExtractionConfigurations.Select(c => c.Project).Distinct())
-                //    {
-                //        OverrideCommandName = "Extracted In (Project)",
-                //        OverrideIcon = GetImage(RDMPConcept.Project)
-                //    };
-                //    yield return new ExecuteCommandShow(_activator, () => cataEds.ExtractionConfigurations)
-                //    {
-                //        OverrideCommandName = "Extracted In (Extraction Configuration)",
-                //        OverrideIcon = GetImage(RDMPConcept.ExtractionConfiguration)
-                //    };
-                //}
+                if (cataEds != null)
+                {
+                    yield return new ExecuteCommandShow(_activator,
+                         () => (cataEds.Select(c => c.Project_ID).Select(p => _activator.RepositoryLocator.DataExportRepository.GetObjectByID<Project>(p.Value))))
+                    {
+                        OverrideCommandName = "Associated Projects",
+                        OverrideIcon = GetImage(RDMPConcept.Project)
+                    };
+                    yield return new ExecuteCommandShow(_activator,
+                          () => (cataEds.SelectMany(c => c.ExtractionConfigurations.Select(e => e.Project))))
+                    {
+                        OverrideCommandName = "Extracted In (Project)",
+                        OverrideIcon = GetImage(RDMPConcept.Project)
+                    };
+                    yield return new ExecuteCommandShow(_activator, () => cataEds.SelectMany(c => c.ExtractionConfigurations))
+                    {
+                        OverrideCommandName = $"Extracted In (Extraction Configuration)",
+                        OverrideIcon = GetImage(RDMPConcept.ExtractionConfiguration)
+                    };
+                }
                 //else
-                //{
-                //    //no values, show disabled options
-                //    yield return new ExecuteCommandShow(_activator,
-                //          () =>
-                //          {
-                //              return new Project[] { };
-                //          }
-                //      )
-                //    {
-                //        OverrideCommandName = "No Associated Project",
-                //        OverrideIcon = GetImage(RDMPConcept.Project)
-                //    };
-                //    yield return new ExecuteCommandShow(_activator,
-                //                             () =>
-                //                             {
-                //                                 return new Project[] { };
-                //                             }
-                //                         )
-                //    {
-                //        OverrideCommandName = "Not Extracted In (Project)",
-                //        OverrideIcon = GetImage(RDMPConcept.Project)
-                //    };
-                //    yield return new ExecuteCommandShow(_activator,
-                //        () =>
-                //        {
-                //            return new ExtractionConfiguration[] { };
-                //        }
-                //    )
-                //    {
-                //        OverrideCommandName = "Not Extracted In (Extraction Configuration)",
-                //        OverrideIcon = GetImage(RDMPConcept.ExtractionConfiguration)
-                //    };
-                //}
+                {
+                    //no values, show disabled options
+                    yield return new ExecuteCommandShow(_activator,
+                          () =>
+                          {
+                              return new Project[] { };
+                          }
+                      )
+                    {
+                        OverrideCommandName = "No Associated Project",
+                        OverrideIcon = GetImage(RDMPConcept.Project)
+                    };
+                    yield return new ExecuteCommandShow(_activator,
+                                             () =>
+                                             {
+                                                 return new Project[] { };
+                                             }
+                                         )
+                    {
+                        OverrideCommandName = "Not Extracted In (Project)",
+                        OverrideIcon = GetImage(RDMPConcept.Project)
+                    };
+                    yield return new ExecuteCommandShow(_activator,
+                        () =>
+                        {
+                            return new ExtractionConfiguration[] { };
+                        }
+                    )
+                    {
+                        OverrideCommandName = "Not Extracted In (Extraction Configuration)",
+                        OverrideIcon = GetImage(RDMPConcept.ExtractionConfiguration)
+                    };
+                }
             }
 
             yield return new ExecuteCommandShow(_activator, () => catalogue.GetTableInfoList(true))
