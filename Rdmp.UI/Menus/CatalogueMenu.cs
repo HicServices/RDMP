@@ -28,6 +28,9 @@ internal class CatalogueMenu : RDMPContextMenuStrip
         {
             OverrideCommandName = "Link Catalogue to Dataset"
         });
+        Add(new ExecuteCommandSetProjectsForCatalogueUI(_activator, catalogue)
+        { OverrideCommandName = "Set Projects for Catalogue"});
+
         Add(new ExecuteCommandGenerateMetadataReport(_activator, catalogue)
         {
             Weight = -99.059f

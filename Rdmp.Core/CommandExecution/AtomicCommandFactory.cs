@@ -134,6 +134,7 @@ public class AtomicCommandFactory : CommandFactoryBase
                     Weight = -99.0010f,
                     SuggestedCategory = Extraction
                 };
+
                 //todo want a toggle UI
                 //yield return new ExecuteCommandMakeProjectSpecificCatalogueNormalAgain(_activator, c)
                 //{
