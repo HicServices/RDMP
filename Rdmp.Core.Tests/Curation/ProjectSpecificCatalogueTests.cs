@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using Microsoft.Data.SqlClient;
+using NUnit.Framework;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Interactive;
@@ -162,17 +163,49 @@ namespace Rdmp.Core.Tests.Curation
             Assert.DoesNotThrow(() => cmd.Execute());
 
             var ec = new ExtractionConfiguration(DataExportRepository, project, "ec1");
-            Assert.DoesNotThrow(() => ec.AddDatasetToConfiguration(activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Project_ID", project.ID).First()));
             ec.SaveToDatabase();
-
+            Assert.DoesNotThrow(() => ec.AddDatasetToConfiguration(activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Project_ID", project.ID).First()));
+            ec.AddDatasetToConfiguration(activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", catalogue.ID).First());
+            ec.SaveToDatabase();
             ec = new ExtractionConfiguration(DataExportRepository, project2, "ec2");
+            ec.SaveToDatabase();
             Assert.DoesNotThrow(() => ec.AddDatasetToConfiguration(activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Project_ID", project2.ID).First()));
             ec.SaveToDatabase();
+
             var returnCmd = new ExecuteCommandMakeProjectSpecificCatalogueNormalAgain(activator, catalogue, project);
             var ex = Assert.Throws<ImpossibleCommandException>(() => returnCmd.Execute());
-            Assert.That(ex?.Message, Is.EqualTo(""));
+            Assert.That(ex?.Message, Is.EqualTo("Command is marked as IsImpossible and should not be Executed.  Reason is 'Catalogue is used in multiple Project Specific Catalogue. Remove this catalogue from and extractions in Project1'"));
         }
 
         //try to make catalogue project specific to the same project twice
+        [Test]
+        public void MakeCatalogueSameProjectSpecificTwice()
+        {
+            var activator = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet)
+            { DisallowInput = true };
+            var catalogue = new Catalogue(CatalogueRepository, "Dataset1");
+            catalogue.SaveToDatabase();
+            var _t1 = new TableInfo(CatalogueRepository, "T1");
+            _t1.SaveToDatabase();
+            var _c1 = new ColumnInfo(CatalogueRepository, "PrivateIdentifierA", "varchar(10)", _t1);
+            _c1.SaveToDatabase();
+            var _ci1 = new CatalogueItem(CatalogueRepository, catalogue, "PrivateIdentifierA");
+            _ci1.SaveToDatabase();
+            var _extractionInfo1 = new ExtractionInformation(CatalogueRepository, _ci1, _c1, _c1.ToString())
+            {
+                Order = 123,
+                ExtractionCategory = ExtractionCategory.Core,
+                IsExtractionIdentifier = true
+            };
+            _extractionInfo1.SaveToDatabase();
+            var eds = new ExtractableDataSet(activator.RepositoryLocator.DataExportRepository, catalogue);
+            eds.SaveToDatabase();
+            var project = new Project(DataExportRepository, "Project1");
+            var cmd = new ExecuteCommandMakeCatalogueProjectSpecific(activator);
+            cmd.SetTarget(project);
+            cmd.SetTarget(catalogue);
+            Assert.DoesNotThrow(() => cmd.Execute());
+            Assert.Throws<SqlException>(() => cmd.Execute());
+        }
     }
 }

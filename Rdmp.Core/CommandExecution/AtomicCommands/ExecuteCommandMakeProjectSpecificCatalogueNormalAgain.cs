@@ -49,7 +49,7 @@ public class ExecuteCommandMakeProjectSpecificCatalogueNormalAgain : BasicComman
             return;
         }
 
-        var usedInSelectedDatasets = dataExportRepository.GetAllObjectsWhere<SelectedDataSets>("ExtractableDataSet_ID", _extractableDataSet.ID).ToList();
+        var usedInSelectedDatasets = dataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(catalogue).SelectMany(eds => dataExportRepository.GetAllObjectsWhere<SelectedDataSets>("ExtractableDataSet_ID", eds.ID));//dataExportRepository.GetAllObjectsWhere<SelectedDataSets>("ExtractableDataSet_ID", _extractableDataSet.ID).ToList();
         foreach (var selectedDataset in usedInSelectedDatasets)
         {
             var pid = selectedDataset.ExtractionConfiguration.Project_ID;
