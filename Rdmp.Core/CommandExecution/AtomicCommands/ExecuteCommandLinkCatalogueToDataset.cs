@@ -7,19 +7,20 @@
 using System;
 using Rdmp.Core.Curation.Data;
 using System.Linq;
+using Rdmp.Core.Curation.Data.Datasets;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 public sealed class ExecuteCommandLinkCatalogueToDataset : BasicCommandExecution
 {
     private readonly Catalogue _catalogue;
-    private readonly Curation.Data.Dataset _dataset;
-    private readonly bool _linkAll;
-    public ExecuteCommandLinkCatalogueToDataset(IBasicActivateItems activator, [DemandsInitialization("The catalogue To link")]Catalogue catalogue, [DemandsInitialization("The dataset to link to")]Curation.Data.Dataset dataset, bool linkAllOtherColumns = true) : base(activator)
+    private readonly Curation.Data.Datasets.Dataset _dataset;
+    private readonly bool _autoUpdate;
+    public ExecuteCommandLinkCatalogueToDataset(IBasicActivateItems activator, [DemandsInitialization("The catalogue To link")]Catalogue catalogue, [DemandsInitialization("The dataset to link to")]Curation.Data.Datasets.Dataset dataset, bool autoUpdate = true) : base(activator)
     {
         _catalogue = catalogue;
         _dataset = dataset;
-        _linkAll = linkAllOtherColumns;
+        _autoUpdate = autoUpdate;
 
         if (_catalogue is null) SetImpossible("No Catalogue Selected");
         if (_dataset is null) SetImpossible("No Dataset Selected");
@@ -29,21 +30,9 @@ public sealed class ExecuteCommandLinkCatalogueToDataset : BasicCommandExecution
     public override void Execute()
     {
         base.Execute();
-        var items = _catalogue.CatalogueItems.ToList();
-        foreach (var ci in items.Select(static item => item.ColumnInfo).Where(ci => ci?.Dataset_ID != _dataset.ID))
-        {
-            ci.Dataset_ID = _dataset.ID;
-            ci.SaveToDatabase();
-            if (!_linkAll) continue;
-
-            var databaseName = ci.Name[..ci.Name.LastIndexOf('.')];
-            var catalogueItems = ci.CatalogueRepository.GetAllObjects<ColumnInfo>().Where(ci => ci.Name[..ci.Name.LastIndexOf(".", StringComparison.Ordinal)] == databaseName).ToList();
-            foreach (var aci in catalogueItems)
-            {
-                aci.Dataset_ID = _dataset.ID;
-                aci.SaveToDatabase();
-            }
-        }
+        var linkage = new CatalogueDatasetLinkage(_catalogue.CatalogueRepository, _catalogue, _dataset,_autoUpdate);
+        linkage.SaveToDatabase();
+        Publish(linkage);
 
     }
 }

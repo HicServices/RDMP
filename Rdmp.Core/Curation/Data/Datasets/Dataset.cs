@@ -11,17 +11,21 @@ using System.Collections.Generic;
 using System.Data.Common;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 
-namespace Rdmp.Core.Curation.Data;
+namespace Rdmp.Core.Curation.Data.Datasets;
 
 /// <inheritdoc cref="IDataset"/>
 
-public sealed class Dataset : DatabaseEntity, IDataset, IHasFolder 
+public class Dataset : DatabaseEntity, IDataset, IHasFolder
 {
     private string _name;
     private string _digitalObjectIdentifier;
     private string _source;
     private string _folder = FolderHelper.Root;
+    private string _type = null;
+    private string _url = null;
+    private int? _providerId = null;
 
     /// <inheritdoc/>
     [DoNotImportDescriptions]
@@ -53,8 +57,37 @@ public sealed class Dataset : DatabaseEntity, IDataset, IHasFolder
         set => SetField(ref _source, value);
     }
 
+    public string Type
+    {
+        get => _type;
+        set => SetField(ref _type, value);
+    }
+    public string Url
+    {
+        get => _url;
+        set => SetField(ref _url, value);
+    }
+
+    public int? Provider_ID
+    {
+        get => _providerId;
+        set => SetField(ref _providerId, value);
+    }
     public override string ToString() => Name;
 
+    public virtual string GetID()
+    {
+        return ID.ToString();
+    }
+    public virtual string GetRemoteID()
+    {
+        return ID.ToString();
+    }
+
+    public List<Catalogue> GetLinkedCatalogues()
+    {
+        return CatalogueRepository.GetAllObjectsWhere<CatalogueDatasetLinkage>("Dataset_ID", this.ID).Select(l => l.Catalogue).Distinct().ToList();
+    }
 
     public Dataset(ICatalogueRepository catalogueRepository, string name)
     {
@@ -75,5 +108,11 @@ public sealed class Dataset : DatabaseEntity, IDataset, IHasFolder
             DigitalObjectIdentifier = r["DigitalObjectIdentifier"].ToString();
         if (r["Source"] != DBNull.Value)
             Source = r["Source"].ToString();
+        if (r["Type"] != DBNull.Value)
+            Type = r["Type"].ToString();
+        if (r["Url"] != DBNull.Value)
+            Url = r["Url"].ToString();
+        if (r["Provider_ID"] != DBNull.Value)
+            Provider_ID = int.Parse(r["Provider_ID"].ToString());
     }
 }
