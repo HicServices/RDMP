@@ -19,6 +19,7 @@ using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.Curation.Data.Datasets;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.Curation.Data.Referencing;
@@ -41,6 +42,7 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
+using static Microsoft.IO.RecyclableMemoryStreamManager;
 
 namespace Rdmp.Core.CommandExecution;
 

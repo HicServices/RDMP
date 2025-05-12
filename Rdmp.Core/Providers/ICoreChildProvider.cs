@@ -44,12 +44,12 @@ public interface ICoreChildProvider : IChildProvider
     JoinableCohortAggregateConfigurationUse[] AllJoinUses { get; set; }
 
     FolderNode<Catalogue> CatalogueRootFolder { get; }
-    FolderNode<Curation.Data.Dataset> DatasetRootFolder { get; }
+    FolderNode<Curation.Data.Datasets.Dataset> DatasetRootFolder { get; }
     FolderNode<LoadMetadata> LoadMetadataRootFolder { get; }
     FolderNode<CohortIdentificationConfiguration> CohortIdentificationConfigurationRootFolder { get; }
     FolderNode<CohortIdentificationConfiguration> CohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations { get; }
     Catalogue[] AllCatalogues { get; }
-    Curation.Data.Dataset[] AllDatasets { get; }
+    Curation.Data.Datasets.Dataset[] AllDatasets { get; }
     Dictionary<int, Catalogue> AllCataloguesDictionary { get; }
 
     ExternalDatabaseServer[] AllExternalServers { get; }
@@ -84,6 +84,7 @@ public interface ICoreChildProvider : IChildProvider
 
     AllRegexRedactionConfigurationsNode AllRegexRedactionConfigurationsNode { get; }
 
+    AllDatasetProviderConfigurationsNode AllDatasetProviderConfigurationsNode { get; }
     AllObjectSharingNode AllObjectSharingNode { get; }
     ObjectImport[] AllImports { get; }
     ObjectExport[] AllExports { get; }

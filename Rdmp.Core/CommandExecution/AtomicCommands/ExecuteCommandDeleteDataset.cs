@@ -4,9 +4,9 @@ using System.Linq;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 public sealed class ExecuteCommandDeleteDataset: BasicCommandExecution
 {
-    private readonly Curation.Data.Dataset _dataset;
+    private readonly Curation.Data.Datasets.Dataset _dataset;
     private readonly IBasicActivateItems _activator;
-public ExecuteCommandDeleteDataset(IBasicActivateItems activator, [DemandsInitialization("The Dataset to delete")]Curation.Data.Dataset dataset)
+public ExecuteCommandDeleteDataset(IBasicActivateItems activator, [DemandsInitialization("The Dataset to delete")]Curation.Data.Datasets.Dataset dataset)
     {
         _dataset = dataset;
         _activator = activator;

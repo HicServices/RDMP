@@ -20,7 +20,7 @@ public class DatasetConfigurationUICommon
     /// </summary>
     public IBasicActivateItems Activator;
 
-    public Curation.Data.Dataset Dataset;
+    public Curation.Data.Datasets.Dataset Dataset;
 
 
     public DatasetConfigurationUICommon()

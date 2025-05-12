@@ -213,5 +213,8 @@ public enum RDMPConcept
     RegexRedaction,
     RegexRedactionConfiguration,
     RegexRedactionKey,
-    AllRegexRedactionConfigurationsNode
+    AllRegexRedactionConfigurationsNode,
+    DatasetProviderConfiguration,
+    AllDatasetProviderConfigurationsNode,
+    PluginDataset
 }

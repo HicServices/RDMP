@@ -17,6 +17,7 @@ using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.Curation.Data.Datasets;
 using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Pipelines;
@@ -66,7 +67,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
 	//Catalogue side of things
 	public Catalogue[] AllCatalogues { get; set; }
-	public Curation.Data.Dataset[] AllDatasets { get; set; }
+	public Curation.Data.Datasets.Dataset[] AllDatasets { get; set; }
 	public Dictionary<int, Catalogue> AllCataloguesDictionary { get; private set; }
 
 	public SupportingDocument[] AllSupportingDocuments { get; set; }
@@ -143,7 +144,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 	public AllPermissionWindowsNode AllPermissionWindowsNode { get; set; }
 	public FolderNode<LoadMetadata> LoadMetadataRootFolder { get; set; }
 
-	public FolderNode<Curation.Data.Dataset> DatasetRootFolder { get; set; }
+	public FolderNode<Curation.Data.Datasets.Dataset> DatasetRootFolder { get; set; }
 	public FolderNode<CohortIdentificationConfiguration> CohortIdentificationConfigurationRootFolder { get; set; }
 	public FolderNode<CohortIdentificationConfiguration> CohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations { get; set; }
 
@@ -209,8 +210,10 @@ public class CatalogueChildProvider : ICoreChildProvider
 
 	public RegexRedactionConfiguration[] AllRegexRedactionConfigurations { get; set; }
 	public AllRegexRedactionConfigurationsNode AllRegexRedactionConfigurationsNode { get; set; }
+    public AllDatasetProviderConfigurationsNode AllDatasetProviderConfigurationsNode { get; set; }
+    public DatasetProviderConfiguration[] DatasetProviderConfigurations { get; set; }
 
-	public HashSet<AggregateConfiguration> OrphanAggregateConfigurations;
+    public HashSet<AggregateConfiguration> OrphanAggregateConfigurations;
 	public AggregateConfiguration[] TemplateAggregateConfigurations;
 
 
@@ -253,7 +256,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 		AllCatalogues = GetAllObjects<Catalogue>(repository);
 		AllCataloguesDictionary = AllCatalogues.ToDictionaryEx(i => i.ID, o => o);
 
-		AllDatasets = GetAllObjects<Curation.Data.Dataset>(repository);
+		AllDatasets = GetAllObjects<Curation.Data.Datasets.Dataset>(repository);
 
 		AllLoadMetadatas = GetAllObjects<LoadMetadata>(repository);
 		AllLoadMetadataLinkage = GetAllObjects<LoadMetadataCatalogueLinkage>(repository);
@@ -454,8 +457,11 @@ public class CatalogueChildProvider : ICoreChildProvider
 		AllRegexRedactionConfigurationsNode = new AllRegexRedactionConfigurationsNode();
 		AddChildren(AllRegexRedactionConfigurationsNode);
 
+        AllDatasetProviderConfigurationsNode = new AllDatasetProviderConfigurationsNode();
+        DatasetProviderConfigurations = GetAllObjects<DatasetProviderConfiguration>(repository);
+        AddChildren(AllDatasetProviderConfigurationsNode);
 
-		AllDatasets = GetAllObjects<Curation.Data.Dataset>(repository);
+        AllDatasets = GetAllObjects<Curation.Data.Datasets.Dataset>(repository);
 		AllDatasetsNode = new AllDatasetsNode();
 		AddChildren(AllDatasetsNode);
 
@@ -606,7 +612,14 @@ public class CatalogueChildProvider : ICoreChildProvider
 		AddToDictionaries(children, descendancy);
 	}
 
-	private void AddChildren(AllRegexRedactionConfigurationsNode allRegexRedactionConfigurationsNode)
+    private void AddChildren(AllDatasetProviderConfigurationsNode allDatasetConfigurationNode)
+    {
+        var children = new HashSet<object>(DatasetProviderConfigurations);
+        var descendancy = new DescendancyList(allDatasetConfigurationNode);
+        AddToDictionaries(children, descendancy);
+    }
+
+    private void AddChildren(AllRegexRedactionConfigurationsNode allRegexRedactionConfigurationsNode)
 	{
 		var children = new HashSet<object>(AllRegexRedactionConfigurations);
 		var descendancy = new DescendancyList(allRegexRedactionConfigurationsNode);
@@ -864,7 +877,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 		);
 	}
 
-	private void AddChildren(FolderNode<Curation.Data.Dataset> folder, DescendancyList descendancy)
+	private void AddChildren(FolderNode<Curation.Data.Datasets.Dataset> folder, DescendancyList descendancy)
 	{
 		foreach (var child in folder.ChildFolders)
 			//add subfolder children
@@ -897,7 +910,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 		);
 	}
 
-	private void AddChildren(Curation.Data.Dataset lmd, DescendancyList descendancy)
+	private void AddChildren(Curation.Data.Datasets.Dataset lmd, DescendancyList descendancy)
 	{
 		var childObjects = new List<object>();
 		AddToDictionaries(new HashSet<object>(childObjects), descendancy);
