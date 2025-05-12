@@ -69,6 +69,7 @@ ix_eachAggregateCanOnlyBeJoinableOnOneProject:Prevents you using an AggregateCon
 ix_eachAggregateCanOnlyHaveOneJoinable:Prevents you configuring multiple JoinableCohortAggregateConfigurationUse relationships i.e. trying to use two or more AggregateConfigurations as 'patient index tables' for the same AggregateConfiguration in an CohortIdentificationConfiguration
 ix_preventDuplicatePipelineNames:Prevents you naming two or more Pipelines with the same name
 ix_NamesMustBeUnique:Prevents you giving two or more DataAccessCredentials the same name
+PreventDoubleAddingCatalogueIdx:Prevents you importing the same Catalogue and marking it extractable twice (creating an ExtractableDataset) 
 PreventDoubleAddingCatalogueProjectIdx:Prevents you importing the same Catalogue Project tuple and marking it extractable twice (creating an ExtractableDataset) 
 ixColumnStateID:Basically the primary key for the table ColumnState in the DQE database... not sure why it isn't the primary key to be honest
 FK_ExtractableDataSetPackage_ExtractableDataSet_ExtractableDataSet:Prevents you from deleting an ExtractableDataSet (Catalogue which is extractable in Data Export Manager) which is part of an ExtractableDataSetPackage (e.g. 'Core Datasets')
