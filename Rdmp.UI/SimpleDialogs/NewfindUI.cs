@@ -369,8 +369,6 @@ namespace Rdmp.UI.SimpleDialogs
                     v => UserSettings.ShowInternalCatalogues = v, "I", "Include Internal");
                 AddUserSettingCheckbox(() => UserSettings.ShowDeprecatedCatalogues,
                     v => UserSettings.ShowDeprecatedCatalogues = v, "D", "Include Deprecated");
-                AddUserSettingCheckbox(() => UserSettings.ShowColdStorageCatalogues,
-                    v => UserSettings.ShowColdStorageCatalogues = v, "C", "Include Cold Storage");
                 AddUserSettingCheckbox(() => UserSettings.ShowProjectSpecificCatalogues,
                     v => UserSettings.ShowProjectSpecificCatalogues = v, "P", "Include Project Specific");
                 AddUserSettingCheckbox(() => UserSettings.ShowNonExtractableCatalogues,

@@ -34,12 +34,6 @@ public class ExecuteCommandMakeProjectSpecificCatalogueNormalAgain : BasicComman
         _extractableDataSet = dataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(catalogue)
             .SingleOrDefault();
 
-        if (_extractableDataSet == null)
-        {
-            SetImpossible("Catalogue is not extractable");
-            return;
-        }
-
         if (_extractableDataSet.Project_ID == null)
         {
             SetImpossible("Catalogue is not a project specific Catalogue");
