@@ -189,7 +189,7 @@ public class DataExportChildProvider : CatalogueChildProvider
             }
             else
             {
-                catalogue.InjectKnown(new CatalogueExtractabilityStatus(false, eds.First().Project_ID != null));
+                catalogue.InjectKnown(new CatalogueExtractabilityStatus(true, eds.First().Project_ID != null));
             }
         }
         ReportProgress("Catalogue extractability injection");
