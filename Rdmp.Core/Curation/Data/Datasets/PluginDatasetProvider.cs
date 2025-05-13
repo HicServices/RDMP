@@ -26,7 +26,6 @@ public abstract class PluginDatasetProvider : IDatasetProvider
 
     public abstract Dataset AddExistingDatasetWithReturn(string name, string url);
 
-
     public abstract void Update(string uuid, PluginDataset datasetUpdates);
 
     public abstract void UpdateUsingCatalogue(Dataset dataset, Catalogue catalogue);
