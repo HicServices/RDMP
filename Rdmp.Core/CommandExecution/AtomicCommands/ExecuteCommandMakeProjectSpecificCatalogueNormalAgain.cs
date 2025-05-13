@@ -49,17 +49,21 @@ public class ExecuteCommandMakeProjectSpecificCatalogueNormalAgain : BasicComman
             return;
         }
 
-        var usedInSelectedDatasets = dataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(catalogue).SelectMany(eds => dataExportRepository.GetAllObjectsWhere<SelectedDataSets>("ExtractableDataSet_ID", eds.ID));//dataExportRepository.GetAllObjectsWhere<SelectedDataSets>("ExtractableDataSet_ID", _extractableDataSet.ID).ToList();
-        foreach (var selectedDataset in usedInSelectedDatasets)
+
+        if (dataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(catalogue).Length > 1)
         {
-            var pid = selectedDataset.ExtractionConfiguration.Project_ID;
-            if (pid != _extractableDataSet.Project_ID)
+            var associatedProjects = dataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(catalogue).Where(eds => eds.Project_ID == _project.ID);
+            foreach (var eds in associatedProjects)
             {
-                SetImpossible($"Catalogue is used in multiple Project Specific Catalogue. Remove this catalogue from and extractions in {_project.Name}");
-                return;
+                var sds = dataExportRepository.GetAllObjectsWhere<SelectedDataSets>("ExtractableDataSet_ID", eds.ID);
+                if (sds.Any())
+                {
+                    //used in an extraction
+                    SetImpossible($"Catalogue is used in extractions within Prject {_project.Name}. Remove the Catalogue from these extractions.");
+                    return;
+                }
             }
         }
-
     }
 
     public override string GetCommandHelp() =>
@@ -68,8 +72,15 @@ public class ExecuteCommandMakeProjectSpecificCatalogueNormalAgain : BasicComman
     public override void Execute()
     {
         base.Execute();
-
-        _extractableDataSet.DeleteInDatabase();
+        if(BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(_catalogue).Length > 1)
+        {
+            _extractableDataSet.DeleteInDatabase();
+        }
+        else {
+            _extractableDataSet.Project_ID = null;
+            _extractableDataSet.SaveToDatabase();
+        }        
+        if (BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(_catalogue).Any()) return;
 
         foreach (var ei in _catalogue.GetAllExtractionInformation(ExtractionCategory.ProjectSpecific))
         {

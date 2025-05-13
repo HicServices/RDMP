@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [9.0.0] - Unreleased
 
-- Add ability to mark a catalogue ptoject specific with multiple projects
+- Add ability to mark a catalogue project specific with multiple projects
 
 ## [8.4.4] - 2025-05-08 
 

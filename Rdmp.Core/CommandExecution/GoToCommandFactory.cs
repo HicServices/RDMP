@@ -278,7 +278,6 @@ public class GoToCommandFactory : CommandFactoryBase
 
             if (_activator.CoreChildProvider is DataExportChildProvider exp)
             {
-                //TODO
                 var cataEds = exp.ExtractableDataSets.Where(d => d.Catalogue_ID == catalogue.ID);
 
                 if (cataEds != null)
@@ -301,7 +300,7 @@ public class GoToCommandFactory : CommandFactoryBase
                         OverrideIcon = GetImage(RDMPConcept.ExtractionConfiguration)
                     };
                 }
-                //else
+                else
                 {
                     //no values, show disabled options
                     yield return new ExecuteCommandShow(_activator,
