@@ -42,7 +42,7 @@
             button1.Name = "button1";
             button1.Size = new System.Drawing.Size(148, 23);
             button1.TabIndex = 0;
-            button1.Text = "Make Project Specific";
+            button1.Text = "Restrict to selected Projects";
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click;
             // 
@@ -93,7 +93,7 @@
             Controls.Add(checkedListBox1);
             Controls.Add(button1);
             Name = "SetProjectsForCatalogueUI";
-            Text = "Set Project For Catalogue";
+            Text = "Restrict to Specific Projects";
             ResumeLayout(false);
             PerformLayout();
         }

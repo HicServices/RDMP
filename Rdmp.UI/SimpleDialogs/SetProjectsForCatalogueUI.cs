@@ -28,6 +28,27 @@ namespace Rdmp.UI.SimpleDialogs
             _activator = activator;
             _catalogue = catalogue;
             _allProjects = _activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>().ToList();
+            //_allProjects.AddRange(_allProjects);
+            //_allProjects.AddRange(_allProjects);
+            //_allProjects.AddRange(_allProjects);
+            //_allProjects.AddRange(_allProjects);
+            //_allProjects.AddRange(_allProjects);
+            //_allProjects.AddRange(_allProjects);
+            //_allProjects.AddRange(_allProjects);
+            //_allProjects.AddRange(_allProjects);
+            //_allProjects.AddRange(_allProjects);
+            //_allProjects.AddRange(_allProjects);
+            //_allProjects.AddRange(_allProjects);
+            //_allProjects.AddRange(_allProjects);
+            //_allProjects.AddRange(_allProjects);
+            //_allProjects.AddRange(_allProjects);
+            //_allProjects.AddRange(_allProjects);
+            //_allProjects.AddRange(_allProjects);
+            //_allProjects.AddRange(_allProjects);
+            //_allProjects.AddRange(_allProjects);
+            //_allProjects.AddRange(_allProjects);
+            //_allProjects.AddRange(_allProjects);
+            //_allProjects.AddRange(_allProjects);
             _linkedProjects = _activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", _catalogue.ID).Where(eds => eds.Project_ID != null).Select(eds => (int)eds.Project_ID).ToList();
             checkedListBox1.Items.AddRange(_allProjects.ToArray());
             foreach (var selectedProjectId in _linkedProjects)
