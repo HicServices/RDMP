@@ -59,7 +59,7 @@ public class ExecuteCommandMakeProjectSpecificCatalogueNormalAgain : BasicComman
                 if (sds.Any())
                 {
                     //used in an extraction
-                    SetImpossible($"Catalogue is used in extractions within Prject {_project.Name}. Remove the Catalogue from these extractions.");
+                    SetImpossible($"Catalogue is used in extractions within Project {_project.Name}. Remove the Catalogue from these extractions.");
                     return;
                 }
             }

@@ -1,4 +1,6 @@
-﻿namespace Rdmp.UI.SimpleDialogs
+﻿using BrightIdeasSoftware;
+
+namespace Rdmp.UI.SimpleDialogs
 {
     partial class SetProjectsForCatalogueUI
     {
@@ -29,10 +31,13 @@
         private void InitializeComponent()
         {
             button1 = new System.Windows.Forms.Button();
-            checkedListBox1 = new System.Windows.Forms.CheckedListBox();
             label1 = new System.Windows.Forms.Label();
             button2 = new System.Windows.Forms.Button();
             label2 = new System.Windows.Forms.Label();
+            fastObjectListView1 = new FastObjectListView();
+            Project = new OLVColumn();
+            ProjectID = new OLVColumn();
+            ((System.ComponentModel.ISupportInitialize)fastObjectListView1).BeginInit();
             SuspendLayout();
             // 
             // button1
@@ -45,15 +50,6 @@
             button1.Text = "Restrict to selected Projects";
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click;
-            // 
-            // checkedListBox1
-            // 
-            checkedListBox1.FormattingEnabled = true;
-            checkedListBox1.Location = new System.Drawing.Point(12, 22);
-            checkedListBox1.Name = "checkedListBox1";
-            checkedListBox1.Size = new System.Drawing.Size(405, 400);
-            checkedListBox1.TabIndex = 1;
-            checkedListBox1.ItemCheck += OnItemCheck;
             // 
             // label1
             // 
@@ -82,18 +78,42 @@
             label2.Size = new System.Drawing.Size(0, 15);
             label2.TabIndex = 4;
             // 
+            // fastObjectListView1
+            // 
+            fastObjectListView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { Project, ProjectID });
+            fastObjectListView1.Location = new System.Drawing.Point(12, 22);
+            fastObjectListView1.Name = "fastObjectListView1";
+            fastObjectListView1.ShowGroups = false;
+            fastObjectListView1.Size = new System.Drawing.Size(389, 400);
+            fastObjectListView1.TabIndex = 5;
+            fastObjectListView1.View = System.Windows.Forms.View.Details;
+            fastObjectListView1.VirtualMode = true;
+            fastObjectListView1.SelectedIndexChanged += fastObjectListView1_SelectedIndexChanged;
+            // 
+            // Project
+            // 
+            Project.MinimumWidth = 100;
+            Project.Text = "Project";
+            Project.Width = 100;
+            // 
+            // ProjectID
+            // 
+            ProjectID.MinimumWidth = 20;
+            ProjectID.Text = "ID";
+            // 
             // SetProjectsForCatalogueUI
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(800, 450);
+            Controls.Add(fastObjectListView1);
             Controls.Add(label2);
             Controls.Add(button2);
             Controls.Add(label1);
-            Controls.Add(checkedListBox1);
             Controls.Add(button1);
             Name = "SetProjectsForCatalogueUI";
             Text = "Restrict to Specific Projects";
+            ((System.ComponentModel.ISupportInitialize)fastObjectListView1).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -101,9 +121,11 @@
         #endregion
 
         private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.CheckedListBox checkedListBox1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Label label2;
+        private BrightIdeasSoftware.FastObjectListView fastObjectListView1;
+        private OLVColumn Project;
+        private OLVColumn ProjectID;
     }
 }
