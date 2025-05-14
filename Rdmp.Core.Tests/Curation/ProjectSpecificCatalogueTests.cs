@@ -15,22 +15,24 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation
 {
-    class ProjectSpecificCatalogueTests: DatabaseTests
+    class ProjectSpecificCatalogueTests : DatabaseTests
     {
+        private Catalogue _catalogue;
+        private Project _project1;
+        private Project _project2;
+        private ConsoleInputManager _activator;
 
-        [Test]
-        public void MakeCatalogueProjectSpecific()
+        public void SetupTests(int projectCount = 0, int projectSpecificCount = 0, int extractionCount = 0)
         {
+            _activator = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet);
 
-            var activator = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet)
-            { DisallowInput = true };
-            var catalogue = new Catalogue(CatalogueRepository, "Dataset1");
-            catalogue.SaveToDatabase();
+            _catalogue = new Catalogue(CatalogueRepository, "Dataset1");
+            _catalogue.SaveToDatabase();
             var _t1 = new TableInfo(CatalogueRepository, "T1");
             _t1.SaveToDatabase();
             var _c1 = new ColumnInfo(CatalogueRepository, "PrivateIdentifierA", "varchar(10)", _t1);
             _c1.SaveToDatabase();
-            var _ci1 = new CatalogueItem(CatalogueRepository, catalogue, "PrivateIdentifierA");
+            var _ci1 = new CatalogueItem(CatalogueRepository, _catalogue, "PrivateIdentifierA");
             _ci1.SaveToDatabase();
             var _extractionInfo1 = new ExtractionInformation(CatalogueRepository, _ci1, _c1, _c1.ToString())
             {
@@ -39,173 +41,178 @@ namespace Rdmp.Core.Tests.Curation
                 IsExtractionIdentifier = true
             };
             _extractionInfo1.SaveToDatabase();
-            var eds = new ExtractableDataSet(activator.RepositoryLocator.DataExportRepository, catalogue);
+            var eds = new ExtractableDataSet(_activator.RepositoryLocator.DataExportRepository, _catalogue);
             eds.SaveToDatabase();
-            var project = new Project(DataExportRepository, "Project1");
-            var cmd = new ExecuteCommandMakeCatalogueProjectSpecific(activator);
-            cmd.SetTarget(project);
-            cmd.SetTarget(catalogue);
-            Assert.DoesNotThrow(() => cmd.Execute());
-
-        }
-        [Test]
-        public void MakeCatalogueMultipleProjectSpecific()
-        {
-
-            var activator = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet)
-            { DisallowInput = true };
-            var catalogue = new Catalogue(CatalogueRepository, "Dataset1");
-            catalogue.SaveToDatabase();
-            var _t1 = new TableInfo(CatalogueRepository, "T1");
-            _t1.SaveToDatabase();
-            var _c1 = new ColumnInfo(CatalogueRepository, "PrivateIdentifierA", "varchar(10)", _t1);
-            _c1.SaveToDatabase();
-            var _ci1 = new CatalogueItem(CatalogueRepository, catalogue, "PrivateIdentifierA");
-            _ci1.SaveToDatabase();
-            var _extractionInfo1 = new ExtractionInformation(CatalogueRepository, _ci1, _c1, _c1.ToString())
+            if (projectCount > 0)
             {
-                Order = 123,
-                ExtractionCategory = ExtractionCategory.Core,
-                IsExtractionIdentifier = true
-            };
-            _extractionInfo1.SaveToDatabase();
-            var eds = new ExtractableDataSet(activator.RepositoryLocator.DataExportRepository, catalogue);
-            eds.SaveToDatabase();
-            var project = new Project(DataExportRepository, "Project1");
-            var project2 = new Project(DataExportRepository, "Project2");
-            var cmd = new ExecuteCommandMakeCatalogueProjectSpecific(activator);
-            cmd.SetTarget(project);
-            cmd.SetTarget(catalogue);
-            Assert.DoesNotThrow(() => cmd.Execute());
-            cmd = new ExecuteCommandMakeCatalogueProjectSpecific(activator);
-            cmd.SetTarget(project2);
-            cmd.SetTarget(catalogue);
-            Assert.DoesNotThrow(() => cmd.Execute());
+                _project1 = new Project(DataExportRepository, "Project1");
+                _project1.SaveToDatabase();
+            }
+            if (projectCount > 1)
+            {
+                _project2 = new Project(DataExportRepository, "Project1");
+                _project2.SaveToDatabase();
+            }
+            if (projectSpecificCount > 0)
+            {
+                var cmd = new ExecuteCommandMakeCatalogueProjectSpecific(_activator);
+                cmd.SetTarget(_project1);
+                cmd.SetTarget(_catalogue);
+                Assert.DoesNotThrow(() => cmd.Execute());
+            }
+            if (projectSpecificCount > 1)
+            {
+                var cmd = new ExecuteCommandMakeCatalogueProjectSpecific(_activator);
+                cmd.SetTarget(_project2);
+                cmd.SetTarget(_catalogue);
+                Assert.DoesNotThrow(() => cmd.Execute());
+            }
+            if (extractionCount > 0)
+            {
+                var ec = new ExtractionConfiguration(DataExportRepository, _project1, "ec1");
+                Assert.DoesNotThrow(() => ec.AddDatasetToConfiguration(_activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", _catalogue.ID).First()));
+                ec.SaveToDatabase();
+            }
+            if (extractionCount > 1)
+            {
+                var ec = new ExtractionConfiguration(DataExportRepository, _project2, "ec2");
+                Assert.DoesNotThrow(() => ec.AddDatasetToConfiguration(_activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", _catalogue.ID).First()));
+                ec.SaveToDatabase();
+            }
 
         }
 
-        [Test]
-        public void MakeCatalogueMultipleProjectSpecificAfterExtraction()
+        private void MakeProjectSpecific(Catalogue catalogue, Project project, List<int> projectIdsToIgnore = null, bool shouldThrow = false)
         {
-
-            var activator = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet)
-            { DisallowInput = true };
-            var catalogue = new Catalogue(CatalogueRepository, "Dataset1");
-            catalogue.SaveToDatabase();
-            var _t1 = new TableInfo(CatalogueRepository, "T1");
-            _t1.SaveToDatabase();
-            var _c1 = new ColumnInfo(CatalogueRepository, "PrivateIdentifierA", "varchar(10)", _t1);
-            _c1.SaveToDatabase();
-            var _ci1 = new CatalogueItem(CatalogueRepository, catalogue, "PrivateIdentifierA");
-            _ci1.SaveToDatabase();
-            var _extractionInfo1 = new ExtractionInformation(CatalogueRepository, _ci1, _c1, _c1.ToString())
-            {
-                Order = 123,
-                ExtractionCategory = ExtractionCategory.Core,
-                IsExtractionIdentifier = true
-            };
-            _extractionInfo1.SaveToDatabase();
-            var eds = new ExtractableDataSet(activator.RepositoryLocator.DataExportRepository, catalogue);
-            eds.SaveToDatabase();
-            var project = new Project(DataExportRepository, "Project1");
-            var project2 = new Project(DataExportRepository, "Project2");
-
-            var ec = new ExtractionConfiguration(DataExportRepository, project, "ec1");
-            Assert.DoesNotThrow(() => ec.AddDatasetToConfiguration(activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", catalogue.ID).First()));
-            ec.SaveToDatabase();
-
-            var cmd = new ExecuteCommandMakeCatalogueProjectSpecific(activator);
-            cmd.SetTarget(project2);
-            cmd.SetTarget(catalogue);
-            var ex = Assert.Throws<ImpossibleCommandException>(() => cmd.Execute());
-            Assert.That(ex?.Message,  Is.EqualTo("Command is marked as IsImpossible and should not be Executed.  Reason is 'Cannot make Dataset1 Project Specific because it is already a part of ExtractionConfiguration ec1 (Project=Project1) and possibly others'"));
-            cmd = new ExecuteCommandMakeCatalogueProjectSpecific(activator);
-            cmd.projectIdsToIgnore.Add(project.ID);
-            cmd.SetTarget(project2);
-            cmd.SetTarget(catalogue);
-            Assert.DoesNotThrow(() => cmd.Execute());
-        }
-
-        //2 project specific w/ext, try ot remove
-        [Test]
-        public void RemoveProjectSpecificWhenUsedInMultipleProjectSpecificCatalogues()
-        {
-            var activator = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet)
-            { DisallowInput = true };
-            var catalogue = new Catalogue(CatalogueRepository, "Dataset1");
-            catalogue.SaveToDatabase();
-            var _t1 = new TableInfo(CatalogueRepository, "T1");
-            _t1.SaveToDatabase();
-            var _c1 = new ColumnInfo(CatalogueRepository, "PrivateIdentifierA", "varchar(10)", _t1);
-            _c1.SaveToDatabase();
-            var _ci1 = new CatalogueItem(CatalogueRepository, catalogue, "PrivateIdentifierA");
-            _ci1.SaveToDatabase();
-            var _extractionInfo1 = new ExtractionInformation(CatalogueRepository, _ci1, _c1, _c1.ToString())
-            {
-                Order = 123,
-                ExtractionCategory = ExtractionCategory.Core,
-                IsExtractionIdentifier = true
-            };
-            _extractionInfo1.SaveToDatabase();
-            var eds = new ExtractableDataSet(activator.RepositoryLocator.DataExportRepository, catalogue);
-            eds.SaveToDatabase();
-            var project = new Project(DataExportRepository, "Project1");
-            project.SaveToDatabase();
-            var project2 = new Project(DataExportRepository, "Project2");
-            project2.SaveToDatabase();
-            var cmd = new ExecuteCommandMakeCatalogueProjectSpecific(activator);
+            var cmd = new ExecuteCommandMakeCatalogueProjectSpecific(_activator);
+            cmd.projectIdsToIgnore = projectIdsToIgnore ?? [];
             cmd.SetTarget(project);
             cmd.SetTarget(catalogue);
-            Assert.DoesNotThrow(() => cmd.Execute());
-            cmd = new ExecuteCommandMakeCatalogueProjectSpecific(activator);
-            cmd.SetTarget(project2);
-            cmd.SetTarget(catalogue);
-            Assert.DoesNotThrow(() => cmd.Execute());
-
-            var ec = new ExtractionConfiguration(DataExportRepository, project, "ec1");
-            ec.SaveToDatabase();
-            Assert.DoesNotThrow(() => ec.AddDatasetToConfiguration(activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Project_ID", project.ID).First()));
-            ec.AddDatasetToConfiguration(activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", catalogue.ID).First());
-            ec.SaveToDatabase();
-            ec = new ExtractionConfiguration(DataExportRepository, project2, "ec2");
-            ec.SaveToDatabase();
-            Assert.DoesNotThrow(() => ec.AddDatasetToConfiguration(activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Project_ID", project2.ID).First()));
-            ec.SaveToDatabase();
-
-            var returnCmd = new ExecuteCommandMakeProjectSpecificCatalogueNormalAgain(activator, catalogue, project);
-            var ex = Assert.Throws<ImpossibleCommandException>(() => returnCmd.Execute());
-            Assert.That(ex?.Message, Is.EqualTo("Command is marked as IsImpossible and should not be Executed.  Reason is 'Catalogue is used in multiple Project Specific Catalogue. Remove this catalogue from and extractions in Project1'"));
+            if (shouldThrow) Assert.Throws<ImpossibleCommandException>(() => cmd.Execute());
+            else Assert.DoesNotThrow(() => cmd.Execute());
         }
 
-        //try to make catalogue project specific to the same project twice
-        [Test]
-        public void MakeCatalogueSameProjectSpecificTwice()
+        private void MakeNotProjectSpecific(Catalogue catalogue, Project project, bool shouldThrow = false)
         {
-            var activator = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet)
-            { DisallowInput = true };
-            var catalogue = new Catalogue(CatalogueRepository, "Dataset1");
-            catalogue.SaveToDatabase();
-            var _t1 = new TableInfo(CatalogueRepository, "T1");
-            _t1.SaveToDatabase();
-            var _c1 = new ColumnInfo(CatalogueRepository, "PrivateIdentifierA", "varchar(10)", _t1);
-            _c1.SaveToDatabase();
-            var _ci1 = new CatalogueItem(CatalogueRepository, catalogue, "PrivateIdentifierA");
-            _ci1.SaveToDatabase();
-            var _extractionInfo1 = new ExtractionInformation(CatalogueRepository, _ci1, _c1, _c1.ToString())
-            {
-                Order = 123,
-                ExtractionCategory = ExtractionCategory.Core,
-                IsExtractionIdentifier = true
-            };
-            _extractionInfo1.SaveToDatabase();
-            var eds = new ExtractableDataSet(activator.RepositoryLocator.DataExportRepository, catalogue);
-            eds.SaveToDatabase();
-            var project = new Project(DataExportRepository, "Project1");
-            var cmd = new ExecuteCommandMakeCatalogueProjectSpecific(activator);
-            cmd.SetTarget(project);
-            cmd.SetTarget(catalogue);
-            Assert.DoesNotThrow(() => cmd.Execute());
-            Assert.Throws<SqlException>(() => cmd.Execute());
+            var cmd = new ExecuteCommandMakeProjectSpecificCatalogueNormalAgain(_activator,catalogue,project);
+            if (shouldThrow) Assert.Throws<ImpossibleCommandException>(() => cmd.Execute());
+            else Assert.DoesNotThrow(() => cmd.Execute());
+        }
+
+        [Test]
+        public void MakeCatalogueProjectSpecificTest()
+        {
+            SetupTests(1, 0, 0);
+            MakeProjectSpecific(_catalogue, _project1);
+        }
+
+        [Test]
+        public void MakeCatalogueNotProjectSpecificTest()
+        {
+            SetupTests(1,1,0);
+            MakeNotProjectSpecific(_catalogue, _project1);
+        }
+
+
+        [Test]
+        public void MakeCatalogueProjectSpecificWhenInExtractionTest()
+        {
+            SetupTests(1, 0,1);
+            MakeProjectSpecific(_catalogue, _project1);
+        }
+
+        [Test]
+        public void MakeCatalogueNotProjectSpecificWhenInExtractionTest()
+        {
+            SetupTests(1, 1, 1);
+            MakeNotProjectSpecific(_catalogue, _project1);
+        }
+
+        [Test]
+        public void MakeCatalogueProjectSpecificWithTwoProjectsTest()
+        {
+            SetupTests(2, 0, 0);
+            MakeProjectSpecific(_catalogue, _project1, new List<int>() { _project2.ID });
+            MakeProjectSpecific(_catalogue, _project2, new List<int>() { _project1.ID });
+        }
+
+        [Test]
+        public void MakeCatalogueNotProjectSpecificWithTwoProjectsTest()
+        {
+            SetupTests(2, 2, 0);
+            MakeNotProjectSpecific(_catalogue, _project1);
+            MakeNotProjectSpecific(_catalogue, _project2);
+        }
+
+        [Test]
+        public void MakeSingleCatalogueNotProjectSpecificWithTwoProjectsTest()
+        {
+            SetupTests(2, 2, 0);
+            MakeNotProjectSpecific(_catalogue, _project1);
+            Assert.That(_activator.RepositoryLocator.CatalogueRepository.GetObjectByID<Catalogue>(_catalogue.ID).IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository), Is.True);
+            Assert.That(_activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID",_catalogue.ID).Count, Is.EqualTo(1));
+        }
+
+        [Test]
+        public void MakeSingleCatalogueNotProjectSpecificWithTwoProjectsAndOneExtractionInOtherProjectTest()
+        {
+            SetupTests(2, 2, 1);
+            MakeNotProjectSpecific(_catalogue, _project2);
+            Assert.That(_activator.RepositoryLocator.CatalogueRepository.GetObjectByID<Catalogue>(_catalogue.ID).IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository), Is.True);
+            Assert.That(_activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", _catalogue.ID).Count, Is.EqualTo(1));
+        }
+
+
+
+        [Test]
+        public void MakeSingleCatalogueNotProjectSpecificWithTwoProjectsAndOneExtractionTest()
+        {
+            SetupTests(2, 2, 1);
+            MakeNotProjectSpecific(_catalogue, _project1,true);
+            Assert.That(_activator.RepositoryLocator.CatalogueRepository.GetObjectByID<Catalogue>(_catalogue.ID).IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository), Is.True);
+            Assert.That(_activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", _catalogue.ID).Count, Is.EqualTo(2));
+        }
+
+        [Test]
+        public void MakeSingleCatalogueProjectSpecificWhenAlreadyInOtherProjectExtractionTest()
+        {
+            SetupTests(2, 0, 1);
+            Assert.That(_activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", _catalogue.ID).Count, Is.EqualTo(1));
+            Assert.That(_activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", _catalogue.ID).First().Project_ID, Is.EqualTo(null));
+            MakeProjectSpecific(_catalogue, _project2,null,true);
+            Assert.That(_activator.RepositoryLocator.CatalogueRepository.GetObjectByID<Catalogue>(_catalogue.ID).IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository), Is.False);
+            Assert.That(_activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", _catalogue.ID).Count, Is.EqualTo(1));
+            Assert.That(_activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", _catalogue.ID).First().Project_ID, Is.EqualTo(null));
+        }
+
+        [Test]
+        public void MakeSingleCatalogueProjectSpecificWhenAlreadyInOtherProjectAllowExtractionTest()
+        {
+            SetupTests(2, 0, 1);
+            MakeProjectSpecific(_catalogue, _project2, new List<int>() { _project1.ID });
+            MakeProjectSpecific(_catalogue, _project1, new List<int>() { _project1.ID });
+            Assert.That(_activator.RepositoryLocator.CatalogueRepository.GetObjectByID<Catalogue>(_catalogue.ID).IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository), Is.True);
+            Assert.That(_activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", _catalogue.ID).Count, Is.EqualTo(2));
+        }
+
+        [Test]
+        public void MakeSingleCatalogueProjectSpecificWhenAlreadyInExtractionsTest()
+        {
+            SetupTests(2, 0, 2);
+            MakeProjectSpecific(_catalogue, _project2, null,true);
+            Assert.That(_activator.RepositoryLocator.CatalogueRepository.GetObjectByID<Catalogue>(_catalogue.ID).IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository), Is.False);
+            Assert.That(_activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", _catalogue.ID).Count, Is.EqualTo(1));
+            Assert.That(_activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", _catalogue.ID).First().Project_ID, Is.EqualTo(null));
+        }
+
+        [Test]
+        public void MakeSingleCatalogueProjectSpecificWhenAlreadyInAnExtractionInEachProjectTest()
+        {
+            SetupTests(2, 0, 2);
+            MakeProjectSpecific(_catalogue, _project2, new List<int>() { _project1.ID });
+            MakeProjectSpecific(_catalogue, _project1, new List<int>() { _project1.ID });
+            Assert.That(_activator.RepositoryLocator.CatalogueRepository.GetObjectByID<Catalogue>(_catalogue.ID).IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository), Is.True);
+            Assert.That(_activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", _catalogue.ID).Count, Is.EqualTo(2));
         }
     }
 }
