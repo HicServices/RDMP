@@ -37,6 +37,7 @@ namespace Rdmp.UI.SimpleDialogs
             fastObjectListView1 = new FastObjectListView();
             Project = new OLVColumn();
             ProjectID = new OLVColumn();
+            label3 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)fastObjectListView1).BeginInit();
             SuspendLayout();
             // 
@@ -45,9 +46,9 @@ namespace Rdmp.UI.SimpleDialogs
             button1.Enabled = false;
             button1.Location = new System.Drawing.Point(515, 399);
             button1.Name = "button1";
-            button1.Size = new System.Drawing.Size(148, 23);
+            button1.Size = new System.Drawing.Size(204, 23);
             button1.TabIndex = 0;
-            button1.Text = "Restrict to selected Projects";
+            button1.Text = "Restrict to Selected Projects";
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click;
             // 
@@ -101,11 +102,20 @@ namespace Rdmp.UI.SimpleDialogs
             ProjectID.MinimumWidth = 20;
             ProjectID.Text = "ID";
             // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new System.Drawing.Point(430, 427);
+            label3.Name = "label3";
+            label3.Size = new System.Drawing.Size(0, 15);
+            label3.TabIndex = 6;
+            // 
             // SetProjectsForCatalogueUI
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(800, 450);
+            Controls.Add(label3);
             Controls.Add(fastObjectListView1);
             Controls.Add(label2);
             Controls.Add(button2);
@@ -127,5 +137,6 @@ namespace Rdmp.UI.SimpleDialogs
         private BrightIdeasSoftware.FastObjectListView fastObjectListView1;
         private OLVColumn Project;
         private OLVColumn ProjectID;
+        private System.Windows.Forms.Label label3;
     }
 }

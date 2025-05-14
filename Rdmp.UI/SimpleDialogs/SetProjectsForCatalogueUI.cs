@@ -10,6 +10,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Windows.Forms;
@@ -30,37 +31,18 @@ namespace Rdmp.UI.SimpleDialogs
             _activator = activator;
             _catalogue = catalogue;
             _allProjects = _activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>().ToList();
-            //_allProjects.AddRange(_allProjects);
-            //_allProjects.AddRange(_allProjects);
-            //_allProjects.AddRange(_allProjects);
-            //_allProjects.AddRange(_allProjects);
-            //_allProjects.AddRange(_allProjects);
-            //_allProjects.AddRange(_allProjects);
-            //_allProjects.AddRange(_allProjects);
-            //_allProjects.AddRange(_allProjects);
-            //_allProjects.AddRange(_allProjects);
-            //_allProjects.AddRange(_allProjects);
-            //_allProjects.AddRange(_allProjects);
-            //_allProjects.AddRange(_allProjects);
-            //_allProjects.AddRange(_allProjects);
-            //_allProjects.AddRange(_allProjects);
-            //_allProjects.AddRange(_allProjects);
-            //_allProjects.AddRange(_allProjects);
-            //_allProjects.AddRange(_allProjects);
-            //_allProjects.AddRange(_allProjects);
-            //_allProjects.AddRange(_allProjects);
-            //_allProjects.AddRange(_allProjects);
-            //_allProjects.AddRange(_allProjects);
 
             _linkedProjects = _activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", _catalogue.ID).Where(eds => eds.Project_ID != null).Select(eds => (int)eds.Project_ID).ToList();
             _savedLinkedProjects = _linkedProjects;
             Project.AspectGetter = obj => ((Project)obj).Name;
             ProjectID.AspectGetter = obj => ((Project)obj).ID;
             fastObjectListView1.CheckBoxes = true;
-            fastObjectListView1.BooleanCheckStateGetter = delegate (Object rowObject) { 
-                return _linkedProjects.Contains(((Project)rowObject).ID); 
+            fastObjectListView1.BooleanCheckStateGetter = delegate (Object rowObject)
+            {
+                return _linkedProjects.Contains(((Project)rowObject).ID);
             };
-            fastObjectListView1.BooleanCheckStatePutter = delegate (Object rowObject, bool newValue) {
+            fastObjectListView1.BooleanCheckStatePutter = delegate (Object rowObject, bool newValue)
+            {
                 if (_linkedProjects.Contains(((Project)rowObject).ID))
                 {
                     //remove
@@ -71,7 +53,7 @@ namespace Rdmp.UI.SimpleDialogs
                     //add
                     _linkedProjects.Add(((Project)rowObject).ID);
                 }
-                    return _linkedProjects.Contains(((Project)rowObject).ID); ; // return the value that you want the control to use
+                return _linkedProjects.Contains(((Project)rowObject).ID); ; // return the value that you want the control to use
             };
             fastObjectListView1.BeginUpdate();
             fastObjectListView1.AddObjects(_allProjects);
@@ -156,6 +138,13 @@ namespace Rdmp.UI.SimpleDialogs
         {
             if (Run(true))
             {
+                label3.Text = "Successfully Update Specific Projects for Catalogue";
+                Task.Factory.StartNew(() => Thread.Sleep(5 * 1000))
+            .ContinueWith((t) =>
+            {
+                label3.Text = "";
+            }, TaskScheduler.FromCurrentSynchronizationContext());
+
                 //checkedListBox1.Items.Clear();
                 //_linkedProjects = _activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", _catalogue.ID).Where(eds => eds.Project_ID != null).Select(eds => (int)eds.Project_ID).ToList();
                 //checkedListBox1.Items.AddRange(_allProjects.ToArray());
