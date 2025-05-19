@@ -159,6 +159,14 @@ jobs:
         id: version
         shell: bash
         run: perl -ne "print \"rdmpversion=\$1\n\" if /AssemblyInformationalVersion\(\"([0-9a-z.-]+)\"\)/;" SharedAssemblyInfo.cs >> $GITHUB_OUTPUT
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+          architecture: 'x64'
+      - name: Check Change Management
+        if: contains(github.ref, 'refs/tags/v') || contains('refs/heads/main refs/heads/develop',github.ref)
+        run: python ../scripts/validate_cm_release.py
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v4.3.1
         with:
