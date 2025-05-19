@@ -35,5 +35,6 @@ public enum OverlayKind
     Cloud,
     BigE,
     IsExtractionIdentifier,
-    Parameter
+    Parameter,
+    Version
 }
