@@ -288,18 +288,8 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
     public bool Recursefilter(ArchivalDataLoadInfo archivalDataLoadInfo, string filter)
     {
         if (archivalDataLoadInfo.ToString().Contains(filter)) return true;
-        foreach (var error in archivalDataLoadInfo.Errors)
-        {
-            if (error.ToString().Contains(filter))
-            {
-                return true;
-            }
-
-        }
-        foreach (var progress in archivalDataLoadInfo.Progress)
-        {
-            if (progress.ToString().Contains(filter)) return true;
-        }
+        if (archivalDataLoadInfo.Errors.Any(error => error.ToString().Contains(filter))) return true;
+        if (archivalDataLoadInfo.Progress.Any(progress => progress.ToString().Contains(filter))) return true;
         return false;
     }
 
