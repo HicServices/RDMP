@@ -101,6 +101,7 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
 
     private object olvDescription_AspectGetter(object rowObject)
     {
+        if (rowObject is null) return null;
         return rowObject switch
         {
             ArchivalDataLoadInfo adi => adi.ToString(),
@@ -117,6 +118,7 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
 
     private static object olvDate_AspectGetter(object rowObject)
     {
+        if (rowObject is null) return null;
         return rowObject switch
         {
             ArchivalDataLoadInfo adi => adi.StartTime,
@@ -283,10 +285,24 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
     }
 
 
+    public bool Recursefilter(ArchivalDataLoadInfo archivalDataLoadInfo, string filter)
+    {
+        if (archivalDataLoadInfo.ToString().Contains(filter)) return true;
+        if (archivalDataLoadInfo.Errors.Any(error => error.ToString().Contains(filter))) return true;
+        if (archivalDataLoadInfo.Progress.Any(progress => progress.ToString().Contains(filter))) return true;
+        return false;
+    }
+
     public void ApplyFilter(string filter)
     {
-        treeView1.ModelFilter = new TextMatchFilter(treeView1, filter, StringComparison.CurrentCultureIgnoreCase);
-        treeView1.UseFiltering = !string.IsNullOrWhiteSpace(filter);
+        var expanded = treeView1.ExpandedObjects.Cast<object>().ToList();
+;        ClearObjects();
+        AddObjects(_populateLoadHistoryResults.Where(r => Recursefilter(r, filter)).ToArray());
+        foreach( var e in expanded)
+        {
+            treeView1.Expand(e);
+        }
+        treeView1.DefaultRenderer = new HighlightTextRenderer(TextMatchFilter.Contains(treeView1, filter));
     }
 
     private void treeView1_ColumnRightClick(object sender, CellRightClickEventArgs e)
