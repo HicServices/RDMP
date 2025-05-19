@@ -47,7 +47,6 @@
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="HIC.System.Windows.Forms.DataVisualization" />
-		<PackageReference Include="Microsoft.Net.Sdk.Compilers.Toolset" />
 		<PackageReference Include="Microsoft.SourceLink.GitHub">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

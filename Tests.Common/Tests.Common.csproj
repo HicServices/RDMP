@@ -35,7 +35,6 @@
         <ProjectReference Include="..\Rdmp.Core\Rdmp.Core.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Microsoft.Net.Sdk.Compilers.Toolset" />
         <PackageReference Include="Microsoft.SourceLink.GitHub">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
