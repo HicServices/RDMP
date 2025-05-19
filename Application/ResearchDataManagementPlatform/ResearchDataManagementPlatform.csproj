@@ -32,6 +32,7 @@
     <PackageReference Include="ConsoleControl" />
     <PackageReference Include="Autoupdater.NET.Official" />
     <PackageReference Include="DockPanelSuite.ThemeVS2015" />
+    <PackageReference Include="Microsoft.Net.Sdk.Compilers.Toolset" />
     <PackageReference Include="System.Resources.Extensions" />
   </ItemGroup>
   <ItemGroup>

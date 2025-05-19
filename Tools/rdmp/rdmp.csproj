@@ -41,6 +41,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\Rdmp.Core\Rdmp.Core.csproj" />
+		<PackageReference Include="Microsoft.Net.Sdk.Compilers.Toolset" />
 		<PackageReference Include="Terminal.Gui" />
 		<PackageReference Include="System.Threading.ThreadPool" />
 		<PackageReference Include="YamlDotNet" />
