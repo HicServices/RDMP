@@ -177,6 +177,14 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
             AddUsefulPropertiesIfHomogeneousTypes(_allObjects);
 
             BuildToolStripForDatabaseObjects(focusedCollection);
+            if (focusedCollection != RDMPCollection.None)
+            {
+                StartingEasyFilters.TryGetValue(focusedCollection, out var focusedType);
+                if (focusedType != null && focusedType.Any())
+                {
+                    showOnlyTypes.Add(focusedType.First());
+                }
+            }
         }
         else
         {
