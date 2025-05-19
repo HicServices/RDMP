@@ -4,13 +4,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [8.4.4] - Ureleased 
+## [9.0.0] - Unreleased
+- Improve Extraction Log Viewer Filter
+
+
+## [8.4.4] - 2025-05-08 
 
 - Re-add AggregateGraph functionality
 - Add ability to show/hide quick edit pipeline controls during extractions
 - Fix issue with columnForbidder crashing when no Regex specified
 - Add contextual global search (CRTL+f)
-- Improve Extraction Log Viewer Filter
+- Fix Issue with Multiselect cancel dialog
+- Improve UI Tab ordering
+- Add ability to specify DB collation on new DB creation
+- Display warnings about pipeline issues in the tables(advanced) tree
+>>>>>>> a0d154bcd647d785ef913b8d1b212e5408c9354e
 
 ## [8.4.3] - 2025-02-24
 
