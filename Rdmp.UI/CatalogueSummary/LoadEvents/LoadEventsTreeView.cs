@@ -14,9 +14,12 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
+using Org.BouncyCastle.Asn1.X509.Qualified;
 using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Logging.PastEvents;
 using Rdmp.Core.ReusableLibraryCode;
@@ -293,16 +296,103 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
         return false;
     }
 
+    private class LogFilter : AbstractModelFilter
+    {
+        public LogFilter()
+        {
+
+        }
+
+        public LogFilter(ObjectListView olv)
+        {
+            this.ListView = olv;
+        }
+
+        public LogFilter(ObjectListView olv, string text)
+        {
+            this.ListView = olv;
+            this.Text = text;
+        }
+
+        public LogFilter(ObjectListView olv, string text, StringComparison comparison)
+        {
+            this.ListView = olv;
+            this.Text = text;
+            this.StringComparison = comparison;
+        }
+
+        public string Text;
+        public StringComparison StringComparison = StringComparison.InvariantCultureIgnoreCase;
+
+        protected ObjectListView ListView;
+
+        private List<int> acceptableChildren = [];
+        private List<int> acceptableRoots = [];
+
+        public override bool Filter(object modelObject)
+        {
+            if (this.ListView == null || String.IsNullOrEmpty(this.Text))
+                return true;
+
+            foreach (OLVColumn column in this.ListView.Columns)
+            {
+                if (column.IsVisible)
+                {
+                    string cellText = column.GetStringValue(modelObject);
+                    if (cellText.IndexOf(this.Text, this.StringComparison) != -1)
+                    {
+                        if (modelObject is ArchivalDataLoadInfo adli)
+                        {
+                            acceptableChildren.AddRange(adli.Progress.Select(p => p.ID));
+                            acceptableRoots.Add(adli.ID);
+                        }
+                        return true;
+                    }
+                    else if (modelObject is ArchivalProgressLog log)
+                    {
+                        if (acceptableChildren.Contains(log.ID))
+                        {
+                            return true;
+                        }
+                    }
+                    else if (modelObject is LoadEventsTreeView_Category lec)
+                    {
+                        if (acceptableRoots.Contains(lec.RunId))
+                        {
+                            return true;
+                        }
+                        if (lec.Children is ArchivalProgressLog[] lapl)
+                        {
+                            return lapl.Any(pl => pl.ToString().IndexOf(this.Text, this.StringComparison) != -1);
+                        }
+                        if (lec.Children is ArchivalTableLoadInfo[] latli)
+                        {
+                            return latli.Any(pl => pl.ToString().IndexOf(this.Text, this.StringComparison) != -1);
+                        }
+                    }
+                    else if (modelObject is ArchivalTableLoadInfo dli)
+                    {
+                        if (acceptableRoots.Contains(dli.Parent.ID))
+                        {
+                            return true;
+                        }
+                    }
+                    else if (modelObject is ArchivalDataLoadInfo adli)
+                    {
+                        return adli.Progress.Any(p => p.ToString().IndexOf(this.Text, this.StringComparison) != -1);
+                    }
+                }
+            }
+
+            return false;
+        }
+    }
+
     public void ApplyFilter(string filter)
     {
-        var expanded = treeView1.ExpandedObjects.Cast<object>().ToList();
-;        ClearObjects();
-        AddObjects(_populateLoadHistoryResults.Where(r => Recursefilter(r, filter)).ToArray());
-        foreach( var e in expanded)
-        {
-            treeView1.Expand(e);
-        }
-        treeView1.DefaultRenderer = new HighlightTextRenderer(TextMatchFilter.Contains(treeView1, filter));
+
+        treeView1.ModelFilter = new LogFilter(treeView1, filter, StringComparison.CurrentCultureIgnoreCase);
+        treeView1.UseFiltering = !string.IsNullOrWhiteSpace(filter);
     }
 
     private void treeView1_ColumnRightClick(object sender, CellRightClickEventArgs e)

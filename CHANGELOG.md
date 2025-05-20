@@ -18,7 +18,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improve UI Tab ordering
 - Add ability to specify DB collation on new DB creation
 - Display warnings about pipeline issues in the tables(advanced) tree
->>>>>>> a0d154bcd647d785ef913b8d1b212e5408c9354e
 
 ## [8.4.3] - 2025-02-24
 
