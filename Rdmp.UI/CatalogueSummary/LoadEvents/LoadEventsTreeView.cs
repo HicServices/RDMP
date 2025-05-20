@@ -327,6 +327,7 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
                 if (column.IsVisible)
                 {
                     string cellText = column.GetStringValue(modelObject);
+                    var y = modelObject.ToString();
                     if (cellText.IndexOf(this.Text, this.StringComparison) != -1)
                     {
                         if (modelObject is ArchivalDataLoadInfo adli)
@@ -351,11 +352,11 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
                         }
                         if (lec.Children is ArchivalProgressLog[] lapl)
                         {
-                            return lapl.Any(pl => pl.ToString().IndexOf(this.Text, this.StringComparison) != -1);
+                            if(lapl.Any(pl => pl.ToString().IndexOf(this.Text, this.StringComparison) != -1))return true;
                         }
                         if (lec.Children is ArchivalTableLoadInfo[] latli)
                         {
-                            return latli.Any(pl => pl.ToString().IndexOf(this.Text, this.StringComparison) != -1);
+                            if (latli.Any(pl => pl.ToString().IndexOf(this.Text, this.StringComparison) != -1)) return true;
                         }
                     }
                     else if (modelObject is ArchivalTableLoadInfo dli)
@@ -367,7 +368,7 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
                     }
                     else if (modelObject is ArchivalDataLoadInfo adli)
                     {
-                        return adli.Progress.Any(p => p.ToString().IndexOf(this.Text, this.StringComparison) != -1);
+                        if (adli.Progress.Any(p => p.ToString().IndexOf(this.Text, this.StringComparison) != -1)) return true;
                     }
                 }
             }
@@ -381,6 +382,7 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
 
         treeView1.ModelFilter = new LogFilter(treeView1, filter, StringComparison.CurrentCultureIgnoreCase);
         treeView1.UseFiltering = !string.IsNullOrWhiteSpace(filter);
+        treeView1.DefaultRenderer = new HighlightTextRenderer(new TextMatchFilter(treeView1,filter));
     }
 
     private void treeView1_ColumnRightClick(object sender, CellRightClickEventArgs e)
