@@ -33,7 +33,7 @@ namespace Rdmp.UI.SimpleDialogs
             _allProjects = _activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>().ToList();
 
             _linkedProjects = _activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", _catalogue.ID).Where(eds => eds.Project_ID != null).Select(eds => (int)eds.Project_ID).ToList();
-            _savedLinkedProjects = _linkedProjects;
+            _savedLinkedProjects = new List<int>(_linkedProjects);
             Project.AspectGetter = obj => ((Project)obj).Name;
             ProjectID.AspectGetter = obj => ((Project)obj).ID;
             fastObjectListView1.CheckBoxes = true;
