@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add ability to use Extraction Configuration ID in the naming scheme of the extract to database Pipeline component
 - Update Cohort Versioning Icons and Interface
 - Fix issue with global contextual search
-- Add MS Teams Extraction notifications (see [Documentation\DataExtractions\ExtractionNotifications.md])
+- Add MS Teams Extraction notifications (see [Documentation\DataExtractions\ExtractionTeamsNotifications.md])
 
 ## [8.4.4] - 2025-05-08 
 
