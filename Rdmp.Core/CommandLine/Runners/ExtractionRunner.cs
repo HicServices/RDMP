@@ -8,7 +8,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.Mail;
+using FluentFTP;
+using MimeKit;
 using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Pipelines;
@@ -23,6 +27,8 @@ using Rdmp.Core.Logging;
 using Rdmp.Core.Logging.Listeners;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Settings;
+using Spectre.Console;
 
 namespace Rdmp.Core.CommandLine.Runners;
 
@@ -64,6 +70,20 @@ public class ExtractionRunner : ManyRunner
 
     protected override void AfterRun()
     {
+        switch (_options.Command)
+        {
+            case CommandLineActivity.run:
+                if (UserSettings.ExtractionWebhookUrl is not null)
+                {
+                    var eds = ExtractCommands.Keys.Select(k => k.ExtractableDataSet);
+                    var status = eds.Select(e => GetState(e)).Where(e => e is not null).Select(e => (ExtractCommandState)Enum.Parse(typeof(ExtractCommandState),e.ToString()));
+                    var cmd = new ExecuteCommandSendExtractionResolutionTeamsNotification(_activator, _configuration,!status.Any(s => s != ExtractCommandState.Completed));
+                    cmd.Execute();
+                }
+                break;
+            default:
+                break;
+        }
     }
 
     protected override object[] GetRunnables()
