@@ -47,6 +47,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentat
 		Documentation\CodeTutorials\DataTableUpload.md = Documentation\CodeTutorials\DataTableUpload.md
 		Documentation\CodeTutorials\DoubleClickAndDragDrop.md = Documentation\CodeTutorials\DoubleClickAndDragDrop.md
 		Documentation\CodeTutorials\ExcelHandling.md = Documentation\CodeTutorials\ExcelHandling.md
+		ExtractionNotifications.md = ExtractionNotifications.md
 		Documentation\CodeTutorials\FAQ.md = Documentation\CodeTutorials\FAQ.md
 		Documentation\CodeTutorials\Glossary.md = Documentation\CodeTutorials\Glossary.md
 		Documentation\CodeTutorials\Graphs.md = Documentation\CodeTutorials\Graphs.md

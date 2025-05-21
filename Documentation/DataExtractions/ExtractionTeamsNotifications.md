@@ -1,33 +1,27 @@
-## Execute Full Extraction To Database MSSQL
-This data extraction pipeline component allows you to extract data into a known database.
-You can add the database you want to extract to as an external database within RDMP.
+## Extraction Teams Notification
 
-This component has several configurable options that are detailed below
-| Configuration Option                            | Description                                                                                                                                                                                                                                                                                                                                                                   |
-|-------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Target Database Server                          | External server to create the extraction into, a new database will be created for the [Project]: ../CodeTutorials/Glossary.md#Project based on the naming pattern provided                                                                                                                                                                                                                                            |
-| Database Naming Pattern                         | How do you want to name datasets, use the following tokens if you need them:             $p - [Project](../CodeTutorials/Glossary.md#Project) Name ('e.g. My [Project](../CodeTutorials/Glossary.md#Project)')          $n - [Project](../CodeTutorials/Glossary.md#Project) Number (e.g. 234)          $t - Master Ticket (e.g. 'LINK-1234')          $r - Request Ticket (e.g. 'LINK-1234')          $l - Release Ticket (e.g. 'LINK-1234')  Default : Proj_$n_$l                                   |
-| Table Naming Pattern                            | How do you want to name datasets, use the following tokens if you need them:             $p - [Project](../CodeTutorials/Glossary.md#Project) Name ('e.g. My [Project](../CodeTutorials/Glossary.md#Project)')          $n - [Project](../CodeTutorials/Glossary.md#Project) Number (e.g. 234)          $c - Configuration Name (e.g. 'Cases')          $d - Dataset name (e.g. 'Prescribing')          $a - Dataset acronym (e.g. 'Presc')            You must have either $a or $d  Default : $c_$d |
-| Drop Table If Load Fails                        | If the extraction fails half way through AND the destination table was created during the extraction then the table will be dropped from the destination rather than being left in a half loaded state                                                                                                                                                                        |
-| Alter Timeout                                   | Timeout to perform all ALTER TABLE operations (column resize and PK creation)                                                                                                                                                                                                                                                                                                 |
-| Copy Collations                                 | True to copy the column collations from the source database when creating the destination database.  Only works if both the source and destination have the same DatabaseType.  Excludes columns which feature a transform as part of extraction.                                                                                                                             |
-| Always Drop ExtractionTables                    | True to always drop the destination database table(s) from the destination if they already existed                                                                                                                                                                                                                                                                            |
-| Make Final Table Distinct When Batching Results | True to apply a distincting operation to the final table when using an [ExtractionProgress](../CodeTutorials/Glossary.md#ExtractionProgress).  This prevents data duplication from failed batch resumes.                                                                                                                                                                                                                         |
-| Append Data If Table Exists                     | If this extraction has already been run, it will append the extraction data into the database. There is no duplication protection with this functionality.                                                                                                                                                                                                                    |
-| Include Timestamp                               | If checked, a column names 'extraction_timestamp' will be included in the extraction that denotes the time the record was added to the extraction.                                                                                                                                                                                                                            |
-| Use Acronym For File Naming                     | Naming of flat files is usually based on [Catalogue](../CodeTutorials/Glossary.md#Catalogue).Name, if this is true then the [Catalogue](../CodeTutorials/Glossary.md#Catalogue).Acronym will be used instead                                                                                                                                                                                                                                                      |
-| Date Format                                     | The date format to output all datetime fields in e.g. dd/MM/yyyy for uk format yyyy-MM-dd for something more machine processable, see https://msdn.microsoft.com/en-us/library/8kb3ddd4(v=vs.110).aspx                                                                                                                                                                        |
-| Clean Extraction Folder Before Extraction       | If this is true, the dataset/globals extraction folder will be wiped clean before extracting the dataset. Useful if you suspect there are spurious files in the folder                                                                                                                                                                                                        |
-| Extraction Subdirectory Pattern                 | Overrides the extraction sub directory of datasets as they are extracted          $c - Configuration Name (e.g. 'Cases')          $i - Configuration ID (e.g. 459)          $d - Dataset name (e.g. 'Prescribing')          $a - Dataset acronym (e.g. 'Presc')          $n - Dataset ID (e.g. 459)  e.g. /$i/$a                                                              |
+RDMP has the ability to notify you of the status of an Extractions final result via Microsoft Teams. This may be useful for extractions that take a significant amount of time to complete, or are run from a secondary system.
 
-[Project]: ../CodeTutorials/Glossary.md#Project
-[ExtractionProgress]: ../CodeTutorials/Glossary.md#ExtractionProgress
-[Catalogue]: ../CodeTutorials/Glossary.md#Catalogue
+### Prerequisits
+* A Microsoft teams channel for notifications to be sent to
+* Permission to create new workfows for said channel
 
+### Setup
+This integration uses the MS Teams Workflows App. It comes as standard with all Microsoft Teams instances.
 
-## Notes on updating an extraction
-Using the "Append Data If Table Exists" option within this extraction destination component will allow you to re-extract additional information to a database, however there a number of caveats and gotchas with this.
-* Archive Table
-    * Similar to data loads, these database tables will come with an _Archive table that will auto-populate when new extractions are ran against the database.
-* Data Structure changing
-    * While the extractor can handle columns being removed, it does not support columns being added beyond the first extraction. For this you will need to write the data to a new database table. It is recommended that the extraction is cloned in this case.
+### Step 1:
+Within a Teams channel, select the three dots at the top right, there should be a "Workflows" menu item. Select this menu item.
+
+### Step 2:
+A dialog will appear, search for a workflow named "Post to a channel when a webhook request is received". Select this option.
+
+### Step 3:
+Give the workflow a sensible name i.e. "John Smith's  Extraction Notifications"
+Follow through all the options presented over the next few pages and click "Add workflow" when it appears.
+A URL will now be displayed. Copy this value. It can be retrieved again later via the "Manage Workflows" section within Microsoft teams
+
+### Step 4:
+Within RDMP, open your user settings "View > User Settings" and populate the "Notification Webhook URL" Textbox with the URL from the previous step
+You will also need to provide the email address you use in Microsoft teams in the "Webhook Email Address" Textbox. This is to allow the notification to tag you when it posts
+Once these fields are populated, close the window and restart RDMP.
+You should now recieve notifications about any Extractions you run within Microsoft Teams
