@@ -13,6 +13,7 @@ using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.FilterImporting;
 using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
@@ -32,8 +33,10 @@ public class ExecuteCommandCreateNewFilter : BasicCommandExecution, IAtomicComma
     public string Name { get; }
     public string WhereSQL { get; }
 
-    private IFilter[] _offerFilters;
+    private IFilter[] _offerFilters = [];
+    private IFilter[] _offerCohortFilters = [];
     private bool offerCatalogueFilters;
+    private bool offerCohortCatalogueFilters;
 
     public bool OfferCatalogueFilters
     {
@@ -54,6 +57,19 @@ public class ExecuteCommandCreateNewFilter : BasicCommandExecution, IAtomicComma
         }
     }
 
+
+    public bool OfferCohortCatalogueFilters
+    {
+        get => offerCohortCatalogueFilters;
+            set
+        {
+            var c = GetCatalogue();
+
+            var filters = c.CatalogueRepository.GetAllObjects<AggregateFilter>().Where(af => af.GetCatalogue().ID == c.ID);
+            _offerCohortFilters = filters.ToArray();
+            offerCohortCatalogueFilters = value;
+        }
+    }
 
     private ExecuteCommandCreateNewFilter(IBasicActivateItems activator) : base(activator)
     {
@@ -239,8 +255,8 @@ where    Optional SQL to set for the filter.  If <basedOn> is not null this will
     private void ImportExistingFilter(IContainer container)
     {
         var wizard = new FilterImportWizard(BasicActivator);
-
-        var import = wizard.ImportManyFromSelection(container, _offerFilters).ToArray();
+        var filters = _offerFilters.Union(_offerCohortFilters).ToArray();
+        var import = wizard.ImportManyFromSelection(container, filters).ToArray();
 
         foreach (var f in import) container.AddChild(f);
 
