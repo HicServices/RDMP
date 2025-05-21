@@ -15,7 +15,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         private readonly ExtractionConfiguration _ec;
         private readonly bool _success;
         private static readonly HttpClient client = new HttpClient();
-        private string url = UserSettings.ExtractionWebhookUrl;
+        private readonly string url = UserSettings.ExtractionWebhookUrl;
         private readonly string template = "{  \"type\":\"AdaptiveCard\",  \"attachments\":[      {        \"contentType\":\"application/vnd.microsoft.card.adaptive\",        \"contentUrl\":null,        \"content\":{  \"type\": \"AdaptiveCard\",    \"$schema\": \"https://adaptivecards.io/schemas/adaptive-card.json\",    \"version\": \"1.5\",    \"body\": [        {            \"type\": \"Table\",            \"columns\": [                {                    \"width\": 1                },                {                    \"width\": 7                }            ],            \"rows\": [                {                    \"type\": \"TableRow\",                    \"cells\": [                        {                            \"type\": \"TableCell\",                            \"items\": [                                {                                    \"type\": \"Image\",                                    \"url\": \"\",                                    \"size\": \"Small\",                                    \"width\": \"40px\"                                }                            ]                        },                        {                            \"type\": \"TableCell\",                            \"verticalContentAlignment\": \"Center\",                            \"items\": [                                {                                    \"type\": \"TextBlock\",                                    \"text\": \"\",                                    \"wrap\": true,                                    \"maxLines\": 3                                }                            ],                            \"targetWidth\": \"Wide\",                            \"bleed\": true                        },                        {                            \"type\": \"TableCell\",                            \"isVisible\": false                        }                    ]                }            ]        },        {            \"type\": \"TextBlock\",            \"text\": \"<at></at>\"        }    ],    \"msteams\": {                \"entities\": [                    {                    \"type\": \"mention\",                    \"text\": \"<at></at>\",                    \"mentioned\": {                        \"id\": \"\",                        \"name\": \"\"                    }                    }                ]            }        }       }  ]}";
         public ExecuteCommandSendExtractionResolutionTeamsNotification(IBasicActivateItems activator, ExtractionConfiguration ec, bool success) {
             _ec = ec;
@@ -25,15 +25,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         public override void Execute()
         {
             base.Execute();
-            try
-            {
-                var c = GetContent();
-            }catch(Exception e)
-            {
-                Console.WriteLine(e.Message);
-            }
             var content = new StringContent(GetContent(), Encoding.UTF8, "application/json");
             client.PostAsync(url, content);
+            content.Dispose();
 
         }
 
