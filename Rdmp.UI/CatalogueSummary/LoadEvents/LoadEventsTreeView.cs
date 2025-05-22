@@ -327,7 +327,6 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
                 if (column.IsVisible)
                 {
                     string cellText = column.GetStringValue(modelObject);
-                    var y = modelObject.ToString();
                     if (cellText.IndexOf(this.Text, this.StringComparison) != -1)
                     {
                         if (modelObject is ArchivalDataLoadInfo adli)
@@ -352,11 +351,15 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
                         }
                         if (lec.Children is ArchivalProgressLog[] lapl)
                         {
-                            if(lapl.Any(pl => pl.ToString().IndexOf(this.Text, this.StringComparison) != -1))return true;
+                            if (lapl.Any(pl => column.GetStringValue(pl).IndexOf(this.Text, this.StringComparison) != -1)) return true;
                         }
                         if (lec.Children is ArchivalTableLoadInfo[] latli)
                         {
-                            if (latli.Any(pl => pl.ToString().IndexOf(this.Text, this.StringComparison) != -1)) return true;
+                            if (latli.Any(pl => column.GetStringValue(pl).IndexOf(this.Text, this.StringComparison) != -1)) return true;
+                        }
+                        if (lec.Children is ArchivalFatalError[] lafe)
+                        {
+                            if (lafe.Any(pl => column.GetStringValue(pl).IndexOf(this.Text, this.StringComparison) != -1)) return true;
                         }
                     }
                     else if (modelObject is ArchivalTableLoadInfo dli)
@@ -368,7 +371,9 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
                     }
                     else if (modelObject is ArchivalDataLoadInfo adli)
                     {
-                        if (adli.Progress.Any(p => p.ToString().IndexOf(this.Text, this.StringComparison) != -1)) return true;
+                        if (adli.Progress.Any(p => column.GetStringValue(p).IndexOf(this.Text, this.StringComparison) != -1)) return true;
+                        if (adli.TableLoadInfos.Any(p => column.GetStringValue(p).IndexOf(this.Text, this.StringComparison) != -1)) return true;
+                        if (adli.Errors.Any(p => column.GetStringValue(p).IndexOf(this.Text, this.StringComparison) != -1)) return true;
                     }
                 }
             }
@@ -382,7 +387,7 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
 
         treeView1.ModelFilter = new LogFilter(treeView1, filter, StringComparison.CurrentCultureIgnoreCase);
         treeView1.UseFiltering = !string.IsNullOrWhiteSpace(filter);
-        treeView1.DefaultRenderer = new HighlightTextRenderer(new TextMatchFilter(treeView1,filter));
+        treeView1.DefaultRenderer = new HighlightTextRenderer(new TextMatchFilter(treeView1, filter));
     }
 
     private void treeView1_ColumnRightClick(object sender, CellRightClickEventArgs e)
