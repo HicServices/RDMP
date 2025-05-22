@@ -261,7 +261,6 @@ public class AtomicCommandFactory : CommandFactoryBase
             yield return new ExecuteCommandCreateNewFilter(_activator, ac)
             {
                 OfferCatalogueFilters = true,
-                OfferCohortCatalogueFilters = true,
                 SuggestedCategory = Add,
                 OverrideCommandName = "Existing Filter"
             };
@@ -331,7 +330,6 @@ public class AtomicCommandFactory : CommandFactoryBase
             yield return new ExecuteCommandCreateNewFilter(_activator, container, null)
             {
                 OfferCatalogueFilters = true,
-                OfferCohortCatalogueFilters = true,
                 SuggestedCategory = Add,
                 OverrideCommandName = "Existing Filter"
             };
@@ -696,8 +694,12 @@ public class AtomicCommandFactory : CommandFactoryBase
             yield return new ExecuteCommandCreateNewFilter(_activator, sds)
             {
                 OfferCatalogueFilters = true,
-                OfferCohortCatalogueFilters = true,
                 OverrideCommandName = "Existing Filter (copy of)",
+                SuggestedCategory = Add
+            };
+            yield return new ExecuteCommandCopyCatalogueFiltersFromCohortConfigurationToExtraction(_activator, sds)
+            {
+                OverrideCommandName = "Add Catalogue Filters from Cohort Configuration",
                 SuggestedCategory = Add
             };
 

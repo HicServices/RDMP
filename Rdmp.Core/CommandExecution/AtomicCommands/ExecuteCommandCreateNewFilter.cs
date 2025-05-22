@@ -34,9 +34,7 @@ public class ExecuteCommandCreateNewFilter : BasicCommandExecution, IAtomicComma
     public string WhereSQL { get; }
 
     private IFilter[] _offerFilters = [];
-    private IFilter[] _offerCohortFilters = [];
     private bool offerCatalogueFilters;
-    private bool offerCohortCatalogueFilters;
 
     public bool OfferCatalogueFilters
     {
@@ -47,27 +45,12 @@ public class ExecuteCommandCreateNewFilter : BasicCommandExecution, IAtomicComma
             {
                 var c = GetCatalogue();
                 _offerFilters = c?.GetAllFilters();
-
                 if (_offerFilters == null || !_offerFilters.Any())
                     SetImpossible($"There are no Filters declared in Catalogue '{c?.ToString() ?? "NULL"}'");
             }
 
 
             offerCatalogueFilters = value;
-        }
-    }
-
-
-    public bool OfferCohortCatalogueFilters
-    {
-        get => offerCohortCatalogueFilters;
-            set
-        {
-            var c = GetCatalogue();
-
-            var filters = c.CatalogueRepository.GetAllObjects<AggregateFilter>().Where(af => af.GetCatalogue().ID == c.ID);
-            _offerCohortFilters = filters.ToArray();
-            offerCohortCatalogueFilters = value;
         }
     }
 
@@ -255,8 +238,7 @@ where    Optional SQL to set for the filter.  If <basedOn> is not null this will
     private void ImportExistingFilter(IContainer container)
     {
         var wizard = new FilterImportWizard(BasicActivator);
-        var filters = _offerFilters.Union(_offerCohortFilters).ToArray();
-        var import = wizard.ImportManyFromSelection(container, filters).ToArray();
+        var import = wizard.ImportManyFromSelection(container, _offerFilters).ToArray();
 
         foreach (var f in import) container.AddChild(f);
 
