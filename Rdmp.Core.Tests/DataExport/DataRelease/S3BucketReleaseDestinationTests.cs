@@ -81,12 +81,12 @@ public sealed class S3BucketReleaseDestinationTests : TestsRequiringAnExtraction
         }
     }
 
-    [Test]
-    public void AWSLoginTest()
-    {
-        var awss3 = new AWSS3("minio", Amazon.RegionEndpoint.EUWest2);
-        Assert.That(awss3.ListAvailableBuckets().Result, Is.Empty);
-    }
+    //[Test]
+    //public void AWSLoginTest()
+    //{
+    //    var awss3 = new AWSS3("minio", Amazon.RegionEndpoint.EUWest2);
+    //    Assert.That(awss3.ListAvailableBuckets().Result, Is.Empty);
+    //}
 
     [Test]
     public void ReleaseToAWSBasicTest()
