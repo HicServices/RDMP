@@ -85,8 +85,8 @@ public sealed class S3BucketReleaseDestinationTests : TestsRequiringAnExtraction
     public void AWSLoginTest()
     {
         var awss3 = new AWSS3("minio", Amazon.RegionEndpoint.EUWest2);
-        Assert.DoesNotThrow(() => MakeBucket("LoginTest"));
-        Assert.DoesNotThrow(() => DeleteBucket("LoginTest"));
+        Assert.DoesNotThrow(() => MakeBucket("logintest"));
+        Assert.DoesNotThrow(() => DeleteBucket("logintest"));
     }
 
     [Test]
