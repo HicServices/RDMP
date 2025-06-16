@@ -1,7 +1,7 @@
 <Project>
   <ItemGroup>
     <PackageVersion Include="AWSSDK.S3" Version="3.7.416.16" />
-    <PackageVersion Include="AWSSDK.SecurityToken" Version="3.7.401.89" />
+    <PackageVersion Include="AWSSDK.SecurityToken" Version="4.0.0.8" />
     <PackageVersion Include="AWSSDK.SSO" Version="3.7.400.140" />
     <PackageVersion Include="AWSSDK.SSOOIDC" Version="3.7.401.18" />
     <PackageVersion Include="CommandLineParser" Version="2.9.1" />
@@ -37,13 +37,13 @@
     <PackageVersion Include="NUnit" Version="4.3.2" />
     <PackageVersion Include="ObjectListView.Repack.NET6Plus" Version="2.9.5" />
     <PackageVersion Include="Scintilla.NET" Version="5.3.2.9" />
-    <PackageVersion Include="System.Resources.Extensions" Version="9.0.4" />
+    <PackageVersion Include="System.Resources.Extensions" Version="9.0.6" />
     <PackageVersion Include="VPKSoft.ScintillaLexers.NET" Version="1.1.16" />
     <PackageVersion Include="HIC.System.Windows.Forms.DataVisualization" Version="1.0.1" />
     <PackageVersion Include="NUnit3TestAdapter" Version="5.0.0" />
-    <PackageVersion Include="NUnit.Analyzers" Version="4.6.0" />
+    <PackageVersion Include="NUnit.Analyzers" Version="4.9.1" />
     <PackageVersion Include="NSubstitute" Version="5.3.0" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
     <PackageVersion Include="coverlet.collector" Version="6.0.4" />
   </ItemGroup>
 </Project>
