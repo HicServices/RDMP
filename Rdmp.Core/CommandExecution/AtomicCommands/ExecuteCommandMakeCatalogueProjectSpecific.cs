@@ -39,7 +39,7 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
     }
 
     public override string GetCommandHelp() =>
-        "Restrict use of the dataset only to extractions of the specified Project";
+        "Restrict use of the Catalogue to extractions of the specified Projects";
 
     public override void Execute()
     {
