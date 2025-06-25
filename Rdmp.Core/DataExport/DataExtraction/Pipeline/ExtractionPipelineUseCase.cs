@@ -316,6 +316,19 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
                 new NotifyEventArgs(ProgressEventType.Error, "Word metadata document NOT CREATED", e));
             return;
         }
+        try
+        {
+            var datasetVariableReportWriter = new DatasetVariableReportGenerator(this);
+            datasetVariableReportWriter.GenerateDatasetVariableReport();
+        }
+        catch (Exception e)
+        {
+            ExtractCommand.ElevateState(ExtractCommandState.Warning);
+
+            listener.OnNotify(this,
+                new NotifyEventArgs(ProgressEventType.Error, "Dataset variable document NOT CREATED", e));
+            return;
+        }
 
         //if there were any exceptions
         if (wordDataWriter.ExceptionsGeneratingWordFile.Any())
