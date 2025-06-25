@@ -38,6 +38,8 @@ namespace Rdmp.UI.SimpleDialogs
             Project = new OLVColumn();
             ProjectID = new OLVColumn();
             label3 = new System.Windows.Forms.Label();
+            tbFilter = new System.Windows.Forms.TextBox();
+            label4 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)fastObjectListView1).BeginInit();
             SuspendLayout();
             // 
@@ -110,11 +112,30 @@ namespace Rdmp.UI.SimpleDialogs
             label3.Size = new System.Drawing.Size(0, 15);
             label3.TabIndex = 6;
             // 
+            // tbFilter
+            // 
+            tbFilter.Location = new System.Drawing.Point(54, 424);
+            tbFilter.Name = "tbFilter";
+            tbFilter.Size = new System.Drawing.Size(347, 23);
+            tbFilter.TabIndex = 7;
+            tbFilter.TextChanged += tbFilter_TextChanged;
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Location = new System.Drawing.Point(12, 427);
+            label4.Name = "label4";
+            label4.Size = new System.Drawing.Size(36, 15);
+            label4.TabIndex = 8;
+            label4.Text = "Filter:";
+            // 
             // SetProjectsForCatalogueUI
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(800, 450);
+            Controls.Add(label4);
+            Controls.Add(tbFilter);
             Controls.Add(label3);
             Controls.Add(fastObjectListView1);
             Controls.Add(label2);
@@ -138,5 +159,7 @@ namespace Rdmp.UI.SimpleDialogs
         private OLVColumn Project;
         private OLVColumn ProjectID;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TextBox tbFilter;
+        private System.Windows.Forms.Label label4;
     }
 }

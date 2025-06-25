@@ -60,6 +60,21 @@ namespace Rdmp.UI.SimpleDialogs
             fastObjectListView1.EndUpdate();
         }
 
+
+        private void Filter(string filterText)
+        {
+            fastObjectListView1.BeginUpdate();
+            fastObjectListView1.ClearObjects();
+            if (string.IsNullOrWhiteSpace(filterText))
+            {
+                fastObjectListView1.AddObjects(_allProjects);
+            }
+            else
+            {
+                fastObjectListView1.AddObjects(_allProjects.Where(project => project.Name.ToLower().Contains(filterText.ToLower())).ToList());
+            }
+            fastObjectListView1.EndUpdate();
+        }
         private void OnItemCheck(object sender, EventArgs e)
         {
             button1.Enabled = false;
@@ -144,16 +159,6 @@ namespace Rdmp.UI.SimpleDialogs
             {
                 label3.Text = "";
             }, TaskScheduler.FromCurrentSynchronizationContext());
-
-                //checkedListBox1.Items.Clear();
-                //_linkedProjects = _activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", _catalogue.ID).Where(eds => eds.Project_ID != null).Select(eds => (int)eds.Project_ID).ToList();
-                //checkedListBox1.Items.AddRange(_allProjects.ToArray());
-                //foreach (var selectedProjectId in _linkedProjects)
-                //{
-                //    checkedListBox1.SelectedItem = checkedListBox1.Items.OfType<Project>().ToList().FirstOrDefault(i => i.ID == selectedProjectId);
-                //    checkedListBox1.SetItemChecked(checkedListBox1.SelectedIndex, true);
-                //    checkedListBox1.SelectedItem = null; // To clear selection if needed
-                //}
                 fastObjectListView1.Enabled = true;
                 button2.Enabled = true;
                 button1.Enabled = false;
@@ -163,6 +168,12 @@ namespace Rdmp.UI.SimpleDialogs
         private void fastObjectListView1_SelectedIndexChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void tbFilter_TextChanged(object sender, EventArgs e)
+        {
+            var text = tbFilter.Text;
+            Filter(text);
         }
     }
 }
