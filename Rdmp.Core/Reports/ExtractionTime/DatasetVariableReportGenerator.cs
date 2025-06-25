@@ -1,4 +1,5 @@
 ﻿using CommandLine;
+using Rdmp.Core.CohortCommitting;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline;
@@ -47,25 +48,42 @@ namespace Rdmp.Core.Reports.ExtractionTime
                 $"{_destination.GetFilename()}Variables.csv")).ToString(), csv.ToString());
         }
 
+
+        private string LookupKeyNameGenerator(ColumnInfo columnInfo)
+        {
+            var split = columnInfo.GetFullyQualifiedName().Split('.');
+            return $"{split[^2]}.{split[^1]}";
+        }
+        private string LookupStringGenerator(Lookup lookup)
+        {             
+            return $"{LookupKeyNameGenerator(lookup.ForeignKey)} = {LookupKeyNameGenerator(lookup.PrimaryKey)}";
+        }
+
         private void WriteColumn(ExtractableColumn column, StringBuilder sb)
         {
             var catalogueItem = _catalogue.CatalogueItems.Where(c => c.ColumnInfo_ID == column.ColumnInfo.ID).First();
             bool isNull = !catalogueItem.ExtractionInformation.IsPrimaryKey;
             bool isIdentifier = catalogueItem.ExtractionInformation.IsExtractionIdentifier;
-            sb.AppendLine($"\"{column.GetRuntimeName()}\",\"{column.ColumnInfo.Data_type}\",{isNull},\"{catalogueItem.Description}\",{isIdentifier}");
+            var lookups = _catalogue.CatalogueRepository.GetAllObjectsWhere<Lookup>("ForeignKey_ID",column.ColumnInfo.ID);
+            var lookupString = "";
+            if (lookups.Any()) lookupString = string.Join(';', lookups.Select(l => LookupStringGenerator(l)));
+            sb.AppendLine($"\"{column.GetRuntimeName()}\",\"{column.ColumnInfo.Data_type}\",{isNull},\"{catalogueItem.Description}\",{isIdentifier},{lookups.Any()},{lookupString}");
         }
 
         private void WriteReleaseSubs(ReleaseIdentifierSubstitution releaseIdentifierSubstitution,StringBuilder sb)
         {
             var column = releaseIdentifierSubstitution.ColumnInfo;
             var catalogueItem = _catalogue.CatalogueItems.Where(c => c.ColumnInfo_ID == column.ID).First();
-            sb.AppendLine($"\"{releaseIdentifierSubstitution.Alias}\",\"{column.Data_type}\",{false},\"{catalogueItem.Description}\",{releaseIdentifierSubstitution.IsExtractionIdentifier}");
+            var lookups = _catalogue.CatalogueRepository.GetAllObjectsWhere<Lookup>("ForeignKey_ID", column.ID);
+            var lookupString = "";
+            if (lookups.Any()) lookupString = string.Join(';', lookups.Select(l => LookupStringGenerator(l)));
+            sb.AppendLine($"\"{releaseIdentifierSubstitution.Alias}\",\"{column.Data_type}\",{false},\"{catalogueItem.Description}\",{releaseIdentifierSubstitution.IsExtractionIdentifier},{lookups.Any()},{lookupString}");
 
         }
 
         private void WriteHeaders(StringBuilder sb)
         {
-            sb.AppendLine("Variable Name, Type, Null possible(Y/N),Description,Identifier");
+            sb.AppendLine("Variable Name, Type, Null possible(Y/N),Description,Identifier,HasLookups,Lookups");
         }
     }
 }
