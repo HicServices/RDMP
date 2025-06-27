@@ -307,6 +307,7 @@
 		<EmbeddedResource Include="Databases\DataQualityEngineDatabase\runAfterCreateDatabase\CreateTables.sql" />
 		<EmbeddedResource Include="Databases\DataQualityEngineDatabase\up\001_AnnotationsAndDiagram.sql" />
 		<EmbeddedResource Include="Databases\DataQualityEngineDatabase\up\002_AddPivotCategoryLogic.sql" />
+		<EmbeddedResource Include="Databases\DataQualityEngineDatabase\up\005_AnalyticsSupport.sql" />
 		<EmbeddedResource Include="Databases\DataQualityEngineDatabase\up\004_UnicodeSupport.sql" />
 		<EmbeddedResource Include="Databases\DataQualityEngineDatabase\up\003_FixCascadeOnPeriodicityStateTable.sql" />
 		<EmbeddedResource Include="Databases\IdentifierDumpDatabase\runAfterCreateDatabase\CreateTables.sql" />

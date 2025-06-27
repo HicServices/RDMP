@@ -58,6 +58,12 @@ internal class CatalogueMenu : RDMPContextMenuStrip
         {
             Items.Add(new DQEMenuItem(_activator, catalogue));
 
+            Add(new ExecuteCommandViewCatalogueAnalyticsUI(_activator, catalogue)
+            {
+                OverrideCommandName = "Catalogue Analytics",
+                Weight = -86.9f
+            });
+
             //create right click context menu
             Add(new ExecuteCommandViewCatalogueExtractionSqlUI(_activator)
             {

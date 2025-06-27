@@ -23,6 +23,7 @@ public class RunnerFactory
             {
                 DleOptions dleOpts => new DleRunner(activator,dleOpts),
                 DqeOptions dqeOpts => new DqeRunner(dqeOpts),
+                AnalyticsOptions analyticsOpt => new AnalyticsRunner(analyticsOpt),
                 CacheOptions cacheOpts => new CacheRunner(cacheOpts),
                 ExtractionOptions extractionOpts => new ExtractionRunner(activator, extractionOpts),
                 ReleaseOptions releaseOpts => new ReleaseRunner(activator,releaseOpts),
