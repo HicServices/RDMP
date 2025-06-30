@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.Collections.Generic;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
@@ -21,7 +22,7 @@ public class ExecuteCommandMakeProjectSpecificCatalogueNormalAgain : BasicComman
     private Project _project;
     private ExtractableDataSet _extractableDataSet;
 
-    public ExecuteCommandMakeProjectSpecificCatalogueNormalAgain(IBasicActivateItems activator, Catalogue catalogue, Project project) :
+    public ExecuteCommandMakeProjectSpecificCatalogueNormalAgain(IBasicActivateItems activator, Catalogue catalogue, Project project, List<int> projectIdsToIngore) :
         base(activator)
     {
         _catalogue = catalogue;
@@ -52,11 +53,11 @@ public class ExecuteCommandMakeProjectSpecificCatalogueNormalAgain : BasicComman
 
         if (dataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(catalogue).Length > 1)
         {
-            var associatedProjects = dataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(catalogue).Where(eds => eds.Project_ID == _project.ID);
+            var associatedProjects = dataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(catalogue).Where(eds => !projectIdsToIngore.Contains(_project.ID) && eds.Project_ID == _project.ID);
             foreach (var eds in associatedProjects)
             {
                 var sds = dataExportRepository.GetAllObjectsWhere<SelectedDataSets>("ExtractableDataSet_ID", eds.ID);
-                if (sds.Any())
+                if (sds.Count()>1)
                 {
                     //used in an extraction
                     SetImpossible($"Catalogue is used in extractions within Project {_project.Name}. Remove the Catalogue from these extractions.");
@@ -74,6 +75,23 @@ public class ExecuteCommandMakeProjectSpecificCatalogueNormalAgain : BasicComman
         base.Execute();
         if(BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(_catalogue).Length > 1)
         {
+            //var sds = BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<SelectedDataSets>("ExtractableDataSet_ID", _extractableDataSet.ID);
+            //if (sds.Any())
+            //{
+            //    //see if there is a null and repoint, else make the current one null
+            //    var nullProj = BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", _catalogue.ID).Where(eds => eds.Project_ID is null).FirstOrDefault();
+            //    if (nullProj != null)
+            //    {
+            //        foreach(var s in sds)
+            //        {
+            //            s.DeleteInDatabase();
+            //            var x = new SelectedDataSets(BasicActivator.RepositoryLocator.DataExportRepository, (ExtractionConfiguration)s.ExtractionConfiguration, null, (FilterContainer)s.RootFilterContainer);
+            //            x.SaveToDatabase();
+            //            //s.ExtractableDataSet = nullProj;
+                        
+            //        }
+            //    }
+            //}
             _extractableDataSet.DeleteInDatabase();
         }
         else {

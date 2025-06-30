@@ -119,7 +119,7 @@ namespace Rdmp.UI.SimpleDialogs
             foreach (var projectId in removedProjectIDs)
             {
                 var project = _activator.RepositoryLocator.DataExportRepository.GetObjectByID<Project>(projectId);
-                var cmd = new ExecuteCommandMakeProjectSpecificCatalogueNormalAgain(_activator, _catalogue, project);
+                var cmd = new ExecuteCommandMakeProjectSpecificCatalogueNormalAgain(_activator, _catalogue, project, removedProjectIDs.ToList());
                 if (cmd.IsImpossible)
                 {
                     issues.Add(cmd.ReasonCommandImpossible);
@@ -127,6 +127,8 @@ namespace Rdmp.UI.SimpleDialogs
                 else if (execute)
                 {
                     cmd.Execute();
+                    _linkedProjects = _activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", _catalogue.ID).Where(eds => eds.Project_ID != null).Select(eds => (int)eds.Project_ID).ToList();
+                    _savedLinkedProjects = new List<int>(_linkedProjects);
                 }
             }
 
@@ -139,6 +141,7 @@ namespace Rdmp.UI.SimpleDialogs
                 button1.Enabled = false;
                 label2.Text = string.Join("\r\n", issues);
             }
+           
             fastObjectListView1.Enabled = true;
             button2.Enabled = true;
             return issues.Count == 0;
