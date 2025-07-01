@@ -13,7 +13,7 @@ namespace Rdmp.Core.DataExport.Data
     static class ProjectSpecificCatalogueManager
     {
 
-        public static bool CanMakeCatalogueProjectSpecific(IDataExportRepository dqeRepo, ICatalogue catalogue, IProject project, List<int> projectIdsToIgnore)
+        public static bool CanMakeCatalogueProjectSpecific(IDataExportRepository dqeRepo, ICatalogue catalogue, IProject project, List<int> projectIdsToIgnore )
         {
             var status = catalogue.GetExtractabilityStatus(dqeRepo);
 
