@@ -18,15 +18,12 @@ namespace Rdmp.Core.DataExport.Data
             var status = catalogue.GetExtractabilityStatus(dqeRepo);
 
             if (!status.IsExtractable)
-                //throw new Exception("Catalogue must first be made Extractable");
                 return false;
 
             var ei = catalogue.GetAllExtractionInformation(ExtractionCategory.Any);
             if (!ei.Any())
-                //SetImpossible("Catalogue has no extractable columns");
                 return false;
             if (ei.Count(e => e.IsExtractionIdentifier) < 1)
-                //SetImpossible("Catalogue must have at least 1 IsExtractionIdentifier column");
                 return false;
             var edss = dqeRepo.GetAllObjectsWithParent<ExtractableDataSet>(catalogue);
             if (edss.Any(e => e.Project_ID == project.ID))
