@@ -9,7 +9,6 @@ using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
@@ -36,7 +35,7 @@ public class ExecuteCommandMakeProjectSpecificCatalogueNormalAgain : BasicComman
             return;
         }
 
-        _extractableDataSets = dataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(catalogue).Where(eds => ProjectSpecificCatalogueManager.CanMakeCatalogueNonProjectSpecific(dataExportRepository, catalogue, eds)).ToList();
+        _extractableDataSets = dataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(catalogue).Where(eds => eds.Project_ID != null && ProjectSpecificCatalogueManager.CanMakeCatalogueNonProjectSpecific(dataExportRepository, catalogue, eds)).ToList();
         if (!_extractableDataSets.Any())
         {
             SetImpossible("Cannot make Catalogue Non-Project specific");
