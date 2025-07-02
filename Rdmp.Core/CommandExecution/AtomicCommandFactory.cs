@@ -135,7 +135,7 @@ public class AtomicCommandFactory : CommandFactoryBase
                     SuggestedCategory = Extraction
                 };
 
-                yield return new ExecuteCommandMakeCatalogueProjectSpecific(_activator, c, null)
+                yield return new ExecuteCommandMakeCatalogueProjectSpecific(_activator, c, null,false)
                 {
                     Weight = -99.0009f,
                     SuggestedCategory = Extraction

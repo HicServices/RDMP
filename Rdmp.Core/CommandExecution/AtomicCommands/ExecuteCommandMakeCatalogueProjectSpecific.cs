@@ -22,13 +22,15 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
     private ICatalogue _catalogue;
     private IProject _project;
     private List<int> _existingProjectIDs;
+    private bool _force = false;
 
     [UseWithObjectConstructor]
     public ExecuteCommandMakeCatalogueProjectSpecific(IBasicActivateItems itemActivator, ICatalogue catalogue,
-        IProject project) : this(itemActivator)
+        IProject project, [DemandsInitialization("Ignore Validation Login",DemandType.Unspecified,defaultValue:false)]bool force) : this(itemActivator)
     {
         SetCatalogue(catalogue);
         _project = project;
+        _force = force;
     }
 
     public ExecuteCommandMakeCatalogueProjectSpecific(IBasicActivateItems itemActivator) : base(itemActivator)
@@ -101,7 +103,7 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
 
         var status = _catalogue.GetExtractabilityStatus(BasicActivator.RepositoryLocator.DataExportRepository);
 
-        if (!GetListOfValidProjects().Any())
+        if (!GetListOfValidProjects().Any() && !_force)
         {
             SetImpossible("No valid Projects available");
         }

@@ -88,9 +88,9 @@ namespace Rdmp.Core.Tests.Curation
 
         }
 
-        private void MakeProjectSpecific(Catalogue catalogue, Project project, List<int> projectIdsToIgnore = null, bool shouldThrow = false)
+        private void MakeProjectSpecific(Catalogue catalogue, Project project, List<int> projectIdsToIgnore = null, bool shouldThrow = false,bool force=false)
         {
-            var cmd = new ExecuteCommandMakeCatalogueProjectSpecific(_activator);
+            var cmd = new ExecuteCommandMakeCatalogueProjectSpecific(_activator,catalogue,project,force);
             cmd.SetTarget(project);
             cmd.SetTarget(catalogue);
             if (shouldThrow) Assert.That(ProjectSpecificCatalogueManager.CanMakeCatalogueProjectSpecific(_activator.RepositoryLocator.DataExportRepository,catalogue,project,projectIdsToIgnore??new List<int>()), Is.False);
@@ -210,14 +210,14 @@ namespace Rdmp.Core.Tests.Curation
             Assert.That(_activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", _catalogue.ID).First().Project_ID, Is.EqualTo(null));
         }
 
-        //[Test]
-        //public void MakeSingleCatalogueProjectSpecificWhenAlreadyInAnExtractionInEachProjectTest()
-        //{
-        //    SetupTests(2, 0, 2);
-        //    MakeProjectSpecific(_catalogue, _project2, new List<int>() { _project1.ID });
-        //    MakeProjectSpecific(_catalogue, _project1, new List<int>() { _project1.ID });
-        //    Assert.That(_activator.RepositoryLocator.CatalogueRepository.GetObjectByID<Catalogue>(_catalogue.ID).IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository), Is.True);
-        //    Assert.That(_activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", _catalogue.ID).Count, Is.EqualTo(2));
-        //}
+        [Test]
+        public void MakeSingleCatalogueProjectSpecificWhenAlreadyInAnExtractionInEachProjectTest()
+        {
+            SetupTests(2, 0, 2);
+            MakeProjectSpecific(_catalogue, _project2, new List<int>() { _project1.ID },false,true);
+            MakeProjectSpecific(_catalogue, _project1, new List<int>() { _project1.ID },false,true);
+            Assert.That(_activator.RepositoryLocator.CatalogueRepository.GetObjectByID<Catalogue>(_catalogue.ID).IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository), Is.True);
+            Assert.That(_activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", _catalogue.ID).Count, Is.EqualTo(2));
+        }
     }
 }
