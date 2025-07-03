@@ -193,7 +193,7 @@ public class DataExportChildProvider : CatalogueChildProvider
             }
             else
             {
-                catalogue.InjectKnown(new CatalogueExtractabilityStatus(true, eds.First().Project_ID != null));
+                catalogue.InjectKnown(new CatalogueExtractabilityStatus(true, eds.First().Projects.Any()));
             }
         }
         ReportProgress("Catalogue extractability injection");
@@ -318,7 +318,7 @@ public class DataExportChildProvider : CatalogueChildProvider
         var children = new HashSet<object>();
 
         foreach (var projectSpecificEds in ExtractableDataSets.Where(eds =>
-                     eds.Project_ID == projectCataloguesNode.Project.ID))
+                     eds.Projects.Select(p => p.ID).Contains(projectCataloguesNode.Project.ID)))
         {
             var cata = (Catalogue)projectSpecificEds.Catalogue;
 
@@ -355,7 +355,7 @@ public class DataExportChildProvider : CatalogueChildProvider
     {
         var children = new HashSet<object>();
         var associatedCohorts = associatedCohortConfigurations.Project.GetAssociatedCohortIdentificationConfigurations();
-        foreach(var x in associatedCohorts)
+        foreach (var x in associatedCohorts)
         {
             children.Add(x);
         }

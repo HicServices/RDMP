@@ -1,4 +1,6 @@
-﻿using Rdmp.Core.Curation.Data;
+﻿using NPOI.OpenXmlFormats.Spreadsheet;
+using Org.BouncyCastle.Crypto.Signers;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories;
 using Spectre.Console;
 using System;
@@ -13,7 +15,7 @@ namespace Rdmp.Core.DataExport.Data
     static class ProjectSpecificCatalogueManager
     {
 
-        public static bool CanMakeCatalogueProjectSpecific(IDataExportRepository dqeRepo, ICatalogue catalogue, IProject project, List<int> projectIdsToIgnore )
+        public static bool CanMakeCatalogueProjectSpecific(IDataExportRepository dqeRepo, ICatalogue catalogue, IProject project, List<int> projectIdsToIgnore)
         {
             var status = catalogue.GetExtractabilityStatus(dqeRepo);
 
@@ -26,7 +28,7 @@ namespace Rdmp.Core.DataExport.Data
             if (ei.Count(e => e.IsExtractionIdentifier) < 1)
                 return false;
             var edss = dqeRepo.GetAllObjectsWithParent<ExtractableDataSet>(catalogue);
-            if (edss.Any(e => e.Project_ID == project.ID))
+            if (edss.Any(e => e.Projects.Select(p => p.ID).Contains(project.ID)))
             {
                 //already project specific
                 return true;
@@ -41,62 +43,48 @@ namespace Rdmp.Core.DataExport.Data
             return true;
         }
 
-        public static void MakeCatalogueProjectSpecific(IDataExportRepository dqeRepo, ICatalogue catalogue, IProject project)
+        public static ExtractableDataSet MakeCatalogueProjectSpecific(IDataExportRepository dqeRepo, ICatalogue catalogue, IProject project)
         {
-            var eds = dqeRepo.GetAllObjectsWithParent<ExtractableDataSet>(catalogue).Where(eds => eds.Project_ID is null).SingleOrDefault();
+            var eds = dqeRepo.GetAllObjectsWithParent<ExtractableDataSet>(catalogue).SingleOrDefault();
             if (eds is null)
             {
                 eds = new ExtractableDataSet(dqeRepo, catalogue, false);
+                eds.SaveToDatabase();
             }
-            eds.Project_ID = project.ID;
+
+            var edsp = new ExtractableDataSetProject(dqeRepo, eds, project);
+            edsp.SaveToDatabase();
+            eds.Projects.Add(edsp.Project);
+            eds.SaveToDatabase();
             foreach (var ei in catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Where(ei => ei.ExtractionCategory is ExtractionCategory.Core))
             {
                 ei.ExtractionCategory = ExtractionCategory.ProjectSpecific;
                 ei.SaveToDatabase();
             }
-            eds.SaveToDatabase();
+            return eds;
         }
 
-        public static bool CanMakeCatalogueNonProjectSpecific(IDataExportRepository dqeRepo, ICatalogue catalogue, ExtractableDataSet extractableDataSet)
+        public static bool CanMakeCatalogueNonProjectSpecific(IDataExportRepository dqeRepo, ICatalogue catalogue, ExtractableDataSet extractableDataSet,IProject project)
         {
-            var selectedDatasetsForEDS = dqeRepo.GetAllObjects<SelectedDataSets>().Where(sds => sds.ExtractableDataSet_ID == extractableDataSet.ID);
-            if (selectedDatasetsForEDS.Any()) //used in an extraction
-            {
-                //check if catalgue is project specific to any other projects
-                var otherEDs = dqeRepo.GetAllObjectsWithParent<ExtractableDataSet>(catalogue).Where(eds => eds.ID != extractableDataSet.ID && eds.Project_ID != null);
-                if (otherEDs.Any())
-                {
-                    //it's used in this projects extractions and used in another project specific extraction;
-                    return false;
-                }
-            }
-            return true;
+            bool usedInExtraction = project.ExtractionConfigurations.Where(ec => ec.SelectedDataSets.Select(sds => sds.ExtractableDataSet).Contains(extractableDataSet)).Any();
+            if (!usedInExtraction) return true;
+            if(usedInExtraction && extractableDataSet.Projects.Count ==1) return true;
+            return false;
         }
 
-        public static void MakeCatalogueNonProjectSpecific(IDataExportRepository dqeRepo, ICatalogue catalogue, ExtractableDataSet extractableDataSet)
+        public static void MakeCatalogueNonProjectSpecific(IDataExportRepository dqeRepo, ICatalogue catalogue, ExtractableDataSet extractableDataSet, Project project)
         {
-            var existingNullEntry = dqeRepo.GetAllObjects<ExtractableDataSet>().Where(eds => eds.Catalogue_ID == catalogue.ID && eds.Project_ID == null).FirstOrDefault();
-            if (existingNullEntry is not null)
+            if (project is null) return;
+            if (extractableDataSet is null) return;
+            if (catalogue is null) return;
+
+            var p = dqeRepo.GetAllObjects<ExtractableDataSetProject>().Where(edsp => edsp.ExtractableDataSet_ID == extractableDataSet.ID && edsp.Project_ID == project.ID).FirstOrDefault();
+            if (p is not null)
             {
-                var selectedDatasets = dqeRepo.GetAllObjects<SelectedDataSets>().Where(sds => sds.ExtractableDataSet_ID == extractableDataSet.ID);
-                foreach(var sds in selectedDatasets)
-                {
-                    sds.ExtractableDataSet_ID = existingNullEntry.ID;
-                    sds.SaveToDatabase();
-                }
-                var cumulativeExtractionResults = dqeRepo.GetAllObjects<CumulativeExtractionResults>().Where(cer => cer.ExtractableDataSet_ID == extractableDataSet.ID);
-                foreach (var cer in cumulativeExtractionResults)
-                {
-                    cer.ExtractableDataSet_ID = existingNullEntry.ID;
-                    cer.SaveToDatabase();
-                }
-                extractableDataSet.DeleteInDatabase();
+                p.DeleteInDatabase();
             }
-            else
-            {
-                extractableDataSet.Project_ID = null;
-                extractableDataSet.SaveToDatabase();
-            }
+            extractableDataSet.Projects.Remove(project);
+            
             foreach (var ei in catalogue.GetAllExtractionInformation(ExtractionCategory.ProjectSpecific))
             {
                 ei.ExtractionCategory = ExtractionCategory.Core;

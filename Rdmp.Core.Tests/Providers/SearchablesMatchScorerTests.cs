@@ -175,7 +175,7 @@ internal class SearchablesMatchScorerTests : UnitTests
             if (projectSpecific)
             {
                 // this makes it project specific
-                eds.Project_ID = 5135;
+                //eds.Project_ID = 5135;
                 eds.SaveToDatabase();
             }
 

@@ -54,8 +54,9 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
 
         base.Execute();
 
-        ProjectSpecificCatalogueManager.MakeCatalogueProjectSpecific(BasicActivator.RepositoryLocator.DataExportRepository, _catalogue, _project);
+        var eds = ProjectSpecificCatalogueManager.MakeCatalogueProjectSpecific(BasicActivator.RepositoryLocator.DataExportRepository, _catalogue, _project);
         Publish(_catalogue);
+        Publish(eds);
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>

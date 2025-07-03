@@ -283,7 +283,7 @@ public class GoToCommandFactory : CommandFactoryBase
                 if (cataEds != null)
                 {
                     yield return new ExecuteCommandShow(_activator,
-                         () => (cataEds.Select(c => c.Project_ID).Select(p => _activator.RepositoryLocator.DataExportRepository.GetObjectByID<Project>(p.Value))))
+                         () => (cataEds.SelectMany(c => c.Projects.Select(p => p.ID)).Select(p => _activator.RepositoryLocator.DataExportRepository.GetObjectByID<Project>(p))))
                     {
                         OverrideCommandName = "Associated Projects",
                         OverrideIcon = GetImage(RDMPConcept.Project)
