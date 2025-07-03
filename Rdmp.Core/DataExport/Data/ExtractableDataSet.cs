@@ -51,8 +51,7 @@ public class ExtractableDataSet : DatabaseEntity, IExtractableDataSet, IInjectKn
         get
         {
             if (_projects != null) return _projects;
-            var x = Repository.GetAllObjectsWhere<ExtractableDataSetProject>("ExtractableDataset_ID", this.ID);
-            var ids = Repository.GetAllObjectsWhere<ExtractableDataSetProject>("ExtractableDataset_ID", this.ID).Select(edsp => edsp.Project_ID);
+            var ids = Repository.GetAllObjectsWhere<ExtractableDataSetProject>("ExtractableDataSet_ID", this.ID).Select(edsp => edsp.Project_ID);
             Projects = Repository.GetAllObjectsInIDList<Project>(ids).Cast<IProject>().ToList();
             return _projects;
 

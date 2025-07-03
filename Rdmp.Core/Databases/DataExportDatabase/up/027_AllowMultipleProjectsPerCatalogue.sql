@@ -32,7 +32,7 @@ CREATE TABLE [dbo].[ExtractableDataSetProject](
  REFERENCES [dbo].[ExtractableDataSet] ([ID])
  ON DELETE CASCADE,
 	CONSTRAINT [PK_ExtractableDataSetProject] PRIMARY KEY CLUSTERED(
-		[Project_ID], [ExtractableDataset_ID]	
+		[Project_ID], [ExtractableDataSet_ID]	
 	)
 )
 END
