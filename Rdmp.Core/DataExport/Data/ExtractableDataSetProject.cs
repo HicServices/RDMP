@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Rdmp.Core.DataExport.Data
 {
-    class ExtractableDataSetProject : DatabaseEntity
+    public class ExtractableDataSetProject : DatabaseEntity
     {
         #region Database Properties
         private int _projectID;
