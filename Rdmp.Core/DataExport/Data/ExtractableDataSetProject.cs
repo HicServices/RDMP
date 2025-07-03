@@ -10,6 +10,9 @@ using System.Threading.Tasks;
 
 namespace Rdmp.Core.DataExport.Data
 {
+    /// <summary>
+    /// Used in a one-to-many relationship for the proejcts that are associated with a certain extractable dataset
+    /// </summary>
     public class ExtractableDataSetProject : DatabaseEntity
     {
         #region Database Properties
