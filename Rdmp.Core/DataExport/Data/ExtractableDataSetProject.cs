@@ -27,13 +27,16 @@ namespace Rdmp.Core.DataExport.Data
             get => _extractableDataSetID;
             set => SetField(ref _extractableDataSetID, value);
         }
-
+        #endregion
+        #region Relationships
         [NoMappingToDatabase]
         public IProject Project => Repository.GetObjectByID<Project>(_projectID);
 
         [NoMappingToDatabase]
         public ExtractableDataSet DataSet=> Repository.GetObjectByID<ExtractableDataSet>(_extractableDataSetID);
         #endregion
+
+
 
         public ExtractableDataSetProject(IDataExportRepository repository, ExtractableDataSet eds, IProject project)
         {
