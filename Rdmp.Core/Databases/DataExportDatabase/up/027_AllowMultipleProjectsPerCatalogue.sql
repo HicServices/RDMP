@@ -22,7 +22,7 @@ CREATE UNIQUE NONCLUSTERED INDEX [PreventDoubleAddingCatalogueIdx] ON [dbo].[Ext
 )
 END
 
-if not exists (select 1 from sys.tables where name= "ExtractableDataSetProject")
+if not exists (select 1 from sys.tables where name='ExtractableDataSetProject')
 BEGIN
 CREATE TABLE [dbo].[ExtractableDataSetProject](
 	[ID] [int] IDENTITY(1,1) NOT NULL,
