@@ -123,6 +123,7 @@ public sealed class S3BucketReleaseDestinationTests : TestsRequiringAnExtraction
         Assert.DoesNotThrow(() => runner.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, ThrowImmediatelyCheckNotifier.Quiet, new GracefulCancellationToken()));
         var foundObjects = GetObjects("releasetoawsbasictest");
         Assert.That(foundObjects, Has.Count.EqualTo(1));
+        _minioClient.RemoveObjectAsync(new RemoveObjectArgs().WithBucket("releasetoawsbasictest").WithObject("releasetoawsbasictest"));
         DeleteBucket("releasetoawsbasictest");
     }
 
