@@ -22,7 +22,6 @@ namespace Rdmp.Core.Tests.Curation
         private Project _project1;
         private Project _project2;
         private ExtractableDataSet _eds1;
-        private ExtractableDataSet _eds2;
         private ConsoleInputManager _activator;
 
         public void SetupTests(int projectCount = 0, int projectSpecificCount = 0, int extractionCount = 0)

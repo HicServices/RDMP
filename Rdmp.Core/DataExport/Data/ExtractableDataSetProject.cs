@@ -39,7 +39,7 @@ namespace Rdmp.Core.DataExport.Data
         public ExtractableDataSet DataSet=> Repository.GetObjectByID<ExtractableDataSet>(_extractableDataSetID);
         #endregion
 
-
+        public ExtractableDataSetProject() { }
 
         public ExtractableDataSetProject(IDataExportRepository repository, ExtractableDataSet eds, IProject project)
         {
