@@ -63,7 +63,7 @@ public sealed class S3BucketReleaseDestinationTests : TestsRequiringAnExtraction
         _minioClient.RemoveBucketAsync(rbArgs).Wait();
     }
 
-    private static List<Minio.DataModel.Item> GetObjects(string bucketName)
+    private static List<Item> GetObjects(string bucketName)
     {
         var loArgs = new ListObjectsArgs().WithBucket(bucketName);
         var x = _minioClient.ListObjectsEnumAsync(loArgs).ToListAsync();
@@ -85,7 +85,8 @@ public sealed class S3BucketReleaseDestinationTests : TestsRequiringAnExtraction
     public void AWSLoginTest()
     {
         var awss3 = new AWSS3("minio", Amazon.RegionEndpoint.EUWest2);
-        Assert.That(awss3.ListAvailableBuckets().Result, Is.Empty);
+        Assert.DoesNotThrow(() => MakeBucket("logintest"));
+        Assert.DoesNotThrow(() => DeleteBucket("logintest"));
     }
 
     [Test]
