@@ -63,7 +63,7 @@ public sealed class S3BucketReleaseDestinationTests : TestsRequiringAnExtraction
         _minioClient.RemoveBucketAsync(rbArgs).Wait();
     }
 
-    private static List<Item> GetObjects(string bucketName)
+    private static List<Minio.DataModel.Item> GetObjects(string bucketName)
     {
         var loArgs = new ListObjectsArgs().WithBucket(bucketName);
         var x = _minioClient.ListObjectsEnumAsync(loArgs).ToListAsync();
