@@ -318,16 +318,22 @@ public class DataExportChildProvider : CatalogueChildProvider
     {
         var children = new HashSet<object>();
 
-        foreach(var projectSpecificEdsp in ExtractableDataSetProjects.Where(edsp => edsp.Project_ID == projectCataloguesNode.Project.ID))
+        if (ExtractableDataSetProjects.Any())
         {
-            var eds = ExtractableDataSets.First(eds => eds.ID == projectSpecificEdsp.ExtractableDataSet_ID);
-            var cata = (Catalogue)eds.Catalogue;
-
-            // cata will be null if it has been deleted from the database
-            if (cata != null)
+            foreach (var projectSpecificEdsp in ExtractableDataSetProjects.Where(edsp => edsp.Project_ID == projectCataloguesNode.Project.ID))
             {
-                children.Add(cata);
-                AddChildren(cata, descendancy.Add(eds.Catalogue));
+                var eds = ExtractableDataSets.FirstOrDefault(eds => eds.ID == projectSpecificEdsp.ExtractableDataSet_ID);
+                if (eds != null)
+                {
+                    var cata = (Catalogue)eds.Catalogue;
+
+                    // cata will be null if it has been deleted from the database
+                    if (cata != null)
+                    {
+                        children.Add(cata);
+                        AddChildren(cata, descendancy.Add(eds.Catalogue));
+                    }
+                }
             }
         }
         //foreach (var projectSpecificEds in ExtractableDataSets.Where(eds =>
