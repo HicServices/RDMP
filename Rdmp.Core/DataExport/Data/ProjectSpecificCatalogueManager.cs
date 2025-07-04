@@ -54,8 +54,8 @@ namespace Rdmp.Core.DataExport.Data
 
             var edsp = new ExtractableDataSetProject(dqeRepo, eds, project);
             edsp.SaveToDatabase();
-            eds.Projects.Add(edsp.Project);
-            eds.SaveToDatabase();
+            //eds.Projects.Add(edsp.Project);
+            //eds.SaveToDatabase();
             foreach (var ei in catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Where(ei => ei.ExtractionCategory is ExtractionCategory.Core))
             {
                 ei.ExtractionCategory = ExtractionCategory.ProjectSpecific;

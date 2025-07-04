@@ -13,7 +13,7 @@ namespace Rdmp.Core.DataExport.Data
     /// <summary>
     /// Used in a one-to-many relationship for the proejcts that are associated with a certain extractable dataset
     /// </summary>
-    public class ExtractableDataSetProject : DatabaseEntity
+    public class ExtractableDataSetProject : DatabaseEntity, IMapsDirectlyToDatabaseTable
     {
         #region Database Properties
         private int _projectID;
