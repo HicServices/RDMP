@@ -39,9 +39,9 @@ CREATE TABLE [dbo].[ExtractableDataSetProject](
 )
 END
 
-if ((select count(*) from [ExtractableDataSetProject]) = 0)
+if (((select count(*) from [ExtractableDataSetProject]) = 0) AND COL_LENGTH('ExtractableDataSetProject','Project_ID') IS NULL)
 BEGIN
 INSERT INTO [dbo].[ExtractableDataSetProject](ExtractableDataSet_ID,Project_ID)
-SELECT  ID, Project_ID FROM [dbo].[ExtractableDataSet]
+SELECT  [ID], [Project_ID] FROM [dbo].[ExtractableDataSet]
 WHERE PROJECT_ID is not null
 END
