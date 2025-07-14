@@ -10,9 +10,11 @@ if exists(select 1 from sys.columns where name = 'Project_ID' and OBJECT_NAME(ob
 ALTER TABLE [dbo].[ExtractableDataSet]
 DROP CONSTRAINT [FK_ExtractableDataSet_Project]
 
-if exists(select 1 from sys.columns where name = 'Project_ID' and OBJECT_NAME(object_id) = 'ExtractableDataSet')
-ALTER TABLE [dbo].[ExtractableDataSet]
-DROP COLUMN [Project_ID]
+
+-- not droping this makes it backwards compatable
+--if exists(select 1 from sys.columns where name = 'Project_ID' and OBJECT_NAME(object_id) = 'ExtractableDataSet')
+--ALTER TABLE [dbo].[ExtractableDataSet]
+--DROP COLUMN [Project_ID]
 
 if not exists(select 1 from sys.indexes where name='PreventDoubleAddingCatalogueProjectIdx' and OBJECT_NAME(object_id) = 'ExtractableDataSet')
 BEGIN
@@ -35,4 +37,11 @@ CREATE TABLE [dbo].[ExtractableDataSetProject](
 		[Project_ID], [ExtractableDataSet_ID]	
 	)
 )
+END
+
+if ((select count(*) from [ExtractableDataSetProject]) = 0)
+BEGIN
+INSERT INTO [dbo].[ExtractableDataSetProject](ExtractableDataSet_ID,Project_ID)
+SELECT  ID, Project_ID FROM [dbo].[ExtractableDataSet]
+WHERE PROJECT_ID is not null
 END
