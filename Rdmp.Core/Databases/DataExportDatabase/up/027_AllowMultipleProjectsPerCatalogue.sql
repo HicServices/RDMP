@@ -7,9 +7,10 @@ BEGIN
 END
 
 if exists(select 1 from sys.columns where name = 'Project_ID' and OBJECT_NAME(object_id) = 'ExtractableDataSet')
+BEGIN
 ALTER TABLE [dbo].[ExtractableDataSet]
 DROP CONSTRAINT [FK_ExtractableDataSet_Project]
-
+END
 
 -- not droping this makes it backwards compatable
 --if exists(select 1 from sys.columns where name = 'Project_ID' and OBJECT_NAME(object_id) = 'ExtractableDataSet')
