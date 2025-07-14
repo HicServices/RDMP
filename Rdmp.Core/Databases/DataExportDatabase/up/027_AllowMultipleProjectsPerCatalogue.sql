@@ -40,8 +40,9 @@ CREATE TABLE [dbo].[ExtractableDataSetProject](
 )
 END
 
-if (((select count(*) from [ExtractableDataSetProject]) = 0) AND COL_LENGTH('ExtractableDataSetProject','Project_ID') IS NULL)
+if (((select count(*) from [ExtractableDataSetProject]) = 0) AND (select count(*) from sys.columns where name = 'Project_ID' and OBJECT_NAME(object_id) = 'ExtractableDataSet')!=0)
 BEGIN
+DECLARE @SQLString AS NVARCHAR (500);
 set @SQLString = 'INSERT INTO [dbo].[ExtractableDataSetProject](ExtractableDataSet_ID,Project_ID) SELECT  [ID], [Project_ID] FROM [dbo].[ExtractableDataSet] WHERE [Project_ID] is not null'
-EXEC sq_executeSQL @SQLString
+EXEC (@SQLString)
 END
