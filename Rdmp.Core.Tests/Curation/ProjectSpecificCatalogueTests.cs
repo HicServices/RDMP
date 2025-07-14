@@ -94,7 +94,7 @@ namespace Rdmp.Core.Tests.Curation
 
         private void MakeNotProjectSpecific(Catalogue catalogue, Project project, bool shouldThrow = false)
         {
-            var cmd = new ExecuteCommandMakeProjectSpecificCatalogueNormalAgain(_activator,catalogue,project);
+            var cmd = new ExecuteCommandMakeProjectSpecificCatalogueNormalAgain(_activator,catalogue,project,new List<int>() { });
             if (shouldThrow) Assert.Throws<ImpossibleCommandException>(() => cmd.Execute());
             else Assert.DoesNotThrow(() => cmd.Execute());
         }
