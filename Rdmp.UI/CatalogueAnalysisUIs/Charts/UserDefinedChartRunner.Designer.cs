@@ -30,8 +30,8 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UserDefinedChartRunner));
             groupBox1 = new System.Windows.Forms.GroupBox();
-            button1 = new System.Windows.Forms.Button();
             multiPurposeChart1 = new MultiPurposeChart();
+            button1 = new System.Windows.Forms.Button();
             groupBox1.SuspendLayout();
             SuspendLayout();
             // 
@@ -48,6 +48,13 @@
             groupBox1.TabStop = false;
             groupBox1.Text = "groupBox1";
             // 
+            // multiPurposeChart1
+            // 
+            multiPurposeChart1.Location = new System.Drawing.Point(6, 51);
+            multiPurposeChart1.Name = "multiPurposeChart1";
+            multiPurposeChart1.TabIndex = 1;
+            multiPurposeChart1.Load += multiPurposeChart1_Load;
+            // 
             // button1
             // 
             button1.Image = (System.Drawing.Image)resources.GetObject("button1.Image");
@@ -57,13 +64,6 @@
             button1.TabIndex = 0;
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click;
-            // 
-            // multiPurposeChart1
-            // 
-            multiPurposeChart1.Location = new System.Drawing.Point(6, 51);
-            multiPurposeChart1.Name = "multiPurposeChart1";
-            multiPurposeChart1.Size = new System.Drawing.Size(223, 203);
-            multiPurposeChart1.TabIndex = 1;
             // 
             // UserDefinedChartRunner
             // 

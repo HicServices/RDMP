@@ -1,4 +1,6 @@
-﻿using NPOI.OpenXmlFormats.Dml.Diagram;
+﻿using CommandLine;
+using Microsoft.Data.SqlClient;
+using NPOI.OpenXmlFormats.Dml.Diagram;
 using NPOI.SS.Formula.Functions;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.QueryBuilding;
@@ -46,7 +48,7 @@ namespace Rdmp.Core.CatalogueAnalysisTools.Data
             {
                 var y = r[r.GetName(0)].ToString();
                 var x = r[r.GetName(1)].ToString();
-                var result = new UserDefinedChartResult(_DQERepository, this, x, y);
+                var result = new UserDefinedChartResult(new DQERepository(_DQERepository.CatalogueRepository), this, x, y);
                 result.SaveToDatabase();
             }
         }
@@ -56,12 +58,12 @@ namespace Rdmp.Core.CatalogueAnalysisTools.Data
         {
             //seems to be an issue with the dbdatareader already being open
             var dt = new DataTable();
-            dt.Columns.Add("Y");
             dt.Columns.Add("X");
+            dt.Columns.Add("Y");
             var results = _DQERepository.GetAllObjectsWhere<UserDefinedChartResult>("UserDefinedChart_ID", this.ID);
             foreach(var result in results)
             {
-                dt.Rows.Add([result.Y, result.X]);
+                dt.Rows.Add([result.X, result.Y]);
             }
 
             return dt;

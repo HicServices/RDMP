@@ -256,7 +256,7 @@
 		<EmbeddedResource Include="Databases\CatalogueDatabase\up\078_AddLastLoadTimeToLoadMetadata.sql" />
 		<EmbeddedResource Include="Databases\CatalogueDatabase\up\084_AddLoadDirectorySplit.sql" />
 		<EmbeddedResource Include="Databases\CatalogueDatabase\up\085_AddTicketingReleaseStatuses.sql" />
-		<EmbeddedResource Include="Databases\CatalogueDatabase\up\091_AddAnalysisTools.sql" />
+		<EmbeddedResource Include="Databases\DataQualityEngineDatabase\up\091_AddAnalysisTools.sql" />
 		<EmbeddedResource Include="Databases\CatalogueDatabase\up\090_UpdateCatalogueMetadata.sql" />
 		<EmbeddedResource Include="Databases\CatalogueDatabase\up\089_AddDataLoadVersioning.sql" />
 		<EmbeddedResource Include="Databases\CatalogueDatabase\up\088_AddRegexRedactionConfiguration.sql" />

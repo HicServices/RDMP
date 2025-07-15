@@ -1,4 +1,5 @@
 ﻿using Rdmp.Core.Curation.Data;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using System;
 using System.Collections.Generic;
@@ -18,14 +19,15 @@ namespace Rdmp.Core.CatalogueAnalysisTools.Data
 
 
         public string X { get => _x; set => SetField(ref _x, value); }
-        public string Y { get => _x; set => SetField(ref _x, value); }
+        public string Y { get => _y; set => SetField(ref _y, value); }
 
+        [NoMappingToDatabase]
         public UserDefinedChart UserDefinedChart { get => _userDefinedChart; set => SetField(ref _userDefinedChart, value); }
 
 
         public UserDefinedChartResult(DQERepository repository, DbDataReader r): base(repository, r)
         {
-            _DQERepository = repository;
+            _DQERepository = new DQERepository(repository.CatalogueRepository);
             _x = r["X"].ToString();
             _y = r["Y"].ToString();
             _userDefinedChart = _DQERepository.GetObjectByID<UserDefinedChart>(int.Parse(r["UserDefinedChart_ID"].ToString()));

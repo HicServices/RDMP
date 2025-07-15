@@ -8,7 +8,7 @@ using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static Rdmp.Core.CatalogueAnalysisTools.Data.PrimaryContraint;
+using static Rdmp.Core.CatalogueAnalysisTools.Data.PrimaryConstraint;
 
 namespace Rdmp.Core.CatalogueAnalysisTools.Data
 {

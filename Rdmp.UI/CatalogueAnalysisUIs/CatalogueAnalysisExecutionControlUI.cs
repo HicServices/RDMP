@@ -16,7 +16,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using static Rdmp.Core.CatalogueAnalysisTools.Data.PrimaryContraint;
+using static Rdmp.Core.CatalogueAnalysisTools.Data.PrimaryConstraint;
 using static Rdmp.Core.CatalogueAnalysisTools.Data.SecondaryConstraint;
 
 namespace Rdmp.UI.CatalogueAnalysisUIs;
@@ -25,7 +25,7 @@ public partial class CatalogueAnalysisExecutionControlUI : CatalogueAnalysisExec
 {
     private Catalogue _catalogue;
     private DQERepository _dqeRepository;
-    private List<PrimaryContraint> _primaryConstraints;
+    private List<PrimaryConstraint> _primaryConstraints = [];
 
     private List<SecondaryConstraint> _secondaryConstraints = [];
     private void SetupPrimaryConstrainsConfiguration()
@@ -35,14 +35,14 @@ public partial class CatalogueAnalysisExecutionControlUI : CatalogueAnalysisExec
             var existingEvaulation = _primaryConstraints.Where(pc => pc.ColumnInfo.ID == ci.ID).FirstOrDefault();
 
             var constraintsDropdown = new ComboBox();
-            constraintsDropdown.Items.AddRange(Enum.GetNames(typeof(PrimaryContraint.Contraints)));
+            constraintsDropdown.Items.AddRange(Enum.GetNames(typeof(PrimaryConstraint.Constraints)));
             constraintsDropdown.Click += (o, e) =>
             {
                 HandleConstraintUpdate(o, e, ci);
             };
 
             var resultsDropdown = new ComboBox();
-            resultsDropdown.Items.AddRange(Enum.GetNames(typeof(PrimaryContraint.ConstraintResults)));
+            resultsDropdown.Items.AddRange(Enum.GetNames(typeof(PrimaryConstraint.ConstraintResults)));
             resultsDropdown.Click += (o, e) =>
             {
                 HandleConstraintResultUpdate(o, e, ci);
@@ -50,7 +50,7 @@ public partial class CatalogueAnalysisExecutionControlUI : CatalogueAnalysisExec
 
             if (existingEvaulation is not null)
             {
-                constraintsDropdown.SelectedIndex = (int)existingEvaulation.Contraint;
+                constraintsDropdown.SelectedIndex = (int)existingEvaulation.Constraint;
                 resultsDropdown.SelectedIndex = (int)existingEvaulation.Result;
             }
 
@@ -94,7 +94,7 @@ public partial class CatalogueAnalysisExecutionControlUI : CatalogueAnalysisExec
         base.SetDatabaseObject(activator, databaseObject);
         _catalogue = databaseObject;
         _dqeRepository = new DQERepository(activator.RepositoryLocator.CatalogueRepository);
-        _primaryConstraints = _catalogue.CatalogueItems.SelectMany(ci => _dqeRepository.GetAllObjectsWhere<PrimaryContraint>("ColumnInfo_ID", ci.ColumnInfo_ID)).ToList();
+        _primaryConstraints = _catalogue.CatalogueItems.SelectMany(ci => _dqeRepository.GetAllObjectsWhere<PrimaryConstraint>("ColumnInfo_ID", ci.ColumnInfo_ID)).ToList();
         SetupPrimaryConstrainsConfiguration();
         SetupSecondaryConstrainsConfiguration();
         HandleValidationChart();
@@ -115,29 +115,29 @@ public partial class CatalogueAnalysisExecutionControlUI : CatalogueAnalysisExec
             }
         }
         var pieDT = new DataTable();
-        pieDT.Columns.Add("Y");
         pieDT.Columns.Add("X");
-        pieDT.Rows.Add([10, 'A']);
-        pieDT.Rows.Add([20, 'B']);
-        pieDT.Rows.Add([30, 'C']);
-        pieDT.Rows.Add([40, 'D']);
-        pieDT.Rows.Add([50, 'E']);
-        pieDT.Rows.Add([60, 'F']);
-        pieDT.Rows.Add([70, 'G']);
-        pieDT.Rows.Add([80, 'H']);
-        pieDT.Rows.Add([90, 'I']);
-        pieChart1.Init(pieDT, System.Windows.Forms.DataVisualization.Charting.SeriesChartType.SplineRange, "Yonk!", "yeye");
-        multiPurposeChart1.Init(pieDT, System.Windows.Forms.DataVisualization.Charting.SeriesChartType.RangeBar);
-        multiPurposeChart2.Init(pieDT, System.Windows.Forms.DataVisualization.Charting.SeriesChartType.RangeColumn);
-        multiPurposeChart3.Init(pieDT, System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Radar);
-        multiPurposeChart4.Init(pieDT, System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Polar);
-        multiPurposeChart5.Init(pieDT, System.Windows.Forms.DataVisualization.Charting.SeriesChartType.ErrorBar);
-        multiPurposeChart6.Init(pieDT, System.Windows.Forms.DataVisualization.Charting.SeriesChartType.BoxPlot);
-        multiPurposeChart7.Init(pieDT, System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Renko);
-        multiPurposeChart8.Init(pieDT, System.Windows.Forms.DataVisualization.Charting.SeriesChartType.ThreeLineBreak);
-        multiPurposeChart9.Init(pieDT, System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Kagi);
-        multiPurposeChart10.Init(pieDT, System.Windows.Forms.DataVisualization.Charting.SeriesChartType.PointAndFigure);
-        multiPurposeChart11.Init(pieDT, System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Funnel);
+        pieDT.Columns.Add("Y");
+        pieDT.Rows.Add([1989, 'F']);
+        pieDT.Rows.Add([8011, 'T']);
+        //pieDT.Rows.Add([30, 'C']);
+        //pieDT.Rows.Add([40, 'D']);
+        //pieDT.Rows.Add([50, 'E']);
+        //pieDT.Rows.Add([60, 'F']);
+        //pieDT.Rows.Add([70, 'G']);
+        //pieDT.Rows.Add([80, 'H']);
+        //pieDT.Rows.Add([90, 'I']);
+        //pieChart1.Init(pieDT, System.Windows.Forms.DataVisualization.Charting.SeriesChartType.SplineRange, "Yonk!", "yeye");
+        multiPurposeChart1.Init(pieDT, System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Pie);
+        //multiPurposeChart2.Init(pieDT, System.Windows.Forms.DataVisualization.Charting.SeriesChartType.RangeColumn);
+        //multiPurposeChart3.Init(pieDT, System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Radar);
+        //multiPurposeChart4.Init(pieDT, System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Polar);
+        //multiPurposeChart5.Init(pieDT, System.Windows.Forms.DataVisualization.Charting.SeriesChartType.ErrorBar);
+        //multiPurposeChart6.Init(pieDT, System.Windows.Forms.DataVisualization.Charting.SeriesChartType.BoxPlot);
+        //multiPurposeChart7.Init(pieDT, System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Renko);
+        //multiPurposeChart8.Init(pieDT, System.Windows.Forms.DataVisualization.Charting.SeriesChartType.ThreeLineBreak);
+        //multiPurposeChart9.Init(pieDT, System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Kagi);
+        //multiPurposeChart10.Init(pieDT, System.Windows.Forms.DataVisualization.Charting.SeriesChartType.PointAndFigure);
+        //multiPurposeChart11.Init(pieDT, System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Funnel);
 
 
         var userDefinedCharts = _dqeRepository.GetAllObjectsWhere<UserDefinedChart>("Catalogue_ID", databaseObject.ID);
@@ -190,18 +190,18 @@ public partial class CatalogueAnalysisExecutionControlUI : CatalogueAnalysisExec
             var existingEvaulation = _primaryConstraints.Where(pc => pc.ColumnInfo.GetRuntimeName() == label.Text).FirstOrDefault();
             if (existingEvaulation != null)
             {
-                existingEvaulation.Contraint = (PrimaryContraint.Contraints)constraint.SelectedIndex;
-                existingEvaulation.Result = (PrimaryContraint.ConstraintResults)result.SelectedIndex;
+                existingEvaulation.Constraint = (PrimaryConstraint.Constraints)constraint.SelectedIndex;
+                existingEvaulation.Result = (PrimaryConstraint.ConstraintResults)result.SelectedIndex;
                 existingEvaulation.SaveToDatabase();
             }
             else
             {
                 if (constraint.SelectedIndex >= 0 && result.SelectedIndex >= 0)
                 {
-                    var newEval = new PrimaryContraint(_dqeRepository,
+                    var newEval = new PrimaryConstraint(_dqeRepository,
                         _catalogue.CatalogueItems.Select(ci => ci.ColumnInfo).Where(ci => ci.GetRuntimeName() == label.Text).FirstOrDefault(),
-                        (PrimaryContraint.Contraints)constraint.SelectedIndex,
-                        (PrimaryContraint.ConstraintResults)result.SelectedIndex
+                        (PrimaryConstraint.Constraints)constraint.SelectedIndex,
+                        (PrimaryConstraint.ConstraintResults)result.SelectedIndex
                     );
                     newEval.SaveToDatabase();
                 }
@@ -357,13 +357,13 @@ public partial class CatalogueAnalysisExecutionControlUI : CatalogueAnalysisExec
             secondary.SaveToDatabase();
             switch (constraint)
             {
-                case Constraints.REGULAREXPRESSION:
+                case Core.CatalogueAnalysisTools.Data.SecondaryConstraint.Constraints.REGULAREXPRESSION:
                     var pattern = SecondaryConstrainsTableLayoutPanel.GetControlFromPosition(3, row + 1);
                     var scArg = new SecondaryConstraintArgument(_dqeRepository, "Pattern", pattern.Text, secondary);
                     scArg.SaveToDatabase();
                     break;
-                case Constraints.BOUNDDATE:
-                case Constraints.BOUNDDOUBLE:
+                case Core.CatalogueAnalysisTools.Data.SecondaryConstraint.Constraints.BOUNDDATE:
+                case Core.CatalogueAnalysisTools.Data.SecondaryConstraint.Constraints.BOUNDDOUBLE:
                     var lower = SecondaryConstrainsTableLayoutPanel.GetControlFromPosition(3, row + 1);
                     if (!string.IsNullOrWhiteSpace(lower.Text))
                     {

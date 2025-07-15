@@ -35,7 +35,7 @@ public class CatalogueValidationTool
     private readonly bool _updatePreviousResult;
     private RowPeeker _peeker = new();
     private Dictionary<string, Dictionary<string, ResultObject>> _results = new();
-    private Dictionary<string, PrimaryContraint> _primaryConstraints = new();
+    private Dictionary<string, Data.PrimaryConstraint> _primaryConstraints = new();
     private Dictionary<string, List<Data.SecondaryConstraint>> _secondaryConstraints = new();
     private DQERepository _DQERepository;
     private readonly string ALL = "ALL";
@@ -55,7 +55,7 @@ public class CatalogueValidationTool
 
         foreach (var columnInfo in catalogue.CatalogueItems.Select(c => c.ColumnInfo))
         {
-            _primaryConstraints[columnInfo.GetRuntimeName()] = _DQERepository.GetAllObjectsWhere<PrimaryContraint>("ColumnInfo_ID", columnInfo.ID).FirstOrDefault();
+            _primaryConstraints[columnInfo.GetRuntimeName()] = _DQERepository.GetAllObjectsWhere<Data.PrimaryConstraint>("ColumnInfo_ID", columnInfo.ID).FirstOrDefault();
             _secondaryConstraints[columnInfo.GetRuntimeName()] = _DQERepository.GetAllObjectsWhere<Data.SecondaryConstraint>("ColumnInfo_ID", columnInfo.ID).ToList();
         }
 
@@ -92,7 +92,7 @@ public class CatalogueValidationTool
         }
     }
 
-    private bool ValidConstraint(PrimaryConstraint pc, object value)
+    private bool ValidConstraint(Validation.Constraints.Primary.PrimaryConstraint pc, object value)
     {
         if (value is DBNull) return true;
         try
@@ -178,49 +178,49 @@ public class CatalogueValidationTool
 
     private ResultObject EvaulateRow(DataRow row, ResultObject existingResultObject)
     {
-        foreach (var primaryContraint in _primaryConstraints.Keys)
+        foreach (var primaryConstraint in _primaryConstraints.Keys)
         {
-            var rowIndex = row.Table.Columns[primaryContraint].Ordinal;
+            var rowIndex = row.Table.Columns[primaryConstraint].Ordinal;
             var rowValue = row.ItemArray[rowIndex];
-            _primaryConstraints.TryGetValue(primaryContraint, out PrimaryContraint constraint);
+            _primaryConstraints.TryGetValue(primaryConstraint, out Data.PrimaryConstraint constraint);
             if (constraint is not null)
             {
-                switch (constraint.Contraint)
+                switch (constraint.Constraint)
                 {
-                    case PrimaryContraint.Contraints.ALPHA:
+                    case Data.PrimaryConstraint.Constraints.ALPHA:
                         if (ValidConstraint(new Alpha(), rowValue))
                         {
-                            EvaluateSecondaryConstraints(rowValue, primaryContraint, existingResultObject);
+                            EvaluateSecondaryConstraints(rowValue, primaryConstraint, existingResultObject);
                         }
                         else
                         {
                             existingResultObject.Increment(constraint.Result.ToString());
                         }
                         break;
-                    case PrimaryContraint.Contraints.ALPHANUMERIC:
+                    case Data.PrimaryConstraint.Constraints.ALPHANUMERIC:
                         if (ValidConstraint(new AlphaNumeric(), rowValue))
                         {
-                            EvaluateSecondaryConstraints(rowValue, primaryContraint, existingResultObject);
+                            EvaluateSecondaryConstraints(rowValue, primaryConstraint, existingResultObject);
                         }
                         else
                         {
                             existingResultObject.Increment(constraint.Result.ToString());
                         }
                         break;
-                    case PrimaryContraint.Contraints.CHI:
+                    case Data.PrimaryConstraint.Constraints.CHI:
                         if (ValidConstraint(new Chi(), rowValue))
                         {
-                            EvaluateSecondaryConstraints(rowValue, primaryContraint, existingResultObject);
+                            EvaluateSecondaryConstraints(rowValue, primaryConstraint, existingResultObject);
                         }
                         else
                         {
                             existingResultObject.Increment(constraint.Result.ToString());
                         }
                         break;
-                    case PrimaryContraint.Contraints.DATE:
+                    case Data.PrimaryConstraint.Constraints.DATE:
                         if (ValidConstraint(new Date(), rowValue))
                         {
-                            EvaluateSecondaryConstraints(rowValue, primaryContraint, existingResultObject);
+                            EvaluateSecondaryConstraints(rowValue, primaryConstraint, existingResultObject);
                         }
                         else
                         {

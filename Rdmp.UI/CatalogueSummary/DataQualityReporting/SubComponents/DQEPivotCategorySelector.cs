@@ -61,6 +61,7 @@ public partial class DQEPivotCategorySelector : UserControl
 
         if (evaluation == null)
             return;
+        var x = evaluation.GetPivotCategoryValues();
 
         foreach (var category in evaluation.GetPivotCategoryValues())
         {

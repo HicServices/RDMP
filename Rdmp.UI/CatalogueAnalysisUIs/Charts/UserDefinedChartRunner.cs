@@ -32,5 +32,10 @@ namespace Rdmp.UI.CatalogueAnalysisUIs.Charts
             _chart.Generate();
             Setup(_chart);
         }
+
+        private void multiPurposeChart1_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }
