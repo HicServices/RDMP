@@ -144,9 +144,8 @@ public partial class CatalogueAnalysisExecutionControlUI : CatalogueAnalysisExec
         foreach(var udc in userDefinedCharts)
         {
             var chartRunner = new UserDefinedChartRunner();
-            chartRunner.Setup(udc);
-            chartRunner.Location = new Point(10, udc.ID * 100);
-            tabPage3.Controls.Add(chartRunner);
+            chartRunner.Setup(activator, _dqeRepository, udc);
+            tblCustomChart.Controls.Add(chartRunner);
         }
 
     }

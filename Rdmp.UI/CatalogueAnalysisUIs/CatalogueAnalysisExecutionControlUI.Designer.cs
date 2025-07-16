@@ -71,6 +71,7 @@
             label1 = new System.Windows.Forms.Label();
             tabPage3 = new System.Windows.Forms.TabPage();
             button3 = new System.Windows.Forms.Button();
+            tblCustomChart = new System.Windows.Forms.TableLayoutPanel();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             tabPage2.SuspendLayout();
@@ -494,6 +495,7 @@
             // 
             // tabPage3
             // 
+            tabPage3.Controls.Add(tblCustomChart);
             tabPage3.Controls.Add(button3);
             tabPage3.Location = new System.Drawing.Point(4, 24);
             tabPage3.Name = "tabPage3";
@@ -511,6 +513,20 @@
             button3.Text = "Create New Chart";
             button3.UseVisualStyleBackColor = true;
             button3.Click += button3_Click;
+            // 
+            // tblCustomChart
+            // 
+            tblCustomChart.AutoSize = true;
+            tblCustomChart.ColumnCount = 2;
+            tblCustomChart.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            tblCustomChart.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            tblCustomChart.Location = new System.Drawing.Point(3, 41);
+            tblCustomChart.Name = "tblCustomChart";
+            tblCustomChart.RowCount = 2;
+            tblCustomChart.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            tblCustomChart.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            tblCustomChart.Size = new System.Drawing.Size(200, 100);
+            tblCustomChart.TabIndex = 1;
             // 
             // CatalogueAnalysisExecutionControlUI
             // 
@@ -539,6 +555,7 @@
             primaryConstrainsTableLayout.ResumeLayout(false);
             primaryConstrainsTableLayout.PerformLayout();
             tabPage3.ResumeLayout(false);
+            tabPage3.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -586,5 +603,6 @@
         private Charts.MultiPurposeChart multiPurposeChart11;
         private System.Windows.Forms.TabPage tabPage3;
         private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.TableLayoutPanel tblCustomChart;
     }
 }

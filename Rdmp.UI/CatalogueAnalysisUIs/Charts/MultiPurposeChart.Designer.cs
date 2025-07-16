@@ -42,7 +42,7 @@ namespace Rdmp.UI.CatalogueAnalysisUIs.Charts
             groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             groupBox1.Location = new System.Drawing.Point(0, 0);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new System.Drawing.Size(150, 150);
+            groupBox1.Size = new System.Drawing.Size(406, 297);
             groupBox1.TabIndex = 0;
             groupBox1.TabStop = false;
             this.SuspendLayout();
@@ -73,7 +73,7 @@ namespace Rdmp.UI.CatalogueAnalysisUIs.Charts
             series1.Legend = "Legend1";
             series1.Name = "Series1";
             this.chart1.Series.Add(series1);
-            this.chart1.Size = new System.Drawing.Size(387, 203);
+            this.chart1.Size = new System.Drawing.Size(406, 297);
             this.chart1.TabIndex = 0;
             this.chart1.Text = "chart1";
             this.chart1.ChartAreas[0].AxisX.ScaleView.Zoomable = true;

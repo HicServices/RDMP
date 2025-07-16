@@ -3,6 +3,7 @@ using Microsoft.Data.SqlClient;
 using NPOI.OpenXmlFormats.Dml.Diagram;
 using NPOI.SS.Formula.Functions;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
 using System;
@@ -25,6 +26,7 @@ namespace Rdmp.Core.CatalogueAnalysisTools.Data
         private string _seriesName;
 
 
+        [NoMappingToDatabase]
         public Catalogue Catalogue { get => _catalogue; set => SetField(ref _catalogue, value); }
         public String QueryString { get => _queryString; set => SetField(ref _queryString, value); }
         public String Title { get => _title; set => SetField(ref _title, value); }
