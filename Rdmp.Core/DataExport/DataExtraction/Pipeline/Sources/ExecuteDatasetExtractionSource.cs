@@ -4,13 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Common;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 using FAnsi;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
@@ -25,6 +18,14 @@ using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.Core.ReusableLibraryCode.Progress;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.Common;
+using System.Diagnostics;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using IContainer = Rdmp.Core.Curation.Data.IContainer;
 
 namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources;
@@ -73,7 +74,9 @@ public class ExecuteDatasetExtractionSource : IPluginDataFlowSource<DataTable>, 
     [DemandsInitialization(@"Determines how the system achieves DISTINCT on extraction.  These include:
 None - Do not DISTINCT the records, can result in duplication in your extract (not recommended)
 SqlDistinct - Adds the DISTINCT keyword to the SELECT sql sent to the server
-OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies the DISTINCT in memory as records are read from the server (this can help when extracting very large data sets where DISTINCT keyword blocks record streaming until all records are ready to go)"
+OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies the DISTINCT in memory as records are read from the server (this can help when extracting very large data sets where DISTINCT keyword blocks record streaming until all records are ready to go)
+DistinctByDestinationPKS - Distincts based on the catalogue PKs
+"
         , DefaultValue = DistinctStrategy.SqlDistinct)]
     public DistinctStrategy DistinctStrategy { get; set; }
 
@@ -183,7 +186,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
         {
             case DatabaseType.MicrosoftSQLServer:
                 sql = $"""
-                    SELECT DISTINCT *
+                    SELECT *
                     INTO {_uuid}
                     FROM(
                     SELECT * FROM {_externalCohortTable.TableName}
@@ -440,14 +443,9 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
         }
         _timeSpentCalculatingDISTINCT.Stop();
         pks.AddRange(Request.ColumnsToExtract.Where(static c => ((ExtractableColumn)c).CatalogueExtractionInformation.IsPrimaryKey).Select(static column => ((ExtractableColumn)column).CatalogueExtractionInformation.ToString()).Select(name => chunk.Columns[name]));
-        try
-        {
-            chunk.PrimaryKey = pks.ToArray();
+        chunk.PrimaryKey = pks.ToArray();
 
-        }catch(Exception ex)
-        {
-            Console.WriteLine(ex.ToString());
-        }
+
 
         return chunk;
     }
@@ -529,8 +527,21 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
                 // don't add the line if it is already there (e.g. because of Retry)
                 if (!Request.QueryBuilder.CustomLines.Any(l => string.Equals(l.Text, orderBySql)))
                     Request.QueryBuilder.AddCustomLine(orderBySql, QueryComponent.Postfix);
-
                 break;
+            case DistinctStrategy.DistinctByDestinationPKS:
+                var pks = _catalogue.CatalogueItems.Where(c => c.ExtractionInformation.IsPrimaryKey).Select(c => c.ColumnInfo.GetRuntimeName()).ToList();
+                Request.QueryBuilder.AddCustomLine($"GROUP BY {string.Join(',',pks)}", QueryComponent.GroupBy);
+                break;
+            //                  SELECT MIN(ReleaseId), SpecimenNo, TestCode
+            //  FROM [Proj_2__8].[dbo].[_2_2025_07_17_Extraction_simpleSample]
+            //GROUP BY SpecimenNo,TestCode
+            //  SELECT MIN(ReleaseId), SpecimenNo, TestCode
+            //  FROM [Proj_2__8].[dbo].[_2_2025_07_17_Extraction_simpleSample]
+            //GROUP BY SpecimenNo,TestCode
+
+
+            //also want to add a where clause to ignore existign foud PKS
+            //where NOT (SpecimenNo = 1 and TestCode ='a')
             default:
                 throw new ArgumentOutOfRangeException();
         }

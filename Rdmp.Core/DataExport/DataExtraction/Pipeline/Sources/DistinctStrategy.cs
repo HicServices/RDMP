@@ -26,7 +26,7 @@ public enum DistinctStrategy
     /// </summary>
     OrderByAndDistinctInMemory,
     /// <summary>
-    /// Write data to a temp table on the destination before distincting the data and applyting and Primary Keys
+    /// Distict by Column PKs rather than the whole record
     /// </summary>
-    DistinctInDestination
+    DistinctByDestinationPKS
 }
