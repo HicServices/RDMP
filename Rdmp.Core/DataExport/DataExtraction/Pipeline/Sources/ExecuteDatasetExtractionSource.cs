@@ -183,7 +183,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
         {
             case DatabaseType.MicrosoftSQLServer:
                 sql = $"""
-                    SELECT *
+                    SELECT DISTINCT *
                     INTO {_uuid}
                     FROM(
                     SELECT * FROM {_externalCohortTable.TableName}
@@ -194,18 +194,18 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
             case DatabaseType.MySql:
                 sql = $"""
                     CREATE TEMPORARY TABLE {_uuid} ENGINE=MEMORY
-                    as (SELECT * FROM {_externalCohortTable.TableName} WHERE {_whereSQL})
+                    as (SELECT DISTINCT * FROM {_externalCohortTable.TableName} WHERE {_whereSQL})
                 """;
                 break;
             case DatabaseType.Oracle:
                 sql = $"""
-                    CREATE TEMPORARY TABLE {_uuid} SELECT * FROM {_externalCohortTable.TableName} WHERE {_whereSQL}
+                    CREATE TEMPORARY TABLE {_uuid} SELECT DISTINCT * FROM {_externalCohortTable.TableName} WHERE {_whereSQL}
                 """;
                 break;
             case DatabaseType.PostgreSql:
                 sql = $"""
                     CREATE TEMP TABLE {_uuid} AS
-                    SELECT * FROM {_externalCohortTable.TableName} WHERE {_whereSQL}
+                    SELECT DISTINCT * FROM {_externalCohortTable.TableName} WHERE {_whereSQL}
                 """;
                 break;
             default:
@@ -411,6 +411,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
         //record unique release identifiers found
         if (includesReleaseIdentifier)
+        {
             foreach (var idx in _extractionIdentifiersidx.Distinct().ToList())
             {
                 var sub = Request.ReleaseIdentifierSubstitutions.FirstOrDefault(s => s.Alias == chunk.Columns[idx].ColumnName);
@@ -436,10 +437,17 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
                         new ProgressMeasurement(UniqueReleaseIdentifiersEncountered.Count, ProgressType.Records),
                         _timeSpentCalculatingDISTINCT.Elapsed));
             }
-
+        }
         _timeSpentCalculatingDISTINCT.Stop();
         pks.AddRange(Request.ColumnsToExtract.Where(static c => ((ExtractableColumn)c).CatalogueExtractionInformation.IsPrimaryKey).Select(static column => ((ExtractableColumn)column).CatalogueExtractionInformation.ToString()).Select(name => chunk.Columns[name]));
-        chunk.PrimaryKey = pks.ToArray();
+        try
+        {
+            chunk.PrimaryKey = pks.ToArray();
+
+        }catch(Exception ex)
+        {
+            Console.WriteLine(ex.ToString());
+        }
 
         return chunk;
     }
