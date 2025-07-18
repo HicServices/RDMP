@@ -11,7 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add MS Teams Extraction notifications (see [Documentation\DataExtractions\ExtractionTeamsNotifications.md])
 - Add ability to use Cohort Catalogue Filters in an Extraction Configuration
 - Add DistinctByDestinationPKs distinction strategy to the DatasetExtractionSource Extraction pipeline component
- 
+- Update clone extraction configuration to include generic perameters
+
 ## [8.4.4] - 2025-05-08 
 
 - Re-add AggregateGraph functionality
