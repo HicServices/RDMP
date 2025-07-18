@@ -75,7 +75,7 @@ public class ExecuteDatasetExtractionSource : IPluginDataFlowSource<DataTable>, 
 None - Do not DISTINCT the records, can result in duplication in your extract (not recommended)
 SqlDistinct - Adds the DISTINCT keyword to the SELECT sql sent to the server
 OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies the DISTINCT in memory as records are read from the server (this can help when extracting very large data sets where DISTINCT keyword blocks record streaming until all records are ready to go)
-DistinctByDestinationPKS - Performs a GROUP BY on each batch of records to ensure unique extraction primary key values in the batch"
+DistinctByDestinationPKs - Performs a GROUP BY on each batch of records to ensure unique extraction primary key values in the batch"
         , DefaultValue = DistinctStrategy.SqlDistinct)]
     public DistinctStrategy DistinctStrategy { get; set; }
 
@@ -135,7 +135,7 @@ DistinctByDestinationPKS - Performs a GROUP BY on each batch of records to ensur
 
         _catalogue = request.Catalogue;
 
-        if (DistinctStrategy == DistinctStrategy.DistinctByDestinationPKS)
+        if (DistinctStrategy == DistinctStrategy.DistinctByDestinationPKs)
         {
             _knownPKs = _catalogue.CatalogueItems.Where(ci => ci.ExtractionInformation != null && ci.ExtractionInformation.IsPrimaryKey).Select(ci => ci.ColumnInfo.GetRuntimeName()).ToList();
         }
@@ -416,7 +416,7 @@ DistinctByDestinationPKS - Performs a GROUP BY on each batch of records to ensur
         _timeSpentCalculatingDISTINCT.Start();
 
 
-        if (DistinctStrategy == DistinctStrategy.DistinctByDestinationPKS && _knownPKs.Any())
+        if (DistinctStrategy == DistinctStrategy.DistinctByDestinationPKs && _knownPKs.Any())
         {
             var columnNames = _knownPKs;
             Func<DataRow, String> groupingFunction = (DataRow dr) => GroupData(dr, _knownPKs.ToArray());
@@ -523,7 +523,7 @@ DistinctByDestinationPKS - Performs a GROUP BY on each batch of records to ensur
                 break;
 
             //system default behaviour
-            case DistinctStrategy.DistinctByDestinationPKS:
+            case DistinctStrategy.DistinctByDestinationPKs:
             case DistinctStrategy.SqlDistinct:
                 break;
 
