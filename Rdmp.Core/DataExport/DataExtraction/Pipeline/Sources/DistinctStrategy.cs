@@ -28,5 +28,5 @@ public enum DistinctStrategy
     /// <summary>
     /// Perform a GROUP BY on columns marked as extraction primary keys
     /// </summary>
-    DistinctByDestinationPKS
+    DistinctByDestinationPKs
 }
