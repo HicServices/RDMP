@@ -4,9 +4,15 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.Common;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
 using FAnsi;
 using FAnsi.Discovery.QuerySyntax;
-using NPOI.SS.Formula;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.Commands;
@@ -14,21 +20,11 @@ using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Components;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Sources;
-using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.QueryBuilding;
-using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.Core.ReusableLibraryCode.Progress;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Common;
-using System.Diagnostics;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using IContainer = Rdmp.Core.Curation.Data.IContainer;
 
 namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources;
@@ -77,9 +73,7 @@ public class ExecuteDatasetExtractionSource : IPluginDataFlowSource<DataTable>, 
     [DemandsInitialization(@"Determines how the system achieves DISTINCT on extraction.  These include:
 None - Do not DISTINCT the records, can result in duplication in your extract (not recommended)
 SqlDistinct - Adds the DISTINCT keyword to the SELECT sql sent to the server
-OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies the DISTINCT in memory as records are read from the server (this can help when extracting very large data sets where DISTINCT keyword blocks record streaming until all records are ready to go)
-DistinctByDestinationPKS - Distincts based on the catalogue PKs
-"
+OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies the DISTINCT in memory as records are read from the server (this can help when extracting very large data sets where DISTINCT keyword blocks record streaming until all records are ready to go)"
         , DefaultValue = DistinctStrategy.SqlDistinct)]
     public DistinctStrategy DistinctStrategy { get; set; }
 
@@ -113,7 +107,7 @@ DistinctByDestinationPKS - Distincts based on the catalogue PKs
     private string _whereSQL;
     private DbConnection _con;
     private string _uuid;
-    private string _pkUUID;
+    private DataTable _knownPKs;
     protected virtual void Initialize(ExtractDatasetCommand request)
     {
         Request = request;
@@ -138,6 +132,12 @@ DistinctByDestinationPKS - Distincts based on the catalogue PKs
         UniqueReleaseIdentifiersEncountered = new HashSet<object>();
 
         _catalogue = request.Catalogue;
+
+        _knownPKs = new DataTable();
+        foreach (var pkCol in _catalogue.CatalogueItems.Where(ci => ci.ExtractionInformation != null && ci.ExtractionInformation.IsPrimaryKey).Select(ci => ci.ColumnInfo.GetRuntimeName()).ToArray())
+        {
+            _knownPKs.Columns.Add(pkCol);
+        }
 
         if (!string.IsNullOrWhiteSpace(_catalogue.ValidatorXML))
             ExtractionTimeValidator = new ExtractionTimeValidator(_catalogue, request.ColumnsToExtract);
@@ -181,21 +181,6 @@ DistinctByDestinationPKS - Distincts based on the catalogue PKs
             .Select(s => s[random.Next(s.Length)]).ToArray());
     }
 
-    private void CreatePKTable(DbConnection con, IDataLoadEventListener listener)
-    {
-        var db = Request.GetDistinctLiveDatabaseServer();
-        Request.QueryBuilder.RegenerateSQL();
-        _pkUUID = $"{RandomString(24)}";
-        var sql = $"""
-            SELECT DISTINCT {string.Join(',', _catalogue.CatalogueItems.Where(ci => ci.ExtractionInformation.IsPrimaryKey).Select(ci => ci.ColumnInfo.GetFullyQualifiedName()))}
-            INTO {_pkUUID}
-            {SqlQueryBuilderHelper.GetFROMSQL(Request.QueryBuilder)}
-            """;
-        using var cmd = db.GetCommand(sql, con);
-        cmd.CommandTimeout = ExecutionTimeout;
-        cmd.ExecuteNonQuery();
-    }
-
     private void CreateCohortTempTable(DbConnection con, IDataLoadEventListener listener)
     {
         _uuid = $"#{RandomString(24)}";
@@ -216,18 +201,18 @@ DistinctByDestinationPKS - Distincts based on the catalogue PKs
             case DatabaseType.MySql:
                 sql = $"""
                     CREATE TEMPORARY TABLE {_uuid} ENGINE=MEMORY
-                    as (SELECT DISTINCT * FROM {_externalCohortTable.TableName} WHERE {_whereSQL})
+                    as (SELECT * FROM {_externalCohortTable.TableName} WHERE {_whereSQL})
                 """;
                 break;
             case DatabaseType.Oracle:
                 sql = $"""
-                    CREATE TEMPORARY TABLE {_uuid} SELECT DISTINCT * FROM {_externalCohortTable.TableName} WHERE {_whereSQL}
+                    CREATE TEMPORARY TABLE {_uuid} SELECT * FROM {_externalCohortTable.TableName} WHERE {_whereSQL}
                 """;
                 break;
             case DatabaseType.PostgreSql:
                 sql = $"""
                     CREATE TEMP TABLE {_uuid} AS
-                    SELECT DISTINCT * FROM {_externalCohortTable.TableName} WHERE {_whereSQL}
+                    SELECT * FROM {_externalCohortTable.TableName} WHERE {_whereSQL}
                 """;
                 break;
             default:
@@ -282,16 +267,11 @@ DistinctByDestinationPKS - Distincts based on the catalogue PKs
 
         if (_hostedSource == null)
         {
-            _con = DatabaseCommandHelper.GetConnection(Request.GetDistinctLiveDatabaseServer().Builder);
-            _con.Open();
             if (UseTempTablesWhenExtractingCohort)
             {
-                
+                _con = DatabaseCommandHelper.GetConnection(Request.GetDistinctLiveDatabaseServer().Builder);
+                _con.Open();
                 CreateCohortTempTable(_con, listener);
-            }
-            if (DistinctStrategy == DistinctStrategy.DistinctByDestinationPKS)
-            { 
-                CreatePKTable(_con, listener);
             }
             var cmdSql = GetCommandSQL(listener);
             StartAudit(cmdSql);
@@ -434,11 +414,27 @@ DistinctByDestinationPKS - Distincts based on the catalogue PKs
         _timeSpentBuckettingDates.Stop();
 
         _timeSpentCalculatingDISTINCT.Start();
+
+        var rows = chunk.Select().Where(r => {
+            var values = _knownPKs.Columns.Cast<DataColumn>().Select(c => r[c.ColumnName]);
+            var columnNames= _knownPKs.Columns.Cast<DataColumn>().Select(c => c.ColumnName);
+            var indexes = columnNames.Select(v => chunk.Columns[v].Ordinal).ToList();
+            bool exist = _knownPKs.Rows.Cast<DataRow>().Any(pkr => !values.Select((v, i) => pkr[i].ToString() == r.ItemArray[indexes[i]].ToString()).Any(b => b == false));
+            return exist;
+        });
+        foreach (DataRow row in rows) {
+            chunk.Rows.Remove(row);
+        }
+        if (chunk.Rows.Count == 0)
+        {
+            //every row was a pk clash
+            return GetChunk(listener, cancellationToken);
+        }
+
         var pks = new List<DataColumn>();
 
         //record unique release identifiers found
         if (includesReleaseIdentifier)
-        {
             foreach (var idx in _extractionIdentifiersidx.Distinct().ToList())
             {
                 var sub = Request.ReleaseIdentifierSubstitutions.FirstOrDefault(s => s.Alias == chunk.Columns[idx].ColumnName);
@@ -464,12 +460,16 @@ DistinctByDestinationPKS - Distincts based on the catalogue PKs
                         new ProgressMeasurement(UniqueReleaseIdentifiersEncountered.Count, ProgressType.Records),
                         _timeSpentCalculatingDISTINCT.Elapsed));
             }
-        }
+
         _timeSpentCalculatingDISTINCT.Stop();
         pks.AddRange(Request.ColumnsToExtract.Where(static c => ((ExtractableColumn)c).CatalogueExtractionInformation.IsPrimaryKey).Select(static column => ((ExtractableColumn)column).CatalogueExtractionInformation.ToString()).Select(name => chunk.Columns[name]));
         chunk.PrimaryKey = pks.ToArray();
 
-
+        foreach(DataRow dr in chunk.Rows)
+        {
+            var x = _knownPKs.Columns.Cast<DataColumn>().Select(dc => dr[dc.ColumnName]).ToArray();
+            _knownPKs.Rows.Add(x);
+        }
 
         return chunk;
     }
@@ -551,16 +551,7 @@ DistinctByDestinationPKS - Distincts based on the catalogue PKs
                 // don't add the line if it is already there (e.g. because of Retry)
                 if (!Request.QueryBuilder.CustomLines.Any(l => string.Equals(l.Text, orderBySql)))
                     Request.QueryBuilder.AddCustomLine(orderBySql, QueryComponent.Postfix);
-                break;
-            case DistinctStrategy.DistinctByDestinationPKS:
-                if (_pkUUID != null)
-                {
-                    var pks = _catalogue.CatalogueItems.Where(ci => ci.ExtractionInformation.IsPrimaryKey).Select(ci => ci.ColumnInfo);
-                    var strs = pks.Select(pk => $"{_pkUUID}.{pk.GetRuntimeName()} = {pk.GetFullyQualifiedName()}");
-                    Request.QueryBuilder.AddCustomLine($"LEFT JOIN {_pkUUID} ON {string.Join(" AND ",strs)}", QueryComponent.JoinInfoJoin);
-                    var notNull = pks.Select(pk => $"{_pkUUID}.{pk.GetRuntimeName()} IS NOT NULL");
-                    Request.QueryBuilder.AddCustomLine(string.Join(" AND",notNull), QueryComponent.WHERE);
-                }
+
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
