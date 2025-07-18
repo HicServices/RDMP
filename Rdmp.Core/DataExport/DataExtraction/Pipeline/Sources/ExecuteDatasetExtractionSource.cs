@@ -4,13 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Common;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 using FAnsi;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
@@ -25,6 +18,14 @@ using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.Core.ReusableLibraryCode.Progress;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.Common;
+using System.Diagnostics;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using IContainer = Rdmp.Core.Curation.Data.IContainer;
 
 namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources;
@@ -73,7 +74,8 @@ public class ExecuteDatasetExtractionSource : IPluginDataFlowSource<DataTable>, 
     [DemandsInitialization(@"Determines how the system achieves DISTINCT on extraction.  These include:
 None - Do not DISTINCT the records, can result in duplication in your extract (not recommended)
 SqlDistinct - Adds the DISTINCT keyword to the SELECT sql sent to the server
-OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies the DISTINCT in memory as records are read from the server (this can help when extracting very large data sets where DISTINCT keyword blocks record streaming until all records are ready to go)"
+OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies the DISTINCT in memory as records are read from the server (this can help when extracting very large data sets where DISTINCT keyword blocks record streaming until all records are ready to go)
+DistinctByDestinationPKS - Performs a GROUP BY on each batch of records to ensure unique extraction primary key values in the batch"
         , DefaultValue = DistinctStrategy.SqlDistinct)]
     public DistinctStrategy DistinctStrategy { get; set; }
 
@@ -107,7 +109,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
     private string _whereSQL;
     private DbConnection _con;
     private string _uuid;
-    private DataTable _knownPKs;
+    private List<string> _knownPKs = new();
     protected virtual void Initialize(ExtractDatasetCommand request)
     {
         Request = request;
@@ -133,12 +135,10 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
         _catalogue = request.Catalogue;
 
-        _knownPKs = new DataTable();
-        foreach (var pkCol in _catalogue.CatalogueItems.Where(ci => ci.ExtractionInformation != null && ci.ExtractionInformation.IsPrimaryKey).Select(ci => ci.ColumnInfo.GetRuntimeName()).ToArray())
+        if (DistinctStrategy == DistinctStrategy.DistinctByDestinationPKS)
         {
-            _knownPKs.Columns.Add(pkCol);
+            _knownPKs = _catalogue.CatalogueItems.Where(ci => ci.ExtractionInformation != null && ci.ExtractionInformation.IsPrimaryKey).Select(ci => ci.ColumnInfo.GetRuntimeName()).ToList();
         }
-
         if (!string.IsNullOrWhiteSpace(_catalogue.ValidatorXML))
             ExtractionTimeValidator = new ExtractionTimeValidator(_catalogue, request.ColumnsToExtract);
 
@@ -415,20 +415,16 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
         _timeSpentCalculatingDISTINCT.Start();
 
-        var rows = chunk.Select().Where(r => {
-            var values = _knownPKs.Columns.Cast<DataColumn>().Select(c => r[c.ColumnName]);
-            var columnNames= _knownPKs.Columns.Cast<DataColumn>().Select(c => c.ColumnName);
-            var indexes = columnNames.Select(v => chunk.Columns[v].Ordinal).ToList();
-            bool exist = _knownPKs.Rows.Cast<DataRow>().Any(pkr => !values.Select((v, i) => pkr[i].ToString() == r.ItemArray[indexes[i]].ToString()).Any(b => b == false));
-            return exist;
-        });
-        foreach (DataRow row in rows) {
-            chunk.Rows.Remove(row);
-        }
-        if (chunk.Rows.Count == 0)
+
+        if (DistinctStrategy == DistinctStrategy.DistinctByDestinationPKS && _knownPKs.Any())
         {
-            //every row was a pk clash
-            return GetChunk(listener, cancellationToken);
+            var columnNames = _knownPKs;
+            Func<DataRow, String> groupingFunction = (DataRow dr) => GroupData(dr, _knownPKs.ToArray());
+
+            chunk = chunk.AsEnumerable()
+                        .GroupBy(groupingFunction)
+                        .Select(g => g.First())
+                   .CopyToDataTable();
         }
 
         var pks = new List<DataColumn>();
@@ -464,12 +460,6 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
         _timeSpentCalculatingDISTINCT.Stop();
         pks.AddRange(Request.ColumnsToExtract.Where(static c => ((ExtractableColumn)c).CatalogueExtractionInformation.IsPrimaryKey).Select(static column => ((ExtractableColumn)column).CatalogueExtractionInformation.ToString()).Select(name => chunk.Columns[name]));
         chunk.PrimaryKey = pks.ToArray();
-
-        foreach(DataRow dr in chunk.Rows)
-        {
-            var x = _knownPKs.Columns.Cast<DataColumn>().Select(dc => dr[dc.ColumnName]).ToArray();
-            _knownPKs.Rows.Add(x);
-        }
 
         return chunk;
     }
@@ -533,6 +523,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
                 break;
 
             //system default behaviour
+            case DistinctStrategy.DistinctByDestinationPKS:
             case DistinctStrategy.SqlDistinct:
                 break;
 
@@ -730,5 +721,18 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
             notifier.OnCheckPerformed(new CheckEventArgs("ExtractionRequest has not been set", CheckResult.Fail));
             return;
         }
+    }
+
+    private static String GroupData(DataRow dataRow, String[] columnNames)
+    {
+
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.Remove(0, stringBuilder.Length);
+        foreach (String column in columnNames)
+        {
+            stringBuilder.Append(dataRow[column].ToString());
+        }
+        return stringBuilder.ToString();
+
     }
 }

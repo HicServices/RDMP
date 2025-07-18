@@ -26,7 +26,7 @@ public enum DistinctStrategy
     /// </summary>
     OrderByAndDistinctInMemory,
     /// <summary>
-    /// Distict by Column PKs rather than the whole record
+    /// Perform a GROUP BY on columns marked as extraction primary keys
     /// </summary>
     DistinctByDestinationPKS
 }
