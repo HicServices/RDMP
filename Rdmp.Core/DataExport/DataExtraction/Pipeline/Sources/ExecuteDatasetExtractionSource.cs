@@ -6,6 +6,7 @@
 
 using FAnsi;
 using FAnsi.Discovery.QuerySyntax;
+using NPOI.SS.Formula;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.Commands;
@@ -13,7 +14,9 @@ using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Components;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Sources;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.QueryBuilding;
+using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
@@ -110,6 +113,7 @@ DistinctByDestinationPKS - Distincts based on the catalogue PKs
     private string _whereSQL;
     private DbConnection _con;
     private string _uuid;
+    private string _pkUUID;
     protected virtual void Initialize(ExtractDatasetCommand request)
     {
         Request = request;
@@ -175,6 +179,21 @@ DistinctByDestinationPKS - Distincts based on the catalogue PKs
         const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         return new string(Enumerable.Repeat(chars, length)
             .Select(s => s[random.Next(s.Length)]).ToArray());
+    }
+
+    private void CreatePKTable(DbConnection con, IDataLoadEventListener listener)
+    {
+        var db = Request.GetDistinctLiveDatabaseServer();
+        Request.QueryBuilder.RegenerateSQL();
+        _pkUUID = $"{RandomString(24)}";
+        var sql = $"""
+            SELECT DISTINCT {string.Join(',', _catalogue.CatalogueItems.Where(ci => ci.ExtractionInformation.IsPrimaryKey).Select(ci => ci.ColumnInfo.GetFullyQualifiedName()))}
+            INTO {_pkUUID}
+            {SqlQueryBuilderHelper.GetFROMSQL(Request.QueryBuilder)}
+            """;
+        using var cmd = db.GetCommand(sql, con);
+        cmd.CommandTimeout = ExecutionTimeout;
+        cmd.ExecuteNonQuery();
     }
 
     private void CreateCohortTempTable(DbConnection con, IDataLoadEventListener listener)
@@ -263,11 +282,16 @@ DistinctByDestinationPKS - Distincts based on the catalogue PKs
 
         if (_hostedSource == null)
         {
+            _con = DatabaseCommandHelper.GetConnection(Request.GetDistinctLiveDatabaseServer().Builder);
+            _con.Open();
             if (UseTempTablesWhenExtractingCohort)
             {
-                _con = DatabaseCommandHelper.GetConnection(Request.GetDistinctLiveDatabaseServer().Builder);
-                _con.Open();
+                
                 CreateCohortTempTable(_con, listener);
+            }
+            if (DistinctStrategy == DistinctStrategy.DistinctByDestinationPKS)
+            { 
+                CreatePKTable(_con, listener);
             }
             var cmdSql = GetCommandSQL(listener);
             StartAudit(cmdSql);
@@ -529,19 +553,15 @@ DistinctByDestinationPKS - Distincts based on the catalogue PKs
                     Request.QueryBuilder.AddCustomLine(orderBySql, QueryComponent.Postfix);
                 break;
             case DistinctStrategy.DistinctByDestinationPKS:
-                var pks = _catalogue.CatalogueItems.Where(c => c.ExtractionInformation.IsPrimaryKey).Select(c => c.ColumnInfo.GetRuntimeName()).ToList();
-                Request.QueryBuilder.AddCustomLine($"GROUP BY {string.Join(',',pks)}", QueryComponent.GroupBy);
+                if (_pkUUID != null)
+                {
+                    var pks = _catalogue.CatalogueItems.Where(ci => ci.ExtractionInformation.IsPrimaryKey).Select(ci => ci.ColumnInfo);
+                    var strs = pks.Select(pk => $"{_pkUUID}.{pk.GetRuntimeName()} = {pk.GetFullyQualifiedName()}");
+                    Request.QueryBuilder.AddCustomLine($"LEFT JOIN {_pkUUID} ON {string.Join(" AND ",strs)}", QueryComponent.JoinInfoJoin);
+                    var notNull = pks.Select(pk => $"{_pkUUID}.{pk.GetRuntimeName()} IS NOT NULL");
+                    Request.QueryBuilder.AddCustomLine(string.Join(" AND",notNull), QueryComponent.WHERE);
+                }
                 break;
-            //                  SELECT MIN(ReleaseId), SpecimenNo, TestCode
-            //  FROM [Proj_2__8].[dbo].[_2_2025_07_17_Extraction_simpleSample]
-            //GROUP BY SpecimenNo,TestCode
-            //  SELECT MIN(ReleaseId), SpecimenNo, TestCode
-            //  FROM [Proj_2__8].[dbo].[_2_2025_07_17_Extraction_simpleSample]
-            //GROUP BY SpecimenNo,TestCode
-
-
-            //also want to add a where clause to ignore existign foud PKS
-            //where NOT (SpecimenNo = 1 and TestCode ='a')
             default:
                 throw new ArgumentOutOfRangeException();
         }
