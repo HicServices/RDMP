@@ -519,7 +519,7 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
     /// <inheritdoc/>
     public string DataType { get => _dataType; set => SetField(ref _dataType, value); }
     /// <inheritdoc/>
-    public string DataSubtype { get => _dataSubtype; set => SetField(ref _dataSubtype, value); }
+    public string DataSubType { get => _dataSubtype; set => SetField(ref _dataSubtype, value); }
     /// <inheritdoc/>
     public string DataSource { get => _dataSource; set => SetField(ref _dataSource, value); }
     /// <inheritdoc/>
@@ -1120,7 +1120,7 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
         AssociatedMedia = r["AssociatedMedia"].ToString();
         ControlledVocabulary = r["ControlledVocabulary"].ToString();
         DataType = r["DataType"].ToString();
-        DataSubtype = r["DataSubtype"].ToString();
+        DataSubType = r["DataSubType"].ToString();
         Doi = r["Doi"].ToString();
         var updateLag = r["UpdateLag"];
         if (updateLag == null || updateLag == DBNull.Value)
