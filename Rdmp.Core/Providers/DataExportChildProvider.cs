@@ -180,10 +180,6 @@ public class DataExportChildProvider : CatalogueChildProvider
         AddChildren(ProjectRootFolder, new DescendancyList(ProjectRootFolder));
 
         ReportProgress("Projects");
-
-        //work out all the Catalogues that are extractable (Catalogues are extractable if there is an ExtractableDataSet with the Catalogue_ID that matches them)
-        //var cataToEds = new Dictionary<int, ExtractableDataSet>(ExtractableDataSets.ToDictionary(k => k.Catalogue_ID));
-
         //inject extractability into Catalogues
         foreach (var catalogue in AllCatalogues)
         {
