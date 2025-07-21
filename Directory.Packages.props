@@ -22,13 +22,7 @@
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageVersion Include="NPOI" Version="2.7.3" />
     <PackageVersion Include="NLog" Version="5.4.0" />
-<<<<<<< HEAD
     <PackageVersion Include="SixLabors.ImageSharp" Version="3.1.10" />
-||||||| e00497595
-    <PackageVersion Include="SixLabors.ImageSharp" Version="3.1.6" />
-=======
-    <PackageVersion Include="SixLabors.ImageSharp" Version="3.1.8" />
->>>>>>> a8fc1cb910d6a3ab914b8e13216d1884627fdbfa
     <PackageVersion Include="SixLabors.ImageSharp.Drawing" Version="2.1.5" />
     <PackageVersion Include="Spectre.Console" Version="0.50.0" />
     <PackageVersion Include="SSH.NET" Version="2025.0.0" />
