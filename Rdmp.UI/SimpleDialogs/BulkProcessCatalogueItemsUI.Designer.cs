@@ -243,6 +243,7 @@ namespace Rdmp.UI.SimpleDialogs
             olvCatalogueItems.TabIndex = 1;
             olvCatalogueItems.UseCompatibleStateImageBehavior = false;
             olvCatalogueItems.View = System.Windows.Forms.View.Details;
+            olvCatalogueItems.KeyUp += olvCatalogueItems_KeyUp;
             // 
             // olvName
             // 

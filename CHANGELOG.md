@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add ability to associate a Catalogue with multiple Projects
 - Add DistinctByDestinationPKs distinction strategy to the DatasetExtractionSource Extraction pipeline component
 - Update clone extraction configuration to include generic perameters
+- Fix copy-paste issue in bulk edit Catalogue Items UI
 
 ## [8.4.4] - 2025-05-08 
 
