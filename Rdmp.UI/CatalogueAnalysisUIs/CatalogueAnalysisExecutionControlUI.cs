@@ -117,7 +117,7 @@ public partial class CatalogueAnalysisExecutionControlUI : CatalogueAnalysisExec
 
 
         var userDefinedCharts = _dqeRepository.GetAllObjectsWhere<UserDefinedChart>("Catalogue_ID", databaseObject.ID);
-        foreach(var udc in userDefinedCharts)
+        foreach (var udc in userDefinedCharts)
         {
             var chartRunner = new UserDefinedChartRunner();
             chartRunner.Setup(activator, _dqeRepository, udc);
@@ -372,6 +372,11 @@ public partial class CatalogueAnalysisExecutionControlUI : CatalogueAnalysisExec
         var dialog = new UserDefinedChartCreationForm();
         dialog.Setup(Activator, _dqeRepository, _catalogue);
         dialog.Show();
+    }
+
+    private void lblRecordCount_Click(object sender, EventArgs e)
+    {
+
     }
 }
 

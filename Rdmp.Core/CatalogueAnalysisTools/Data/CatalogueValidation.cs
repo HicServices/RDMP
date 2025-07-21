@@ -65,6 +65,11 @@ namespace Rdmp.Core.CatalogueAnalysisTools.Data
             return _dqeRepositroy.GetAllObjectsWhere<CatalogueValidationResult>("CatalogueValidation_ID", this.ID).ToList();
         }
 
+        public CatalogueValidationResultCounts GetCounts()
+        {
+            return _dqeRepositroy.GetAllObjectsWhere<CatalogueValidationResultCounts>("CatalogueValidation_ID", this.ID).First();
+        }
+
         public CatalogueValidation(DQERepository repository, Catalogue catalogue, ColumnInfo timeColumn, ColumnInfo pivotColumn)
         {
             _dqeRepositroy = repository;

@@ -58,7 +58,7 @@ if not exists (select 1 from sys.tables where name = 'CatalogueValidationResultC
 BEGIN
 CREATE TABLE [dbo].[CatalogueValidationResultCounts](
 	[ID] [int] IDENTITY(1,1) NOT NULL,
-	[CatalogueValidationResult_ID] [int] NOT NULL,
+	[CatalogueValidation_ID] [int] NOT NULL,
 	[RecordCount] [int] NOT NULL,
 	[ExtractionIdentifierCount] [int] NOT NULL,
 CONSTRAINT [PK_CatalogueValidationResultCounts] PRIMARY KEY CLUSTERED 

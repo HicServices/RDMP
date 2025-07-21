@@ -8,6 +8,7 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
+using NPOI.SS.Formula.Functions;
 using Rdmp.Core;
 using Rdmp.Core.CatalogueAnalysisTools.Data;
 using Rdmp.Core.Curation.Data;
@@ -54,6 +55,11 @@ public partial class CatalogueValidationResultsUI : CatalogueValidationSummarySc
         timePeriodicityChart1.SelectEvaluation(evaluation, category ?? "ALL");
         //columnStatesChart1.SelectEvaluation(evaluation, category ?? "ALL");
         _lastSelected = evaluation;
+        
+        var counts = evaluation.GetCounts();
+
+        lblRecordCount.Text = counts.RecordCount.ToString();
+        lblExtractionIdentifiersCount.Text = counts.ExtractionIdentifierCount.ToString();
     }
 
     private void dqePivotCategorySelector1_PivotCategorySelectionChanged()

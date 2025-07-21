@@ -14,7 +14,7 @@ namespace Rdmp.Core.CatalogueAnalysisTools.Data
     public class CatalogueValidationResultCounts : DatabaseEntity
     {
 
-        private int _catalogueValidationResultID;
+        private int _catalogueValidationID;
 
         private int _recordCount;
         private int _extractionIdentifierCount;
@@ -25,7 +25,7 @@ namespace Rdmp.Core.CatalogueAnalysisTools.Data
 
 
         [NoMappingToDatabase]
-        public CatalogueValidationResult CatalogueValidationResult { get => _dqeRepository.GetObjectByID<CatalogueValidationResult>(_catalogueValidationResultID); private set => SetField(ref _catalogueValidationResultID, value.ID); }
+        public CatalogueValidation CatalogueValidation{ get => _dqeRepository.GetObjectByID<CatalogueValidation>(_catalogueValidationID); private set => SetField(ref _catalogueValidationID, value.ID); }
 
         public int RecordCount { get => _recordCount; private set => SetField(ref _recordCount, value); }
         public int ExtractionIdentifierCount { get => _extractionIdentifierCount; private set => SetField(ref _extractionIdentifierCount, value); }
@@ -52,22 +52,22 @@ namespace Rdmp.Core.CatalogueAnalysisTools.Data
             _dqeRepository = repository;
             _recordCount = int.Parse(r["RecordCount"].ToString());
             _extractionIdentifierCount = int.Parse(r["ExtractionIdentifierCount"].ToString());
-            _catalogueValidationResultID = int.Parse(r["CatalogueValidationResult_ID"].ToString());
+            _catalogueValidationID = int.Parse(r["CatalogueValidation_ID"].ToString());
 
         }
 
-        public CatalogueValidationResultCounts(DQERepository repository, CatalogueValidationResult validationResult, int recordCount, int extractionIdentifierCount)
+        public CatalogueValidationResultCounts(DQERepository repository, CatalogueValidation validation, int recordCount, int extractionIdentifierCount)
         {
 
             _dqeRepository = repository;
             _recordCount = recordCount;
             _extractionIdentifierCount = extractionIdentifierCount;
-            _catalogueValidationResultID = validationResult.ID;
+            _catalogueValidationID = validation.ID;
             repository.InsertAndHydrate(this, new Dictionary<string, object>
             {
                 {"RecordCount",_recordCount },
                 {"ExtractionIdentifierCount",_extractionIdentifierCount },
-                {"CatalogueValidationResult_ID",_catalogueValidationResultID }
+                {"CatalogueValidation_ID",_catalogueValidationID }
             });
 
 
