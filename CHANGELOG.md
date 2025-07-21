@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix issue with global contextual search
 - Add MS Teams Extraction notifications (see [Documentation\DataExtractions\ExtractionTeamsNotifications.md])
 - Add ability to use Cohort Catalogue Filters in an Extraction Configuration
+- Add ability to associate a Catalogue with multiple Projects
 - Add DistinctByDestinationPKs distinction strategy to the DatasetExtractionSource Extraction pipeline component
 - Update clone extraction configuration to include generic perameters
 

@@ -85,7 +85,8 @@ public sealed class S3BucketReleaseDestinationTests : TestsRequiringAnExtraction
     public void AWSLoginTest()
     {
         var awss3 = new AWSS3("minio", Amazon.RegionEndpoint.EUWest2);
-        Assert.That(awss3.ListAvailableBuckets().Result, Is.Empty);
+        Assert.DoesNotThrow(() => MakeBucket("logintest"));
+        Assert.DoesNotThrow(() => DeleteBucket("logintest"));
     }
 
     [Test]
@@ -122,7 +123,6 @@ public sealed class S3BucketReleaseDestinationTests : TestsRequiringAnExtraction
         Assert.DoesNotThrow(() => runner.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, ThrowImmediatelyCheckNotifier.Quiet, new GracefulCancellationToken()));
         var foundObjects = GetObjects("releasetoawsbasictest");
         Assert.That(foundObjects, Has.Count.EqualTo(1));
-        DeleteBucket("releasetoawsbasictest");
     }
 
     [Test]
@@ -141,7 +141,7 @@ public sealed class S3BucketReleaseDestinationTests : TestsRequiringAnExtraction
         SetArgs(args, new Dictionary<string, object>
         {
             { "AWS_Profile", "minio" },
-            { "BucketName", "releasetoawsbasictest" },
+            { "BucketName", "noregion" },
             { "ConfigureInteractivelyOnRelease", false },
             { "BucketFolder", "release" }
         });
@@ -174,7 +174,7 @@ public sealed class S3BucketReleaseDestinationTests : TestsRequiringAnExtraction
         SetArgs(args, new Dictionary<string, object>
         {
             { "AWS_Region", "eu-west-2" },
-            { "BucketName", "releasetoawsbasictest" },
+            { "BucketName", "noprofile" },
             { "ConfigureInteractivelyOnRelease", false },
             { "BucketFolder", "release" }
         });
@@ -208,7 +208,7 @@ public sealed class S3BucketReleaseDestinationTests : TestsRequiringAnExtraction
         {
             { "AWS_Region", "eu-west-2" },
             { "AWS_Profile", "junk-profile" },
-            { "BucketName", "releasetoawsbasictest" },
+            { "BucketName", "badprofile" },
             { "ConfigureInteractivelyOnRelease", false },
             { "BucketFolder", "release" }
         });
@@ -295,7 +295,7 @@ public sealed class S3BucketReleaseDestinationTests : TestsRequiringAnExtraction
     [Test]
     public void LocationAlreadyExists()
     {
-        MakeBucket("releasetoawsbasictest");
+        MakeBucket("locationalreadyexist");
 
         DoExtraction();
         var pipe = new Pipeline(CatalogueRepository, "NestedPipe7");
@@ -310,7 +310,7 @@ public sealed class S3BucketReleaseDestinationTests : TestsRequiringAnExtraction
         {
             { "AWS_Region", "eu-west-2" },
             { "AWS_Profile", "minio" },
-            { "BucketName", "releasetoawsbasictest" },
+            { "BucketName", "locationalreadyexist" },
             { "ConfigureInteractivelyOnRelease", false },
             { "BucketFolder", "release" }
         });
@@ -324,7 +324,7 @@ public sealed class S3BucketReleaseDestinationTests : TestsRequiringAnExtraction
         };
         var runner = new ReleaseRunner(new ThrowImmediatelyActivator(RepositoryLocator), optsRelease);
         Assert.DoesNotThrow(() => runner.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, ThrowImmediatelyCheckNotifier.Quiet, new GracefulCancellationToken()));
-        var foundObjects = GetObjects("releasetoawsbasictest");
+        var foundObjects = GetObjects("locationalreadyexist");
         Assert.That(foundObjects, Has.Count.EqualTo(1));
         DoExtraction();
         pipe = new Pipeline(CatalogueRepository, "NestedPipe8");
@@ -339,7 +339,7 @@ public sealed class S3BucketReleaseDestinationTests : TestsRequiringAnExtraction
         {
             { "AWS_Region", "eu-west-2" },
             { "AWS_Profile", "minio" },
-            { "BucketName", "releasetoawsbasictest" },
+            { "BucketName", "locationalreadyexist" },
             { "ConfigureInteractivelyOnRelease", false },
             { "BucketFolder", "release" }
         });
@@ -354,8 +354,7 @@ public sealed class S3BucketReleaseDestinationTests : TestsRequiringAnExtraction
         };
         runner = new ReleaseRunner(new ThrowImmediatelyActivator(RepositoryLocator), optsRelease);
         Assert.Throws<AggregateException>(() => runner.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, ThrowImmediatelyCheckNotifier.Quiet, new GracefulCancellationToken()));
-        foundObjects = GetObjects("releasetoawsbasictest");
+        foundObjects = GetObjects("locationalreadyexist");
         Assert.That(foundObjects, Has.Count.EqualTo(1));
-        DeleteBucket("releasetoawsbasictest");
     }
 }
