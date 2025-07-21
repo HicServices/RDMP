@@ -62,6 +62,7 @@ namespace Rdmp.Core.CatalogueAnalysisTools.Data
             _dqeRepository = repository;
             _recordCount = recordCount;
             _extractionIdentifierCount = extractionIdentifierCount;
+            _catalogueValidationResultID = validationResult.ID;
             repository.InsertAndHydrate(this, new Dictionary<string, object>
             {
                 {"RecordCount",_recordCount },

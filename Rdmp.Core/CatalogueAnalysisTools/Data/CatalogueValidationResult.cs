@@ -38,12 +38,12 @@ namespace Rdmp.Core.CatalogueAnalysisTools.Data
             if (!historicalResults.Any()) return null;
             return historicalResults.First();
         }
-#nullable disable
 
-        public CatalogueValidationResultCounts GetCounts()
+        public CatalogueValidationResultCounts? GetCounts()
         {
-            return _dqeRepository.GetAllObjectsWhere<CatalogueValidationResultCounts>("CatalogueValidationResult_ID", this.ID).First();
+            return _dqeRepository.GetAllObjectsWhere<CatalogueValidationResultCounts>("CatalogueValidationResult_ID", this.ID).FirstOrDefault();
         }
+#nullable disable
 
 
         public CatalogueValidationResult(DQERepository repository, DbDataReader r) : base(repository, r)

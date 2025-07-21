@@ -47,6 +47,7 @@ public class CatalogueValidationTool
     private readonly string ALL = "ALL";
     private readonly string CORRECT = "CORRECT";
     private readonly int _batchSize = 10000;
+
     public CatalogueValidationTool(ICatalogueRepository catalogueRepository, Catalogue catalogue, ColumnInfo timeColumn, ColumnInfo pivotColumn, DateTime? startDate = null, DateTime? endDate = null, bool updatePreviousResult = false, int batchSize = 10000)
     {
         _catalogueRepository = catalogueRepository;
@@ -59,7 +60,7 @@ public class CatalogueValidationTool
         _updatePreviousResult = updatePreviousResult;
         _batchSize = batchSize;
 
-        foreach (var columnInfo in catalogue.CatalogueItems.Select(c => c.ColumnInfo))
+        foreach (var columnInfo in catalogue.CatalogueItems.Select(c => c.ColumnInfo).Where(c => !SpecialFieldNames.IsHicPrefixed(c.GetRuntimeName())))
         {
             _primaryConstraints[columnInfo.GetRuntimeName()] = _DQERepository.GetAllObjectsWhere<Data.PrimaryConstraint>("ColumnInfo_ID", columnInfo.ID).FirstOrDefault();
             _secondaryConstraints[columnInfo.GetRuntimeName()] = _DQERepository.GetAllObjectsWhere<Data.SecondaryConstraint>("ColumnInfo_ID", columnInfo.ID).ToList();
@@ -284,7 +285,7 @@ public class CatalogueValidationTool
     private void GenerateReport(string pivotColumnValue, CatalogueValidation catalogueValidation, DateTime? startDate = null, DateTime? endDate = null, bool updatePreviousEvaluation = false)
     {
         var qb = new QueryBuilder(null, null);
-        qb.AddColumnRange(_catalogue.GetAllExtractionInformation());
+        qb.AddColumnRange(_catalogue.GetAllExtractionInformation().Where(ei => !SpecialFieldNames.IsHicPrefixed(ei.ColumnInfo.GetRuntimeName())).ToArray());
         if (pivotColumnValue != ALL)
         {
             qb.AddCustomLine($"{_pivotColumn.GetFullyQualifiedName()} = '{pivotColumnValue}'", FAnsi.Discovery.QuerySyntax.QueryComponent.WHERE);
@@ -381,13 +382,16 @@ public class CatalogueValidationTool
 
     private void GenerateResultCounts(CatalogueValidationResult result)
     {
+        var timeValue = result.Date;
+        var pivotCategory = result.PivotCategory;
+
         int recordsCount = 0;
         int extractionIdentifierCount = 0;
         var previousRecord = result.GetPreviousResult();
         var server = _catalogue.GetDistinctLiveDatabaseServer(ReusableLibraryCode.DataAccess.DataAccessContext.InternalDataProcessing, false);
         var con = server.GetConnection();
         con.Open();
-        if (previousRecord != null)
+        if (previousRecord != null && previousRecord.GetCounts() != null)
         {
             var previousCounts = previousRecord.GetCounts();
             recordsCount = previousCounts.RecordCount;
@@ -398,7 +402,7 @@ public class CatalogueValidationTool
             var repo = new MemoryCatalogueRepository();
             var qb = new QueryBuilder("", "");
             qb.AddColumnRange(_catalogue.CatalogueItems.Select(ci => new ColumnInfoToIColumn(repo, ci.ColumnInfo)).ToArray());
-            qb.AddCustomLine($"{SpecialFieldNames.ValidFrom} > {previousRecord.Date}", FAnsi.Discovery.QuerySyntax.QueryComponent.WHERE);
+            qb.AddCustomLine($"{SpecialFieldNames.ValidFrom} > {previousRecord.Date} AND {_timeColumn.GetRuntimeName()} = '{timeValue}' AND {_pivotColumn.GetRuntimeName()} = '{pivotCategory}'", FAnsi.Discovery.QuerySyntax.QueryComponent.WHERE);
             var newStuffSQL = qb.SQL;
             using (var cmd = server.GetCommand(newStuffSQL, con))
             {
@@ -413,7 +417,7 @@ public class CatalogueValidationTool
                 var underlyingData = ei.ColumnInfo.TableInfo.Discover(ReusableLibraryCode.DataAccess.DataAccessContext.InternalDataProcessing);
                 DiscoveredTable _archiveTable = underlyingData.Database.ExpectTable($"{underlyingData.GetRuntimeName()}_Archine", underlyingData.Schema);
 
-                var replacedStuffSQL = $"SELECT * FROM {_archiveTable.GetFullyQualifiedName()} WHERE hic_validTo > {previousRecord.Date}";
+                var replacedStuffSQL = $"SELECT * FROM {_archiveTable.GetFullyQualifiedName()} WHERE hic_validTo > {previousRecord.Date} AND {_timeColumn.GetRuntimeName()} = '{timeValue}' AND {_pivotColumn.GetRuntimeName()} = '{pivotCategory}'";
                 using (var cmd = server.GetCommand(replacedStuffSQL, con))
                 {
                     using var da = server.GetDataAdapter(cmd);
@@ -430,14 +434,17 @@ public class CatalogueValidationTool
             }
             else
             {
-                extractionIdentifierCount = CalculateExtractionIdentifierCount(ei,server,con);
+                extractionIdentifierCount = CalculateExtractionIdentifierCount(result, ei,server,con);
             }
         }
         else
         {
             //no previous records, do a total calculation
-
-            var recordsSQL = $"SELECT COUNT(*) FROM {_catalogue.CatalogueItems.First().ColumnInfo.TableInfo.Name}";
+            var recordsSQL = $"SELECT COUNT(*) FROM {_catalogue.CatalogueItems.First().ColumnInfo.TableInfo.Name} WHERE {_timeColumn.GetRuntimeName()} = convert(datetime,'{timeValue}',103)";
+            if(pivotCategory != ALL)
+            {
+                recordsSQL = recordsSQL + " AND { _pivotColumn.GetRuntimeName()} = '{pivotCategory}'";
+            }
             using (var cmd = server.GetCommand(recordsSQL, con))
             {
                 recordsCount = Convert.ToInt32(cmd.ExecuteScalar());
@@ -445,16 +452,16 @@ public class CatalogueValidationTool
             var ei = _catalogue.CatalogueItems.Where(ci => ci.ExtractionInformation.IsExtractionIdentifier).FirstOrDefault();
             if (ei != null)
             {
-                extractionIdentifierCount = CalculateExtractionIdentifierCount(ei, server, con);
+                extractionIdentifierCount = CalculateExtractionIdentifierCount(result,ei, server, con);
             }
         }
         var counts = new CatalogueValidationResultCounts(_DQERepository, result, recordsCount, extractionIdentifierCount);
         counts.SaveToDatabase();
     }
 
-    private int CalculateExtractionIdentifierCount(CatalogueItem catalogueItem, DiscoveredServer server, DbConnection con)
+    private int CalculateExtractionIdentifierCount(CatalogueValidationResult result,CatalogueItem catalogueItem, DiscoveredServer server, DbConnection con)
     {
-        var extractionIdentifierSQL = $"SELECT COUNT(DISTINCT {catalogueItem.ColumnInfo.GetRuntimeName()}) FROM {catalogueItem.ColumnInfo.TableInfo.Name}";
+        var extractionIdentifierSQL = $"SELECT COUNT(DISTINCT {catalogueItem.ColumnInfo.GetRuntimeName()}) FROM {catalogueItem.ColumnInfo.TableInfo.Name} WHERE {_timeColumn.GetRuntimeName()} = '{result.Date}' AND {_pivotColumn.GetRuntimeName()} = '{result.PivotCategory}'";
         using (var cmd = server.GetCommand(extractionIdentifierSQL, con))
         {
             return Convert.ToInt32(cmd.ExecuteScalar());
