@@ -22,11 +22,11 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
     private ICatalogue _catalogue;
     private IProject _project;
     private List<int> _existingProjectIDs;
-    private bool _force = false;
+    private readonly bool _force = false;
 
     [UseWithObjectConstructor]
     public ExecuteCommandMakeCatalogueProjectSpecific(IBasicActivateItems itemActivator, ICatalogue catalogue,
-        IProject project, [DemandsInitialization("Ignore Validation Login",DemandType.Unspecified,defaultValue:false)]bool force) : this(itemActivator)
+        IProject project, [DemandsInitialization("Ignore Validation",DemandType.Unspecified,defaultValue:false)]bool force) : this(itemActivator)
     {
         SetCatalogue(catalogue);
         _project = project;
@@ -54,7 +54,7 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
 
         base.Execute();
 
-        var eds = ProjectSpecificCatalogueManager.MakeCatalogueProjectSpecific(BasicActivator.RepositoryLocator.DataExportRepository, _catalogue, _project);
+        ProjectSpecificCatalogueManager.MakeCatalogueProjectSpecific(BasicActivator.RepositoryLocator.DataExportRepository, _catalogue, _project);
         Publish(_catalogue);
     }
 

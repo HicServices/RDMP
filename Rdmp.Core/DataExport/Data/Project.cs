@@ -192,8 +192,6 @@ public class Project : DatabaseEntity, IProject, ICustomSearchString, ICheckable
     /// <inheritdoc/>
     public ICatalogue[] GetAllProjectCatalogues()
     {
-        var x = Repository.GetAllObjects<ExtractableDataSetProject>().Where(edsp => edsp.Project_ID == this.ID).Select(edsp => edsp.DataSet.Catalogue);
-        //return Repository.GetAllObjects<ExtractableDataSet>().Where(eds => eds.Projects.Select(p => p.ID).Contains(ID)).Select(eds => eds.Catalogue).ToArray();
         return Repository.GetAllObjects<ExtractableDataSetProject>().Where(edsp => edsp.Project_ID == this.ID).Select(edsp => edsp.DataSet.Catalogue).ToArray(); 
     }
 

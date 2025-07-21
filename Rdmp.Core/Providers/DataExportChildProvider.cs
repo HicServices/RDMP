@@ -336,18 +336,6 @@ public class DataExportChildProvider : CatalogueChildProvider
                 }
             }
         }
-        //foreach (var projectSpecificEds in ExtractableDataSets.Where(eds =>
-        //             eds.Projects.Select(p => p.ID).Contains(projectCataloguesNode.Project.ID)))
-        //{
-        //    var cata = (Catalogue)projectSpecificEds.Catalogue;
-
-        //    // cata will be null if it has been deleted from the database
-        //    if (cata != null)
-        //    {
-        //        children.Add(cata);
-        //        AddChildren(cata, descendancy.Add(projectSpecificEds.Catalogue));
-        //    }
-        //}
 
         AddToDictionaries(children, descendancy);
     }
@@ -374,9 +362,9 @@ public class DataExportChildProvider : CatalogueChildProvider
     {
         var children = new HashSet<object>();
         var associatedCohorts = associatedCohortConfigurations.Project.GetAssociatedCohortIdentificationConfigurations();
-        foreach (var x in associatedCohorts)
+        foreach (var cohort in associatedCohorts)
         {
-            children.Add(x);
+            children.Add(cohort);
         }
 
         AddToDictionaries(children, descendancy);

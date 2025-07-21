@@ -143,7 +143,8 @@ public class AtomicCommandFactory : CommandFactoryBase
                 yield return  new ExecuteCommandMakeProjectSpecificCatalogueNormalAgain(_activator, c,null)
                 {
                     Weight = -99.0009f,
-                    SuggestedCategory = Extraction
+                    SuggestedCategory = Extraction,
+                    OverrideCommandName="Remove Project Specific Catalogue from a Project"
                 };
 
                 yield return new ExecuteCommandSetExtractionIdentifier(_activator, c, null, null)

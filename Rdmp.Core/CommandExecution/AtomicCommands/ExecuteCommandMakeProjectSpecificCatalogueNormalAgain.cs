@@ -19,7 +19,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 public class ExecuteCommandMakeProjectSpecificCatalogueNormalAgain : BasicCommandExecution, IAtomicCommand
 {
     private Catalogue _catalogue;
-    private List<ExtractableDataSet> _extractableDataSets;
+    private readonly List<ExtractableDataSet> _extractableDataSets;
     private ExtractableDataSet _extractableDataSet;
     private Project _selectedProj;
 
@@ -36,9 +36,6 @@ public class ExecuteCommandMakeProjectSpecificCatalogueNormalAgain : BasicComman
             SetImpossible("Data Export functionality is not available");
             return;
         }
-
-        var x = dataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(catalogue);
-        var y = x.Where(eds => eds.Projects.Any());
 
         _extractableDataSets = dataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(catalogue).Where(eds => eds.Projects.Any() && eds.Projects.Select(p =>ProjectSpecificCatalogueManager.CanMakeCatalogueNonProjectSpecific(dataExportRepository, catalogue, eds,p)).Contains(true)).ToList();
         if (!_extractableDataSets.Any())
