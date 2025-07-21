@@ -30,7 +30,8 @@ namespace Rdmp.UI.CatalogueAnalysisUIs.Charts
             groupBox1.Text = _title;
             chart1.Visible = false;
             chart1.Series[0].ChartType = _chartType;
-            if(_dt is not null)
+            //todo each chart has custom properties to make them look nice
+            if (_dt is not null)
             {
                 chart1.Series[0].XValueMember = _dt.Columns[1].ColumnName;
                 chart1.Series[0].YValueMembers = _dt.Columns[0].ColumnName;

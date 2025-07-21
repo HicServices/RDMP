@@ -31,18 +31,6 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CatalogueAnalysisExecutionControlUI));
             tabControl1 = new System.Windows.Forms.TabControl();
             tabPage1 = new System.Windows.Forms.TabPage();
-            multiPurposeChart6 = new Rdmp.UI.CatalogueAnalysisUIs.Charts.MultiPurposeChart();
-            multiPurposeChart7 = new Rdmp.UI.CatalogueAnalysisUIs.Charts.MultiPurposeChart();
-            multiPurposeChart8 = new Rdmp.UI.CatalogueAnalysisUIs.Charts.MultiPurposeChart();
-            multiPurposeChart9 = new Rdmp.UI.CatalogueAnalysisUIs.Charts.MultiPurposeChart();
-            multiPurposeChart10 = new Rdmp.UI.CatalogueAnalysisUIs.Charts.MultiPurposeChart();
-            multiPurposeChart11 = new Rdmp.UI.CatalogueAnalysisUIs.Charts.MultiPurposeChart();
-            multiPurposeChart5 = new Rdmp.UI.CatalogueAnalysisUIs.Charts.MultiPurposeChart();
-            multiPurposeChart4 = new Rdmp.UI.CatalogueAnalysisUIs.Charts.MultiPurposeChart();
-            multiPurposeChart3 = new Rdmp.UI.CatalogueAnalysisUIs.Charts.MultiPurposeChart();
-            multiPurposeChart2 = new Rdmp.UI.CatalogueAnalysisUIs.Charts.MultiPurposeChart();
-            multiPurposeChart1 = new Rdmp.UI.CatalogueAnalysisUIs.Charts.MultiPurposeChart();
-            pieChart1 = new Rdmp.UI.CatalogueAnalysisUIs.Charts.MultiPurposeChart();
             catalogueValidationResultsui1 = new Rdmp.UI.CatalogueSummary.CatalogueValidationResultsUI();
             tabPage2 = new System.Windows.Forms.TabPage();
             groupBox6 = new System.Windows.Forms.GroupBox();
@@ -70,8 +58,8 @@
             label2 = new System.Windows.Forms.Label();
             label1 = new System.Windows.Forms.Label();
             tabPage3 = new System.Windows.Forms.TabPage();
-            button3 = new System.Windows.Forms.Button();
             tblCustomChart = new System.Windows.Forms.TableLayoutPanel();
+            button3 = new System.Windows.Forms.Button();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             tabPage2.SuspendLayout();
@@ -101,18 +89,6 @@
             // 
             // tabPage1
             // 
-            tabPage1.Controls.Add(multiPurposeChart6);
-            tabPage1.Controls.Add(multiPurposeChart7);
-            tabPage1.Controls.Add(multiPurposeChart8);
-            tabPage1.Controls.Add(multiPurposeChart9);
-            tabPage1.Controls.Add(multiPurposeChart10);
-            tabPage1.Controls.Add(multiPurposeChart11);
-            tabPage1.Controls.Add(multiPurposeChart5);
-            tabPage1.Controls.Add(multiPurposeChart4);
-            tabPage1.Controls.Add(multiPurposeChart3);
-            tabPage1.Controls.Add(multiPurposeChart2);
-            tabPage1.Controls.Add(multiPurposeChart1);
-            tabPage1.Controls.Add(pieChart1);
             tabPage1.Controls.Add(catalogueValidationResultsui1);
             tabPage1.Location = new System.Drawing.Point(4, 24);
             tabPage1.Name = "tabPage1";
@@ -121,90 +97,6 @@
             tabPage1.TabIndex = 0;
             tabPage1.Text = "Analysis";
             tabPage1.UseVisualStyleBackColor = true;
-            // 
-            // multiPurposeChart6
-            // 
-            multiPurposeChart6.Location = new System.Drawing.Point(1044, 602);
-            multiPurposeChart6.Name = "multiPurposeChart6";
-            multiPurposeChart6.Size = new System.Drawing.Size(176, 139);
-            multiPurposeChart6.TabIndex = 13;
-            // 
-            // multiPurposeChart7
-            // 
-            multiPurposeChart7.Location = new System.Drawing.Point(849, 602);
-            multiPurposeChart7.Name = "multiPurposeChart7";
-            multiPurposeChart7.Size = new System.Drawing.Size(176, 139);
-            multiPurposeChart7.TabIndex = 12;
-            // 
-            // multiPurposeChart8
-            // 
-            multiPurposeChart8.Location = new System.Drawing.Point(650, 602);
-            multiPurposeChart8.Name = "multiPurposeChart8";
-            multiPurposeChart8.Size = new System.Drawing.Size(176, 139);
-            multiPurposeChart8.TabIndex = 11;
-            // 
-            // multiPurposeChart9
-            // 
-            multiPurposeChart9.Location = new System.Drawing.Point(452, 602);
-            multiPurposeChart9.Name = "multiPurposeChart9";
-            multiPurposeChart9.Size = new System.Drawing.Size(176, 139);
-            multiPurposeChart9.TabIndex = 10;
-            // 
-            // multiPurposeChart10
-            // 
-            multiPurposeChart10.Location = new System.Drawing.Point(255, 602);
-            multiPurposeChart10.Name = "multiPurposeChart10";
-            multiPurposeChart10.Size = new System.Drawing.Size(176, 139);
-            multiPurposeChart10.TabIndex = 9;
-            // 
-            // multiPurposeChart11
-            // 
-            multiPurposeChart11.Location = new System.Drawing.Point(47, 602);
-            multiPurposeChart11.Name = "multiPurposeChart11";
-            multiPurposeChart11.Size = new System.Drawing.Size(187, 139);
-            multiPurposeChart11.TabIndex = 8;
-            // 
-            // multiPurposeChart5
-            // 
-            multiPurposeChart5.Location = new System.Drawing.Point(1044, 457);
-            multiPurposeChart5.Name = "multiPurposeChart5";
-            multiPurposeChart5.Size = new System.Drawing.Size(176, 139);
-            multiPurposeChart5.TabIndex = 7;
-            // 
-            // multiPurposeChart4
-            // 
-            multiPurposeChart4.Location = new System.Drawing.Point(849, 457);
-            multiPurposeChart4.Name = "multiPurposeChart4";
-            multiPurposeChart4.Size = new System.Drawing.Size(176, 139);
-            multiPurposeChart4.TabIndex = 6;
-            // 
-            // multiPurposeChart3
-            // 
-            multiPurposeChart3.Location = new System.Drawing.Point(650, 457);
-            multiPurposeChart3.Name = "multiPurposeChart3";
-            multiPurposeChart3.Size = new System.Drawing.Size(176, 139);
-            multiPurposeChart3.TabIndex = 5;
-            // 
-            // multiPurposeChart2
-            // 
-            multiPurposeChart2.Location = new System.Drawing.Point(452, 457);
-            multiPurposeChart2.Name = "multiPurposeChart2";
-            multiPurposeChart2.Size = new System.Drawing.Size(176, 139);
-            multiPurposeChart2.TabIndex = 4;
-            // 
-            // multiPurposeChart1
-            // 
-            multiPurposeChart1.Location = new System.Drawing.Point(255, 457);
-            multiPurposeChart1.Name = "multiPurposeChart1";
-            multiPurposeChart1.Size = new System.Drawing.Size(176, 139);
-            multiPurposeChart1.TabIndex = 3;
-            // 
-            // pieChart1
-            // 
-            pieChart1.Location = new System.Drawing.Point(47, 457);
-            pieChart1.Name = "pieChart1";
-            pieChart1.Size = new System.Drawing.Size(187, 139);
-            pieChart1.TabIndex = 2;
             // 
             // catalogueValidationResultsui1
             // 
@@ -504,16 +396,6 @@
             tabPage3.Text = "Custom Charts";
             tabPage3.UseVisualStyleBackColor = true;
             // 
-            // button3
-            // 
-            button3.Location = new System.Drawing.Point(3, 3);
-            button3.Name = "button3";
-            button3.Size = new System.Drawing.Size(136, 32);
-            button3.TabIndex = 0;
-            button3.Text = "Create New Chart";
-            button3.UseVisualStyleBackColor = true;
-            button3.Click += button3_Click;
-            // 
             // tblCustomChart
             // 
             tblCustomChart.AutoSize = true;
@@ -527,6 +409,16 @@
             tblCustomChart.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             tblCustomChart.Size = new System.Drawing.Size(200, 100);
             tblCustomChart.TabIndex = 1;
+            // 
+            // button3
+            // 
+            button3.Location = new System.Drawing.Point(3, 3);
+            button3.Name = "button3";
+            button3.Size = new System.Drawing.Size(136, 32);
+            button3.TabIndex = 0;
+            button3.Text = "Create New Chart";
+            button3.UseVisualStyleBackColor = true;
+            button3.Click += button3_Click;
             // 
             // CatalogueAnalysisExecutionControlUI
             // 
@@ -589,18 +481,6 @@
         private System.Windows.Forms.TextBox tbStartDate;
         private System.Windows.Forms.Label label7;
         private CatalogueSummary.CatalogueValidationResultsUI catalogueValidationResultsui1;
-        private Charts.MultiPurposeChart pieChart1;
-        private Charts.MultiPurposeChart multiPurposeChart5;
-        private Charts.MultiPurposeChart multiPurposeChart4;
-        private Charts.MultiPurposeChart multiPurposeChart3;
-        private Charts.MultiPurposeChart multiPurposeChart2;
-        private Charts.MultiPurposeChart multiPurposeChart1;
-        private Charts.MultiPurposeChart multiPurposeChart6;
-        private Charts.MultiPurposeChart multiPurposeChart7;
-        private Charts.MultiPurposeChart multiPurposeChart8;
-        private Charts.MultiPurposeChart multiPurposeChart9;
-        private Charts.MultiPurposeChart multiPurposeChart10;
-        private Charts.MultiPurposeChart multiPurposeChart11;
         private System.Windows.Forms.TabPage tabPage3;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.TableLayoutPanel tblCustomChart;

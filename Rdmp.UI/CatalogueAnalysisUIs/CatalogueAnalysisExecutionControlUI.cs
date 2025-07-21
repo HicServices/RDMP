@@ -114,30 +114,6 @@ public partial class CatalogueAnalysisExecutionControlUI : CatalogueAnalysisExec
                 cbPivot.SelectedIndex = columnInfos.Select(ci => ci.ID).ToList().IndexOf(evaluation.PivotColumn_ID);
             }
         }
-        var pieDT = new DataTable();
-        pieDT.Columns.Add("X");
-        pieDT.Columns.Add("Y");
-        pieDT.Rows.Add([1989, 'F']);
-        pieDT.Rows.Add([8011, 'T']);
-        //pieDT.Rows.Add([30, 'C']);
-        //pieDT.Rows.Add([40, 'D']);
-        //pieDT.Rows.Add([50, 'E']);
-        //pieDT.Rows.Add([60, 'F']);
-        //pieDT.Rows.Add([70, 'G']);
-        //pieDT.Rows.Add([80, 'H']);
-        //pieDT.Rows.Add([90, 'I']);
-        //pieChart1.Init(pieDT, System.Windows.Forms.DataVisualization.Charting.SeriesChartType.SplineRange, "Yonk!", "yeye");
-        multiPurposeChart1.Init(pieDT, System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Pie);
-        //multiPurposeChart2.Init(pieDT, System.Windows.Forms.DataVisualization.Charting.SeriesChartType.RangeColumn);
-        //multiPurposeChart3.Init(pieDT, System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Radar);
-        //multiPurposeChart4.Init(pieDT, System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Polar);
-        //multiPurposeChart5.Init(pieDT, System.Windows.Forms.DataVisualization.Charting.SeriesChartType.ErrorBar);
-        //multiPurposeChart6.Init(pieDT, System.Windows.Forms.DataVisualization.Charting.SeriesChartType.BoxPlot);
-        //multiPurposeChart7.Init(pieDT, System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Renko);
-        //multiPurposeChart8.Init(pieDT, System.Windows.Forms.DataVisualization.Charting.SeriesChartType.ThreeLineBreak);
-        //multiPurposeChart9.Init(pieDT, System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Kagi);
-        //multiPurposeChart10.Init(pieDT, System.Windows.Forms.DataVisualization.Charting.SeriesChartType.PointAndFigure);
-        //multiPurposeChart11.Init(pieDT, System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Funnel);
 
 
         var userDefinedCharts = _dqeRepository.GetAllObjectsWhere<UserDefinedChart>("Catalogue_ID", databaseObject.ID);

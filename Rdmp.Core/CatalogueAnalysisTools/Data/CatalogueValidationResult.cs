@@ -30,6 +30,22 @@ namespace Rdmp.Core.CatalogueAnalysisTools.Data
         public int Invalid { get => _invalid; private set => SetField(ref _invalid, value); }
         public string PivotCategory { get => _pivotCategory; private set => SetField(ref _pivotCategory, value); }
 
+
+#nullable enable
+        public CatalogueValidationResult? GetPreviousResult()
+        {
+            var historicalResults = _dqeRepository.GetAllObjectsWhere<CatalogueValidationResult>("CatalogueValidation_ID", _catalogueValidationID).Where(cv => cv.Date < _date).OrderByDescending(cv => cv.Date);
+            if (!historicalResults.Any()) return null;
+            return historicalResults.First();
+        }
+#nullable disable
+
+        public CatalogueValidationResultCounts GetCounts()
+        {
+            return _dqeRepository.GetAllObjectsWhere<CatalogueValidationResultCounts>("CatalogueValidationResult_ID", this.ID).First();
+        }
+
+
         public CatalogueValidationResult(DQERepository repository, DbDataReader r) : base(repository, r)
         {
             _dqeRepository = repository;

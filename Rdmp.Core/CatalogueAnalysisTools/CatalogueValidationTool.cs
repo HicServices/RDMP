@@ -1,4 +1,7 @@
 ﻿using Amazon.Runtime;
+using FAnsi.Discovery;
+using MongoDB.Driver;
+using NPOI.OpenXmlFormats.Spreadsheet;
 using NPOI.SS.Formula.Functions;
 using Org.BouncyCastle.Bcpg.OpenPgp;
 using Org.BouncyCastle.Crypto;
@@ -7,6 +10,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Sources;
+using Rdmp.Core.DataLoad.Triggers;
 using Rdmp.Core.DataViewing;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
@@ -16,11 +20,13 @@ using Rdmp.Core.Validation.Constraints.Secondary;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using static MongoDB.Driver.WriteConcern;
+using static Terminal.Gui.MainLoop;
 
 namespace Rdmp.Core.CatalogueAnalysisTools;
 
@@ -41,7 +47,7 @@ public class CatalogueValidationTool
     private readonly string ALL = "ALL";
     private readonly string CORRECT = "CORRECT";
     private readonly int _batchSize = 10000;
-    public CatalogueValidationTool(ICatalogueRepository catalogueRepository, Catalogue catalogue, ColumnInfo timeColumn, ColumnInfo pivotColumn, DateTime? startDate = null, DateTime? endDate = null, bool updatePreviousResult = false, int batchSize=10000)
+    public CatalogueValidationTool(ICatalogueRepository catalogueRepository, Catalogue catalogue, ColumnInfo timeColumn, ColumnInfo pivotColumn, DateTime? startDate = null, DateTime? endDate = null, bool updatePreviousResult = false, int batchSize = 10000)
     {
         _catalogueRepository = catalogueRepository;
         _DQERepository = new DQERepository(_catalogueRepository);
@@ -105,7 +111,7 @@ public class CatalogueValidationTool
         }
     }
 
-    private bool ValidSecondaryConstraint(Validation.Constraints.Secondary.SecondaryConstraint sc, object value , object[] otherColumns, string[] otherColumnNames)
+    private bool ValidSecondaryConstraint(Validation.Constraints.Secondary.SecondaryConstraint sc, object value, object[] otherColumns, string[] otherColumnNames)
     {
         if (value is DBNull) return true;
         try
@@ -134,7 +140,7 @@ public class CatalogueValidationTool
             switch (constraint.Constraint)
             {
                 case Data.SecondaryConstraint.Constraints.REGULAREXPRESSION:
-                    if (!ValidSecondaryConstraint(new RegularExpression(arguments.Where(a => a.Key =="Pattern").First().Value), rowValue,null,null) && consequence < (int)constraint.Consequence)
+                    if (!ValidSecondaryConstraint(new RegularExpression(arguments.Where(a => a.Key == "Pattern").First().Value), rowValue, null, null) && consequence < (int)constraint.Consequence)
                     {
                         consequence = (int)constraint.Consequence;
                     }
@@ -146,7 +152,7 @@ public class CatalogueValidationTool
                     var doubleMax = arguments.Where(a => a.Key == "Upper").FirstOrDefault();
                     if (doubleMax is not null) boundDouble.Upper = int.Parse(doubleMax.Value);
 
-                    if (!ValidSecondaryConstraint(boundDouble, rowValue,null,null) && consequence < (int)constraint.Consequence)
+                    if (!ValidSecondaryConstraint(boundDouble, rowValue, null, null) && consequence < (int)constraint.Consequence)
                     {
                         consequence = (int)constraint.Consequence;
                     }
@@ -154,10 +160,10 @@ public class CatalogueValidationTool
                 case Data.SecondaryConstraint.Constraints.BOUNDDATE:
                     var boundDate = new BoundDate();
                     var dateMin = arguments.Where(a => a.Key == "Lower").FirstOrDefault();
-                    if ( dateMin is not null) boundDate.Lower = DateTime.Parse(dateMin.Value);
+                    if (dateMin is not null) boundDate.Lower = DateTime.Parse(dateMin.Value);
                     var dateMax = arguments.Where(a => a.Key == "Upper").FirstOrDefault();
                     if (dateMax is not null) boundDate.Upper = DateTime.Parse(dateMax.Value);
-                    if (!ValidSecondaryConstraint(boundDate, rowValue,null,null) && consequence < (int)constraint.Consequence)
+                    if (!ValidSecondaryConstraint(boundDate, rowValue, null, null) && consequence < (int)constraint.Consequence)
                     {
                         consequence = (int)constraint.Consequence;
                     }
@@ -322,11 +328,11 @@ public class CatalogueValidationTool
                     var nonOverwrittenResults = mostRecentEval.GetResults().Where(result => result.PivotCategory == pivotColumnValue && !incomingDates.Contains(result.Date));
                     var x = incomingDates.Count();
                     var y = nonOverwrittenResults.Count();
-                    Console.WriteLine(x.ToString(), y.ToString());
                     foreach (var result in nonOverwrittenResults)
                     {
                         var cvresult = new CatalogueValidationResult(_DQERepository, catalogueValidation, result.Date, pivotColumnValue, result.Correct, result.Wrong, result.Missing, result.Invalid);
                         cvresult.SaveToDatabase();
+                        GenerateResultCounts(cvresult);
                     }
                 }
             }
@@ -336,6 +342,7 @@ public class CatalogueValidationTool
         {
             var result = new CatalogueValidationResult(_DQERepository, catalogueValidation, DateTime.Parse(key), pivotColumnValue, _results[pivotColumnValue][key].Correct, _results[pivotColumnValue][key].Wrong, _results[pivotColumnValue][key].Missing, _results[pivotColumnValue][key].Invalid);
             result.SaveToDatabase();
+            GenerateResultCounts(result);
         }
     }
 
@@ -369,5 +376,88 @@ public class CatalogueValidationTool
             GenerateReport(pivotColumnValue, catalogueValidation, _startDate, _endDate, _updatePreviousResult);
         }
         //todo for all values in pivot category
+    }
+
+
+    private void GenerateResultCounts(CatalogueValidationResult result)
+    {
+        int recordsCount = 0;
+        int extractionIdentifierCount = 0;
+        var previousRecord = result.GetPreviousResult();
+        var server = _catalogue.GetDistinctLiveDatabaseServer(ReusableLibraryCode.DataAccess.DataAccessContext.InternalDataProcessing, false);
+        var con = server.GetConnection();
+        con.Open();
+        if (previousRecord != null)
+        {
+            var previousCounts = previousRecord.GetCounts();
+            recordsCount = previousCounts.RecordCount;
+            extractionIdentifierCount = previousCounts.ExtractionIdentifierCount;
+
+            var mostRecentDate = previousRecord.Date;
+            DataTable newStuff = new DataTable();
+            var repo = new MemoryCatalogueRepository();
+            var qb = new QueryBuilder("", "");
+            qb.AddColumnRange(_catalogue.CatalogueItems.Select(ci => new ColumnInfoToIColumn(repo, ci.ColumnInfo)).ToArray());
+            qb.AddCustomLine($"{SpecialFieldNames.ValidFrom} > {previousRecord.Date}", FAnsi.Discovery.QuerySyntax.QueryComponent.WHERE);
+            var newStuffSQL = qb.SQL;
+            using (var cmd = server.GetCommand(newStuffSQL, con))
+            {
+                using var da = server.GetDataAdapter(cmd);
+                da.Fill(newStuff);
+            }
+
+            var replacedStuff = new DataTable();
+            var ei = _catalogue.CatalogueItems.Where(ci => ci.ExtractionInformation.IsExtractionIdentifier).FirstOrDefault();
+            if (ei != null)
+            {
+                var underlyingData = ei.ColumnInfo.TableInfo.Discover(ReusableLibraryCode.DataAccess.DataAccessContext.InternalDataProcessing);
+                DiscoveredTable _archiveTable = underlyingData.Database.ExpectTable($"{underlyingData.GetRuntimeName()}_Archine", underlyingData.Schema);
+
+                var replacedStuffSQL = $"SELECT * FROM {_archiveTable.GetFullyQualifiedName()} WHERE hic_validTo > {previousRecord.Date}";
+                using (var cmd = server.GetCommand(replacedStuffSQL, con))
+                {
+                    using var da = server.GetDataAdapter(cmd);
+                    da.Fill(replacedStuff);
+                }
+
+            }
+
+            recordsCount = recordsCount + (newStuff.Rows.Count - replacedStuff.Rows.Count);
+            if (ei.ColumnInfo.IsPrimaryKey)
+            {
+                //we know the extraction identifier is unique, so can diff
+                extractionIdentifierCount = extractionIdentifierCount + (newStuff.Rows.Count - replacedStuff.Rows.Count);
+            }
+            else
+            {
+                extractionIdentifierCount = CalculateExtractionIdentifierCount(ei,server,con);
+            }
+        }
+        else
+        {
+            //no previous records, do a total calculation
+
+            var recordsSQL = $"SELECT COUNT(*) FROM {_catalogue.CatalogueItems.First().ColumnInfo.TableInfo.Name}";
+            using (var cmd = server.GetCommand(recordsSQL, con))
+            {
+                recordsCount = Convert.ToInt32(cmd.ExecuteScalar());
+            }
+            var ei = _catalogue.CatalogueItems.Where(ci => ci.ExtractionInformation.IsExtractionIdentifier).FirstOrDefault();
+            if (ei != null)
+            {
+                extractionIdentifierCount = CalculateExtractionIdentifierCount(ei, server, con);
+            }
+        }
+        var counts = new CatalogueValidationResultCounts(_DQERepository, result, recordsCount, extractionIdentifierCount);
+        counts.SaveToDatabase();
+    }
+
+    private int CalculateExtractionIdentifierCount(CatalogueItem catalogueItem, DiscoveredServer server, DbConnection con)
+    {
+        var extractionIdentifierSQL = $"SELECT COUNT(DISTINCT {catalogueItem.ColumnInfo.GetRuntimeName()}) FROM {catalogueItem.ColumnInfo.TableInfo.Name}";
+        using (var cmd = server.GetCommand(extractionIdentifierSQL, con))
+        {
+            return Convert.ToInt32(cmd.ExecuteScalar());
+        }
     }
 }
