@@ -107,8 +107,7 @@ public partial class BulkProcessCatalogueItemsUI : BulkProcessCatalogueItems_Des
                 StringBuilder sb = new StringBuilder();
                 foreach (var item in olvCatalogueItems.SelectedItems.Cast<OLVListItem>())
                 {
-                    var x = item.RowObject.ToString();
-                    sb.AppendLine(x);
+                    sb.AppendLine(item.RowObject.ToString());
                 }
 
                 Clipboard.SetDataObject(sb.ToString());
