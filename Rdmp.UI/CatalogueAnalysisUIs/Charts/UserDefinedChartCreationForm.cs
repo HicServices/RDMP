@@ -50,6 +50,7 @@ namespace Rdmp.UI.CatalogueAnalysisUIs.Charts
             _DQERepository = repository;
             _catalogue = catalogue;
             comboBox1.Items.AddRange(Enum.GetNames(typeof(SeriesChartType)));
+            comboBox1.Items.Add("Table");
         }
 
 

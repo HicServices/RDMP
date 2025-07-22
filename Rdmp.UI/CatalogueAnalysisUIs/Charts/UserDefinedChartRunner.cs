@@ -30,6 +30,7 @@ namespace Rdmp.UI.CatalogueAnalysisUIs.Charts
             _dqeRepository = dqeRepository;
             _chart = chart;
             groupBox1.Text = _chart.Title;
+            //todo if table...
             multiPurposeChart1.Init(_chart.GetResults(), (System.Windows.Forms.DataVisualization.Charting.SeriesChartType)_chart.ChartType, "", _chart.SeriesName);
         }
 
