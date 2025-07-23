@@ -164,10 +164,10 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
             return _globals;
 
         if (model == _coreDatasetsFolder)
-            return _datasets.Where(sds => sds.ExtractableDataSet.Project_ID == null);
+            return _datasets.Where(sds => !sds.ExtractableDataSet.Projects.Any());
 
         if (model == _projectSpecificDatasetsFolder)
-            return _datasets.Where(sds => sds.ExtractableDataSet.Project_ID != null);
+            return _datasets.Where(sds => sds.ExtractableDataSet.Projects.Any());
 
         return _bundledStuff != null && model is ISelectedDataSets sds2
             ? _bundledStuff.Where(s => s.User.Equals(sds2))
@@ -283,7 +283,7 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
         tlvDatasets.DisableObjects(_bundledStuff);
 
         //if there are no project specific datasets
-        if (_datasets.All(sds => sds.ExtractableDataSet.Project_ID == null))
+        if (_datasets.All(sds => !sds.ExtractableDataSet.Projects.Any()))
             tlvDatasets.DisableObject(_projectSpecificDatasetsFolder); //disable this option
 
         //don't accept refresh while executing

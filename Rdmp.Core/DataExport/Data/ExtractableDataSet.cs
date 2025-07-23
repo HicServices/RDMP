@@ -22,7 +22,8 @@ public class ExtractableDataSet : DatabaseEntity, IExtractableDataSet, IInjectKn
 
     private int _catalogue_ID;
     private bool _disableExtraction;
-    private int? _project_ID;
+    private List<IProject> _projects;
+
 
     /// <inheritdoc/>
     public int Catalogue_ID
@@ -44,10 +45,18 @@ public class ExtractableDataSet : DatabaseEntity, IExtractableDataSet, IInjectKn
 
 
     /// <inheritdoc/>
-    public int? Project_ID
+    [NoMappingToDatabase]
+    public List<IProject> Projects
     {
-        get => _project_ID;
-        set => SetField(ref _project_ID, value);
+        get
+        {
+            if (_projects != null) return _projects;
+            var ids = Repository.GetAllObjectsWhere<ExtractableDataSetProject>("ExtractableDataSet_ID", this.ID).Select(edsp => edsp.Project_ID);
+            Projects = Repository.GetAllObjectsInIDList<Project>(ids).Cast<IProject>().ToList();
+            return _projects;
+
+        }
+        set => SetField(ref _projects, value);
     }
 
     #endregion
@@ -103,7 +112,6 @@ public class ExtractableDataSet : DatabaseEntity, IExtractableDataSet, IInjectKn
     {
         Catalogue_ID = Convert.ToInt32(r["Catalogue_ID"]);
         DisableExtraction = (bool)r["DisableExtraction"];
-        Project_ID = ObjectToNullableInt(r["Project_ID"]);
 
         ClearAllInjections();
     }
@@ -153,7 +161,7 @@ public class ExtractableDataSet : DatabaseEntity, IExtractableDataSet, IInjectKn
     /// Returns an object indicating whether the dataset is project specific or not
     /// </summary>
     /// <returns></returns>
-    public CatalogueExtractabilityStatus GetCatalogueExtractabilityStatus() => new(true, Project_ID != null);
+    public CatalogueExtractabilityStatus GetCatalogueExtractabilityStatus() => new(true, Projects.Any());
 
     private Lazy<ICatalogue> _catalogue;
 

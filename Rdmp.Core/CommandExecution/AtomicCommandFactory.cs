@@ -135,17 +135,17 @@ public class AtomicCommandFactory : CommandFactoryBase
                     SuggestedCategory = Extraction
                 };
 
-                yield return c.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository)
-                    ? new ExecuteCommandMakeProjectSpecificCatalogueNormalAgain(_activator, c)
-                    {
-                        Weight = -99.0009f,
-                        SuggestedCategory = Extraction
-                    }
-                    : new ExecuteCommandMakeCatalogueProjectSpecific(_activator, c, null)
-                    {
-                        Weight = -99.0009f,
-                        SuggestedCategory = Extraction
-                    };
+                yield return new ExecuteCommandMakeCatalogueProjectSpecific(_activator, c, null,false)
+                {
+                    Weight = -99.0009f,
+                    SuggestedCategory = Extraction
+                };
+                yield return  new ExecuteCommandMakeProjectSpecificCatalogueNormalAgain(_activator, c,null)
+                {
+                    Weight = -99.0009f,
+                    SuggestedCategory = Extraction,
+                    OverrideCommandName="Remove Project Specific Catalogue from a Project"
+                };
 
                 yield return new ExecuteCommandSetExtractionIdentifier(_activator, c, null, null)
                 {
@@ -261,6 +261,7 @@ public class AtomicCommandFactory : CommandFactoryBase
             yield return new ExecuteCommandCreateNewFilter(_activator, ac)
             {
                 OfferCatalogueFilters = true,
+                OfferCohortCatalogueFilters=true,
                 SuggestedCategory = Add,
                 OverrideCommandName = "Existing Filter"
             };
@@ -330,6 +331,7 @@ public class AtomicCommandFactory : CommandFactoryBase
             yield return new ExecuteCommandCreateNewFilter(_activator, container, null)
             {
                 OfferCatalogueFilters = true,
+                OfferCohortCatalogueFilters = true,
                 SuggestedCategory = Add,
                 OverrideCommandName = "Existing Filter"
             };
@@ -694,6 +696,7 @@ public class AtomicCommandFactory : CommandFactoryBase
             yield return new ExecuteCommandCreateNewFilter(_activator, sds)
             {
                 OfferCatalogueFilters = true,
+                OfferCohortCatalogueFilters = true,
                 OverrideCommandName = "Existing Filter (copy of)",
                 SuggestedCategory = Add
             };

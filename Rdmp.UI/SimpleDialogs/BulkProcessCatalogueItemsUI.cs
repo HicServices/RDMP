@@ -4,19 +4,20 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Windows.Forms;
 using BrightIdeasSoftware;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 
 namespace Rdmp.UI.SimpleDialogs;
@@ -89,13 +90,29 @@ public partial class BulkProcessCatalogueItemsUI : BulkProcessCatalogueItems_Des
             case Keys.V when e.Control:
                 lbPastedColumns.Items.AddRange(
                     UsefulStuff.GetArrayOfColumnNamesFromStringPastedInByUser(Clipboard.GetText()).ToArray());
-
                 UpdateFilter();
                 break;
             case Keys.Delete when lbPastedColumns.SelectedItem != null:
                 lbPastedColumns.Items.Remove(lbPastedColumns.SelectedItem);
                 UpdateFilter();
                 break;
+        }
+    }
+
+    private void olvCatalogueItems_KeyUp(object sender, KeyEventArgs e)
+    {
+        switch (e.KeyCode)
+        {
+            case Keys.C when e.Control:
+                StringBuilder sb = new StringBuilder();
+                foreach (var item in olvCatalogueItems.SelectedItems.Cast<OLVListItem>())
+                {
+                    sb.AppendLine(item.RowObject.ToString());
+                }
+
+                Clipboard.SetDataObject(sb.ToString());
+                break;
+
         }
     }
 

@@ -8,6 +8,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.Repositories;
+using System.Collections.Generic;
 
 namespace Rdmp.Core.DataExport.Data;
 
@@ -32,7 +33,7 @@ public interface IExtractableDataSet : IMapsDirectlyToDatabaseTable, IRevertable
     ICatalogue Catalogue { get; }
 
     /// <summary>
-    /// Indicates that the referenced <see cref="Catalogue_ID"/> is associated only with one <see cref="IProject"/> and should not be used outside of that.
+    /// Indicates that the referenced <see cref="Catalogue_ID"/> is associated only with a <see cref="IProject"/> and should not be used outside of that.
     /// 
     /// <para>Usually this means the data is bespoke project data e.g. questionnaire answers for a cohort etc.  These data tables are treated exactly like regular Catalogues and
     /// extracted in the same way as all the regular data.</para>
@@ -43,7 +44,7 @@ public interface IExtractableDataSet : IMapsDirectlyToDatabaseTable, IRevertable
     /// <para>For example imagine you have a custom data set which is 'Patient ID,Date Consented' then you could configure an extraction filters that only extracted records from
     ///  Prescribing, Demography, Biochemistry catalogues AFTER each patients consent date.</para>
     /// </summary>
-    int? Project_ID { get; set; }
+    List<IProject> Projects{ get; set; }
 
     /// <summary>
     /// Returns true if the <see cref="ICatalogue"/> behind this dataset has been deleted or is marked <see cref="IMightBeDeprecated.IsDeprecated"/>

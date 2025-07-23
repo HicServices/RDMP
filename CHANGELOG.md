@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [9.0.0] - 2025-07-23
+- Add ability to use Extraction Configuration ID in the naming scheme of the extract to database Pipeline component
+- Update Cohort Versioning Icons and Interface
+- Fix issue with global contextual search
+- Add MS Teams Extraction notifications (see [Documentation\DataExtractions\ExtractionTeamsNotifications.md])
+- Add ability to use Cohort Catalogue Filters in an Extraction Configuration
+- Add ability to associate a Catalogue with multiple Projects
+- Add DistinctByDestinationPKs distinction strategy to the DatasetExtractionSource Extraction pipeline component
+- Update clone extraction configuration to include generic parameters
+- Fix copy-paste issue in bulk edit Catalogue Items UI
+
 ## [8.4.4] - 2025-05-08 
 
 - Re-add AggregateGraph functionality
