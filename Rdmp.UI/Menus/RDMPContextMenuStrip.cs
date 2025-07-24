@@ -165,11 +165,11 @@ public class RDMPContextMenuStrip : ContextMenuStrip
 
         if (_o is IMapsDirectlyToDatabaseTable m) Add(new ExecuteCommandViewCommits(_activator, m));
 
-        ////ensure all submenus appear in the same place
+        //ensure all submenus appear in the same place
         foreach (var mi in _subMenuDictionary.Values)
             Items.Add(mi);
 
-        ////add plugin menu items
+        //add plugin menu items
         foreach (var plugin in _activator.PluginUserInterfaces)
             try
             {
