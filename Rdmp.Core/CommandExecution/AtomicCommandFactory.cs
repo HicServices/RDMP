@@ -899,22 +899,22 @@ public class AtomicCommandFactory : CommandFactoryBase
             };
         }
 
-        //if (Is(o, out IMightBeDeprecated d))
-        //{
-        //    yield return new ExecuteCommandDeprecate(_activator, new[] { d }, !d.IsDeprecated)
-        //    {
-        //        OverrideCommandName = d.IsDeprecated ? "Un Deprecate" : "Deprecate",
-        //        SuggestedCategory = Deprecation,
-        //        Weight = -99.7f
-        //    };
-        //    yield return new ExecuteCommandReplacedBy(_activator, d, null)
-        //    {
-        //        PromptToPickReplacement = true,
-        //        SuggestedCategory = Deprecation,
-        //        Weight = -99.6f,
-        //        OverrideCommandName = "Set Replaced By"
-        //    };
-        //}
+        if (Is(o, out IMightBeDeprecated d))
+        {
+            yield return new ExecuteCommandDeprecate(_activator, new[] { d }, !d.IsDeprecated)
+            {
+                OverrideCommandName = d.IsDeprecated ? "Un Deprecate" : "Deprecate",
+                SuggestedCategory = Deprecation,
+                Weight = -99.7f
+            };
+            yield return new ExecuteCommandReplacedBy(_activator, d, null)
+            {
+                PromptToPickReplacement = true,
+                SuggestedCategory = Deprecation,
+                Weight = -99.6f,
+                OverrideCommandName = "Set Replaced By"
+            };
+        }
 
         if (Is(o, out CohortAggregateContainer cohortAggregateContainer))
         {

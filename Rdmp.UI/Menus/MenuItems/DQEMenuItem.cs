@@ -28,7 +28,7 @@ internal class DQEMenuItem : RDMPToolStripMenuItem
 
         Image = activator.CoreIconProvider.GetImage(RDMPConcept.DQE).ImageToBitmap();
 
-        Text = "Data Quality Engine...";//_dqeServer == null ? "Create DQE Database..." : "Data Quality Engine...";
+        Text = "Data Quality Engine...";
     }
 
     protected override void OnClick(EventArgs e)
