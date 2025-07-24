@@ -44,29 +44,29 @@ public class GoToCommandFactory : CommandFactoryBase
         if (Is(forObject, out IInjectKnown ii))
             ii.ClearAllInjections();
 
-        if (Is(forObject, out IMapsDirectlyToDatabaseTable mt))
-        {
-            // Go to import / export definitions
-            var export = _activator.RepositoryLocator.CatalogueRepository.GetReferencesTo<ObjectExport>(mt)
-                .FirstOrDefault();
+        //if (Is(forObject, out IMapsDirectlyToDatabaseTable mt))
+        //{
+        //    // Go to import / export definitions
+        //    var export = _activator.RepositoryLocator.CatalogueRepository.GetReferencesTo<ObjectExport>(mt)
+        //        .FirstOrDefault();
 
-            if (export != null)
-                yield return new ExecuteCommandShow(_activator, export, 0, true)
-                { OverrideCommandName = "Show Export Definition" };
+        //    if (export != null)
+        //        yield return new ExecuteCommandShow(_activator, export, 0, true)
+        //        { OverrideCommandName = "Show Export Definition" };
 
-            var import = _activator.RepositoryLocator.CatalogueRepository.GetReferencesTo<ObjectImport>(mt)
-                .FirstOrDefault();
-            if (import != null)
-                yield return new ExecuteCommandShow(_activator, import, 0)
-                { OverrideCommandName = "Show Import Definition" };
+        //    var import = _activator.RepositoryLocator.CatalogueRepository.GetReferencesTo<ObjectImport>(mt)
+        //        .FirstOrDefault();
+        //    if (import != null)
+        //        yield return new ExecuteCommandShow(_activator, import, 0)
+        //        { OverrideCommandName = "Show Import Definition" };
 
-            if (SupportsReplacement(forObject))
-                yield return new ExecuteCommandShow(_activator, () => GetReplacementIfAny(mt))
-                { OverrideCommandName = "Replacement" };
+        //    if (SupportsReplacement(forObject))
+        //        yield return new ExecuteCommandShow(_activator, () => GetReplacementIfAny(mt))
+        //        { OverrideCommandName = "Replacement" };
 
 
-            yield return new ExecuteCommandSimilar(_activator, mt, false) { GoTo = true };
-        }
+        //    yield return new ExecuteCommandSimilar(_activator, mt, false) { GoTo = true };
+        //}
 
         // cic => associated projects
         if (Is(forObject, out CohortIdentificationConfiguration cic))
@@ -188,14 +188,12 @@ public class GoToCommandFactory : CommandFactoryBase
         if (Is(forObject, out ExtractionFilter masterFilter))
         {
             yield return new ExecuteCommandShow(_activator, () =>
-                _activator.RepositoryLocator.CatalogueRepository
-                    .GetAllObjectsWhere<AggregateFilter>("ClonedFromExtractionFilter_ID", masterFilter.ID)
-                    .Select(f => f.GetAggregate())
+                _activator.CoreChildProvider.AllAggregateFilters.Where(af => af.ClonedFromExtractionFilter_ID == masterFilter.ID).Select(f => f.GetAggregate())
                     .Where(a => a != null).Distinct()
             )
             { OverrideCommandName = "Usages (in Cohort Builder)" };
 
-
+            //TODO
             yield return new ExecuteCommandShow(_activator, () =>
                 _activator.RepositoryLocator.DataExportRepository
                     .GetAllObjectsWhere<DeployedExtractionFilter>("ClonedFromExtractionFilter_ID", masterFilter.ID)
@@ -264,12 +262,14 @@ public class GoToCommandFactory : CommandFactoryBase
 
         if (Is(forObject, out Catalogue catalogue))
         {
-            foreach (var lmd in catalogue.LoadMetadatas())
+            var lmdLinkage = _activator.CoreChildProvider.AllLoadMetadataCatalogueLinkages.Where(lmdcl => lmdcl.CatalogueID == catalogue.ID).Select(lmdcl => lmdcl.LoadMetadataID);
+            var lmds = _activator.CoreChildProvider.AllLoadMetadatas.Where(lmd => lmdLinkage.Contains(lmd.ID));
+            foreach (var lmd in lmds)
             {
                 yield return new ExecuteCommandShow(_activator, lmd.ID, typeof(LoadMetadata))
                 { OverrideCommandName = $"Data Load ({lmd.Name})", OverrideIcon = GetImage(RDMPConcept.LoadMetadata) };
             }
-            if (catalogue.LoadMetadatas().Length == 0)
+            if (!lmds.Any())
             {
                 yield return new ExecuteCommandShow(_activator, null, typeof(LoadMetadata))
                 { OverrideCommandName = "No Data Load", OverrideIcon = GetImage(RDMPConcept.LoadMetadata) };

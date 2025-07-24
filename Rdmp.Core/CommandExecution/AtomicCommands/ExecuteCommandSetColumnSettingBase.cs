@@ -4,10 +4,11 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.Providers;
+using System;
+using System.Linq;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
@@ -48,12 +49,14 @@ public abstract class ExecuteCommandSetColumnSettingBase : BasicCommandExecution
         _commandName = commandName;
         _catalogue.ClearAllInjections();
         _commandProperty = commandProperty;
+        var dataExportChildProvider = ((DataExportChildProvider)activator.CoreChildProvider);
+
 
         if (inConfiguration != null)
         {
             SetImpossibleIfReadonly(_inConfiguration);
 
-            var allEds = inConfiguration.GetAllExtractableDataSets();
+            var allEds = dataExportChildProvider.ExtractableDataSets.Where(eds => eds.ExtractionConfigurations.Contains(inConfiguration));
             var eds = allEds.FirstOrDefault(sds => sds.Catalogue_ID == _catalogue.ID);
             if (eds == null)
             {
@@ -73,7 +76,7 @@ public abstract class ExecuteCommandSetColumnSettingBase : BasicCommandExecution
         }
         else
         {
-            _extractionInformations = _catalogue.GetAllExtractionInformation(ExtractionCategory.Any);
+            _extractionInformations = dataExportChildProvider.AllCatalogueItems.Where(ci => ci.Catalogue_ID == catalogue.ID && ci.ExtractionInformation != null && ci.ExtractionInformation.ExtractionCategory == ExtractionCategory.Any).Select(ci => ci.ExtractionInformation).ToArray();
 
             if (_extractionInformations.Length == 0)
             {
