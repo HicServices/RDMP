@@ -5,6 +5,7 @@ using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Interactive;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using System;
@@ -92,14 +93,14 @@ namespace Rdmp.Core.Tests.Curation
             var cmd = new ExecuteCommandMakeCatalogueProjectSpecific(_activator,catalogue,project,force);
             cmd.SetTarget(project);
             cmd.SetTarget(catalogue);
-            if (shouldThrow) Assert.That(ProjectSpecificCatalogueManager.CanMakeCatalogueProjectSpecific(_activator.RepositoryLocator.DataExportRepository,catalogue,project,projectIdsToIgnore??new List<int>()), Is.False);
+            if (shouldThrow) Assert.That(ProjectSpecificCatalogueManager.CanMakeCatalogueProjectSpecific((DataExportChildProvider)_activator.CoreChildProvider,catalogue,project,projectIdsToIgnore??new List<int>()), Is.False);
             else Assert.DoesNotThrow(() => cmd.Execute());
         }
 
         private void MakeNotProjectSpecific(Catalogue catalogue, ExtractableDataSet eds, Project project, bool shouldThrow = false)
         {
             var cmd = new ExecuteCommandMakeProjectSpecificCatalogueNormalAgain(_activator, catalogue, eds);
-            if (shouldThrow) Assert.That(ProjectSpecificCatalogueManager.CanMakeCatalogueNonProjectSpecific(_activator.RepositoryLocator.DataExportRepository, catalogue, eds,project), Is.False);
+            if (shouldThrow) Assert.That(ProjectSpecificCatalogueManager.CanMakeCatalogueNonProjectSpecific(catalogue, eds,project), Is.False);
             else Assert.DoesNotThrow(() => cmd.Execute());
         }
 

@@ -4,16 +4,17 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
@@ -23,6 +24,7 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
     private IProject _project;
     private List<int> _existingProjectIDs;
     private readonly bool _force = false;
+    private readonly IBasicActivateItems _activator;
 
     [UseWithObjectConstructor]
     public ExecuteCommandMakeCatalogueProjectSpecific(IBasicActivateItems itemActivator, ICatalogue catalogue,
@@ -31,11 +33,13 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
         SetCatalogue(catalogue);
         _project = project;
         _force = force;
+        _activator = itemActivator;
     }
 
     public ExecuteCommandMakeCatalogueProjectSpecific(IBasicActivateItems itemActivator) : base(itemActivator)
     {
         UseTripleDotSuffix = true;
+        _activator = itemActivator;
     }
 
     public override string GetCommandHelp() =>
@@ -45,7 +49,8 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
     {
         if (_catalogue == null)
             SetCatalogue(SelectOne(BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>().ToList()));
-        GetExistingProjectIDs();
+        if(_existingProjectIDs is null)
+            GetExistingProjectIDs();
 
         _project ??= SelectOne<Project>(GetListOfValidProjects());
 
@@ -79,20 +84,23 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
 
     private List<Project> GetListOfValidProjects()
     {
-        var availableProjects = BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>().Where(p => !p.GetAllProjectCatalogues().Contains(_catalogue));
-        return availableProjects.Where(p => ProjectSpecificCatalogueManager.CanMakeCatalogueProjectSpecific(BasicActivator.RepositoryLocator.DataExportRepository, _catalogue, p, _existingProjectIDs)).ToList();
+        var dataExportChildProvider = ((DataExportChildProvider)_activator.CoreChildProvider);
+
+        var availableProjects = dataExportChildProvider.Projects.Where(p =>!dataExportChildProvider.ExtractableDataSetProjects.Where(edsp => edsp.Project_ID == p.ID).Select(edsp => edsp.DataSet.Catalogue).Contains(_catalogue));
+        return availableProjects.Where(p => ProjectSpecificCatalogueManager.CanMakeCatalogueProjectSpecific(dataExportChildProvider, _catalogue, p, _existingProjectIDs)).ToList();
     }
 
     private void GetExistingProjectIDs()
-    {
-        var existingProjects = BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>().Where(p => p.GetAllProjectCatalogues().Contains(_catalogue));
+    {  
+        var dataExportChildProvider = ((DataExportChildProvider)_activator.CoreChildProvider);
+        var existingProjects = dataExportChildProvider.Projects.Where(p => dataExportChildProvider.ExtractableDataSetProjects.Where(edsp => edsp.Project_ID==p.ID).Select(edsp => edsp.DataSet.Catalogue).Contains(_catalogue));
         _existingProjectIDs = existingProjects.Select(p => p.ID).ToList();
     }
 
     private void SetCatalogue(ICatalogue catalogue)
     {
         ResetImpossibleness();
-
+        var dataExportChildProvider = ((DataExportChildProvider)_activator.CoreChildProvider);
         _catalogue = catalogue;
         GetExistingProjectIDs();
         if (catalogue == null)
@@ -100,8 +108,8 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
             SetImpossible("Catalogue cannot be null");
             return;
         }
-
-        var status = _catalogue.GetExtractabilityStatus(BasicActivator.RepositoryLocator.DataExportRepository);
+        var eds = dataExportChildProvider.ExtractableDataSets.Where(eds => eds.Catalogue_ID == catalogue.ID).ToList();
+        var status = eds.Count == 0 ? new CatalogueExtractabilityStatus(false, false) : new CatalogueExtractabilityStatus(true, eds.Count > 1 ? true : eds.First().Projects.Any());
 
         if (!GetListOfValidProjects().Any() && !_force)
         {
@@ -111,7 +119,7 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
         if (!status.IsExtractable)
             SetImpossible("Catalogue must first be made Extractable");
 
-        var ei = _catalogue.GetAllExtractionInformation(ExtractionCategory.Any);
+        var ei = dataExportChildProvider.AllCatalogueItems.Where(ci => ci.Catalogue_ID == _catalogue.ID && ci.ExtractionInformation != null).Select(ci => ci.ExtractionInformation);
         if (!ei.Any())
             SetImpossible("Catalogue has no extractable columns");
 

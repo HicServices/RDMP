@@ -24,7 +24,7 @@ public class ExecuteCommandShowTooltip : BasicUICommandExecution, IAtomicCommand
     public ExecuteCommandShowTooltip(IActivateItems activator, object o) : base(activator)
     {
         Weight = 100.5f;
-
+        //this REALLY queries the db
         var hasOne = RDMPCollectionCommonFunctionality.GetToolTip(activator, o, out _title, out _body, out _isBad);
 
         if (!hasOne)

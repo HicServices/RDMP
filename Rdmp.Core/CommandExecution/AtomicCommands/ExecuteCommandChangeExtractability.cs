@@ -23,8 +23,12 @@ public sealed class ExecuteCommandChangeExtractability : BasicCommandExecution
     public ExecuteCommandChangeExtractability(IBasicActivateItems activator, Catalogue catalogue,
         bool? explicitExtractability = null) : base(activator)
     {
+        //calls db but not sure how to improve this
         _catalogue = catalogue;
-        var status = catalogue.GetExtractabilityStatus(BasicActivator.RepositoryLocator.DataExportRepository);
+        var dataExportChildProvider = (DataExportChildProvider)activator.CoreChildProvider;
+        var eds = dataExportChildProvider.ExtractableDataSets.Where(eds => eds.Catalogue_ID == catalogue.ID).ToList();
+        var status = eds.Count == 0 ? new CatalogueExtractabilityStatus(false, false) : new CatalogueExtractabilityStatus(true, eds.Count > 1 ? true : eds.First().Projects.Any());
+
         if (status == null)
         {
             SetImpossible(
