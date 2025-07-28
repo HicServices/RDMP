@@ -28,6 +28,11 @@ internal class DQEMenuItem : RDMPToolStripMenuItem
 
         Image = activator.CoreIconProvider.GetImage(RDMPConcept.DQE).ImageToBitmap();
 
+        InitializeText();
+    }
+
+    private void InitializeText()
+    {
         Text = "Data Quality Engine...";
     }
 
