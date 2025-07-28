@@ -460,9 +460,9 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
             case 7:
                 tableLayoutPanel3.SuspendLayout();
                 var datasets = _catalogue.GetLinkedDatasets();
-                while (tableLayoutPanel3.Controls.Count > 0)
+                while (tableLayoutPanel3.Controls.Count > 6)
                 {
-                    tableLayoutPanel3.Controls[0].Dispose();
+                    tableLayoutPanel3.Controls[7].Dispose();
                 }
                 foreach (var dataset in datasets)
                 {
@@ -471,7 +471,7 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
                     var label = new Label();
                     label.Text = dataset.Name;
                     label.AutoSize = true;
-                    tableLayoutPanel3.Controls.Add(label, 0, tableLayoutPanel3.RowCount - 1);
+                    tableLayoutPanel3.Controls.Add(label);
                     var cb = new CheckBox();
                     cb.Checked = linkage.Autoupdate;
                     cb.CheckedChanged += (object sender, EventArgs e) =>
@@ -480,11 +480,18 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
                         linkage.SaveToDatabase();
                         Publish(linkage);
                     };
-                    tableLayoutPanel3.Controls.Add(cb, 1, tableLayoutPanel3.RowCount - 1);
+                    tableLayoutPanel3.Controls.Add(cb);
                     var btn = new Button();
                     btn.Text = "Update Now";
                     btn.Click += (object sender, EventArgs e) => UpdateDataset(dataset);
-                    tableLayoutPanel3.Controls.Add(btn, 2, tableLayoutPanel3.RowCount - 1);
+                    tableLayoutPanel3.Controls.Add(btn);
+
+                    var viewBtn = new Button();
+                    viewBtn.Text = "View";
+                    viewBtn.Enabled = false;
+                    tableLayoutPanel3.Controls.Add(viewBtn);
+
+
                     var btn3 = new Button();
                     btn3.Text = "Remove Link to Dataset";
                     btn3.Click += (object sender, EventArgs e) =>
@@ -496,11 +503,11 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
                             tabControl1_SelectedIndexChanged(tabControl1, null);
                         }
                     };
-                    tableLayoutPanel3.Controls.Add(btn3, 4, tableLayoutPanel3.RowCount - 1);
+                    tableLayoutPanel3.Controls.Add(btn3);
                     var labelType = new Label();
                     labelType.Text = _catalogue.CatalogueRepository.GetObjectByID<DatasetProviderConfiguration>((int)dataset.Provider_ID).Name;
                     labelType.AutoSize = true;
-                    tableLayoutPanel3.Controls.Add(labelType, 5, tableLayoutPanel3.RowCount - 1);
+                    tableLayoutPanel3.Controls.Add(labelType);
 
                 }
                 tableLayoutPanel3.ResumeLayout();
