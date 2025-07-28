@@ -33,24 +33,25 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
         public List<Catalogue> GetCatalogues()
         {
+            var cataloguesToReturn = new List<Catalogue>();
             var catalogues = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>().ToList();
-            if (!_includeInternal)
+            if (_includeInternal)
             {
-                catalogues = catalogues.Where(c => !c.IsInternalDataset).ToList();
+                cataloguesToReturn.AddRange(catalogues.Where(c => c.IsInternalDataset).ToList());
             }
-            if (!_includeProjectSpecific)
+            if (_includeProjectSpecific)
             {
-                catalogues = catalogues.Where(c => !c.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository)).ToList();
+                cataloguesToReturn.AddRange(catalogues.Where(c => c.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository)).ToList());
             }
-            if (!_includeDeprecated)
+            if (_includeDeprecated)
             {
-                catalogues = catalogues.Where(c => !c.IsDeprecated).ToList();
+                cataloguesToReturn.AddRange(catalogues.Where(c => c.IsDeprecated).ToList());
             }
-            if (!_includeExtractable)
+            if (_includeExtractable)
             {
-                catalogues = catalogues.Where(c => !c.GetExtractabilityStatus(_activator.RepositoryLocator.DataExportRepository).IsExtractable).ToList();
+                cataloguesToReturn.AddRange(catalogues.Where(c => c.GetExtractabilityStatus(_activator.RepositoryLocator.DataExportRepository).IsExtractable).ToList());
             }
-            return catalogues;
+            return cataloguesToReturn.Distinct().ToList();
         }
 
 

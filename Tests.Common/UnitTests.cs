@@ -29,6 +29,7 @@ using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Datasets;
+using Rdmp.Core.Curation.Data.Datasets.HDR;
 using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Pipelines;
@@ -621,6 +622,10 @@ public class UnitTests
         if (typeof(T) == typeof(DatasetProviderConfiguration))
         {
             return (T)(object)new DatasetProviderConfiguration(repository.CatalogueRepository, "","","",WhenIHaveA<DataAccessCredentials>(repository).ID,"");
+        }
+        if (typeof(T) == typeof(HDRDataset))
+        {
+            return (T)(object)new HDRDataset(repository.CatalogueRepository, "HDR Dataset");
         }
         if(typeof(T) == typeof(ExtractableDataSetProject))
         {
