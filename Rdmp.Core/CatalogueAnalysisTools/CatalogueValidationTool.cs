@@ -47,6 +47,7 @@ public class CatalogueValidationTool
     private readonly string ALL = "ALL";
     private readonly string CORRECT = "CORRECT";
     private readonly int _batchSize = 10000;
+    private Dictionary<string, int> _nullColumnCounts = new();
 
     public CatalogueValidationTool(ICatalogueRepository catalogueRepository, Catalogue catalogue, ColumnInfo timeColumn, ColumnInfo pivotColumn, DateTime? startDate = null, DateTime? endDate = null, bool updatePreviousResult = false, int batchSize = 10000)
     {
@@ -271,6 +272,24 @@ public class CatalogueValidationTool
                         }
                     }
                 }
+                if (pivotCategory == ALL)
+                {
+
+                    foreach (var col in chunk.Columns.Cast<DataColumn>())
+                    {
+                        var colName = col.ColumnName;
+                        var nullCount = chunk.AsEnumerable().Where(row => row[colName] != null).Count();
+                        var exists = _nullColumnCounts.TryGetValue(colName, out int v);
+                        if (exists)
+                        {
+                            _nullColumnCounts.Add(colName, nullCount);
+                        }
+                        else
+                        {
+                            _nullColumnCounts[colName] = v + nullCount;
+                        }
+                    }
+                }
             }
         }
         catch (Exception e)
@@ -396,6 +415,13 @@ public class CatalogueValidationTool
             recordCount = _DQERepository.GetAllObjectsWhere<CatalogueValidationResult>("CatalogueValidation_ID", catalogueValidation.ID).Where(cvr => cvr.PivotCategory == ALL).Select(cvr => cvr.Correct + cvr.Wrong + cvr.Missing + cvr.Invalid).Sum();
             var count = new CatalogueValidationResultCounts(_DQERepository, catalogueValidation, recordCount, extractionIdentifierCount);
             count.SaveToDatabase();
+            foreach(var col in _nullColumnCounts.Keys)
+            {
+
+                var field = new FieldCompletionRate(_DQERepository, count, _catalogue.CatalogueItems.First(c => c.Name==col).ColumnInfo, _nullColumnCounts[col] / count.RecordCount);
+                field.SaveToDatabase();
+            }
+            //todo save field counts here
         }
         else
         {

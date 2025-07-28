@@ -33,10 +33,11 @@ namespace Rdmp.UI.CatalogueSummary
         {
             evaluationTrackBar1 = new EvaluationTrackBar();
             panel1 = new System.Windows.Forms.Panel();
+            tblCompletionRates = new System.Windows.Forms.TableLayoutPanel();
             lblExtractionIdentifiersCount = new System.Windows.Forms.Label();
+            label8 = new System.Windows.Forms.Label();
             label11 = new System.Windows.Forms.Label();
             lblRecordCount = new System.Windows.Forms.Label();
-            label8 = new System.Windows.Forms.Label();
             splitContainer3 = new System.Windows.Forms.SplitContainer();
             dqePivotCategorySelector1 = new DQEPivotCategorySelector();
             timePeriodicityChart1 = new TimePeriodicityChartNoControls();
@@ -54,7 +55,7 @@ namespace Rdmp.UI.CatalogueSummary
             // 
             evaluationTrackBar1.AutoSize = true;
             evaluationTrackBar1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            evaluationTrackBar1.Location = new System.Drawing.Point(0, 299);
+            evaluationTrackBar1.Location = new System.Drawing.Point(0, 426);
             evaluationTrackBar1.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
             evaluationTrackBar1.Name = "evaluationTrackBar1";
             evaluationTrackBar1.Size = new System.Drawing.Size(1206, 73);
@@ -63,15 +64,31 @@ namespace Rdmp.UI.CatalogueSummary
             // 
             // panel1
             // 
+            panel1.Controls.Add(tblCompletionRates);
             panel1.Controls.Add(lblExtractionIdentifiersCount);
             panel1.Controls.Add(label8);
             panel1.Controls.Add(label11);
             panel1.Controls.Add(lblRecordCount);
             panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            panel1.Location = new System.Drawing.Point(0, 372);
+            panel1.Location = new System.Drawing.Point(0, 499);
             panel1.Name = "panel1";
             panel1.Size = new System.Drawing.Size(1206, 100);
             panel1.TabIndex = 3;
+            // 
+            // tblCompletionRates
+            // 
+            tblCompletionRates.AutoSize = true;
+            tblCompletionRates.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Single;
+            tblCompletionRates.ColumnCount = 2;
+            tblCompletionRates.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            tblCompletionRates.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            tblCompletionRates.Location = new System.Drawing.Point(344, 16);
+            tblCompletionRates.Name = "tblCompletionRates";
+            tblCompletionRates.RowCount = 2;
+            tblCompletionRates.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            tblCompletionRates.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            tblCompletionRates.Size = new System.Drawing.Size(200, 100);
+            tblCompletionRates.TabIndex = 11;
             // 
             // lblExtractionIdentifiersCount
             // 
@@ -83,6 +100,15 @@ namespace Rdmp.UI.CatalogueSummary
             lblExtractionIdentifiersCount.TabIndex = 10;
             lblExtractionIdentifiersCount.Text = "0";
             lblExtractionIdentifiersCount.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label8
+            // 
+            label8.AutoSize = true;
+            label8.Location = new System.Drawing.Point(22, 16);
+            label8.Name = "label8";
+            label8.Size = new System.Drawing.Size(80, 15);
+            label8.TabIndex = 7;
+            label8.Text = "Record Count";
             // 
             // label11
             // 
@@ -104,15 +130,6 @@ namespace Rdmp.UI.CatalogueSummary
             lblRecordCount.Text = "0";
             lblRecordCount.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // label8
-            // 
-            label8.AutoSize = true;
-            label8.Location = new System.Drawing.Point(22, 16);
-            label8.Name = "label8";
-            label8.Size = new System.Drawing.Size(80, 15);
-            label8.TabIndex = 7;
-            label8.Text = "Record Count";
-            // 
             // splitContainer3
             // 
             splitContainer3.BackColor = System.Drawing.SystemColors.Control;
@@ -120,7 +137,7 @@ namespace Rdmp.UI.CatalogueSummary
             splitContainer3.Location = new System.Drawing.Point(0, 0);
             splitContainer3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             splitContainer3.Name = "splitContainer3";
-            splitContainer3.Size = new System.Drawing.Size(1062, 633);
+            splitContainer3.Size = new System.Drawing.Size(1062, 3000);
             splitContainer3.SplitterDistance = 167;
             splitContainer3.SplitterWidth = 5;
             splitContainer3.TabIndex = 1;
@@ -131,7 +148,7 @@ namespace Rdmp.UI.CatalogueSummary
             dqePivotCategorySelector1.Location = new System.Drawing.Point(0, 0);
             dqePivotCategorySelector1.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
             dqePivotCategorySelector1.Name = "dqePivotCategorySelector1";
-            dqePivotCategorySelector1.Size = new System.Drawing.Size(131, 295);
+            dqePivotCategorySelector1.Size = new System.Drawing.Size(131, 422);
             dqePivotCategorySelector1.TabIndex = 0;
             // 
             // timePeriodicityChart1
@@ -140,7 +157,7 @@ namespace Rdmp.UI.CatalogueSummary
             timePeriodicityChart1.Location = new System.Drawing.Point(0, 0);
             timePeriodicityChart1.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
             timePeriodicityChart1.Name = "timePeriodicityChart1";
-            timePeriodicityChart1.Size = new System.Drawing.Size(1062, 295);
+            timePeriodicityChart1.Size = new System.Drawing.Size(1062, 422);
             timePeriodicityChart1.TabIndex = 0;
             // 
             // splitContainer1
@@ -158,7 +175,7 @@ namespace Rdmp.UI.CatalogueSummary
             // splitContainer1.Panel2
             // 
             splitContainer1.Panel2.Controls.Add(timePeriodicityChart1);
-            splitContainer1.Size = new System.Drawing.Size(1206, 299);
+            splitContainer1.Size = new System.Drawing.Size(1206, 426);
             splitContainer1.SplitterDistance = 135;
             splitContainer1.SplitterWidth = 5;
             splitContainer1.TabIndex = 3;
@@ -168,12 +185,13 @@ namespace Rdmp.UI.CatalogueSummary
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            AutoSize = true;
             Controls.Add(splitContainer1);
             Controls.Add(evaluationTrackBar1);
             Controls.Add(panel1);
             Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             Name = "CatalogueValidationResultsUI";
-            Size = new System.Drawing.Size(1206, 472);
+            Size = new System.Drawing.Size(1206, 599);
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer3).EndInit();
@@ -198,5 +216,6 @@ namespace Rdmp.UI.CatalogueSummary
         private System.Windows.Forms.Label lblRecordCount;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.TableLayoutPanel tblCompletionRates;
     }
 }

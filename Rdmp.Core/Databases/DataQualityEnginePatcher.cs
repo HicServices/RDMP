@@ -56,7 +56,7 @@ public sealed class DataQualityEnginePatcher : Patcher
     public override SortedDictionary<string, Patch> GetAllPatchesInAssembly(DiscoveredDatabase db)
     {
         var basePatches = base.GetAllPatchesInAssembly(db);
-        if (basePatches.Count > 4)
+        if (basePatches.Count > 5)
             throw new NotImplementedException(
                 "Someone has added some patches, we need to think about how we handle those in MySql and Oracle! i.e. don't add them in '/QueryCachingDatabase/up' please");
 

@@ -41,7 +41,6 @@ public partial class CatalogueValidationResultsUI : CatalogueValidationSummarySc
     private void ClearDQEGraphs()
     {
         timePeriodicityChart1.ClearGraph();
-        //columnStatesChart1.ClearGraph();
     }
 
     private CatalogueValidation _lastSelected;
@@ -53,13 +52,35 @@ public partial class CatalogueValidationResultsUI : CatalogueValidationSummarySc
         var category = dqePivotCategorySelector1.SelectedPivotCategory;
 
         timePeriodicityChart1.SelectEvaluation(evaluation, category ?? "ALL");
-        //columnStatesChart1.SelectEvaluation(evaluation, category ?? "ALL");
         _lastSelected = evaluation;
-        
+
         var counts = evaluation.GetCounts();
 
         lblRecordCount.Text = counts.RecordCount.ToString();
         lblExtractionIdentifiersCount.Text = counts.ExtractionIdentifierCount.ToString();
+
+        tblCompletionRates.Controls.Clear();
+        var lblColumn = new Label();
+        lblColumn.Text = "Column";
+        tblCompletionRates.Controls.Add(lblColumn);
+        var lblRate = new Label();
+        lblRate.Text = "Completion Rate";
+        tblCompletionRates.Controls.Add(lblRate);
+
+        foreach (var catalogueItem in evaluation.Catalogue.CatalogueItems)
+        {
+            var lblName= new Label();
+            lblName.Text = catalogueItem.Name;
+            tblCompletionRates.Controls.Add(lblName);
+
+            var lblColumnRate = new Label();
+            var completionRate = counts.CompletionRates.FirstOrDefault(cr => cr.ColumnInfo.ID == catalogueItem.ColumnInfo_ID)?.CompletionRate;
+            if (completionRate != null)
+            {
+                lblColumnRate.Text = (completionRate*100).ToString()+"%";
+            }
+            tblCompletionRates.Controls.Add(lblColumnRate);
+        }
     }
 
     private void dqePivotCategorySelector1_PivotCategorySelectionChanged()
@@ -70,7 +91,6 @@ public partial class CatalogueValidationResultsUI : CatalogueValidationSummarySc
         var category = dqePivotCategorySelector1.SelectedPivotCategory;
 
         timePeriodicityChart1.SelectEvaluation(_lastSelected, category ?? "ALL");
-        //columnStatesChart1.SelectEvaluation(_lastSelected, category ?? "ALL");
     }
 
     public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
@@ -106,11 +126,6 @@ public partial class CatalogueValidationResultsUI : CatalogueValidationSummarySc
             //there have been some evaluations
             evaluationTrackBar1.Validations = evaluations;
         }
-
-        //CommonFunctionality.Add(
-        //    new ExecuteCommandConfigureCatalogueValidationRules(activator).SetTarget(databaseObject));
-        //CommonFunctionality.Add(new ExecuteCommandRunDQEOnCatalogue(activator, databaseObject),
-        //    "Run Data Quality Engine...");
     }
 
     public override string GetTabName() => $"DQE:{base.GetTabName()}";

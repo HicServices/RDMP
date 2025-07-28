@@ -74,8 +74,8 @@ BEGIN
 CREATE TABLE [dbo].[FieldCompletionRate](
 	[ID] [int] IDENTITY(1,1) NOT NULL,
 	[CatalogueValidationResultCounts_ID] [int] NOT NULL,
-	[CoulmnInfo_ID] [int] NOT NULL,
-	[CompletionDate] [int] NOT NULL,
+	[ColumnInfo_ID] [int] NOT NULL,
+	[CompletionRate] [int] NOT NULL,
 CONSTRAINT [PK_FieldCompletionRate] PRIMARY KEY CLUSTERED 
 (
 	[ID] ASC
