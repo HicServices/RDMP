@@ -1,7 +1,6 @@
 ﻿using NPOI.OpenXmlFormats.Spreadsheet;
 using Org.BouncyCastle.Crypto.Signers;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
 using Spectre.Console;
 using System;
@@ -16,10 +15,9 @@ namespace Rdmp.Core.DataExport.Data
     static class ProjectSpecificCatalogueManager
     {
 
-        public static bool CanMakeCatalogueProjectSpecific(DataExportChildProvider childProvider, ICatalogue catalogue, IProject project, List<int> projectIdsToIgnore)
+        public static bool CanMakeCatalogueProjectSpecific(IDataExportRepository dqeRepo, ICatalogue catalogue, IProject project, List<int> projectIdsToIgnore)
         {
-            var foundeds = childProvider.ExtractableDataSets.Where(eds => eds.Catalogue_ID == catalogue.ID).ToList();
-            var status = foundeds.Count == 0 ? new CatalogueExtractabilityStatus(false, false) : new CatalogueExtractabilityStatus(true, foundeds.Count > 1 ? true : foundeds.First().Projects.Any());
+            var status = catalogue.GetExtractabilityStatus(dqeRepo);
 
             if (!status.IsExtractable)
                 return false;
@@ -29,7 +27,7 @@ namespace Rdmp.Core.DataExport.Data
                 return false;
             if (ei.Count(e => e.IsExtractionIdentifier) < 1)
                 return false;
-            var edss = childProvider.ExtractableDataSets.Where(eds => eds.Catalogue_ID == catalogue.ID).ToList();
+            var edss = dqeRepo.GetAllObjectsWithParent<ExtractableDataSet>(catalogue);
             if (edss.Any(e => e.Projects.Select(p => p.ID).Contains(project.ID)))
             {
                 //already project specific
@@ -64,11 +62,11 @@ namespace Rdmp.Core.DataExport.Data
             return eds;
         }
 
-        public static bool CanMakeCatalogueNonProjectSpecific(ICatalogue catalogue, ExtractableDataSet extractableDataSet,IProject project)
+        public static bool CanMakeCatalogueNonProjectSpecific(IDataExportRepository dqeRepo, ICatalogue catalogue, ExtractableDataSet extractableDataSet, IProject project)
         {
             bool usedInExtraction = project.ExtractionConfigurations.Where(ec => ec.SelectedDataSets.Select(sds => sds.ExtractableDataSet).Contains(extractableDataSet)).Any();
             if (!usedInExtraction) return true;
-            if(usedInExtraction && extractableDataSet.Projects.Count ==1) return true;
+            if (usedInExtraction && extractableDataSet.Projects.Count == 1) return true;
             return false;
         }
 
@@ -84,7 +82,7 @@ namespace Rdmp.Core.DataExport.Data
                 p.DeleteInDatabase();
             }
             extractableDataSet.Projects.Remove(project);
-            
+
             foreach (var ei in catalogue.GetAllExtractionInformation(ExtractionCategory.ProjectSpecific))
             {
                 ei.ExtractionCategory = ExtractionCategory.Core;
@@ -93,4 +91,3 @@ namespace Rdmp.Core.DataExport.Data
         }
     }
 }
-

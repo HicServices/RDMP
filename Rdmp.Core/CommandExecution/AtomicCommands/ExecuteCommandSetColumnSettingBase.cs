@@ -76,7 +76,7 @@ public abstract class ExecuteCommandSetColumnSettingBase : BasicCommandExecution
         }
         else
         {
-            _extractionInformations = dataExportChildProvider.AllCatalogueItems.Where(ci => ci.Catalogue_ID == catalogue.ID && ci.ExtractionInformation != null && ci.ExtractionInformation.ExtractionCategory == ExtractionCategory.Any).Select(ci => ci.ExtractionInformation).ToArray();
+            _extractionInformations = _catalogue.GetAllExtractionInformation(ExtractionCategory.Any);
 
             if (_extractionInformations.Length == 0)
             {

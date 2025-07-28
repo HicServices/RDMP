@@ -26,9 +26,7 @@ public sealed class ExecuteCommandChangeExtractability : BasicCommandExecution
         //calls db but not sure how to improve this
         _catalogue = catalogue;
         var dataExportChildProvider = (DataExportChildProvider)activator.CoreChildProvider;
-        var eds = dataExportChildProvider.ExtractableDataSets.Where(eds => eds.Catalogue_ID == catalogue.ID).ToList();
-        var status = eds.Count == 0 ? new CatalogueExtractabilityStatus(false, false) : new CatalogueExtractabilityStatus(true, eds.Count > 1 ? true : eds.First().Projects.Any());
-
+        var status = _catalogue.GetExtractabilityStatus(BasicActivator.RepositoryLocator.DataExportRepository); 
         if (status == null)
         {
             SetImpossible(

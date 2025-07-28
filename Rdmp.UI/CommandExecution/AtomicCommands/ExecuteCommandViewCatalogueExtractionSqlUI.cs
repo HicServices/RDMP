@@ -20,18 +20,15 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands;
 public class ExecuteCommandViewCatalogueExtractionSqlUI : BasicUICommandExecution, IAtomicCommandWithTarget
 {
     private Catalogue _catalogue;
-    private IActivateItems _actvator;
 
     [UseWithObjectConstructor]
     public ExecuteCommandViewCatalogueExtractionSqlUI(IActivateItems activator, Catalogue catalogue) : this(activator)
     {
         _catalogue = catalogue;
-        _actvator = activator;
     }
 
     public ExecuteCommandViewCatalogueExtractionSqlUI(IActivateItems activator) : base(activator)
     {
-        _actvator = activator;
     }
 
     public override string GetCommandHelp() =>
@@ -45,7 +42,7 @@ public class ExecuteCommandViewCatalogueExtractionSqlUI : BasicUICommandExecutio
 
 
         //if the catalogue has no extractable columns
-        if(_actvator.CoreChildProvider.AllCatalogueItems.Where(ci => ci.Catalogue_ID == _catalogue.ID).Where(ci => ci.ExtractionInformation != null).Any(ci => ci.ExtractionInformation.ExtractionCategory == ExtractionCategory.Any))
+        if(!_catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Any())
             SetImpossible("Catalogue has no ExtractionInformations");
 
         return this;

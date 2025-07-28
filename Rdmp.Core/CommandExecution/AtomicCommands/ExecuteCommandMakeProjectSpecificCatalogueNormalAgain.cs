@@ -19,7 +19,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 public class ExecuteCommandMakeProjectSpecificCatalogueNormalAgain : BasicCommandExecution, IAtomicCommand
 {
     private Catalogue _catalogue;
-    private readonly List<ExtractableDataSet> _extractableDataSets;
+    private List<ExtractableDataSet> _extractableDataSets;
     private ExtractableDataSet _extractableDataSet;
     private Project _selectedProj;
 
@@ -36,15 +36,6 @@ public class ExecuteCommandMakeProjectSpecificCatalogueNormalAgain : BasicComman
             SetImpossible("Data Export functionality is not available");
             return;
         }
-        
-        _extractableDataSets = dataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(catalogue).Where(eds => eds.Projects.Any() && eds.Projects.Select(p =>ProjectSpecificCatalogueManager.CanMakeCatalogueNonProjectSpecific(catalogue, eds,p)).Contains(true)).ToList();
-        if (!_extractableDataSets.Any())
-        {
-            SetImpossible("Cannot make Catalogue Non-Project specific");
-            return;
-        }
-        
-
     }
 
     public override string GetCommandHelp() =>
@@ -52,12 +43,22 @@ public class ExecuteCommandMakeProjectSpecificCatalogueNormalAgain : BasicComman
 
     public override void Execute()
     {
+        var dataExportRepository = BasicActivator.RepositoryLocator.DataExportRepository;
+
         base.Execute();
+        _extractableDataSets = dataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(_catalogue).Where(eds => eds.Projects.Any() && eds.Projects.Select(p => ProjectSpecificCatalogueManager.CanMakeCatalogueNonProjectSpecific(dataExportRepository, _catalogue, eds, p)).Contains(true)).ToList();
+        if (!_extractableDataSets.Any())
+        {
+            SetImpossible("Cannot make Catalogue Non-Project specific");
+            return;
+        }
+
+
+
         if (_extractableDataSet is null)
         {
-            var dataExportRepository = BasicActivator.RepositoryLocator.DataExportRepository;
 
-            var projectIds = _extractableDataSets.SelectMany(eds => eds.Projects.Where(p => ProjectSpecificCatalogueManager.CanMakeCatalogueNonProjectSpecific(_catalogue,eds,p))).Select(p => p.ID);
+            var projectIds = _extractableDataSets.SelectMany(eds => eds.Projects.Where(p => ProjectSpecificCatalogueManager.CanMakeCatalogueNonProjectSpecific(dataExportRepository,_catalogue, eds,p))).Select(p => p.ID);
             _selectedProj = SelectOne<Project>(BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjectsInIDList<Project>(projectIds).ToList());
             if (_selectedProj is null) return;
             _extractableDataSet = _extractableDataSets.FirstOrDefault(eds => eds.Projects.Select(p => p.ID).Contains(_selectedProj.ID));
