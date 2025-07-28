@@ -127,6 +127,16 @@ namespace Rdmp.UI.MainFormUITabs
             groupBox25 = new GroupBox();
             aiAssociatedMedia = new SimpleControls.AdditionalInfomationUI();
             ffAssociatedMedia = new SimpleControls.MultiSelectChips.FreeFormTextChipDisplay();
+            tabPage8 = new TabPage();
+            tableLayoutPanel3 = new TableLayoutPanel();
+            label6 = new Label();
+            label4 = new Label();
+            label3 = new Label();
+            label1 = new Label();
+            label2 = new Label();
+            label5 = new Label();
+            button2 = new Button();
+            button1 = new Button();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
@@ -166,6 +176,8 @@ namespace Rdmp.UI.MainFormUITabs
             groupBox4.SuspendLayout();
             tabPage7.SuspendLayout();
             groupBox25.SuspendLayout();
+            tabPage8.SuspendLayout();
+            tableLayoutPanel3.SuspendLayout();
             SuspendLayout();
             // 
             // splitContainer1
@@ -255,6 +267,8 @@ namespace Rdmp.UI.MainFormUITabs
             tabControl1.Controls.Add(tabPage5);
             tabControl1.Controls.Add(tabPage6);
             tabControl1.Controls.Add(tabPage7);
+            tabControl1.Controls.Add(tabPage8);
+
             tabControl1.Dock = DockStyle.Fill;
             tabControl1.Location = new System.Drawing.Point(0, 0);
             tabControl1.Name = "tabControl1";
@@ -1100,6 +1114,118 @@ namespace Rdmp.UI.MainFormUITabs
             ffAssociatedMedia.Size = new System.Drawing.Size(300, 189);
             ffAssociatedMedia.TabIndex = 0;
             // 
+            // tabPage8
+            // 
+            tabPage8.BackColor = System.Drawing.Color.WhiteSmoke;
+            tabPage8.Controls.Add(button1);
+            tabPage8.Controls.Add(tableLayoutPanel3);
+            tabPage8.Controls.Add(button2);
+            tabPage8.Location = new System.Drawing.Point(4, 24);
+            tabPage8.Name = "tabPage8";
+            tabPage8.Size = new System.Drawing.Size(873, 895);
+            tabPage8.TabIndex = 7;
+            tabPage8.Text = "Datasets";
+            // 
+            // tableLayoutPanel3
+            // 
+            tableLayoutPanel3.AutoSize = true;
+            tableLayoutPanel3.CellBorderStyle = TableLayoutPanelCellBorderStyle.Single;
+            tableLayoutPanel3.ColumnCount = 6;
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel3.Controls.Add(label6, 5, 0);
+            tableLayoutPanel3.Controls.Add(label4, 3, 0);
+            tableLayoutPanel3.Controls.Add(label3, 2, 0);
+            tableLayoutPanel3.Controls.Add(label1, 0, 0);
+            tableLayoutPanel3.Controls.Add(label2, 1, 0);
+            tableLayoutPanel3.Controls.Add(label5, 4, 0);
+            tableLayoutPanel3.Location = new System.Drawing.Point(7, 41);
+            tableLayoutPanel3.Name = "tableLayoutPanel3";
+            tableLayoutPanel3.RowCount = 2;
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel3.Size = new System.Drawing.Size(619, 100);
+            tableLayoutPanel3.TabIndex = 2;
+            tableLayoutPanel3.Paint += tableLayoutPanel3_Paint;
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Location = new System.Drawing.Point(346, 1);
+            label6.Name = "label6";
+            label6.Size = new System.Drawing.Size(51, 15);
+            label6.TabIndex = 7;
+            label6.Text = "Provider";
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Location = new System.Drawing.Point(225, 1);
+            label4.Name = "label4";
+            label4.Size = new System.Drawing.Size(32, 15);
+            label4.TabIndex = 3;
+            label4.Text = "View";
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new System.Drawing.Point(173, 1);
+            label3.Name = "label3";
+            label3.Size = new System.Drawing.Size(45, 15);
+            label3.TabIndex = 5;
+            label3.Text = "Update";
+            label3.Click += label3_Click;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new System.Drawing.Point(4, 1);
+            label1.Name = "label1";
+            label1.Size = new System.Drawing.Size(81, 15);
+            label1.TabIndex = 3;
+            label1.Text = "Dataset Name";
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new System.Drawing.Point(92, 1);
+            label2.Name = "label2";
+            label2.Size = new System.Drawing.Size(74, 15);
+            label2.TabIndex = 4;
+            label2.Text = "Auto Update";
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Location = new System.Drawing.Point(264, 1);
+            label5.Name = "label5";
+            label5.Size = new System.Drawing.Size(75, 15);
+            label5.TabIndex = 6;
+            label5.Text = "Remove Link";
+            // 
+            // button2
+            // 
+            button2.Location = new System.Drawing.Point(7, 12);
+            button2.Name = "button2";
+            button2.Size = new System.Drawing.Size(150, 23);
+            button2.TabIndex = 1;
+            button2.Text = "Link to Existing Dataset";
+            button2.UseVisualStyleBackColor = true;
+            button2.Click += button2_Click;
+            // 
+            // button1
+            // 
+            button1.Location = new System.Drawing.Point(163, 12);
+            button1.Name = "button1";
+            button1.Size = new System.Drawing.Size(183, 23);
+            button1.TabIndex = 3;
+            button1.Text = "Create using External Provider";
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
             // CatalogueUI
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -1169,6 +1295,10 @@ namespace Rdmp.UI.MainFormUITabs
             tabPage7.ResumeLayout(false);
             groupBox25.ResumeLayout(false);
             groupBox25.PerformLayout();
+            tabPage8.ResumeLayout(false);
+            tabPage8.PerformLayout();
+            tableLayoutPanel3.ResumeLayout(false);
+            tableLayoutPanel3.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -1268,5 +1398,15 @@ namespace Rdmp.UI.MainFormUITabs
         private SimpleControls.AdditionalInfomationUI aiAssociatedMedia;
         private SimpleControls.MultiSelectChips.DropdownOptionsChipDisplay ddDataSourceSetting;
         private SimpleControls.MultiSelectChips.DropdownOptionsChipDisplay ddDataSource;
+        private TabPage tabPage8;
+        private TableLayoutPanel tableLayoutPanel3;
+        private Button button2;
+        private Label label3;
+        private Label label1;
+        private Label label2;
+        private Label label4;
+        private Label label5;
+        private Label label6;
+        private Button button1;
     }
 }

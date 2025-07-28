@@ -17,6 +17,7 @@ using FAnsi.Implementations.MySql;
 using FAnsi.Implementations.Oracle;
 using FAnsi.Implementations.PostgreSql;
 using NUnit.Framework;
+using Org.BouncyCastle.Asn1.X509.Qualified;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine.Interactive;
 using Rdmp.Core.Curation;
@@ -27,6 +28,7 @@ using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.Curation.Data.Datasets;
 using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Pipelines;
@@ -604,11 +606,26 @@ public class UnitTests
         {
             return (T)(object)new RegexRedactionKey(repository.CatalogueRepository,WhenIHaveA<RegexRedaction>(repository),WhenIHaveA<ColumnInfo>(repository),"PK");
         }
+        if(typeof(T) == typeof(CatalogueDatasetLinkage))
+        {
+            return (T)(object)new CatalogueDatasetLinkage(repository.CatalogueRepository, WhenIHaveA<Catalogue>(repository), WhenIHaveA<Dataset>(repository));
+        }
+        if(typeof(T) == typeof(Dataset))
+        {
+            return (T)(object)new Dataset(repository.CatalogueRepository, "Dataset");
+        }
+        if (typeof(T) == typeof(PluginDataset))
+        {
+            return (T)(object)new PluginDataset(repository.CatalogueRepository, "Plugin Dataset");
+        }
+        if (typeof(T) == typeof(DatasetProviderConfiguration))
+        {
+            return (T)(object)new DatasetProviderConfiguration(repository.CatalogueRepository, "","","",WhenIHaveA<DataAccessCredentials>(repository).ID,"");
+        }
         if(typeof(T) == typeof(ExtractableDataSetProject))
         {
             return (T)(object)new ExtractableDataSetProject(repository, WhenIHaveA<ExtractableDataSet>(repository), WhenIHaveA<Project>(repository));
         }
-
 
         throw new TestCaseNotWrittenYetException(typeof(T));
     }
