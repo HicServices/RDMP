@@ -626,6 +626,7 @@ public class UnitTests
         if (typeof(T) == typeof(HDRDataset))
         {
             return (T)(object)new HDRDataset(repository.CatalogueRepository, "HDR Dataset");
+        }
         if(typeof(T) == typeof(ExtractableDataSetProject))
         {
             return (T)(object)new ExtractableDataSetProject(repository, WhenIHaveA<ExtractableDataSet>(repository), WhenIHaveA<Project>(repository));
