@@ -12,4 +12,4 @@ using System.Reflection;
 
 [assembly: AssemblyVersion("9.0.0")]
 [assembly: AssemblyFileVersion("9.0.0")]
-[assembly: AssemblyInformationalVersion("9.0.0-right-click-test")]
+[assembly: AssemblyInformationalVersion("9.0.0")]
