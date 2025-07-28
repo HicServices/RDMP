@@ -105,7 +105,6 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
     private void SetCatalogue(ICatalogue catalogue)
     {
         ResetImpossibleness();
-        var dataExportChildProvider = ((DataExportChildProvider)_activator.CoreChildProvider);
         _catalogue = catalogue;
         GetExistingProjectIDs();
         if (catalogue == null)

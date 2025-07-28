@@ -192,7 +192,6 @@ public class GoToCommandFactory : CommandFactoryBase
             )
             { OverrideCommandName = "Usages (in Cohort Builder)" };
 
-            //TODO
             yield return new ExecuteCommandShow(_activator, () =>
                 _activator.RepositoryLocator.DataExportRepository
                     .GetAllObjectsWhere<DeployedExtractionFilter>("ClonedFromExtractionFilter_ID", masterFilter.ID)
