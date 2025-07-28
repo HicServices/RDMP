@@ -39,23 +39,23 @@ namespace Rdmp.UI.CatalogueSummary
             label11 = new System.Windows.Forms.Label();
             lblRecordCount = new System.Windows.Forms.Label();
             splitContainer3 = new System.Windows.Forms.SplitContainer();
-            dqePivotCategorySelector1 = new DQEPivotCategorySelector();
             timePeriodicityChart1 = new TimePeriodicityChartNoControls();
-            splitContainer1 = new System.Windows.Forms.SplitContainer();
+            dqePivotCategorySelector1 = new DQEPivotCategorySelector();
+            splitContainer2 = new System.Windows.Forms.SplitContainer();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer3).BeginInit();
             splitContainer3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
-            splitContainer1.Panel1.SuspendLayout();
-            splitContainer1.Panel2.SuspendLayout();
-            splitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)splitContainer2).BeginInit();
+            splitContainer2.Panel1.SuspendLayout();
+            splitContainer2.Panel2.SuspendLayout();
+            splitContainer2.SuspendLayout();
             SuspendLayout();
             // 
             // evaluationTrackBar1
             // 
             evaluationTrackBar1.AutoSize = true;
             evaluationTrackBar1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            evaluationTrackBar1.Location = new System.Drawing.Point(0, 426);
+            evaluationTrackBar1.Location = new System.Drawing.Point(0, 374);
             evaluationTrackBar1.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
             evaluationTrackBar1.Name = "evaluationTrackBar1";
             evaluationTrackBar1.Size = new System.Drawing.Size(1206, 73);
@@ -64,20 +64,23 @@ namespace Rdmp.UI.CatalogueSummary
             // 
             // panel1
             // 
+            panel1.AutoSize = true;
+            panel1.BackColor = System.Drawing.SystemColors.Control;
             panel1.Controls.Add(tblCompletionRates);
             panel1.Controls.Add(lblExtractionIdentifiersCount);
             panel1.Controls.Add(label8);
             panel1.Controls.Add(label11);
             panel1.Controls.Add(lblRecordCount);
-            panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            panel1.Location = new System.Drawing.Point(0, 499);
+            panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            panel1.Location = new System.Drawing.Point(0, 0);
             panel1.Name = "panel1";
-            panel1.Size = new System.Drawing.Size(1206, 100);
+            panel1.Size = new System.Drawing.Size(1206, 443);
             panel1.TabIndex = 3;
             // 
             // tblCompletionRates
             // 
             tblCompletionRates.AutoSize = true;
+            tblCompletionRates.BackColor = System.Drawing.SystemColors.Control;
             tblCompletionRates.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Single;
             tblCompletionRates.ColumnCount = 2;
             tblCompletionRates.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
@@ -87,7 +90,7 @@ namespace Rdmp.UI.CatalogueSummary
             tblCompletionRates.RowCount = 2;
             tblCompletionRates.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             tblCompletionRates.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            tblCompletionRates.Size = new System.Drawing.Size(200, 100);
+            tblCompletionRates.Size = new System.Drawing.Size(200, 45);
             tblCompletionRates.TabIndex = 11;
             // 
             // lblExtractionIdentifiersCount
@@ -142,80 +145,81 @@ namespace Rdmp.UI.CatalogueSummary
             splitContainer3.SplitterWidth = 5;
             splitContainer3.TabIndex = 1;
             // 
-            // dqePivotCategorySelector1
-            // 
-            dqePivotCategorySelector1.Dock = System.Windows.Forms.DockStyle.Fill;
-            dqePivotCategorySelector1.Location = new System.Drawing.Point(0, 0);
-            dqePivotCategorySelector1.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
-            dqePivotCategorySelector1.Name = "dqePivotCategorySelector1";
-            dqePivotCategorySelector1.Size = new System.Drawing.Size(131, 422);
-            dqePivotCategorySelector1.TabIndex = 0;
-            // 
             // timePeriodicityChart1
             // 
             timePeriodicityChart1.Dock = System.Windows.Forms.DockStyle.Fill;
             timePeriodicityChart1.Location = new System.Drawing.Point(0, 0);
             timePeriodicityChart1.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
             timePeriodicityChart1.Name = "timePeriodicityChart1";
-            timePeriodicityChart1.Size = new System.Drawing.Size(1062, 422);
+            timePeriodicityChart1.Size = new System.Drawing.Size(1206, 447);
             timePeriodicityChart1.TabIndex = 0;
             // 
-            // splitContainer1
+            // dqePivotCategorySelector1
             // 
-            splitContainer1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            splitContainer1.Location = new System.Drawing.Point(0, 0);
-            splitContainer1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            splitContainer1.Name = "splitContainer1";
+            dqePivotCategorySelector1.Dock = System.Windows.Forms.DockStyle.Left;
+            dqePivotCategorySelector1.Location = new System.Drawing.Point(0, 0);
+            dqePivotCategorySelector1.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
+            dqePivotCategorySelector1.Name = "dqePivotCategorySelector1";
+            dqePivotCategorySelector1.Size = new System.Drawing.Size(131, 374);
+            dqePivotCategorySelector1.TabIndex = 0;
             // 
-            // splitContainer1.Panel1
+            // splitContainer2
             // 
-            splitContainer1.Panel1.Controls.Add(dqePivotCategorySelector1);
+            splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
+            splitContainer2.Location = new System.Drawing.Point(0, 0);
+            splitContainer2.MinimumSize = new System.Drawing.Size(0, 800);
+            splitContainer2.Name = "splitContainer2";
+            splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
-            // splitContainer1.Panel2
+            // splitContainer2.Panel1
             // 
-            splitContainer1.Panel2.Controls.Add(timePeriodicityChart1);
-            splitContainer1.Size = new System.Drawing.Size(1206, 426);
-            splitContainer1.SplitterDistance = 135;
-            splitContainer1.SplitterWidth = 5;
-            splitContainer1.TabIndex = 3;
-            splitContainer1.SplitterMoved += splitContainer1_SplitterMoved;
+            splitContainer2.Panel1.Controls.Add(dqePivotCategorySelector1);
+            splitContainer2.Panel1.Controls.Add(evaluationTrackBar1);
+            splitContainer2.Panel1.Controls.Add(timePeriodicityChart1);
+            // 
+            // splitContainer2.Panel2
+            // 
+            splitContainer2.Panel2.Controls.Add(panel1);
+            splitContainer2.Size = new System.Drawing.Size(1206, 894);
+            splitContainer2.SplitterDistance = 447;
+            splitContainer2.TabIndex = 5;
             // 
             // CatalogueValidationResultsUI
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             AutoSize = true;
-            Controls.Add(splitContainer1);
-            Controls.Add(evaluationTrackBar1);
-            Controls.Add(panel1);
+            BackColor = System.Drawing.SystemColors.Control;
+            Controls.Add(splitContainer2);
             Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            MinimumSize = new System.Drawing.Size(0, 800);
             Name = "CatalogueValidationResultsUI";
-            Size = new System.Drawing.Size(1206, 599);
+            Size = new System.Drawing.Size(1206, 894);
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer3).EndInit();
             splitContainer3.ResumeLayout(false);
-            splitContainer1.Panel1.ResumeLayout(false);
-            splitContainer1.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
-            splitContainer1.ResumeLayout(false);
+            splitContainer2.Panel1.ResumeLayout(false);
+            splitContainer2.Panel1.PerformLayout();
+            splitContainer2.Panel2.ResumeLayout(false);
+            splitContainer2.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)splitContainer2).EndInit();
+            splitContainer2.ResumeLayout(false);
             ResumeLayout(false);
-            PerformLayout();
 
         }
 
         #endregion
         private DataQualityReporting.SubComponents.EvaluationTrackBar evaluationTrackBar1;
         private System.Windows.Forms.SplitContainer splitContainer3;
-        private DQEPivotCategorySelector dqePivotCategorySelector1;
-        private TimePeriodicityChartNoControls timePeriodicityChart1;
-        private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.Label lblExtractionIdentifiersCount;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label lblRecordCount;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.TableLayoutPanel tblCompletionRates;
+        private TimePeriodicityChartNoControls timePeriodicityChart1;
+        private DQEPivotCategorySelector dqePivotCategorySelector1;
+        private System.Windows.Forms.SplitContainer splitContainer2;
     }
 }
