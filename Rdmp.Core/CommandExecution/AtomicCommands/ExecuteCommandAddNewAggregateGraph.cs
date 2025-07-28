@@ -25,8 +25,7 @@ public class ExecuteCommandAddNewAggregateGraph : BasicCommandExecution, IAtomic
     {
         _catalogue = catalogue;
         _name = name;
-        if (_catalogue != null && _catalogue.GetAllExtractionInformation(ExtractionCategory.Any)
-                .All(ei => ei.ColumnInfo == null))
+        if (_catalogue != null && _catalogue.GetAllExtractionInformation(ExtractionCategory.Any).All(ei => ei.ColumnInfo == null))
             SetImpossible("Catalogue has no extractable columns");
     }
 

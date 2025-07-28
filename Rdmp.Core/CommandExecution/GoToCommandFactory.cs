@@ -47,8 +47,7 @@ public class GoToCommandFactory : CommandFactoryBase
         if (Is(forObject, out IMapsDirectlyToDatabaseTable mt))
         {
             // Go to import / export definitions
-            var export = _activator.RepositoryLocator.CatalogueRepository.GetReferencesTo<ObjectExport>(mt)
-                .FirstOrDefault();
+            var export = _activator.CoreChildProvider.AllExports.FirstOrDefault(export => export.IsReferenceTo(mt));
 
             if (export != null)
                 yield return new ExecuteCommandShow(_activator, export, 0, true)
@@ -188,13 +187,10 @@ public class GoToCommandFactory : CommandFactoryBase
         if (Is(forObject, out ExtractionFilter masterFilter))
         {
             yield return new ExecuteCommandShow(_activator, () =>
-                _activator.RepositoryLocator.CatalogueRepository
-                    .GetAllObjectsWhere<AggregateFilter>("ClonedFromExtractionFilter_ID", masterFilter.ID)
-                    .Select(f => f.GetAggregate())
+                _activator.CoreChildProvider.AllAggregateFilters.Where(af => af.ClonedFromExtractionFilter_ID == masterFilter.ID).Select(f => f.GetAggregate())
                     .Where(a => a != null).Distinct()
             )
             { OverrideCommandName = "Usages (in Cohort Builder)" };
-
 
             yield return new ExecuteCommandShow(_activator, () =>
                 _activator.RepositoryLocator.DataExportRepository
@@ -264,12 +260,14 @@ public class GoToCommandFactory : CommandFactoryBase
 
         if (Is(forObject, out Catalogue catalogue))
         {
-            foreach (var lmd in catalogue.LoadMetadatas())
+            var lmdLinkage = _activator.CoreChildProvider.AllLoadMetadataCatalogueLinkages.Where(lmdcl => lmdcl.CatalogueID == catalogue.ID).Select(lmdcl => lmdcl.LoadMetadataID);
+            var lmds = _activator.CoreChildProvider.AllLoadMetadatas.Where(lmd => lmdLinkage.Contains(lmd.ID));
+            foreach (var lmd in lmds)
             {
                 yield return new ExecuteCommandShow(_activator, lmd.ID, typeof(LoadMetadata))
                 { OverrideCommandName = $"Data Load ({lmd.Name})", OverrideIcon = GetImage(RDMPConcept.LoadMetadata) };
             }
-            if (catalogue.LoadMetadatas().Length == 0)
+            if (!lmds.Any())
             {
                 yield return new ExecuteCommandShow(_activator, null, typeof(LoadMetadata))
                 { OverrideCommandName = "No Data Load", OverrideIcon = GetImage(RDMPConcept.LoadMetadata) };

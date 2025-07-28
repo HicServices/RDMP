@@ -55,8 +55,9 @@ public class CatalogueChildProvider : ICoreChildProvider
 {
 	//Load System
 	public LoadMetadata[] AllLoadMetadatas { get; set; }
+	public LoadMetadataCatalogueLinkage[] AllLoadMetadataCatalogueLinkages { get; set; }
 
-	private LoadMetadataCatalogueLinkage[] AllLoadMetadataLinkage { get; set; }
+    private LoadMetadataCatalogueLinkage[] AllLoadMetadataLinkage { get; set; }
 	public ProcessTask[] AllProcessTasks { get; set; }
 	public ProcessTaskArgument[] AllProcessTasksArguments { get; set; }
 
@@ -256,7 +257,8 @@ public class CatalogueChildProvider : ICoreChildProvider
 		AllDatasets = GetAllObjects<Curation.Data.Dataset>(repository);
 
 		AllLoadMetadatas = GetAllObjects<LoadMetadata>(repository);
-		AllLoadMetadataLinkage = GetAllObjects<LoadMetadataCatalogueLinkage>(repository);
+		AllLoadMetadataCatalogueLinkages = GetAllObjects<LoadMetadataCatalogueLinkage>(repository);
+        AllLoadMetadataLinkage = GetAllObjects<LoadMetadataCatalogueLinkage>(repository);
 		AllProcessTasks = GetAllObjects<ProcessTask>(repository);
 		AllProcessTasksArguments = GetAllObjects<ProcessTaskArgument>(repository);
 		AllLoadProgresses = GetAllObjects<LoadProgress>(repository);

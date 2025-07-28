@@ -24,7 +24,7 @@ public sealed class ExecuteCommandChangeExtractability : BasicCommandExecution
         bool? explicitExtractability = null) : base(activator)
     {
         _catalogue = catalogue;
-        var status = catalogue.GetExtractabilityStatus(BasicActivator.RepositoryLocator.DataExportRepository);
+        var status = _catalogue.GetExtractabilityStatus(BasicActivator.RepositoryLocator.DataExportRepository); 
         if (status == null)
         {
             SetImpossible(

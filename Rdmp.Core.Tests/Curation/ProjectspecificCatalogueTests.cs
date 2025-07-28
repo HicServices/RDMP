@@ -1,10 +1,12 @@
 ﻿using Microsoft.Data.SqlClient;
+using NPOI.OpenXmlFormats.Spreadsheet;
 using NUnit.Framework;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Interactive;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using System;
@@ -32,10 +34,13 @@ namespace Rdmp.Core.Tests.Curation
             _catalogue.SaveToDatabase();
             var _t1 = new TableInfo(CatalogueRepository, "T1");
             _t1.SaveToDatabase();
+            _activator.Publish(_t1);
             var _c1 = new ColumnInfo(CatalogueRepository, "PrivateIdentifierA", "varchar(10)", _t1);
             _c1.SaveToDatabase();
+            _activator.Publish(_c1);
             var _ci1 = new CatalogueItem(CatalogueRepository, _catalogue, "PrivateIdentifierA");
             _ci1.SaveToDatabase();
+            _activator.Publish(_ci1);
             var _extractionInfo1 = new ExtractionInformation(CatalogueRepository, _ci1, _c1, _c1.ToString())
             {
                 Order = 123,
@@ -43,18 +48,24 @@ namespace Rdmp.Core.Tests.Curation
                 IsExtractionIdentifier = true
             };
             _extractionInfo1.SaveToDatabase();
+            _activator.Publish(_extractionInfo1);
             if (projectCount > 0)
             {
                 _project1 = new Project(DataExportRepository, "Project1");
                 _project1.SaveToDatabase();
+                _activator.Publish(_project1);
+                
             }
             if (projectCount > 1)
             {
                 _project2 = new Project(DataExportRepository, "Project1");
                 _project2.SaveToDatabase();
+                _activator.Publish(_project2);
+
             }
             _eds1 = _activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", _catalogue.ID).FirstOrDefault() ?? new ExtractableDataSet(_activator.RepositoryLocator.DataExportRepository, _catalogue);
             _eds1.SaveToDatabase();
+            _activator.Publish(_eds1);
             if (projectSpecificCount > 0)
             {
                 var cmd = new ExecuteCommandMakeCatalogueProjectSpecific(_activator);
@@ -92,7 +103,7 @@ namespace Rdmp.Core.Tests.Curation
             var cmd = new ExecuteCommandMakeCatalogueProjectSpecific(_activator,catalogue,project,force);
             cmd.SetTarget(project);
             cmd.SetTarget(catalogue);
-            if (shouldThrow) Assert.That(ProjectSpecificCatalogueManager.CanMakeCatalogueProjectSpecific(_activator.RepositoryLocator.DataExportRepository,catalogue,project,projectIdsToIgnore??new List<int>()), Is.False);
+            if (shouldThrow) Assert.That(ProjectSpecificCatalogueManager.CanMakeCatalogueProjectSpecific(_activator.RepositoryLocator.DataExportRepository, catalogue,project,projectIdsToIgnore??new List<int>()), Is.False);
             else Assert.DoesNotThrow(() => cmd.Execute());
         }
 

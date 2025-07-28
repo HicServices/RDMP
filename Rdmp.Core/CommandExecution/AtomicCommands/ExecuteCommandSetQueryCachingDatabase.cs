@@ -24,8 +24,7 @@ public sealed class ExecuteCommandSetQueryCachingDatabase : BasicCommandExecutio
         base(activator)
     {
         _cic = cic;
-        _caches = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>()
-            .Where(static s => s.WasCreatedBy(new QueryCachingPatcher())).ToArray();
+        _caches = activator.CoreChildProvider.AllExternalServers.Where(es => es.WasCreatedBy(new QueryCachingPatcher())).ToArray();
         if (!_caches.Any())
             SetImpossible("There are no Query Caching databases set up");
     }
