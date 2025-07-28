@@ -705,7 +705,9 @@ public abstract class BasicActivateItems : IBasicActivateItems
             // Catalogue must be extractable to be project specific
             if (projectSpecific != null)
             {
-                eds.Project_ID = projectSpecific.ID;
+                var edsp = new ExtractableDataSetProject(RepositoryLocator.DataExportRepository, eds, projectSpecific);
+                edsp.SaveToDatabase();
+                eds.Projects.Add(projectSpecific);
                 eds.SaveToDatabase();
             }
         }

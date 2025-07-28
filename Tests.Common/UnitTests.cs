@@ -622,6 +622,10 @@ public class UnitTests
         {
             return (T)(object)new DatasetProviderConfiguration(repository.CatalogueRepository, "","","",WhenIHaveA<DataAccessCredentials>(repository).ID,"");
         }
+        if(typeof(T) == typeof(ExtractableDataSetProject))
+        {
+            return (T)(object)new ExtractableDataSetProject(repository, WhenIHaveA<ExtractableDataSet>(repository), WhenIHaveA<Project>(repository));
+        }
 
         throw new TestCaseNotWrittenYetException(typeof(T));
     }

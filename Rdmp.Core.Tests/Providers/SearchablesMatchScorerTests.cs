@@ -175,7 +175,10 @@ internal class SearchablesMatchScorerTests : UnitTests
             if (projectSpecific)
             {
                 // this makes it project specific
-                eds.Project_ID = 5135;
+                var p = new Project(Repository, "Test Proj");
+                p.SaveToDatabase();
+                var edsp = new ExtractableDataSetProject(Repository,eds,p);
+                edsp.SaveToDatabase();
                 eds.SaveToDatabase();
             }
 
