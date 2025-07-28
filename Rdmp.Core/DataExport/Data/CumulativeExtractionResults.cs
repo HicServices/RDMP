@@ -45,7 +45,7 @@ public class CumulativeExtractionResults : DatabaseEntity, ICumulativeExtraction
     public int ExtractableDataSet_ID
     {
         get => _extractableDataSet_ID;
-        private set => SetField(ref _extractableDataSet_ID, value);
+        set => SetField(ref _extractableDataSet_ID, value);
     }
 
     /// <inheritdoc/>

@@ -22,7 +22,7 @@ public class CustomDataImportingTests : TestsRequiringAnExtractionConfiguration
     public void Extract_ProjectSpecificCatalogue_WholeDataset()
     {
         //make the catalogue a custom catalogue for this project
-        CustomExtractableDataSet.Project_ID = _project.ID;
+        CustomExtractableDataSet.Projects.Add(_project);
         CustomExtractableDataSet.SaveToDatabase();
 
         var pipe = SetupPipeline();
@@ -64,7 +64,7 @@ public class CustomDataImportingTests : TestsRequiringAnExtractionConfiguration
     public void Extract_ProjectSpecificCatalogue_AppendedColumn()
     {
         //make the catalogue a custom catalogue for this project
-        CustomExtractableDataSet.Project_ID = _project.ID;
+        CustomExtractableDataSet.Projects.Add(_project);
         CustomExtractableDataSet.SaveToDatabase();
 
         var pipe = SetupPipeline();
@@ -135,7 +135,7 @@ public class CustomDataImportingTests : TestsRequiringAnExtractionConfiguration
     public void Extract_ProjectSpecificCatalogue_FilterReference()
     {
         //make the catalogue a custom catalogue for this project
-        CustomExtractableDataSet.Project_ID = _project.ID;
+        CustomExtractableDataSet.Projects.Add(_project);
         CustomExtractableDataSet.SaveToDatabase();
 
         var pipe = SetupPipeline();

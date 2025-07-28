@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
@@ -20,13 +21,16 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
 {
     private ICatalogue _catalogue;
     private IProject _project;
+    private List<int> _existingProjectIDs;
+    private readonly bool _force = false;
 
     [UseWithObjectConstructor]
     public ExecuteCommandMakeCatalogueProjectSpecific(IBasicActivateItems itemActivator, ICatalogue catalogue,
-        IProject project) : this(itemActivator)
+        IProject project, [DemandsInitialization("Ignore Validation",DemandType.Unspecified,defaultValue:false)]bool force) : this(itemActivator)
     {
         SetCatalogue(catalogue);
         _project = project;
+        _force = force;
     }
 
     public ExecuteCommandMakeCatalogueProjectSpecific(IBasicActivateItems itemActivator) : base(itemActivator)
@@ -40,33 +44,17 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
     public override void Execute()
     {
         if (_catalogue == null)
-            SetCatalogue(SelectOne<Catalogue>(BasicActivator.RepositoryLocator.CatalogueRepository));
+            SetCatalogue(SelectOne(BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>().ToList()));
+        GetExistingProjectIDs();
 
-        _project ??= SelectOne<Project>(BasicActivator.RepositoryLocator.DataExportRepository);
+        _project ??= SelectOne<Project>(GetListOfValidProjects());
 
         if (_project == null || _catalogue == null)
             return;
 
         base.Execute();
 
-        var eds = BasicActivator.RepositoryLocator.DataExportRepository
-            .GetAllObjectsWithParent<ExtractableDataSet>(_catalogue).SingleOrDefault();
-
-        var alreadyInConfiguration = eds.ExtractionConfigurations.FirstOrDefault(ec => ec.Project_ID != _project.ID);
-
-        if (alreadyInConfiguration != null)
-            throw new Exception(
-                $"Cannot make {_catalogue} Project Specific because it is already a part of ExtractionConfiguration {alreadyInConfiguration} (Project={alreadyInConfiguration.Project}) and possibly others");
-
-        eds.Project_ID = _project.ID;
-        foreach (var ei in _catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Where(ei => ei.ExtractionCategory is ExtractionCategory.Core))
-        {
-            ei.ExtractionCategory = ExtractionCategory.ProjectSpecific;
-            ei.SaveToDatabase();
-        }
-
-        eds.SaveToDatabase();
-
+        ProjectSpecificCatalogueManager.MakeCatalogueProjectSpecific(BasicActivator.RepositoryLocator.DataExportRepository, _catalogue, _project);
         Publish(_catalogue);
     }
 
@@ -88,12 +76,25 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
         return this;
     }
 
+
+    private List<Project> GetListOfValidProjects()
+    {
+        var availableProjects = BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>().Where(p => !p.GetAllProjectCatalogues().Contains(_catalogue));
+        return availableProjects.Where(p => ProjectSpecificCatalogueManager.CanMakeCatalogueProjectSpecific(BasicActivator.RepositoryLocator.DataExportRepository, _catalogue, p, _existingProjectIDs)).ToList();
+    }
+
+    private void GetExistingProjectIDs()
+    {
+        var existingProjects = BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>().Where(p => p.GetAllProjectCatalogues().Contains(_catalogue));
+        _existingProjectIDs = existingProjects.Select(p => p.ID).ToList();
+    }
+
     private void SetCatalogue(ICatalogue catalogue)
     {
         ResetImpossibleness();
 
         _catalogue = catalogue;
-
+        GetExistingProjectIDs();
         if (catalogue == null)
         {
             SetImpossible("Catalogue cannot be null");
@@ -102,8 +103,10 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
 
         var status = _catalogue.GetExtractabilityStatus(BasicActivator.RepositoryLocator.DataExportRepository);
 
-        if (status.IsProjectSpecific)
-            SetImpossible("Catalogue is already Project Specific");
+        if (!GetListOfValidProjects().Any() && !_force)
+        {
+            SetImpossible("No valid Projects available");
+        }
 
         if (!status.IsExtractable)
             SetImpossible("Catalogue must first be made Extractable");
