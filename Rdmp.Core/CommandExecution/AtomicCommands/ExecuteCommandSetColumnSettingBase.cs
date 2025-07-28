@@ -49,14 +49,13 @@ public abstract class ExecuteCommandSetColumnSettingBase : BasicCommandExecution
         _commandName = commandName;
         _catalogue.ClearAllInjections();
         _commandProperty = commandProperty;
-        var dataExportChildProvider = ((DataExportChildProvider)activator.CoreChildProvider);
 
 
         if (inConfiguration != null)
         {
             SetImpossibleIfReadonly(_inConfiguration);
 
-            var allEds = dataExportChildProvider.ExtractableDataSets.Where(eds => eds.ExtractionConfigurations.Contains(inConfiguration));
+            var allEds = inConfiguration.GetAllExtractableDataSets();
             var eds = allEds.FirstOrDefault(sds => sds.Catalogue_ID == _catalogue.ID);
             if (eds == null)
             {
