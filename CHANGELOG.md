@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [9.0.1] - Unreleased
 - Improve Right-click performance
+- Fix bug where orphaned filters were causing issues with cohort configurations
 
 ## [9.0.0] - 2025-07-23
 - Add ability to use Extraction Configuration ID in the naming scheme of the extract to database Pipeline component

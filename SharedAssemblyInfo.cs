@@ -12,4 +12,4 @@ using System.Reflection;
 
 [assembly: AssemblyVersion("9.0.1")]
 [assembly: AssemblyFileVersion("9.0.1")]
-[assembly: AssemblyInformationalVersion("9.0.1-cohort-filter-fix")]
+[assembly: AssemblyInformationalVersion("9.0.1")]
