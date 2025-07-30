@@ -65,7 +65,7 @@ public class ExecuteCommandCreateNewFilter : BasicCommandExecution, IAtomicComma
         {
             var c = GetCatalogue();
 
-            var filters = c.CatalogueRepository.GetAllObjects<AggregateFilter>().Where(af => af.GetCatalogue().ID == c.ID);
+            var filters = c.CatalogueRepository.GetAllObjects<AggregateFilter>().Where(af => { try { return af.GetCatalogue()?.ID == c.ID; } catch (Exception) { return false; } });
             _offerCohortFilters = filters.ToArray();
             offerCohortCatalogueFilters = value;
         }
