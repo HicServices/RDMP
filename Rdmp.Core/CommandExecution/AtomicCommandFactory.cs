@@ -261,7 +261,6 @@ public class AtomicCommandFactory : CommandFactoryBase
             yield return new ExecuteCommandCreateNewFilter(_activator, ac)
             {
                 OfferCatalogueFilters = true,
-                OfferCohortCatalogueFilters=true,
                 SuggestedCategory = Add,
                 OverrideCommandName = "Existing Filter"
             };
@@ -331,7 +330,6 @@ public class AtomicCommandFactory : CommandFactoryBase
             yield return new ExecuteCommandCreateNewFilter(_activator, container, null)
             {
                 OfferCatalogueFilters = true,
-                OfferCohortCatalogueFilters = true,
                 SuggestedCategory = Add,
                 OverrideCommandName = "Existing Filter"
             };
@@ -696,7 +694,6 @@ public class AtomicCommandFactory : CommandFactoryBase
             yield return new ExecuteCommandCreateNewFilter(_activator, sds)
             {
                 OfferCatalogueFilters = true,
-                OfferCohortCatalogueFilters = true,
                 OverrideCommandName = "Existing Filter (copy of)",
                 SuggestedCategory = Add
             };
@@ -950,10 +947,12 @@ public class AtomicCommandFactory : CommandFactoryBase
         }
 
         if (Is(o, out IDisableable disable))
+            //todo this calls the db
             yield return new ExecuteCommandDisableOrEnable(_activator, disable);
 
         // If the root object is deletable offer deleting
         if (Is(o, out IDeleteable deletable))
+            //todo this calls the db
             yield return new ExecuteCommandDelete(_activator, deletable) { SuggestedShortcut = "Delete" };
 
         if (Is(o, out ReferenceOtherObjectDatabaseEntity reference))
