@@ -93,6 +93,10 @@
         </Compile>
     </ItemGroup>
     <ItemGroup>
+      <PackageReference Include="AWSSDK.S3" VersionOverride="4.0.6.2" />
+      <PackageReference Include="AWSSDK.SecurityToken" VersionOverride="4.0.1.7" />
+    <PackageReference Include="AWSSDK.SSO" VersionOverride="4.0.0.15" />
+    <PackageReference Include="AWSSDK.SSOOIDC" VersionOverride="4.0.0.15" />
         <None Update="DataLoad\Engine\Resources\kvpTestFilePK.csv">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
