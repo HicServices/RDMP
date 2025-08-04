@@ -604,6 +604,10 @@ public class UnitTests
         {
             return (T)(object)new RegexRedactionKey(repository.CatalogueRepository,WhenIHaveA<RegexRedaction>(repository),WhenIHaveA<ColumnInfo>(repository),"PK");
         }
+        if(typeof(T) == typeof(ExtractableDataSetProject))
+        {
+            return (T)(object)new ExtractableDataSetProject(repository, WhenIHaveA<ExtractableDataSet>(repository), WhenIHaveA<Project>(repository));
+        }
 
 
         throw new TestCaseNotWrittenYetException(typeof(T));

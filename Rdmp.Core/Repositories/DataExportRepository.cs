@@ -67,6 +67,7 @@ public class DataExportRepository : TableRepository, IDataExportRepository
             (rep, r) => new ExternalCohortTable((IDataExportRepository)rep, r));
         Constructors.Add(typeof(ExtractableCohort), (rep, r) => new ExtractableCohort((IDataExportRepository)rep, r));
         Constructors.Add(typeof(ExtractableColumn), (rep, r) => new ExtractableColumn((IDataExportRepository)rep, r));
+        Constructors.Add(typeof(ExtractableDataSetProject), (rep, r) => new ExtractableDataSetProject((IDataExportRepository)rep, r));
         Constructors.Add(typeof(ExtractableDataSet), (rep, r) => new ExtractableDataSet((IDataExportRepository)rep, r));
         Constructors.Add(typeof(ExtractionConfiguration),
             (rep, r) => new ExtractionConfiguration((IDataExportRepository)rep, r));
@@ -97,8 +98,8 @@ public class DataExportRepository : TableRepository, IDataExportRepository
 
     public CatalogueExtractabilityStatus GetExtractabilityStatus(ICatalogue c)
     {
-        var eds = GetAllObjectsWithParent<ExtractableDataSet>(c).SingleOrDefault();
-        return eds == null ? new CatalogueExtractabilityStatus(false, false) : eds.GetCatalogueExtractabilityStatus();
+        var eds = GetAllObjectsWithParent<ExtractableDataSet>(c).ToList();
+        return eds.Count == 0 ? new CatalogueExtractabilityStatus(false, false) : new CatalogueExtractabilityStatus(true, eds.Count > 1 ? true : eds.First().Projects.Any());
     }
 
     public ISelectedDataSets[] GetSelectedDatasetsWithNoExtractionIdentifiers() =>
