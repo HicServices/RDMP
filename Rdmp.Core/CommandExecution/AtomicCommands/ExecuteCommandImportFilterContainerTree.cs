@@ -31,7 +31,7 @@ public class ExecuteCommandImportFilterContainerTree : BasicCommandExecution
     /// <summary>
     /// ID of the Catalogue that is being extracted by <see cref="_into"/> to ensure that we only import filters from the same table
     /// </summary>
-    private readonly ICatalogue _catalogue;
+    private ICatalogue _catalogue;
 
     private readonly IRootFilterContainerHost _into;
     private const float DEFAULT_WEIGHT = 1.2f;
@@ -68,7 +68,6 @@ public class ExecuteCommandImportFilterContainerTree : BasicCommandExecution
         if (into is AggregateConfiguration ac && ac.Catalogue.IsApiCall())
             SetImpossible(ExecuteCommandAddNewFilterContainer.FiltersCannotBeAddedToApiCalls);
 
-        _catalogue = _into.GetCatalogue();
 
         SetImpossibleIfReadonly(into);
     }
@@ -227,6 +226,7 @@ public class ExecuteCommandImportFilterContainerTree : BasicCommandExecution
     /// <returns></returns>
     private IEnumerable<AggregateConfiguration> GetEligibleChildren(CohortIdentificationConfiguration arg)
     {
+        if(_catalogue is null) _catalogue = _into.GetCatalogue();
         return arg.RootCohortAggregateContainer_ID == null
             ? Array.Empty<AggregateConfiguration>()
             : arg.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively()
