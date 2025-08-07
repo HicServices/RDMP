@@ -8,6 +8,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.DirectoryServices.ActiveDirectory;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -20,6 +21,7 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Logging.PastEvents;
 using Rdmp.Core.ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 using Rdmp.UI.Collections;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Menus.MenuItems;
@@ -50,7 +52,9 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
     private readonly ToolStripButton _btnApplyFilter = new("Apply");
     private readonly ToolStripTextBox _tbToFetch = new() { Text = "1000" };
     private readonly ToolStripButton _btnFetch = new("Go");
+    private readonly ToolStripButton _btnFlat = new("Flat View");
 
+    private bool _flatView = UserSettings.DefaultLogViewFlat;
     private int _toFetch = 1000;
 
 
@@ -58,7 +62,7 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
     public LoadEventsTreeView()
     {
         InitializeComponent();
-
+        if (_flatView) _btnFlat.Text = "Nested View";
         _populateLoadHistory.DoWork += _populateLoadHistory_DoWork;
         _populateLoadHistory.WorkerSupportsCancellation = true;
         _populateLoadHistory.RunWorkerCompleted += _populateLoadHistory_RunWorkerCompleted;
@@ -78,7 +82,7 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
         _btnApplyFilter.Click += (s, e) => ApplyFilter(_tbFilterBox.Text);
         _tbToFetch.TextChanged += TbToFetchTextChanged;
         _btnFetch.Click += (s, e) => PopulateLoadHistory();
-
+        _btnFlat.Click += (s,e) => ToggleView();
         RDMPCollectionCommonFunctionality.SetupColumnTracking(treeView1, olvDescription,
             new Guid("6b09f39c-2b88-41ed-a396-42a2d2288952"));
         RDMPCollectionCommonFunctionality.SetupColumnTracking(treeView1, olvDate,
@@ -128,9 +132,15 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
         };
     }
 
-    private static void treeView1_FormatRow(object sender, FormatRowEventArgs e)
+    private void treeView1_FormatRow(object sender, FormatRowEventArgs e)
     {
         // Only apply if it is a data load info thing
+        if (_flatView)
+        {
+            if (e.Model is ArchivalFatalError atli)
+                e.Item.ForeColor = Color.DarkOrange;
+        }
+
         if (e.Model is not ArchivalDataLoadInfo dli) return;
 
         if (dli.HasErrors)
@@ -206,7 +216,15 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
 
     public void AddObjects(ArchivalDataLoadInfo[] archivalDataLoadInfos)
     {
-        treeView1.AddObjects(archivalDataLoadInfos);
+        if (_flatView) {
+            treeView1.AddObjects(archivalDataLoadInfos.SelectMany(adli => adli.TableLoadInfos).ToList());
+            treeView1.AddObjects(archivalDataLoadInfos.SelectMany(adli => adli.Errors).ToList());
+            treeView1.AddObjects(archivalDataLoadInfos.SelectMany(adli => adli.Progress).ToList());
+        }
+        else
+        {
+            treeView1.AddObjects(archivalDataLoadInfos);
+        }
     }
 
     public void ClearObjects()
@@ -239,6 +257,13 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
         {
             CommonFunctionality.Fatal("Failed to populate load history", exception);
         }
+    }
+
+    private void ToggleView()
+    {
+        _flatView = !_flatView;
+        _btnFlat.Text = _flatView ?"Nested View": "Flat View";
+        PopulateLoadHistory();
     }
 
     private void PopulateLoadHistory()
@@ -406,7 +431,7 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
         CommonFunctionality.Add(new ToolStripLabel("Fetch:"));
         CommonFunctionality.Add(_tbToFetch);
         CommonFunctionality.Add(_btnFetch);
-
+        CommonFunctionality.Add(_btnFlat);
         PopulateLoadHistory();
     }
 }
