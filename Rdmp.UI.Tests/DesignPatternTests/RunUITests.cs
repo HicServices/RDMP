@@ -31,7 +31,6 @@ public class RunUITests : DatabaseTests
             typeof(ExecuteCommandSetDataAccessContextForCredentials),
             typeof(ExecuteCommandActivate),
             typeof(ExecuteCommandCreateNewExternalDatabaseServer),
-            typeof(ExecuteCommandShowTooltip),
             typeof(ExecuteCommandShowKeywordHelp),
             typeof(ExecuteCommandCollapseChildNodes),
             typeof(ExecuteCommandExpandAllNodes),

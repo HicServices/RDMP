@@ -34,8 +34,6 @@ public class ExecuteCommandCreateNewFilter : BasicCommandExecution, IAtomicComma
 
     private IFilter[] _offerFilters = [];
     private bool offerCatalogueFilters;
-    private IFilter[] _offerCohortFilters = [];
-    private bool offerCohortCatalogueFilters;
 
 
 
@@ -57,20 +55,6 @@ public class ExecuteCommandCreateNewFilter : BasicCommandExecution, IAtomicComma
             offerCatalogueFilters = value;
         }
     }
-
-    public bool OfferCohortCatalogueFilters
-    {
-        get => offerCohortCatalogueFilters;
-        set
-        {
-            var c = GetCatalogue();
-
-            var filters = c.CatalogueRepository.GetAllObjects<AggregateFilter>().Where(af => af.GetCatalogue().ID == c.ID);
-            _offerCohortFilters = filters.ToArray();
-            offerCohortCatalogueFilters = value;
-        }
-    }
-
 
     private ExecuteCommandCreateNewFilter(IBasicActivateItems activator) : base(activator)
     {
@@ -257,7 +241,7 @@ where    Optional SQL to set for the filter.  If <basedOn> is not null this will
     {
         var wizard = new FilterImportWizard(BasicActivator);
 
-        var filters = _offerFilters.Union(_offerCohortFilters).ToArray();
+        var filters = _offerFilters;
         var import = wizard.ImportManyFromSelection(container, filters).ToArray();
 
         foreach (var f in import) container.AddChild(f);

@@ -23,6 +23,7 @@ public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution, IAtomicC
     private readonly Catalogue _catalogue;
     private readonly ColumnInfo[] _columnInfos;
     private readonly HashSet<int> _existingColumnInfos;
+    private readonly IBasicActivateItems _activator;
 
     /// <summary>
     /// The category to assign for newly created <see cref="ExtractionInformation"/>.
@@ -33,12 +34,14 @@ public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution, IAtomicC
     public ExecuteCommandAddNewCatalogueItem(IBasicActivateItems activator, Catalogue catalogue,
         ColumnInfoCombineable colInfo) : this(activator, catalogue, colInfo.ColumnInfos)
     {
+        _activator = activator;
     }
 
     [UseWithObjectConstructor]
     public ExecuteCommandAddNewCatalogueItem(IBasicActivateItems activator, Catalogue catalogue,
         params ColumnInfo[] columnInfos) : base(activator)
     {
+        _activator = activator;
         _catalogue = catalogue;
         _existingColumnInfos = GetColumnInfos(_catalogue);
         _columnInfos = columnInfos;
@@ -48,11 +51,11 @@ public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution, IAtomicC
             SetImpossible("ColumnInfo(s) are already in Catalogue");
     }
 
-    private static HashSet<int> GetColumnInfos(ICatalogue catalogue)
+    private HashSet<int> GetColumnInfos(ICatalogue catalogue)
     {
         return catalogue == null
             ? null
-            : new HashSet<int>(catalogue.CatalogueItems.Select(static ci => ci.ColumnInfo_ID)
+            : new HashSet<int>(_activator.CoreChildProvider.AllCatalogueItems.Where(ci => ci.Catalogue_ID == catalogue.ID).Select(static ci => ci.ColumnInfo_ID)
                 .Where(static col => col.HasValue).Select(static v => v.Value).Distinct());
     }
 

@@ -40,8 +40,9 @@ public class ExecuteCommandViewCatalogueExtractionSqlUI : BasicUICommandExecutio
     {
         _catalogue = (Catalogue)target;
 
+
         //if the catalogue has no extractable columns
-        if (!_catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Any())
+        if(!_catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Any())
             SetImpossible("Catalogue has no ExtractionInformations");
 
         return this;

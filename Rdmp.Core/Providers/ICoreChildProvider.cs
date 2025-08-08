@@ -35,6 +35,7 @@ public interface ICoreChildProvider : IChildProvider
 {
     JoinInfo[] AllJoinInfos { get; }
     LoadMetadata[] AllLoadMetadatas { get; }
+    LoadMetadataCatalogueLinkage[] AllLoadMetadataCatalogueLinkages { get; }
     TableInfoServerNode[] AllServers { get; }
     TableInfo[] AllTableInfos { get; }
     Dictionary<int, List<ColumnInfo>> TableInfosToColumnInfos { get; }

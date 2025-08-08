@@ -62,11 +62,11 @@ namespace Rdmp.Core.DataExport.Data
             return eds;
         }
 
-        public static bool CanMakeCatalogueNonProjectSpecific(IDataExportRepository dqeRepo, ICatalogue catalogue, ExtractableDataSet extractableDataSet,IProject project)
+        public static bool CanMakeCatalogueNonProjectSpecific(IDataExportRepository dqeRepo, ICatalogue catalogue, ExtractableDataSet extractableDataSet, IProject project)
         {
             bool usedInExtraction = project.ExtractionConfigurations.Where(ec => ec.SelectedDataSets.Select(sds => sds.ExtractableDataSet).Contains(extractableDataSet)).Any();
             if (!usedInExtraction) return true;
-            if(usedInExtraction && extractableDataSet.Projects.Count ==1) return true;
+            if (usedInExtraction && extractableDataSet.Projects.Count == 1) return true;
             return false;
         }
 
@@ -82,7 +82,7 @@ namespace Rdmp.Core.DataExport.Data
                 p.DeleteInDatabase();
             }
             extractableDataSet.Projects.Remove(project);
-            
+
             foreach (var ei in catalogue.GetAllExtractionInformation(ExtractionCategory.ProjectSpecific))
             {
                 ei.ExtractionCategory = ExtractionCategory.Core;
@@ -91,4 +91,3 @@ namespace Rdmp.Core.DataExport.Data
         }
     }
 }
-
