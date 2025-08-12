@@ -338,6 +338,7 @@
 		<PackageReference Include="Newtonsoft.Json" />
 		<PackageReference Include="NPOI" />
 		<PackageReference Include="NLog" />
+		<PackageReference Include="pythonnet" />
 		<PackageReference Include="SixLabors.ImageSharp" />
 		<PackageReference Include="SixLabors.ImageSharp.Drawing" />
 		<PackageReference Include="Spectre.Console" />
