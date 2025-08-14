@@ -146,38 +146,6 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
         if (indexes.Length == 0) return itemArray;
         return itemArray.Where((source, idx) => !indexes.Contains(idx)).ToArray();
     }
-    private string GetPKValue(DataColumn pkColumn, DataRow row)
-    {
-        var pkName = pkColumn.ColumnName;
-        var value = row[pkName];
-        if (_externalCohortTable is not null)
-        {
-            var privateIdentifierField = _externalCohortTable.PrivateIdentifierField.Split('.').Last()[1..^1];//remove the "[]" from the identifier field
-            var releaseIdentifierField = _externalCohortTable.ReleaseIdentifierField.Split('.').Last()[1..^1];//remove the "[]" from the identifier field
-            if (pkName == releaseIdentifierField)
-            {
-                //going to have to look up the previous relaseID to match
-                DiscoveredTable cohortTable = _externalCohortTable.DiscoverCohortTable();
-                using var lookupDT = cohortTable.GetDataTable();
-                var releaseIdIndex = lookupDT.Columns.IndexOf(releaseIdentifierField);
-                var privateIdIndex = lookupDT.Columns.IndexOf(privateIdentifierField);
-                var foundRow = lookupDT.Rows.Cast<DataRow>().Where(r => r.ItemArray[releaseIdIndex].ToString() == value.ToString()).LastOrDefault();
-                if (foundRow is not null)
-                {
-                    var originalValue = foundRow.ItemArray[privateIdIndex];
-                    var existingIDsforReleaseID = lookupDT.Rows.Cast<DataRow>().Where(r => r.ItemArray[privateIdIndex].ToString() == originalValue.ToString()).Select(s => s.ItemArray[releaseIdIndex].ToString());
-                    if (existingIDsforReleaseID.Count() > 0)
-                    {
-                        //we don't know what the current release ID is ( there may be ones from multiple cohorts)
-                        var ids = existingIDsforReleaseID.Select(id => $"'{id}'");
-                        return $"{pkName} in ({string.Join(',', ids)})";
-                    }
-                }
-            }
-        }
-        return $"{pkName} = '{value}'";
-    }
-
 
     public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,
         GracefulCancellationToken cancellationToken)
