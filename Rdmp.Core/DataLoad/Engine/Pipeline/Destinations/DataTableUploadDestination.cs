@@ -4,22 +4,17 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Diagnostics;
-using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
+using FAnsi;
 using FAnsi.Connections;
 using FAnsi.Discovery;
+using FAnsi.Discovery.QuerySyntax;
 using FAnsi.Discovery.TableCreation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
-using Rdmp.Core.DataLoad.Triggers.Implementations;
 using Rdmp.Core.DataLoad.Triggers;
+using Rdmp.Core.DataLoad.Triggers.Implementations;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Logging.Listeners;
 using Rdmp.Core.Repositories.Construction;
@@ -27,8 +22,14 @@ using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.Core.ReusableLibraryCode.Progress;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Diagnostics;
+using System.Globalization;
+using System.Linq;
+using System.Threading.Tasks;
 using TypeGuesser;
-using FAnsi;
 
 namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
 
@@ -393,29 +394,45 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
 
             }
 
-
-            foreach (DataRow row in rowsToModify.Distinct())
+            if (rowsToModify.Any())
             {
-                //replace existing 
-                var args = new DatabaseOperationArgs();
-                List<String> columns = [];
-                foreach (DataColumn column in toProcess.Columns)
+                var tmpDt = toProcess.Clone();
+                foreach (var row in rowsToModify)
                 {
-                    //if (!pkColumns.Contains(column))
-                    //{
-                    columns.Add(column.ColumnName);
-                    //}
+                    tmpDt.ImportRow(row);
                 }
-                //need to check for removed column and null them out
-                var existingColumns = _discoveredTable.DiscoverColumns().Select(c => c.GetRuntimeName());
-                var columnsThatPreviouslyExisted = existingColumns.Where(c => !pkColumns.Select(pk => pk.ColumnName).Contains(c) && !columns.Contains(c) && c != SpecialFieldNames.DataLoadRunID && c != SpecialFieldNames.ValidFrom);
-                var nullEntries = string.Join(" ,", columnsThatPreviouslyExisted.Select(c => $"{c} = NULL"));
-                var nullText = nullEntries.Length > 0 ? $" , {nullEntries}" : "";
-                var columnString = string.Join(" , ", columns.Select(col => $"{col} = '{row[col]}'").ToList());
-                var pkMatch = string.Join(" AND ", pkColumns.Select(pk => GetPKValue(pk, row)).ToList());
-                var sql = $"update {_discoveredTable.GetFullyQualifiedName()} set {columnString} {nullText} where {pkMatch}";
-                var cmd = _discoveredTable.GetCommand(sql, args.GetManagedConnection(_discoveredTable).Connection);
-                cmd.ExecuteNonQuery();
+                var tblName = $"tmpTable_{DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond}";
+                var tmpTable = _discoveredTable.Database.CreateTable(tblName, tmpDt);
+
+                var customLines = new List<CustomLine>() { };
+                foreach (var col in tmpDt.Columns.Cast<DataColumn>())
+                {
+                    if (!pkColumns.Select(c => c.ColumnName).Contains(col.ColumnName))
+                    {
+                        customLines.Add(new CustomLine($"t1.{col.ColumnName} = t2.{col.ColumnName}", QueryComponent.SET));
+                    }
+                    else
+                    {
+                        customLines.Add(new CustomLine($"t1.{col.ColumnName} = t2.{col.ColumnName}", QueryComponent.JoinInfoJoin));
+                        customLines.Add(new CustomLine($"t1.{col.ColumnName} = t2.{col.ColumnName}", QueryComponent.WHERE));
+                    }
+                }
+                var existingColumns = _discoveredTable.DiscoverColumns().Select(c => c.GetRuntimeName()).Where(c => c != SpecialFieldNames.DataLoadRunID && c != SpecialFieldNames.ValidFrom);
+                var columnsThatPreviouslyExisted = existingColumns.Where(ec => !toProcess.Columns.Cast<DataColumn>().ToList().Select(c => c.ColumnName).Contains(ec));
+                foreach (var col in columnsThatPreviouslyExisted)
+                {
+                    customLines.Add(new CustomLine($"t1.{col} = t2.{col}", QueryComponent.SET));
+
+                }
+
+                var str = _discoveredTable.Database.Server.GetQuerySyntaxHelper().UpdateHelper.BuildUpdate(_discoveredTable, tmpTable, customLines);
+                using (var connection = _discoveredTable.Database.Server.GetConnection())
+                {
+                    connection.Open();
+                    var cmd = _discoveredTable.Database.Server.GetCommand(str, connection);
+                    cmd.ExecuteNonQuery();
+                    tmpTable.Drop();
+                }
             }
 
             foreach (DataRow row in rowsToModify.Distinct())
