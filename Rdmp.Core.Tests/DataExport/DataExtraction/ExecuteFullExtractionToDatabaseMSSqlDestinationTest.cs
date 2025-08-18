@@ -18,7 +18,6 @@ using Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources;
 using Tests.Common;
 using Tests.Common.Scenarios;
-using Rdmp.Core.DataLoad.Triggers;
 
 namespace Rdmp.Core.Tests.DataExport.DataExtraction;
 
