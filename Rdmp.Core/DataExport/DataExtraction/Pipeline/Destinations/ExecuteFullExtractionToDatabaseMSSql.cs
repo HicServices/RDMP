@@ -12,6 +12,7 @@ using Rdmp.Core.DataExport.DataExtraction.UserPicks;
 using Rdmp.Core.DataExport.DataRelease.Pipeline;
 using Rdmp.Core.DataExport.DataRelease.Potential;
 using Rdmp.Core.DataFlowPipeline;
+using Rdmp.Core.DataLoad.Engine.Job.Scheduling;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
 using Rdmp.Core.DataLoad.Triggers.Exceptions;
 using Rdmp.Core.DataLoad.Triggers.Implementations;
@@ -112,7 +113,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
     public string UserDefinedIndex { get; set; }
 
 
-    [DemandsInitialization("Archive trigger",DefaultValue =true)]
+    [DemandsInitialization("When writing to an existing database, will update records and store historical versions via a view", DefaultValue = false)]
     public bool UseArchiveTrigger { get; set; }
 
     private DiscoveredDatabase _destinationDatabase;
@@ -200,7 +201,8 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
 
                     // since we dropped it we should treat it as if it was never there to begin with
                     _tableDidNotExistAtStartOfLoad = true;
-                } else if (UseArchiveTrigger && hasPKs)//todo check if there are pks
+                }
+                else if (UseArchiveTrigger && hasPKs)
                 {
 
                     TriggerImplementerFactory triggerFactory = new TriggerImplementerFactory(FAnsi.DatabaseType.MicrosoftSQLServer);
@@ -371,7 +373,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         }
 
 
-        return indexName.Replace(" ","");
+        return indexName.Replace(" ", "");
     }
 
     private string GetTableName(string suffix = null)
@@ -691,6 +693,24 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     $"Catalogue '{dsRequest.Catalogue}' does not have an Acronym but TableNamingPattern contains $a",
                     CheckResult.Fail));
+
+        if (UseArchiveTrigger)
+        {
+            if (_request is ExtractDatasetCommand dsRequest)
+            {
+                var existing = _destinationDatabase.ExpectTable(dsRequest.Catalogue.Name);
+                if (existing.Exists())
+                {
+                    var hasPKs = existing.DiscoverColumns().Any(col => col.IsPrimaryKey);
+                    if (!hasPKs)
+                    {
+                        notifier.OnCheckPerformed(new CheckEventArgs(
+                           $"Catalogue does not have any PKS. Cannot apply the archive trigger",
+                           CheckResult.Fail));
+                    }
+                }
+            }
+        }
 
         base.Check(notifier);
 
