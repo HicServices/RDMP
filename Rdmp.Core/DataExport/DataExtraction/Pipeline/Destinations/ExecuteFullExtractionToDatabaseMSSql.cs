@@ -694,23 +694,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                     $"Catalogue '{dsRequest.Catalogue}' does not have an Acronym but TableNamingPattern contains $a",
                     CheckResult.Fail));
 
-        if (UseArchiveTrigger)
-        {
-            if (_request is ExtractDatasetCommand dsRequest)
-            {
-                var existing = _destinationDatabase.ExpectTable(dsRequest.Catalogue.Name);
-                if (existing.Exists())
-                {
-                    var hasPKs = existing.DiscoverColumns().Any(col => col.IsPrimaryKey);
-                    if (!hasPKs)
-                    {
-                        notifier.OnCheckPerformed(new CheckEventArgs(
-                           $"Catalogue does not have any PKS. Cannot apply the archive trigger",
-                           CheckResult.Fail));
-                    }
-                }
-            }
-        }
+       
 
         base.Check(notifier);
 
@@ -718,6 +702,24 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         {
             var server = DataAccessPortal.ExpectServer(TargetDatabaseServer, DataAccessContext.DataExport, false);
             var database = _destinationDatabase = server.ExpectDatabase(GetDatabaseName());
+
+            if (UseArchiveTrigger)
+            {
+                if (_request is ExtractDatasetCommand dsRequest)
+                {
+                    var existing = _destinationDatabase.ExpectTable(dsRequest.Catalogue.Name);
+                    if (existing.Exists())
+                    {
+                        var hasPKs = existing.DiscoverColumns().Any(col => col.IsPrimaryKey);
+                        if (!hasPKs)
+                        {
+                            notifier.OnCheckPerformed(new CheckEventArgs(
+                               $"Catalogue does not have any PKS. Cannot apply the archive trigger",
+                               CheckResult.Fail));
+                        }
+                    }
+                }
+            }
 
             if (database.Exists())
             {
