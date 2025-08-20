@@ -36,15 +36,19 @@ public class TableInfoCloneOperation
 
 
     private bool _operationSucceeded;
+    private DiscoveredDatabase _sourceDb;
+    private bool _copyDestinationPKs;
 
     public TableInfoCloneOperation(HICDatabaseConfiguration hicDatabaseConfiguration, TableInfo tableInfo,
-        LoadBubble copyToBubble, IDataLoadEventListener listener)
+        LoadBubble copyToBubble, IDataLoadEventListener listener,DiscoveredDatabase sourceDb=null, bool copyDestinationPKs=false)
     {
         _hicDatabaseConfiguration = hicDatabaseConfiguration;
         _tableInfo = tableInfo;
         _copyToBubble = copyToBubble;
         _listener = listener;
         DropIdentityColumns = true;
+        _sourceDb = sourceDb;
+        _copyDestinationPKs = copyDestinationPKs;
     }
 
 
@@ -53,7 +57,8 @@ public class TableInfoCloneOperation
         if (_operationSucceeded)
             throw new Exception("Operation already executed once");
 
-        var liveDb = DataAccessPortal.ExpectDatabase(_tableInfo, DataAccessContext.DataLoad);
+        var liveDb = _sourceDb??DataAccessPortal.ExpectDatabase(_tableInfo, DataAccessContext.DataLoad);
+        var tbl = _sourceDb != null?_sourceDb.ExpectTable(_tableInfo.GetRuntimeName()):_tableInfo.Discover(DataAccessContext.DataLoad);
         var destTableName = _tableInfo.GetRuntimeName(_copyToBubble, _hicDatabaseConfiguration.DatabaseNamer);
 
 
@@ -61,9 +66,21 @@ public class TableInfoCloneOperation
             .Where(c => c.Destination == DiscardedColumnDestination.Dilute).ToArray();
 
         CloneTable(liveDb, _hicDatabaseConfiguration.DeployInfo[_copyToBubble],
-            _tableInfo.Discover(DataAccessContext.DataLoad), destTableName, DropHICColumns, DropIdentityColumns,
+            tbl, destTableName, DropHICColumns, DropIdentityColumns,
             AllowNulls, discardedColumns);
+        if (_copyDestinationPKs)
+        {
+            var pks = _tableInfo.Discover(DataAccessContext.DataLoad).DiscoverColumns().Where(col => col.IsPrimaryKey).Select(col => col.GetRuntimeName());
+            var destTbl = _hicDatabaseConfiguration.DeployInfo[_copyToBubble].ExpectTable(destTableName);
+            foreach (var col in destTbl.DiscoverColumns())
+            {
+                if (pks.Contains(col.GetRuntimeName()))
+                {
+                    destTbl.Database.Helper.GetTableHelper().CreatePrimaryKey(new FAnsi.DatabaseOperationArgs(), destTbl, [col]);
+                }
 
+            }
+        }
         _operationSucceeded = true;
     }
 
@@ -109,7 +126,6 @@ public class TableInfoCloneOperation
 
         var sql = sourceTable.ScriptTableCreation(allowNulls, allowNulls,
             false /*False because we want to drop these columns entirely not just flip to int*/, newTable);
-
         _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Creating table with SQL:{sql}"));
 
         using (var con = destDatabaseInfo.Server.GetConnection())

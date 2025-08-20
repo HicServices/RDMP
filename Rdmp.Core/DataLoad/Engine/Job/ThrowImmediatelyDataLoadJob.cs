@@ -115,4 +115,9 @@ public class ThrowImmediatelyDataLoadJob : IDataLoadJob
     {
         _crashAtEnd.Add(because);
     }
+
+    public void CreateTablesInStageFromPreviousStage(DatabaseCloner cloner, LoadBubble stage, DiscoveredDatabase sourceDatabase, bool copyDestinationPKs)
+    {
+        throw new System.NotImplementedException();
+    }
 }

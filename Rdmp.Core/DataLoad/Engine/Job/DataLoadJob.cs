@@ -4,10 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+using FAnsi.Discovery;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
@@ -18,6 +15,10 @@ using Rdmp.Core.Logging;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Progress;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace Rdmp.Core.DataLoad.Engine.Job;
 
@@ -147,6 +148,19 @@ public class DataLoadJob : IDataLoadJob
 
         if (!DataLoadInfo.IsClosed)
             DataLoadInfo.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnWarning, senderName, message);
+    }
+
+    public void CreateTablesInStageFromPreviousStage(DatabaseCloner cloner, LoadBubble stage, DiscoveredDatabase sourceDatabase, bool copyDestinationPKs)
+    {
+        bool allowReservedPrefixColumns = stage == LoadBubble.Raw ? LoadMetadata.AllowReservedPrefix : true;
+        foreach (TableInfo regularTableInfo in RegularTablesToLoad)
+        {
+            cloner.CreateTablesInDatabaseFromSourceDatabase(_listener, regularTableInfo, stage, allowReservedPrefixColumns, sourceDatabase,copyDestinationPKs);
+        }
+        foreach (TableInfo lookupTableInfo in LookupTablesToLoad)
+            cloner.CreateTablesInDatabaseFromSourceDatabase(_listener, lookupTableInfo, stage, allowReservedPrefixColumns,sourceDatabase, copyDestinationPKs);
+
+        PushForDisposal(cloner);
     }
 
     public void CreateTablesInStage(DatabaseCloner cloner, LoadBubble stage)

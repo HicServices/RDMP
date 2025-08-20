@@ -45,6 +45,23 @@ public class DatabaseCloner : IDisposeAfterDataLoad
         return dbInfo;
     }
 
+    public void CreateTablesInDatabaseFromSourceDatabase(IDataLoadEventListener listener, TableInfo tableInfo,
+        LoadBubble copyToStage, bool allowReservedPrefixColumns,DiscoveredDatabase sourceDatabase, bool copyDestinationPKs)
+    {
+        if (copyToStage == LoadBubble.Live)
+            throw new Exception("Please don't try to create tables in the live database");
+
+        var destDbInfo = _hicDatabaseConfiguration.DeployInfo[copyToStage];
+        var cloneOperation = new TableInfoCloneOperation(_hicDatabaseConfiguration, tableInfo, copyToStage, listener,sourceDatabase, copyDestinationPKs)
+        {
+            DropHICColumns = !allowReservedPrefixColumns,
+            AllowNulls = copyToStage == LoadBubble.Raw
+        };
+
+        cloneOperation.Execute();
+        _tablesCreated.Add(cloneOperation);
+    }
+
     public void CreateTablesInDatabaseFromCatalogueInfo(IDataLoadEventListener listener, TableInfo tableInfo,
         LoadBubble copyToStage, bool allowReservedPrefixColumns)
     {

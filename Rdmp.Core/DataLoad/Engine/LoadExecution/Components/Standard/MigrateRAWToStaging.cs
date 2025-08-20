@@ -76,6 +76,21 @@ public class MigrateRAWToStaging : DataLoadComponent
     private void CreateStagingTables(IDataLoadJob job)
     {
         var cloner = new DatabaseCloner(_databaseConfiguration);
-        job.CreateTablesInStage(cloner, LoadBubble.Staging);
+        var useRawStructureProcessTask = job.LoadMetadata.ProcessTasks.FirstOrDefault(pt => pt.Name== "PromoteRAWTableStructureToSTAGING");
+        bool usePreviousStage = false;
+        bool copyDestPKS = false;
+        if(useRawStructureProcessTask != null)
+        {
+            usePreviousStage = true;
+            var usePKs = useRawStructureProcessTask.GetAllArguments().FirstOrDefault(arg => arg.Name== "UseDestinationPrimaryKeys");
+            if (usePKs != null)
+            {
+                copyDestPKS = bool.Parse(usePKs.Value);
+            }
+        }
+        if(usePreviousStage)
+            job.CreateTablesInStageFromPreviousStage(cloner, LoadBubble.Staging, _databaseConfiguration.DeployInfo[LoadBubble.Raw],copyDestPKS);
+        else
+            job.CreateTablesInStage(cloner, LoadBubble.Staging);
     }
 }

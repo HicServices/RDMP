@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
+using FAnsi.Discovery;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
@@ -64,6 +65,7 @@ public interface IDataLoadJob : IDataLoadEventListener, IDisposeAfterDataLoad
     /// <param name="cloner"></param>
     /// <param name="stage"></param>
     void CreateTablesInStage(DatabaseCloner cloner, LoadBubble stage);
+    void CreateTablesInStageFromPreviousStage(DatabaseCloner cloner, LoadBubble stage, DiscoveredDatabase sourceDatabase, bool copyDestinationPKs);
 
     void PushForDisposal(IDisposeAfterDataLoad disposeable);
 
