@@ -14,6 +14,9 @@ using System.Threading.Tasks;
 
 namespace Rdmp.Core.DataLoad.Modules.Mutilators
 {
+    /// <summary>
+    /// Used to allow the RAW structure to be used in STAGING. Users are responsible for ensuring PKs and structure are corrected before merging into LIVE.
+    /// </summary>
     public class PromoteRAWTableStructureToSTAGING : IPluginMutilateDataTables
     {
 
