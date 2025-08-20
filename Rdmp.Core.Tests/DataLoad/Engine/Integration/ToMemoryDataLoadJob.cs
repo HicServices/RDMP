@@ -6,6 +6,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using FAnsi.Discovery;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
@@ -77,5 +78,9 @@ public class ToMemoryDataLoadJob : ToMemoryDataLoadEventListener, IDataLoadJob
     public void CrashAtEnd(NotifyEventArgs because)
     {
         _crashAtEnd.Add(because);
+    }
+
+    public void CreateTablesInStageFromPreviousStage(DatabaseCloner cloner, LoadBubble stage, DiscoveredDatabase sourceDatabase, bool copyDestinationPKs)
+    {
     }
 }
