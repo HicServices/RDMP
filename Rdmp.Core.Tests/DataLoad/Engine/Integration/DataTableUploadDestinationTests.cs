@@ -1627,7 +1627,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             dt1.Rows.Add(new[] { "Fish", "Friend" });
             dt1.PrimaryKey = new[] { dt1.Columns[0] };
             dt1.TableName = "DataTableUploadDestinationTests"; ;
-            Assert.Throws<Exception>(()=>destination.ProcessPipelineData(dt1, toConsole, token));
+            Assert.DoesNotThrow(()=>destination.ProcessPipelineData(dt1, toConsole, token));
             destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
         }
         catch (Exception ex)
@@ -1734,7 +1734,8 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             AppendDataIfTableExists = true
         };
         destination.PreInitialize(db, toConsole);
-        Assert.Throws<Exception>(() => destination.ProcessPipelineData(dt1, toConsole, token));
+        //Assert.Throws<Exception>(() => /*destination.ProcessPipelineData(dt1, toConsole, token)*/);
+        Assert.DoesNotThrow(()=>destination.ProcessPipelineData(dt1, toConsole, token));
         destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
         var table = db.DiscoverTables(false).First(static t => t.GetRuntimeName() == "DataTableUploadDestinationTests");
         var resultDt = table.GetDataTable();
@@ -1844,7 +1845,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         using var resultDt = table.GetDataTable();
         Assert.That(resultDt.Rows, Has.Count.EqualTo(1));
         Assert.That(resultDt.Rows[0].ItemArray[0], Is.EqualTo("Fish"));
-        Assert.That(resultDt.Rows[0].ItemArray[1], Is.EqualTo(string.Empty));
+        Assert.That(resultDt.Rows[0].ItemArray[1], Is.EqualTo(System.DBNull.Value));
         table = db.DiscoverTables(false).First(static t => t.GetRuntimeName() == "DataTableUploadDestinationTests_Archive");
         using var resultDt2 = table.GetDataTable();
         Assert.That(resultDt2.Rows, Has.Count.EqualTo(1));

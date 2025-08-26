@@ -358,7 +358,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                 DataColumn newColumn = new("hic_existingReleaseID", typeof(string));
                 if (!toProcess.Columns.Contains("hic_existingReleaseID"))
                     toProcess.Columns.Add(newColumn);
-                if (toProcess.Columns.Cast<DataColumn>().Any(c => c.ColumnName == "ReleaseId")) //need a relweaseId to map to cohort
+                if (toProcess.Columns.Cast<DataColumn>().Any(c => c.ColumnName == "ReleaseId"))
                 {
                     for (int i = 0; i < toProcess.Rows.Count; i++)
                     {
@@ -378,19 +378,26 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                 var mergeTable = _discoveredTable.Database.ExpectTable($"{_discoveredTable.GetRuntimeName()}_MERGE_CANDIDATES");
                 if (!mergeTable.Exists())
                 {
-                    mergeTable = _discoveredTable.Database.CreateTable($"{_discoveredTable.GetRuntimeName()}_MERGE_CANDIDATES", toProcess, new DatabaseColumnRequest[] { new DatabaseColumnRequest("hic_existingReleaseID", new DatabaseTypeRequest(typeof(string), int.MaxValue)) });
+                    mergeTable = _discoveredTable.Database.CreateTable($"{_discoveredTable.GetRuntimeName()}_MERGE_CANDIDATES", toProcess,
+                        toProcess.Columns.Cast<DataColumn>().Select(c => new DatabaseColumnRequest(c.ColumnName, new DatabaseTypeRequest(c.DataType, int.MaxValue))).ToArray()
+                        );
                 }
+
+                var toProcessColumnNames = toProcess.Columns.Cast<DataColumn>().Where(col => !pkColumns.Contains(col)).Select(c => c.ColumnName).ToArray();
+
                 var pksMatching = pkColumns.Select(pk => pk.ColumnName == "ReleaseId" ? $"src.[hic_existingReleaseID] = dest.[{pk.ColumnName}]" : $"src.[{pk.ColumnName}] = dest.[{pk.ColumnName}]").ToList();
                 var mergeSql = $"""
-                    MERGE {_discoveredTable.GetFullyQualifiedName()} dest
+                    MERGE {_discoveredTable.GetFullyQualifiedName()} AS dest
                     USING (
                 	    SELECT {String.Join(" , ", toProcess.Columns.Cast<DataColumn>().Select(c => $"[{c.ColumnName}]").ToList())}
                 	    FROM  {mergeTable.GetFullyQualifiedName()}
-                    ) src
+                    ) AS src
                     ON {string.Join(" AND ", pksMatching)}
+                    WHEN MATCHED THEN
+                    UPDATE SET {String.Join(" , ",_discoveredTable.DiscoverColumns().Where(col => toProcessColumnNames.Contains(col.GetRuntimeName())).Select(col => $"dest.[{col.GetRuntimeName()}] = src.[{col.GetRuntimeName()}]"))}
                     WHEN NOT MATCHED THEN
-                    insert({String.Join(" , ", toProcess.Columns.Cast<DataColumn>().Where(c => c.ColumnName != "hic_existingReleaseID").Select(c => $"[{c.ColumnName}]").ToList())})
-                    values({String.Join(" , ", toProcess.Columns.Cast<DataColumn>().Where(c => c.ColumnName != "hic_existingReleaseID").Select(c => $"src.[{c.ColumnName}]").ToList())});
+                    INSERT({String.Join(" , ", toProcess.Columns.Cast<DataColumn>().Where(c => c.ColumnName != "hic_existingReleaseID").Select(c => $"[{c.ColumnName}]").ToList())})
+                    VALUES({String.Join(" , ", toProcess.Columns.Cast<DataColumn>().Where(c => c.ColumnName != "hic_existingReleaseID").Select(c => $"src.[{c.ColumnName}]").ToList())});
                 """;
                 using (var executeconnection = (SqlConnection)mergeTable.Database.Server.GetConnection())
                 {
