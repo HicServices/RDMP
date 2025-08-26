@@ -126,6 +126,10 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
     //All column values sent to server so far
     private Dictionary<string, Guesser> _dataTypeDictionary;
 
+
+    private DataTable _cohortDataTable;
+    private DataTable _existingReleaseIDs = new();
+
     /// <summary>
     /// Optional function called when a name is needed for the table being uploaded (this overrides
     /// upstream components naming of tables - e.g. from file names).
@@ -142,44 +146,6 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
         ExplicitTypes = new List<DatabaseColumnRequest>();
         _externalCohortTable = externalCohortTable;
     }
-
-    private static object[] FilterOutItemAtIndex(object[] itemArray, int[] indexes)
-    {
-        if (indexes.Length == 0) return itemArray;
-        return itemArray.Where((source, idx) => !indexes.Contains(idx)).ToArray();
-    }
-    private string GetPKValue(DataColumn pkColumn, DataRow row)
-    {
-        var pkName = pkColumn.ColumnName;
-        var value = row[pkName];
-        if (_externalCohortTable is not null)
-        {
-            var privateIdentifierField = _externalCohortTable.PrivateIdentifierField.Split('.').Last()[1..^1];//remove the "[]" from the identifier field
-            var releaseIdentifierField = _externalCohortTable.ReleaseIdentifierField.Split('.').Last()[1..^1];//remove the "[]" from the identifier field
-            if (pkName == releaseIdentifierField)
-            {
-                //going to have to look up the previous relaseID to match
-                DiscoveredTable cohortTable = _externalCohortTable.DiscoverCohortTable();
-                using var lookupDT = cohortTable.GetDataTable();
-                var releaseIdIndex = lookupDT.Columns.IndexOf(releaseIdentifierField);
-                var privateIdIndex = lookupDT.Columns.IndexOf(privateIdentifierField);
-                var foundRow = lookupDT.Rows.Cast<DataRow>().Where(r => r.ItemArray[releaseIdIndex].ToString() == value.ToString()).LastOrDefault();
-                if (foundRow is not null)
-                {
-                    var originalValue = foundRow.ItemArray[privateIdIndex];
-                    var existingIDsforReleaseID = lookupDT.Rows.Cast<DataRow>().Where(r => r.ItemArray[privateIdIndex].ToString() == originalValue.ToString()).Select(s => s.ItemArray[releaseIdIndex].ToString());
-                    if (existingIDsforReleaseID.Count() > 0)
-                    {
-                        //we don't know what the current release ID is ( there may be ones from multiple cohorts)
-                        var ids = existingIDsforReleaseID.Select(id => $"'{id}'");
-                        return $"{pkName} in ({string.Join(',', ids)})";
-                    }
-                }
-            }
-        }
-        return $"{pkName} = '{value}'";
-    }
-
 
     public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,
         GracefulCancellationToken cancellationToken)
@@ -277,9 +243,38 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                     $"Created table {TargetTableName} successfully."));
             }
 
+
+            if (AppendDataIfTableExists && pkColumns.Length > 0 && _externalCohortTable != null)
+            {
+                var releaseIdentifier = _externalCohortTable is not null ? _externalCohortTable.ReleaseIdentifierField.Split('.').Last()[1..^1] : "ReleaseId";
+                if (_externalCohortTable != null)
+                {
+                    using (var con = (SqlConnection)_discoveredTable.Database.Server.GetConnection())
+                    {
+                        con.Open();
+                        using (var da = new SqlDataAdapter($"SELECT ReleaseId FROM {_discoveredTable.GetFullyQualifiedName()}", con))
+                        {
+                            da.Fill(_existingReleaseIDs);
+                        }
+                    }
+                    _existingReleaseIDs.Columns.Add("chi");
+
+                    var cohortTable = _externalCohortTable.DiscoverCohortTable();
+                    _cohortDataTable = cohortTable.GetDataTable();
+                    for (int i = 0; i < _existingReleaseIDs.Rows.Count; i++)
+                    {
+                        var foundExistingRow = _cohortDataTable.Select($"ReleaseId = '{_existingReleaseIDs.Rows[i]["ReleaseId"]}'").FirstOrDefault();
+                        if (foundExistingRow != null)
+                        {
+                            _existingReleaseIDs.Rows[i]["chi"] = foundExistingRow["chi"];
+                        }
+                    }
+                }
+            }
             _managedConnection = _server.BeginNewTransactedConnection();
             _bulkcopy = _discoveredTable.BeginBulkInsert(Culture, _managedConnection.ManagedTransaction);
             _firstTime = false;
+
         }
 
         if (IncludeTimeStamp && _discoveredTable.DiscoverColumns().All(c => c.GetRuntimeName() != _extractionTimeStamp))
@@ -337,57 +332,10 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                 ResizeColumnsIfRequired(toProcess, listener);
 
             swTimeSpentWriting.Start();
-            if (AppendDataIfTableExists && pkColumns.Length > 0 && _discoveredTable.GetDataTable(1).Rows.Count>0) //assumes columns are the same
+
+            if (UseTrigger)
             {
-                var releaseIdentifier = _externalCohortTable is not null ? _externalCohortTable.ReleaseIdentifierField.Split('.').Last()[1..^1] : "ReleaseId";
-                if(_externalCohortTable != null) {
-                    //need to unhash the release columns to check for updates
-                    DataColumn newColumn = new("hic_existingReleaseID", typeof(string))
-                    {
-                    };
-                    if (!toProcess.Columns.Contains("hic_existingReleaseID"))
-                        toProcess.Columns.Add(newColumn);
-
-                    var existingReleaseIDs = new DataTable();
-                    using (var con = (SqlConnection)_discoveredTable.Database.Server.GetConnection())
-                    {
-                        con.Open();
-                        using (var da = new SqlDataAdapter($"SELECT ReleaseId FROM {_discoveredTable.GetFullyQualifiedName()}", con))
-                        {
-                            da.Fill(existingReleaseIDs);
-                        }
-                    }
-                    existingReleaseIDs.Columns.Add("chi");
-
-                    var cohortTable = _externalCohortTable.DiscoverCohortTable();
-                    var cohortDT = cohortTable.GetDataTable();
-                    for (int i = 0; i < existingReleaseIDs.Rows.Count; i++)
-                    {
-                        var foundExistingRow = cohortDT.Select($"ReleaseId = '{existingReleaseIDs.Rows[i]["ReleaseId"]}'").FirstOrDefault();
-                        if (foundExistingRow != null)
-                        {
-                            existingReleaseIDs.Rows[i]["chi"] = foundExistingRow["chi"];
-                        }
-                    }
-                    for (int i = 0; i < toProcess.Rows.Count; i++)
-                    {
-                        var cohortRow = cohortDT.Select($"ReleaseId = '{toProcess.Rows[i]["ReleaseId"]}'").FirstOrDefault();
-                        if (cohortRow != null)
-                        {
-                            var chi = cohortRow["chi"];
-                            var existingMappingRow = existingReleaseIDs.Select($"chi = '{chi}'").FirstOrDefault();
-                            if (existingMappingRow != null)
-                            {
-                                toProcess.Rows[i]["hic_existingReleaseID"] = existingMappingRow["ReleaseId"];
-                            }
-                        }
-
-                    }
-                }
-
-              
-
-                if (UseTrigger)
+                if (listener.GetType() == typeof(ForkDataLoadEventListener))
                 {
                     var job = (ForkDataLoadEventListener)listener;
                     var listeners = job.GetToLoggingDatabaseDataLoadEventListenersIfany();
@@ -400,19 +348,46 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                         };
                         if (!toProcess.Columns.Contains(SpecialFieldNames.DataLoadRunID))
                             toProcess.Columns.Add(newColumn);
-                            foreach (DataRow dr in toProcess.Rows)
-                                dr[SpecialFieldNames.DataLoadRunID] = dataLoadInfo.ID;
+                        foreach (DataRow dr in toProcess.Rows)
+                            dr[SpecialFieldNames.DataLoadRunID] = dataLoadInfo.ID;
                     }
                 }
-                var mergeTable = _discoveredTable.Database.CreateTable($"{_discoveredTable.GetRuntimeName()}_MERGE_CANDIDATES", toProcess);
-                var pksMatching = pkColumns.Select(pk => pk.ColumnName == "ReleaseId"? $"src.[hic_existingReleaseID] = dest.[{pk.ColumnName}]" : $"src.[{pk.ColumnName}] = dest.[{pk.ColumnName}]").ToList();
+            }
+            if (AppendDataIfTableExists && pkColumns.Length > 0 && _discoveredTable.GetDataTable(1).Rows.Count > 0) //assumes columns are the same
+            {
+                DataColumn newColumn = new("hic_existingReleaseID", typeof(string));
+                if (!toProcess.Columns.Contains("hic_existingReleaseID"))
+                    toProcess.Columns.Add(newColumn);
+                if (toProcess.Columns.Cast<DataColumn>().Any(c => c.ColumnName == "ReleaseId")) //need a relweaseId to map to cohort
+                {
+                    for (int i = 0; i < toProcess.Rows.Count; i++)
+                    {
+                        var cohortRow = _cohortDataTable.Select($"ReleaseId = '{toProcess.Rows[i]["ReleaseId"]}'").FirstOrDefault();
+                        if (cohortRow != null)
+                        {
+                            var chi = cohortRow["chi"];
+                            var existingMappingRow = _existingReleaseIDs.Select($"chi = '{chi}'").FirstOrDefault();
+                            if (existingMappingRow != null)
+                            {
+                                toProcess.Rows[i]["hic_existingReleaseID"] = existingMappingRow["ReleaseId"];
+                            }
+                        }
+                    }
+                }
+
+                var mergeTable = _discoveredTable.Database.ExpectTable($"{_discoveredTable.GetRuntimeName()}_MERGE_CANDIDATES");
+                if (!mergeTable.Exists())
+                {
+                    mergeTable = _discoveredTable.Database.CreateTable($"{_discoveredTable.GetRuntimeName()}_MERGE_CANDIDATES", toProcess, new DatabaseColumnRequest[] { new DatabaseColumnRequest("hic_existingReleaseID", new DatabaseTypeRequest(typeof(string), int.MaxValue)) });
+                }
+                var pksMatching = pkColumns.Select(pk => pk.ColumnName == "ReleaseId" ? $"src.[hic_existingReleaseID] = dest.[{pk.ColumnName}]" : $"src.[{pk.ColumnName}] = dest.[{pk.ColumnName}]").ToList();
                 var mergeSql = $"""
                     MERGE {_discoveredTable.GetFullyQualifiedName()} dest
                     USING (
-                	    SELECT {String.Join(" , ",toProcess.Columns.Cast<DataColumn>().Select(c => $"[{c.ColumnName}]").ToList())}
+                	    SELECT {String.Join(" , ", toProcess.Columns.Cast<DataColumn>().Select(c => $"[{c.ColumnName}]").ToList())}
                 	    FROM  {mergeTable.GetFullyQualifiedName()}
                     ) src
-                    ON {string.Join(" AND ",pksMatching)}
+                    ON {string.Join(" AND ", pksMatching)}
                     WHEN NOT MATCHED THEN
                     insert({String.Join(" , ", toProcess.Columns.Cast<DataColumn>().Where(c => c.ColumnName != "hic_existingReleaseID").Select(c => $"[{c.ColumnName}]").ToList())})
                     values({String.Join(" , ", toProcess.Columns.Cast<DataColumn>().Where(c => c.ColumnName != "hic_existingReleaseID").Select(c => $"src.[{c.ColumnName}]").ToList())});
@@ -421,7 +396,14 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                 {
                     executeconnection.Open();
                     var cmd = new SqlCommand(mergeSql, executeconnection);
-                    _affectedRows += cmd.ExecuteNonQuery();
+                    try
+                    {
+                        _affectedRows += cmd.ExecuteNonQuery();
+                    }
+                    catch (Exception e)
+                    {
+                        Console.Write(e.ToString());
+                    }
                 }
                 mergeTable.Drop();
             }
