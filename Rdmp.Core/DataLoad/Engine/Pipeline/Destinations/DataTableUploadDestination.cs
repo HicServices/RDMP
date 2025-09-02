@@ -209,7 +209,6 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             if (_discoveredTable.Exists())
             {
                 tableAlreadyExistsButEmpty = true;
-
                 if (!AllowLoadingPopulatedTables)
                     if (_discoveredTable.IsEmpty())
                         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
@@ -232,7 +231,6 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             if (!tableAlreadyExistsButEmpty)
             {
                 CreatedTable = true;
-
                 if (AllowResizingColumnsAtUploadTime)
                     _database.CreateTable(out _dataTypeDictionary, TargetTableName, toProcess, ExplicitTypes.ToArray(),
                         true, adjuster);
@@ -244,7 +242,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             }
 
 
-            if (AppendDataIfTableExists && pkColumns.Length > 0 && _externalCohortTable != null)
+            if (AppendDataIfTableExists && pkColumns.Length > 0 && _externalCohortTable != null && _discoveredTable.GetDataTable(1).Rows.Count > 0)
             {
                 var releaseIdentifier = _externalCohortTable is not null ? _externalCohortTable.ReleaseIdentifierField.Split('.').Last()[1..^1] : "ReleaseId";
                 if (_externalCohortTable != null)
@@ -353,7 +351,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                     }
                 }
             }
-            if (AppendDataIfTableExists && pkColumns.Length > 0 && _discoveredTable.GetDataTable(1).Rows.Count > 0) //assumes columns are the same
+            if (AppendDataIfTableExists && pkColumns.Length > 0 && _cohortDataTable  is not null)//_discoveredTable.GetDataTable(1).Rows.Count > 0 //assumes columns are the same
             {
                 DataColumn newColumn = new("hic_existingReleaseID", typeof(string));
                 if (!toProcess.Columns.Contains("hic_existingReleaseID"))
@@ -363,7 +361,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                     for (int i = 0; i < toProcess.Rows.Count; i++)
                     {
                         var cohortRow = _cohortDataTable.Select($"ReleaseId = '{toProcess.Rows[i]["ReleaseId"]}'").FirstOrDefault();
-                        if (cohortRow != null)
+                        if (cohortRow != null) 
                         {
                             var chi = cohortRow["chi"];
                             var existingMappingRow = _existingReleaseIDs.Select($"chi = '{chi}'").FirstOrDefault();
