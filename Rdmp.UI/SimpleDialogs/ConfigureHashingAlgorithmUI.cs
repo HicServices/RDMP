@@ -61,7 +61,7 @@ public partial class ConfigureHashingAlgorithmUI : RDMPForm
         var typeValue =
             Activator.RepositoryLocator.DataExportRepository.DataExportPropertyManager.GetValue(DataExportProperty
                 .HashingAlgorithmOutputDatabaseType);
-        tbHashingType.Text = value;
+        tbHashingType.Text = typeValue;
     }
 
     private void tbHashingAlgorithm_TextChanged(object sender, EventArgs e)
