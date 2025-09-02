@@ -28,94 +28,124 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.btnReferenceColumn = new System.Windows.Forms.Button();
-            this.btnReferenceSalt = new System.Windows.Forms.Button();
-            this.panel2 = new System.Windows.Forms.Panel();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.tbHashingAlgorithm = new System.Windows.Forms.TextBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.SuspendLayout();
+            btnReferenceColumn = new System.Windows.Forms.Button();
+            btnReferenceSalt = new System.Windows.Forms.Button();
+            panel2 = new System.Windows.Forms.Panel();
+            label1 = new System.Windows.Forms.Label();
+            label2 = new System.Windows.Forms.Label();
+            tbHashingAlgorithm = new System.Windows.Forms.TextBox();
+            label3 = new System.Windows.Forms.Label();
+            tbHashingType = new System.Windows.Forms.TextBox();
+            label4 = new System.Windows.Forms.Label();
+            SuspendLayout();
             // 
             // btnReferenceColumn
             // 
-            this.btnReferenceColumn.Location = new System.Drawing.Point(351, 55);
-            this.btnReferenceColumn.Name = "btnReferenceColumn";
-            this.btnReferenceColumn.Size = new System.Drawing.Size(158, 23);
-            this.btnReferenceColumn.TabIndex = 1;
-            this.btnReferenceColumn.Text = "Reference Column {0}";
-            this.btnReferenceColumn.UseVisualStyleBackColor = true;
-            this.btnReferenceColumn.Click += new System.EventHandler(this.btnReferenceColumn_Click);
+            btnReferenceColumn.Location = new System.Drawing.Point(410, 63);
+            btnReferenceColumn.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            btnReferenceColumn.Name = "btnReferenceColumn";
+            btnReferenceColumn.Size = new System.Drawing.Size(184, 27);
+            btnReferenceColumn.TabIndex = 1;
+            btnReferenceColumn.Text = "Reference Column {0}";
+            btnReferenceColumn.UseVisualStyleBackColor = true;
+            btnReferenceColumn.Click += btnReferenceColumn_Click;
             // 
             // btnReferenceSalt
             // 
-            this.btnReferenceSalt.Location = new System.Drawing.Point(515, 55);
-            this.btnReferenceSalt.Name = "btnReferenceSalt";
-            this.btnReferenceSalt.Size = new System.Drawing.Size(153, 23);
-            this.btnReferenceSalt.TabIndex = 1;
-            this.btnReferenceSalt.Text = "Reference Salt {1}";
-            this.btnReferenceSalt.UseVisualStyleBackColor = true;
-            this.btnReferenceSalt.Click += new System.EventHandler(this.btnReferenceSalt_Click);
+            btnReferenceSalt.Location = new System.Drawing.Point(601, 63);
+            btnReferenceSalt.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            btnReferenceSalt.Name = "btnReferenceSalt";
+            btnReferenceSalt.Size = new System.Drawing.Size(178, 27);
+            btnReferenceSalt.TabIndex = 1;
+            btnReferenceSalt.Text = "Reference Salt {1}";
+            btnReferenceSalt.UseVisualStyleBackColor = true;
+            btnReferenceSalt.Click += btnReferenceSalt_Click;
             // 
             // panel2
             // 
-            this.panel2.Location = new System.Drawing.Point(13, 180);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(655, 73);
-            this.panel2.TabIndex = 0;
+            panel2.Location = new System.Drawing.Point(15, 208);
+            panel2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            panel2.Name = "panel2";
+            panel2.Size = new System.Drawing.Size(764, 84);
+            panel2.TabIndex = 0;
             // 
             // label1
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(10, 164);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(48, 13);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "Preview:";
+            label1.AutoSize = true;
+            label1.Location = new System.Drawing.Point(12, 189);
+            label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label1.Name = "label1";
+            label1.Size = new System.Drawing.Size(51, 15);
+            label1.TabIndex = 2;
+            label1.Text = "Preview:";
             // 
             // label2
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(13, 68);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(49, 13);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "Hashing:";
+            label2.AutoSize = true;
+            label2.Location = new System.Drawing.Point(15, 78);
+            label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label2.Name = "label2";
+            label2.Size = new System.Drawing.Size(54, 15);
+            label2.TabIndex = 2;
+            label2.Text = "Hashing:";
             // 
             // tbHashingAlgorithm
             // 
-            this.tbHashingAlgorithm.Location = new System.Drawing.Point(16, 85);
-            this.tbHashingAlgorithm.Name = "tbHashingAlgorithm";
-            this.tbHashingAlgorithm.Size = new System.Drawing.Size(652, 20);
-            this.tbHashingAlgorithm.TabIndex = 3;
-            this.tbHashingAlgorithm.TextChanged += new System.EventHandler(this.tbHashingAlgorithm_TextChanged);
+            tbHashingAlgorithm.Location = new System.Drawing.Point(19, 98);
+            tbHashingAlgorithm.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tbHashingAlgorithm.Name = "tbHashingAlgorithm";
+            tbHashingAlgorithm.Size = new System.Drawing.Size(760, 23);
+            tbHashingAlgorithm.TabIndex = 3;
+            tbHashingAlgorithm.TextChanged += tbHashingAlgorithm_TextChanged;
             // 
             // label3
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(10, 256);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(527, 13);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "Example data, referencing a column called [TestColumn] in database [TEST]  from a" +
-    " project with a number 123";
+            label3.AutoSize = true;
+            label3.Location = new System.Drawing.Point(12, 295);
+            label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label3.Name = "label3";
+            label3.Size = new System.Drawing.Size(585, 15);
+            label3.TabIndex = 2;
+            label3.Text = "Example data, referencing a column called [TestColumn] in database [TEST]  from a project with a number 123";
             // 
-            // ConfigureHashingAlgorithm
+            // tbHashingType
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(680, 274);
-            this.Controls.Add(this.tbHashingAlgorithm);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.btnReferenceSalt);
-            this.Controls.Add(this.btnReferenceColumn);
-            this.Controls.Add(this.panel2);
-            this.Name = "ConfigureHashingAlgorithm";
-            this.Text = "Configure Hashing Algorithm";
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            tbHashingType.Location = new System.Drawing.Point(16, 147);
+            tbHashingType.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tbHashingType.Name = "tbHashingType";
+            tbHashingType.Size = new System.Drawing.Size(760, 23);
+            tbHashingType.TabIndex = 4;
+            tbHashingType.TextChanged += tbHashingType_TextChanged;
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Location = new System.Drawing.Point(16, 129);
+            label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label4.Name = "label4";
+            label4.Size = new System.Drawing.Size(146, 15);
+            label4.TabIndex = 5;
+            label4.Text = "Hashing SQL Output Type:";
+            // 
+            // ConfigureHashingAlgorithmUI
+            // 
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            ClientSize = new System.Drawing.Size(793, 316);
+            Controls.Add(label4);
+            Controls.Add(tbHashingType);
+            Controls.Add(tbHashingAlgorithm);
+            Controls.Add(label2);
+            Controls.Add(label3);
+            Controls.Add(label1);
+            Controls.Add(btnReferenceSalt);
+            Controls.Add(btnReferenceColumn);
+            Controls.Add(panel2);
+            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            Name = "ConfigureHashingAlgorithmUI";
+            Text = "Configure Hashing Algorithm";
+            ResumeLayout(false);
+            PerformLayout();
 
         }
 
@@ -128,5 +158,7 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox tbHashingAlgorithm;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TextBox tbHashingType;
+        private System.Windows.Forms.Label label4;
     }
 }

@@ -21,5 +21,10 @@ public enum DataExportProperty
     /// <summary>
     /// What text to write into the release document when releasing datasets
     /// </summary>
-    ReleaseDocumentDisclaimer
+    ReleaseDocumentDisclaimer,
+
+    /// <summary>
+    /// What the C# type output type of the hashing pattern is i.e. 'string'
+    /// </summary>
+    HashingAlgorithmOutputDatabaseType
 }

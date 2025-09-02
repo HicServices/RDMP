@@ -57,6 +57,11 @@ public partial class ConfigureHashingAlgorithmUI : RDMPForm
             Activator.RepositoryLocator.DataExportRepository.DataExportPropertyManager.GetValue(DataExportProperty
                 .HashingAlgorithmPattern);
         tbHashingAlgorithm.Text = value;
+
+        var typeValue =
+            Activator.RepositoryLocator.DataExportRepository.DataExportPropertyManager.GetValue(DataExportProperty
+                .HashingAlgorithmOutputDatabaseType);
+        tbHashingType.Text = value;
     }
 
     private void tbHashingAlgorithm_TextChanged(object sender, EventArgs e)
@@ -88,5 +93,12 @@ public partial class ConfigureHashingAlgorithmUI : RDMPForm
     private void btnReferenceSalt_Click(object sender, EventArgs e)
     {
         tbHashingAlgorithm.Text = $"{tbHashingAlgorithm.Text}{{1}}";
+    }
+
+    private void tbHashingType_TextChanged(object sender, EventArgs e)
+    {
+        var type = tbHashingType.Text;
+        Activator.RepositoryLocator.DataExportRepository.DataExportPropertyManager.SetValue(
+             DataExportProperty.HashingAlgorithmOutputDatabaseType, type);
     }
 }

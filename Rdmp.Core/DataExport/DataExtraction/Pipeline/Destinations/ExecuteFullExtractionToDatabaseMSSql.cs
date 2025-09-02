@@ -4,13 +4,8 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Data;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
 using FAnsi.Discovery;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.Commands;
@@ -22,10 +17,17 @@ using Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.Repositories.Managers;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.Core.ReusableLibraryCode.Progress;
+using System;
+using System.Data;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
 using YamlDotNet.Core;
 
 namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
@@ -116,6 +118,8 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
     private bool _isTableAlreadyNamed;
     private DataTable _toProcess;
 
+    private string _hashingType = null;
+
     public ExecuteFullExtractionToDatabaseMSSql() : base(false)
     {
     }
@@ -123,6 +127,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
     public override DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener job,
         GracefulCancellationToken cancellationToken)
     {
+        _hashingType = _project.DataExportRepository.DataExportPropertyManager.GetValue(DataExportProperty.HashingAlgorithmOutputDatabaseType);
         _destinationDatabase = GetDestinationDatabase(job);
         return base.ProcessPipelineData(toProcess, job, cancellationToken);
     }
@@ -264,8 +269,13 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                         $"Did not copy Types for ExtractionInformation {extractionInformation} (ID={extractionInformation.ID}) because it had no associated ColumnInfo"));
                 continue;
             }
-
-            if (extractionInformation.IsProperTransform())
+            ////allow hash and pks through 
+            //if (hashingType is null)
+            //{
+            //    var x = extractionInformation.CatalogueRepository
+            //    hashingType = extractionInformation.DataExportRepository.DataExportPropertyManager.GetValue(DataExportProperty.HashingAlgorithmOutputDatabaseType);
+            //}
+            if (!(!string.IsNullOrWhiteSpace(_hashingType) && extractionInformation.HashOnDataRelease && extractionInformation.IsPrimaryKey) && extractionInformation.IsProperTransform())
             {
                 listener.OnNotify(this,
                     new NotifyEventArgs(ProgressEventType.Warning,
@@ -273,7 +283,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                 continue;
             }
 
-            var destinationType = GetDestinationDatabaseType(extractionInformation);
+            var destinationType = extractionInformation.HashOnDataRelease && !string.IsNullOrWhiteSpace(_hashingType) ? _hashingType : GetDestinationDatabaseType(extractionInformation);
 
             //Tell the destination the datatype of the ColumnInfo that underlies the ExtractionInformation (this might be changed by the ExtractionInformation e.g. as a
             //transform but it is a good starting point.  We don't want to create a varchar(10) column in the destination if the origin dataset (Catalogue) is a varchar(100)
@@ -343,7 +353,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         }
 
 
-        return indexName.Replace(" ","");
+        return indexName.Replace(" ", "");
     }
 
     private string GetTableName(string suffix = null)
