@@ -186,6 +186,8 @@ DistinctByDestinationPKs - Performs a GROUP BY on each batch of records to ensur
         _uuid = $"#{RandomString(24)}";
         var sql = "";
         var db = _externalCohortTable.Discover();
+        var privateIdentifierField = _externalCohortTable.PrivateIdentifierField.Split('.').Last()[1..^1];//remove the "[]" from the identifier field
+        var releaseIdentifierField = _externalCohortTable.ReleaseIdentifierField.Split('.').Last()[1..^1];//remove the "[]" from the identifier field
         switch (db.Server.DatabaseType)
         {
             case DatabaseType.MicrosoftSQLServer:
@@ -193,7 +195,8 @@ DistinctByDestinationPKs - Performs a GROUP BY on each batch of records to ensur
                     SELECT *
                     INTO {_uuid}
                     FROM(
-                    SELECT * FROM {_externalCohortTable.TableName}
+                    SELECT  DISTINCT {privateIdentifierField}, {releaseIdentifierField}
+                    FROM {_externalCohortTable.TableName}
                     WHERE {_whereSQL}
                     ) as cohortTempTable
                 """;
