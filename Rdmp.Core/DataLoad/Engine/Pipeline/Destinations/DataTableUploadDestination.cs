@@ -242,7 +242,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             }
 
 
-            if (AppendDataIfTableExists && pkColumns.Length > 0 && _externalCohortTable != null && _discoveredTable.GetDataTable(1).Rows.Count > 0)
+            if (AppendDataIfTableExists && pkColumns.Length > 0 && _externalCohortTable != null)// && _discoveredTable.GetDataTable(1).Rows.Count > 0)
             {
                 var releaseIdentifier = _externalCohortTable is not null ? _externalCohortTable.ReleaseIdentifierField.Split('.').Last()[1..^1] : "ReleaseId";
                 if (_externalCohortTable != null)
@@ -250,21 +250,21 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                     using (var con = (SqlConnection)_discoveredTable.Database.Server.GetConnection())
                     {
                         con.Open();
-                        using (var da = new SqlDataAdapter($"SELECT ReleaseId FROM {_discoveredTable.GetFullyQualifiedName()}", con))
+                        using (var da = new SqlDataAdapter($"SELECT {releaseIdentifier} FROM {_discoveredTable.GetFullyQualifiedName()}", con))
                         {
                             da.Fill(_existingReleaseIDs);
                         }
                     }
-                    _existingReleaseIDs.Columns.Add("chi");
+                    _existingReleaseIDs.Columns.Add("CHI");
 
                     var cohortTable = _externalCohortTable.DiscoverCohortTable();
                     _cohortDataTable = cohortTable.GetDataTable();
                     for (int i = 0; i < _existingReleaseIDs.Rows.Count; i++)
                     {
-                        var foundExistingRow = _cohortDataTable.Select($"ReleaseId = '{_existingReleaseIDs.Rows[i]["ReleaseId"]}'").FirstOrDefault();
+                        var foundExistingRow = _cohortDataTable.Select($"{releaseIdentifier} = '{_existingReleaseIDs.Rows[i][releaseIdentifier]}'").FirstOrDefault();
                         if (foundExistingRow != null)
                         {
-                            _existingReleaseIDs.Rows[i]["chi"] = foundExistingRow["chi"];
+                            _existingReleaseIDs.Rows[i]["CHI"] = foundExistingRow["CHI"];
                         }
                     }
                 }

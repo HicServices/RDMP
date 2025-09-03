@@ -4,20 +4,23 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using FAnsi;
+using FAnsi.Discovery;
+using FAnsi.Discovery.TableCreation;
+using NUnit.Framework;
+using Rdmp.Core.CohortCommitting;
+using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.DataFlowPipeline;
+using Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
+using Rdmp.Core.DataLoad.Triggers;
+using Rdmp.Core.ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Linq;
-using FAnsi;
-using FAnsi.Discovery;
-using FAnsi.Discovery.TableCreation;
-using NUnit.Framework;
-using Rdmp.Core.DataFlowPipeline;
-using Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
-using Rdmp.Core.DataLoad.Triggers;
-using Rdmp.Core.ReusableLibraryCode;
-using Rdmp.Core.ReusableLibraryCode.Progress;
 using Tests.Common;
 using TypeGuesser;
 
@@ -1601,8 +1604,10 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         var token = new GracefulCancellationToken();
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
         var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
-
-        var destination = new DataTableUploadDestination
+        var wizard = new CreateNewCohortDatabaseWizard(db, CatalogueRepository, DataExportRepository, false);
+        var privateColumn = new PrivateIdentifierPrototype("chi", "varchar(10)");
+        var externalCohortTable = wizard.CreateDatabase(privateColumn, ThrowImmediatelyCheckNotifier.Quiet);
+        var destination = new DataTableUploadDestination(externalCohortTable)
         {
             IndexTables = true,
             IndexTableName = "CreateIndex_OK",
@@ -1614,6 +1619,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         var dt1 = new DataTable();
         dt1.Columns.Add("name", typeof(string));
         dt1.Columns.Add("other", typeof(string));
+        dt1.Columns.Add("ReleaseId", typeof(string));
         dt1.Rows.Add(new[] { "Fish", "Friend" });
         dt1.PrimaryKey = new[] { dt1.Columns[0] };
         dt1.TableName = "DataTableUploadDestinationTests";
@@ -1624,6 +1630,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             dt1 = new DataTable();
             dt1.Columns.Add("name", typeof(string));
             dt1.Columns.Add("other", typeof(string));
+            dt1.Columns.Add("ReleaseId", typeof(string));
             dt1.Rows.Add(new[] { "Fish", "Friend" });
             dt1.PrimaryKey = new[] { dt1.Columns[0] };
             dt1.TableName = "DataTableUploadDestinationTests"; ;
@@ -1647,8 +1654,10 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         var token = new GracefulCancellationToken();
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
         var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
-
-        var destination = new DataTableUploadDestination
+        var wizard = new CreateNewCohortDatabaseWizard(db, CatalogueRepository, DataExportRepository, false);
+        var privateColumn = new PrivateIdentifierPrototype("chi", "varchar(10)");
+        var externalCohortTable = wizard.CreateDatabase(privateColumn, ThrowImmediatelyCheckNotifier.Quiet);
+        var destination = new DataTableUploadDestination(externalCohortTable)
         {
             IndexTables = true,
             IndexTableName = "CreateIndex_OK",
@@ -1661,6 +1670,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         var dt1 = new DataTable();
         dt1.Columns.Add("name", typeof(string));
         dt1.Columns.Add("other", typeof(string));
+        dt1.Columns.Add("ReleaseId", typeof(string));
         dt1.Rows.Add(new[] { "Fish", "Friend" });
         dt1.PrimaryKey = new[] { dt1.Columns[0] };
         dt1.TableName = "DataTableUploadDestinationTests";
@@ -1671,6 +1681,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             dt1 = new DataTable();
             dt1.Columns.Add("name", typeof(string));
             dt1.Columns.Add("other", typeof(string));
+            dt1.Columns.Add("ReleaseId", typeof(string));
             dt1.Rows.Add(new[] { "Fish", "Friend" });
             dt1.PrimaryKey = new[] { dt1.Columns[0] };
             dt1.TableName = "DataTableUploadDestinationTests"; ;
@@ -1695,7 +1706,11 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
         var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
 
-        var destination = new DataTableUploadDestination
+        var wizard = new CreateNewCohortDatabaseWizard(db, CatalogueRepository, DataExportRepository, false);
+        var privateColumn = new PrivateIdentifierPrototype("chi", "varchar(10)");
+        var externalCohortTable = wizard.CreateDatabase(privateColumn, ThrowImmediatelyCheckNotifier.Quiet);
+
+        var destination = new DataTableUploadDestination(externalCohortTable)
         {
             IndexTables = true,
             IndexTableName = "CreateIndex_OK",
@@ -1707,6 +1722,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         var dt1 = new DataTable();
         dt1.Columns.Add("name", typeof(string));
         dt1.Columns.Add("other", typeof(string));
+        dt1.Columns.Add("ReleaseId", typeof(string));
         dt1.Rows.Add(new[] { "Fish", "Friend" });
         dt1.PrimaryKey = new[] { dt1.Columns[0] };
         dt1.TableName = "DataTableUploadDestinationTests";
@@ -1723,6 +1739,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         dt1 = new DataTable();
         dt1.Columns.Add("name", typeof(string));
         dt1.Columns.Add("other", typeof(string));
+        dt1.Columns.Add("ReleaseId", typeof(string));
         dt1.Rows.Add(new[] { "Fish", "Enemy" });
         dt1.PrimaryKey = new[] { dt1.Columns[0] };
         dt1.TableName = "DataTableUploadDestinationTests";
@@ -1734,8 +1751,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             AppendDataIfTableExists = true
         };
         destination.PreInitialize(db, toConsole);
-        //Assert.Throws<Exception>(() => /*destination.ProcessPipelineData(dt1, toConsole, token)*/);
-        Assert.DoesNotThrow(()=>destination.ProcessPipelineData(dt1, toConsole, token));
+        Assert.Throws<Exception>(() => destination.ProcessPipelineData(dt1, toConsole, token));
         destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
         var table = db.DiscoverTables(false).First(static t => t.GetRuntimeName() == "DataTableUploadDestinationTests");
         var resultDt = table.GetDataTable();
@@ -1751,7 +1767,11 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
         var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
 
-        var destination = new DataTableUploadDestination
+        var wizard = new CreateNewCohortDatabaseWizard(db, CatalogueRepository, DataExportRepository, false);
+        var privateColumn = new PrivateIdentifierPrototype("chi", "varchar(10)");
+        var externalCohortTable = wizard.CreateDatabase(privateColumn, ThrowImmediatelyCheckNotifier.Quiet);
+
+        var destination = new DataTableUploadDestination(externalCohortTable)
         {
             IndexTables = true,
             IndexTableName = "CreateIndex_OK",
@@ -1762,9 +1782,10 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         destination.PreInitialize(db, toConsole);
 
         var dt1 = new DataTable();
-        dt1.Columns.Add("name", typeof(string));
+        dt1.Columns.Add("chi", typeof(string));
+        dt1.Columns.Add("ReleaseId", typeof(string));
         dt1.Columns.Add("other", typeof(string));
-        dt1.Rows.Add(new[] { "Fish", "Friend" });
+        dt1.Rows.Add(new[] { "Fish","www", "Friend" });
         dt1.PrimaryKey = new[] { dt1.Columns[0] };
         dt1.TableName = "DataTableUploadDestinationTests";
         try
@@ -1772,9 +1793,10 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             destination.ProcessPipelineData(dt1, toConsole, token);
             destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
             dt1 = new DataTable();
-            dt1.Columns.Add("name", typeof(string));
+            dt1.Columns.Add("chi", typeof(string));
+            dt1.Columns.Add("ReleaseId", typeof(string));
             dt1.Columns.Add("other", typeof(string));
-            dt1.Rows.Add(new[] { "Fish", "Enemy" });
+            dt1.Rows.Add(new[] { "Fish","www", "Enemy" });
             dt1.PrimaryKey = new[] { dt1.Columns[0] };
             dt1.TableName = "DataTableUploadDestinationTests"; ;
             destination.ProcessPipelineData(dt1, toConsole, token);
@@ -1790,7 +1812,8 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         using var resultDt = table.GetDataTable();
         Assert.That(resultDt.Rows, Has.Count.EqualTo(1));
         Assert.That(resultDt.Rows[0].ItemArray[0], Is.EqualTo("Fish"));
-        Assert.That(resultDt.Rows[0].ItemArray[1], Is.EqualTo("Enemy"));
+        Assert.That(resultDt.Rows[0].ItemArray[1], Is.EqualTo("www"));
+        Assert.That(resultDt.Rows[0].ItemArray[2], Is.EqualTo("Enemy"));
         table = db.DiscoverTables(false).First(static t => t.GetRuntimeName() == "DataTableUploadDestinationTests_Archive");
         using var resultDt2 = table.GetDataTable();
         Assert.That(resultDt2.Rows, Has.Count.EqualTo(1));
@@ -1806,7 +1829,11 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
         var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
 
-        var destination = new DataTableUploadDestination
+        var wizard = new CreateNewCohortDatabaseWizard(db, CatalogueRepository, DataExportRepository, false);
+        var privateColumn = new PrivateIdentifierPrototype("chi", "varchar(10)");
+        var externalCohortTable = wizard.CreateDatabase(privateColumn, ThrowImmediatelyCheckNotifier.Quiet);
+
+        var destination = new DataTableUploadDestination(externalCohortTable)
         {
             IndexTables = true,
             IndexTableName = "CreateIndex_OK",
@@ -1819,6 +1846,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         var dt1 = new DataTable();
         dt1.Columns.Add("name", typeof(string));
         dt1.Columns.Add("other", typeof(string));
+        dt1.Columns.Add("ReleaseId", typeof(string));
         dt1.Rows.Add(new[] { "Fish", "Friend" });
         dt1.PrimaryKey = new[] { dt1.Columns[0] };
         dt1.TableName = "DataTableUploadDestinationTests";
@@ -1829,6 +1857,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             dt1 = new DataTable();
             dt1.Columns.Add("name", typeof(string));
             dt1.Columns.Add("other", typeof(string));
+            dt1.Columns.Add("ReleaseId", typeof(string));
             dt1.Rows.Add(new[] { "Fish" });
             dt1.PrimaryKey = new[] { dt1.Columns[0] };
             dt1.TableName = "DataTableUploadDestinationTests"; ;
