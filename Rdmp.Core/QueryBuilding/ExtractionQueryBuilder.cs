@@ -109,7 +109,16 @@ public class ExtractionQueryBuilder
         //remove the identification column from the query
         request.ColumnsToExtract.RemoveAll(c => c.IsExtractionIdentifier);
 
+
+        var externalCohortTable =
+    _repository.GetObjectByID<ExternalCohortTable>(request.ExtractableCohort.ExternalCohortTable_ID);
+
         //add in the ReleaseIdentifier in place of the identification column
+        for(var i=0; i < substitutions.Count; i++)
+        {
+            substitutions[i].SelectSQL = substitutions[i].SelectSQL.Replace(externalCohortTable.TableName, "RDMP_SpecificCohortTable");
+
+        }
         queryBuilder.AddColumnRange(substitutions.ToArray());
 
         //add the rest of the columns to the query
@@ -118,21 +127,22 @@ public class ExtractionQueryBuilder
         //add the users selected filters
         queryBuilder.RootFilterContainer = request.Configuration.GetFilterContainerFor(request.DatasetBundle.DataSet);
 
-        var externalCohortTable =
-            _repository.GetObjectByID<ExternalCohortTable>(request.ExtractableCohort.ExternalCohortTable_ID);
+
 
         if (request.ExtractableCohort != null)
         {
+
+            var specificCohortTableSelect = $"(SELECT DISTINCT {externalCohortTable.PrivateIdentifierField}, {externalCohortTable.ReleaseIdentifierField},cohortDefinition_id FROM {externalCohortTable.TableName} WHERE {request.ExtractableCohort.WhereSQL()}) AS RDMP_SpecificCohortTable";
             //the JOIN with the cohort table:
             var cohortJoin = substitutions.Count == 1
-                ? $" INNER JOIN {externalCohortTable.TableName} ON {substitutions.Single().JoinSQL}"
-                : $" INNER JOIN {externalCohortTable.TableName} ON {string.Join(" OR ", substitutions.Select(s => s.JoinSQL))}";
+                ? $" INNER JOIN {specificCohortTableSelect} ON {substitutions.Single().JoinSQL.Replace(externalCohortTable.TableName, "RDMP_SpecificCohortTable")}"
+                : $" INNER JOIN {specificCohortTableSelect} ON {string.Join(" OR ", substitutions.Select(s => s.JoinSQL)).Replace(externalCohortTable.TableName, "RDMP_SpecificCohortTable")}";
 
             //add the JOIN in after any other joins
             queryBuilder.AddCustomLine(cohortJoin, QueryComponent.JoinInfoJoin);
 
             //add the filter cohortID because our new Cohort system uses ID number and a giant combo table with all the cohorts in it we need to say Select XX from XX join Cohort Where Cohort number = Y
-            queryBuilder.AddCustomLine(request.ExtractableCohort.WhereSQL(), QueryComponent.WHERE);
+            queryBuilder.AddCustomLine(request.ExtractableCohort.WhereSQL().Replace(externalCohortTable.TableName, "RDMP_SpecificCohortTable"), QueryComponent.WHERE);
         }
 
         HandleBatching(request, queryBuilder, syntaxHelper);
