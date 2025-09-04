@@ -195,7 +195,7 @@ DistinctByDestinationPKs - Performs a GROUP BY on each batch of records to ensur
                     SELECT *
                     INTO {_uuid}
                     FROM(
-                    SELECT  DISTINCT {privateIdentifierField}, {releaseIdentifierField}
+                    SELECT DISTINCT {privateIdentifierField}, {releaseIdentifierField}
                     FROM {_externalCohortTable.TableName}
                     WHERE {_whereSQL}
                     ) as cohortTempTable
