@@ -186,14 +186,17 @@ DistinctByDestinationPKs - Performs a GROUP BY on each batch of records to ensur
         _uuid = $"#{RandomString(24)}";
         var sql = "";
         var db = _externalCohortTable.Discover();
+        var privateIdentifierField = _externalCohortTable.PrivateIdentifierField.Split('.').Last()[1..^1];//remove the "[]" from the identifier field
+        var releaseIdentifierField = _externalCohortTable.ReleaseIdentifierField.Split('.').Last()[1..^1];//remove the "[]" from the identifier field
+
         switch (db.Server.DatabaseType)
         {
             case DatabaseType.MicrosoftSQLServer:
                 sql = $"""
-                    SELECT *
+                    SELECT DISTINCT {releaseIdentifierField},{privateIdentifierField}, cohortDefinition_id
                     INTO {_uuid}
                     FROM(
-                    SELECT * FROM {_externalCohortTable.TableName}
+                    SELECT  DISTINCT {releaseIdentifierField},{privateIdentifierField}, cohortDefinition_id FROM {_externalCohortTable.TableName}
                     WHERE {_whereSQL}
                     ) as cohortTempTable
                 """;
@@ -201,18 +204,18 @@ DistinctByDestinationPKs - Performs a GROUP BY on each batch of records to ensur
             case DatabaseType.MySql:
                 sql = $"""
                     CREATE TEMPORARY TABLE {_uuid} ENGINE=MEMORY
-                    as (SELECT * FROM {_externalCohortTable.TableName} WHERE {_whereSQL})
+                    as (SELECT DISTINCT {releaseIdentifierField},{privateIdentifierField}, cohortDefinition_id FROM {_externalCohortTable.TableName} WHERE {_whereSQL})
                 """;
                 break;
             case DatabaseType.Oracle:
                 sql = $"""
-                    CREATE TEMPORARY TABLE {_uuid} SELECT * FROM {_externalCohortTable.TableName} WHERE {_whereSQL}
+                    CREATE TEMPORARY TABLE {_uuid} SELECT DISTINCT {releaseIdentifierField},{privateIdentifierField}, cohortDefinition_id FROM {_externalCohortTable.TableName} WHERE {_whereSQL}
                 """;
                 break;
             case DatabaseType.PostgreSql:
                 sql = $"""
                     CREATE TEMP TABLE {_uuid} AS
-                    SELECT * FROM {_externalCohortTable.TableName} WHERE {_whereSQL}
+                    SELECT DISTINCT {releaseIdentifierField},{privateIdentifierField}, cohortDefinition_id FROM {_externalCohortTable.TableName} WHERE {_whereSQL}
                 """;
                 break;
             default:
