@@ -65,27 +65,29 @@ CollapseWhitespace(request.QueryBuilder.SQL), Is.EqualTo(CollapseWhitespace(
                     string.Format(
                         @"DECLARE @fish AS varchar(50);
 SET @fish='jormungander';
-/*The ID of the cohort in [{0}CohortDatabase]..[Cohort]*/
+/*The ID of the cohort in [TEST_CohortDatabase]..[Cohort]*/
 DECLARE @CohortDefinitionID AS int;
 SET @CohortDefinitionID=-599;
-/*The project number of project {0}ExtractionConfiguration*/
+/*The project number of project TEST_ExtractionConfiguration*/
 DECLARE @ProjectNumber AS int;
 SET @ProjectNumber=1;
 
 SELECT DISTINCT 
-[{0}CohortDatabase]..[Cohort].[ReleaseID] AS ReleaseID,
-[{0}ScratchArea].[dbo].[TestTable].[Name],
-[{0}ScratchArea].[dbo].[TestTable].[DateOfBirth]
-FROM 
-[{0}ScratchArea].[dbo].[TestTable] INNER JOIN [{0}CohortDatabase]..[Cohort] ON [{0}ScratchArea].[dbo].[TestTable].[PrivateID]=[{0}CohortDatabase]..[Cohort].[PrivateID]
 
+CohortJoinSelectTable.[ReleaseID] AS ReleaseID,
+[TEST_ScratchArea].[dbo].[TestTable].[Name],
+[TEST_ScratchArea].[dbo].[TestTable].[DateOfBirth]
+FROM 
+[TEST_ScratchArea].[dbo].[TestTable]
+INNER JOIN (SELECT DISTINCT [TEST_CohortDatabase]..[Cohort].[PrivateID], [TEST_CohortDatabase]..[Cohort].[ReleaseID],cohortDefinition_id FROM [TEST_CohortDatabase]..[Cohort] WHERE [TEST_CohortDatabase]..[Cohort].[cohortDefinition_id]=-599) AS CohortJoinSelectTable ON [TEST_ScratchArea].[dbo].[TestTable].[PrivateID]=CohortJoinSelectTable.[PrivateID]
 WHERE
 (
 /*FilterByFishDeployed*/
 Fish = @fish
 )
+
 AND
-[{0}CohortDatabase]..[Cohort].[cohortDefinition_id]=-599
+CohortJoinSelectTable.[cohortDefinition_id]=-599
 "
                         , TestDatabaseNames.Prefix))
 ));

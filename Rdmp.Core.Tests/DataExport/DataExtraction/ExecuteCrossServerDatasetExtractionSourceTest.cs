@@ -85,20 +85,20 @@ public class ExecuteCrossServerDatasetExtractionSourceTest : TestsRequiringAnExt
             string.Format(@"/*The ID of the cohort in [tempdb]..[Cohort]*/
 DECLARE @CohortDefinitionID AS int;
 SET @CohortDefinitionID=-599;
-/*The project number of project {0}ExtractionConfiguration*/
+/*The project number of project TEST_ExtractionConfiguration*/
 DECLARE @ProjectNumber AS int;
 SET @ProjectNumber=1;
 
 SELECT DISTINCT 
 
-[tempdb]..[Cohort].[ReleaseID] AS ReleaseID,
-[{0}ScratchArea].[dbo].[TestTable].[Name],
-[{0}ScratchArea].[dbo].[TestTable].[DateOfBirth]
+CohortJoinSelectTable.[ReleaseID] AS ReleaseID,
+[TEST_ScratchArea].[dbo].[TestTable].[Name],
+[TEST_ScratchArea].[dbo].[TestTable].[DateOfBirth]
 FROM 
-[{0}ScratchArea].[dbo].[TestTable]
-INNER JOIN [tempdb]..[Cohort] ON [{0}ScratchArea].[dbo].[TestTable].[PrivateID]=[tempdb]..[Cohort].[PrivateID]
+[TEST_ScratchArea].[dbo].[TestTable]
+INNER JOIN (SELECT DISTINCT [tempdb]..[Cohort].[PrivateID], [tempdb]..[Cohort].[ReleaseID],cohortDefinition_id FROM [tempdb]..[Cohort] WHERE [tempdb]..[Cohort].[cohortDefinition_id]=-599) AS CohortJoinSelectTable ON [TEST_ScratchArea].[dbo].[TestTable].[PrivateID]=CohortJoinSelectTable.[PrivateID]
 WHERE
-[tempdb]..[Cohort].[cohortDefinition_id]=-599
+CohortJoinSelectTable.[cohortDefinition_id]=-599
 ", TestDatabaseNames.Prefix);
 
         //cross server is only used if cohort and dataset are on different servers so pretend the cohort is on bob server
