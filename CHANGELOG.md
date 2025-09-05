@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [9.0.2] - Unreleased
 - allow the use of Catalogue CIC filters in coresponding Extractions
+- Add Data Load component to allow SQL to be executed on an external database server
 
 ## [9.0.1] - 2025-07-31
 - Improve Right-click performance
