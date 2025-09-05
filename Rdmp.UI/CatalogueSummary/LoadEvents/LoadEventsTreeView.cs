@@ -105,6 +105,7 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
 
     private object olvDescription_AspectGetter(object rowObject)
     {
+        if (rowObject is null) return null;
         return rowObject switch
         {
             ArchivalDataLoadInfo adi => adi.ToString(),
@@ -121,6 +122,7 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
 
     private static object olvDate_AspectGetter(object rowObject)
     {
+        if (rowObject is null) return null;
         return rowObject switch
         {
             ArchivalDataLoadInfo adi => adi.StartTime,
@@ -307,11 +309,110 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
         AbortWorkers();
     }
 
+    private class LogFilter : AbstractModelFilter
+    {
+        public LogFilter()
+        {
+
+        }
+
+        public LogFilter(ObjectListView olv)
+        {
+            this.ListView = olv;
+        }
+
+        public LogFilter(ObjectListView olv, string text)
+        {
+            this.ListView = olv;
+            this.Text = text;
+        }
+
+        public LogFilter(ObjectListView olv, string text, StringComparison comparison)
+        {
+            this.ListView = olv;
+            this.Text = text;
+            this.StringComparison = comparison;
+        }
+
+        public string Text;
+        public StringComparison StringComparison = StringComparison.InvariantCultureIgnoreCase;
+
+        protected ObjectListView ListView;
+
+        private List<int> acceptableChildren = [];
+        private List<int> acceptableRoots = [];
+
+        public override bool Filter(object modelObject)
+        {
+            if (this.ListView == null || String.IsNullOrEmpty(this.Text))
+                return true;
+
+            foreach (OLVColumn column in this.ListView.Columns)
+            {
+                if (column.IsVisible)
+                {
+                    string cellText = column.GetStringValue(modelObject);
+                    if (cellText.IndexOf(this.Text, this.StringComparison) != -1)
+                    {
+                        if (modelObject is ArchivalDataLoadInfo adli)
+                        {
+                            acceptableChildren.AddRange(adli.Progress.Select(p => p.ID));
+                            acceptableRoots.Add(adli.ID);
+                        }
+                        return true;
+                    }
+                    else if (modelObject is ArchivalProgressLog log)
+                    {
+                        if (acceptableChildren.Contains(log.ID))
+                        {
+                            return true;
+                        }
+                    }
+                    else if (modelObject is LoadEventsTreeView_Category lec)
+                    {
+                        if (acceptableRoots.Contains(lec.RunId))
+                        {
+                            return true;
+                        }
+                        if (lec.Children is ArchivalProgressLog[] lapl)
+                        {
+                            if (lapl.Any(pl => column.GetStringValue(pl).IndexOf(this.Text, this.StringComparison) != -1)) return true;
+                        }
+                        if (lec.Children is ArchivalTableLoadInfo[] latli)
+                        {
+                            if (latli.Any(pl => column.GetStringValue(pl).IndexOf(this.Text, this.StringComparison) != -1)) return true;
+                        }
+                        if (lec.Children is ArchivalFatalError[] lafe)
+                        {
+                            if (lafe.Any(pl => column.GetStringValue(pl).IndexOf(this.Text, this.StringComparison) != -1)) return true;
+                        }
+                    }
+                    else if (modelObject is ArchivalTableLoadInfo dli)
+                    {
+                        if (acceptableRoots.Contains(dli.Parent.ID))
+                        {
+                            return true;
+                        }
+                    }
+                    else if (modelObject is ArchivalDataLoadInfo adli)
+                    {
+                        if (adli.Progress.Any(p => column.GetStringValue(p).IndexOf(this.Text, this.StringComparison) != -1)) return true;
+                        if (adli.TableLoadInfos.Any(p => column.GetStringValue(p).IndexOf(this.Text, this.StringComparison) != -1)) return true;
+                        if (adli.Errors.Any(p => column.GetStringValue(p).IndexOf(this.Text, this.StringComparison) != -1)) return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+    }
 
     public void ApplyFilter(string filter)
     {
-        treeView1.ModelFilter = new TextMatchFilter(treeView1, filter, StringComparison.CurrentCultureIgnoreCase);
+
+        treeView1.ModelFilter = new LogFilter(treeView1, filter, StringComparison.CurrentCultureIgnoreCase);
         treeView1.UseFiltering = !string.IsNullOrWhiteSpace(filter);
+        treeView1.DefaultRenderer = new HighlightTextRenderer(new TextMatchFilter(treeView1, filter));
     }
 
     private void treeView1_ColumnRightClick(object sender, CellRightClickEventArgs e)
