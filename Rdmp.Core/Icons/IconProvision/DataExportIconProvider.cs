@@ -35,6 +35,7 @@ public class DataExportIconProvider : CatalogueIconProvider
             : concept switch
             {
                 SelectedDataSets sds => base.GetImageImpl(sds.ExtractableDataSet),
+                ExtractableDataSetProject edsp=> base.GetImageImpl(edsp.Project),
                 PackageContentNode pcn => base.GetImageImpl(pcn.DataSet),
                 ProjectCohortIdentificationConfigurationAssociation association =>
                     association.CohortIdentificationConfiguration != null

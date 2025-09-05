@@ -26,6 +26,7 @@ using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.Core.ReusableLibraryCode.Progress;
+using YamlDotNet.Core;
 
 namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
 
@@ -45,6 +46,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
          $t - Master Ticket (e.g. 'LINK-1234')
          $r - Request Ticket (e.g. 'LINK-1234')
          $l - Release Ticket (e.g. 'LINK-1234')
+         $e - Extraction Configuration Id (e.g. 14)
          ", Mandatory = true, DefaultValue = "Proj_$n_$l")]
     public string DatabaseNamingPattern { get; set; }
 
@@ -54,7 +56,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
          $c - Configuration Name (e.g. 'Cases')
          $d - Dataset name (e.g. 'Prescribing')
          $a - Dataset acronym (e.g. 'Presc') 
-
+         $e - Extraction Configuration Id (e.g. 14)
          You must have either $a or $d
          ", Mandatory = true, DefaultValue = "$c_$d")]
     public string TableNamingPattern { get; set; }
@@ -99,9 +101,9 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
          $c - Configuration Name (e.g. 'Cases')
          $d - Dataset name (e.g. 'Prescribing')
          $a - Dataset acronym (e.g. 'Presc') 
-
+         $e - Extraction Configuration Id (e.g. 14)
          You must have either $a or $d
-         ",DefaultValue = "Index_$c_$d")]
+         ", DefaultValue = "Index_$c_$d")]
     public string IndexNamingPattern { get; set; }
 
     [DemandsInitialization("An optional list of columns to index on e.g \"Column1, Column2\"")]
@@ -327,6 +329,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         indexName = indexName.Replace("$p", project.Name);
         indexName = indexName.Replace("$n", project.ProjectNumber.ToString());
         indexName = indexName.Replace("$c", _request.Configuration.Name);
+        indexName = indexName.Replace("$e", _request.Configuration.ID.ToString());
         if (_request is ExtractDatasetCommand extractDatasetCommand)
         {
             indexName = indexName.Replace("$d", extractDatasetCommand.DatasetBundle.DataSet.Catalogue.Name);
@@ -362,6 +365,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         tblName = tblName.Replace("$p", project.Name);
         tblName = tblName.Replace("$n", project.ProjectNumber.ToString());
         tblName = tblName.Replace("$c", _request.Configuration.Name);
+        tblName = tblName.Replace("$e", _request.Configuration.ID.ToString());
 
         if (_request is ExtractDatasetCommand extractDatasetCommand)
         {
@@ -591,8 +595,8 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
             .Replace("$n", _project.ProjectNumber.ToString())
             .Replace("$t", _project.MasterTicket)
             .Replace("$r", _request.Configuration.RequestTicket)
-            .Replace("$l", _request.Configuration.ReleaseTicket);
-
+            .Replace("$l", _request.Configuration.ReleaseTicket)
+            .Replace("$e", _request.Configuration.ID.ToString());
         return dbName;
     }
 

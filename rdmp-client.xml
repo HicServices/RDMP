@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <item>
-    <version>8.4.4.0</version>
-    <url>https://github.com/HicServices/RDMP/releases/download/v8.4.4/rdmp-8.4.4-client.zip</url>
+    <version>9.0.1.0</version>
+    <url>https://github.com/HicServices/RDMP/releases/download/v9.0.1/rdmp-9.0.1-client.zip</url>
     <changelog>https://github.com/HicServices/RDMP/blob/main/CHANGELOG.md#7</changelog>
     <mandatory>true</mandatory>
 </item>

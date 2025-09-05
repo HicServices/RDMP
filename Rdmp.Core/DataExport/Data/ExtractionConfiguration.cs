@@ -371,8 +371,21 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
         {
             try
             {
-                //clone the root object (the configuration) - this includes cloning the link to the correct project and cohort
+                //clone the root object (the configuration) - this includes cloning the link to the correct project and cohort       
                 var clone = ShallowClone();
+
+                // Clone GlobalExtractionFilterParameters
+                foreach (var param in GlobalExtractionFilterParameters.OfType<GlobalExtractionFilterParameter>())
+                {
+                    // Create the new parameter with the same SQL declaration
+                    var clonedParam = new GlobalExtractionFilterParameter(repo, clone, param.ParameterSQL);
+
+                    // Copy value and comment if present
+                    clonedParam.Value = param.Value;
+                    clonedParam.Comment = param.Comment;
+
+                    clonedParam.SaveToDatabase();
+                }
 
                 //find each of the selected datasets for ourselves and clone those too
                 foreach (SelectedDataSets selected in SelectedDataSets)
@@ -710,6 +723,10 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
     /// <inheritdoc/>
     public override void DeleteInDatabase()
     {
+        // Delete only GlobalExtractionFilterParameters for this configuration
+        foreach (var param in Repository.GetAllObjectsWithParent<GlobalExtractionFilterParameter>(this))
+            param.DeleteInDatabase();
+
         foreach (var result in Repository.GetAllObjectsWithParent<SupplementalExtractionResults>(this))
             result.DeleteInDatabase();
 

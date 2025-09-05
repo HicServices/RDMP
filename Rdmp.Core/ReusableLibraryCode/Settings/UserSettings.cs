@@ -184,6 +184,17 @@ public static class UserSettings
     }
 
 
+    public static string ExtractionWebhookUsername
+    {
+        get => AppSettings.GetValueOrDefault("ExtractionWebhookUsername", null);
+        set => AppSettings.AddOrUpdateValue("ExtractionWebhookUsername", value);
+    }
+    public static string ExtractionWebhookUrl
+    {
+        get => AppSettings.GetValueOrDefault("ExtractionWebhookUrl", null);
+        set => AppSettings.AddOrUpdateValue("ExtractionWebhookUrl", value);
+    }
+
     #region Catalogue flag visibility settings
 
     public static bool ShowInternalCatalogues

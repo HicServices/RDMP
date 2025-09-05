@@ -12,19 +12,19 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.Sharing;
 
 public class ExecuteCommandExportInDublinCoreFormat : BasicCommandExecution, IAtomicCommand
 {
-    private readonly DublinCoreDefinition _definition;
+    private readonly Catalogue _catalogue;
     private FileInfo _toExport;
-    private readonly DublinCoreTranslater _translater = new();
 
     public ExecuteCommandExportInDublinCoreFormat(IBasicActivateItems activator, Catalogue catalogue) : base(activator)
     {
-        _definition = DublinCoreTranslater.GenerateFrom(catalogue);
-        UseTripleDotSuffix = true;
+            _catalogue = catalogue;
+            UseTripleDotSuffix = true;
     }
 
     public override void Execute()
     {
         base.Execute();
+        DublinCoreDefinition _definition = DublinCoreTranslater.GenerateFrom(_catalogue);
 
         if ((_toExport ??= BasicActivator.SelectFile("Dublin Core Xml|*.xml")) == null)
             return;

@@ -62,7 +62,7 @@ public class ExecuteCommandAddDatasetsToConfiguration : BasicCommandExecution
                 var _importableDataSets = childProvider.ExtractableDataSets.Except(_datasets)
 
                     //where it can be used in any Project OR this project only
-                    .Where(ds => ds.Project_ID == null || ds.Project_ID == targetExtractionConfiguration.Project_ID)
+                    .Where(ds => !ds.Projects.Any()|| ds.Projects.Select(p => p.ID).Contains(targetExtractionConfiguration.Project_ID))
                     .ToArray();
 
                 SetExtractableDataSets(true, _importableDataSets);

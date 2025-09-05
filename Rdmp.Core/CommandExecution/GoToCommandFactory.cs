@@ -47,8 +47,7 @@ public class GoToCommandFactory : CommandFactoryBase
         if (Is(forObject, out IMapsDirectlyToDatabaseTable mt))
         {
             // Go to import / export definitions
-            var export = _activator.RepositoryLocator.CatalogueRepository.GetReferencesTo<ObjectExport>(mt)
-                .FirstOrDefault();
+            var export = _activator.CoreChildProvider.AllExports.FirstOrDefault(export => export.IsReferenceTo(mt));
 
             if (export != null)
                 yield return new ExecuteCommandShow(_activator, export, 0, true)
@@ -188,13 +187,10 @@ public class GoToCommandFactory : CommandFactoryBase
         if (Is(forObject, out ExtractionFilter masterFilter))
         {
             yield return new ExecuteCommandShow(_activator, () =>
-                _activator.RepositoryLocator.CatalogueRepository
-                    .GetAllObjectsWhere<AggregateFilter>("ClonedFromExtractionFilter_ID", masterFilter.ID)
-                    .Select(f => f.GetAggregate())
+                _activator.CoreChildProvider.AllAggregateFilters.Where(af => af.ClonedFromExtractionFilter_ID == masterFilter.ID).Select(f => f.GetAggregate())
                     .Where(a => a != null).Distinct()
             )
             { OverrideCommandName = "Usages (in Cohort Builder)" };
-
 
             yield return new ExecuteCommandShow(_activator, () =>
                 _activator.RepositoryLocator.DataExportRepository
@@ -264,12 +260,14 @@ public class GoToCommandFactory : CommandFactoryBase
 
         if (Is(forObject, out Catalogue catalogue))
         {
-            foreach (var lmd in catalogue.LoadMetadatas())
+            var lmdLinkage = _activator.CoreChildProvider.AllLoadMetadataCatalogueLinkages.Where(lmdcl => lmdcl.CatalogueID == catalogue.ID).Select(lmdcl => lmdcl.LoadMetadataID);
+            var lmds = _activator.CoreChildProvider.AllLoadMetadatas.Where(lmd => lmdLinkage.Contains(lmd.ID));
+            foreach (var lmd in lmds)
             {
                 yield return new ExecuteCommandShow(_activator, lmd.ID, typeof(LoadMetadata))
                 { OverrideCommandName = $"Data Load ({lmd.Name})", OverrideIcon = GetImage(RDMPConcept.LoadMetadata) };
             }
-            if (catalogue.LoadMetadatas().Length == 0)
+            if (!lmds.Any())
             {
                 yield return new ExecuteCommandShow(_activator, null, typeof(LoadMetadata))
                 { OverrideCommandName = "No Data Load", OverrideIcon = GetImage(RDMPConcept.LoadMetadata) };
@@ -278,52 +276,25 @@ public class GoToCommandFactory : CommandFactoryBase
 
             if (_activator.CoreChildProvider is DataExportChildProvider exp)
             {
-                var cataEds = exp.ExtractableDataSets.SingleOrDefault(d => d.Catalogue_ID == catalogue.ID);
+                var cataEds = exp.ExtractableDataSets.Where(d => d.Catalogue_ID == catalogue.ID);
 
                 if (cataEds != null)
                 {
-                    if (cataEds.Project_ID != null)
-                    {
-                        yield return new ExecuteCommandShow(_activator,
-                            () =>
-                            {
-                                return new[]
-                                {
-                                    _activator.RepositoryLocator.DataExportRepository.GetObjectByID<Project>(
-                                        cataEds.Project_ID.Value)
-                                };
-                            }
-                        )
-                        {
-                            OverrideCommandName = "Associated Project",
-                            OverrideIcon = GetImage(RDMPConcept.Project)
-                        };
-                    }
-                    else
-                    {
-                        yield return new ExecuteCommandShow(_activator,
-                          () =>
-                          {
-                              return new Project[]
-                              {
-                              };
-                          }
-                      )
-                        {
-                            OverrideCommandName = "No Associated Project",
-                            OverrideIcon = GetImage(RDMPConcept.Project)
-                        };
-                    }
-
                     yield return new ExecuteCommandShow(_activator,
-                        () => cataEds.ExtractionConfigurations.Select(c => c.Project).Distinct())
+                         () => (cataEds.SelectMany(c => c.Projects.Select(p => p.ID)).Select(p => _activator.RepositoryLocator.DataExportRepository.GetObjectByID<Project>(p))))
+                    {
+                        OverrideCommandName = "Associated Projects",
+                        OverrideIcon = GetImage(RDMPConcept.Project)
+                    };
+                    yield return new ExecuteCommandShow(_activator,
+                          () => (cataEds.SelectMany(c => c.ExtractionConfigurations.Select(e => e.Project))))
                     {
                         OverrideCommandName = "Extracted In (Project)",
                         OverrideIcon = GetImage(RDMPConcept.Project)
                     };
-                    yield return new ExecuteCommandShow(_activator, () => cataEds.ExtractionConfigurations)
+                    yield return new ExecuteCommandShow(_activator, () => cataEds.SelectMany(c => c.ExtractionConfigurations))
                     {
-                        OverrideCommandName = "Extracted In (Extraction Configuration)",
+                        OverrideCommandName = $"Extracted In (Extraction Configuration)",
                         OverrideIcon = GetImage(RDMPConcept.ExtractionConfiguration)
                     };
                 }

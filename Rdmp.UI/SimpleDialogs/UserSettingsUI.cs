@@ -141,6 +141,8 @@ public partial class UserSettingsFileUI : Form
         ddWordWrap.SelectedItem = (WrapMode)UserSettings.WrapMode;
 
         tbHeatmapColours.Text = UserSettings.HeatMapColours;
+        tbWebhookUrl.Text = UserSettings.ExtractionWebhookUrl;
+        tbWebhookUsername.Text = UserSettings.ExtractionWebhookUsername;
 
         _bLoaded = true;
 
@@ -268,5 +270,21 @@ public partial class UserSettingsFileUI : Form
             cb.Key.Visible = string.IsNullOrWhiteSpace(text) ||
                              cb.Key.Text.Contains(text, StringComparison.CurrentCultureIgnoreCase) ||
                              cb.Value.Name.Contains(text, StringComparison.CurrentCultureIgnoreCase);
+    }
+
+    private void label17_Click(object sender, EventArgs e)
+    {
+
+    }
+
+    private void tbWebhookUrl_TextChanged(object sender, EventArgs e)
+    {
+        UserSettings.ExtractionWebhookUrl = tbWebhookUrl.Text;
+    }
+
+    private void tbWebhookUsername_TextChanged(object sender, EventArgs e)
+    {
+        UserSettings.ExtractionWebhookUsername = tbWebhookUsername.Text;
+
     }
 }

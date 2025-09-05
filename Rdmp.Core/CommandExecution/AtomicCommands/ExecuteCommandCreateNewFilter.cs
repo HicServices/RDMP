@@ -32,8 +32,10 @@ public class ExecuteCommandCreateNewFilter : BasicCommandExecution, IAtomicComma
     public string Name { get; }
     public string WhereSQL { get; }
 
-    private IFilter[] _offerFilters;
+    private IFilter[] _offerFilters = [];
     private bool offerCatalogueFilters;
+
+
 
     public bool OfferCatalogueFilters
     {
@@ -53,7 +55,6 @@ public class ExecuteCommandCreateNewFilter : BasicCommandExecution, IAtomicComma
             offerCatalogueFilters = value;
         }
     }
-
 
     private ExecuteCommandCreateNewFilter(IBasicActivateItems activator) : base(activator)
     {
@@ -240,7 +241,8 @@ where    Optional SQL to set for the filter.  If <basedOn> is not null this will
     {
         var wizard = new FilterImportWizard(BasicActivator);
 
-        var import = wizard.ImportManyFromSelection(container, _offerFilters).ToArray();
+        var filters = _offerFilters;
+        var import = wizard.ImportManyFromSelection(container, filters).ToArray();
 
         foreach (var f in import) container.AddChild(f);
 
