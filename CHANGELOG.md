@@ -22,7 +22,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add DistinctByDestinationPKs distinction strategy to the DatasetExtractionSource Extraction pipeline component
 - Update clone extraction configuration to include generic parameters
 - Fix copy-paste issue in bulk edit Catalogue Items UI
->>>>>>> ff32bcb4e808a3f2bbcf180b7ec371817471a716
 
 ## [8.4.4] - 2025-05-08 
 
