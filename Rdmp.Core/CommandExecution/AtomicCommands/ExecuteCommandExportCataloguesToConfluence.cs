@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Amazon.Runtime.Internal.Endpoints.StandardLibrary;
+using Newtonsoft.Json;
 using NPOI.SS.Formula.Functions;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Dataset.Confluence;
@@ -87,7 +88,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             public string id { get; set; }
         }
 
-        private class ConfluencePagePostResponse
+        private class ConfluencePageResponse
         {
             public string id { get; set; }
             public ConfluenceLinks _links { get; set; }
@@ -104,9 +105,27 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             _description = description;
         }
 
+        private static ConfluencePageResponse ResponseToConfluenceResponseObject(HttpResponseMessage response)
+        {
+            var content = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
+            return JsonConvert.DeserializeObject<ConfluencePageResponse>(content);
+        }
+
+        private static ConfluencePostErrors PostResponseToConfluenceErrorsObject(HttpResponseMessage response)
+        {
+            var content = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
+            return JsonConvert.DeserializeObject<ConfluencePostErrors>(content);
+        }
+
+        private ConfluenceGetResults GetConfluencePage(string uri, string title)
+        {
+            var result = Task.Run(async () => await _client.GetAsync($"{uri}?title={title}&space-id={_spaceId}")).Result;
+            var content = Task.Run(async () => await result.Content.ReadAsStringAsync()).Result;
+            return JsonConvert.DeserializeObject<ConfluenceGetResults>(content);
+        }
+
         public override void Execute()
         {
-            //todo needs to do updates also
             base.Execute();
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", _apiKey);
 
@@ -129,28 +148,24 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             HttpResponseMessage response = Task.Run(async () => await _client.PostAsJsonAsync(uri, request)).Result;
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                var content = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
-                var responseContent = JsonConvert.DeserializeObject<ConfluencePagePostResponse>(content);
-                rootParentId = responseContent.id;
-                rootParentVersion = responseContent.version.number;
+                var confluencePostResponseObject = ResponseToConfluenceResponseObject(response);
+                rootParentId = confluencePostResponseObject.id;
+                rootParentVersion = confluencePostResponseObject.version.number;
             }
             else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
             {
-                var content = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
-                var responseContent = JsonConvert.DeserializeObject<ConfluencePostErrors>(content);
-                if (responseContent.errors.Count == 1 && responseContent.errors[0].title.Contains("page with this title already exists"))
+                var confluenceErrorsResponse = PostResponseToConfluenceErrorsObject(response);
+                if (confluenceErrorsResponse.errors.Count == 1 && confluenceErrorsResponse.errors[0].title.Contains("page with this title already exists"))
                 {
                     //page already exists - update it
                     //need to get version
-                    var getResult = Task.Run(async () => await _client.GetAsync($"{uri}?title={request.title}&space-id={_spaceId}")).Result;
-                    var getContent = Task.Run(async () => await getResult.Content.ReadAsStringAsync()).Result;
-                    var getObj = JsonConvert.DeserializeObject<ConfluenceGetResults>(getContent);
-                    if (getObj.results.Count != 1)
+                    var foundPages = GetConfluencePage(uri, request.title);
+                    if (foundPages.results.Count != 1)
                     {
                         throw new Exception($"Multiple pages in pace {_spaceId} with name {request.title}");
                     }
-                    rootParentId = getObj.results[0].id;
-                    rootParentVersion = getObj.results[0].version.number;
+                    rootParentId = foundPages.results[0].id;
+                    rootParentVersion = foundPages.results[0].version.number;
 
                     var putRequest = new ConfluencePagePutRequest()
                     {
@@ -164,10 +179,13 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                         }
                     };
                     response = Task.Run(async () => await _client.PutAsJsonAsync($"{uri}/{rootParentId}", putRequest)).Result;
-                    var putContent = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
-                    var putResponseContent = JsonConvert.DeserializeObject<ConfluencePagePostResponse>(putContent);
+                    var putResponseContent = ResponseToConfluenceResponseObject(response);
                     rootParentId = putResponseContent.id;
                     rootParentVersion = putResponseContent.version.number;
+                }
+                else
+                {
+                    //who knows whats gone wrong...
                 }
             }
             else
@@ -191,28 +209,24 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                     response = Task.Run(async () => await _client.PostAsJsonAsync(uri, request)).Result;
                     if (response.StatusCode == System.Net.HttpStatusCode.OK)
                     {
-                        var content = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
-                        var responseContent = JsonConvert.DeserializeObject<ConfluencePagePostResponse>(content);
+                        var responseContent = ResponseToConfluenceResponseObject(response);
                         _cataloguePageLookups.TryAdd(catalogue.ID, responseContent._links.webui);
                     }
                     else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
                     {
-                        var content = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
-                        var responseContent = JsonConvert.DeserializeObject<ConfluencePostErrors>(content);
+                        var responseContent = PostResponseToConfluenceErrorsObject(response);
                         if (responseContent.errors.Count == 1 && responseContent.errors[0].title.Contains("page with this title already exists"))
                         {
                             //already exists, do a put
                             //page already exists - update it
                             //need to get version
-                            var getResult = Task.Run(async () => await _client.GetAsync($"{uri}?title={request.title}&space-id={_spaceId}")).Result;
-                            var getContent = Task.Run(async () => await getResult.Content.ReadAsStringAsync()).Result;
-                            var getObj = JsonConvert.DeserializeObject<ConfluenceGetResults>(getContent);
-                            if (getObj.results.Count != 1)
+                            var getResults = GetConfluencePage(uri, request.title);
+                            if (getResults.results.Count != 1)
                             {
                                 throw new Exception($"Multiple pages in pace {_spaceId} with name {request.title}");
                             }
-                            var id = getObj.results[0].id;
-                            var version = getObj.results[0].version.number;
+                            var id = getResults.results[0].id;
+                            var version = getResults.results[0].version.number;
 
                             var cataloguePutRequest = new ConfluencePagePutRequest()
                             {
@@ -226,8 +240,10 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                                 }
                             };
                             response = Task.Run(async () => await _client.PutAsJsonAsync($"{uri}/{id}", cataloguePutRequest)).Result;
-                            var putContent = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
-                            var putResponseContent = JsonConvert.DeserializeObject<ConfluencePagePostResponse>(putContent);
+                            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                            {
+                                //some sort of error
+                            }
                         }
                     }
                     else
@@ -249,6 +265,10 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                     }
                 };
                 response = Task.Run(async () => await _client.PutAsJsonAsync($"{uri}/{rootParentId}", putRequest)).Result;
+                if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                {
+                    //some sort of error
+                }
             }
             else
             {

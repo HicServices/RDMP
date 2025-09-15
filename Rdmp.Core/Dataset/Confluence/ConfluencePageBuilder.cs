@@ -2,8 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Rdmp.Core.Dataset.Confluence
 {
@@ -13,9 +11,7 @@ namespace Rdmp.Core.Dataset.Confluence
         private readonly List<Catalogue> _catalogues;
 
         private readonly string _repositoryName = "";
-        //HIC
         private readonly string _repositoryDescription = "";
-        //A HIC dataset offers a theme-specific database of residents in the Tayside region.
         private readonly string _subdomain = "";
         public ConfluencePageBuilder(List<Catalogue> catalogues, string name,string description, string subdomain) { 
             _catalogues = catalogues;
@@ -77,13 +73,14 @@ namespace Rdmp.Core.Dataset.Confluence
                     <td>{catalogueItem.ExtractionInformation.IsPrimaryKey}</td>
                     <td>{catalogueItem.Description}</td>
                     <td>{catalogueItem.ExtractionInformation.IsExtractionIdentifier}</td>
-                    <td>{lookups.Any()}</td>
+                    <td>{lookups.Length != 0}</td>
                 </tr>
                 """;
         }
 
         public string BuildHTMLForCatalogue(Catalogue catalogue)
         {
+            //todo think about splitting and spacing of some of these values
             return $"""
             <h2>Dataset Summary</h2>
             <p>{catalogue.Description}</p>
@@ -188,7 +185,7 @@ namespace Rdmp.Core.Dataset.Confluence
                 </tr>
                 <tr>
                     <th>Initial Release Date</th>
-                    <td>{catalogue.DatasetReleaseDate.ToString()}</td>
+                    <td>{catalogue.DatasetReleaseDate}</td>
                 </tr>
                 <tr>
                     <th>Update Lag</th>
