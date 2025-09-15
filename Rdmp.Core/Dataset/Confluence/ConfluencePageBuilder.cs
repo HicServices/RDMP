@@ -10,23 +10,24 @@ namespace Rdmp.Core.Dataset.Confluence
     public class ConfluencePageBuilder
     {
 
-        private List<Catalogue> _catalogues;
+        private readonly List<Catalogue> _catalogues;
 
-        private string _repositoryName = "";
+        private readonly string _repositoryName = "";
         //HIC
-        private string _repositoryDescription = "";
+        private readonly string _repositoryDescription = "";
         //A HIC dataset offers a theme-specific database of residents in the Tayside region.
-
-        public ConfluencePageBuilder(List<Catalogue> catalogues, string name,string description) { 
+        private readonly string _subdomain = "";
+        public ConfluencePageBuilder(List<Catalogue> catalogues, string name,string description, string subdomain) { 
             _catalogues = catalogues;
             _repositoryName = name;
             _repositoryDescription = description;
+            _subdomain = subdomain;
         }
 
-        public string BuildRootPage() { return BuildContainerPage(); }
-
-        private static string BuildCatalogueOverviewHTML(Catalogue catalogue)
+        private string BuildCatalogueOverviewHTML(Catalogue catalogue,string pageId)
         {
+            string name = pageId != null ?$"<a href='https://{_subdomain}.atlassian.net/wiki/{pageId}'>{catalogue.Name}</a>" : catalogue.Name;
+
             return $"""
                 <h2>{catalogue.Name}</h2>
                 <table>
@@ -43,7 +44,7 @@ namespace Rdmp.Core.Dataset.Confluence
                 </tr>
                 <tr>
                     <td>
-                        {catalogue.Name} - todo make link
+                        {name}
                     </td>
                     <td>
                         {catalogue.Description}
@@ -56,13 +57,13 @@ namespace Rdmp.Core.Dataset.Confluence
                 """;
         }
 
-        private string BuildContainerPage() {
+        public string BuildContainerPage(Dictionary<int, string> cataloguePageLookup) {
             return $"""
            
             <h2>{_repositoryName} Catalogues</h2>
             <p>{_repositoryDescription}</p>
             <p><ac:structured-macro ac:name='toc'/></p>
-            {string.Join("",_catalogues.Select(c => BuildCatalogueOverviewHTML(c)))}
+            {string.Join("",_catalogues.Select(c => { cataloguePageLookup.TryGetValue(c.ID, out var pageId); return BuildCatalogueOverviewHTML(c, pageId); }))}
             """;
         }
 
