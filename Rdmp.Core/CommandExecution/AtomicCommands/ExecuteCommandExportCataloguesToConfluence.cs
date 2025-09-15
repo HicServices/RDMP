@@ -18,6 +18,9 @@ using System.Threading.Tasks;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
+    /// <summary>
+    /// Uses provided Confluence credentials to populate a tree of pages about the public catalogues in RDMP
+    /// </summary>
     public class ExecuteCommandExportCataloguesToConfluence : BasicCommandExecution, IAtomicCommand
     {
 

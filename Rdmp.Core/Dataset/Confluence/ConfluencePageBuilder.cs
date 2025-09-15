@@ -5,6 +5,12 @@ using System.Linq;
 
 namespace Rdmp.Core.Dataset.Confluence
 {
+    /// <summary>
+    /// Used to generate HTML to create a confluence tree of
+    /// - Overview Page
+    ///     - Each catalogue
+    /// Tabulates dataset variables and metadata about each catalogue
+    /// </summary>
     public class ConfluencePageBuilder
     {
 
