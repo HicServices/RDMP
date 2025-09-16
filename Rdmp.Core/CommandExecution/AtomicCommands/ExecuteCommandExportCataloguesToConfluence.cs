@@ -161,7 +161,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
         private bool PageAlreadyExists(ConfluencePostErrors errors)
         {
-            return errors.errors.Count == 1 && errors.errors[0].title.Contains("page with this title already exists")
+            return errors.errors.Count == 1 && errors.errors[0].title.Contains("page with this title already exists");
         }
 
         private void CreateContainerPage(ConfluencePageBuilder builder, string uri)
