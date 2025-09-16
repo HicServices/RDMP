@@ -1,6 +1,8 @@
 ﻿using Amazon.Runtime.Internal.Endpoints.StandardLibrary;
+using Azure;
 using Newtonsoft.Json;
 using NPOI.SS.Formula.Functions;
+using Org.BouncyCastle.Asn1.BC;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Dataset.Confluence;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
@@ -15,6 +17,7 @@ using System.Net.Http.Json;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using Terminal.Gui;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -32,7 +35,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         private readonly string _description;
         private readonly HttpClient _client = new();
         private Dictionary<int, string> _cataloguePageLookups = new();
-
+        private string rootParentId = null;
+        private int rootParentVersion = 0;
         private class ConfluencePageBody
         {
             public string representation { get; set; } = "storage";
@@ -127,20 +131,41 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             return JsonConvert.DeserializeObject<ConfluenceGetResults>(content);
         }
 
-        public override void Execute()
+
+        private void UpdateContainerPage(ConfluencePageBuilder builder, string uri)
         {
-            base.Execute();
-            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", _apiKey);
+            var rootPageHTML = builder.BuildContainerPage(_cataloguePageLookups);
+            var putRequest = new ConfluencePagePutRequest()
+            {
+                id = int.Parse(rootParentId),
+                title = $"{_owner} Catalogues",
+                status = "current",
+                body = new ConfluencePageBody() { value = rootPageHTML },
+                version = new ConfluencePageVersion()
+                {
+                    number = rootParentVersion + 1
+                }
+            };
+            var response = Task.Run(async () => await _client.PutAsJsonAsync($"{uri}/{rootParentId}", putRequest)).Result;
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                var putResponseContent = ResponseToConfluenceResponseObject(response);
+                rootParentId = putResponseContent.id;
+                rootParentVersion = putResponseContent.version.number;
+            }
+            else
+            {
+                throw new Exception("Unable to update container page");
+            }
+        }
 
-            var catalogues = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>()
-                .Where(c => !c.IsColdStorageDataset && !c.IsDeprecated && !c.IsInternalDataset && !c.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository))
-                .ToList();
-            var builder = new ConfluencePageBuilder(catalogues, _owner, _description, _subdomain);
-            var uri = $"https://{_subdomain}.atlassian.net/wiki/api/v2/pages";
-            string rootParentId = null;
-            int rootParentVersion = 0;
+        private bool PageAlreadyExists(ConfluencePostErrors errors)
+        {
+            return errors.errors.Count == 1 && errors.errors[0].title.Contains("page with this title already exists")
+        }
 
-            //container page
+        private void CreateContainerPage(ConfluencePageBuilder builder, string uri)
+        {
             var rootPageHTML = builder.BuildContainerPage(_cataloguePageLookups);
             var request = new ConfluencePagePostRequest()
             {
@@ -158,10 +183,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
             {
                 var confluenceErrorsResponse = PostResponseToConfluenceErrorsObject(response);
-                if (confluenceErrorsResponse.errors.Count == 1 && confluenceErrorsResponse.errors[0].title.Contains("page with this title already exists"))
+                if (PageAlreadyExists(confluenceErrorsResponse))
                 {
-                    //page already exists - update it
-                    //need to get version
                     var foundPages = GetConfluencePage(uri, request.title);
                     if (foundPages.results.Count != 1)
                     {
@@ -169,113 +192,96 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                     }
                     rootParentId = foundPages.results[0].id;
                     rootParentVersion = foundPages.results[0].version.number;
-
-                    var putRequest = new ConfluencePagePutRequest()
-                    {
-                        id = int.Parse(rootParentId),
-                        title = $"{_owner} Catalogues",
-                        status = "current",
-                        body = new ConfluencePageBody() { value = rootPageHTML },
-                        version = new ConfluencePageVersion()
-                        {
-                            number = rootParentVersion + 1
-                        }
-                    };
-                    response = Task.Run(async () => await _client.PutAsJsonAsync($"{uri}/{rootParentId}", putRequest)).Result;
-                    var putResponseContent = ResponseToConfluenceResponseObject(response);
-                    rootParentId = putResponseContent.id;
-                    rootParentVersion = putResponseContent.version.number;
+                    UpdateContainerPage(builder, uri);
                 }
                 else
                 {
-                    //who knows whats gone wrong...
+                    throw new Exception($"Unexpected Error when creating container page - {confluenceErrorsResponse.errors[0].title}");
                 }
             }
             else
             {
-                Console.WriteLine($"Unable to create root page  - {response.StatusCode}");
-                return;
+                throw new Exception($"Unable to create root page  - {response.StatusCode}");
             }
-            //catalogue pages
+        }
+
+        private void CreateCataloguePage(Catalogue catalogue, ConfluencePageBuilder builder, string uri)
+        {
+            var cataloguePageHTML = builder.BuildHTMLForCatalogue(catalogue);
+            var request = new ConfluencePagePostRequest()
+            {
+                spaceId = _spaceId.ToString(),
+                title = catalogue.Name,
+                parentId = rootParentId,
+                body = new ConfluencePageBody() { value = cataloguePageHTML }
+            };
+            var response = Task.Run(async () => await _client.PostAsJsonAsync(uri, request)).Result;
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                var responseContent = ResponseToConfluenceResponseObject(response);
+                _cataloguePageLookups.TryAdd(catalogue.ID, responseContent._links.webui);
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            {
+                var responseContent = PostResponseToConfluenceErrorsObject(response);
+                if (PageAlreadyExists(responseContent))
+                {
+                    var getResults = GetConfluencePage(uri, request.title);
+                    if (getResults.results.Count != 1)
+                    {
+                        throw new Exception($"Multiple pages in pace {_spaceId} with name {request.title}");
+                    }
+                    var id = getResults.results[0].id;
+                    var version = getResults.results[0].version.number;
+
+                    var cataloguePutRequest = new ConfluencePagePutRequest()
+                    {
+                        id = int.Parse(id),
+                        title = request.title,
+                        status = "current",
+                        body = new ConfluencePageBody() { value = cataloguePageHTML },
+                        version = new ConfluencePageVersion()
+                        {
+                            number = version + 1
+                        }
+                    };
+                    response = Task.Run(async () => await _client.PutAsJsonAsync($"{uri}/{id}", cataloguePutRequest)).Result;
+                    if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                    {
+                        throw new Exception($"Unable to PUT update for catalogue '{catalogue.Name}' - {response.StatusCode}");
+                    }
+                }
+            }
+            else
+            {
+                throw new Exception($"Unknown status code when working with catalogue '{catalogue.Name}' - {response.StatusCode}");
+            }
+        }
+
+        public override void Execute()
+        {
+            base.Execute();
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", _apiKey);
+
+            var catalogues = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>()
+                .Where(c => !c.IsColdStorageDataset && !c.IsDeprecated && !c.IsInternalDataset && !c.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository))
+                .ToList();
+            var builder = new ConfluencePageBuilder(catalogues, _owner, _description, _subdomain);
+            var uri = $"https://{_subdomain}.atlassian.net/wiki/api/v2/pages";
+
+            CreateContainerPage(builder, uri);
             if (rootParentId != null)
             {
                 foreach (var catalogue in catalogues)
                 {
-                    var cataloguePageHTML = builder.BuildHTMLForCatalogue(catalogue);
-                    request = new ConfluencePagePostRequest()
-                    {
-                        spaceId = _spaceId.ToString(),
-                        title = catalogue.Name,
-                        parentId = rootParentId,
-                        body = new ConfluencePageBody() { value = cataloguePageHTML }
-                    };
-                    response = Task.Run(async () => await _client.PostAsJsonAsync(uri, request)).Result;
-                    if (response.StatusCode == System.Net.HttpStatusCode.OK)
-                    {
-                        var responseContent = ResponseToConfluenceResponseObject(response);
-                        _cataloguePageLookups.TryAdd(catalogue.ID, responseContent._links.webui);
-                    }
-                    else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
-                    {
-                        var responseContent = PostResponseToConfluenceErrorsObject(response);
-                        if (responseContent.errors.Count == 1 && responseContent.errors[0].title.Contains("page with this title already exists"))
-                        {
-                            //already exists, do a put
-                            //page already exists - update it
-                            //need to get version
-                            var getResults = GetConfluencePage(uri, request.title);
-                            if (getResults.results.Count != 1)
-                            {
-                                throw new Exception($"Multiple pages in pace {_spaceId} with name {request.title}");
-                            }
-                            var id = getResults.results[0].id;
-                            var version = getResults.results[0].version.number;
+                    CreateCataloguePage(catalogue, builder, uri);
+                }
+                UpdateContainerPage(builder, uri);//re-add the links for the catalogue pages to the home page
 
-                            var cataloguePutRequest = new ConfluencePagePutRequest()
-                            {
-                                id = int.Parse(id),
-                                title = request.title,
-                                status = "current",
-                                body = new ConfluencePageBody() { value = rootPageHTML },
-                                version = new ConfluencePageVersion()
-                                {
-                                    number = version + 1
-                                }
-                            };
-                            response = Task.Run(async () => await _client.PutAsJsonAsync($"{uri}/{id}", cataloguePutRequest)).Result;
-                            if (response.StatusCode != System.Net.HttpStatusCode.OK)
-                            {
-                                //some sort of error
-                            }
-                        }
-                    }
-                    else
-                    {
-                        //really bad
-                    }
-                }
-                //re-add the links for the catalogue pages to the home page
-                rootPageHTML = builder.BuildContainerPage(_cataloguePageLookups);
-                var putRequest = new ConfluencePagePutRequest()
-                {
-                    id = int.Parse(rootParentId),
-                    title = $"{_owner} Catalogues",
-                    status = "current",
-                    body = new ConfluencePageBody() { value = rootPageHTML },
-                    version = new ConfluencePageVersion()
-                    {
-                        number = rootParentVersion + 1
-                    }
-                };
-                response = Task.Run(async () => await _client.PutAsJsonAsync($"{uri}/{rootParentId}", putRequest)).Result;
-                if (response.StatusCode != System.Net.HttpStatusCode.OK)
-                {
-                    //some sort of error
-                }
             }
             else
             {
-                Console.WriteLine($"Unable to find root id in response - {response.Content.ToString()}");
+                throw new Exception($"Unable to find root id in response");
 
             }
         }
