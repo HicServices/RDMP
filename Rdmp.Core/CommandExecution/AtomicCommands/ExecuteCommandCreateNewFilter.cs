@@ -10,8 +10,10 @@ using Rdmp.Core.CommandLine.Interactive.Picking;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.FilterImporting;
 using Rdmp.Core.Curation.FilterImporting.Construction;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
@@ -35,23 +37,11 @@ public class ExecuteCommandCreateNewFilter : BasicCommandExecution, IAtomicComma
     private IFilter[] _offerFilters = [];
     private bool offerCatalogueFilters;
 
-
-
     public bool OfferCatalogueFilters
     {
         get => offerCatalogueFilters;
         set
         {
-            if (value)
-            {
-                var c = GetCatalogue();
-                _offerFilters = c?.GetAllFilters();
-
-                if (_offerFilters == null || !_offerFilters.Any())
-                    SetImpossible($"There are no Filters declared in Catalogue '{c?.ToString() ?? "NULL"}'");
-            }
-
-
             offerCatalogueFilters = value;
         }
     }
@@ -136,7 +126,6 @@ where    Optional SQL to set for the filter.  If <basedOn> is not null this will
         _factory = host.GetFilterFactory();
         _container = host.RootFilterContainer;
         _host = host;
-
         if (_container == null && _host is AggregateConfiguration ac)
         {
             if (ac.Catalogue.IsApiCall())
@@ -204,6 +193,7 @@ where    Optional SQL to set for the filter.  If <basedOn> is not null this will
             container = _host.RootFilterContainer;
         }
 
+
         // if importing an existing filter instead of creating blank
         if (BasedOn != null)
         {
@@ -212,6 +202,23 @@ where    Optional SQL to set for the filter.  If <basedOn> is not null this will
         }
         else if (OfferCatalogueFilters)
         {
+
+            var c = GetCatalogue();
+            _offerFilters = c?.GetAllFilters();
+            if (_host is SelectedDataSets sds)
+            {
+                var cohortId = sds.ExtractionConfiguration.Cohort.OriginID;
+                var cic = c.CatalogueRepository.GetObjectByID<CohortIdentificationConfiguration>(cohortId);
+                if (cic != null)
+                {
+                    var filters = cic.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively().SelectMany(ac => ac.RootFilterContainer.GetAllFiltersIncludingInSubContainersRecursively());
+                    filters = filters.Where(f => f.GetCatalogue().ID == c.ID);
+                    _offerFilters = _offerFilters.Concat(filters).ToArray();
+                }
+            }
+            if (_offerFilters == null || !_offerFilters.Any())
+                SetImpossible($"There are no Filters declared in Catalogue '{c?.ToString() ?? "NULL"}'");
+
             // we want user to make decision about what to import
             ImportExistingFilter(container);
             return;

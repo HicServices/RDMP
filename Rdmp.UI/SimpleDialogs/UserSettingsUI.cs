@@ -108,6 +108,7 @@ public partial class UserSettingsFileUI : Form
         RegisterCheckbox(cbUseAliasInsteadOfTransformInGroupByAggregateGraphs,
             nameof(UserSettings.UseAliasInsteadOfTransformInGroupByAggregateGraphs));
         RegisterCheckbox(cbUseLocalFileSystem, nameof(UserSettings.UseLocalFileSystem));
+        RegisterCheckbox(cbFlatLogs, nameof(UserSettings.DefaultLogViewFlat));
         AddTooltip(label7, nameof(UserSettings.CreateDatabaseTimeout));
         AddTooltip(tbCreateDatabaseTimeout, nameof(UserSettings.CreateDatabaseTimeout));
         AddTooltip(label13, nameof(UserSettings.ArchiveTriggerTimeout));

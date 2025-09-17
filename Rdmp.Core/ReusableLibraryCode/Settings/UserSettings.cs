@@ -195,6 +195,12 @@ public static class UserSettings
         set => AppSettings.AddOrUpdateValue("ExtractionWebhookUrl", value);
     }
 
+    public static bool DefaultLogViewFlat
+    {
+        get => AppSettings.GetValueOrDefault("DefaultLogViewFlat", false);
+        set => AppSettings.AddOrUpdateValue("DefaultLogViewFlat", value);
+    }
+
     #region Catalogue flag visibility settings
 
     public static bool ShowInternalCatalogues
