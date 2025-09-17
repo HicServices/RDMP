@@ -31,7 +31,10 @@ namespace Rdmp.UI.CatalogueAnalysisUIs.Charts
             _chart = chart;
             groupBox1.Text = _chart.Title;
             //todo if table...
-            multiPurposeChart1.Init(_chart.GetResults(), (System.Windows.Forms.DataVisualization.Charting.SeriesChartType)_chart.ChartType, "", _chart.SeriesName);
+            if (_chart.ChartType != 35)
+            {
+                multiPurposeChart1.Init(_chart.GetResults(), (System.Windows.Forms.DataVisualization.Charting.SeriesChartType)_chart.ChartType, "", _chart.SeriesName);
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)

@@ -37,6 +37,7 @@ namespace Rdmp.UI.CatalogueAnalysisUIs.Charts
             _DQERepository = repository;
             _chart = chart;
             comboBox1.Items.AddRange(Enum.GetNames(typeof(SeriesChartType)));
+            comboBox1.Items.Add("Table");
             textBox1.Text = _chart.Title;
             textBox2.Text = _chart.SeriesName;
             comboBox1.SelectedIndex = _chart.ChartType;
