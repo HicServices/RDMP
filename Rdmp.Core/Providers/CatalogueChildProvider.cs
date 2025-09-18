@@ -57,32 +57,45 @@ public class CatalogueChildProvider : ICoreChildProvider
 {
 
     //Load System
-    public LoadMetadata[] AllLoadMetadatas { get; set; }
-    public LoadMetadataCatalogueLinkage[] AllLoadMetadataCatalogueLinkages { get; set; }
+    Lazy<LoadMetadata[]> _lazyAllLoadMetadatas;
+    public LoadMetadata[] AllLoadMetadatas { get => _lazyAllLoadMetadatas.Value; }
 
-    private LoadMetadataCatalogueLinkage[] AllLoadMetadataLinkage { get; set; }
-    public ProcessTask[] AllProcessTasks { get; set; }
-    public ProcessTaskArgument[] AllProcessTasksArguments { get; set; }
+    Lazy<LoadMetadataCatalogueLinkage[]> _lazyAllLoadMetadataCatalogueLinkages;
+    public LoadMetadataCatalogueLinkage[] AllLoadMetadataCatalogueLinkages { get => _lazyAllLoadMetadataCatalogueLinkages.Value; }
 
-    public LoadProgress[] AllLoadProgresses { get; set; }
-    public CacheProgress[] AllCacheProgresses { get; set; }
-    public PermissionWindow[] AllPermissionWindows { get; set; }
+    Lazy<LoadMetadataCatalogueLinkage[]> _lazyAllLoadMetadataLinkage;
+    private LoadMetadataCatalogueLinkage[] AllLoadMetadataLinkage { get => _lazyAllLoadMetadataLinkage.Value; }
+
+    Lazy<ProcessTask[]> _lazyAllProcessTasks;
+    public ProcessTask[] AllProcessTasks { get => _lazyAllProcessTasks.Value; }
+
+    Lazy<ProcessTaskArgument[]> _lazyAllProcessTasksArguments;
+    public ProcessTaskArgument[] AllProcessTasksArguments { get => _lazyAllProcessTasksArguments.Value; }
+
+    Lazy<LoadProgress[]> _lazyAllLoadProgress;
+    public LoadProgress[] AllLoadProgresses { get => _lazyAllLoadProgress.Value; }
+
+    Lazy<CacheProgress[]> _lazyAllCacheProgresses;
+    public CacheProgress[] AllCacheProgresses { get => _lazyAllCacheProgresses.Value; }
+
+    Lazy<PermissionWindow[]> _lazyAllPermissionWindows;
+    public PermissionWindow[] AllPermissionWindows { get => _lazyAllPermissionWindows.Value; }
 
     //Catalogue side of things
     Lazy<Catalogue[]> _lazyAllCatalogues;
-    public Catalogue[] AllCatalogues
-    {
-        get
-        {
-            return _lazyAllCatalogues.Value;
-        }
-    }
+    public Catalogue[] AllCatalogues { get => _lazyAllCatalogues.Value; }
 
-    public Curation.Data.Dataset[] AllDatasets { get; set; }
-    public Dictionary<int, Catalogue> AllCataloguesDictionary { get; private set; }
+    Lazy<Curation.Data.Dataset[]> _lazyAllDatasets;
+    public Curation.Data.Dataset[] AllDatasets { get => _lazyAllDatasets.Value; }
 
-    public SupportingDocument[] AllSupportingDocuments { get; set; }
-    public SupportingSQLTable[] AllSupportingSQL { get; set; }
+    Lazy<Dictionary<int, Catalogue>> _lazyAllCataloguesDictionary;
+    public Dictionary<int, Catalogue> AllCataloguesDictionary { get => _lazyAllCataloguesDictionary.Value; }
+
+    Lazy<SupportingDocument[]> _lazyAllSupportingDocuments;
+    public SupportingDocument[] AllSupportingDocuments { get => _lazyAllSupportingDocuments.Value; }
+
+    Lazy<SupportingSQLTable[]> _lazyAllSupportingSQL;
+    public SupportingSQLTable[] AllSupportingSQL { get => _lazyAllSupportingSQL.Value; }
 
     //tells you the immediate children of a given node.  Do not add to this directly instead add using AddToDictionaries unless you want the Key to be an 'on the sly' no known descendency child
     private ConcurrentDictionary<object, HashSet<object>> _childDictionary = new();
@@ -91,6 +104,8 @@ public class CatalogueChildProvider : ICoreChildProvider
     //this tells you for a given child object what the navigation tree down to get to it is e.g. ascendancy[child] would return [root,grandParent,parent]
     private ConcurrentDictionary<object, DescendancyList> _descendancyDictionary = new();
 
+
+    //TODO - below here
     public IEnumerable<CatalogueItem> AllCatalogueItems => AllCatalogueItemsDictionary.Values;
 
     private Dictionary<int, List<CatalogueItem>> _catalogueToCatalogueItems;
@@ -98,133 +113,227 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     private Dictionary<int, ColumnInfo> _allColumnInfos;
 
-    public AggregateConfiguration[] AllAggregateConfigurations { get; private set; }
-    public AggregateDimension[] AllAggregateDimensions { get; private set; }
+    //TODO till here, there is something funky going on
 
-    public AggregateContinuousDateAxis[] AllAggregateContinuousDateAxis { get; private set; }
+    Lazy<AggregateConfiguration[]> _lazyAllAggregateConfigurations;
+    public AggregateConfiguration[] AllAggregateConfigurations { get => _lazyAllAggregateConfigurations.Value; }
+
+    Lazy<AggregateDimension[]> _lazyAllAggregateDimensions;
+    public AggregateDimension[] AllAggregateDimensions { get => _lazyAllAggregateDimensions.Value; }
+
+    Lazy<AggregateContinuousDateAxis[]> _lazyAllAggregateContinuousDataAxis;
+    public AggregateContinuousDateAxis[] AllAggregateContinuousDateAxis { get => _lazyAllAggregateContinuousDataAxis.Value; }
 
     Lazy<AllRDMPRemotesNode> _lazyAllRDMPRemotesNode;
-    public AllRDMPRemotesNode AllRDMPRemotesNode { get { return _lazyAllRDMPRemotesNode.Value; }}
+    public AllRDMPRemotesNode AllRDMPRemotesNode { get { return _lazyAllRDMPRemotesNode.Value; } }
     //public RemoteRDMP[] AllRemoteRDMPs { get; set; }
     Lazy<RemoteRDMP[]> _lazyAllRemoteRDMPs;
     public RemoteRDMP[] AllRemoteRDMPs
     {
-        get
-        {
-            var x = Environment.StackTrace;
-            return _lazyAllRemoteRDMPs.Value;
-        }
+        get => _lazyAllRemoteRDMPs.Value;
     }
 
-    public AllDashboardsNode AllDashboardsNode { get; set; }
-    public DashboardLayout[] AllDashboards { get; set; }
+    Lazy<AllDashboardsNode> _lazyAllDashboardsNode;
+    public AllDashboardsNode AllDashboardsNode { get => _lazyAllDashboardsNode.Value; }
 
-    public AllObjectSharingNode AllObjectSharingNode { get; private set; }
-    public ObjectImport[] AllImports { get; set; }
-    public ObjectExport[] AllExports { get; set; }
+    Lazy<DashboardLayout[]> _lazyAllDashboards;
+    public DashboardLayout[] AllDashboards { get => _lazyAllDashboards.Value; }
 
-    public AllStandardRegexesNode AllStandardRegexesNode { get; private set; }
-    public AllPipelinesNode AllPipelinesNode { get; private set; }
-    public OtherPipelinesNode OtherPipelinesNode { get; private set; }
-    public Pipeline[] AllPipelines { get; set; }
-    public PipelineComponent[] AllPipelineComponents { get; set; }
+    Lazy<AllObjectSharingNode> _lazyAllObjectSharingNode;
+    public AllObjectSharingNode AllObjectSharingNode { get => _lazyAllObjectSharingNode.Value; }
 
-    public PipelineComponentArgument[] AllPipelineComponentsArguments { get; set; }
+    Lazy<ObjectImport[]> _lazyAllImports;
+    public ObjectImport[] AllImports { get => _lazyAllImports.Value; }
 
-    public StandardRegex[] AllStandardRegexes { get; set; }
+    Lazy<ObjectExport[]> _lazyAllExports;
+    public ObjectExport[] AllExports { get => _lazyAllExports.Value; }
+
+
+    Lazy<AllStandardRegexesNode> _lazyAllStandardRegexesNode;
+    public AllStandardRegexesNode AllStandardRegexesNode { get => _lazyAllStandardRegexesNode.Value; }
+
+    Lazy<AllPipelinesNode> _lazyAllPipelinesNode;
+    public AllPipelinesNode AllPipelinesNode { get => _lazyAllPipelinesNode.Value; }
+
+    Lazy<OtherPipelinesNode> _lazyOtherPipelineNode;
+    public OtherPipelinesNode OtherPipelinesNode { get => _lazyOtherPipelineNode.Value; }
+
+    Lazy<Pipeline[]> _lazyAllPipelines;
+    public Pipeline[] AllPipelines { get => _lazyAllPipelines.Value; }
+
+    Lazy<PipelineComponent[]> _lazyAllPipelineComponents;
+    public PipelineComponent[] AllPipelineComponents { get => _lazyAllPipelineComponents.Value; }
+
+    Lazy<PipelineComponentArgument[]> _lazyAllPipelineComponentArgument;
+    public PipelineComponentArgument[] AllPipelineComponentsArguments { get => _lazyAllPipelineComponentArgument.Value; }
+
+    Lazy<StandardRegex[]> _lazyAllStandardRegex;
+    public StandardRegex[] AllStandardRegexes { get => _lazyAllStandardRegex.Value; }
 
     //TableInfo side of things
-    public AllANOTablesNode AllANOTablesNode { get; private set; }
-    public ANOTable[] AllANOTables { get; set; }
+    Lazy<AllANOTablesNode> _lazyAllANOTableNodes;
+    public AllANOTablesNode AllANOTablesNode { get => _lazyAllANOTableNodes.Value; }
 
-    public ExternalDatabaseServer[] AllExternalServers { get; private set; }
-    public TableInfoServerNode[] AllServers { get; private set; }
-    public TableInfo[] AllTableInfos { get; private set; }
+    Lazy<ANOTable[]> _lazyAllANOTables;
+    public ANOTable[] AllANOTables { get => _lazyAllANOTables.Value; }
 
-    public AllDataAccessCredentialsNode AllDataAccessCredentialsNode { get; set; }
+    Lazy<ExternalDatabaseServer[]> _lazyAllExternalServers;
+    public ExternalDatabaseServer[] AllExternalServers { get => _lazyAllExternalServers.Value; }
 
-    public AllExternalServersNode AllExternalServersNode { get; private set; }
-    public AllServersNode AllServersNode { get; private set; }
+    Lazy<TableInfoServerNode[]> _lazyAllServers;
+    public TableInfoServerNode[] AllServers { get => _lazyAllServers.Value; }
 
-    public DataAccessCredentials[] AllDataAccessCredentials { get; set; }
-    public Dictionary<ITableInfo, List<DataAccessCredentialUsageNode>> AllDataAccessCredentialUsages { get; set; }
+    Lazy<TableInfo[]> _lazyAllTableInfos;
+    public TableInfo[] AllTableInfos { get => _lazyAllTableInfos.Value; }
 
-    public Dictionary<int, List<ColumnInfo>> TableInfosToColumnInfos { get; private set; }
-    public ColumnInfo[] AllColumnInfos { get; private set; }
-    public PreLoadDiscardedColumn[] AllPreLoadDiscardedColumns { get; private set; }
 
-    public Lookup[] AllLookups { get; set; }
+    Lazy<AllDataAccessCredentialsNode> _lazyAllDataAccessCredentialsNode;
+    public AllDataAccessCredentialsNode AllDataAccessCredentialsNode { get => _lazyAllDataAccessCredentialsNode.Value; }
 
-    public JoinInfo[] AllJoinInfos { get; set; }
+    Lazy<AllExternalServersNode> _lazyAllExternalServersNode;
+    public AllExternalServersNode AllExternalServersNode { get => _lazyAllExternalServersNode.Value; }
 
-    public AnyTableSqlParameter[] AllAnyTableParameters;
+    Lazy<AllServersNode> _lazyAllServersNode;
+    public AllServersNode AllServersNode { get => _lazyAllServersNode.Value; }
+
+    Lazy<DataAccessCredentials[]> _lazyAllDataAccessCredentials;
+    public DataAccessCredentials[] AllDataAccessCredentials { get => _lazyAllDataAccessCredentials.Value; }
+
+    Lazy<Dictionary<ITableInfo, List<DataAccessCredentialUsageNode>>> _lazyAllDataAccessCredentialsUsage;
+    public Dictionary<ITableInfo, List<DataAccessCredentialUsageNode>> AllDataAccessCredentialUsages { get => _lazyAllDataAccessCredentialsUsage.Value; }
+
+    Lazy<Dictionary<int, List<ColumnInfo>>> _lazyTableInfosToColumnInfos;
+    public Dictionary<int, List<ColumnInfo>> TableInfosToColumnInfos { get => _lazyTableInfosToColumnInfos.Value; }
+
+    Lazy<ColumnInfo[]> _lazyAllColumnInfos;
+    public ColumnInfo[] AllColumnInfos { get => _lazyAllColumnInfos.Value; }
+
+    Lazy<PreLoadDiscardedColumn[]> _lazyAllPreLoadDiscardedColumns;
+    public PreLoadDiscardedColumn[] AllPreLoadDiscardedColumns { get => _lazyAllPreLoadDiscardedColumns.Value; }
+
+    Lazy<Lookup[]> _lazyAllLookups;
+    public Lookup[] AllLookups { get => _lazyAllLookups.Value; }
+
+    Lazy<JoinInfo[]> _lazyAllJoinInfos;
+    public JoinInfo[] AllJoinInfos { get => _lazyAllJoinInfos.Value; }
+
+    Lazy<AnyTableSqlParameter[]> _lazyAllAnyTableParameters;
+    public AnyTableSqlParameter[] AllAnyTableParameters { get => _lazyAllAnyTableParameters.Value; }
 
     //Filter / extraction side of things
     public IEnumerable<ExtractionInformation> AllExtractionInformations => AllExtractionInformationsDictionary.Values;
 
-    public AllPermissionWindowsNode AllPermissionWindowsNode { get; set; }
-    public FolderNode<LoadMetadata> LoadMetadataRootFolder { get; set; }
+    Lazy<AllPermissionWindowsNode> _lazyAllPermissionWindowsNode;
+    public AllPermissionWindowsNode AllPermissionWindowsNode { get => _lazyAllPermissionWindowsNode.Value; }
 
-    public FolderNode<Curation.Data.Dataset> DatasetRootFolder { get; set; }
-    public FolderNode<CohortIdentificationConfiguration> CohortIdentificationConfigurationRootFolder { get; set; }
-    public FolderNode<CohortIdentificationConfiguration> CohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations { get; set; }
+    Lazy<FolderNode<LoadMetadata>> _lazyLoadMetadataRootFolder;
+    public FolderNode<LoadMetadata> LoadMetadataRootFolder { get => _lazyLoadMetadataRootFolder.Value; }
 
-    public AllConnectionStringKeywordsNode AllConnectionStringKeywordsNode { get; set; }
-    public ConnectionStringKeyword[] AllConnectionStringKeywords { get; set; }
+    Lazy<FolderNode<Curation.Data.Dataset>> _lazyDatasetRootFolder;
+    public FolderNode<Curation.Data.Dataset> DatasetRootFolder { get => _lazyDatasetRootFolder.Value; }
 
-    public Dictionary<int, ExtractionInformation> AllExtractionInformationsDictionary { get; private set; }
+    Lazy<FolderNode<CohortIdentificationConfiguration>> _lazyCohortidentificationConfigurationRootFolder;
+    public FolderNode<CohortIdentificationConfiguration> CohortIdentificationConfigurationRootFolder { get => _lazyCohortidentificationConfigurationRootFolder.Value; }
+
+    Lazy<FolderNode<CohortIdentificationConfiguration>> _lazyCohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations;
+    public FolderNode<CohortIdentificationConfiguration> CohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations { get => _lazyCohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations.Value; }
+
+    Lazy<AllConnectionStringKeywordsNode> _lazyAllConnectionStringKeyworksNode;
+    public AllConnectionStringKeywordsNode AllConnectionStringKeywordsNode { get => _lazyAllConnectionStringKeyworksNode.Value; }
+
+    Lazy<ConnectionStringKeyword[]> _lazyAllConnectionStringKeywords;
+    public ConnectionStringKeyword[] AllConnectionStringKeywords { get => _lazyAllConnectionStringKeywords.Value; }
+
+    Lazy<Dictionary<int, ExtractionInformation>> _lazyAllExtractionInformationsDictionary;
+    public Dictionary<int, ExtractionInformation> AllExtractionInformationsDictionary { get => _lazyAllExtractionInformationsDictionary.Value; }
+
     protected Dictionary<int, ExtractionInformation> _extractionInformationsByCatalogueItem;
 
     private IFilterManager _aggregateFilterManager;
 
     //Filters for Aggregates (includes filter containers (AND/OR)
-    public Dictionary<int, AggregateFilterContainer> AllAggregateContainersDictionary { get; private set; }
+    Lazy<Dictionary<int, AggregateFilterContainer>> _lazyAllAggregateContainersDictionary;
+    public Dictionary<int, AggregateFilterContainer> AllAggregateContainersDictionary { get => _lazyAllAggregateContainersDictionary.Value; }
+
     public AggregateFilterContainer[] AllAggregateContainers => AllAggregateContainersDictionary.Values.ToArray();
 
-    public AggregateFilter[] AllAggregateFilters { get; private set; }
-    public AggregateFilterParameter[] AllAggregateFilterParameters { get; private set; }
+    Lazy<AggregateFilter[]> _lazyAllAggregateFilters;
+    public AggregateFilter[] AllAggregateFilters { get => _lazyAllAggregateFilters.Value; }
+    Lazy<AggregateFilterParameter[]> _lazyAllAggregateFilterParameters;
+    public AggregateFilterParameter[] AllAggregateFilterParameters { get => _lazyAllAggregateFilterParameters.Value; }
 
     //Catalogue master filters (does not include any support for filter containers (AND/OR)
-    private ExtractionFilter[] AllCatalogueFilters;
-    public ExtractionFilterParameter[] AllCatalogueParameters;
-    public ExtractionFilterParameterSet[] AllCatalogueValueSets;
-    public ExtractionFilterParameterSetValue[] AllCatalogueValueSetValues;
+    Lazy<ExtractionFilter[]> _lazyAllCatalogueFilters;
+    private ExtractionFilter[] AllCatalogueFilters { get => _lazyAllCatalogueFilters.Value; }
+    Lazy<ExtractionFilterParameter[]> _lazyAllCatalogueParameters;
+    public ExtractionFilterParameter[] AllCatalogueParameters { get => _lazyAllCatalogueParameters.Value; }
+
+    Lazy<ExtractionFilterParameterSet[]> _lazyAllCatalogueValueSets;
+    public ExtractionFilterParameterSet[] AllCatalogueValueSets { get => _lazyAllCatalogueValueSets.Value; }
+    Lazy<ExtractionFilterParameterSetValue[]> _lazyAllCatalogueValueSetValues;
+    public ExtractionFilterParameterSetValue[] AllCatalogueValueSetValues { get => _lazyAllCatalogueValueSetValues.Value; }
 
     private ICohortContainerManager _cohortContainerManager;
 
-    public CohortIdentificationConfiguration[] AllCohortIdentificationConfigurations { get; private set; }
-    public CohortAggregateContainer[] AllCohortAggregateContainers { get; set; }
-    public JoinableCohortAggregateConfiguration[] AllJoinables { get; set; }
-    public JoinableCohortAggregateConfigurationUse[] AllJoinUses { get; set; }
+    Lazy<CohortIdentificationConfiguration[]> _lazyAllCohortIdentificationConfigurations;
+    public CohortIdentificationConfiguration[] AllCohortIdentificationConfigurations { get => _lazyAllCohortIdentificationConfigurations.Value; }
+
+    Lazy<CohortAggregateContainer[]> _lazyAllCohortAggregateContainers;
+    public CohortAggregateContainer[] AllCohortAggregateContainers { get => _lazyAllCohortAggregateContainers.Value; }
+
+    Lazy<JoinableCohortAggregateConfiguration[]> _lazyAllJoinables;
+    public JoinableCohortAggregateConfiguration[] AllJoinables { get => _lazyAllJoinables.Value; }
+
+    Lazy<JoinableCohortAggregateConfigurationUse[]> _lazyAllJoinUses;
+    public JoinableCohortAggregateConfigurationUse[] AllJoinUses { get => _lazyAllJoinUses.Value; }
 
     /// <summary>
     /// Collection of all objects for which there are masqueraders
     /// </summary>
-    public ConcurrentDictionary<object, HashSet<IMasqueradeAs>> AllMasqueraders { get; private set; }
+    Lazy<ConcurrentDictionary<object, HashSet<IMasqueradeAs>>> _lazyAllMasquerades;
+    public ConcurrentDictionary<object, HashSet<IMasqueradeAs>> AllMasqueraders { get => _lazyAllMasquerades.Value; }
 
     private IChildProvider[] _pluginChildProviders;
     private readonly ICatalogueRepository _catalogueRepository;
     private readonly ICheckNotifier _errorsCheckNotifier;
     private readonly List<IChildProvider> _blockedPlugins = new();
 
-    public AllGovernanceNode AllGovernanceNode { get; private set; }
-    public GovernancePeriod[] AllGovernancePeriods { get; private set; }
-    public GovernanceDocument[] AllGovernanceDocuments { get; private set; }
-    public Dictionary<int, HashSet<int>> GovernanceCoverage { get; private set; }
+
+    Lazy<AllGovernanceNode> _lazyAllGovernanceNode;
+    public AllGovernanceNode AllGovernanceNode { get => _lazyAllGovernanceNode.Value; }
+
+    Lazy<GovernancePeriod[]> _lazyAllGovernancePeriods;
+    public GovernancePeriod[] AllGovernancePeriods { get => _lazyAllGovernancePeriods.Value; }
+
+    Lazy<GovernanceDocument[]> _lazyAllGovernanceDocuments;
+    public GovernanceDocument[] AllGovernanceDocuments { get => _lazyAllGovernanceDocuments.Value; }
+
+    Lazy<Dictionary<int, HashSet<int>>> _lazyAllGovernanceCoverage;
+    public Dictionary<int, HashSet<int>> GovernanceCoverage { get => _lazyAllGovernanceCoverage.Value; }
 
     private CommentStore _commentStore;
 
-    public JoinableCohortAggregateConfigurationUse[] AllJoinableCohortAggregateConfigurationUse { get; private set; }
-    public AllPluginsNode AllPluginsNode { get; private set; }
-    public HashSet<StandardPipelineUseCaseNode> PipelineUseCases { get; set; } = new();
+    Lazy<JoinableCohortAggregateConfigurationUse[]> _lazyAllJoinableCohortAggregateConfigurationUse;
+    public JoinableCohortAggregateConfigurationUse[] AllJoinableCohortAggregateConfigurationUse { get => _lazyAllJoinableCohortAggregateConfigurationUse.Value; }
+
+    Lazy<AllPluginsNode> _lazyAllPluginsNode;
+    public AllPluginsNode AllPluginsNode { get=>_lazyAllPluginsNode.Value; }
+
+    Lazy<HashSet<StandardPipelineUseCaseNode>> _lazyPipelineUseCases;
+
+    public HashSet<StandardPipelineUseCaseNode> PipelineUseCases { get => _lazyPipelineUseCases.Value; }// = new()
 
     /// <summary>
     /// Lock for changes to Child provider
     /// </summary>
     protected object WriteLock = new();
 
-    public AllOrphanAggregateConfigurationsNode OrphanAggregateConfigurationsNode { get; set; } = new();
-    public AllTemplateAggregateConfigurationsNode TemplateAggregateConfigurationsNode { get; set; } = new();
+    Lazy<AllOrphanAggregateConfigurationsNode> _lazyOrphanAggregateConfigurationsNode;
+    public AllOrphanAggregateConfigurationsNode OrphanAggregateConfigurationsNode { get=> _lazyOrphanAggregateConfigurationsNode.Value; }// = new();
+
+    Lazy<AllTemplateAggregateConfigurationsNode> _lazyTemplateAggregateConfigurationsNode;
+
+    public AllTemplateAggregateConfigurationsNode TemplateAggregateConfigurationsNode { get => _lazyTemplateAggregateConfigurationsNode.Value; }// = new();
     //public FolderNode<Catalogue> CatalogueRootFolder { get; private set; }
 
     //CatalogueRootFolder = FolderHelper.BuildFolderTree(AllCatalogues);
@@ -283,33 +392,57 @@ public class CatalogueChildProvider : ICoreChildProvider
                 $"Refresh generated by:{Environment.NewLine}{Environment.StackTrace}", CheckResult.Success));
 
         // all the objects which are
-        AllMasqueraders = new ConcurrentDictionary<object, HashSet<IMasqueradeAs>>();
+        //AllMasqueraders = new ConcurrentDictionary<object, HashSet<IMasqueradeAs>>();
 
         _pluginChildProviders = pluginChildProviders ?? Array.Empty<IChildProvider>();
 
         ReportProgress("Before object fetches");
 
-        AllAnyTableParameters = GetAllObjects<AnyTableSqlParameter>(repository);
+        _lazyAllAnyTableParameters = new Lazy<AnyTableSqlParameter[]>(() => GetAllObjects<AnyTableSqlParameter>(repository), true);
+        //AllAnyTableParameters = GetAllObjects<AnyTableSqlParameter>(repository);
 
-        AllANOTables = GetAllObjects<ANOTable>(repository);
-        AllANOTablesNode = new AllANOTablesNode();
+        _lazyAllANOTables = new Lazy<ANOTable[]>(() => GetAllObjects<ANOTable>(repository), true);
+
+        //AllANOTables = GetAllObjects<ANOTable>(repository);
+        _lazyAllANOTableNodes = new Lazy<AllANOTablesNode>(() => new AllANOTablesNode(), true);
+        //AllANOTablesNode = new AllANOTablesNode();
         AddChildren(AllANOTablesNode);
 
         //AllCatalogues = GetAllObjects<Catalogue>(repository);
-        AllCataloguesDictionary = AllCatalogues.ToDictionaryEx(i => i.ID, o => o);
+        _lazyAllCataloguesDictionary = new Lazy<Dictionary<int, Catalogue>>(() => AllCatalogues.ToDictionaryEx(i => i.ID, o => o));
+        //AllCataloguesDictionary = AllCatalogues.ToDictionaryEx(i => i.ID, o => o);
 
-        AllDatasets = GetAllObjects<Curation.Data.Dataset>(repository);
+        _lazyAllDatasets = new Lazy<Curation.Data.Dataset[]>(() => GetAllObjects<Curation.Data.Dataset>(repository));
 
-        AllLoadMetadatas = GetAllObjects<LoadMetadata>(repository);
-        AllLoadMetadataCatalogueLinkages = GetAllObjects<LoadMetadataCatalogueLinkage>(repository);
-        AllLoadMetadataLinkage = GetAllObjects<LoadMetadataCatalogueLinkage>(repository);
-        AllProcessTasks = GetAllObjects<ProcessTask>(repository);
-        AllProcessTasksArguments = GetAllObjects<ProcessTaskArgument>(repository);
-        AllLoadProgresses = GetAllObjects<LoadProgress>(repository);
-        AllCacheProgresses = GetAllObjects<CacheProgress>(repository);
+        //AllDatasets = GetAllObjects<Curation.Data.Dataset>(repository);
+        _lazyAllLoadMetadatas = new Lazy<LoadMetadata[]>(() =>
+        {
+            return GetAllObjects<LoadMetadata>(repository);
+        });
+        //AllLoadMetadatas = GetAllObjects<LoadMetadata>(repository);
 
-        AllPermissionWindows = GetAllObjects<PermissionWindow>(repository);
-        AllPermissionWindowsNode = new AllPermissionWindowsNode();
+        _lazyAllLoadMetadataCatalogueLinkages = new Lazy<LoadMetadataCatalogueLinkage[]>(() => GetAllObjects<LoadMetadataCatalogueLinkage>(repository));
+        //AllLoadMetadataCatalogueLinkages = GetAllObjects<LoadMetadataCatalogueLinkage>(repository);
+
+        _lazyAllLoadMetadataLinkage = new Lazy<LoadMetadataCatalogueLinkage[]>(() => GetAllObjects<LoadMetadataCatalogueLinkage>(repository));
+        //AllLoadMetadataLinkage = GetAllObjects<LoadMetadataCatalogueLinkage>(repository);
+
+        _lazyAllProcessTasks = new Lazy<ProcessTask[]>(() => GetAllObjects<ProcessTask>(repository));
+        //AllProcessTasks = GetAllObjects<ProcessTask>(repository);
+
+        _lazyAllProcessTasksArguments = new Lazy<ProcessTaskArgument[]>(() => GetAllObjects<ProcessTaskArgument>(repository));
+        //AllProcessTasksArguments = GetAllObjects<ProcessTaskArgument>(repository);
+
+        _lazyAllLoadProgress = new Lazy<LoadProgress[]>(() => GetAllObjects<LoadProgress>(repository));
+        //AllLoadProgresses = GetAllObjects<LoadProgress>(repository);
+
+        _lazyAllCacheProgresses = new Lazy<CacheProgress[]>(() => GetAllObjects<CacheProgress>(repository));
+        //AllCacheProgresses = GetAllObjects<CacheProgress>(repository);
+
+        _lazyAllPermissionWindows = new Lazy<PermissionWindow[]>(() => GetAllObjects<PermissionWindow>(repository));
+        //AllPermissionWindows = GetAllObjects<PermissionWindow>(repository);
+        _lazyAllPermissionWindowsNode = new Lazy<AllPermissionWindowsNode>(() => new AllPermissionWindowsNode(), true);
+        //AllPermissionWindowsNode = new AllPermissionWindowsNode();
         AddChildren(AllPermissionWindowsNode);
 
         //AllRemoteRDMPs = GetAllObjects<RemoteRDMP>(repository);
@@ -318,7 +451,8 @@ public class CatalogueChildProvider : ICoreChildProvider
             return GetAllObjects<RemoteRDMP>(_catalogueRepository);
         }, true);
 
-        AllExternalServers = GetAllObjects<ExternalDatabaseServer>(repository);
+        _lazyAllExternalServers = new Lazy<ExternalDatabaseServer[]>(() => GetAllObjects<ExternalDatabaseServer>(repository), true);
+        //AllExternalServers = GetAllObjects<ExternalDatabaseServer>(repository);
 
         AllTableInfos = GetAllObjects<TableInfo>(repository);
         AllDataAccessCredentials = GetAllObjects<DataAccessCredentials>(repository);
@@ -352,8 +486,11 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         AllPreLoadDiscardedColumns = GetAllObjects<PreLoadDiscardedColumn>(repository);
 
-        AllSupportingDocuments = GetAllObjects<SupportingDocument>(repository);
-        AllSupportingSQL = GetAllObjects<SupportingSQLTable>(repository);
+        _lazyAllSupportingDocuments = new Lazy<SupportingDocument[]>(() => GetAllObjects<SupportingDocument>(repository));
+
+        //AllSupportingDocuments = GetAllObjects<SupportingDocument>(repository);
+        _lazyAllSupportingSQL = new Lazy<SupportingSQLTable[]>(() => GetAllObjects<SupportingSQLTable>(repository));
+        //AllSupportingSQL = GetAllObjects<SupportingSQLTable>(repository);
 
         AllCohortIdentificationConfigurations = GetAllObjects<CohortIdentificationConfiguration>(repository);
 
@@ -404,12 +541,12 @@ public class CatalogueChildProvider : ICoreChildProvider
             AddChildren(x);
             return x;
         });
-               //_lazyAllCatalogues = new Lazy<Catalogue[]>(() =>
-               //{
-               //    var _catalogues = GetAllObjects<Catalogue>(_catalogueRepository);
-               //    return _catalogues;
+        //_lazyAllCatalogues = new Lazy<Catalogue[]>(() =>
+        //{
+        //    var _catalogues = GetAllObjects<Catalogue>(_catalogueRepository);
+        //    return _catalogues;
 
-               //}, true);
+        //}, true);
 
         AllDashboardsNode = new AllDashboardsNode();
         AllDashboards = GetAllObjects<DashboardLayout>(repository);
@@ -517,7 +654,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         AddChildren(AllRegexRedactionConfigurationsNode);
 
 
-        AllDatasets = GetAllObjects<Curation.Data.Dataset>(repository);
+        //AllDatasets = GetAllObjects<Curation.Data.Dataset>(repository);
         AllDatasetsNode = new AllDatasetsNode();
         AddChildren(AllDatasetsNode);
 
@@ -607,7 +744,8 @@ public class CatalogueChildProvider : ICoreChildProvider
     {
         AllJoinableCohortAggregateConfigurationUse =
             GetAllObjects<JoinableCohortAggregateConfigurationUse>(_catalogueRepository);
-        AllAggregateConfigurations = GetAllObjects<AggregateConfiguration>(_catalogueRepository);
+        _lazyAllAggregateConfigurations = new Lazy<AggregateConfiguration[]>(() => GetAllObjects<AggregateConfiguration>(_catalogueRepository));
+        //AllAggregateConfigurations = GetAllObjects<AggregateConfiguration>(_catalogueRepository);
 
         BuildAggregateDimensions();
 
@@ -633,8 +771,10 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     private void BuildAggregateDimensions()
     {
-        AllAggregateDimensions = GetAllObjects<AggregateDimension>(_catalogueRepository);
-        AllAggregateContinuousDateAxis = GetAllObjects<AggregateContinuousDateAxis>(_catalogueRepository);
+        _lazyAllAggregateDimensions = new Lazy<AggregateDimension[]>(() => GetAllObjects<AggregateDimension>(_catalogueRepository));
+        //AllAggregateDimensions = GetAllObjects<AggregateDimension>(_catalogueRepository);
+        _lazyAllAggregateContinuousDataAxis = new Lazy<AggregateContinuousDateAxis[]>(() => GetAllObjects<AggregateContinuousDateAxis>(_catalogueRepository));
+        //AllAggregateContinuousDateAxis = GetAllObjects<AggregateContinuousDateAxis>(_catalogueRepository);
     }
 
     private void BuildAggregateFilterContainers()
@@ -1826,89 +1966,89 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     public virtual void UpdateTo(ICoreChildProvider other)
     {
-        ArgumentNullException.ThrowIfNull(other);
+        //ArgumentNullException.ThrowIfNull(other);
 
-        if (other is not CatalogueChildProvider otherCat)
-            throw new NotSupportedException(
-                $"Did not know how to UpdateTo ICoreChildProvider of type {other.GetType().Name}");
+        //if (other is not CatalogueChildProvider otherCat)
+        //    throw new NotSupportedException(
+        //        $"Did not know how to UpdateTo ICoreChildProvider of type {other.GetType().Name}");
 
-        AllLoadMetadatas = otherCat.AllLoadMetadatas;
-        AllProcessTasks = otherCat.AllProcessTasks;
-        AllProcessTasksArguments = otherCat.AllProcessTasksArguments;
-        AllLoadProgresses = otherCat.AllLoadProgresses;
-        AllCacheProgresses = otherCat.AllCacheProgresses;
-        AllPermissionWindows = otherCat.AllPermissionWindows;
-        //AllCatalogues = otherCat.AllCatalogues;
-        AllCataloguesDictionary = otherCat.AllCataloguesDictionary;
-        AllSupportingDocuments = otherCat.AllSupportingDocuments;
-        AllSupportingSQL = otherCat.AllSupportingSQL;
-        _childDictionary = otherCat._childDictionary;
-        _descendancyDictionary = otherCat._descendancyDictionary;
-        _catalogueToCatalogueItems = otherCat._catalogueToCatalogueItems;
-        AllCatalogueItemsDictionary = otherCat.AllCatalogueItemsDictionary;
-        _allColumnInfos = otherCat._allColumnInfos;
-        AllAggregateConfigurations = otherCat.AllAggregateConfigurations;
-        AllAggregateDimensions = otherCat.AllAggregateDimensions;
-        AllAggregateContinuousDateAxis = otherCat.AllAggregateContinuousDateAxis;
-        //AllRDMPRemotesNode = otherCat.AllRDMPRemotesNode;
-        //AllRemoteRDMPs = otherCat.AllRemoteRDMPs;
-        AllDashboardsNode = otherCat.AllDashboardsNode;
-        AllDashboards = otherCat.AllDashboards;
-        AllObjectSharingNode = otherCat.AllObjectSharingNode;
-        AllImports = otherCat.AllImports;
-        AllExports = otherCat.AllExports;
-        AllStandardRegexesNode = otherCat.AllStandardRegexesNode;
-        AllPipelinesNode = otherCat.AllPipelinesNode;
-        OtherPipelinesNode = otherCat.OtherPipelinesNode;
-        AllPipelines = otherCat.AllPipelines;
-        AllPipelineComponents = otherCat.AllPipelineComponents;
-        AllPipelineComponentsArguments = otherCat.AllPipelineComponentsArguments;
-        AllStandardRegexes = otherCat.AllStandardRegexes;
-        AllANOTablesNode = otherCat.AllANOTablesNode;
-        AllANOTables = otherCat.AllANOTables;
-        AllExternalServers = otherCat.AllExternalServers;
-        AllServers = otherCat.AllServers;
-        AllTableInfos = otherCat.AllTableInfos;
-        AllDataAccessCredentialsNode = otherCat.AllDataAccessCredentialsNode;
-        AllExternalServersNode = otherCat.AllExternalServersNode;
-        AllServersNode = otherCat.AllServersNode;
-        AllDataAccessCredentials = otherCat.AllDataAccessCredentials;
-        AllDataAccessCredentialUsages = otherCat.AllDataAccessCredentialUsages;
-        TableInfosToColumnInfos = otherCat.TableInfosToColumnInfos;
-        AllColumnInfos = otherCat.AllColumnInfos;
-        AllPreLoadDiscardedColumns = otherCat.AllPreLoadDiscardedColumns;
-        AllLookups = otherCat.AllLookups;
-        AllJoinInfos = otherCat.AllJoinInfos;
-        AllAnyTableParameters = otherCat.AllAnyTableParameters;
-        AllMasqueraders = otherCat.AllMasqueraders;
-        AllExtractionInformationsDictionary = otherCat.AllExtractionInformationsDictionary;
-        _pluginChildProviders = otherCat._pluginChildProviders;
-        AllPermissionWindowsNode = otherCat.AllPermissionWindowsNode;
-        LoadMetadataRootFolder = otherCat.LoadMetadataRootFolder;
-        //CatalogueRootFolder = otherCat.CatalogueRootFolder;
-        CohortIdentificationConfigurationRootFolder = otherCat.CohortIdentificationConfigurationRootFolder;
-        AllConnectionStringKeywordsNode = otherCat.AllConnectionStringKeywordsNode;
-        AllConnectionStringKeywords = otherCat.AllConnectionStringKeywords;
-        AllAggregateContainersDictionary = otherCat.AllAggregateContainersDictionary;
-        AllAggregateFilters = otherCat.AllAggregateFilters;
-        AllAggregateFilterParameters = otherCat.AllAggregateFilterParameters;
-        AllCohortIdentificationConfigurations = otherCat.AllCohortIdentificationConfigurations;
-        AllCohortAggregateContainers = otherCat.AllCohortAggregateContainers;
-        AllJoinables = otherCat.AllJoinables;
-        AllJoinUses = otherCat.AllJoinUses;
-        AllGovernanceNode = otherCat.AllGovernanceNode;
-        AllGovernancePeriods = otherCat.AllGovernancePeriods;
-        AllGovernanceDocuments = otherCat.AllGovernanceDocuments;
-        GovernanceCoverage = otherCat.GovernanceCoverage;
-        AllJoinableCohortAggregateConfigurationUse = otherCat.AllJoinableCohortAggregateConfigurationUse;
-        AllPluginsNode = otherCat.AllPluginsNode;
-        PipelineUseCases = otherCat.PipelineUseCases;
-        OrphanAggregateConfigurationsNode = otherCat.OrphanAggregateConfigurationsNode;
-        TemplateAggregateConfigurationsNode = otherCat.TemplateAggregateConfigurationsNode;
-        AllCatalogueParameters = otherCat.AllCatalogueParameters;
-        AllCatalogueValueSets = otherCat.AllCatalogueValueSets;
-        AllCatalogueValueSetValues = otherCat.AllCatalogueValueSetValues;
-        OrphanAggregateConfigurations = otherCat.OrphanAggregateConfigurations;
+        //AllLoadMetadatas = otherCat.AllLoadMetadatas;
+        //AllProcessTasks = otherCat.AllProcessTasks;
+        //AllProcessTasksArguments = otherCat.AllProcessTasksArguments;
+        //AllLoadProgresses = otherCat.AllLoadProgresses;
+        //AllCacheProgresses = otherCat.AllCacheProgresses;
+        //AllPermissionWindows = otherCat.AllPermissionWindows;
+        ////AllCatalogues = otherCat.AllCatalogues;
+        //AllCataloguesDictionary = otherCat.AllCataloguesDictionary;
+        //AllSupportingDocuments = otherCat.AllSupportingDocuments;
+        //AllSupportingSQL = otherCat.AllSupportingSQL;
+        //_childDictionary = otherCat._childDictionary;
+        //_descendancyDictionary = otherCat._descendancyDictionary;
+        //_catalogueToCatalogueItems = otherCat._catalogueToCatalogueItems;
+        //AllCatalogueItemsDictionary = otherCat.AllCatalogueItemsDictionary;
+        //_allColumnInfos = otherCat._allColumnInfos;
+        //AllAggregateConfigurations = otherCat.AllAggregateConfigurations;
+        //AllAggregateDimensions = otherCat.AllAggregateDimensions;
+        //AllAggregateContinuousDateAxis = otherCat.AllAggregateContinuousDateAxis;
+        ////AllRDMPRemotesNode = otherCat.AllRDMPRemotesNode;
+        ////AllRemoteRDMPs = otherCat.AllRemoteRDMPs;
+        //AllDashboardsNode = otherCat.AllDashboardsNode;
+        //AllDashboards = otherCat.AllDashboards;
+        //AllObjectSharingNode = otherCat.AllObjectSharingNode;
+        //AllImports = otherCat.AllImports;
+        //AllExports = otherCat.AllExports;
+        //AllStandardRegexesNode = otherCat.AllStandardRegexesNode;
+        //AllPipelinesNode = otherCat.AllPipelinesNode;
+        //OtherPipelinesNode = otherCat.OtherPipelinesNode;
+        //AllPipelines = otherCat.AllPipelines;
+        //AllPipelineComponents = otherCat.AllPipelineComponents;
+        //AllPipelineComponentsArguments = otherCat.AllPipelineComponentsArguments;
+        //AllStandardRegexes = otherCat.AllStandardRegexes;
+        //AllANOTablesNode = otherCat.AllANOTablesNode;
+        //AllANOTables = otherCat.AllANOTables;
+        //AllExternalServers = otherCat.AllExternalServers;
+        //AllServers = otherCat.AllServers;
+        //AllTableInfos = otherCat.AllTableInfos;
+        //AllDataAccessCredentialsNode = otherCat.AllDataAccessCredentialsNode;
+        //AllExternalServersNode = otherCat.AllExternalServersNode;
+        //AllServersNode = otherCat.AllServersNode;
+        //AllDataAccessCredentials = otherCat.AllDataAccessCredentials;
+        //AllDataAccessCredentialUsages = otherCat.AllDataAccessCredentialUsages;
+        //TableInfosToColumnInfos = otherCat.TableInfosToColumnInfos;
+        //AllColumnInfos = otherCat.AllColumnInfos;
+        //AllPreLoadDiscardedColumns = otherCat.AllPreLoadDiscardedColumns;
+        //AllLookups = otherCat.AllLookups;
+        //AllJoinInfos = otherCat.AllJoinInfos;
+        //AllAnyTableParameters = otherCat.AllAnyTableParameters;
+        //AllMasqueraders = otherCat.AllMasqueraders;
+        //AllExtractionInformationsDictionary = otherCat.AllExtractionInformationsDictionary;
+        //_pluginChildProviders = otherCat._pluginChildProviders;
+        //AllPermissionWindowsNode = otherCat.AllPermissionWindowsNode;
+        //LoadMetadataRootFolder = otherCat.LoadMetadataRootFolder;
+        ////CatalogueRootFolder = otherCat.CatalogueRootFolder;
+        //CohortIdentificationConfigurationRootFolder = otherCat.CohortIdentificationConfigurationRootFolder;
+        //AllConnectionStringKeywordsNode = otherCat.AllConnectionStringKeywordsNode;
+        //AllConnectionStringKeywords = otherCat.AllConnectionStringKeywords;
+        //AllAggregateContainersDictionary = otherCat.AllAggregateContainersDictionary;
+        //AllAggregateFilters = otherCat.AllAggregateFilters;
+        //AllAggregateFilterParameters = otherCat.AllAggregateFilterParameters;
+        //AllCohortIdentificationConfigurations = otherCat.AllCohortIdentificationConfigurations;
+        //AllCohortAggregateContainers = otherCat.AllCohortAggregateContainers;
+        //AllJoinables = otherCat.AllJoinables;
+        //AllJoinUses = otherCat.AllJoinUses;
+        //AllGovernanceNode = otherCat.AllGovernanceNode;
+        //AllGovernancePeriods = otherCat.AllGovernancePeriods;
+        //AllGovernanceDocuments = otherCat.AllGovernanceDocuments;
+        //GovernanceCoverage = otherCat.GovernanceCoverage;
+        //AllJoinableCohortAggregateConfigurationUse = otherCat.AllJoinableCohortAggregateConfigurationUse;
+        //AllPluginsNode = otherCat.AllPluginsNode;
+        //PipelineUseCases = otherCat.PipelineUseCases;
+        //OrphanAggregateConfigurationsNode = otherCat.OrphanAggregateConfigurationsNode;
+        //TemplateAggregateConfigurationsNode = otherCat.TemplateAggregateConfigurationsNode;
+        //AllCatalogueParameters = otherCat.AllCatalogueParameters;
+        //AllCatalogueValueSets = otherCat.AllCatalogueValueSets;
+        //AllCatalogueValueSetValues = otherCat.AllCatalogueValueSetValues;
+        //OrphanAggregateConfigurations = otherCat.OrphanAggregateConfigurations;
     }
 
     public virtual bool SelectiveRefresh(IMapsDirectlyToDatabaseTable databaseEntity)
