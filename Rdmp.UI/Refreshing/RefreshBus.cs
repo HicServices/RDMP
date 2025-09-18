@@ -83,7 +83,6 @@ public class RefreshBus
                 $"You cannot subscribe to the RefreshBus more than once. Subscriber '{subscriber}' just attempted to register a second time its type was({subscriber.GetType().Name})");
 
         RefreshObject += subscriber.RefreshBus_RefreshObject;
-
         subscribers.Add(subscriber);
     }
 

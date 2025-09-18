@@ -856,6 +856,7 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     public void CommonItemActivation(object sender, EventArgs eventArgs)
     {
         var o = Tree.SelectedObject;
+        //here will want to re-fetch if updated
 
         if (o == null)
             return;
@@ -874,7 +875,16 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
                 return;
             }
         }
-
+        if(o is DatabaseEntity)
+        {
+            //check if we're out of date
+            var dbe = (DatabaseEntity)o;
+            if(dbe.HasLocalChanges().Differences.Count > 0)
+            {
+                dbe.RevertToDatabaseState();
+                o = dbe;
+            }
+        }
         var cmd = new ExecuteCommandActivate(_activator, o);
         if (!cmd.IsImpossible)
             cmd.Execute();
