@@ -799,37 +799,37 @@ public class DataExportChildProvider : CatalogueChildProvider
                     $"Did not know how to UpdateTo ICoreChildProvider of type {other.GetType().Name}");
 
             //That's one way to avoid memory leaks... anyone holding onto a stale one of these is going to have a bad day
-            RootCohortsNode = dxOther.RootCohortsNode;
-            CohortSources = dxOther.CohortSources;
-            ExtractableDataSets = dxOther.ExtractableDataSets;
-            SelectedDataSets = dxOther.SelectedDataSets;
-            AllPackages = dxOther.AllPackages;
-            Projects = dxOther.Projects;
-            _cohortsByOriginId = dxOther._cohortsByOriginId;
-            Cohorts = dxOther.Cohorts;
-            ExtractionConfigurations = dxOther.ExtractionConfigurations;
-            ExtractionConfigurationsByProject = dxOther.ExtractionConfigurationsByProject;
-            _configurationToDatasetMapping = dxOther._configurationToDatasetMapping;
-            _dataExportFilterManager = dxOther._dataExportFilterManager;
-            ForbidListedSources = dxOther.ForbidListedSources;
-            DuplicatesByProject = dxOther.DuplicatesByProject;
-            DuplicatesByCohortSourceUsedByProjectNode = dxOther.DuplicatesByCohortSourceUsedByProjectNode;
-            ProjectNumberToCohortsDictionary = dxOther.ProjectNumberToCohortsDictionary;
-            AllProjectAssociatedCics = dxOther.AllProjectAssociatedCics;
-            AllGlobalExtractionFilterParameters = dxOther.AllGlobalExtractionFilterParameters;
-            _cicAssociations = dxOther._cicAssociations;
-            _selectedDataSetsWithNoIsExtractionIdentifier = dxOther._selectedDataSetsWithNoIsExtractionIdentifier;
-            AllContainers = dxOther.AllContainers;
-            AllDeployedExtractionFilters = dxOther.AllDeployedExtractionFilters;
-            _allParameters = dxOther._allParameters;
-            dataExportRepository = dxOther.dataExportRepository;
-            _extractionInformationsByCatalogueItem = dxOther._extractionInformationsByCatalogueItem;
-            _extractionProgressesBySelectedDataSetID = dxOther._extractionProgressesBySelectedDataSetID;
-            ProjectRootFolder = dxOther.ProjectRootFolder;
-            DatasetRootFolder = dxOther.DatasetRootFolder;
-            AllDatasetsNode = dxOther.AllDatasetsNode;
-            AllRegexRedactionConfigurations = dxOther.AllRegexRedactionConfigurations;
-            AllRegexRedactionConfigurationsNode = dxOther.AllRegexRedactionConfigurationsNode;
+            //RootCohortsNode = dxOther.RootCohortsNode;
+            //CohortSources = dxOther.CohortSources;
+            //ExtractableDataSets = dxOther.ExtractableDataSets;
+            //SelectedDataSets = dxOther.SelectedDataSets;
+            //AllPackages = dxOther.AllPackages;
+            //Projects = dxOther.Projects;
+            //_cohortsByOriginId = dxOther._cohortsByOriginId;
+            //Cohorts = dxOther.Cohorts;
+            //ExtractionConfigurations = dxOther.ExtractionConfigurations;
+            //ExtractionConfigurationsByProject = dxOther.ExtractionConfigurationsByProject;
+            //_configurationToDatasetMapping = dxOther._configurationToDatasetMapping;
+            //_dataExportFilterManager = dxOther._dataExportFilterManager;
+            //ForbidListedSources = dxOther.ForbidListedSources;
+            //DuplicatesByProject = dxOther.DuplicatesByProject;
+            //DuplicatesByCohortSourceUsedByProjectNode = dxOther.DuplicatesByCohortSourceUsedByProjectNode;
+            //ProjectNumberToCohortsDictionary = dxOther.ProjectNumberToCohortsDictionary;
+            //AllProjectAssociatedCics = dxOther.AllProjectAssociatedCics;
+            //AllGlobalExtractionFilterParameters = dxOther.AllGlobalExtractionFilterParameters;
+            //_cicAssociations = dxOther._cicAssociations;
+            //_selectedDataSetsWithNoIsExtractionIdentifier = dxOther._selectedDataSetsWithNoIsExtractionIdentifier;
+            //AllContainers = dxOther.AllContainers;
+            //AllDeployedExtractionFilters = dxOther.AllDeployedExtractionFilters;
+            //_allParameters = dxOther._allParameters;
+            //dataExportRepository = dxOther.dataExportRepository;
+            //_extractionInformationsByCatalogueItem = dxOther._extractionInformationsByCatalogueItem;
+            //_extractionProgressesBySelectedDataSetID = dxOther._extractionProgressesBySelectedDataSetID;
+            //ProjectRootFolder = dxOther.ProjectRootFolder;
+            //DatasetRootFolder = dxOther.DatasetRootFolder;
+            //AllDatasetsNode = dxOther.AllDatasetsNode;
+            //AllRegexRedactionConfigurations = dxOther.AllRegexRedactionConfigurations;
+            //AllRegexRedactionConfigurationsNode = dxOther.AllRegexRedactionConfigurationsNode;
         }
     }
 

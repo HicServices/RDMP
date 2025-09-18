@@ -40,9 +40,9 @@ public interface ICoreChildProvider : IChildProvider
     TableInfo[] AllTableInfos { get; }
     Dictionary<int, List<ColumnInfo>> TableInfosToColumnInfos { get; }
     CohortIdentificationConfiguration[] AllCohortIdentificationConfigurations { get; }
-    CohortAggregateContainer[] AllCohortAggregateContainers { get; set; }
-    JoinableCohortAggregateConfiguration[] AllJoinables { get; set; }
-    JoinableCohortAggregateConfigurationUse[] AllJoinUses { get; set; }
+    CohortAggregateContainer[] AllCohortAggregateContainers { get;  }
+    JoinableCohortAggregateConfiguration[] AllJoinables { get;  }
+    JoinableCohortAggregateConfigurationUse[] AllJoinUses { get; }
 
     FolderNode<Catalogue> CatalogueRootFolder { get; }
     FolderNode<Curation.Data.Dataset> DatasetRootFolder { get; }
@@ -97,8 +97,8 @@ public interface ICoreChildProvider : IChildProvider
 
     Dictionary<int, ExtractionInformation> AllExtractionInformationsDictionary { get; }
 
-    AllPermissionWindowsNode AllPermissionWindowsNode { get; set; }
-    AllConnectionStringKeywordsNode AllConnectionStringKeywordsNode { get; set; }
+    AllPermissionWindowsNode AllPermissionWindowsNode { get; }
+    AllConnectionStringKeywordsNode AllConnectionStringKeywordsNode { get;  }
     AllStandardRegexesNode AllStandardRegexesNode { get; }
     AllPipelinesNode AllPipelinesNode { get; }
 
