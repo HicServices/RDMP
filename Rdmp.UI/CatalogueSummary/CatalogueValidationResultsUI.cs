@@ -58,7 +58,7 @@ public partial class CatalogueValidationResultsUI : CatalogueValidationSummarySc
 
         lblRecordCount.Text = counts.RecordCount.ToString();
         lblExtractionIdentifiersCount.Text = counts.ExtractionIdentifierCount.ToString();
-
+        tblCompletionRates.SuspendLayout();
         tblCompletionRates.Controls.Clear();
         var lblColumn = new Label();
         lblColumn.Text = "Column";
@@ -81,6 +81,7 @@ public partial class CatalogueValidationResultsUI : CatalogueValidationSummarySc
             }
             tblCompletionRates.Controls.Add(lblColumnRate);
         }
+        tblCompletionRates.ResumeLayout();
     }
 
     private void dqePivotCategorySelector1_PivotCategorySelectionChanged()
