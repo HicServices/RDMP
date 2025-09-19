@@ -41,6 +41,11 @@ namespace Rdmp.Core.Providers;
 /// </summary>
 public class DataExportChildProvider : CatalogueChildProvider
 {
+    //TODO - there are still some issues here with speed, they are noted with a TODO flag
+    // there is an issue with folder stuctures not updating in the UI when you change the name 
+    // might need to have the UI watch for updastes?
+
+
     //root objects
     Lazy<AllCohortsNode> _lazyRootCohortsNode = new(() => new AllCohortsNode(), true);
     public AllCohortsNode RootCohortsNode { get => _lazyRootCohortsNode.Value; }
@@ -276,30 +281,30 @@ public class DataExportChildProvider : CatalogueChildProvider
         }
         ReportProgress("Catalogue extractability injection");
 
-        //try
-        //{
-        //    AddPipelineUseCases(new Dictionary<string, PipelineUseCase>
-        //    {
-        //        { "File Import", UploadFileUseCase.DesignTime() },
-        //        { "Extraction", ExtractionPipelineUseCase.DesignTime() },
-        //        { "Release", ReleaseUseCase.DesignTime() },
-        //        { "Cohort Creation", CohortCreationRequest.DesignTime() },
-        //        { "Caching", CachingPipelineUseCase.DesignTime() },
-        //        {
-        //            "Aggregate Committing",
-        //            CreateTableFromAggregateUseCase.DesignTime(repositoryLocator.CatalogueRepository)
-        //        }
-        //    });
-        //}
-        //catch (Exception ex)
-        //{
-        //    _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs("Failed to build DesignTime PipelineUseCases",
-        //        CheckResult.Fail, ex));
-        //}
+        try//TODO
+        {
+            AddPipelineUseCases(new Dictionary<string, PipelineUseCase>
+            {
+                { "File Import", UploadFileUseCase.DesignTime() },
+                { "Extraction", ExtractionPipelineUseCase.DesignTime() },
+                { "Release", ReleaseUseCase.DesignTime() },
+                { "Cohort Creation", CohortCreationRequest.DesignTime() },
+                { "Caching", CachingPipelineUseCase.DesignTime() },
+                {
+                    "Aggregate Committing",
+                    CreateTableFromAggregateUseCase.DesignTime(repositoryLocator.CatalogueRepository)
+                }
+            });
+        }
+        catch (Exception ex)
+        {
+            _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs("Failed to build DesignTime PipelineUseCases",
+                CheckResult.Fail, ex));
+        }
 
         ReportProgress("Pipeline adding");
 
-        //GetPluginChildren();
+        GetPluginChildren();//TODO
     }
 
 
