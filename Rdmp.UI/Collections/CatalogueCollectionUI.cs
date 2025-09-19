@@ -258,6 +258,7 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
 
         Activator.RefreshBus.EstablishLifetimeSubscription(this);
 
+
         tlvCatalogues.AddObject(activator.CoreChildProvider.AllGovernanceNode);
         tlvCatalogues.AddObject(activator.CoreChildProvider.CatalogueRootFolder);
         ApplyFilters();

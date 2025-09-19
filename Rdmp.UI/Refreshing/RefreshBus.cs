@@ -38,7 +38,6 @@ public class RefreshBus
 
     public void Publish(object sender, RefreshObjectEventArgs e)
     {
-        if (DateTime.Now.Year > 2000) return;
         var obj = e.Object;//this isthe UPDATE OBJECT
         if (PublishInProgress)
             throw new SubscriptionException(

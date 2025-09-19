@@ -365,6 +365,7 @@ public class CatalogueChildProvider : ICoreChildProvider
     public CatalogueChildProvider(ICatalogueRepository repository, IChildProvider[] pluginChildProviders,
         ICheckNotifier errorsCheckNotifier, CatalogueChildProvider previousStateIfKnown)
     {
+        var x = Environment.StackTrace;
         _commentStore = repository.CommentStore;
         _catalogueRepository = repository;
         _catalogueRepository?.EncryptionManager?.ClearAllInjections();
