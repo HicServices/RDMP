@@ -879,7 +879,7 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         {
             //check if we're out of date
             var dbe = (DatabaseEntity)o;
-            if(dbe.HasLocalChanges().Differences.Count > 0)
+            if(dbe.HasLocalChanges().Differences.Count > 0)//todo is out of date on first load
             {
                 dbe.RevertToDatabaseState();
                 o = dbe;

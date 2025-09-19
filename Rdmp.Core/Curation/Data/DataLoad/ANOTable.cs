@@ -308,7 +308,7 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable, ICheckable, IRev
                         CheckResult.Warning));
         }
 
-        var con = forceConnection ?? server.GetConnection(); //use the forced connection or open a new one
+        using var con = forceConnection ?? server.GetConnection(); //use the forced connection or open a new one
 
         try
         {

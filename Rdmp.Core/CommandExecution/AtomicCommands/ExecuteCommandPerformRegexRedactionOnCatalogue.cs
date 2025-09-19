@@ -84,7 +84,7 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
 
                 var dt = new DataTable();
                 dt.BeginLoadData();
-                var conn = _server.GetConnection();
+                using var conn = _server.GetConnection();
                 conn.Open();
                 using (var cmd = _server.GetCommand(sql, conn))
                 {

@@ -69,7 +69,7 @@ public sealed class CohortIdentificationTaskExecution : IDisposable
         using var cmdCount = _target.GetCommand(CountSQL, con);
         cmdCount.CommandTimeout = commandTimeout;
 
-        var identifiersReader = cmdCount.ExecuteReaderAsync(_cancellationTokenSource.Token);
+        using var identifiersReader = cmdCount.ExecuteReaderAsync(_cancellationTokenSource.Token);
 
         identifiersReader.Wait(_cancellationTokenSource.Token);
         using var rIds = identifiersReader.Result;
@@ -85,7 +85,7 @@ public sealed class CohortIdentificationTaskExecution : IDisposable
 
             using var cmdCountCumulative = _target.GetCommand(_cumulativeSQL, con);
             cmdCountCumulative.CommandTimeout = commandTimeout;
-            var cumulativeIdentifiersRead = cmdCountCumulative.ExecuteReaderAsync(_cancellationTokenSource.Token);
+            using var cumulativeIdentifiersRead = cmdCountCumulative.ExecuteReaderAsync(_cancellationTokenSource.Token);
             cumulativeIdentifiersRead.Wait(_cancellationTokenSource.Token);
             using var rCumulative = cumulativeIdentifiersRead.Result;
             CumulativeIdentifiers.Load(rCumulative);

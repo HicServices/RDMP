@@ -17,6 +17,7 @@ using System.Threading;
 using FAnsi;
 using FAnsi.Connections;
 using FAnsi.Discovery;
+using Microsoft.Data.SqlClient;
 using NLog;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
@@ -273,12 +274,14 @@ public abstract class TableRepository : ITableRepository
         var toReturn = new List<T>();
 
         using var opener = GetConnection();
+        
         var selectCommand = DatabaseCommandHelper.GetCommand($"SELECT * FROM {typename} {whereSQL ?? ""}",
             opener.Connection, opener.Transaction);
 
         using var r = selectCommand.ExecuteReader();
         while (r.Read())
             toReturn.Add(ConstructEntity<T>(r));
+        r.Close();
         return toReturn.ToArray();
     }
 
