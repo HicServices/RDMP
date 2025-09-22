@@ -169,7 +169,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
         if (IsDatabaseObjects())
         {
-            _allObjects = toSelectFrom.ToArray();
+            _allObjects = toSelectFrom.Distinct().ToArray();
             _searchables = _allObjects.Cast<IMapsDirectlyToDatabaseTable>()
                 .ToDictionary(k => k, activator.CoreChildProvider.GetDescendancyListIfAnyFor);
             _usefulPropertyFinder = new AttributePropertyFinder<UsefulPropertyAttribute>(_searchables.Keys);
@@ -188,7 +188,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         }
         else
         {
-            _allObjects = toSelectFrom.ToArray();
+            _allObjects = toSelectFrom.Distinct().ToArray();
 
             // don't bother with the tool strip because its not database objects so we can't filter by ID/type etc
             Controls.Remove(toolStrip1);
