@@ -144,6 +144,13 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {
+        //var o = e.Object;
+        //switch (o)
+        //{
+        //    case CohortIdentificationConfiguration:
+        //        tlvCohortIdentificationConfigurations.RefreshObjects(Activator.CoreChildProvider.AllCohortIdentificationConfigurations);
+        //        break;
+        //}
     }
 
     private string FrozenAspectGetter(object o) =>

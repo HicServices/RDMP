@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Org.BouncyCastle.Asn1.X509.Qualified;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cache;
@@ -35,6 +36,7 @@ using Rdmp.Core.Repositories.Managers.HighPerformance;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Comments;
 using Rdmp.Core.ReusableLibraryCode.Settings;
+using ZstdSharp.Unsafe;
 
 namespace Rdmp.Core.Providers;
 
@@ -105,14 +107,14 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     public IEnumerable<CatalogueItem> AllCatalogueItems { get => AllCatalogueItemsDictionary.Values; }
 
-    LazyWithReset<Dictionary<int, List<CatalogueItem>>> _lazy_catalogueToCatalogueItems = new(()=> new Dictionary<int, List<CatalogueItem>>());
+    LazyWithReset<Dictionary<int, List<CatalogueItem>>> _lazy_catalogueToCatalogueItems = new(() => new Dictionary<int, List<CatalogueItem>>());
 
     private Dictionary<int, List<CatalogueItem>> _catalogueToCatalogueItems { get => _lazy_catalogueToCatalogueItems.Value; }
 
-    LazyWithReset<Dictionary<int, CatalogueItem>> _lazyAllCatalogueItemsDictionary = new(()=>new Dictionary<int, CatalogueItem>());
+    LazyWithReset<Dictionary<int, CatalogueItem>> _lazyAllCatalogueItemsDictionary = new(() => new Dictionary<int, CatalogueItem>());
     public Dictionary<int, CatalogueItem> AllCatalogueItemsDictionary { get => _lazyAllCatalogueItemsDictionary.Value; }
 
-    LazyWithReset<Dictionary<int, ColumnInfo>> _lazy_allColumnInfos = new(()=> new Dictionary<int, ColumnInfo>());
+    LazyWithReset<Dictionary<int, ColumnInfo>> _lazy_allColumnInfos = new(() => new Dictionary<int, ColumnInfo>());
     private Dictionary<int, ColumnInfo> _allColumnInfos { get => _lazy_allColumnInfos.Value; }
 
     LazyWithReset<AggregateConfiguration[]> _lazyAllAggregateConfigurations = new(() => []);
@@ -199,7 +201,7 @@ public class CatalogueChildProvider : ICoreChildProvider
     LazyWithReset<Dictionary<ITableInfo, List<DataAccessCredentialUsageNode>>> _lazyAllDataAccessCredentialsUsage = new(() => []);
     public Dictionary<ITableInfo, List<DataAccessCredentialUsageNode>> AllDataAccessCredentialUsages { get => _lazyAllDataAccessCredentialsUsage.Value; }
 
-    LazyWithReset<Dictionary<int, List<ColumnInfo>>> _lazyTableInfosToColumnInfos = new(()=> new Dictionary<int, List<ColumnInfo>>());
+    LazyWithReset<Dictionary<int, List<ColumnInfo>>> _lazyTableInfosToColumnInfos = new(() => new Dictionary<int, List<ColumnInfo>>());
     public Dictionary<int, List<ColumnInfo>> TableInfosToColumnInfos { get => _lazyTableInfosToColumnInfos.Value; }
 
     LazyWithReset<ColumnInfo[]> _lazyAllColumnInfos = new(() => []);
@@ -244,7 +246,7 @@ public class CatalogueChildProvider : ICoreChildProvider
     LazyWithReset<Dictionary<int, ExtractionInformation>> _lazyAllExtractionInformationsDictionary;
     public Dictionary<int, ExtractionInformation> AllExtractionInformationsDictionary { get => _lazyAllExtractionInformationsDictionary.Value; }
 
-    LazyWithReset<Dictionary<int, ExtractionInformation>> _lazy_extractionInformationsByCatalogueItem = new(()=> new Dictionary<int, ExtractionInformation>());
+    LazyWithReset<Dictionary<int, ExtractionInformation>> _lazy_extractionInformationsByCatalogueItem = new(() => new Dictionary<int, ExtractionInformation>());
     protected Dictionary<int, ExtractionInformation> _extractionInformationsByCatalogueItem { get => _lazy_extractionInformationsByCatalogueItem.Value; }
 
     private IFilterManager _aggregateFilterManager;
@@ -288,7 +290,7 @@ public class CatalogueChildProvider : ICoreChildProvider
     /// <summary>
     /// Collection of all objects for which there are masqueraders
     /// </summary>
-    LazyWithReset<ConcurrentDictionary<object, HashSet<IMasqueradeAs>>> _lazyAllMasquerades = new(()=>new ConcurrentDictionary<object, HashSet<IMasqueradeAs>>());
+    LazyWithReset<ConcurrentDictionary<object, HashSet<IMasqueradeAs>>> _lazyAllMasquerades = new(() => new ConcurrentDictionary<object, HashSet<IMasqueradeAs>>());
     public ConcurrentDictionary<object, HashSet<IMasqueradeAs>> AllMasqueraders { get => _lazyAllMasquerades.Value; }
 
     private IChildProvider[] _pluginChildProviders;
@@ -317,7 +319,7 @@ public class CatalogueChildProvider : ICoreChildProvider
     LazyWithReset<AllPluginsNode> _lazyAllPluginsNode;
     public AllPluginsNode AllPluginsNode { get => _lazyAllPluginsNode.Value; }
 
-    LazyWithReset<HashSet<StandardPipelineUseCaseNode>> _lazyPipelineUseCases = new(()=>new HashSet<StandardPipelineUseCaseNode>());
+    LazyWithReset<HashSet<StandardPipelineUseCaseNode>> _lazyPipelineUseCases = new(() => new HashSet<StandardPipelineUseCaseNode>());
 
     public HashSet<StandardPipelineUseCaseNode> PipelineUseCases { get => _lazyPipelineUseCases.Value; }
 
@@ -326,7 +328,7 @@ public class CatalogueChildProvider : ICoreChildProvider
     /// </summary>
     protected object WriteLock = new();
 
-    LazyWithReset<AllOrphanAggregateConfigurationsNode> _lazyOrphanAggregateConfigurationsNode = new(()=> new AllOrphanAggregateConfigurationsNode());
+    LazyWithReset<AllOrphanAggregateConfigurationsNode> _lazyOrphanAggregateConfigurationsNode = new(() => new AllOrphanAggregateConfigurationsNode());
     public AllOrphanAggregateConfigurationsNode OrphanAggregateConfigurationsNode { get => _lazyOrphanAggregateConfigurationsNode.Value; }
 
     LazyWithReset<AllTemplateAggregateConfigurationsNode> _lazyTemplateAggregateConfigurationsNode = new(() => new AllTemplateAggregateConfigurationsNode());
@@ -733,13 +735,10 @@ public class CatalogueChildProvider : ICoreChildProvider
         _lazyAllCohortAggregateContainers = new LazyWithReset<CohortAggregateContainer[]>(() => GetAllObjects<CohortAggregateContainer>(_catalogueRepository));
 
         //if we have a database repository then we should get answers from the caching version CohortContainerManagerFromChildProvider otherwise
-        //just use the one that is configured on the repository.
-
-        _cohortContainerManager = _catalogueRepository.CohortContainerManager;
-        //TODO this is problematic
-        //_cohortContainerManager = _catalogueRepository is CatalogueRepository cataRepo
-        //    ? new CohortContainerManagerFromChildProvider(cataRepo, this)
-        //    : _catalogueRepository.CohortContainerManager;
+        //just use the one that is configured on the repository
+        _cohortContainerManager = _catalogueRepository is CatalogueRepository cataRepo
+            ? new CohortContainerManagerFromChildProvider(cataRepo, this)
+            : _catalogueRepository.CohortContainerManager;
     }
 
     private void BuildAggregateConfigurations()
@@ -1976,173 +1975,227 @@ public class CatalogueChildProvider : ICoreChildProvider
     public virtual bool SelectiveRefresh(IMapsDirectlyToDatabaseTable databaseEntity)
     {
         ProgressStopwatch.Restart();
-
-        //loadmetadata
-        //loadmetadatalinkage
-        //processtask
-        //processtaskargument
-        //cacheprogress
-        //permissionwindow
-        //catalogue
-        //dataset
-        //supporting docment
-        //SupportingSQL
-        //catalogueitem
-        //columninfo
-        //aggregateconfig
-        //aggregatedimentions
-        //aggregateontinuousdataaxis
-        //remoterdmp
-        //dashboard
-        //objectimport
-        //objectexport
-        //pipeline
-        //pipelinecomponent
-        //pipelinecomponentargument
-        //standardregex
-        //ANOTable
-        //externaldatabaseserver
-        //tableinfo
-        //dataaccesscredentails
-        //preloaddiscardedcolumns
-        //lookup
-        //joininfo
-        //anytablesqlparameter
-        //extractioninfo
-        //connectionstringkeywords
-        //aggregatefiltercontainer
-        //aggregatefilter
-        //aggregatefilterparameter
-        //extractionfilter
-        //extractionfilterparameter
-        //extractionfilterparameterset
-        //extractionparametersetvalue
-        //cohortidentificationconfiguration
-        //cohortaggregatecontainer
-        //joinablecohortaggregateconfiguration
-        //governanceperiod
-        //governancedocument
-        //joinablecohortaggregateconfigurationuse
-        //regexredactionconfiguration
-        //aggregateconfiguration
-
         return databaseEntity switch
         {
-            AggregateFilterParameter afp => SelectiveRefresh(afp.AggregateFilter),
-            AggregateFilter af => SelectiveRefresh(af),
-            AggregateFilterContainer afc => SelectiveRefresh(afc),
-            CohortAggregateContainer cac => SelectiveRefresh(cac),
-            ExtractionInformation ei => SelectiveRefresh(ei),
-            CatalogueItem ci => SelectiveRefresh(ci),
-            Catalogue c => SelectiveRefresh(c),
+            Catalogue _ => SelectiveRefresh(typeof(Catalogue)),
+            CatalogueItem _ => SelectiveRefresh(typeof(CatalogueItem)),
+            LoadMetadata _ => SelectiveRefresh(typeof(LoadMetadata)),
+            LoadMetadataCatalogueLinkage _ => SelectiveRefresh(typeof(LoadMetadataCatalogueLinkage)),
+            ProcessTask _ => SelectiveRefresh(typeof(ProcessTask)),
+            ProcessTaskArgument _ => SelectiveRefresh(typeof(ProcessTaskArgument)),
+            LoadProgress _ => SelectiveRefresh(typeof(LoadProgress)),
+            CacheProgress _ => SelectiveRefresh(typeof(CacheProgress)),
+            PermissionWindow _ => SelectiveRefresh(typeof(PermissionWindow)),
+            Curation.Data.Dataset _ => SelectiveRefresh(typeof(Curation.Data.Dataset)),
+            SupportingDocument _ => SelectiveRefresh(typeof(SupportingDocument)),
+            SupportingSQLTable _ => SelectiveRefresh(typeof(SupportingSQLTable)),
+            ColumnInfo _ => SelectiveRefresh(typeof(ColumnInfo)),
+            AggregateConfiguration _ => SelectiveRefresh(typeof(AggregateConfiguration)),
+            AggregateDimension _ => SelectiveRefresh(typeof(AggregateDimension)),
+            AggregateContinuousDateAxis _ => SelectiveRefresh(typeof(AggregateContinuousDateAxis)),
+            RemoteRDMP _ => SelectiveRefresh(typeof(RemoteRDMP)),
+            DashboardLayout _ => SelectiveRefresh(typeof(DashboardLayout)),
+            ObjectImport _ => SelectiveRefresh(typeof(ObjectImport)),
+            ObjectExport _ => SelectiveRefresh(typeof(ObjectExport)),
+            StandardRegex _ => SelectiveRefresh(typeof(StandardRegex)),
+            Pipeline _ => SelectiveRefresh(typeof(Pipeline)),
+            PipelineComponent _ => SelectiveRefresh(typeof(PipelineComponent)),
+            PipelineComponentArgument _ => SelectiveRefresh(typeof(PipelineComponentArgument)),
+            ANOTable _ => SelectiveRefresh(typeof(ANOTable)),
+            ExternalDatabaseServer _ => SelectiveRefresh(typeof(ExternalDatabaseServer)),
+            TableInfo _ => SelectiveRefresh(typeof(TableInfo)),
+            DataAccessCredentials _ => SelectiveRefresh(typeof(DataAccessCredentials)),
+            PreLoadDiscardedColumn _ => SelectiveRefresh(typeof(PreLoadDiscardedColumn)),
+            Lookup _ => SelectiveRefresh(typeof(Lookup)),
+            JoinInfo _ => SelectiveRefresh(typeof(JoinInfo)),
+            AnyTableSqlParameter _ => SelectiveRefresh(typeof(AnyTableSqlParameter)),
+            ExtractionInformation _ => SelectiveRefresh(typeof(ExtractionInformation)),
+            ConnectionStringKeyword _ => SelectiveRefresh(typeof(ConnectionStringKeyword)),
+            AggregateFilterContainer _ => SelectiveRefresh(typeof(AggregateFilterContainer)),
+            AggregateFilter _ => SelectiveRefresh(typeof(AggregateFilter)),
+            AggregateFilterParameter _ => SelectiveRefresh(typeof(AggregateFilterParameter)),
+            ExtractionFilter _ => SelectiveRefresh(typeof(ExtractionFilter)),
+            ExtractionFilterParameter _ => SelectiveRefresh(typeof(ExtractionFilterParameter)),
+            ExtractionFilterParameterSet _ => SelectiveRefresh(typeof(ExtractionFilterParameterSet)),
+            ExtractionFilterParameterSetValue _ => SelectiveRefresh(typeof(ExtractionFilterParameterSetValue)),
+            CohortIdentificationConfiguration _ => SelectiveRefresh(typeof(CohortIdentificationConfiguration)),
+            CohortAggregateContainer _ => SelectiveRefresh(typeof(CohortAggregateContainer)),
+            JoinableCohortAggregateConfiguration _ => SelectiveRefresh(typeof(JoinableCohortAggregateConfiguration)),
+            JoinableCohortAggregateConfigurationUse _ => SelectiveRefresh(typeof(JoinableCohortAggregateConfigurationUse)),
+            GovernancePeriod _ => SelectiveRefresh(typeof(GovernancePeriod)),
+            GovernanceDocument _ => SelectiveRefresh(typeof(GovernanceDocument)),
+            RegexRedactionConfiguration _ => SelectiveRefresh(typeof(RegexRedactionConfiguration)),
             _ => false
         };
     }
 
-    public bool SelectiveRefresh(Catalogue c)
+
+
+    public bool SelectiveRefreshParents(Type t)
     {
-        _lazyAllCatalogues.Reset();
-        _lazyCatalogueRootFolder.Reset();
-        return true;
-    }
-
-    public bool SelectiveRefresh(CatalogueItem ci)
-    {
-        var descendancy = GetDescendancyListIfAnyFor(ci.Catalogue);
-        if (descendancy == null) return false;
-
-        FetchCatalogueItems();
-        FetchExtractionInformations();
-        AddChildren(ci.Catalogue, descendancy.Add(ci.Catalogue));
-        return true;
-    }
-
-    public bool SelectiveRefresh(ExtractionInformation ei)
-    {
-        var descendancy = GetDescendancyListIfAnyFor(ei);
-        var cata = descendancy?.Parents.OfType<Catalogue>().LastOrDefault() ?? ei.CatalogueItem.Catalogue;
-
-        if (cata == null)
-            return false;
-
-        var cataDescendancy = GetDescendancyListIfAnyFor(cata);
-
-        if (cataDescendancy == null)
-            return false;
-
-        FetchCatalogueItems();
-
-        foreach (var ci in AllCatalogueItems.Where(ci => ci.ID == ei.CatalogueItem_ID)) ci.ClearAllInjections();
-
-        // property changes or deleting the ExtractionInformation
-        FetchExtractionInformations();
-
-        // refresh the Catalogue
-        AddChildren(cata, cataDescendancy.Add(cata));
-        return true;
-    }
-
-    public bool SelectiveRefresh(CohortAggregateContainer container)
-    {
-        var parentContainer = container.GetParentContainerIfAny();
-        if (parentContainer != null)
+        var results = new List<bool>();
+        if (_descendancyDictionary.TryGetValue(t, out DescendancyList parents))
         {
-            var descendancy = GetDescendancyListIfAnyFor(parentContainer);
-
-            if (descendancy != null)
+            foreach (var parent in parents.Parents)
             {
-                BuildAggregateConfigurations();
-
-                BuildCohortCohortAggregateContainers();
-                AddChildren(parentContainer, descendancy.Add(parentContainer));
-                return true;
+                results.Add(SelectiveRefresh(parent.GetType()));
             }
         }
+        return !results.Contains(false);
+    }
 
-        var cic = container.GetCohortIdentificationConfiguration();
-
-        if (cic != null)
+    public bool SelectiveRefresh(Type t)
+    {
+        if (t == typeof(Catalogue))
         {
-            var descendancy = GetDescendancyListIfAnyFor(cic);
-
-            if (descendancy != null)
-            {
-                BuildAggregateConfigurations();
-                BuildCohortCohortAggregateContainers();
-                AddChildren(cic, descendancy.Add(cic));
-                return true;
-            }
+            _lazyAllCatalogues.Reset();
+            return SelectiveRefreshParents(t);
         }
-
+        if (t == typeof(CatalogueItem))
+        {
+            _lazyAllCatalogueItemsDictionary.Reset();
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(LoadMetadata)) {
+            _lazyAllLoadMetadatas.Reset();
+            return SelectiveRefreshParents(t); }
+        if (t == typeof(LoadMetadataCatalogueLinkage)) {
+            _lazyAllLoadMetadataLinkage.Reset();
+            _lazyAllLoadMetadataCatalogueLinkages.Reset();
+            return SelectiveRefreshParents(t); }
+        if (t == typeof(ProcessTask)) {
+            _lazyAllProcessTasks.Reset();
+            return SelectiveRefreshParents(t); }
+        if (t == typeof(ProcessTaskArgument)) {
+            _lazyAllProcessTasksArguments.Reset();
+            return SelectiveRefreshParents(t); }
+        if (t == typeof(LoadProgress)) {
+            _lazyAllLoadProgress.Reset();
+            return SelectiveRefreshParents(t); }
+        if (t == typeof(CacheProgress)) {
+            _lazyAllCacheProgresses.Reset();
+            return SelectiveRefreshParents(t); }
+        if (t == typeof(PermissionWindow)) {
+            _lazyAllPermissionWindows.Reset();
+            return SelectiveRefreshParents(t); }
+        if (t == typeof(Curation.Data.Dataset)) {
+            _lazyAllDatasets.Reset();
+            return SelectiveRefreshParents(t); }
+        if (t == typeof(SupportingDocument)) {
+            _lazyAllSupportingDocuments.Reset();
+            return SelectiveRefreshParents(t); }
+        if (t == typeof(SupportingSQLTable)) {
+            _lazyAllSupportingSQL.Reset();
+            return SelectiveRefreshParents(t); }
+        if (t == typeof(ColumnInfo)) {
+            _lazyAllColumnInfos.Reset();
+            return SelectiveRefreshParents(t); }
+        if (t == typeof(AggregateConfiguration)) {
+            _lazyAllAggregateConfigurations.Reset();
+            return SelectiveRefreshParents(t); }
+        if (t == typeof(AggregateDimension)) {
+            _lazyAllAggregateDimensions.Reset();
+            return SelectiveRefreshParents(t); }
+        if (t == typeof(AggregateContinuousDateAxis)) {
+            _lazyAllAggregateContinuousDataAxis.Reset();
+            return SelectiveRefreshParents(t); }
+        if (t == typeof(RemoteRDMP)) {
+            _lazyAllRemoteRDMPs.Reset();
+            return SelectiveRefreshParents(t); }
+        if (t == typeof(DashboardLayout)) { 
+            _lazyAllDashboards.Reset();
+            return SelectiveRefreshParents(t); }
+        if (t == typeof(ObjectImport)) {
+            _lazyAllImports.Reset();
+            return SelectiveRefreshParents(t); }
+        if (t == typeof(ObjectExport)) {
+            _lazyAllExports.Reset();
+            return SelectiveRefreshParents(t); }
+        if (t == typeof(StandardRegex)) {
+            _lazyAllStandardRegex.Reset();
+            return SelectiveRefreshParents(t); }
+        if (t == typeof(Pipeline)) {
+            _lazyAllPipelines.Reset();
+            return SelectiveRefreshParents(t); }
+        if (t == typeof(PipelineComponent)) {
+            _lazyAllPipelineComponents.Reset();
+            return SelectiveRefreshParents(t); }
+        if (t == typeof(PipelineComponentArgument)) {
+            _lazyAllPipelineComponentArgument.Reset();
+            return SelectiveRefreshParents(t); }
+        if (t == typeof(ANOTable)) {
+            _lazyAllANOTables.Reset();
+            return SelectiveRefreshParents(t); }
+        if (t == typeof(ExternalDatabaseServer)) {
+            _lazyAllExternalServers.Reset();
+            return SelectiveRefreshParents(t); }
+        if (t == typeof(TableInfo)) {
+            _lazyAllTableInfos.Reset();
+            return SelectiveRefreshParents(t); }
+        if (t == typeof(DataAccessCredentials)) {
+            _lazyAllDataAccessCredentials.Reset();
+            return SelectiveRefreshParents(t); }
+        if (t == typeof(PreLoadDiscardedColumn)) {
+            _lazyAllPreLoadDiscardedColumns.Reset();
+            return SelectiveRefreshParents(t); }
+        if (t == typeof(Lookup)) {
+            _lazyAllLookups.Reset();
+            return SelectiveRefreshParents(t); }
+        if (t == typeof(JoinInfo)) {
+            _lazyAllJoinInfos.Reset();
+            return SelectiveRefreshParents(t); }
+        if (t == typeof(AnyTableSqlParameter)) {
+            _lazyAllAnyTableParameters.Reset();
+            return SelectiveRefreshParents(t); }
+        if (t == typeof(ExtractionInformation)) {
+            _lazyAllExtractionInformationsDictionary.Reset();
+            return SelectiveRefreshParents(t); }
+        if (t == typeof(ConnectionStringKeyword)) { 
+            _lazyAllConnectionStringKeywords.Reset();
+            return SelectiveRefreshParents(t); }
+        if (t == typeof(AggregateFilterContainer)) {
+            _lazyAllAggregateContainersDictionary.Reset();
+            return SelectiveRefreshParents(t); }
+        if (t == typeof(AggregateFilter)) {
+            _lazyAllAggregateFilters.Reset();
+            return SelectiveRefreshParents(t); }
+        if (t == typeof(AggregateFilterParameter)) {
+            _lazyAllAggregateFilterParameters.Reset();
+            return SelectiveRefreshParents(t); }
+        if (t == typeof(ExtractionFilter)) {
+            _lazyAllCatalogueFilters.Reset();
+            return SelectiveRefreshParents(t); }
+        if (t == typeof(ExtractionFilterParameter)) {
+            _lazyAllCatalogueParameters.Reset();
+            return SelectiveRefreshParents(t); }
+        if (t == typeof(ExtractionFilterParameterSet)) {
+            _lazyAllCatalogueValueSets.Reset();
+            return SelectiveRefreshParents(t); }
+        if (t == typeof(ExtractionFilterParameterSetValue)) {
+            _lazyAllCatalogueValueSetValues.Reset();
+            return SelectiveRefreshParents(t); }
+        if (t == typeof(CohortIdentificationConfiguration)) {
+            _lazyAllCohortIdentificationConfigurations.Reset();
+            _lazyCohortidentificationConfigurationRootFolder.Reset();
+            return SelectiveRefreshParents(t); }
+        if (t == typeof(CohortAggregateContainer)) {
+            _lazyAllCohortAggregateContainers.Reset();
+            return SelectiveRefreshParents(t); }
+        if (t == typeof(JoinableCohortAggregateConfiguration)) {
+            _lazyAllJoinables.Reset();
+            return SelectiveRefreshParents(t); }
+        if (t == typeof(JoinableCohortAggregateConfigurationUse)) {
+            _lazyAllJoinableCohortAggregateConfigurationUse.Reset();
+            return SelectiveRefreshParents(t); }
+        if (t == typeof(GovernancePeriod)) {
+            _lazyAllGovernancePeriods.Reset();
+            return SelectiveRefreshParents(t); }
+        if (t == typeof(GovernanceDocument)) {
+            _lazyAllGovernanceDocuments.Reset();
+            return SelectiveRefreshParents(t); }
+        if (t == typeof(RegexRedactionConfiguration)) {
+            _lazyAllRegexRedactionConfigurations.Reset();
+            return SelectiveRefreshParents(t); }
         return false;
-    }
-
-    public bool SelectiveRefresh(AggregateFilter f)
-    {
-        var knownContainer = GetDescendancyListIfAnyFor(f.FilterContainer);
-        if (knownContainer == null) return false;
-
-        BuildAggregateFilterContainers();
-        AddChildren((AggregateFilterContainer)f.FilterContainer, knownContainer.Add(f.FilterContainer));
-        return true;
-    }
-
-    public bool SelectiveRefresh(AggregateFilterContainer container)
-    {
-        var aggregate = container.GetAggregate();
-
-        if (aggregate == null) return false;
-
-        var descendancy = GetDescendancyListIfAnyFor(aggregate);
-
-        if (descendancy == null) return false;
-
-        // update just in case we became a root filter for someone
-        aggregate.RevertToDatabaseState();
-
-        BuildAggregateFilterContainers();
-
-        AddChildren(aggregate, descendancy.Add(aggregate));
-        return true;
     }
 }
