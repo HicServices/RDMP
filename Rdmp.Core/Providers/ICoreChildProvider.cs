@@ -117,12 +117,6 @@ public interface ICoreChildProvider : IChildProvider
 
 
     /// <summary>
-    /// Copy updated values for all properties from the <paramref name="other"/>
-    /// </summary>
-    /// <param name="other"></param>
-    void UpdateTo(ICoreChildProvider other);
-
-    /// <summary>
     /// Returns all known objects who are masquerading as o
     /// </summary>
     /// <param name="o"></param>

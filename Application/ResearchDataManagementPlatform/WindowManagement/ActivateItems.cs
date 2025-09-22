@@ -162,9 +162,9 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         IsAbleToLaunchSubprocesses = true;
     }
 
-    protected override ICoreChildProvider GetChildProvider()
+    protected override ICoreChildProvider GetChildProvider(bool force = false)
     {
-        var provider = base.GetChildProvider();
+        var provider = base.GetChildProvider(force);
 
         if (RefreshBus != null) RefreshBus.ChildProvider = provider;
 
