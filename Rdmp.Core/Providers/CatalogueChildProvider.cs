@@ -1977,6 +1977,55 @@ public class CatalogueChildProvider : ICoreChildProvider
     {
         ProgressStopwatch.Restart();
 
+        //loadmetadata
+        //loadmetadatalinkage
+        //processtask
+        //processtaskargument
+        //cacheprogress
+        //permissionwindow
+        //catalogue
+        //dataset
+        //supporting docment
+        //SupportingSQL
+        //catalogueitem
+        //columninfo
+        //aggregateconfig
+        //aggregatedimentions
+        //aggregateontinuousdataaxis
+        //remoterdmp
+        //dashboard
+        //objectimport
+        //objectexport
+        //pipeline
+        //pipelinecomponent
+        //pipelinecomponentargument
+        //standardregex
+        //ANOTable
+        //externaldatabaseserver
+        //tableinfo
+        //dataaccesscredentails
+        //preloaddiscardedcolumns
+        //lookup
+        //joininfo
+        //anytablesqlparameter
+        //extractioninfo
+        //connectionstringkeywords
+        //aggregatefiltercontainer
+        //aggregatefilter
+        //aggregatefilterparameter
+        //extractionfilter
+        //extractionfilterparameter
+        //extractionfilterparameterset
+        //extractionparametersetvalue
+        //cohortidentificationconfiguration
+        //cohortaggregatecontainer
+        //joinablecohortaggregateconfiguration
+        //governanceperiod
+        //governancedocument
+        //joinablecohortaggregateconfigurationuse
+        //regexredactionconfiguration
+        //aggregateconfiguration
+
         return databaseEntity switch
         {
             AggregateFilterParameter afp => SelectiveRefresh(afp.AggregateFilter),
