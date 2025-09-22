@@ -63,7 +63,14 @@ public class RefreshBus
                     if (ChildProvider != null && e.DeletedObjectDescendancy == null)
                         e.DeletedObjectDescendancy = ChildProvider.GetDescendancyListIfAnyFor(e.Object);
                 }
+                //want to find anythign that is list<T> and reset it
+                //then want to push out a subscriber update foer it any anything that depends on it
+                ChildProvider.SelectiveRefresh(e.Object);
 
+                //ChildProvider.CatalogueRootFolder = null;
+                //ChildProvider.AllCatalogue = null;
+                //var x = ChildProvider.AllCatalogue;
+                //var y = ChildProvider.CatalogueRootFolder;
                 RefreshObject?.Invoke(sender, e);
             }
             finally

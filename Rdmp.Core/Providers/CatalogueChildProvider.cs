@@ -54,6 +54,28 @@ namespace Rdmp.Core.Providers;
 /// </summary>
 public class CatalogueChildProvider : ICoreChildProvider
 {
+    public void Reset(Type t)
+    {
+
+    }
+
+    private class LazyWithReset<T>
+    {
+        private readonly Func<T> _valueFactory;
+        private volatile Lazy<T> _lazy;
+
+        public LazyWithReset(Func<T> valueFactory)
+        {
+            ArgumentNullException.ThrowIfNull(valueFactory);
+            _valueFactory = valueFactory;
+            _lazy = new(valueFactory);
+        }
+
+        public T Value => _lazy.Value;
+        public bool IsValueCreated => _lazy.IsValueCreated;
+
+        public void Reset() => _lazy = new(_valueFactory);
+    }
 
     //Load System
     Lazy<LoadMetadata[]> _lazyAllLoadMetadatas = new(() => []);
@@ -81,7 +103,7 @@ public class CatalogueChildProvider : ICoreChildProvider
     public PermissionWindow[] AllPermissionWindows { get => _lazyAllPermissionWindows.Value; }
 
     //Catalogue side of things
-    Lazy<Catalogue[]> _lazyAllCatalogues = new(() => []);
+    LazyWithReset<Catalogue[]> _lazyAllCatalogues = new(() => []);
     public Catalogue[] AllCatalogues { get => _lazyAllCatalogues.Value; }
 
     Lazy<Curation.Data.Dataset[]> _lazyAllDatasets = new(() => []);
@@ -334,8 +356,8 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     public AllTemplateAggregateConfigurationsNode TemplateAggregateConfigurationsNode { get => _lazyTemplateAggregateConfigurationsNode.Value; }
 
-    Lazy<FolderNode<Catalogue>> _lazyCatalogueRootFolder;
-    public FolderNode<Catalogue> CatalogueRootFolder { get => _lazyCatalogueRootFolder.Value; }
+    LazyWithReset<FolderNode<Catalogue>> _lazyCatalogueRootFolder;
+    public FolderNode<Catalogue> CatalogueRootFolder { get => _lazyCatalogueRootFolder.Value; set => _lazyCatalogueRootFolder.Reset(); }
 
     Lazy<AllDatasetsNode> _lazyAllDatasetsNode = new(() => new AllDatasetsNode(), true);
     public AllDatasetsNode AllDatasetsNode { get => _lazyAllDatasetsNode.Value; }
@@ -374,20 +396,20 @@ public class CatalogueChildProvider : ICoreChildProvider
 
 
 
-        _lazyAllCatalogues = new Lazy<Catalogue[]>(() =>
+        _lazyAllCatalogues = new LazyWithReset<Catalogue[]>(() =>
         {
             var _catalogues = GetAllObjects<Catalogue>(_catalogueRepository);
             return _catalogues;
 
-        }, true);
+        });
 
-        _lazyCatalogueRootFolder = new Lazy<FolderNode<Catalogue>>(() =>
+        _lazyCatalogueRootFolder = new LazyWithReset<FolderNode<Catalogue>>(() =>
         {
             var tree = FolderHelper.BuildFolderTree(AllCatalogues);
             AddChildren(tree, new DescendancyList(tree));
             return tree;
 
-        }, true);
+        });
 
         if (UserSettings.DebugPerformance)
             _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs(
@@ -2073,10 +2095,17 @@ public class CatalogueChildProvider : ICoreChildProvider
             CohortAggregateContainer cac => SelectiveRefresh(cac),
             ExtractionInformation ei => SelectiveRefresh(ei),
             CatalogueItem ci => SelectiveRefresh(ci),
+            Catalogue c => SelectiveRefresh(c),
             _ => false
         };
     }
 
+    public bool SelectiveRefresh(Catalogue c)
+    {
+        _lazyAllCatalogues.Reset();
+        _lazyCatalogueRootFolder.Reset();
+        return true;
+    }
 
     public bool SelectiveRefresh(CatalogueItem ci)
     {

@@ -45,7 +45,7 @@ public interface ICoreChildProvider : IChildProvider
     JoinableCohortAggregateConfiguration[] AllJoinables { get;  }
     JoinableCohortAggregateConfigurationUse[] AllJoinUses { get; }
 
-    FolderNode<Catalogue> CatalogueRootFolder { get; }
+    FolderNode<Catalogue> CatalogueRootFolder { get; set; }
     FolderNode<Curation.Data.Dataset> DatasetRootFolder { get; }
     FolderNode<LoadMetadata> LoadMetadataRootFolder { get; }
     FolderNode<CohortIdentificationConfiguration> CohortIdentificationConfigurationRootFolder { get; }

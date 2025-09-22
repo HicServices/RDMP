@@ -160,7 +160,6 @@ public abstract class BasicActivateItems : IBasicActivateItems
             }
 
         //there was an error generating a data export repository or there was no repository specified
-        var x = Environment.StackTrace;
         //so just create a catalogue one
         temp ??= new CatalogueChildProvider(RepositoryLocator.CatalogueRepository, PluginUserInterfaces.ToArray(),
             GlobalErrorCheckNotifier, CoreChildProvider as CatalogueChildProvider);
