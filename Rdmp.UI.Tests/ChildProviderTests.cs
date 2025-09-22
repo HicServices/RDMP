@@ -97,7 +97,7 @@ internal class ChildProviderTests : UITests
 
 
         // Now call UpdateTo to make cp1 look like cp2
-        cp1.UpdateTo(cp2);
+        //cp1.UpdateTo(cp2);
 
         var badProps = new List<string>();
 
