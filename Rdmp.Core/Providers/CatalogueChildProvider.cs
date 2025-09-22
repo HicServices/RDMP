@@ -54,25 +54,6 @@ namespace Rdmp.Core.Providers;
 /// </summary>
 public class CatalogueChildProvider : ICoreChildProvider
 {
-
-    private class LazyWithReset<T>
-    {
-        private readonly Func<T> _valueFactory;
-        private volatile Lazy<T> _lazy;
-
-        public LazyWithReset(Func<T> valueFactory)
-        {
-            ArgumentNullException.ThrowIfNull(valueFactory);
-            _valueFactory = valueFactory;
-            _lazy = new(valueFactory);
-        }
-
-        public T Value => _lazy.Value;
-        public bool IsValueCreated => _lazy.IsValueCreated;
-
-        public void Reset() => _lazy = new(_valueFactory);
-    }
-
     //Load System
     LazyWithReset<LoadMetadata[]> _lazyAllLoadMetadatas = new(() => []);
     public LoadMetadata[] AllLoadMetadatas { get => _lazyAllLoadMetadatas.Value; }

@@ -539,7 +539,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         if (HardRefresh || !UserSettings.SelectiveRefresh || !CoreChildProvider.SelectiveRefresh(e.Object))
         {
             //update the child provider with a full refresh
-            GetChildProvider();
+            GetChildProvider(true);
             HardRefresh = false;
         }
 

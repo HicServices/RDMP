@@ -47,105 +47,105 @@ public class DataExportChildProvider : CatalogueChildProvider
 
 
     //root objects
-    Lazy<AllCohortsNode> _lazyRootCohortsNode = new(() => new AllCohortsNode(), true);
+    LazyWithReset<AllCohortsNode> _lazyRootCohortsNode = new(() => new AllCohortsNode());
     public AllCohortsNode RootCohortsNode { get => _lazyRootCohortsNode.Value; }
 
     private readonly ICheckNotifier _errorsCheckNotifier;
 
 
-    Lazy<ExternalCohortTable[]> _lazyCohortSources = new();
+    LazyWithReset<ExternalCohortTable[]> _lazyCohortSources = new(() => []);
     public ExternalCohortTable[] CohortSources { get => _lazyCohortSources.Value; }
 
-    Lazy<ExtractableDataSet[]> _lazyExtractableDataSets = new();
+    LazyWithReset<ExtractableDataSet[]> _lazyExtractableDataSets = new(() => []);
     public ExtractableDataSet[] ExtractableDataSets { get => _lazyExtractableDataSets.Value; }
 
-    Lazy<ExtractableDataSetProject[]> _lazyExtractableDataSetProjects = new();
+    LazyWithReset<ExtractableDataSetProject[]> _lazyExtractableDataSetProjects = new(() => []);
     public ExtractableDataSetProject[] ExtractableDataSetProjects { get => _lazyExtractableDataSetProjects.Value; }
 
-    Lazy<SelectedDataSets[]> _lazySelectedDataSets = new();
+    LazyWithReset<SelectedDataSets[]> _lazySelectedDataSets = new(() => []);
     public SelectedDataSets[] SelectedDataSets { get => _lazySelectedDataSets.Value; }
 
-    Lazy<Dictionary<int, ExtractionProgress>> _lazy_extractionProgressesBySelectedDataSetID = new();
+    LazyWithReset<Dictionary<int, ExtractionProgress>> _lazy_extractionProgressesBySelectedDataSetID = new(() => []);
     public Dictionary<int, ExtractionProgress> _extractionProgressesBySelectedDataSetID { get => _lazy_extractionProgressesBySelectedDataSetID.Value; }
 
-    Lazy<ExtractableDataSetPackage[]> _lazyAllPackages { get; set; }
+    LazyWithReset<ExtractableDataSetPackage[]> _lazyAllPackages { get; set; }
     public ExtractableDataSetPackage[] AllPackages { get => _lazyAllPackages.Value; }
 
 
-    Lazy<FolderNode<Project>> _lazyProjectRootFolder;
+    LazyWithReset<FolderNode<Project>> _lazyProjectRootFolder;
     public FolderNode<Project> ProjectRootFolder { get => _lazyProjectRootFolder.Value; }
 
-    Lazy<Project[]> _lazyProjects = new();
+    LazyWithReset<Project[]> _lazyProjects = new(() => []);
     public Project[] Projects { get => _lazyProjects.Value; }
 
-    Lazy<Dictionary<int, HashSet<ExtractableCohort>>> _lazy_cohortsByOriginId;
+    LazyWithReset<Dictionary<int, HashSet<ExtractableCohort>>> _lazy_cohortsByOriginId;
 
     private Dictionary<int, HashSet<ExtractableCohort>> _cohortsByOriginId { get => _lazy_cohortsByOriginId.Value; }
 
-    Lazy<ExtractableCohort[]> _lazyCohorts = new();
+    LazyWithReset<ExtractableCohort[]> _lazyCohorts = new(() => []);
     public ExtractableCohort[] Cohorts { get => _lazyCohorts.Value; }
 
 
-    Lazy<ExtractionConfiguration[]> _lazyExtractionConfigurations = new();
+    LazyWithReset<ExtractionConfiguration[]> _lazyExtractionConfigurations = new(() => []);
     public ExtractionConfiguration[] ExtractionConfigurations { get => _lazyExtractionConfigurations.Value; }
 
-    Lazy<Dictionary<int, List<ExtractionConfiguration>>> _lazyExtractionConfigurationsByProject;
+    LazyWithReset<Dictionary<int, List<ExtractionConfiguration>>> _lazyExtractionConfigurationsByProject;
     public Dictionary<int, List<ExtractionConfiguration>> ExtractionConfigurationsByProject { get => _lazyExtractionConfigurationsByProject.Value; }
 
-    Lazy<Dictionary<IExtractionConfiguration, List<SelectedDataSets>>> _lazy_configurationToDatasetMapping;
+    LazyWithReset<Dictionary<IExtractionConfiguration, List<SelectedDataSets>>> _lazy_configurationToDatasetMapping;
 
     private Dictionary<IExtractionConfiguration, List<SelectedDataSets>> _configurationToDatasetMapping { get => _lazy_configurationToDatasetMapping.Value; }
     private IFilterManager _dataExportFilterManager;//TODO
 
 
-    Lazy<List<ExternalCohortTable>> _lazyForbidListedSources = new();
+    LazyWithReset<List<ExternalCohortTable>> _lazyForbidListedSources = new(() => []);
     public List<ExternalCohortTable> ForbidListedSources { get => _lazyForbidListedSources.Value; }
 
-    Lazy<List<IObjectUsedByOtherObjectNode<Project, IMapsDirectlyToDatabaseTable>>> _lazyDuplicatesByProject = new();
+    LazyWithReset<List<IObjectUsedByOtherObjectNode<Project, IMapsDirectlyToDatabaseTable>>> _lazyDuplicatesByProject = new(()=>new List<IObjectUsedByOtherObjectNode<Project, IMapsDirectlyToDatabaseTable>>());
     public List<IObjectUsedByOtherObjectNode<Project, IMapsDirectlyToDatabaseTable>> DuplicatesByProject { get => _lazyDuplicatesByProject.Value; }
 
-    Lazy<List<IObjectUsedByOtherObjectNode<CohortSourceUsedByProjectNode>>> _lazyDuplicatesByCohortSourceUsedByProjectNode = new();
+    LazyWithReset<List<IObjectUsedByOtherObjectNode<CohortSourceUsedByProjectNode>>> _lazyDuplicatesByCohortSourceUsedByProjectNode = new(() => []);
 
     public List<IObjectUsedByOtherObjectNode<CohortSourceUsedByProjectNode>> DuplicatesByCohortSourceUsedByProjectNode { get => _lazyDuplicatesByCohortSourceUsedByProjectNode.Value; }
 
 
     private readonly object _oProjectNumberToCohortsDictionary = new();//todo
 
-    Lazy<Dictionary<int, List<ExtractableCohort>>> _lazyProjectNumberToCohortsDictionary = new();
+    LazyWithReset<Dictionary<int, List<ExtractableCohort>>> _lazyProjectNumberToCohortsDictionary = new(()=>new Dictionary<int, List<ExtractableCohort>>());
     public Dictionary<int, List<ExtractableCohort>> ProjectNumberToCohortsDictionary { get => _lazyProjectNumberToCohortsDictionary.Value; }
 
-    Lazy<ProjectCohortIdentificationConfigurationAssociation[]> _lazyAllProjectAssociatedCics = new();
+    LazyWithReset<ProjectCohortIdentificationConfigurationAssociation[]> _lazyAllProjectAssociatedCics = new(() => []);
 
     public ProjectCohortIdentificationConfigurationAssociation[] AllProjectAssociatedCics { get => _lazyAllProjectAssociatedCics.Value; }
 
-    Lazy<GlobalExtractionFilterParameter[]> _lazyAllGlobalExtractionFilterParameters = new();
+    LazyWithReset<GlobalExtractionFilterParameter[]> _lazyAllGlobalExtractionFilterParameters = new(() => []);
     public GlobalExtractionFilterParameter[] AllGlobalExtractionFilterParameters { get => _lazyAllGlobalExtractionFilterParameters.Value; }
 
     /// <summary>
     /// ID of all CohortIdentificationConfiguration which have an ProjectCohortIdentificationConfigurationAssociation declared on them (i.e. the CIC is used with one or more Projects)
     /// </summary>
     /// 
-    Lazy<HashSet<int>> _lazy_cicAssociations = new();
+    LazyWithReset<HashSet<int>> _lazy_cicAssociations = new(()=>new HashSet<int>());
     private HashSet<int> _cicAssociations { get => _lazy_cicAssociations.Value; }
 
 
-    Lazy<HashSet<ISelectedDataSets>> _lazy_selectedDataSetsWithNoIsExtractionIdentifier = new();
+    LazyWithReset<HashSet<ISelectedDataSets>> _lazy_selectedDataSetsWithNoIsExtractionIdentifier = new(()=>new HashSet<ISelectedDataSets>());
     private HashSet<ISelectedDataSets> _selectedDataSetsWithNoIsExtractionIdentifier { get => _lazy_selectedDataSetsWithNoIsExtractionIdentifier.Value; }
 
     /// <summary>
     /// All AND/OR containers found during construction (in the data export database).  The Key is the ID of the container (for rapid random access)
     /// </summary>
-    Lazy<Dictionary<int, FilterContainer>> _lazyAllContainers;
+    LazyWithReset<Dictionary<int, FilterContainer>> _lazyAllContainers;
     public Dictionary<int, FilterContainer> AllContainers { get => _lazyAllContainers.Value; }
 
     /// <summary>
     /// All data export filters that existed when this child provider was constructed
     /// </summary>
     /// 
-    Lazy<DeployedExtractionFilter[]> _lazyAllDeployedExtractionFilters = new();
+    LazyWithReset<DeployedExtractionFilter[]> _lazyAllDeployedExtractionFilters = new(() => []);
     public DeployedExtractionFilter[] AllDeployedExtractionFilters { get => _lazyAllDeployedExtractionFilters.Value; }
 
-    Lazy<DeployedExtractionFilterParameter[]> _lazy_allParameters = new();
+    LazyWithReset<DeployedExtractionFilterParameter[]> _lazy_allParameters = new(() => []);
 
     private DeployedExtractionFilterParameter[] _allParameters { get => _lazy_allParameters.Value; }
 
@@ -156,23 +156,23 @@ public class DataExportChildProvider : CatalogueChildProvider
         DataExportChildProvider previousStateIfKnown) : base(repositoryLocator.CatalogueRepository,
         pluginChildProviders, errorsCheckNotifier, previousStateIfKnown)
     {
-        _lazyForbidListedSources = new Lazy<List<ExternalCohortTable>>(() => previousStateIfKnown?.ForbidListedSources ?? new List<ExternalCohortTable>(), true);
+        _lazyForbidListedSources = new LazyWithReset<List<ExternalCohortTable>>(() => previousStateIfKnown?.ForbidListedSources ?? new List<ExternalCohortTable>());
         _errorsCheckNotifier = errorsCheckNotifier;
         dataExportRepository = repositoryLocator.DataExportRepository;
 
-        _lazyAllProjectAssociatedCics = new Lazy<ProjectCohortIdentificationConfigurationAssociation[]>(() =>
-            GetAllObjects<ProjectCohortIdentificationConfigurationAssociation>(dataExportRepository), true);
+        _lazyAllProjectAssociatedCics = new LazyWithReset<ProjectCohortIdentificationConfigurationAssociation[]>(() =>
+            GetAllObjects<ProjectCohortIdentificationConfigurationAssociation>(dataExportRepository));
 
-        _lazy_cicAssociations = new Lazy<HashSet<int>>(() =>
-            new HashSet<int>(AllProjectAssociatedCics.Select(a => a.CohortIdentificationConfiguration_ID)), true);
+        _lazy_cicAssociations = new LazyWithReset<HashSet<int>>(() =>
+            new HashSet<int>(AllProjectAssociatedCics.Select(a => a.CohortIdentificationConfiguration_ID)));
 
-        _lazyCohortSources = new Lazy<ExternalCohortTable[]>(() => GetAllObjects<ExternalCohortTable>(dataExportRepository));
-        _lazyExtractableDataSets = new Lazy<ExtractableDataSet[]>(() =>
+        _lazyCohortSources = new LazyWithReset<ExternalCohortTable[]>(() => GetAllObjects<ExternalCohortTable>(dataExportRepository));
+        _lazyExtractableDataSets = new LazyWithReset<ExtractableDataSet[]>(() =>
         {
             var x = GetAllObjects<ExtractableDataSet>(dataExportRepository);
             return x;
-        }, true);
-        _lazyExtractableDataSetProjects = new Lazy<ExtractableDataSetProject[]>(() => GetAllObjects<ExtractableDataSetProject>(dataExportRepository), true);
+        });
+        _lazyExtractableDataSetProjects = new LazyWithReset<ExtractableDataSetProject[]>(() => GetAllObjects<ExtractableDataSetProject>(dataExportRepository));
         //This means that the ToString method in ExtractableDataSet doesn't need to go lookup catalogue info
 
         //TODO
@@ -183,39 +183,39 @@ public class DataExportChildProvider : CatalogueChildProvider
 
         ReportProgress("Injecting ExtractableDataSet");
 
-        _lazyAllPackages = new Lazy<ExtractableDataSetPackage[]>(() =>
+        _lazyAllPackages = new LazyWithReset<ExtractableDataSetPackage[]>(() =>
         {
             var x = GetAllObjects<ExtractableDataSetPackage>(dataExportRepository);
             foreach (var package in x)
                 AddChildren(package, new DescendancyList(package));
             return x;
-        }, true);
+        });
 
-        _lazyProjects = new Lazy<Project[]>(() => GetAllObjects<Project>(dataExportRepository), true);
-        _lazyExtractionConfigurations = new Lazy<ExtractionConfiguration[]>(() => GetAllObjects<ExtractionConfiguration>(dataExportRepository), true);
+        _lazyProjects = new LazyWithReset<Project[]>(() => GetAllObjects<Project>(dataExportRepository));
+        _lazyExtractionConfigurations = new LazyWithReset<ExtractionConfiguration[]>(() => GetAllObjects<ExtractionConfiguration>(dataExportRepository));
 
         ReportProgress("Get Projects and Configurations");
 
-        _lazyExtractionConfigurationsByProject = new Lazy<Dictionary<int, List<ExtractionConfiguration>>>(() => ExtractionConfigurations.GroupBy(k => k.Project_ID)
-            .ToDictionaryEx(gdc => gdc.Key, gdc => gdc.ToList()), true);
+        _lazyExtractionConfigurationsByProject = new LazyWithReset<Dictionary<int, List<ExtractionConfiguration>>>(() => ExtractionConfigurations.GroupBy(k => k.Project_ID)
+            .ToDictionaryEx(gdc => gdc.Key, gdc => gdc.ToList()));
 
         ReportProgress("Grouping Extractions by Project");
 
         BuildSelectedDatasets();
 
-        _lazyAllGlobalExtractionFilterParameters = new Lazy<GlobalExtractionFilterParameter[]>(() => GetAllObjects<GlobalExtractionFilterParameter>(dataExportRepository), true);
+        _lazyAllGlobalExtractionFilterParameters = new LazyWithReset<GlobalExtractionFilterParameter[]>(() => GetAllObjects<GlobalExtractionFilterParameter>(dataExportRepository));
 
         BuildExtractionFilters();
 
         ReportProgress("Building FilterManager");
 
-        _lazyCohorts = new Lazy<ExtractableCohort[]>(() =>
+        _lazyCohorts = new LazyWithReset<ExtractableCohort[]>(() =>
         {
             var x = GetAllObjects<ExtractableCohort>(dataExportRepository);
             return x;
         }
-        , true);
-        _lazy_cohortsByOriginId = new Lazy<Dictionary<int, HashSet<ExtractableCohort>>>(() =>
+        );
+        _lazy_cohortsByOriginId = new LazyWithReset<Dictionary<int, HashSet<ExtractableCohort>>>(() =>
         {
 
             var x = new Dictionary<int, HashSet<ExtractableCohort>>();
@@ -227,43 +227,45 @@ public class DataExportChildProvider : CatalogueChildProvider
                 x[c.OriginID].Add(c);
             }
             return x;
-        }, true);
+        });
 
 
 
         ReportProgress("Fetching Cohorts");
 
 
-        _lazyProjectNumberToCohortsDictionary = new Lazy<Dictionary<int, List<ExtractableCohort>>>(() => {
+        _lazyProjectNumberToCohortsDictionary = new LazyWithReset<Dictionary<int, List<ExtractableCohort>>>(() =>
+        {
             var x = new Dictionary<int, List<ExtractableCohort>>();
-            foreach(var cohort in CohortSources.Except(ForbidListedSources)) {
+            foreach (var cohort in CohortSources.Except(ForbidListedSources))
+            {
                 GetCohortAvailability(cohort, x);
             }
             return x;
-        }, true);
+        });
 
         ReportProgress("GetCohortAvailability");
 
 
         ReportProgress("Mapping configurations to datasets");
 
-        _lazyRootCohortsNode = new Lazy<AllCohortsNode>(() =>
+        _lazyRootCohortsNode = new LazyWithReset<AllCohortsNode>(() =>
         {
             var x = new AllCohortsNode();
             AddChildren(x, new DescendancyList(x));
             return x;
-        }, true);
+        });
 
 
 
         ReportProgress("Packages and Cohorts");
 
-        _lazyProjectRootFolder = new Lazy<FolderNode<Project>>(() =>
+        _lazyProjectRootFolder = new LazyWithReset<FolderNode<Project>>(() =>
         {
             var x = FolderHelper.BuildFolderTree(Projects);
             AddChildren(x, new DescendancyList(x));
             return x;
-        }, true);
+        });
 
         ReportProgress("Projects");
         //inject extractability into Catalogues
@@ -326,25 +328,25 @@ public class DataExportChildProvider : CatalogueChildProvider
 
     private void BuildSelectedDatasets()
     {
-        _lazy_selectedDataSetsWithNoIsExtractionIdentifier = new Lazy<HashSet<ISelectedDataSets>>(() =>
-            new HashSet<ISelectedDataSets>(dataExportRepository.GetSelectedDatasetsWithNoExtractionIdentifiers()), true);
+        _lazy_selectedDataSetsWithNoIsExtractionIdentifier = new LazyWithReset<HashSet<ISelectedDataSets>>(() =>
+            new HashSet<ISelectedDataSets>(dataExportRepository.GetSelectedDatasetsWithNoExtractionIdentifiers()));
 
-        _lazySelectedDataSets = new Lazy<SelectedDataSets[]>(() =>
+        _lazySelectedDataSets = new LazyWithReset<SelectedDataSets[]>(() =>
         {
             var x = GetAllObjects<SelectedDataSets>(dataExportRepository);
             var dsDictionary = ExtractableDataSets.ToDictionaryEx(ds => ds.ID, d => d);
             foreach (var s in x)
                 s.InjectKnown(dsDictionary[s.ExtractableDataSet_ID]);
             return x;
-        }, true);
+        });
         ReportProgress("Fetching data export objects");
 
-        _lazy_extractionProgressesBySelectedDataSetID = new Lazy<Dictionary<int, ExtractionProgress>>(() => GetAllObjects<ExtractionProgress>(dataExportRepository)
-            .ToDictionaryEx(ds => ds.SelectedDataSets_ID, d => d), true);
+        _lazy_extractionProgressesBySelectedDataSetID = new LazyWithReset<Dictionary<int, ExtractionProgress>>(() => GetAllObjects<ExtractionProgress>(dataExportRepository)
+            .ToDictionaryEx(ds => ds.SelectedDataSets_ID, d => d));
 
         ReportProgress("Injecting SelectedDataSets");
 
-        _lazy_configurationToDatasetMapping = new Lazy<Dictionary<IExtractionConfiguration, List<SelectedDataSets>>>(() =>
+        _lazy_configurationToDatasetMapping = new LazyWithReset<Dictionary<IExtractionConfiguration, List<SelectedDataSets>>>(() =>
         {
 
             var x = new Dictionary<IExtractionConfiguration, List<SelectedDataSets>>();
@@ -355,16 +357,16 @@ public class DataExportChildProvider : CatalogueChildProvider
                 if (configToSds.TryGetValue(configuration.ID, out var result))
                     x.Add(configuration, result);
             return x;
-        }, true);
+        });
 
 
     }
 
     private void BuildExtractionFilters()
     {
-        _lazyAllContainers = new Lazy<Dictionary<int, FilterContainer>>(() => GetAllObjects<FilterContainer>(dataExportRepository).ToDictionaryEx(o => o.ID, o => o), true);
-        _lazyAllDeployedExtractionFilters = new Lazy<DeployedExtractionFilter[]>(() => GetAllObjects<DeployedExtractionFilter>(dataExportRepository), true);
-        _lazy_allParameters = new Lazy<DeployedExtractionFilterParameter[]>(() => GetAllObjects<DeployedExtractionFilterParameter>(dataExportRepository), true);
+        _lazyAllContainers = new LazyWithReset<Dictionary<int, FilterContainer>>(() => GetAllObjects<FilterContainer>(dataExportRepository).ToDictionaryEx(o => o.ID, o => o));
+        _lazyAllDeployedExtractionFilters = new LazyWithReset<DeployedExtractionFilter[]>(() => GetAllObjects<DeployedExtractionFilter>(dataExportRepository));
+        _lazy_allParameters = new LazyWithReset<DeployedExtractionFilterParameter[]>(() => GetAllObjects<DeployedExtractionFilterParameter>(dataExportRepository));
 
         ReportProgress("Getting Filters");
 
@@ -969,7 +971,7 @@ public class DataExportChildProvider : CatalogueChildProvider
         // update it to the latest state
         project.RevertToDatabaseState();
 
-        _lazyAllGlobalExtractionFilterParameters = new Lazy<GlobalExtractionFilterParameter[]>(() => GetAllObjects<GlobalExtractionFilterParameter>(dataExportRepository), true);
+        _lazyAllGlobalExtractionFilterParameters = new LazyWithReset<GlobalExtractionFilterParameter[]>(() => GetAllObjects<GlobalExtractionFilterParameter>(dataExportRepository));
 
         BuildSelectedDatasets();
 
