@@ -968,6 +968,6 @@ public class DataExportChildProvider : CatalogueChildProvider
             _lazyAllDeployedExtractionFilters.Reset();
             return SelectiveRefreshParents(t);
         }
-        return false;
+        return base.SelectiveRefresh(t);
     }
 }

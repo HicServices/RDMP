@@ -24,4 +24,6 @@ public interface IRefreshBusSubscriber
     //void RefreshBus_DoWork(object sender, DoWorkEventArgs e);
 
     void RefreshBus_DoWork(object sender, DoWorkEventArgs e);
+    delegate void RefreshCallback(object sender, DoWorkEventArgs e);
+
 }

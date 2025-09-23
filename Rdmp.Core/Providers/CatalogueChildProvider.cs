@@ -2049,11 +2049,17 @@ public class CatalogueChildProvider : ICoreChildProvider
         if (t == typeof(Catalogue))
         {
             _lazyAllCatalogues.Reset();
+            _lazyCatalogueRootFolder.Reset();
             return SelectiveRefreshParents(t);
         }
         if (t == typeof(CatalogueItem))
         {
             _lazyAllCatalogueItemsDictionary.Reset();
+            //_lazy_extractionInformationsByCatalogueItem.Reset();
+            //_lazyAllExtractionInformationsDictionary.Reset();
+            //_lazyAllCatalogues.Reset();
+            //_lazyCatalogueRootFolder.Reset();
+            //InjectCatalogueItems();
             return SelectiveRefreshParents(t);
         }
         if (t == typeof(LoadMetadata)) {
@@ -2149,6 +2155,12 @@ public class CatalogueChildProvider : ICoreChildProvider
             return SelectiveRefreshParents(t); }
         if (t == typeof(ExtractionInformation)) {
             _lazyAllExtractionInformationsDictionary.Reset();
+            _lazyAllCatalogueItemsDictionary.Reset();
+            _lazy_extractionInformationsByCatalogueItem.Reset();
+            _lazyAllCatalogues.Reset();
+            _lazyCatalogueRootFolder.Reset();
+            InjectCatalogueItems();
+            InjectCatalogueItems();
             return SelectiveRefreshParents(t); }
         if (t == typeof(ConnectionStringKeyword)) { 
             _lazyAllConnectionStringKeywords.Reset();
@@ -2189,9 +2201,11 @@ public class CatalogueChildProvider : ICoreChildProvider
             return SelectiveRefreshParents(t); }
         if (t == typeof(GovernancePeriod)) {
             _lazyAllGovernancePeriods.Reset();
+            _lazyAllGovernanceNode.Reset();
             return SelectiveRefreshParents(t); }
         if (t == typeof(GovernanceDocument)) {
             _lazyAllGovernanceDocuments.Reset();
+            _lazyAllGovernanceNode.Reset();
             return SelectiveRefreshParents(t); }
         if (t == typeof(RegexRedactionConfiguration)) {
             _lazyAllRegexRedactionConfigurations.Reset();

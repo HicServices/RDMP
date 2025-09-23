@@ -7,10 +7,13 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Providers;
+using Rdmp.UI.Collections;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
@@ -31,8 +34,10 @@ public class RefreshBus
     public event RefreshObjectEventHandler AfterPublish;
     private event RefreshObjectEventHandler RefreshObject;
 
-    public BackgroundWorker worker = new();
-
+    public BackgroundWorker worker = new BackgroundWorker()
+    {
+        WorkerReportsProgress = true,
+    };
     public bool PublishInProgress { get; private set; }
 
     public ICoreChildProvider ChildProvider { get; set; }
@@ -41,6 +46,11 @@ public class RefreshBus
 
     public void Publish(object sender, RefreshObjectEventArgs e)
     {
+        //if (Debugger.IsAttached)
+        //{
+        worker.RunWorkerCompleted += workerComplete;
+        //}
+
         var obj = e.Object;//this isthe UPDATE OBJECT
         if (PublishInProgress)
             throw new SubscriptionException(
@@ -68,12 +78,16 @@ public class RefreshBus
                         e.DeletedObjectDescendancy = ChildProvider.GetDescendancyListIfAnyFor(e.Object);
                 }
                 ChildProvider.SelectiveRefresh(e.Object);
-                worker.RunWorkerAsync();
+                worker.RunWorkerAsync(argument: e.Object);
                 if (DateTime.Now.Year < 2000)
                     RefreshObject?.Invoke(sender, e);
             }
             finally
             {
+                //if (Debugger.IsAttached)
+                //{
+                worker.RunWorkerCompleted -= workerComplete;
+                //}
                 if (DateTime.Now.Year < 2000)
                     AfterPublish?.Invoke(this, e);
                 PublishInProgress = false;
@@ -82,12 +96,21 @@ public class RefreshBus
         }
     }
 
+    private void workerComplete(object sender, RunWorkerCompletedEventArgs e)
+    {
+        Console.Write('w');
+    }
+
     private HashSet<IRefreshBusSubscriber> subscribers = new();
 
     public void Subscribe(IRefreshBusSubscriber subscriber)
     {
-        subscribers.Add(subscriber);
-        worker.DoWork += subscriber.RefreshBus_DoWork;
+        if (subscriber is CatalogueCollectionUI catalogueCollectionUI)
+        {
+            subscribers.Add(subscriber);
+
+            worker.DoWork += subscriber.RefreshBus_DoWork;
+        }
     }
 
     public void Unsubscribe(IRefreshBusSubscriber unsubscriber)
@@ -95,6 +118,7 @@ public class RefreshBus
         subscribers.Remove(unsubscriber);
         worker.DoWork -= unsubscriber.RefreshBus_DoWork;
     }
+
 
     public void EstablishLifetimeSubscription(ILifetimeSubscriber c)
     {

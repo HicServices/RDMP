@@ -20,8 +20,12 @@ using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using static Rdmp.UI.Refreshing.IRefreshBusSubscriber;
 
 namespace Rdmp.UI.Collections;
 
@@ -287,32 +291,43 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
 
     public void RefreshBus_DoWork(object sender, DoWorkEventArgs e)
     {
-
         var o = (IMapsDirectlyToDatabaseTable)e.Argument;
 
-        switch (o)
+        if (tlvCatalogues.InvokeRequired)
         {
-            case GovernancePeriod or GovernanceDocument:
-                tlvCatalogues.RefreshObject(Activator.CoreChildProvider.AllGovernanceNode);
-                break;
-            case Catalogue cata:
-                {
-                    //if there's a change to the folder of the catalogue or it is a new Catalogue (no parent folder) we have to rebuild the entire tree
-                    if (tlvCatalogues.GetParent(cata) is not string oldFolder || !oldFolder.Equals(cata.Folder))
-                        RefreshUIFromDatabase(Activator.CoreChildProvider.CatalogueRootFolder);
-                    else
-                        RefreshUIFromDatabase(o);
-                    return;
-                }
-            case CatalogueItem or AggregateConfiguration or ColumnInfo or TableInfo or ExtractionFilter
-                or ExtractionFilterParameter or ExtractionFilterParameterSet or ExtractionInformation
-                or AggregateFilterContainer or AggregateFilter or AggregateFilterParameter:
-                //then refresh us
-                RefreshUIFromDatabase(o);
-                break;
+            //can do non-UI things here
+            switch (o)
+            {
+                case GovernancePeriod or GovernanceDocument:
+                    _ = Activator.CoreChildProvider.AllGovernanceNode;
+                    break;
+                case Catalogue:
+                    _ = Activator.CoreChildProvider.CatalogueRootFolder;
+                    break;
+                case CatalogueItem or AggregateConfiguration or ColumnInfo or TableInfo or ExtractionFilter or ExtractionFilterParameter or ExtractionFilterParameterSet or ExtractionInformation or AggregateFilterContainer or AggregateFilter or AggregateFilterParameter:
+                    _ = Activator.CoreChildProvider.CatalogueRootFolder;
+                    break;
+            }
+            RefreshCallback rb = new RefreshCallback(RefreshBus_DoWork);
+            this.Invoke(rb, sender, e);
         }
-
-        ApplyFilters();
+        else
+        {
+            //do all the ui things here
+            switch (o)
+            {
+                case GovernancePeriod or GovernanceDocument:
+                    tlvCatalogues.RefreshObject(Activator.CoreChildProvider.AllGovernanceNode);
+                    break;
+                case Catalogue:
+                    RefreshUIFromDatabase(Activator.CoreChildProvider.CatalogueRootFolder);
+                    break;
+                case CatalogueItem or AggregateConfiguration or ColumnInfo or TableInfo or ExtractionFilter or ExtractionFilterParameter or ExtractionFilterParameterSet or ExtractionInformation or AggregateFilterContainer or AggregateFilter or AggregateFilterParameter:
+                    RefreshUIFromDatabase(Activator.CoreChildProvider.CatalogueRootFolder);
+                    break;
+            }
+            ApplyFilters();
+        }
     }
 
     public static bool IsRootObject(object root)
