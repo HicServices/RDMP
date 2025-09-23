@@ -4,11 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Windows.Forms;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
@@ -19,6 +14,12 @@ using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Windows.Forms;
+using static Rdmp.UI.Refreshing.IRefreshBusSubscriber;
 
 namespace Rdmp.UI.Collections;
 
@@ -145,13 +146,22 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
 
     public void RefreshBus_DoWork(object sender, DoWorkEventArgs e)
     {
-        //var o = e.Object;
-        //switch (o)
-        //{
-        //    case CohortIdentificationConfiguration:
-        //        tlvCohortIdentificationConfigurations.RefreshObjects(Activator.CoreChildProvider.AllCohortIdentificationConfigurations);
-        //        break;
-        //}
+        var o = e.Argument;
+        switch (o)
+        {
+            case CohortIdentificationConfiguration:
+                if (tlvCohortIdentificationConfigurations.InvokeRequired)
+                {
+                    _ = Activator.CoreChildProvider.AllCohortIdentificationConfigurations;
+                    RefreshCallback rb = new RefreshCallback(RefreshBus_DoWork);
+                    this.Invoke(rb, sender, e);
+                }
+                else
+                {
+                    tlvCohortIdentificationConfigurations.RefreshObjects(Activator.CoreChildProvider.AllCohortIdentificationConfigurations);
+                }
+                break;
+        }
     }
 
     private string FrozenAspectGetter(object o) =>

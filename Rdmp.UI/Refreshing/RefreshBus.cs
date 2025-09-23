@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
@@ -78,15 +79,24 @@ public class RefreshBus
                         e.DeletedObjectDescendancy = ChildProvider.GetDescendancyListIfAnyFor(e.Object);
                 }
                 ChildProvider.SelectiveRefresh(e.Object);
+                //worker.RunWorkerAsync(argument: e.Object);
+                //while (worker.IsBusy)
+                //{
+                //    Thread.Sleep(1);
+                //}
+                var x = Environment.StackTrace;
                 worker.RunWorkerAsync(argument: e.Object);
                 if (DateTime.Now.Year < 2000)
                     RefreshObject?.Invoke(sender, e);
+            }catch(Exception err)
+            {
+                Console.WriteLine(err.ToString());
             }
             finally
             {
                 //if (Debugger.IsAttached)
                 //{
-                worker.RunWorkerCompleted -= workerComplete;
+                //worker.RunWorkerCompleted -= workerComplete;
                 //}
                 if (DateTime.Now.Year < 2000)
                     AfterPublish?.Invoke(this, e);
@@ -98,19 +108,19 @@ public class RefreshBus
 
     private void workerComplete(object sender, RunWorkerCompletedEventArgs e)
     {
-        Console.Write('w');
+        if (e.Error is not null)
+        {
+            Console.Write('w');
+        }
     }
 
     private HashSet<IRefreshBusSubscriber> subscribers = new();
 
     public void Subscribe(IRefreshBusSubscriber subscriber)
     {
-        if (subscriber is CatalogueCollectionUI catalogueCollectionUI)
-        {
-            subscribers.Add(subscriber);
+        subscribers.Add(subscriber);
 
-            worker.DoWork += subscriber.RefreshBus_DoWork;
-        }
+        worker.DoWork += subscriber.RefreshBus_DoWork;
     }
 
     public void Unsubscribe(IRefreshBusSubscriber unsubscriber)

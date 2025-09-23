@@ -111,7 +111,7 @@ public partial class CreateNewCohortIdentificationConfigurationUI : RDMPForm
 
         var cic = CreateCohortIdentificationConfiguration();
 
-        Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(cic));
+        //Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(cic));
 
         CohortIdentificationCriteriaCreatedIfAny = cic;
         DialogResult = DialogResult.OK;

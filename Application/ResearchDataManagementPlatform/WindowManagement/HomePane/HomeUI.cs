@@ -4,8 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.ComponentModel;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
@@ -19,6 +17,9 @@ using Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
+using System;
+using System.ComponentModel;
+using static Rdmp.UI.Refreshing.IRefreshBusSubscriber;
 
 namespace ResearchDataManagementPlatform.WindowManagement.HomePane;
 
@@ -82,6 +83,14 @@ public partial class HomeUI : RDMPUserControl, ILifetimeSubscriber
 
     public void RefreshBus_DoWork(object sender, DoWorkEventArgs e)
     {
-        BuildCommandLists();
+        if (boxCatalogue.InvokeRequired)
+        {
+            RefreshCallback rb = new RefreshCallback(RefreshBus_DoWork);
+            this.Invoke(rb, sender, e);
+        }
+        else
+        {
+            BuildCommandLists();
+        }
     }
 }
