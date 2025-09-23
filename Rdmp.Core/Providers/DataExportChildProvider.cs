@@ -44,7 +44,7 @@ public class DataExportChildProvider : CatalogueChildProvider
     //TODO - there are still some issues here with speed, they are noted with a TODO flag
     // there is an issue with folder stuctures not updating in the UI when you change the name 
     // might need to have the UI watch for updastes?
-
+    //there is a "double tap" when saving objects...
 
     //root objects
     LazyWithReset<AllCohortsNode> _lazyRootCohortsNode = new(() => new AllCohortsNode());
@@ -95,13 +95,13 @@ public class DataExportChildProvider : CatalogueChildProvider
     LazyWithReset<Dictionary<IExtractionConfiguration, List<SelectedDataSets>>> _lazy_configurationToDatasetMapping;
 
     private Dictionary<IExtractionConfiguration, List<SelectedDataSets>> _configurationToDatasetMapping { get => _lazy_configurationToDatasetMapping.Value; }
-    private IFilterManager _dataExportFilterManager;//TODO
+    private IFilterManager _dataExportFilterManager;
 
 
     LazyWithReset<List<ExternalCohortTable>> _lazyForbidListedSources = new(() => []);
     public List<ExternalCohortTable> ForbidListedSources { get => _lazyForbidListedSources.Value; }
 
-    LazyWithReset<List<IObjectUsedByOtherObjectNode<Project, IMapsDirectlyToDatabaseTable>>> _lazyDuplicatesByProject = new(()=>new List<IObjectUsedByOtherObjectNode<Project, IMapsDirectlyToDatabaseTable>>());
+    LazyWithReset<List<IObjectUsedByOtherObjectNode<Project, IMapsDirectlyToDatabaseTable>>> _lazyDuplicatesByProject = new(() => new List<IObjectUsedByOtherObjectNode<Project, IMapsDirectlyToDatabaseTable>>());
     public List<IObjectUsedByOtherObjectNode<Project, IMapsDirectlyToDatabaseTable>> DuplicatesByProject { get => _lazyDuplicatesByProject.Value; }
 
     LazyWithReset<List<IObjectUsedByOtherObjectNode<CohortSourceUsedByProjectNode>>> _lazyDuplicatesByCohortSourceUsedByProjectNode = new(() => []);
@@ -109,9 +109,9 @@ public class DataExportChildProvider : CatalogueChildProvider
     public List<IObjectUsedByOtherObjectNode<CohortSourceUsedByProjectNode>> DuplicatesByCohortSourceUsedByProjectNode { get => _lazyDuplicatesByCohortSourceUsedByProjectNode.Value; }
 
 
-    private readonly object _oProjectNumberToCohortsDictionary = new();//todo
+    private readonly object _oProjectNumberToCohortsDictionary = new();
 
-    LazyWithReset<Dictionary<int, List<ExtractableCohort>>> _lazyProjectNumberToCohortsDictionary = new(()=>new Dictionary<int, List<ExtractableCohort>>());
+    LazyWithReset<Dictionary<int, List<ExtractableCohort>>> _lazyProjectNumberToCohortsDictionary = new(() => new Dictionary<int, List<ExtractableCohort>>());
     public Dictionary<int, List<ExtractableCohort>> ProjectNumberToCohortsDictionary { get => _lazyProjectNumberToCohortsDictionary.Value; }
 
     LazyWithReset<ProjectCohortIdentificationConfigurationAssociation[]> _lazyAllProjectAssociatedCics = new(() => []);
@@ -125,11 +125,11 @@ public class DataExportChildProvider : CatalogueChildProvider
     /// ID of all CohortIdentificationConfiguration which have an ProjectCohortIdentificationConfigurationAssociation declared on them (i.e. the CIC is used with one or more Projects)
     /// </summary>
     /// 
-    LazyWithReset<HashSet<int>> _lazy_cicAssociations = new(()=>new HashSet<int>());
+    LazyWithReset<HashSet<int>> _lazy_cicAssociations = new(() => new HashSet<int>());
     private HashSet<int> _cicAssociations { get => _lazy_cicAssociations.Value; }
 
 
-    LazyWithReset<HashSet<ISelectedDataSets>> _lazy_selectedDataSetsWithNoIsExtractionIdentifier = new(()=>new HashSet<ISelectedDataSets>());
+    LazyWithReset<HashSet<ISelectedDataSets>> _lazy_selectedDataSetsWithNoIsExtractionIdentifier = new(() => new HashSet<ISelectedDataSets>());
     private HashSet<ISelectedDataSets> _selectedDataSetsWithNoIsExtractionIdentifier { get => _lazy_selectedDataSetsWithNoIsExtractionIdentifier.Value; }
 
     /// <summary>
@@ -149,7 +149,7 @@ public class DataExportChildProvider : CatalogueChildProvider
 
     private DeployedExtractionFilterParameter[] _allParameters { get => _lazy_allParameters.Value; }
 
-    private IDataExportRepository dataExportRepository;//TODO
+    private IDataExportRepository dataExportRepository;
 
     public DataExportChildProvider(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
         IChildProvider[] pluginChildProviders, ICheckNotifier errorsCheckNotifier,
@@ -170,16 +170,14 @@ public class DataExportChildProvider : CatalogueChildProvider
         _lazyExtractableDataSets = new LazyWithReset<ExtractableDataSet[]>(() =>
         {
             var x = GetAllObjects<ExtractableDataSet>(dataExportRepository);
+            var catalogueIdDict = AllCatalogues.ToDictionaryEx(c => c.ID, c2 => c2);
+            foreach (var ds in x)
+                if (catalogueIdDict.TryGetValue(ds.Catalogue_ID, out var cata))
+                    ds.InjectKnown(cata);
             return x;
         });
         _lazyExtractableDataSetProjects = new LazyWithReset<ExtractableDataSetProject[]>(() => GetAllObjects<ExtractableDataSetProject>(dataExportRepository));
         //This means that the ToString method in ExtractableDataSet doesn't need to go lookup catalogue info
-
-        //TODO
-        //var catalogueIdDict = AllCatalogues.ToDictionaryEx(c => c.ID, c2 => c2);
-        //foreach (var ds in ExtractableDataSets)
-        //    if (catalogueIdDict.TryGetValue(ds.Catalogue_ID, out var cata))
-        //        ds.InjectKnown(cata);
 
         ReportProgress("Injecting ExtractableDataSet");
 
@@ -372,11 +370,9 @@ public class DataExportChildProvider : CatalogueChildProvider
 
         //if we are using a database repository then we can make use of the caching class DataExportFilterManagerFromChildProvider to speed up
         //filter contents
-        //TODO this will slow us down
-        //_dataExportFilterManager = dataExportRepository is not DataExportRepository dbRepo
-        //    ? dataExportRepository.FilterManager
-        //    : new DataExportFilterManagerFromChildProvider(dbRepo, this);
-        _dataExportFilterManager = dataExportRepository?.FilterManager;
+        _dataExportFilterManager = dataExportRepository is not DataExportRepository dbRepo
+            ? dataExportRepository.FilterManager
+            : new DataExportFilterManagerFromChildProvider(dbRepo, this);
     }
 
     private void AddChildren(IExtractableDataSetPackage package, DescendancyList descendancy)
@@ -649,12 +645,7 @@ public class DataExportChildProvider : CatalogueChildProvider
         AddToDictionaries(new HashSet<object>(cohorts), descendancy);
     }
 
-    //private void GetCohortAvailability()
-    //{
-    //    Parallel.ForEach(CohortSources.Except(ForbidListedSources), GetCohortAvailability);
-    //}
-
-    private void GetCohortAvailability(ExternalCohortTable source, Dictionary<int,List<ExtractableCohort>> cohortList)
+    private void GetCohortAvailability(ExternalCohortTable source, Dictionary<int, List<ExtractableCohort>> cohortList)
     {
         DiscoveredServer server = null;
 
@@ -893,90 +884,90 @@ public class DataExportChildProvider : CatalogueChildProvider
 
         return databaseEntity switch
         {
-            DeployedExtractionFilterParameter defp => SelectiveRefresh(defp.ExtractionFilter),
-            DeployedExtractionFilter def => SelectiveRefresh(def),
-            FilterContainer fc => SelectiveRefresh(fc),
-            SelectedDataSets sds => SelectiveRefresh(sds),
-            IExtractionConfiguration ec => SelectiveRefresh(ec),
+            ExternalCohortTable _ => SelectiveRefresh(typeof(ExternalCohortTable)),
+            ExtractableDataSet _ => SelectiveRefresh(typeof(ExtractableDataSet)),
+            DataExport.Data.SelectedDataSets _ => SelectiveRefresh(typeof(DataExport.Data.SelectedDataSets)),
+            ExtractionProgress _ => SelectiveRefresh(typeof(ExtractionProgress)),
+            ExtractableDataSetPackage _ => SelectiveRefresh(typeof(ExtractableDataSetPackage)),
+            Project _ => SelectiveRefresh(typeof(Project)),
+            ExtractableCohort _ => SelectiveRefresh(typeof(ExtractableCohort)),
+            ExtractionConfiguration _ => SelectiveRefresh(typeof(ExtractionConfiguration)),
+            ProjectCohortIdentificationConfigurationAssociation _ => SelectiveRefresh(typeof(ProjectCohortIdentificationConfigurationAssociation)),
+            GlobalExtractionFilterParameter _ => SelectiveRefresh(typeof(GlobalExtractionFilterParameter)),
+            FilterContainer _ => SelectiveRefresh(typeof(FilterContainer)),
+            DeployedExtractionFilter _ => SelectiveRefresh(typeof(DeployedExtractionFilter)),
+            DeployedExtractionFilterParameter _ => SelectiveRefresh(typeof(DeployedExtractionFilterParameter)),
             _ => base.SelectiveRefresh(databaseEntity)
         };
     }
 
-    private bool SelectiveRefresh(DeployedExtractionFilter f)
+    public override bool SelectiveRefresh(Type t)
     {
-        var knownContainer = GetDescendancyListIfAnyFor(f.FilterContainer);
-        if (knownContainer == null) return false;
-
-        BuildExtractionFilters();
-        AddChildren((FilterContainer)f.FilterContainer, knownContainer.Add(f.FilterContainer));
-        return true;
-    }
-
-    public bool SelectiveRefresh(FilterContainer container)
-    {
-        var descendancy = GetDescendancyListIfAnyFor(container);
-
-        if (descendancy == null)
-            return false;
-
-        var sds = descendancy.Parents.OfType<SelectedDataSets>().Last();
-
-        descendancy = GetDescendancyListIfAnyFor(sds);
-
-        if (descendancy != null)
+        if (t == typeof(DeployedExtractionFilterParameter))
         {
-            // update it to the latest state (e.g. if a root filter container is being added)
-            sds.RevertToDatabaseState();
-
-            BuildExtractionFilters();
-
-            // rebuild descendency from here
-            AddChildren(sds, descendancy.Add(sds));
-            return true;
+            _lazy_allParameters.Reset();
+            return SelectiveRefreshParents(t);
         }
-
-
-        return false;
-    }
-
-    public bool SelectiveRefresh(SelectedDataSets sds)
-    {
-        var ec = sds.ExtractionConfiguration;
-        var descendancy = GetDescendancyListIfAnyFor(ec);
-
-        if (descendancy != null)
+        if (t == typeof(ExternalCohortTable))
         {
-            // update it to the latest state (e.g. if a root filter container is being added)
-            ec.RevertToDatabaseState();
-
-            BuildExtractionFilters();
-
-            BuildSelectedDatasets();
-
-            // rebuild descendency from here
-            AddChildren(ec, descendancy.Add(ec));
-            return true;
+            _lazyCohortSources.Reset();
+            return SelectiveRefreshParents(t);
         }
-
+        if (t == typeof(ExtractableDataSet))
+        {
+            _lazyExtractableDataSets.Reset();
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(DataExport.Data.SelectedDataSets))
+        {
+            _lazySelectedDataSets.Reset();
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(ExtractionProgress))
+        {
+            _lazy_extractionProgressesBySelectedDataSetID.Reset();
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(ExtractableDataSetPackage))
+        {
+            _lazyAllPackages.Reset();
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(Project))
+        {
+            _lazyProjects.Reset();
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(ExtractableCohort))
+        {
+            _lazyCohorts.Reset();
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(ExtractionConfiguration))
+        {
+            _lazyExtractionConfigurations.Reset();
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(ProjectCohortIdentificationConfigurationAssociation))
+        {
+            _lazyAllProjectAssociatedCics.Reset();
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(GlobalExtractionFilterParameter))
+        {
+            _lazyAllGlobalExtractionFilterParameters.Reset();
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(FilterContainer))
+        {
+            _lazyAllContainers.Reset();
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(DeployedExtractionFilter))
+        {
+            _lazyAllDeployedExtractionFilters.Reset();
+            return SelectiveRefreshParents(t);
+        }
         return false;
-    }
-
-    public bool SelectiveRefresh(IExtractionConfiguration ec)
-    {
-        // don't try to selectively refresh when deleting
-        if (!ec.Exists())
-            return false;
-
-        var project = ec.Project;
-        // update it to the latest state
-        project.RevertToDatabaseState();
-
-        _lazyAllGlobalExtractionFilterParameters = new LazyWithReset<GlobalExtractionFilterParameter[]>(() => GetAllObjects<GlobalExtractionFilterParameter>(dataExportRepository));
-
-        BuildSelectedDatasets();
-
-        // rebuild descendency from here
-        AddChildren((Project)project, new DescendancyList(project));
-        return true;
     }
 }

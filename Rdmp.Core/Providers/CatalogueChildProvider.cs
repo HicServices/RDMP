@@ -2044,7 +2044,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         return !results.Contains(false);
     }
 
-    public bool SelectiveRefresh(Type t)
+    public virtual bool SelectiveRefresh(Type t)
     {
         if (t == typeof(Catalogue))
         {
