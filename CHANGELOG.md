@@ -6,10 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [9.0.2] - Unreleased
 - Add ability to view logs as a flat list. Default settings can be updated via user settings
-- allow the use of Catalogue CIC filters in coresponding Extractions
+- allow the use of Catalogue CIC filters in corresponding Extractions
 - Add Data Load component to allow SQL to be executed on an external database server
 - Improve Extraction Log Viewer Filter
 - Add Dataset Variable document to extractions
+- Fix bug with duplicate searchables
 
 
 ## [9.0.1] - 2025-07-31
