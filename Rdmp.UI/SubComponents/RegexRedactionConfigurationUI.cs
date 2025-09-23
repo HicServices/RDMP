@@ -28,7 +28,7 @@ public partial class RegexRedactionConfigurationUI : RegexRedactionConfiguration
     }
 
 
-    public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
+    public void RefreshBus_DoWork(object sender, DoWorkEventArgs e)
     {
     }
 

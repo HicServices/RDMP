@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core;
@@ -142,7 +143,7 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
             ? f.Name == FolderHelper.Root
             : root is AllOrphanAggregateConfigurationsNode or AllTemplateAggregateConfigurationsNode;
 
-    public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
+    public void RefreshBus_DoWork(object sender, DoWorkEventArgs e)
     {
         //var o = e.Object;
         //switch (o)

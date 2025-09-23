@@ -4,9 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Linq;
-using System.Windows.Forms;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
@@ -15,11 +12,16 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.UI.Collections.Providers.Filtering;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
+using System;
+using System.ComponentModel;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace Rdmp.UI.Collections;
 
@@ -257,14 +259,12 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
         };
 
         Activator.RefreshBus.EstablishLifetimeSubscription(this);
-
         tlvCatalogues.AddObject(activator.CoreChildProvider.AllGovernanceNode);
         tlvCatalogues.AddObject(activator.CoreChildProvider.CatalogueRootFolder);
         ApplyFilters();
 
         RefreshUIFromDatabase(activator.CoreChildProvider.CatalogueRootFolder);
     }
-
     private void _activator_Emphasise(object sender, EmphasiseEventArgs args)
     {
         //user wants this object emphasised
@@ -285,9 +285,10 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
         }
     }
 
-    public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
+    public void RefreshBus_DoWork(object sender, DoWorkEventArgs e)
     {
-        var o = e.Object;
+
+        var o = (IMapsDirectlyToDatabaseTable)e.Argument;
 
         switch (o)
         {

@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core;
@@ -101,15 +102,15 @@ public partial class LoadMetadataCollectionUI : RDMPCollectionUI, ILifetimeSubsc
     }
 
 
-    public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
+    public void RefreshBus_DoWork(object sender, DoWorkEventArgs e)
     {
-        if (e.Object is LoadMetadata)
+        if (e.Argument is LoadMetadata)
             tlvLoadMetadata.RefreshObject(Activator.CoreChildProvider.LoadMetadataRootFolder);
 
-        if (e.Object is PermissionWindow)
+        if (e.Argument is PermissionWindow)
             tlvLoadMetadata.RefreshObject(tlvLoadMetadata.Objects.OfType<AllPermissionWindowsNode>());
 
-        if (e.Object is CacheProgress)
+        if (e.Argument is CacheProgress)
             tlvLoadMetadata.RefreshObject(tlvLoadMetadata.Objects.OfType<AllPermissionWindowsNode>());
 
         BuildCommandList();

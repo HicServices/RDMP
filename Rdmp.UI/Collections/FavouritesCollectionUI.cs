@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution.AtomicCommands;
@@ -55,7 +56,7 @@ public partial class FavouritesCollectionUI : RDMPCollectionUI, ILifetimeSubscri
         }
     }
 
-    public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
+    public void RefreshBus_DoWork(object sender, DoWorkEventArgs e)
     {
         RefreshFavourites();
     }

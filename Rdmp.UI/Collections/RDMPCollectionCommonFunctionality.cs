@@ -7,6 +7,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -890,17 +891,19 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
             cmd.Execute();
     }
 
-    public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
+    public void RefreshBus_DoWork(object sender, DoWorkEventArgs e)
     {
-        RefreshObject(e.Object, e.Exists);
+        //todo
+        var exists = true;
+        RefreshObject(e.Argument, exists);
 
         //now tell tree view to refresh the object
 
         RefreshContextMenuStrip();
 
         //also refresh anyone who is masquerading as e.Object
-        foreach (var masquerader in _activator.CoreChildProvider.GetMasqueradersOf(e.Object))
-            RefreshObject(masquerader, e.Exists);
+        foreach (var masquerader in _activator.CoreChildProvider.GetMasqueradersOf(e.Argument))
+            RefreshObject(masquerader, exists);
     }
 
     private void RefreshObject(object o, bool exists)

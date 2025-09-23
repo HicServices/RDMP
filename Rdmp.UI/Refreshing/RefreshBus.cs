@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
@@ -30,6 +31,8 @@ public class RefreshBus
     public event RefreshObjectEventHandler AfterPublish;
     private event RefreshObjectEventHandler RefreshObject;
 
+    public BackgroundWorker worker = new();
+
     public bool PublishInProgress { get; private set; }
 
     public ICoreChildProvider ChildProvider { get; set; }
@@ -45,7 +48,8 @@ public class RefreshBus
 
         lock (oPublishLock)
         {
-            BeforePublish?.Invoke(sender, e);
+            if (DateTime.Now.Year < 2000)
+                BeforePublish?.Invoke(sender, e);
 
             try
             {
@@ -64,11 +68,14 @@ public class RefreshBus
                         e.DeletedObjectDescendancy = ChildProvider.GetDescendancyListIfAnyFor(e.Object);
                 }
                 ChildProvider.SelectiveRefresh(e.Object);
-                RefreshObject?.Invoke(sender, e);
+                worker.RunWorkerAsync();
+                if (DateTime.Now.Year < 2000)
+                    RefreshObject?.Invoke(sender, e);
             }
             finally
             {
-                AfterPublish?.Invoke(this, e);
+                if (DateTime.Now.Year < 2000)
+                    AfterPublish?.Invoke(this, e);
                 PublishInProgress = false;
                 Cursor.Current = Cursors.Default;
             }
@@ -79,22 +86,14 @@ public class RefreshBus
 
     public void Subscribe(IRefreshBusSubscriber subscriber)
     {
-        if (subscribers.Contains(subscriber))
-            throw new SubscriptionException(
-                $"You cannot subscribe to the RefreshBus more than once. Subscriber '{subscriber}' just attempted to register a second time its type was({subscriber.GetType().Name})");
-
-        RefreshObject += subscriber.RefreshBus_RefreshObject;
         subscribers.Add(subscriber);
+        worker.DoWork += subscriber.RefreshBus_DoWork;
     }
 
     public void Unsubscribe(IRefreshBusSubscriber unsubscriber)
     {
-        if (!subscribers.Contains(unsubscriber))
-            throw new SubscriptionException(
-                $"You cannot unsubscribe from the RefreshBus if never subscribed in the first place. '{unsubscriber}' just attempted to unsubscribe when it wasn't subscribed in the first place its type was ({unsubscriber.GetType().Name})");
-
-        RefreshObject -= unsubscriber.RefreshBus_RefreshObject;
         subscribers.Remove(unsubscriber);
+        worker.DoWork -= unsubscriber.RefreshBus_DoWork;
     }
 
     public void EstablishLifetimeSubscription(ILifetimeSubscriber c)

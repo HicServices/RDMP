@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
@@ -177,7 +178,7 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
         return _collection.GetSingleCatalogueModeCatalogue().CatalogueItems;
     }
 
-    public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
+    public void RefreshBus_DoWork(object sender, DoWorkEventArgs e)
     {
     }
 

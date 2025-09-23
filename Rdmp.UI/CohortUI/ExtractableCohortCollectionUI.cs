@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -230,9 +231,9 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
         SelectedCohortChanged?.Invoke(this, selected);
     }
 
-    public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
+    public void RefreshBus_DoWork(object sender, DoWorkEventArgs e)
     {
-        if (e.Object is ExtractableCohort || e.Object is ExternalCohortTable)
+        if (e.Argument is ExtractableCohort || e.Argument is ExternalCohortTable)
             ReFetchCohortDetailsAsync();
     }
 }

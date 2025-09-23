@@ -138,16 +138,16 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
     }
 
 
-    public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
+    public void RefreshBus_DoWork(object sender, DoWorkEventArgs e)
     {
         Common.Activator = Activator;
-        var descendancy = Activator.CoreChildProvider.GetDescendancyListIfAnyFor(e.Object);
+        var descendancy = Activator.CoreChildProvider.GetDescendancyListIfAnyFor(e.Argument);
 
         //if publish event was for a child of the cic (_cic is in the objects descendancy i.e. it sits below our cic)
         if (descendancy != null && descendancy.Parents.Contains(Common.Configuration))
         {
             //Go up descendency list clearing out the tasks above (and including) e.Object because it has changed
-            foreach (var o in descendancy.Parents.Union(new[] { e.Object }))
+            foreach (var o in descendancy.Parents.Union(new[] { e.Argument }))
             {
                 var key = Common.GetKey(o);
                 if (key != null)

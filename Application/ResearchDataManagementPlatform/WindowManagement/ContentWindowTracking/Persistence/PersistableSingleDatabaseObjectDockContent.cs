@@ -61,7 +61,7 @@ public class PersistableSingleDatabaseObjectDockContent : RDMPSingleControlTab
                DatabaseObject.GetType().FullName + s + DatabaseObject.ID;
     }
 
-    public override void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
+    public override void RefreshBus_DoWork(object sender, DoWorkEventArgs e)
     {
         var newTabName = ((IRDMPSingleDatabaseObjectControl)Control).GetTabName();
 

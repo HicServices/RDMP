@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
@@ -533,10 +534,10 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         return floatable;
     }
 
-    public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
+    public void RefreshBus_DoWork(object sender, DoWorkEventArgs e)
     {
         // if we don't want to do selective refresh or can't (because partial refreshes are not supported on the type)
-        if (HardRefresh || !UserSettings.SelectiveRefresh || !CoreChildProvider.SelectiveRefresh(e.Object))
+        if (HardRefresh || !UserSettings.SelectiveRefresh || !CoreChildProvider.SelectiveRefresh((IMapsDirectlyToDatabaseTable)e.Argument))
         {
             //update the child provider with a full refresh
             GetChildProvider(true);

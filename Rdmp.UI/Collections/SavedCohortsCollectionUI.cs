@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core;
@@ -57,7 +58,7 @@ public partial class SavedCohortsCollectionUI : RDMPCollectionUI, ILifetimeSubsc
         CommonTreeFunctionality.SetupColumnTracking(olvProjectNumber, new Guid("8378f8cf-b08d-4656-a16e-760eed71fe3a"));
     }
 
-    public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
+    public void RefreshBus_DoWork(object sender, DoWorkEventArgs e)
     {
         SetupToolStrip();
     }

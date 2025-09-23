@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core;
@@ -127,9 +128,9 @@ public partial class TableInfoCollectionUI : RDMPCollectionUI, ILifetimeSubscrib
         tlvTableInfos.AddObject(Activator.CoreChildProvider.AllPluginsNode);
     }
 
-    public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
+    public void RefreshBus_DoWork(object sender, DoWorkEventArgs e)
     {
-        switch (e.Object)
+        switch (e.Argument)
         {
             case DataAccessCredentials:
                 tlvTableInfos.RefreshObject(tlvTableInfos.Objects.OfType<AllDataAccessCredentialsNode>());

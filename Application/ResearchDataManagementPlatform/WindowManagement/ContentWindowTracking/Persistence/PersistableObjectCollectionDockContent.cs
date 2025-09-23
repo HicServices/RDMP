@@ -68,7 +68,7 @@ public class PersistableObjectCollectionDockContent : RDMPSingleControlTab
     }
 
 
-    public override void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
+    public override void RefreshBus_DoWork(object sender, DoWorkEventArgs e)
     {
         var newTabName = _control.GetTabName();
 
@@ -78,7 +78,7 @@ public class PersistableObjectCollectionDockContent : RDMPSingleControlTab
         TabText = newTabName;
 
         //pass the info on to the control
-        _control.RefreshBus_RefreshObject(sender, e);
+        _control.RefreshBus_DoWork(sender, e);
     }
 
     public override void HandleUserRequestingTabRefresh(IActivateItems activator)

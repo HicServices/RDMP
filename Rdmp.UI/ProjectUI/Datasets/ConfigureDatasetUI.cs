@@ -774,13 +774,13 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design, ILifetimeSu
         UpdateJoins();
     }
 
-    public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
+    public void RefreshBus_DoWork(object sender, DoWorkEventArgs e)
     {
         if (!SelectedDataSet.Exists())
             return;
 
         //if an ExtractionInformation is being refreshed
-        if (e.Object is ExtractionInformation ei)
+        if (e.Argument is ExtractionInformation ei)
             //We should clear any old cached values for this ExtractionInformation amongst selected column
             foreach (var c in olvSelected.Objects.OfType<ExtractableColumn>().ToArray())
                 if (c.CatalogueExtractionInformation_ID == ei.ID)

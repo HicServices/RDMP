@@ -1,12 +1,14 @@
-﻿using Rdmp.Core.CommandExecution.AtomicCommands;
-using Rdmp.Core;
+﻿using Rdmp.Core;
+using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.DataHelper.RegexRedaction;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.Providers.Nodes;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
+using System.ComponentModel;
 using System.Linq;
-using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Providers.Nodes;
-using Rdmp.Core.Curation.DataHelper.RegexRedaction;
 
 namespace Rdmp.UI.Collections;
 
@@ -47,9 +49,9 @@ public partial class ConfigurationsCollectionUI : RDMPCollectionUI, ILifetimeSub
         tlvConfigurations.Refresh();
         }
 
-    public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
+    public void RefreshBus_DoWork(object sender, DoWorkEventArgs e)
     {
-        switch (e.Object)
+        switch ((IMapsDirectlyToDatabaseTable)e.Argument)
         {
             case Dataset:
                 tlvConfigurations.RefreshObject(tlvConfigurations.Objects.OfType<AllDatasetsNode>());

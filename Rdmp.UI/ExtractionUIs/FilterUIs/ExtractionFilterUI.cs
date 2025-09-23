@@ -216,9 +216,9 @@ public partial class ExtractionFilterUI : ExtractionFilterUI_Design, ILifetimeSu
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Catalogue Catalogue { get; set; }
 
-    public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
+    public void RefreshBus_DoWork(object sender, DoWorkEventArgs e)
     {
-        if (e.Object is not IFilter filter || !filter.Equals(_extractionFilter))
+        if (e.Argument is not IFilter filter || !filter.Equals(_extractionFilter))
             return;
 
         if (!filter.Exists()) //it's deleted

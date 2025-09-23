@@ -14,6 +14,7 @@ using Rdmp.UI.AggregationUIs;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
+using System.ComponentModel;
 
 namespace Rdmp.UI.ExtractionUIs.FilterUIs;
 
@@ -47,7 +48,7 @@ public partial class FilterGraphUI : AggregateGraphUI, IObjectCollectionControl
         return basicQueryBuilder;
     }
 
-    public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
+    public void RefreshBus_DoWork(object sender, DoWorkEventArgs e)
     {
         _collection.HandleRefreshObject(e);
     }
