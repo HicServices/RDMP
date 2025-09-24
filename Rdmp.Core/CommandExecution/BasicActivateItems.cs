@@ -469,7 +469,6 @@ public abstract class BasicActivateItems : IBasicActivateItems
 
             if (deletable is IMasqueradeAs masqueradeAs)
                 databaseObject ??= masqueradeAs.MasqueradingAs() as DatabaseEntity;
-
             return databaseObject == null
                 ? throw new NotSupportedException(
                     $"IDeletable {deletable} was not a DatabaseObject and it did not have a Parent in its tree which was a DatabaseObject (DescendancyList)")

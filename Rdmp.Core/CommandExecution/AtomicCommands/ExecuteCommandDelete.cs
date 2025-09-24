@@ -108,6 +108,7 @@ public class ExecuteCommandDelete : BasicCommandExecution
         {
             case 1:
                 BasicActivator.DeleteWithConfirmation(_deletables[0]);
+                //todo publish the now deleted object
                 return;
             case <= 0:
                 return;
