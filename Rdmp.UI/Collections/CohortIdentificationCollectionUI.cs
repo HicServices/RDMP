@@ -7,6 +7,7 @@
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers.Nodes.CohortNodes;
@@ -158,7 +159,22 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
                 }
                 else
                 {
+                    tlvCohortIdentificationConfigurations.RefreshObject(Activator.CoreChildProvider.CohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations);
                     tlvCohortIdentificationConfigurations.RefreshObjects(Activator.CoreChildProvider.AllCohortIdentificationConfigurations);
+                }
+                break;
+            case AggregateConfiguration:
+                if (tlvCohortIdentificationConfigurations.InvokeRequired)
+                {
+                    _ = Activator.CoreChildProvider.OrphanAggregateConfigurationsNode;
+                    _ = Activator.CoreChildProvider.TemplateAggregateConfigurationsNode;
+                    RefreshCallback rb = new RefreshCallback(RefreshBus_DoWork);
+                    this.Invoke(rb, sender, e);
+                }
+                else
+                {
+                    tlvCohortIdentificationConfigurations.RefreshObject(Activator.CoreChildProvider.OrphanAggregateConfigurationsNode);
+                    tlvCohortIdentificationConfigurations.RefreshObject(Activator.CoreChildProvider.TemplateAggregateConfigurationsNode);
                 }
                 break;
         }

@@ -911,6 +911,7 @@ public class DataExportChildProvider : CatalogueChildProvider
         if (t == typeof(ExternalCohortTable))
         {
             _lazyCohortSources.Reset();
+            _lazyRootCohortsNode.Reset();
             return SelectiveRefreshParents(t);
         }
         if (t == typeof(ExtractableDataSet))
@@ -936,6 +937,8 @@ public class DataExportChildProvider : CatalogueChildProvider
         if (t == typeof(Project))
         {
             _lazyProjects.Reset();
+            _lazyProjectRootFolder.Reset();
+            _lazyAllPackages.Reset();
             return SelectiveRefreshParents(t);
         }
         if (t == typeof(ExtractableCohort))
@@ -946,6 +949,9 @@ public class DataExportChildProvider : CatalogueChildProvider
         if (t == typeof(ExtractionConfiguration))
         {
             _lazyExtractionConfigurations.Reset();
+            _lazyExtractionConfigurationsByProject.Reset();
+            _lazyProjects.Reset();
+            _lazyProjectRootFolder.Reset();
             return SelectiveRefreshParents(t);
         }
         if (t == typeof(ProjectCohortIdentificationConfigurationAssociation))

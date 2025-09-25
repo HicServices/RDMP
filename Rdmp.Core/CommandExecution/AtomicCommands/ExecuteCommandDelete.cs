@@ -108,7 +108,8 @@ public class ExecuteCommandDelete : BasicCommandExecution
         {
             case 1:
                 BasicActivator.DeleteWithConfirmation(_deletables[0]);
-                //todo publish the now deleted object
+                var x = (IMapsDirectlyToDatabaseTable)_deletables[0];
+                BasicActivator.Publish((IMapsDirectlyToDatabaseTable)_deletables[0]);
                 return;
             case <= 0:
                 return;

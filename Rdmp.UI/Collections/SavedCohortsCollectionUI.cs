@@ -4,10 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.ComponentModel;
-using System.Linq;
-using System.Windows.Forms;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
 using Rdmp.Core.DataExport.Data;
@@ -17,6 +13,11 @@ using Rdmp.Core.Providers.Nodes;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
+using System;
+using System.ComponentModel;
+using System.Linq;
+using System.Windows.Forms;
+using static Rdmp.UI.Refreshing.IRefreshBusSubscriber;
 
 namespace Rdmp.UI.Collections;
 
@@ -60,7 +61,16 @@ public partial class SavedCohortsCollectionUI : RDMPCollectionUI, ILifetimeSubsc
 
     public void RefreshBus_DoWork(object sender, DoWorkEventArgs e)
     {
-        SetupToolStrip();
+        if (tlvSavedCohorts.InvokeRequired)
+        {
+            _ = ((DataExportChildProvider)Activator.CoreChildProvider).RootCohortsNode;
+            RefreshCallback rb = new RefreshCallback(RefreshBus_DoWork);
+            this.Invoke(rb, sender, e);
+        }
+        else
+        {
+            SetupToolStrip();
+        }
     }
 
     private void SetupToolStrip()

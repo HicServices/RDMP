@@ -128,14 +128,19 @@ public partial class DataExportCollectionUI : RDMPCollectionUI, ILifetimeSubscri
 
     public void RefreshBus_DoWork(object sender, DoWorkEventArgs e)
     {
-        if (this.InvokeRequired)
+        if (tlvDataExport.InvokeRequired)
         {
             RefreshCallback rb = new RefreshCallback(RefreshBus_DoWork);
             this.Invoke(rb, sender, e);
         }
-        else
+        else if (e.Argument is Project or ExtractionConfiguration)
         {
-            SetupToolStrip();
+            var dataExportChildProvider = _activator.CoreChildProvider as DataExportChildProvider;
+            if (dataExportChildProvider != null)
+            {
+                tlvDataExport.RefreshObjects(dataExportChildProvider.AllPackages);
+                tlvDataExport.RefreshObject(dataExportChildProvider.ProjectRootFolder);
+            }
         }
     }
 

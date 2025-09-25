@@ -4,14 +4,9 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 using Org.BouncyCastle.Asn1.X509.Qualified;
+using Rdmp.Core.Caching.Pipeline;
+using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cache;
@@ -24,6 +19,9 @@ using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.Curation.Data.Remoting;
 using Rdmp.Core.Curation.DataHelper.RegexRedaction;
+using Rdmp.Core.DataExport.DataExtraction.Pipeline;
+using Rdmp.Core.DataExport.DataRelease.Pipeline;
+using Rdmp.Core.DataLoad.Engine.Pipeline;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Providers.Nodes.CohortNodes;
@@ -36,6 +34,13 @@ using Rdmp.Core.Repositories.Managers.HighPerformance;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Comments;
 using Rdmp.Core.ReusableLibraryCode.Settings;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using ZstdSharp.Unsafe;
 
 namespace Rdmp.Core.Providers;
@@ -441,7 +446,12 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         _lazyAllTableInfos = new LazyWithReset<TableInfo[]>(() => GetAllObjects<TableInfo>(repository));
         _lazyAllDataAccessCredentials = new LazyWithReset<DataAccessCredentials[]>(() => GetAllObjects<DataAccessCredentials>(repository));
-        _lazyAllDataAccessCredentialsNode = new LazyWithReset<AllDataAccessCredentialsNode>(() => { var x = new AllDataAccessCredentialsNode(); AddChildren(x); return x; });
+        _lazyAllDataAccessCredentialsNode = new LazyWithReset<AllDataAccessCredentialsNode>(() =>
+        {
+            var x = new AllDataAccessCredentialsNode();
+            AddChildren(x);
+            return x;
+        });
 
         _lazyAllConnectionStringKeyworksNode = new LazyWithReset<AllConnectionStringKeywordsNode>(() =>
         {
@@ -564,7 +574,24 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         //Pipelines setup (see also DataExportChildProvider for calls to AddPipelineUseCases)
         //Root node for all pipelines
-        _lazyAllPipelinesNode = new LazyWithReset<AllPipelinesNode>(() => new AllPipelinesNode());
+        _lazyAllPipelinesNode = new LazyWithReset<AllPipelinesNode>(() =>
+        {
+
+            var x = new AllPipelinesNode();
+            //AddPipelineUseCases(new Dictionary<string, PipelineUseCase>
+            //{
+            //    { "File Import", UploadFileUseCase) },
+            //    { "Extraction", ExtractionPipelineUseCase.DesignTime() },
+            //    { "Release", ReleaseUseCase.DesignTime() },
+            //    { "Cohort Creation", CohortCreationRequest.DesignTime() },
+            //    { "Caching", CachingPipelineUseCase.DesignTime() },
+            //    {
+            //        "Aggregate Committing",
+            //        CreateTableFromAggregateUseCase.DesignTime(_catalogueRepository)
+            //    }
+            //});
+            return x;
+        });
 
         //Pipelines not found to be part of any use case after AddPipelineUseCases
         _lazyOtherPipelineNode = new LazyWithReset<OtherPipelinesNode>(() => new OtherPipelinesNode());
@@ -732,7 +759,9 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     private void BuildCohortCohortAggregateContainers()
     {
-        _lazyAllCohortAggregateContainers = new LazyWithReset<CohortAggregateContainer[]>(() => GetAllObjects<CohortAggregateContainer>(_catalogueRepository));
+        _lazyAllCohortAggregateContainers = new LazyWithReset<CohortAggregateContainer[]>(
+            () => GetAllObjects<CohortAggregateContainer>(_catalogueRepository)
+        );
 
         //if we have a database repository then we should get answers from the caching version CohortContainerManagerFromChildProvider otherwise
         //just use the one that is configured on the repository
@@ -2050,110 +2079,182 @@ public class CatalogueChildProvider : ICoreChildProvider
         {
             _lazyAllCatalogues.Reset();
             _lazyCatalogueRootFolder.Reset();
+            _lazyAllServersNode.Reset();
             return SelectiveRefreshParents(t);
         }
         if (t == typeof(CatalogueItem))
         {
             _lazyAllCatalogueItemsDictionary.Reset();
-            //_lazy_extractionInformationsByCatalogueItem.Reset();
-            //_lazyAllExtractionInformationsDictionary.Reset();
-            //_lazyAllCatalogues.Reset();
-            //_lazyCatalogueRootFolder.Reset();
-            //InjectCatalogueItems();
             return SelectiveRefreshParents(t);
         }
-        if (t == typeof(LoadMetadata)) {
+        if (t == typeof(LoadMetadata))
+        {
             _lazyAllLoadMetadatas.Reset();
-            return SelectiveRefreshParents(t); }
-        if (t == typeof(LoadMetadataCatalogueLinkage)) {
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(LoadMetadataCatalogueLinkage))
+        {
             _lazyAllLoadMetadataLinkage.Reset();
             _lazyAllLoadMetadataCatalogueLinkages.Reset();
-            return SelectiveRefreshParents(t); }
-        if (t == typeof(ProcessTask)) {
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(ProcessTask))
+        {
             _lazyAllProcessTasks.Reset();
-            return SelectiveRefreshParents(t); }
-        if (t == typeof(ProcessTaskArgument)) {
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(ProcessTaskArgument))
+        {
             _lazyAllProcessTasksArguments.Reset();
-            return SelectiveRefreshParents(t); }
-        if (t == typeof(LoadProgress)) {
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(LoadProgress))
+        {
             _lazyAllLoadProgress.Reset();
-            return SelectiveRefreshParents(t); }
-        if (t == typeof(CacheProgress)) {
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(CacheProgress))
+        {
             _lazyAllCacheProgresses.Reset();
-            return SelectiveRefreshParents(t); }
-        if (t == typeof(PermissionWindow)) {
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(PermissionWindow))
+        {
             _lazyAllPermissionWindows.Reset();
-            return SelectiveRefreshParents(t); }
-        if (t == typeof(Curation.Data.Dataset)) {
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(Curation.Data.Dataset))
+        {
             _lazyAllDatasets.Reset();
-            return SelectiveRefreshParents(t); }
-        if (t == typeof(SupportingDocument)) {
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(SupportingDocument))
+        {
             _lazyAllSupportingDocuments.Reset();
-            return SelectiveRefreshParents(t); }
-        if (t == typeof(SupportingSQLTable)) {
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(SupportingSQLTable))
+        {
             _lazyAllSupportingSQL.Reset();
-            return SelectiveRefreshParents(t); }
-        if (t == typeof(ColumnInfo)) {
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(ColumnInfo))
+        {
             _lazyAllColumnInfos.Reset();
-            return SelectiveRefreshParents(t); }
-        if (t == typeof(AggregateConfiguration)) {
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(AggregateConfiguration))
+        {
             _lazyAllAggregateConfigurations.Reset();
-            return SelectiveRefreshParents(t); }
-        if (t == typeof(AggregateDimension)) {
+            _lazyOrphanAggregateConfigurations.Reset();
+            _lazyOrphanAggregateConfigurationsNode.Reset();
+            _lazyTemplateAggregateConfigurations.Reset();
+            _lazyTemplateAggregateConfigurationsNode.Reset();
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(AggregateDimension))
+        {
             _lazyAllAggregateDimensions.Reset();
-            return SelectiveRefreshParents(t); }
-        if (t == typeof(AggregateContinuousDateAxis)) {
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(AggregateContinuousDateAxis))
+        {
             _lazyAllAggregateContinuousDataAxis.Reset();
-            return SelectiveRefreshParents(t); }
-        if (t == typeof(RemoteRDMP)) {
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(RemoteRDMP))
+        {
             _lazyAllRemoteRDMPs.Reset();
-            return SelectiveRefreshParents(t); }
-        if (t == typeof(DashboardLayout)) { 
+            _lazyAllRDMPRemotesNode.Reset();
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(DashboardLayout))
+        {
             _lazyAllDashboards.Reset();
-            return SelectiveRefreshParents(t); }
-        if (t == typeof(ObjectImport)) {
+            _lazyAllDashboardsNode.Reset();
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(ObjectImport))
+        {
             _lazyAllImports.Reset();
-            return SelectiveRefreshParents(t); }
-        if (t == typeof(ObjectExport)) {
+            _lazyAllObjectSharingNode.Reset();
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(ObjectExport))
+        {
             _lazyAllExports.Reset();
-            return SelectiveRefreshParents(t); }
-        if (t == typeof(StandardRegex)) {
+            _lazyAllObjectSharingNode.Reset();
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(StandardRegex))
+        {
             _lazyAllStandardRegex.Reset();
-            return SelectiveRefreshParents(t); }
-        if (t == typeof(Pipeline)) {
+            _lazyAllStandardRegexesNode.Reset();
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(Pipeline))
+        {
             _lazyAllPipelines.Reset();
-            return SelectiveRefreshParents(t); }
-        if (t == typeof(PipelineComponent)) {
+            _lazyAllPipelinesNode.Reset();
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(PipelineComponent))
+        {
             _lazyAllPipelineComponents.Reset();
-            return SelectiveRefreshParents(t); }
-        if (t == typeof(PipelineComponentArgument)) {
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(PipelineComponentArgument))
+        {
             _lazyAllPipelineComponentArgument.Reset();
-            return SelectiveRefreshParents(t); }
-        if (t == typeof(ANOTable)) {
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(ANOTable))
+        {
             _lazyAllANOTables.Reset();
-            return SelectiveRefreshParents(t); }
-        if (t == typeof(ExternalDatabaseServer)) {
+            _lazyAllANOTableNodes.Reset();
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(ExternalDatabaseServer))
+        {
             _lazyAllExternalServers.Reset();
-            return SelectiveRefreshParents(t); }
-        if (t == typeof(TableInfo)) {
+            _lazyAllExternalServersNode.Reset();
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(TableInfo))
+        {
             _lazyAllTableInfos.Reset();
-            return SelectiveRefreshParents(t); }
-        if (t == typeof(DataAccessCredentials)) {
+            _lazyAllANOTableNodes.Reset();
+            _lazyAllServersNode.Reset();
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(DataAccessCredentials))
+        {
             _lazyAllDataAccessCredentials.Reset();
-            return SelectiveRefreshParents(t); }
-        if (t == typeof(PreLoadDiscardedColumn)) {
+            _lazyAllDataAccessCredentialsNode.Reset();
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(PreLoadDiscardedColumn))
+        {
             _lazyAllPreLoadDiscardedColumns.Reset();
-            return SelectiveRefreshParents(t); }
-        if (t == typeof(Lookup)) {
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(Lookup))
+        {
             _lazyAllLookups.Reset();
-            return SelectiveRefreshParents(t); }
-        if (t == typeof(JoinInfo)) {
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(JoinInfo))
+        {
             _lazyAllJoinInfos.Reset();
-            return SelectiveRefreshParents(t); }
-        if (t == typeof(AnyTableSqlParameter)) {
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(AnyTableSqlParameter))
+        {
             _lazyAllAnyTableParameters.Reset();
-            return SelectiveRefreshParents(t); }
-        if (t == typeof(ExtractionInformation)) {
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(ExtractionInformation))
+        {
             _lazyAllExtractionInformationsDictionary.Reset();
             _lazyAllCatalogueItemsDictionary.Reset();
             _lazy_extractionInformationsByCatalogueItem.Reset();
@@ -2161,55 +2262,89 @@ public class CatalogueChildProvider : ICoreChildProvider
             _lazyCatalogueRootFolder.Reset();
             InjectCatalogueItems();
             InjectCatalogueItems();
-            return SelectiveRefreshParents(t); }
-        if (t == typeof(ConnectionStringKeyword)) { 
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(ConnectionStringKeyword))
+        {
             _lazyAllConnectionStringKeywords.Reset();
-            return SelectiveRefreshParents(t); }
-        if (t == typeof(AggregateFilterContainer)) {
+            _lazyAllConnectionStringKeyworksNode.Reset();
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(AggregateFilterContainer))
+        {
             _lazyAllAggregateContainersDictionary.Reset();
-            return SelectiveRefreshParents(t); }
-        if (t == typeof(AggregateFilter)) {
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(AggregateFilter))
+        {
             _lazyAllAggregateFilters.Reset();
-            return SelectiveRefreshParents(t); }
-        if (t == typeof(AggregateFilterParameter)) {
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(AggregateFilterParameter))
+        {
             _lazyAllAggregateFilterParameters.Reset();
-            return SelectiveRefreshParents(t); }
-        if (t == typeof(ExtractionFilter)) {
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(ExtractionFilter))
+        {
             _lazyAllCatalogueFilters.Reset();
-            return SelectiveRefreshParents(t); }
-        if (t == typeof(ExtractionFilterParameter)) {
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(ExtractionFilterParameter))
+        {
             _lazyAllCatalogueParameters.Reset();
-            return SelectiveRefreshParents(t); }
-        if (t == typeof(ExtractionFilterParameterSet)) {
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(ExtractionFilterParameterSet))
+        {
             _lazyAllCatalogueValueSets.Reset();
-            return SelectiveRefreshParents(t); }
-        if (t == typeof(ExtractionFilterParameterSetValue)) {
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(ExtractionFilterParameterSetValue))
+        {
             _lazyAllCatalogueValueSetValues.Reset();
-            return SelectiveRefreshParents(t); }
-        if (t == typeof(CohortIdentificationConfiguration)) {
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(CohortIdentificationConfiguration))
+        {
             _lazyAllCohortIdentificationConfigurations.Reset();
-            _lazyCohortidentificationConfigurationRootFolder.Reset();
-            return SelectiveRefreshParents(t); }
-        if (t == typeof(CohortAggregateContainer)) {
+            _lazyCohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations.Reset();
             _lazyAllCohortAggregateContainers.Reset();
-            return SelectiveRefreshParents(t); }
-        if (t == typeof(JoinableCohortAggregateConfiguration)) {
+            _lazyCohortidentificationConfigurationRootFolder.Reset();
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(CohortAggregateContainer))
+        {
+            _lazyAllCohortAggregateContainers.Reset();
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(JoinableCohortAggregateConfiguration))
+        {
             _lazyAllJoinables.Reset();
-            return SelectiveRefreshParents(t); }
-        if (t == typeof(JoinableCohortAggregateConfigurationUse)) {
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(JoinableCohortAggregateConfigurationUse))
+        {
             _lazyAllJoinableCohortAggregateConfigurationUse.Reset();
-            return SelectiveRefreshParents(t); }
-        if (t == typeof(GovernancePeriod)) {
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(GovernancePeriod))
+        {
             _lazyAllGovernancePeriods.Reset();
             _lazyAllGovernanceNode.Reset();
-            return SelectiveRefreshParents(t); }
-        if (t == typeof(GovernanceDocument)) {
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(GovernanceDocument))
+        {
             _lazyAllGovernanceDocuments.Reset();
             _lazyAllGovernanceNode.Reset();
-            return SelectiveRefreshParents(t); }
-        if (t == typeof(RegexRedactionConfiguration)) {
+            return SelectiveRefreshParents(t);
+        }
+        if (t == typeof(RegexRedactionConfiguration))
+        {
             _lazyAllRegexRedactionConfigurations.Reset();
-            return SelectiveRefreshParents(t); }
+            return SelectiveRefreshParents(t);
+        }
         return false;
     }
 }
