@@ -2114,11 +2114,14 @@ public class CatalogueChildProvider : ICoreChildProvider
         {
             _lazyAllLoadMetadataLinkage.Reset();
             _lazyAllLoadMetadataCatalogueLinkages.Reset();
+            _lazyAllLoadMetadatas.Reset();
+            _lazyLoadMetadataRootFolder.Reset();
             return SelectiveRefreshParents(t);
         }
         if (t == typeof(ProcessTask))
         {
             _lazyAllProcessTasks.Reset();
+            _lazyAllLoadMetadatas.Reset();
             return SelectiveRefreshParents(t);
         }
         if (t == typeof(ProcessTaskArgument))
@@ -2146,6 +2149,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         if (t == typeof(Curation.Data.Dataset))
         {
             _lazyAllDatasets.Reset();
+            _lazyAllDatasetsNode.Reset();
             return SelectiveRefreshParents(t);
         }
         if (t == typeof(SupportingDocument))
@@ -2222,6 +2226,8 @@ public class CatalogueChildProvider : ICoreChildProvider
         if (t == typeof(PipelineComponent))
         {
             _lazyAllPipelineComponents.Reset();
+            _lazyAllPipelines.Reset();
+            _lazyAllPipelinesNode.Reset();
             return SelectiveRefreshParents(t);
         }
         if (t == typeof(PipelineComponentArgument))
@@ -2364,6 +2370,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         if (t == typeof(RegexRedactionConfiguration))
         {
             _lazyAllRegexRedactionConfigurations.Reset();
+            _lazyAllRegexRedactionConfigurationsNode.Reset();
             return SelectiveRefreshParents(t);
         }
         return false;

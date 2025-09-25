@@ -9,6 +9,7 @@ using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using System.ComponentModel;
 using System.Linq;
+using static Rdmp.UI.Refreshing.IRefreshBusSubscriber;
 
 namespace Rdmp.UI.Collections;
 
@@ -51,14 +52,25 @@ public partial class ConfigurationsCollectionUI : RDMPCollectionUI, ILifetimeSub
 
     public void RefreshBus_DoWork(object sender, DoWorkEventArgs e)
     {
-        switch ((IMapsDirectlyToDatabaseTable)e.Argument)
+        if (tlvConfigurations.InvokeRequired)
         {
-            case Dataset:
-                tlvConfigurations.RefreshObject(tlvConfigurations.Objects.OfType<AllDatasetsNode>());
-                break;
-            case RegexRedactionConfiguration:
-                tlvConfigurations.RefreshObject(tlvConfigurations.Objects.OfType<AllRegexRedactionConfigurationsNode>());
-                break;
+            _ = Activator.CoreChildProvider.AllDatasetsNode;
+            _ = Activator.CoreChildProvider.AllRegexRedactionConfigurationsNode;
+            RefreshCallback rb = new RefreshCallback(RefreshBus_DoWork);
+            this.Invoke(rb, sender, e);
+        }
+        else
+        {
+
+            switch ((IMapsDirectlyToDatabaseTable)e.Argument)
+            {
+                case Dataset:
+                    tlvConfigurations.RefreshObject(Activator.CoreChildProvider.AllDatasetsNode);
+                    break;
+                case RegexRedactionConfiguration:
+                    tlvConfigurations.RefreshObject(Activator.CoreChildProvider.AllRegexRedactionConfigurationsNode);
+                    break;
+            }
         }
     }
 

@@ -82,7 +82,7 @@ public class ExecuteCommandCreateNewClassBasedProcessTask : BasicCommandExecutio
 
         newTask.CreateArgumentsForClassIfNotExists(_type);
 
-        Publish(_loadMetadata);
+        Publish(newTask);
         Activate(newTask);
     }
 }

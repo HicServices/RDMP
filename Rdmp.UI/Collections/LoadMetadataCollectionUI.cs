@@ -114,6 +114,7 @@ public partial class LoadMetadataCollectionUI : RDMPCollectionUI, ILifetimeSubsc
         }
         else
         {
+            var x = e.Argument.GetType();
             if (e.Argument is LoadMetadata)
                 tlvLoadMetadata.RefreshObject(Activator.CoreChildProvider.LoadMetadataRootFolder);
 
@@ -122,7 +123,8 @@ public partial class LoadMetadataCollectionUI : RDMPCollectionUI, ILifetimeSubsc
 
             if (e.Argument is CacheProgress)
                 tlvLoadMetadata.RefreshObject(Activator.CoreChildProvider.AllPermissionWindowsNode);
-
+            if (e.Argument is ProcessTask)
+                tlvLoadMetadata.RefreshObject(Activator.CoreChildProvider.LoadMetadataRootFolder);
             BuildCommandList();
         }
     }
