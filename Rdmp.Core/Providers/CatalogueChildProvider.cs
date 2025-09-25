@@ -2107,6 +2107,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         if (t == typeof(LoadMetadata))
         {
             _lazyAllLoadMetadatas.Reset();
+            _lazyLoadMetadataRootFolder.Reset();
             return SelectiveRefreshParents(t);
         }
         if (t == typeof(LoadMetadataCatalogueLinkage))
@@ -2133,11 +2134,13 @@ public class CatalogueChildProvider : ICoreChildProvider
         if (t == typeof(CacheProgress))
         {
             _lazyAllCacheProgresses.Reset();
+            _lazyAllPermissionWindowsNode.Reset();
             return SelectiveRefreshParents(t);
         }
         if (t == typeof(PermissionWindow))
         {
             _lazyAllPermissionWindows.Reset();
+            _lazyAllPermissionWindowsNode.Reset();
             return SelectiveRefreshParents(t);
         }
         if (t == typeof(Curation.Data.Dataset))
