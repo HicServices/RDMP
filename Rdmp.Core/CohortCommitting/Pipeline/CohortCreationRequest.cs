@@ -241,7 +241,7 @@ public sealed class CohortCreationRequest : PipelineUseCase, ICohortCreationRequ
     /// <summary>
     /// Design time types
     /// </summary>
-    private CohortCreationRequest() : base(new Type[]
+    public CohortCreationRequest() : base(new Type[]
     {
         typeof(FlatFileToLoad),
         typeof(CohortIdentificationConfiguration),

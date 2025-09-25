@@ -576,20 +576,37 @@ public class CatalogueChildProvider : ICoreChildProvider
         //Root node for all pipelines
         _lazyAllPipelinesNode = new LazyWithReset<AllPipelinesNode>(() =>
         {
+            var useCases = new Dictionary<string, PipelineUseCase>();
+            useCases.Add("File Import", new UploadFileUseCase());
+            useCases.Add("Extraction", new ExtractionPipelineUseCase());
+            useCases.Add("Release", new ReleaseUseCase());
+            useCases.Add("Cohort Creation", new CohortCreationRequest());
+            useCases.Add("Caching", new CachingPipelineUseCase());
+            useCases.Add("Aggregate Committing", new CreateTableFromAggregateUseCase());
 
             var x = new AllPipelinesNode();
-            //AddPipelineUseCases(new Dictionary<string, PipelineUseCase>
-            //{
-            //    { "File Import", UploadFileUseCase) },
-            //    { "Extraction", ExtractionPipelineUseCase.DesignTime() },
-            //    { "Release", ReleaseUseCase.DesignTime() },
-            //    { "Cohort Creation", CohortCreationRequest.DesignTime() },
-            //    { "Caching", CachingPipelineUseCase.DesignTime() },
-            //    {
-            //        "Aggregate Committing",
-            //        CreateTableFromAggregateUseCase.DesignTime(_catalogueRepository)
-            //    }
-            //});
+            var descendancy = new DescendancyList(x);
+            var children = new HashSet<object>();
+            var unknownPipelines = new HashSet<object>(AllPipelines);
+
+            foreach (var useCase in useCases)
+            {
+                var node = new StandardPipelineUseCaseNode(useCase.Key, useCase.Value, _commentStore);
+
+                //keep track of all the use cases
+                PipelineUseCases.Add(node);
+
+                foreach (var pipeline in AddChildren(node, descendancy.Add(node)))
+                    unknownPipelines.Remove(pipeline);
+
+                children.Add(node);
+            }
+
+            children.Add(OtherPipelinesNode);
+            OtherPipelinesNode.Pipelines.AddRange(unknownPipelines.Cast<Pipeline>());
+            AddToDictionaries(unknownPipelines, descendancy.Add(OtherPipelinesNode));
+
+            AddToDictionaries(children, descendancy);
             return x;
         });
 
@@ -2195,6 +2212,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         if (t == typeof(Pipeline))
         {
             _lazyAllPipelines.Reset();
+            _lazyAllPipelineComponents.Reset();
             _lazyAllPipelinesNode.Reset();
             return SelectiveRefreshParents(t);
         }

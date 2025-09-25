@@ -346,7 +346,7 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
         }
     }
 
-    private ExtractionPipelineUseCase()
+    public ExtractionPipelineUseCase()
         : base(new Type[]
         {
             typeof(IExtractCommand),

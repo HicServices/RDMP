@@ -281,26 +281,26 @@ public class DataExportChildProvider : CatalogueChildProvider
         }
         ReportProgress("Catalogue extractability injection");
 
-        try//TODO
-        {
-            AddPipelineUseCases(new Dictionary<string, PipelineUseCase>
-            {
-                { "File Import", UploadFileUseCase.DesignTime() },
-                { "Extraction", ExtractionPipelineUseCase.DesignTime() },
-                { "Release", ReleaseUseCase.DesignTime() },
-                { "Cohort Creation", CohortCreationRequest.DesignTime() },
-                { "Caching", CachingPipelineUseCase.DesignTime() },
-                {
-                    "Aggregate Committing",
-                    CreateTableFromAggregateUseCase.DesignTime(repositoryLocator.CatalogueRepository)
-                }
-            });
-        }
-        catch (Exception ex)
-        {
-            _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs("Failed to build DesignTime PipelineUseCases",
-                CheckResult.Fail, ex));
-        }
+        //try//TODO
+        //{
+        //    AddPipelineUseCases(new Dictionary<string, PipelineUseCase>
+        //    {
+        //        { "File Import", UploadFileUseCase.DesignTime() },
+        //        { "Extraction", ExtractionPipelineUseCase.DesignTime() },
+        //        { "Release", ReleaseUseCase.DesignTime() },
+        //        { "Cohort Creation", CohortCreationRequest.DesignTime() },
+        //        { "Caching", CachingPipelineUseCase.DesignTime() },
+        //        {
+        //            "Aggregate Committing",
+        //            CreateTableFromAggregateUseCase.DesignTime(repositoryLocator.CatalogueRepository)
+        //        }
+        //    });
+        //}
+        //catch (Exception ex)
+        //{
+        //    _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs("Failed to build DesignTime PipelineUseCases",
+        //        CheckResult.Fail, ex));
+        //}
 
         ReportProgress("Pipeline adding");
 

@@ -72,7 +72,7 @@ public sealed class CreateTableFromAggregateUseCase : PipelineUseCase
     /// <summary>
     /// Design time types
     /// </summary>
-    private CreateTableFromAggregateUseCase()
+    public CreateTableFromAggregateUseCase()
         : base(new[]
         {
             typeof(AggregateConfiguration),
