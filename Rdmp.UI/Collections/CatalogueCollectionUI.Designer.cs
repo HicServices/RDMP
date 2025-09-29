@@ -30,13 +30,14 @@ namespace Rdmp.UI.Collections
             tlvCatalogues = new TreeListView();
             olvColumn1 = new OLVColumn();
             olvColumn2 = new OLVColumn();
+            attributesRenderer = new FlagRenderer();
+            imageList_RightClickIcons = new ImageList(components);
             olvFilters = new OLVColumn();
             olvOrder = new OLVColumn();
-            imageList_RightClickIcons = new ImageList(components);
             gbCatalogueFilters = new GroupBox();
+            tbFilter = new TextBox();
             catalogueCollectionFilterUI1 = new CatalogueCollectionFilterUI();
             panel2 = new Panel();
-            tbFilter = new TextBox();
             ((ISupportInitialize)tlvCatalogues).BeginInit();
             gbCatalogueFilters.SuspendLayout();
             panel2.SuspendLayout();
@@ -73,19 +74,33 @@ namespace Rdmp.UI.Collections
             // 
             // olvColumn2
             // 
-            FlagRenderer attributesRenderer = new FlagRenderer();
-            attributesRenderer.ImageList = imageList_RightClickIcons;
-            attributesRenderer.Add(1, "DLE");
-            //attributesRenderer.Add(FileAttributes.ReadOnly, "readonly");
-            //attributesRenderer.Add(FileAttributes.System, "system");
-            //attributesRenderer.Add(FileAttributes.Hidden, "hidden");
-            //attributesRenderer.Add(FileAttributes.Temporary, "temporary");
-            olvColumn2.Renderer = attributesRenderer;
             olvColumn2.HeaderTextAlign = HorizontalAlignment.Center;
             olvColumn2.MinimumWidth = 100;
+            olvColumn2.Renderer = attributesRenderer;
             olvColumn2.Text = "Other Stuff";
             olvColumn2.TextAlign = HorizontalAlignment.Center;
             olvColumn2.Width = 100;
+            // 
+            // attributesRenderer
+            // 
+            attributesRenderer.ImageList = imageList_RightClickIcons;
+            attributesRenderer.Add(CatalogueStatuses.Internal, "internal");
+            attributesRenderer.Add(CatalogueStatuses.Deprecated, "deprecated");
+            attributesRenderer.Add(CatalogueStatuses.ProjectSpecific, "projectSpecific");
+            // 
+            // imageList_RightClickIcons
+            // 
+            imageList_RightClickIcons.ColorDepth = ColorDepth.Depth8Bit;
+            imageList_RightClickIcons.ImageStream = (ImageListStreamer)resources.GetObject("imageList_RightClickIcons.ImageStream");
+            imageList_RightClickIcons.TransparentColor = System.Drawing.Color.Transparent;
+            imageList_RightClickIcons.Images.SetKeyName(0, "DLE");
+            imageList_RightClickIcons.Images.SetKeyName(1, "DEM");
+            imageList_RightClickIcons.Images.SetKeyName(2, "DQE");
+            imageList_RightClickIcons.Images.SetKeyName(3, "LOG");
+            imageList_RightClickIcons.Images.SetKeyName(4, "aggregates.png");
+            imageList_RightClickIcons.Images.SetKeyName(5, "internal");
+            imageList_RightClickIcons.Images.SetKeyName(6, "deprecated");
+            imageList_RightClickIcons.Images.SetKeyName(7, "projectSpecific");
             // 
             // olvFilters
             // 
@@ -100,17 +115,6 @@ namespace Rdmp.UI.Collections
             olvOrder.IsVisible = false;
             olvOrder.Text = "Order";
             // 
-            // imageList_RightClickIcons
-            // 
-            imageList_RightClickIcons.ColorDepth = ColorDepth.Depth8Bit;
-            imageList_RightClickIcons.ImageStream = (ImageListStreamer)resources.GetObject("imageList_RightClickIcons.ImageStream");
-            imageList_RightClickIcons.TransparentColor = System.Drawing.Color.Transparent;
-            imageList_RightClickIcons.Images.SetKeyName(0, "DLE");
-            imageList_RightClickIcons.Images.SetKeyName(1, "DEM");
-            imageList_RightClickIcons.Images.SetKeyName(2, "DQE");
-            imageList_RightClickIcons.Images.SetKeyName(3, "LOG");
-            imageList_RightClickIcons.Images.SetKeyName(4, "aggregates.png");
-            // 
             // gbCatalogueFilters
             // 
             gbCatalogueFilters.Controls.Add(tbFilter);
@@ -122,6 +126,13 @@ namespace Rdmp.UI.Collections
             gbCatalogueFilters.TabIndex = 1;
             gbCatalogueFilters.TabStop = false;
             gbCatalogueFilters.Text = "Show";
+            // 
+            // tbFilter
+            // 
+            tbFilter.Location = new System.Drawing.Point(0, 39);
+            tbFilter.Name = "tbFilter";
+            tbFilter.Size = new System.Drawing.Size(500, 23);
+            tbFilter.TabIndex = 2;
             // 
             // catalogueCollectionFilterUI1
             // 
@@ -140,13 +151,6 @@ namespace Rdmp.UI.Collections
             panel2.Name = "panel2";
             panel2.Size = new System.Drawing.Size(500, 479);
             panel2.TabIndex = 2;
-            // 
-            // tbFilter
-            // 
-            tbFilter.Location = new System.Drawing.Point(0, 39);
-            tbFilter.Name = "tbFilter";
-            tbFilter.Size = new System.Drawing.Size(500, 23);
-            tbFilter.TabIndex = 2;
             // 
             // CatalogueCollectionUI
             // 
@@ -172,5 +176,6 @@ namespace Rdmp.UI.Collections
         private CatalogueCollectionFilterUI catalogueCollectionFilterUI1;
         private Panel panel2;
         private TextBox tbFilter;
+        private FlagRenderer attributesRenderer;
     }
 }

@@ -19,6 +19,7 @@ using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -50,6 +51,14 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
 
     private bool bLoading = true;
 
+    private enum CatalogueStatuses
+    {
+        None = 0,
+        Internal=1,
+        Deprecated=2,
+        ProjectSpecific =4
+    }
+
     public CatalogueCollectionUI()
     {
         InitializeComponent();
@@ -58,8 +67,14 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
         olvOrder.AspectGetter += OrderAspectGetter;
         olvColumn2.AspectGetter += rowObject =>
         {
-            //var catalogue = (Catalogue)x;
-            return new List<object>() { 1 }.ToArray();
+            //var result = 7;// 0;
+            //var catalouge = (Catalogue)rowObject;
+            //if(catalouge is not null)
+            //{
+            //    if(catalouge.IsInternalDataset
+            //}
+
+            return CatalogueStatuses.Internal|CatalogueStatuses.ProjectSpecific|CatalogueStatuses.Deprecated;
         };
         bLoading = false;
 
