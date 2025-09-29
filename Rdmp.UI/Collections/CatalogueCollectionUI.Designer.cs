@@ -1,7 +1,10 @@
-﻿using System.ComponentModel;
-using System.Windows.Forms;
-using BrightIdeasSoftware;
+﻿using BrightIdeasSoftware;
+using Rdmp.Core.Curation.Data;
 using Rdmp.UI.Refreshing;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
+using System.Windows.Forms;
 
 namespace Rdmp.UI.Collections
 {
@@ -10,7 +13,7 @@ namespace Rdmp.UI.Collections
         /// <summary> 
         /// Required designer variable.
         /// </summary>
-        private IContainer components = null;
+        private System.ComponentModel.IContainer components = null;
 
 
 
@@ -26,6 +29,7 @@ namespace Rdmp.UI.Collections
             ComponentResourceManager resources = new ComponentResourceManager(typeof(CatalogueCollectionUI));
             tlvCatalogues = new TreeListView();
             olvColumn1 = new OLVColumn();
+            olvColumn2 = new OLVColumn();
             olvFilters = new OLVColumn();
             olvOrder = new OLVColumn();
             imageList_RightClickIcons = new ImageList(components);
@@ -41,10 +45,11 @@ namespace Rdmp.UI.Collections
             // tlvCatalogues
             // 
             tlvCatalogues.AllColumns.Add(olvColumn1);
+            tlvCatalogues.AllColumns.Add(olvColumn2);
             tlvCatalogues.AllColumns.Add(olvFilters);
             tlvCatalogues.AllColumns.Add(olvOrder);
             tlvCatalogues.CellEditUseWholeCell = false;
-            tlvCatalogues.Columns.AddRange(new ColumnHeader[] { olvColumn1 });
+            tlvCatalogues.Columns.AddRange(new ColumnHeader[] { olvColumn1, olvColumn2 });
             tlvCatalogues.Dock = DockStyle.Fill;
             tlvCatalogues.Location = new System.Drawing.Point(0, 0);
             tlvCatalogues.Name = "tlvCatalogues";
@@ -65,6 +70,22 @@ namespace Rdmp.UI.Collections
             olvColumn1.Text = "Catalogues";
             olvColumn1.TextAlign = HorizontalAlignment.Center;
             olvColumn1.Width = 100;
+            // 
+            // olvColumn2
+            // 
+            FlagRenderer attributesRenderer = new FlagRenderer();
+            attributesRenderer.ImageList = imageList_RightClickIcons;
+            attributesRenderer.Add(1, "DLE");
+            //attributesRenderer.Add(FileAttributes.ReadOnly, "readonly");
+            //attributesRenderer.Add(FileAttributes.System, "system");
+            //attributesRenderer.Add(FileAttributes.Hidden, "hidden");
+            //attributesRenderer.Add(FileAttributes.Temporary, "temporary");
+            olvColumn2.Renderer = attributesRenderer;
+            olvColumn2.HeaderTextAlign = HorizontalAlignment.Center;
+            olvColumn2.MinimumWidth = 100;
+            olvColumn2.Text = "Other Stuff";
+            olvColumn2.TextAlign = HorizontalAlignment.Center;
+            olvColumn2.Width = 100;
             // 
             // olvFilters
             // 
@@ -144,6 +165,7 @@ namespace Rdmp.UI.Collections
         private TreeListView tlvCatalogues;
         private ImageList imageList_RightClickIcons;
         private OLVColumn olvColumn1;
+        private OLVColumn olvColumn2;
         private OLVColumn olvFilters;
         private GroupBox gbCatalogueFilters;
         private OLVColumn olvOrder;

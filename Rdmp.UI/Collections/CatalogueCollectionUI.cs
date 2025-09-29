@@ -4,9 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Linq;
-using System.Windows.Forms;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
@@ -20,6 +17,10 @@ using Rdmp.UI.Collections.Providers.Filtering;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace Rdmp.UI.Collections;
 
@@ -55,7 +56,11 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
 
         olvFilters.AspectGetter += FilterAspectGetter;
         olvOrder.AspectGetter += OrderAspectGetter;
-
+        olvColumn2.AspectGetter += rowObject =>
+        {
+            //var catalogue = (Catalogue)x;
+            return new List<object>() { 1 }.ToArray();
+        };
         bLoading = false;
 
         catalogueCollectionFilterUI1.FiltersChanged += (s, e) => ApplyFilters();
