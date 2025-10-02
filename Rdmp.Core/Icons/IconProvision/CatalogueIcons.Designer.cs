@@ -2170,6 +2170,62 @@ namespace Rdmp.Core.Icons.IconProvision
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
+        public static Byte[] SpecialApproval
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("SpecialApproval", resourceCulture);
+                return ((Byte[])(obj));
+            }
+        }
+        /// <summary>
+        ///   Looks up a localized resource of type Image.
+        /// </summary>
+        public static Byte[] Internal
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("Internal", resourceCulture);
+                return ((Byte[])(obj));
+            }
+        }
+        /// <summary>
+        ///   Looks up a localized resource of type Image.
+        /// </summary>
+        public static Byte[] ProjectSpecific
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("ProjectSpecific", resourceCulture);
+                return ((Byte[])(obj));
+            }
+        }
+        /// <summary>
+        ///   Looks up a localized resource of type Image.
+        /// </summary>
+        public static Byte[] Supplemental
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("Supplemental", resourceCulture);
+                return ((Byte[])(obj));
+            }
+        }
+        /// <summary>
+        ///   Looks up a localized resource of type Image.
+        /// </summary>
+        public static Byte[] Deprecated
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("Deprecated", resourceCulture);
+                return ((Byte[])(obj));
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized resource of type Image.
+        /// </summary>
         public static Byte[] SpontaneouslyInventedColumn
         {
             get

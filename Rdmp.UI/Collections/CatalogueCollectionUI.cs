@@ -54,9 +54,11 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
     private enum CatalogueStatuses
     {
         None = 0,
-        Internal=1,
-        Deprecated=2,
-        ProjectSpecific =4
+        Internal = 1,
+        Deprecated = 2,
+        ProjectSpecific = 4,
+        PrimaryKey=8,
+        ExtractionIdentifier=16
     }
 
     public CatalogueCollectionUI()
@@ -67,14 +69,39 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
         olvOrder.AspectGetter += OrderAspectGetter;
         olvColumn2.AspectGetter += rowObject =>
         {
-            //var result = 7;// 0;
-            //var catalouge = (Catalogue)rowObject;
-            //if(catalouge is not null)
-            //{
-            //    if(catalouge.IsInternalDataset
-            //}
-
-            return CatalogueStatuses.Internal|CatalogueStatuses.ProjectSpecific|CatalogueStatuses.Deprecated;
+            try
+            {
+                var catalogue = (Catalogue)rowObject;
+                if (catalogue is not null)
+                {
+                    bool isInternal = catalogue.IsInternalDataset;
+                    bool isDeprecated = catalogue.IsDeprecated;
+                    bool isProjectSpecific = catalogue.IsProjectSpecific(catalogue.DataExportRepository);
+                    if (isInternal && isDeprecated && isProjectSpecific) return CatalogueStatuses.Internal | CatalogueStatuses.ProjectSpecific | CatalogueStatuses.Deprecated;
+                    if (isInternal && isDeprecated) return CatalogueStatuses.Internal | CatalogueStatuses.Deprecated;
+                    if (isInternal && isProjectSpecific) return CatalogueStatuses.Internal | CatalogueStatuses.ProjectSpecific;
+                    if (isDeprecated && isProjectSpecific) return CatalogueStatuses.ProjectSpecific | CatalogueStatuses.Deprecated;
+                    if (isInternal) return CatalogueStatuses.Internal;
+                    if (isDeprecated) return CatalogueStatuses.Deprecated;
+                    if (isProjectSpecific) return CatalogueStatuses.ProjectSpecific;
+                }
+                //todo this doesn't trigger for children
+                //var x = rowObject.GetType();
+                //var catalogueItem = (CatalogueItem)rowObject;
+                //if(catalogueItem is not null)
+                //{
+                //    bool isPK = catalogueItem.ExtractionInformation.IsPrimaryKey;
+                //    bool isExtractionIdentifier = catalogueItem.ExtractionInformation.IsExtractionIdentifier;
+                //    if (isPK && isExtractionIdentifier) return CatalogueStatuses.PrimaryKey | CatalogueStatuses.ExtractionIdentifier;
+                //    if (isPK) return CatalogueStatuses.PrimaryKey;
+                //    if (isExtractionIdentifier) return CatalogueStatuses.ExtractionIdentifier;
+                //}
+                return null;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         };
         bLoading = false;
 
@@ -187,6 +214,11 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
                 }
             };
             CommonFunctionality.Add(_refresh);
+            attributesRenderer.Add(1, "internal");
+            attributesRenderer.Add(2, "deprecated");
+            attributesRenderer.Add(4, "projectSpecific");
+            attributesRenderer.Add(8, "primaryKey");
+            attributesRenderer.Add(16, "extractionIdentifier");
         }
 
         if (isFirstTime || Equals(oRefreshFrom, rootFolder))
@@ -245,6 +277,12 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
             olvColumn1, //the icon column
                         //we have our own custom filter logic so no need to pass tbFilter
             olvColumn1, //also the renameable column
+            new RDMPCollectionCommonFunctionalitySettings
+            {
+                AddCheckColumn = false,
+                AddFavouriteColumn = false,
+                AddIDColumn = true
+            },
             tbFilter
         );
 
@@ -278,8 +316,9 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
 
         Activator.RefreshBus.EstablishLifetimeSubscription(this);
 
-        tlvCatalogues.AddObject(activator.CoreChildProvider.AllGovernanceNode);
-        tlvCatalogues.AddObject(activator.CoreChildProvider.CatalogueRootFolder);
+        //tlvCatalogues.AddObject(activator.CoreChildProvider.AllGovernanceNode);
+        tlvCatalogues.AddObjects(activator.CoreChildProvider.CatalogueRootFolder.ChildObjects);
+        tlvCatalogues.AddObjects(activator.CoreChildProvider.CatalogueRootFolder.ChildFolders);
         ApplyFilters();
 
         RefreshUIFromDatabase(activator.CoreChildProvider.CatalogueRootFolder);

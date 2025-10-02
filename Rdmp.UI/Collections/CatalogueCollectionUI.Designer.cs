@@ -47,15 +47,13 @@ namespace Rdmp.UI.Collections
             // 
             tlvCatalogues.AllColumns.Add(olvColumn1);
             tlvCatalogues.AllColumns.Add(olvColumn2);
-            tlvCatalogues.AllColumns.Add(olvFilters);
-            tlvCatalogues.AllColumns.Add(olvOrder);
             tlvCatalogues.CellEditUseWholeCell = false;
-            tlvCatalogues.Columns.AddRange(new ColumnHeader[] { olvColumn1, olvColumn2 });
+            tlvCatalogues.Columns.AddRange(new ColumnHeader[] { olvColumn2, olvColumn1 });
             tlvCatalogues.Dock = DockStyle.Fill;
             tlvCatalogues.Location = new System.Drawing.Point(0, 0);
             tlvCatalogues.Name = "tlvCatalogues";
             tlvCatalogues.ShowGroups = false;
-            tlvCatalogues.Size = new System.Drawing.Size(500, 414);
+            tlvCatalogues.Size = new System.Drawing.Size(500, 404);
             tlvCatalogues.TabIndex = 0;
             tlvCatalogues.Text = "label1";
             tlvCatalogues.UseCompatibleStateImageBehavior = false;
@@ -75,18 +73,13 @@ namespace Rdmp.UI.Collections
             // olvColumn2
             // 
             olvColumn2.HeaderTextAlign = HorizontalAlignment.Center;
-            olvColumn2.MinimumWidth = 100;
             olvColumn2.Renderer = attributesRenderer;
-            olvColumn2.Text = "Other Stuff";
+            olvColumn2.Text = "Status";
             olvColumn2.TextAlign = HorizontalAlignment.Center;
-            olvColumn2.Width = 100;
             // 
             // attributesRenderer
             // 
             attributesRenderer.ImageList = imageList_RightClickIcons;
-            attributesRenderer.Add(CatalogueStatuses.Internal, "internal");
-            attributesRenderer.Add(CatalogueStatuses.Deprecated, "deprecated");
-            attributesRenderer.Add(CatalogueStatuses.ProjectSpecific, "projectSpecific");
             // 
             // imageList_RightClickIcons
             // 
@@ -98,9 +91,11 @@ namespace Rdmp.UI.Collections
             imageList_RightClickIcons.Images.SetKeyName(2, "DQE");
             imageList_RightClickIcons.Images.SetKeyName(3, "LOG");
             imageList_RightClickIcons.Images.SetKeyName(4, "aggregates.png");
-            imageList_RightClickIcons.Images.SetKeyName(5, "internal");
-            imageList_RightClickIcons.Images.SetKeyName(6, "deprecated");
-            imageList_RightClickIcons.Images.SetKeyName(7, "projectSpecific");
+            imageList_RightClickIcons.Images.SetKeyName(5, "deprecated");
+            imageList_RightClickIcons.Images.SetKeyName(6, "projectSpecific");
+            imageList_RightClickIcons.Images.SetKeyName(7, "internal");
+            imageList_RightClickIcons.Images.SetKeyName(8, "primaryKey");
+            imageList_RightClickIcons.Images.SetKeyName(9, "extactionIdentifer");
             // 
             // olvFilters
             // 
@@ -120,16 +115,16 @@ namespace Rdmp.UI.Collections
             gbCatalogueFilters.Controls.Add(tbFilter);
             gbCatalogueFilters.Controls.Add(catalogueCollectionFilterUI1);
             gbCatalogueFilters.Dock = DockStyle.Bottom;
-            gbCatalogueFilters.Location = new System.Drawing.Point(0, 414);
+            gbCatalogueFilters.Location = new System.Drawing.Point(0, 404);
+            gbCatalogueFilters.Margin = new Padding(0);
             gbCatalogueFilters.Name = "gbCatalogueFilters";
-            gbCatalogueFilters.Size = new System.Drawing.Size(500, 65);
+            gbCatalogueFilters.Size = new System.Drawing.Size(500, 75);
             gbCatalogueFilters.TabIndex = 1;
             gbCatalogueFilters.TabStop = false;
-            gbCatalogueFilters.Text = "Show";
             // 
             // tbFilter
             // 
-            tbFilter.Location = new System.Drawing.Point(0, 39);
+            tbFilter.Location = new System.Drawing.Point(0, 50);
             tbFilter.Name = "tbFilter";
             tbFilter.Size = new System.Drawing.Size(500, 23);
             tbFilter.TabIndex = 2;
@@ -139,7 +134,7 @@ namespace Rdmp.UI.Collections
             catalogueCollectionFilterUI1.Dock = DockStyle.Fill;
             catalogueCollectionFilterUI1.Location = new System.Drawing.Point(3, 19);
             catalogueCollectionFilterUI1.Name = "catalogueCollectionFilterUI1";
-            catalogueCollectionFilterUI1.Size = new System.Drawing.Size(494, 43);
+            catalogueCollectionFilterUI1.Size = new System.Drawing.Size(494, 53);
             catalogueCollectionFilterUI1.TabIndex = 0;
             // 
             // panel2

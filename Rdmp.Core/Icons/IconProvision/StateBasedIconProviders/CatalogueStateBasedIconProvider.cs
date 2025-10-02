@@ -10,6 +10,7 @@ using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
 
 namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
 
@@ -30,22 +31,7 @@ public sealed class CatalogueStateBasedIconProvider : IObjectStateBasedIconProvi
         if (o is not Catalogue c)
             return null;
 
-        var status = c.GetExtractabilityStatus(_dataExportRepository);
-
-        var img = status is { IsExtractable: true, IsProjectSpecific: true } ? _projectSpecific : _basic;
-
-        if (c.IsApiCall())
-            img = IconOverlayProvider.GetOverlay(img, OverlayKind.Cloud);
-
-        if (c.IsDeprecated)
-            img = IconOverlayProvider.GetOverlay(img, OverlayKind.Deprecated);
-
-        if (c.IsInternalDataset)
-            img = IconOverlayProvider.GetOverlay(img, OverlayKind.Internal);
-
-        if (status is { IsExtractable: true })
-            img = IconOverlayProvider.GetOverlay(img, OverlayKind.Extractable);
-
-        return img;
+        _basic.Mutate(x => x.Resize(16, 16));
+        return _basic;
     }
 }

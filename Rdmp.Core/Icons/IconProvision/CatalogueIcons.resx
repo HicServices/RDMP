@@ -133,9 +133,24 @@
   <data name="ExecuteArrowWithTickOverlay" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Icons\executeArrowWithTickOverlay.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="Spanner" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\..\Icons\spanner.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	<data name="Spanner" type="System.Resources.ResXFileRef, System.Windows.Forms">
+		<value>..\..\Icons\spanner.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</data>
+  <data name="SpecialApproval" type="System.Resources.ResXFileRef, System.Windows.Forms">
+		  <value>..\..\Icons\fa\special-approval-icon.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+	<data name="Internal" type="System.Resources.ResXFileRef, System.Windows.Forms">
+		<value>..\..\Icons\fa\internal-icon.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</data>
+	<data name="Supplemental" type="System.Resources.ResXFileRef, System.Windows.Forms">
+		<value>..\..\Icons\fa\supplemental-icon.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</data>
+	<data name="ProjectSpecific" type="System.Resources.ResXFileRef, System.Windows.Forms">
+		<value>..\..\Icons\fa\project-icon-pink.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</data>
+	<data name="Deprecated" type="System.Resources.ResXFileRef, System.Windows.Forms">
+		<value>..\..\Icons\fa\deprecated-icon.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</data>
   <data name="TableInfo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Icons\tableinfo.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
@@ -158,7 +173,7 @@
     <value>..\..\Icons\importFile.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="Catalogue" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\..\Icons\Catalogue.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\fa\catalogue.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="Filter" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Icons\Filter.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -197,10 +212,10 @@
     <value>..\..\Icons\ExtractionInformation_Supplemental.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="AggregatesNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\..\Icons\AggregatesNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\fa\folder.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="CatalogueItemsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\..\Icons\catalogueItemsNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\fa\folder.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="BigCohort" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Icons\BigCohort.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -260,13 +275,13 @@
     <value>..\AggregateGraph.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="CatalogueFolder" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\CatalogueFolder.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\fa\folder.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="LoadMetadataVersionNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\CatalogueFolder.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="CatalogueItem" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\CatalogueItem.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\fa\catalogue-item.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="CatalogueItemTransform" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\CatalogueItemTransform.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -783,5 +798,8 @@
   </data>
   <data name="RegexRedactionKey" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\StandardRegex31.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="SpecialApproval" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\fa\special-approval-icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

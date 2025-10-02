@@ -9,6 +9,7 @@ using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
 
 namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
 
@@ -33,16 +34,28 @@ internal sealed class CatalogueItemsNodeStateBasedIconProvider : IObjectStateBas
         if (o is not CatalogueItemsNode cin)
             return null;
 
-        return cin.Category == null
-            ? Basic
-            : cin.Category.Value switch
-            {
-                Curation.Data.ExtractionCategory.Core => Core,
-                Curation.Data.ExtractionCategory.Supplemental => Supplemental,
-                Curation.Data.ExtractionCategory.SpecialApprovalRequired => Special,
-                Curation.Data.ExtractionCategory.Internal => Internal,
-                Curation.Data.ExtractionCategory.Deprecated => Deprecated,
-                _ => Basic
-            };
+        Image<Rgba32> x = Basic;
+
+        switch (cin.Category)
+        {
+            case Curation.Data.ExtractionCategory.SpecialApprovalRequired:
+                x = Image.Load<Rgba32>(CatalogueIcons.SpecialApproval);
+                break;
+            case Curation.Data.ExtractionCategory.Supplemental:
+                x = Image.Load<Rgba32>(CatalogueIcons.Supplemental);
+                break;
+            case Curation.Data.ExtractionCategory.Internal:
+                x = Image.Load<Rgba32>(CatalogueIcons.Internal);
+                break;
+            case Curation.Data.ExtractionCategory.ProjectSpecific:
+                x = Image.Load<Rgba32>(CatalogueIcons.ProjectSpecific);
+                break;
+            case Curation.Data.ExtractionCategory.Deprecated:
+                x = Image.Load<Rgba32>(CatalogueIcons.Deprecated);
+                break;
+        }
+
+        x.Mutate(y => y.Resize(16, 16));
+        return x;
     }
 }

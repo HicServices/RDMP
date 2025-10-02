@@ -10,6 +10,7 @@ using Rdmp.Core.Icons.IconOverlays;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
 
 namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
 
@@ -22,46 +23,47 @@ public sealed class CatalogueItemStateBasedIconProvider : IObjectStateBasedIconP
     {
         if (o is not CatalogueItem ci)
             return null;
+        BasicImage.Mutate(x => x.Resize(16, 16));
+        return BasicImage;
+        //var ei = ci.ExtractionInformation;
+        //var toReturn = ei?.IsProperTransform() ?? false ? TransformImage : BasicImage;
 
-        var ei = ci.ExtractionInformation;
-        var toReturn = ei?.IsProperTransform() ?? false ? TransformImage : BasicImage;
+        ////it's not extractable:
+        //if (ei == null) return toReturn;
 
-        //it's not extractable:
-        if (ei == null) return toReturn;
+        //if (ei.HashOnDataRelease)
+        //    toReturn = IconOverlayProvider.GetOverlay(toReturn, OverlayKind.Hashed);
 
-        if (ei.HashOnDataRelease)
-            toReturn = IconOverlayProvider.GetOverlay(toReturn, OverlayKind.Hashed);
+        //if (ei.IsExtractionIdentifier)
+        //    toReturn = IconOverlayProvider.GetOverlay(toReturn, OverlayKind.IsExtractionIdentifier);
 
-        if (ei.IsExtractionIdentifier)
-            toReturn = IconOverlayProvider.GetOverlay(toReturn, OverlayKind.IsExtractionIdentifier);
+        //if (ei.IsPrimaryKey)
+        //    toReturn = IconOverlayProvider.GetOverlay(toReturn, OverlayKind.Key);
 
-        if (ei.IsPrimaryKey)
-            toReturn = IconOverlayProvider.GetOverlay(toReturn, OverlayKind.Key);
-
-        switch (ei.ExtractionCategory)
-        {
-            case ExtractionCategory.ProjectSpecific:
-            case ExtractionCategory.Core:
-                toReturn = IconOverlayProvider.GetOverlay(toReturn, OverlayKind.Extractable);
-                break;
-            case ExtractionCategory.Supplemental:
-                toReturn = IconOverlayProvider.GetOverlay(toReturn, OverlayKind.Extractable_Supplemental);
-                break;
-            case ExtractionCategory.SpecialApprovalRequired:
-                toReturn = IconOverlayProvider.GetOverlay(toReturn, OverlayKind.Extractable_SpecialApproval);
-                break;
-            case ExtractionCategory.Internal:
-                toReturn = IconOverlayProvider.GetOverlay(toReturn, OverlayKind.Extractable_Internal);
-                break;
-            case ExtractionCategory.Deprecated:
-                toReturn = IconOverlayProvider.GetOverlay(toReturn, OverlayKind.Extractable);
-                toReturn = IconOverlayProvider.GetOverlay(toReturn, OverlayKind.Deprecated);
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(o));
-        }
+        //switch (ei.ExtractionCategory)
+        //{
+        //    case ExtractionCategory.ProjectSpecific:
+        //    case ExtractionCategory.Core:
+        //        toReturn = IconOverlayProvider.GetOverlay(toReturn, OverlayKind.Extractable);
+        //        break;
+        //    case ExtractionCategory.Supplemental:
+        //        toReturn = IconOverlayProvider.GetOverlay(toReturn, OverlayKind.Extractable_Supplemental);
+        //        break;
+        //    case ExtractionCategory.SpecialApprovalRequired:
+        //        toReturn = IconOverlayProvider.GetOverlay(toReturn, OverlayKind.Extractable_SpecialApproval);
+        //        break;
+        //    case ExtractionCategory.Internal:
+        //        toReturn = IconOverlayProvider.GetOverlay(toReturn, OverlayKind.Extractable_Internal);
+        //        break;
+        //    case ExtractionCategory.Deprecated:
+        //        toReturn = IconOverlayProvider.GetOverlay(toReturn, OverlayKind.Extractable);
+        //        toReturn = IconOverlayProvider.GetOverlay(toReturn, OverlayKind.Deprecated);
+        //        break;
+        //    default:
+        //        throw new ArgumentOutOfRangeException(nameof(o));
+        //}
 
 
-        return toReturn;
+        //return toReturn;
     }
 }

@@ -25,6 +25,7 @@ using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
 
 namespace Rdmp.Core.Icons.IconProvision;
 
@@ -78,6 +79,8 @@ public class CatalogueIconProvider : ICoreIconProvider
 
     protected virtual Image<Rgba32> GetImageImpl(object concept, OverlayKind kind = OverlayKind.None)
     {
+        Image<Rgba32> x;
+
         switch (concept)
         {
             case null:
@@ -92,11 +95,19 @@ public class CatalogueIconProvider : ICoreIconProvider
         }
 
         if (concept.GetType().IsGenericType && concept.GetType().GetGenericTypeDefinition() == typeof(FolderNode<>))
-            return GetImage(RDMPConcept.CatalogueFolder, kind);
+        {
 
+            x = GetImage(RDMPConcept.CatalogueFolder, kind);
+            x.Mutate(x => x.Resize(16, 16));
+            return x;
+        }
         //if they already passed in an image just return it back (optionally with the overlay).
         if (concept is Image<Rgba32> image)
-            return GetActualImage(image, kind);
+        {
+            x = GetActualImage(image, kind);
+            x.Mutate(x => x.Resize(16, 16));
+            return x;
+        }
 
         //if there are plugins injecting random objects into RDMP tree views etc then we need the ability to provide icons for them
         if (_pluginIconProviders != null)
@@ -104,66 +115,126 @@ public class CatalogueIconProvider : ICoreIconProvider
             {
                 var img = plugin.GetImage(concept, kind);
                 if (img != null)
+                {
+                    img.Mutate(x => x.Resize(16, 16));
                     return img;
+                }
             }
 
         switch (concept)
         {
             case RDMPCollection collection:
-                return GetImageImpl(GetConceptForCollection(collection), kind);
+                x = GetImageImpl(GetConceptForCollection(collection), kind);
+                x.Mutate(x => x.Resize(16, 16));
+                return x;
             case RDMPConcept rdmpConcept:
-                return GetImageImpl(ImagesCollection[rdmpConcept], kind);
+                x = GetImageImpl(ImagesCollection[rdmpConcept], kind);
+                x.Mutate(x => x.Resize(16, 16));
+                return x;
             case LinkedColumnInfoNode:
-                return GetImageImpl(ImagesCollection[RDMPConcept.ColumnInfo], OverlayKind.Link);
+                x = GetImageImpl(ImagesCollection[RDMPConcept.ColumnInfo], OverlayKind.Link);
+                x.Mutate(x => x.Resize(16, 16));
+                return x;
             case CatalogueUsedByLoadMetadataNode usedByLmd:
-                return GetImageImpl(usedByLmd.ObjectBeingUsed, OverlayKind.Link);
+                x = GetImageImpl(usedByLmd.ObjectBeingUsed, OverlayKind.Link);
+                x.Mutate(x => x.Resize(16, 16));
+                return x;
             case DataAccessCredentialUsageNode:
-                return GetImageImpl(ImagesCollection[RDMPConcept.DataAccessCredentials], OverlayKind.Link);
+                x = GetImageImpl(ImagesCollection[RDMPConcept.DataAccessCredentials], OverlayKind.Link);
+                x.Mutate(x => x.Resize(16, 16));
+                return x;
         }
 
         if (ConceptIs(typeof(ISqlParameter), concept))
-            return GetImageImpl(RDMPConcept.ParametersNode, kind);
+        {
+            x = GetImageImpl(RDMPConcept.ParametersNode, kind);
+            x.Mutate(x => x.Resize(16, 16));
+            return x;
+        }
 
         if (ConceptIs(typeof(IContainer), concept))
-            return GetImageImpl(RDMPConcept.FilterContainer, kind);
+        {
+            x = GetImageImpl(RDMPConcept.FilterContainer, kind);
+            x.Mutate(x => x.Resize(16, 16));
+            return x;
+        }
 
         if (ConceptIs(typeof(JoinableCohortAggregateConfiguration), concept))
-            return GetImageImpl(RDMPConcept.PatientIndexTable);
+        {
+            x = GetImageImpl(RDMPConcept.PatientIndexTable);
+            x.Mutate(x => x.Resize(16, 16));
+            return x;
+        }
 
         if (ConceptIs(typeof(JoinableCohortAggregateConfigurationUse), concept))
-            return GetImageImpl(RDMPConcept.PatientIndexTable, OverlayKind.Link);
+        {
+            x = GetImageImpl(RDMPConcept.PatientIndexTable, OverlayKind.Link);
+            x.Mutate(x => x.Resize(16, 16));
+            return x;
+        }
 
         if (concept is PermissionWindowUsedByCacheProgressNode node)
-            return GetImageImpl(node.GetImageObject(), OverlayKind.Link);
+        {
+            x = GetImageImpl(node.GetImageObject(), OverlayKind.Link);
+            x.Mutate(x => x.Resize(16, 16));
+            return x;
+        }
 
         if (ConceptIs(typeof(DashboardObjectUse), concept))
-            return GetImageImpl(RDMPConcept.DashboardControl, OverlayKind.Link);
+        {
+            x = GetImageImpl(RDMPConcept.DashboardControl, OverlayKind.Link);
+            x.Mutate(x => x.Resize(16, 16));
+            return x;
+        }
 
         switch (concept)
         {
             case DatabaseType databaseType:
-                return _databaseTypeIconProvider.GetImage(databaseType);
+                x = _databaseTypeIconProvider.GetImage(databaseType);
+                x.Mutate(x => x.Resize(16, 16));
+                return x;
             case ArbitraryFolderNode:
-                return GetImageImpl(RDMPConcept.CatalogueFolder, kind);
+                x = GetImageImpl(RDMPConcept.CatalogueFolder, kind);
+                x.Mutate(x => x.Resize(16, 16));
+                return x;
             case DiscoveredDatabase:
-                return GetImageImpl(RDMPConcept.Database);
+                x = GetImageImpl(RDMPConcept.Database);
+                x.Mutate(x => x.Resize(16, 16));
+                return x;
             case DiscoveredTable:
-                return GetImageImpl(RDMPConcept.TableInfo);
+                x = GetImageImpl(RDMPConcept.TableInfo);
+                x.Mutate(x => x.Resize(16, 16));
+                return x;
             case DiscoveredColumn:
-                return GetImageImpl(RDMPConcept.ColumnInfo);
+                x = GetImageImpl(RDMPConcept.ColumnInfo);
+                x.Mutate(x => x.Resize(16, 16));
+                return x;
             case FlatFileToLoad:
-                return GetImageImpl(RDMPConcept.File);
+                x = GetImageImpl(RDMPConcept.File);
+                x.Mutate(x => x.Resize(16, 16));
+                return x;
             case CohortCreationRequest:
-                return GetImageImpl(RDMPConcept.ExtractableCohort, OverlayKind.Add);
+                x = GetImageImpl(RDMPConcept.ExtractableCohort, OverlayKind.Add);
+                x.Mutate(x => x.Resize(16, 16));
+                return x;
         }
 
         //This is special case when asking for icon for the Type, since the node itself is an IMasqueradeAs
         if (ReferenceEquals(concept, typeof(PipelineCompatibleWithUseCaseNode)))
-            return GetImageImpl(RDMPConcept.Pipeline);
+        {
+            x = GetImageImpl(RDMPConcept.Pipeline);
+            x.Mutate(x => x.Resize(16, 16));
+            return x;
+        }
 
         foreach (var bmp in StateBasedIconProviders
                      .Select(stateBasedIconProvider => stateBasedIconProvider.GetImageIfSupportedObject(concept))
-                     .Where(bmp => bmp != null)) return GetImageImpl(bmp, kind);
+                     .Where(bmp => bmp != null))
+        {
+            x = GetImageImpl(bmp, kind);
+            x.Mutate(x => x.Resize(16, 16));
+            return x;
+        }
 
         var conceptTypeName = concept.GetType().Name;
 
@@ -172,11 +243,19 @@ public class CatalogueIconProvider : ICoreIconProvider
         //It is a System.Type, get the name and see if there's a corresponding image
         if (concept is Type type)
             if (TryParseTypeNameToRdmpConcept(type, out t))
-                return GetImageImpl(ImagesCollection[t], kind);
+            {
+                x = GetImageImpl(ImagesCollection[t], kind);
+                x.Mutate(x => x.Resize(16, 16));
+                return x;
+            }
 
         //It is an instance of something, get the System.Type and see if there's a corresponding image
         if (Enum.TryParse(conceptTypeName, out t))
-            return GetImageImpl(ImagesCollection[t], kind);
+        {
+            x = GetImageImpl(ImagesCollection[t], kind);
+            x.Mutate(x => x.Resize(16, 16));
+            return x;
+        }
 
         switch (concept)
         {
@@ -188,11 +267,17 @@ public class CatalogueIconProvider : ICoreIconProvider
 
                     //provided we don't have a circular reference here!
                     if (masqueradingAs is not IMasqueradeAs)
-                        return GetImageImpl(masqueradingAs, kind); //get an image for what your pretending to be
+                    {
+                        x = GetImageImpl(masqueradingAs, kind); //get an image for what your pretending to be
+                        x.Mutate(x => x.Resize(16, 16));
+                        return x;
+                    }
                     break;
                 }
             case IAtomicCommand cmd:
-                return cmd.GetImage(this);
+                x = cmd.GetImage(this);
+                x.Mutate(x => x.Resize(16, 16));
+                return x;
         }
 
 

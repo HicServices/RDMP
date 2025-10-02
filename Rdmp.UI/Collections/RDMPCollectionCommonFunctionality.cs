@@ -230,8 +230,10 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         if (iconColumn != null)
             iconColumn.ImageGetter += ImageGetter;
 
-        if (Tree.RowHeight != 19)
-            Tree.RowHeight = 19;
+        //if (Tree.RowHeight != 19)
+        //    Tree.RowHeight = 19;
+        if (Tree.RowHeight != 24)
+            Tree.RowHeight = 24;
 
         //add colour indicator bar
         Tree.Location = Tree.Location with { Y = tree.Location.Y + 3 };

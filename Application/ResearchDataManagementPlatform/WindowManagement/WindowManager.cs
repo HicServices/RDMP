@@ -27,6 +27,7 @@ using ResearchDataManagementPlatform.WindowManagement.Events;
 using ResearchDataManagementPlatform.WindowManagement.HomePane;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
 using WeifenLuo.WinFormsUI.Docking;
 using Image = SixLabors.ImageSharp.Image;
 
@@ -176,6 +177,7 @@ public class WindowManager
     private PersistableToolboxDockContent Show(RDMPCollection collection, RDMPCollectionUI control, string label,
         Image<Rgba32> image)
     {
+        image.Mutate(x => x.Resize(16, 16));
         var content =
             _windowFactory.Create(ActivateItems, control, label, image,
                 collection); //these are collections so are not tracked with a window tracker.
