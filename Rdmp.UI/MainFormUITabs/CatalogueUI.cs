@@ -123,7 +123,6 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
     protected override void SetBindings(BinderWithErrorProviderFactory rules, Catalogue databaseObject)
     {
         base.SetBindings(rules, databaseObject);
-        Bind(cbColdStorage, "Checked", "IsColdStorageDataset", c => c.IsColdStorageDataset);
         Bind(cbDeprecated, "Checked", "IsDeprecated", c => c.IsDeprecated);
         Bind(cbInternal, "Checked", "IsInternalDataset", c => c.IsInternalDataset);
         Bind(editableCatalogueName, "TextValue", "Name", c => c.Name);

@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improve Extraction Log Viewer Filter
 - Add Dataset Variable document to extractions
 - Fix bug with duplicate searchables
+- Update extractability to only allow non-internal projects to be extracted
+- Remove functionality to mark individual catalogues as extractable/not extractable. Favor use of marking as internal.
 
 
 ## [9.0.1] - 2025-07-31
