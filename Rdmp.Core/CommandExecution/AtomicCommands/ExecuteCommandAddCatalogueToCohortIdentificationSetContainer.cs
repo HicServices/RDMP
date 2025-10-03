@@ -4,11 +4,13 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.Collections.Generic;
 using System.Linq;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
@@ -111,18 +113,33 @@ public class ExecuteCommandAddCatalogueToCohortIdentificationSetContainer : Basi
         // if user hasn't picked a Catalogue yet
         if (_catalogueCombineable == null)
         {
+            var cic = _targetCohortAggregateContainer.GetCohortIdentificationConfiguration();
+            List<int> associatedProjectCataloguesIDs= new();
+            var pcica = BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjects<ProjectCohortIdentificationConfigurationAssociation>().Where(pcica => pcica.CohortIdentificationConfiguration_ID == cic.ID).FirstOrDefault();
+            if(pcica is not null)
+            {
+                associatedProjectCataloguesIDs = pcica.Project.GetAllProjectCatalogues().Select(c => c.ID).ToList();
+            }
             if (!BasicActivator.SelectObjects(new DialogArgs
             {
                 WindowTitle = "Add Catalogue(s) to Container",
                 TaskDescription =
                         $"Choose which Catalogues to add to the cohort container '{_targetCohortAggregateContainer.Name}'.  Catalogues must have at least one IsExtractionIdentifier column."
-            }, BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out var selected))
+            }, BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>().Where(c => !c.IsInternalDataset &&(!c.IsProjectSpecific(BasicActivator.RepositoryLocator.DataExportRepository) || associatedProjectCataloguesIDs.Contains(c.ID))).ToArray(), out var selected))
                 // user didn't pick one
                 return;
 
             // for each catalogue they picked
             foreach (var catalogue in selected)
             {
+                if(BasicActivator.IsInteractive && catalogue.IsDeprecated)
+                {
+                    var confirmDeprecatedUser = BasicActivator.YesNo($"{catalogue.Name} is marked as deprecated. Are you sure you wish to use it?", "Confirm use of Deprecated Catalogue");
+                    if (!confirmDeprecatedUser)
+                    {
+                        continue;
+                    }
+                }
                 var combineable = new CatalogueCombineable(catalogue);
 
                 UpdateIsImpossibleFor(combineable);

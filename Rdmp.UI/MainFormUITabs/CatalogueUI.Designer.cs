@@ -33,7 +33,6 @@ namespace Rdmp.UI.MainFormUITabs
         private void InitializeComponent()
         {
             splitContainer1 = new SplitContainer();
-            cbColdStorage = new CheckBox();
             cbInternal = new CheckBox();
             cbDeprecated = new CheckBox();
             editableFolder = new SimpleControls.EditableLabelUI();
@@ -177,7 +176,6 @@ namespace Rdmp.UI.MainFormUITabs
             // 
             // splitContainer1.Panel1
             // 
-            splitContainer1.Panel1.Controls.Add(cbColdStorage);
             splitContainer1.Panel1.Controls.Add(cbInternal);
             splitContainer1.Panel1.Controls.Add(cbDeprecated);
             splitContainer1.Panel1.Controls.Add(editableFolder);
@@ -190,16 +188,6 @@ namespace Rdmp.UI.MainFormUITabs
             splitContainer1.Size = new System.Drawing.Size(881, 1085);
             splitContainer1.SplitterDistance = 158;
             splitContainer1.TabIndex = 0;
-            // 
-            // cbColdStorage
-            // 
-            cbColdStorage.AutoSize = true;
-            cbColdStorage.Location = new System.Drawing.Point(695, 75);
-            cbColdStorage.Name = "cbColdStorage";
-            cbColdStorage.Size = new System.Drawing.Size(94, 19);
-            cbColdStorage.TabIndex = 5;
-            cbColdStorage.Text = "Cold Storage";
-            cbColdStorage.UseVisualStyleBackColor = true;
             // 
             // cbInternal
             // 
@@ -1177,7 +1165,6 @@ namespace Rdmp.UI.MainFormUITabs
         private TicketingControlUI ticketingControl1;
         private SimpleControls.EditableLabelUI editableFolder;
         private SimpleControls.EditableLabelUI editableCatalogueName;
-        private CheckBox cbColdStorage;
         private CheckBox cbInternal;
         private CheckBox cbDeprecated;
         private TabControl tabControl1;

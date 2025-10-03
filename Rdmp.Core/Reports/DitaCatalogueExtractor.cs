@@ -72,7 +72,7 @@ public class DitaCatalogueExtractor : ICheckable
 
         //get all the catalogues then sort them alphabetically
         var catas = new List<Catalogue>(_repository.GetAllObjects<Catalogue>()
-            .Where(c => !(c.IsDeprecated || c.IsInternalDataset || c.IsColdStorageDataset)));
+            .Where(c => !(c.IsDeprecated || c.IsInternalDataset)));
         catas.Sort();
 
         var sw = Stopwatch.StartNew();
@@ -270,7 +270,7 @@ public class DitaCatalogueExtractor : ICheckable
     /// <param name="notifier"></param>
     public void Check(ICheckNotifier notifier)
     {
-        var catas = _repository.GetAllObjects<Catalogue>().Where(c => !c.IsInternalDataset && !c.IsColdStorageDataset)
+        var catas = _repository.GetAllObjects<Catalogue>().Where(c => !c.IsInternalDataset)
             .ToArray();
 
         //Catalogues with no acronyms

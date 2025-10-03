@@ -49,6 +49,7 @@ public class FlatFileReleasePotential : ReleasePotential
     {
         ExtractFile = new FileInfo(extractionResults.DestinationDescription);
         var metadataFile = new FileInfo(extractionResults.DestinationDescription.Replace(".csv", ".docx"));
+        var variablesFile = new FileInfo(extractionResults.DestinationDescription.Replace(".csv","Variables.csv"));
 
         if (!ExtractFile.Exists)
             return true; //extract is missing
@@ -61,7 +62,7 @@ public class FlatFileReleasePotential : ReleasePotential
 
         //see if there is any other pollution in the extract directory
         var unexpectedFile = ExtractFile.Directory.EnumerateFiles().FirstOrDefault(f =>
-            !(f.Name.Equals(ExtractFile.Name) || f.Name.Equals(metadataFile.Name)));
+            !(f.Name.Equals(ExtractFile.Name) || f.Name.Equals(metadataFile.Name) ||  f.Name.Equals(variablesFile.Name)));
 
         if (unexpectedFile != null)
             throw new Exception(

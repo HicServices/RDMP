@@ -61,7 +61,7 @@ public class GovernanceReport : DocXHelper
                          .Where(c => c.CatalogueItems.Any(ci => ci.ExtractionInformation != null))
                          .OrderBy(c => c.Name))
             {
-                if (catalogue.IsDeprecated || catalogue.IsColdStorageDataset || catalogue.IsInternalDataset)
+                if (catalogue.IsDeprecated || catalogue.IsInternalDataset)
                     continue;
 
                 //get active governances

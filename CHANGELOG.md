@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - allow the use of Catalogue CIC filters in coresponding Extractions
 - Add Data Load component to allow SQL to be executed on an external database server
 - Improve Extraction Log Viewer Filter
+- Add Dataset Variable document to extractions
+- Update extractability to only allow non-internal projects to be extracted
+- Remove functionality to mark individual catalogues as extractable/not extractable. Favor use of marking as internal.
+
 
 ## [9.0.1] - 2025-07-31
 - Improve Right-click performance

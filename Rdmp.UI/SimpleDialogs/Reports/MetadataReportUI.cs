@@ -66,7 +66,7 @@ public partial class MetadataReportUI : RDMPForm
         IEnumerable<Catalogue> toReportOn = _catalogues;
 
         if (rbAllCatalogues.Checked)
-            toReportOn = toReportOn.Where(c => !c.IsInternalDataset && !c.IsColdStorageDataset && !c.IsDeprecated)
+            toReportOn = toReportOn.Where(c => !c.IsInternalDataset && !c.IsDeprecated)
                 .ToArray();
         else if (_cataloguesToRun == null || !_catalogues.Any())
             return;
