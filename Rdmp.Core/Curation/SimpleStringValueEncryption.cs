@@ -22,7 +22,7 @@ public class SimpleStringValueEncryption : IEncryptStrings
     private readonly RSACryptoServiceProvider _turing = new();
 
     private const string Key =
-        @"<?xml version=""1.0"" encoding=""utf-16""?>
+       @"<?xml version=""1.0"" encoding=""utf-16""?>
 <RSAParameters xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"">
    <Exponent>AQAB</Exponent>
     <Modulus>sMDeszVErUmbqOxQavw5OsWpL3frccEGtTJYM8G54Fw7NK6xFVUrq79nWB6px4/B</Modulus>
@@ -46,6 +46,7 @@ public class SimpleStringValueEncryption : IEncryptStrings
     /// <returns></returns>
     public string Encrypt(string toEncrypt)
     {
+
         // Fall back on bad encryption if no private key is configured
         if (_turing.KeySize < 1024)
             return string.Join('-',

@@ -34,9 +34,7 @@ public class SearchablesMatchScorer
     private readonly bool _scoreZeroForCohortAggregateContainers;
     private bool _showInternalCatalogues = true;
     private bool _showDeprecatedCatalogues = true;
-    private bool _showColdStorageCatalogues = true;
     private bool _showProjectSpecificCatalogues = true;
-    private bool _showNonExtractableCatalogues = true;
 
 
     /// <summary>
@@ -175,9 +173,7 @@ public class SearchablesMatchScorer
     {
         _showInternalCatalogues = !RespectUserSettings || UserSettings.ShowInternalCatalogues;
         _showDeprecatedCatalogues = !RespectUserSettings || UserSettings.ShowDeprecatedCatalogues;
-        _showColdStorageCatalogues = !RespectUserSettings || UserSettings.ShowColdStorageCatalogues;
         _showProjectSpecificCatalogues = !RespectUserSettings || UserSettings.ShowProjectSpecificCatalogues;
-        _showNonExtractableCatalogues = !RespectUserSettings || UserSettings.ShowNonExtractableCatalogues;
     }
 
     private int _ScoreMatches(KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList> kvp, List<Regex> regexes,
@@ -277,8 +273,8 @@ public class SearchablesMatchScorer
     /// <param name="kvp"></param>
     /// <returns></returns>
     private bool ScoreZeroBecauseOfUserSettings(KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList> kvp) =>
-        !Filter(kvp.Key, kvp.Value, _showInternalCatalogues, _showDeprecatedCatalogues, _showColdStorageCatalogues,
-            _showProjectSpecificCatalogues, _showNonExtractableCatalogues);
+        !Filter(kvp.Key, kvp.Value, _showInternalCatalogues, _showDeprecatedCatalogues, 
+            _showProjectSpecificCatalogues);
 
     private static Catalogue GetCatalogueIfAnyInDescendancy(
         KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList> kvp)
@@ -326,12 +322,10 @@ public class SearchablesMatchScorer
     /// <param name="descendancy"></param>
     /// <param name="includeInternal"></param>
     /// <param name="includeDeprecated"></param>
-    /// <param name="includeColdStorage"></param>
     /// <param name="includeProjectSpecific"></param>
-    /// <param name="includeNonExtractable"></param>
     /// <returns>True if the item should be shown to the user based on filters</returns>
     public static bool Filter(object modelObject, DescendancyList descendancy, bool includeInternal,
-        bool includeDeprecated, bool includeColdStorage, bool includeProjectSpecific, bool includeNonExtractable)
+        bool includeDeprecated, bool includeProjectSpecific)
     {
         //doesn't relate to us...
         if (modelObject is not ICatalogue cata)
@@ -349,16 +343,12 @@ public class SearchablesMatchScorer
         }
 
         var isProjectSpecific = cata.IsProjectSpecific(null);
-        var isExtractable = cata.GetExtractabilityStatus(null) != null &&
-                            cata.GetExtractabilityStatus(null).IsExtractable;
 
-        return (isExtractable && !cata.IsColdStorageDataset && !cata.IsDeprecated && !cata.IsInternalDataset &&
-                !isProjectSpecific) ||
-               (includeColdStorage && cata.IsColdStorageDataset) ||
-               (includeDeprecated && cata.IsDeprecated) ||
-               (includeInternal && cata.IsInternalDataset) ||
-               (includeProjectSpecific && isProjectSpecific) ||
-               (includeNonExtractable && !isExtractable);
+        var isVisible = !cata.IsDeprecated && !cata.IsInternalDataset && !isProjectSpecific;
+        var showDeprecated = includeDeprecated && cata.IsDeprecated;
+        var showInternal = includeInternal && cata.IsInternalDataset;
+        var showProjectSpecific = includeProjectSpecific && isProjectSpecific;
+        return isVisible || showDeprecated || showInternal || showProjectSpecific;
     }
 
     /// <summary>

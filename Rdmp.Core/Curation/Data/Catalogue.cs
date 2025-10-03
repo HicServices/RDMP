@@ -85,7 +85,6 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
     private int? _pivotCategoryExtractionInformationID;
     private bool _isDeprecated;
     private bool _isInternalDataset;
-    private bool _isColdStorageDataset;
     private int? _liveLoggingServerID;
 
     private string _shortDescription;
@@ -487,15 +486,6 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
     {
         get => _isInternalDataset;
         set => SetField(ref _isInternalDataset, value);
-    }
-
-    /// <inheritdoc/>
-    [DoNotExtractProperty]
-    [DoNotImportDescriptions]
-    public bool IsColdStorageDataset
-    {
-        get => _isColdStorageDataset;
-        set => SetField(ref _isColdStorageDataset, value);
     }
 
     /// <inheritdoc/>
@@ -1104,7 +1094,6 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
         Source_URL = ParseUrl(r, "Source_URL");
         IsDeprecated = (bool)r["IsDeprecated"];
         IsInternalDataset = (bool)r["IsInternalDataset"];
-        IsColdStorageDataset = (bool)r["IsColdStorageDataset"];
 
         Folder = r["Folder"].ToString();
 

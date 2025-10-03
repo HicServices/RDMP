@@ -67,7 +67,6 @@ public class TestCommandsAreSupported : UnitTests
     [TestCase(typeof(ExecuteCommandAssociateCatalogueWithLoadMetadata))]
     [TestCase(typeof(ExecuteCommandAssociateCohortIdentificationConfigurationWithProject))]
     [TestCase(typeof(ExecuteCommandBulkImportTableInfos))]
-    [TestCase(typeof(ExecuteCommandChangeExtractability))]
     [TestCase(typeof(ExecuteCommandChangeExtractionCategory))]
     [TestCase(typeof(ExecuteCommandChangeLoadStage))]
     [TestCase(typeof(ExecuteCommandCheck))]
