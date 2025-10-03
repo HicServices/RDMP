@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add Dataset Variable document to extractions
 - Update extractability to only allow non-internal projects to be extracted
 - Remove functionality to mark individual catalogues as extractable/not extractable. Favor use of marking as internal.
+- Add cli command to export catalogue metadata to a Atlassian Confluence space
 
 
 ## [9.0.1] - 2025-07-31

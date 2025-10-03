@@ -69,6 +69,12 @@ namespace Rdmp.Core.Dataset.Confluence
             """;
         }
 
+        private string SplitCamelCase(string input)
+        {
+            return System.Text.RegularExpressions.Regex.Replace(input.Replace(",", ", "), "([A-Z])", " $1", System.Text.RegularExpressions.RegexOptions.Compiled).Trim();
+
+        }
+
         private static string BuildDataVariableRecord(CatalogueItem catalogueItem)
         {
             var lookups = catalogueItem.CatalogueRepository.GetAllObjectsWhere<Lookup>("ForeignKey_ID", catalogueItem.ColumnInfo.ID);
@@ -95,31 +101,31 @@ namespace Rdmp.Core.Dataset.Confluence
             <table>
                 <tr>
                     <th>Resource Type</th>
-                    <td>{Enum.GetName(catalogue.Type)}</td>
+                    <td>{SplitCamelCase(Enum.GetName(catalogue.Type))}</td>
                 </tr>
                 <tr>
                     <th>Dataset Purpose</th>
-                    <td>{Enum.GetName(catalogue.Purpose)}</td>
+                    <td>{SplitCamelCase(Enum.GetName(catalogue.Purpose))}</td>
                 </tr>
                 <tr>
                     <th>Dataset Type</th>
-                    <td>{catalogue.DataType}</td>
+                    <td>{SplitCamelCase(catalogue.DataType)}</td>
                 </tr>
                 <tr>
                     <th>Dataset SubType</th>
-                    <td>{catalogue.DataSubType}</td>
+                    <td>{SplitCamelCase(catalogue.DataSubType)}</td>
                 </tr>
                 <tr>
                     <th>Dataset Source</th>
-                    <td>{catalogue.DataSource}</td>
+                    <td>{SplitCamelCase(catalogue.DataSource)}</td>
                 </tr>
                 <tr>
                     <th>Dataset Source Setting</th>
-                    <td>{catalogue.DataSourceSetting}</td>
+                    <td>{SplitCamelCase(catalogue.DataSourceSetting)}</td>
                 </tr>
                 <tr>
                     <th>Dataset Purpose</th>
-                    <td>{Enum.GetName(catalogue.Purpose)}</td>
+                    <td>{SplitCamelCase(Enum.GetName(catalogue.Purpose))}</td>
                 </tr>
             <tr>
                     <th>Dataset Keywords</th>

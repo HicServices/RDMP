@@ -1,23 +1,12 @@
-﻿using Amazon.Runtime.Internal.Endpoints.StandardLibrary;
-using Azure;
-using Newtonsoft.Json;
-using NPOI.SS.Formula.Functions;
-using Org.BouncyCastle.Asn1.BC;
+﻿using Newtonsoft.Json;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Dataset.Confluence;
-using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
 using System;
-using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
-using Terminal.Gui;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -34,7 +23,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         private readonly string _owner;
         private readonly string _description;
         private readonly HttpClient _client = new();
-        private Dictionary<int, string> _cataloguePageLookups = new();
+        private readonly Dictionary<int, string> _cataloguePageLookups = [];
         private string rootParentId = null;
         private int rootParentVersion = 0;
         private class ConfluencePageBody
@@ -264,7 +253,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", _apiKey);
 
             var catalogues = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>()
-                .Where(c => !c.IsColdStorageDataset && !c.IsDeprecated && !c.IsInternalDataset && !c.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository))
+                .Where(c => !c.IsDeprecated && !c.IsInternalDataset && !c.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository))
                 .ToList();
             var builder = new ConfluencePageBuilder(catalogues, _owner, _description, _subdomain);
             var uri = $"https://{_subdomain}.atlassian.net/wiki/api/v2/pages";
