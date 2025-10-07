@@ -21,22 +21,24 @@ public class SimpleStringValueEncryption : IEncryptStrings
 {
     private readonly RSACryptoServiceProvider _turing = new();
 
+    //    private const string Key =
+    //       @"<?xml version=""1.0"" encoding=""utf-16""?>
+    //<RSAParameters xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"">
+    //   <Exponent>AQAB</Exponent>
+    //    <Modulus>sMDeszVErUmbqOxQavw5OsWpL3frccEGtTJYM8G54Fw7NK6xFVUrq79nWB6px4/B</Modulus>
+    //    <P>6kcXnTVJrVuD9j6qUm+F71jIL2H92lgN</P>
+    //    <Q>wSRbrdj1qGBPBnYMO5dx11gvfNCKKdWF</Q>
+    //    <DP>aKdxaQzQ6Nwkyu+bbk/baNwkMOZ5W/xR</DP>
+    //    <DQ>B/B8rErM3l0HIpbbrd9t2JJRcWoJI+sZ</DQ>
+    //    <InverseQ>NFv4Z26nbMpOkOcAnO3rktoMffza+3Ul</InverseQ>
+    //    <D>Y8zC8dUF7gI9zeeAkKfReInauV6wpg4iVh7jaTDN5DAmKFURTAyv6Il6LEyr07JB</D>
+    //</RSAParameters>";
     private const string Key =
-       @"<?xml version=""1.0"" encoding=""utf-16""?>
-<RSAParameters xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"">
-   <Exponent>AQAB</Exponent>
-    <Modulus>sMDeszVErUmbqOxQavw5OsWpL3frccEGtTJYM8G54Fw7NK6xFVUrq79nWB6px4/B</Modulus>
-    <P>6kcXnTVJrVuD9j6qUm+F71jIL2H92lgN</P>
-    <Q>wSRbrdj1qGBPBnYMO5dx11gvfNCKKdWF</Q>
-    <DP>aKdxaQzQ6Nwkyu+bbk/baNwkMOZ5W/xR</DP>
-    <DQ>B/B8rErM3l0HIpbbrd9t2JJRcWoJI+sZ</DQ>
-    <InverseQ>NFv4Z26nbMpOkOcAnO3rktoMffza+3Ul</InverseQ>
-    <D>Y8zC8dUF7gI9zeeAkKfReInauV6wpg4iVh7jaTDN5DAmKFURTAyv6Il6LEyr07JB</D>
-</RSAParameters>";
+            @"<RSAKeyValue><Modulus>tCUELNWpMMqjoeg6Wh3wv6WQ197MstsZlWSv1ksXRvNWYrysa+HFcyN5QxmrnBKFLlAZQ2zuaN32kR9vrKXvmkm8JWecs8+N173pRkBf8ds3T6wnpGhnlXXSe4vDE1/fVI8GIR8KQOqS3VwCi1h5XOdKyzZ+WTiYmGHf5Nxu1KE=</Modulus><Exponent>AQAB</Exponent><P>+obBN1dBG+7+ka/8gZVXIvYsSN07uAcGe4ipaHb1GQbP5N5H0e8CtvD51fjDFGONRyuWMy0kyu3sJdcOTEA8hQ==</P><Q>uBSaEUTqra4QSQuUEW9pR4Pj88J9e97bRox5TM3j9gxqIHZhzu6WBnNt3d4UoHYv1bS8cnvI3/0H4u/PWRXQbQ==</Q><DP>1WCu8r67ctpFMrrs20XiWKHJqCneMmixachFWfdv3GgD69Ay5ain7D8k280sApKkAwkpvd7mZnzs1HHt+J4BrQ==</DP><DQ>k7ZMbyEbI+UyQjsdRORe2bk2+QqPQQ/yaukcCQqKK42It6XnFHMVRfXoKoojiSNtfRI7ya4U4dAcPPlsLDM5/Q==</DQ><InverseQ>6ojK5xGLVIIB6TiHKG8QZfIOLa/tXkt/61onX3aRbE1beJcG28uf9X4Jp7sVYYgELnTHWkvnJvfi6R+doJ48eA==</InverseQ><D>BofxBs8YOzSdihkpRGshd1FBVxI0yac33jqwRUyjo2bfEuVUOvUMe4gltVEQ76+cNHmi8NbaLeMeNVS2b8P0U8vm3G0TT9snR6E03wlR7RDxS4N3ogddTG6PxtC/8s1LGQs06+gfJlm8/XcDXpfoCZsFESnvEt8oFHVGewR8WYE=</D></RSAKeyValue>";
 
     public SimpleStringValueEncryption(string parameters)
     {
-        if(parameters is not null)
+        if (parameters is not null)
         {
             throw new Exception($"passed in rsa parameters: {parameters}");
         }
