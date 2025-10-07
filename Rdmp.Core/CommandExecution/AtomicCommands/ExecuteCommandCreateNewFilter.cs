@@ -205,16 +205,10 @@ where    Optional SQL to set for the filter.  If <basedOn> is not null this will
 
             var c = GetCatalogue();
             _offerFilters = c?.GetAllFilters();
-            if (_host is SelectedDataSets sds)
+            if(_host is SelectedDataSets sds)
             {
-                var cohortId = sds.ExtractionConfiguration.Cohort.OriginID;
-                var cic = c.CatalogueRepository.GetObjectByID<CohortIdentificationConfiguration>(cohortId);
-                if (cic != null)
-                {
-                    var filters = cic.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively().SelectMany(ac => ac.RootFilterContainer.GetAllFiltersIncludingInSubContainersRecursively());
-                    filters = filters.Where(f => f.GetCatalogue().ID == c.ID);
-                    _offerFilters = _offerFilters.Concat(filters).ToArray();
-                }
+                var cohort = sds.ExtractionConfiguration.Cohort;
+
             }
             if (_offerFilters == null || !_offerFilters.Any())
                 SetImpossible($"There are no Filters declared in Catalogue '{c?.ToString() ?? "NULL"}'");
