@@ -8,6 +8,7 @@ using System;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using YamlDotNet.Core;
 
 namespace Rdmp.Core.Curation;
 
@@ -22,17 +23,7 @@ public class SimpleStringValueEncryption : IEncryptStrings
     private readonly RSACryptoServiceProvider _turing = new();
 
     private const string Key =
-       @"<?xml version=""1.0"" encoding=""utf-16""?>
-<RSAParameters xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"">
-   <Exponent>AQAB</Exponent>
-    <Modulus>sMDeszVErUmbqOxQavw5OsWpL3frccEGtTJYM8G54Fw7NK6xFVUrq79nWB6px4/B</Modulus>
-    <P>6kcXnTVJrVuD9j6qUm+F71jIL2H92lgN</P>
-    <Q>wSRbrdj1qGBPBnYMO5dx11gvfNCKKdWF</Q>
-    <DP>aKdxaQzQ6Nwkyu+bbk/baNwkMOZ5W/xR</DP>
-    <DQ>B/B8rErM3l0HIpbbrd9t2JJRcWoJI+sZ</DQ>
-    <InverseQ>NFv4Z26nbMpOkOcAnO3rktoMffza+3Ul</InverseQ>
-    <D>Y8zC8dUF7gI9zeeAkKfReInauV6wpg4iVh7jaTDN5DAmKFURTAyv6Il6LEyr07JB</D>
-</RSAParameters>";
+       @"<? xml version = ""1.0"" encoding=""utf-16""?><RSAParameters xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance""><Modulus>5CBYA/4GKu57eepMM5dHguZR6QxPakujvUPq81YQlAs9XdAS5OugT9xYATXV0ZUVeQrtCOj1jjS6cSnekJKzXMD48H2IbT+ImRVqyjE19dgeeZtK1cGa8wDKTdNtjo+ur2iaMzItE3VChcMidWncQpiieieSUwQ81uoab7foVdaQm078TzlHLaWiSyAPCOOIeeO2q7HEjVPkbiqCGl2Lkrzvzct84SDMFkyQXzXVJCfdlFn5bX3/8OwC9gWVICPBVbVFZZQ3skUKFqK/aYcgJL/svDyhFsj89TK3xzz8YE1r8VwxVtvqLfRXrWqUCV1n2vEm4XUjuTwQi2nwclREuQ==</Modulus><Exponent>AQAB</Exponent><P>+zfBbR8e3gLc5TDOSoyjclKdPyl62BZvp0kdlmihI5rJ/Bk+CnymYr22vBbWe/wJugWL4bLEAMWiWsa0ri0mJig24aJZ+DMEJDh+wz4J70OBbsE7jydw9whkt6r/8dYCwE2L4aKlL5pUOL/DzgQJ6vxkQ3UAjYMvEzBPapd7Z7c=</P><Q>6HgO3YVz2umROVrHkQ0xa+4a+EMZVAEBhS+ZuJ5KhXBomxYptfAud0WmGN1zOM7TpBYnk8IBx2kuBKoAavFtjbjsoINVxlLlUvUDEJmeElVz5TqRRCNEChY0sfDlR9gVIopB/p7BU5SFRz5i7+qpsWzWdBU/BR93K2vJNsj2Vw8=</Q><DP>ecv4bY1vC7hbnIrjGWXCQMUpE9xqgKWwEGz0eV3U8kwzrZQXbkIs8SaFl/+Cka4KkTPrM8vWF4G6S0SXiPK+0jUhFpf+AsXJNj5lxwcnDeeusyHgXHGE5WAeZKX1XSyjPNTcAtM2PzQVrUXcCuAOZu1jNwlc8T8u7aC4gDddT1U=</DP><DQ>KNlP42Ub4o/AUQ++maJz2L9SReWkgbpbhgfDP0mxVplWCEpwseOuho7ajOv83zKYxfCOq8wfe+bjizZENIaP9aNVES+C1wKiAV3EWBpmSFpzrwgHlq2LuyoDwHDQGTvDGvqodhF3bzRd5xLzV60ofGDfni5NkJzi1+JszQ+rGck=</DQ><InverseQ>BC4M2rtw/lHKW8gDVcQSB1a1yWlgtLqtoX+krelqO59/6Np2ApsPc43SUoy4PY1f+Oxf+Erik1NM1+TRucVBGB8AP1q0SFuTsmWiLE9zv/1zjeJJLOoPbpGia+bQ/r7fP+ZhBK8ldae7FAOctcoSfQ0jAn2IBpDyvlAlcnwRvwQ=</InverseQ><D>q1e/w//gEg7dn0xjv7w4chEcJLaiT2xQp6+DoRFbklZ+2R+XkWmJF3KghwgweSJI5olWUALprM3d23FfQaduIJSwZbFj7upxZsm3U/ZyWRzihuQk6ThpcWt+h8Xt283/nrAqYZmmUZ8ZP+64ywef8EVEhAuE0+Wy7JkZEiBH2W/MEXUvbMV8w282/X6H8zpIkHgjMvy/rouDMFA+ZLR9OOCofw7aVV9VivOVCVIhWe+inrQzG3UCLEEmKNOy0FmqQYvZ4vtwJ+kAByo6xW2YO9cHtEJFiKrZ1O2A0P0xtziOqStDq6JqoeE/bty8y3oM3HPyXMZXG2ecLuwbP4usoQ==</D></RSAParameters>";
 
     public SimpleStringValueEncryption(string parameters)
     {
