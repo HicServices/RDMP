@@ -36,6 +36,10 @@ public class SimpleStringValueEncryption : IEncryptStrings
 
     public SimpleStringValueEncryption(string parameters)
     {
+        if(parameters is not null)
+        {
+            throw new Exception($"passed in rsa parameters: {parameters}");
+        }
         _turing.FromXmlString(parameters ?? Key);
     }
 

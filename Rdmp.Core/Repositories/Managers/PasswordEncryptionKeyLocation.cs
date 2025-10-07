@@ -53,7 +53,9 @@ public class PasswordEncryptionKeyLocation : IEncryptionManager, IInjectKnown
     {
         // Prefer to get it from the environment variable
         var fromEnvVar = Environment.GetEnvironmentVariable(RDMP_KEY_LOCATION);
-
+        if (fromEnvVar != null) {
+            throw new Exception($"found an RDMP key: {fromEnvVar}");
+        }
         return fromEnvVar ?? _catalogueRepository.GetEncryptionKeyPath();
     }
 
