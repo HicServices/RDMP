@@ -111,7 +111,6 @@ When running with `oneFile` off (or inside a `$foreach $Catalogue` block) the fo
 |$Geographical_coverage|User provided |
 |$Granularity|User provided |
 |$ID|RDMP allocated number uniquely identifying this object instance in this RDMP installation|
-|$IsColdStorageDataset|True or False flag, configurable in RDMP|
 |$IsDeprecated|True or False flag, configurable in RDMP|
 |$IsInternalDataset|True or False flag, configurable in RDMP|
 |$Last_revision_date|User provided|

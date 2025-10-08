@@ -653,7 +653,6 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
     public override IEnumerable<Type> GetIgnoredCommands()
     {
         yield return typeof(ExecuteCommandRefreshObject);
-        yield return typeof(ExecuteCommandChangeExtractability);
         yield return typeof(ExecuteCommandOpenInExplorer);
         yield return typeof(ExecuteCommandDeletePlugin);
         yield return typeof(ExecuteCommandCreateNewFileBasedProcessTask);
