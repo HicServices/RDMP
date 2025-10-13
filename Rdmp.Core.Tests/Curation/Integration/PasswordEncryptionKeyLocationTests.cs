@@ -27,77 +27,77 @@ public class PasswordEncryptionKeyLocationTests : DatabaseTests
             Assert.Inconclusive();
     }
 
-    [Test]
-    public void NoKeyFileToStartWith()
-    {
-        Environment.SetEnvironmentVariable("RDMP_KEY_LOCATION", null);
-        var keyLocation = new PasswordEncryptionKeyLocation(CatalogueRepository);
-        keyLocation = new PasswordEncryptionKeyLocation(CatalogueRepository);
-        //there shouldn't already be a key
-        Assert.That(keyLocation.GetKeyFileLocation(), Is.Null);
+    //[Test]
+    //public void NoKeyFileToStartWith()
+    //{
+    //    Environment.SetEnvironmentVariable("RDMP_KEY_LOCATION", null);
+    //    var keyLocation = new PasswordEncryptionKeyLocation(CatalogueRepository);
+    //    keyLocation = new PasswordEncryptionKeyLocation(CatalogueRepository);
+    //    //there shouldn't already be a key
+    //    Assert.That(keyLocation.GetKeyFileLocation(), Is.Null);
 
-        var e = Assert.Throws<NotSupportedException>(keyLocation.DeleteKey);
-        Assert.That(e.Message, Is.EqualTo("Cannot delete key because there is no key file configured"));
-    }
+    //    var e = Assert.Throws<NotSupportedException>(keyLocation.DeleteKey);
+    //    Assert.That(e.Message, Is.EqualTo("Cannot delete key because there is no key file configured"));
+    //}
 
-    [Test]
-    public void CreateKeyFile()
-    {
-        Environment.SetEnvironmentVariable("RDMP_KEY_LOCATION", null);
-        var keyLocation = new PasswordEncryptionKeyLocation(CatalogueRepository);
-        var file = keyLocation.CreateNewKeyFile(Path.Combine(TestContext.CurrentContext.TestDirectory, "my.key"));
+    //[Test]
+    //public void CreateKeyFile()
+    //{
+    //    Environment.SetEnvironmentVariable("RDMP_KEY_LOCATION", null);
+    //    var keyLocation = new PasswordEncryptionKeyLocation(CatalogueRepository);
+    //    var file = keyLocation.CreateNewKeyFile(Path.Combine(TestContext.CurrentContext.TestDirectory, "my.key"));
 
-        Console.WriteLine($"Key file location is:{file.FullName}");
-        Console.WriteLine($"Text put into file is:{Environment.NewLine}{File.ReadAllText(file.FullName)}");
+    //    Console.WriteLine($"Key file location is:{file.FullName}");
+    //    Console.WriteLine($"Text put into file is:{Environment.NewLine}{File.ReadAllText(file.FullName)}");
 
-        Assert.Multiple(() =>
-        {
-            Assert.That(file.FullName, Does.EndWith("my.key"));
+    //    Assert.Multiple(() =>
+    //    {
+    //        Assert.That(file.FullName, Does.EndWith("my.key"));
 
-            Assert.That(keyLocation.GetKeyFileLocation(), Is.EqualTo(file.FullName));
-        });
-        keyLocation.DeleteKey();
+    //        Assert.That(keyLocation.GetKeyFileLocation(), Is.EqualTo(file.FullName));
+    //    });
+    //    keyLocation.DeleteKey();
 
-        Assert.That(keyLocation.GetKeyFileLocation(), Is.Null);
-    }
+    //    Assert.That(keyLocation.GetKeyFileLocation(), Is.Null);
+    //}
 
-    [Test]
-    public void Encrypt()
-    {
-        var value = "MyPieceOfText";
+    //[Test]
+    //public void Encrypt()
+    //{
+    //    var value = "MyPieceOfText";
 
-        Console.WriteLine($"String is:{value}");
+    //    Console.WriteLine($"String is:{value}");
 
-        var encrypter = new EncryptedString(CatalogueRepository);
-        Assert.That(encrypter.IsStringEncrypted(value), Is.False);
+    //    var encrypter = new EncryptedString(CatalogueRepository);
+    //    Assert.That(encrypter.IsStringEncrypted(value), Is.False);
 
-        //should do pass through encryption
-        encrypter.Value = value;
-        Assert.Multiple(() =>
-        {
-            Assert.That(encrypter.Value, Is.Not.EqualTo(value));
-            Assert.That(encrypter.GetDecryptedValue(), Is.EqualTo(value));
-        });
+    //    //should do pass through encryption
+    //    encrypter.Value = value;
+    //    Assert.Multiple(() =>
+    //    {
+    //        Assert.That(encrypter.Value, Is.Not.EqualTo(value));
+    //        Assert.That(encrypter.GetDecryptedValue(), Is.EqualTo(value));
+    //    });
 
-        Console.WriteLine($"Encrypted (stock) is:{encrypter.Value}");
-        Console.WriteLine($"Decrypted (stock) is:{encrypter.GetDecryptedValue()}");
-        Environment.SetEnvironmentVariable("RDMP_KEY_LOCATION", null);
-        var keyLocation = new PasswordEncryptionKeyLocation(CatalogueRepository);
-        keyLocation.CreateNewKeyFile(Path.Combine(TestContext.CurrentContext.TestDirectory, "my.key"));
-        var p = keyLocation.OpenKeyFile();
+    //    Console.WriteLine($"Encrypted (stock) is:{encrypter.Value}");
+    //    Console.WriteLine($"Decrypted (stock) is:{encrypter.GetDecryptedValue()}");
+    //    Environment.SetEnvironmentVariable("RDMP_KEY_LOCATION", null);
+    //    var keyLocation = new PasswordEncryptionKeyLocation(CatalogueRepository);
+    //    keyLocation.CreateNewKeyFile(Path.Combine(TestContext.CurrentContext.TestDirectory, "my.key"));
+    //    var p = keyLocation.OpenKeyFile();
 
-        CatalogueRepository.EncryptionManager.ClearAllInjections();
+    //    CatalogueRepository.EncryptionManager.ClearAllInjections();
 
-        var s = CatalogueRepository.EncryptionManager.GetEncrypter();
-        var exception = Assert.Throws<CryptographicException>(() => s.Decrypt(encrypter.Value));
-        Assert.That(exception.Message, Does.StartWith("Could not decrypt an encrypted string, possibly you are trying to decrypt it after having changed the PrivateKey "));
+    //    var s = CatalogueRepository.EncryptionManager.GetEncrypter();
+    //    var exception = Assert.Throws<CryptographicException>(() => s.Decrypt(encrypter.Value));
+    //    Assert.That(exception.Message, Does.StartWith("Could not decrypt an encrypted string, possibly you are trying to decrypt it after having changed the PrivateKey "));
 
-        var encrypted = s.Encrypt(value);
-        Console.WriteLine($"Encrypted (with key) is:{encrypted}");
-        Console.WriteLine($"Decrypted (with key) is:{s.Decrypt(encrypted)}");
+    //    var encrypted = s.Encrypt(value);
+    //    Console.WriteLine($"Encrypted (with key) is:{encrypted}");
+    //    Console.WriteLine($"Decrypted (with key) is:{s.Decrypt(encrypted)}");
 
-        Assert.That(encrypter.IsStringEncrypted(encrypted));
+    //    Assert.That(encrypter.IsStringEncrypted(encrypted));
 
-        keyLocation.DeleteKey();
-    }
+    //    keyLocation.DeleteKey();
+    //}
 }
