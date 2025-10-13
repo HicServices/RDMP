@@ -31,7 +31,8 @@ public class PasswordEncryptionKeyLocationTests : DatabaseTests
     public void NoKeyFileToStartWith()
     {
         var keyLocation = new PasswordEncryptionKeyLocation(CatalogueRepository);
-
+        keyLocation.DeleteKey();
+        keyLocation = new PasswordEncryptionKeyLocation(CatalogueRepository);
         //there shouldn't already be a key
         Assert.That(keyLocation.GetKeyFileLocation(), Is.Null);
 
@@ -82,6 +83,7 @@ public class PasswordEncryptionKeyLocationTests : DatabaseTests
         Console.WriteLine($"Decrypted (stock) is:{encrypter.GetDecryptedValue()}");
 
         var keyLocation = new PasswordEncryptionKeyLocation(CatalogueRepository);
+        keyLocation.DeleteKey();
         keyLocation.CreateNewKeyFile(Path.Combine(TestContext.CurrentContext.TestDirectory, "my.key"));
         var p = keyLocation.OpenKeyFile();
 
