@@ -34,9 +34,11 @@ public class SimpleStringValueEncryption : IEncryptStrings
     <D>Y8zC8dUF7gI9zeeAkKfReInauV6wpg4iVh7jaTDN5DAmKFURTAyv6Il6LEyr07JB</D>
 </RSAParameters>";
 
+    private readonly string _parameters;
+
     public SimpleStringValueEncryption(string parameters)
     {
-        _turing.FromXmlString(parameters ?? Key);
+        _parameters=parameters;
     }
 
     /// <summary>
@@ -46,7 +48,7 @@ public class SimpleStringValueEncryption : IEncryptStrings
     /// <returns></returns>
     public string Encrypt(string toEncrypt)
     {
-
+        _turing.FromXmlString(_parameters ?? Key);
         // Fall back on bad encryption if no private key is configured
         if (_turing.KeySize < 1024)
             return string.Join('-',
@@ -71,6 +73,7 @@ public class SimpleStringValueEncryption : IEncryptStrings
     /// <returns></returns>
     public string Decrypt(string toDecrypt)
     {
+        _turing.FromXmlString(_parameters ?? Key);
         if (toDecrypt.StartsWith("$js1$", StringComparison.Ordinal) && toDecrypt.EndsWith("$", StringComparison.Ordinal))
         {
             // Good, it's a new-style AES+RSA encrypted string
