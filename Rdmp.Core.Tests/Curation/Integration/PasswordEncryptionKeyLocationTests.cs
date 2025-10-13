@@ -30,8 +30,8 @@ public class PasswordEncryptionKeyLocationTests : DatabaseTests
     [Test]
     public void NoKeyFileToStartWith()
     {
+        Environment.SetEnvironmentVariable("RDMP_KEY_LOCATION", null);
         var keyLocation = new PasswordEncryptionKeyLocation(CatalogueRepository);
-        keyLocation.DeleteKey();
         keyLocation = new PasswordEncryptionKeyLocation(CatalogueRepository);
         //there shouldn't already be a key
         Assert.That(keyLocation.GetKeyFileLocation(), Is.Null);
@@ -43,8 +43,8 @@ public class PasswordEncryptionKeyLocationTests : DatabaseTests
     [Test]
     public void CreateKeyFile()
     {
+        Environment.SetEnvironmentVariable("RDMP_KEY_LOCATION", null);
         var keyLocation = new PasswordEncryptionKeyLocation(CatalogueRepository);
-        keyLocation.DeleteKey();
         var file = keyLocation.CreateNewKeyFile(Path.Combine(TestContext.CurrentContext.TestDirectory, "my.key"));
 
         Console.WriteLine($"Key file location is:{file.FullName}");
@@ -81,9 +81,8 @@ public class PasswordEncryptionKeyLocationTests : DatabaseTests
 
         Console.WriteLine($"Encrypted (stock) is:{encrypter.Value}");
         Console.WriteLine($"Decrypted (stock) is:{encrypter.GetDecryptedValue()}");
-
+        Environment.SetEnvironmentVariable("RDMP_KEY_LOCATION", null);
         var keyLocation = new PasswordEncryptionKeyLocation(CatalogueRepository);
-        keyLocation.DeleteKey();
         keyLocation.CreateNewKeyFile(Path.Combine(TestContext.CurrentContext.TestDirectory, "my.key"));
         var p = keyLocation.OpenKeyFile();
 
