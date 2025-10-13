@@ -30,7 +30,6 @@ public class PasswordEncryptionKeyLocationTests : DatabaseTests
     //[Test]
     //public void NoKeyFileToStartWith()
     //{
-    //    Environment.SetEnvironmentVariable("RDMP_KEY_LOCATION", null);
     //    var keyLocation = new PasswordEncryptionKeyLocation(CatalogueRepository);
     //    keyLocation = new PasswordEncryptionKeyLocation(CatalogueRepository);
     //    //there shouldn't already be a key
@@ -43,7 +42,6 @@ public class PasswordEncryptionKeyLocationTests : DatabaseTests
     //[Test]
     //public void CreateKeyFile()
     //{
-    //    Environment.SetEnvironmentVariable("RDMP_KEY_LOCATION", null);
     //    var keyLocation = new PasswordEncryptionKeyLocation(CatalogueRepository);
     //    var file = keyLocation.CreateNewKeyFile(Path.Combine(TestContext.CurrentContext.TestDirectory, "my.key"));
 
@@ -81,7 +79,6 @@ public class PasswordEncryptionKeyLocationTests : DatabaseTests
 
     //    Console.WriteLine($"Encrypted (stock) is:{encrypter.Value}");
     //    Console.WriteLine($"Decrypted (stock) is:{encrypter.GetDecryptedValue()}");
-    //    Environment.SetEnvironmentVariable("RDMP_KEY_LOCATION", null);
     //    var keyLocation = new PasswordEncryptionKeyLocation(CatalogueRepository);
     //    keyLocation.CreateNewKeyFile(Path.Combine(TestContext.CurrentContext.TestDirectory, "my.key"));
     //    var p = keyLocation.OpenKeyFile();
