@@ -43,6 +43,11 @@ public class PasswordEncryptionKeyLocationTests : DatabaseTests
     public void CreateKeyFile()
     {
         var keyLocation = new PasswordEncryptionKeyLocation(CatalogueRepository);
+        try
+        {
+            keyLocation.DeleteKey();
+        }
+        finally { }
         var file = keyLocation.CreateNewKeyFile(Path.Combine(TestContext.CurrentContext.TestDirectory, "my.key"));
 
         Console.WriteLine($"Key file location is:{file.FullName}");
