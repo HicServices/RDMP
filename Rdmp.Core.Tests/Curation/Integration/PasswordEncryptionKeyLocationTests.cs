@@ -31,7 +31,6 @@ public class PasswordEncryptionKeyLocationTests : DatabaseTests
     public void NoKeyFileToStartWith()
     {
         var keyLocation = new PasswordEncryptionKeyLocation(CatalogueRepository);
-        keyLocation = new PasswordEncryptionKeyLocation(CatalogueRepository);
         //there shouldn't already be a key
         Assert.That(keyLocation.GetKeyFileLocation(), Is.Null);
 
