@@ -61,8 +61,6 @@ public class PasswordEncryptionKeyLocationTests : DatabaseTests
     [Test]
     public void Encrypt()
     {
-        var keyLocation = new PasswordEncryptionKeyLocation(CatalogueRepository);
-        keyLocation.DeleteKey();
         var value = "MyPieceOfText";
 
         Console.WriteLine($"String is:{value}");
@@ -80,7 +78,7 @@ public class PasswordEncryptionKeyLocationTests : DatabaseTests
 
         Console.WriteLine($"Encrypted (stock) is:{encrypter.Value}");
         Console.WriteLine($"Decrypted (stock) is:{encrypter.GetDecryptedValue()}");
-        keyLocation = new PasswordEncryptionKeyLocation(CatalogueRepository);
+        var keyLocation = new PasswordEncryptionKeyLocation(CatalogueRepository);
         keyLocation.CreateNewKeyFile(Path.Combine(TestContext.CurrentContext.TestDirectory, "my.key"));
         var p = keyLocation.OpenKeyFile();
 
