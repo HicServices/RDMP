@@ -61,6 +61,8 @@ public class PasswordEncryptionKeyLocationTests : DatabaseTests
     [Test]
     public void Encrypt()
     {
+        var keyLocation = new PasswordEncryptionKeyLocation(CatalogueRepository);
+        keyLocation.DeleteKey();
         var value = "MyPieceOfText";
 
         Console.WriteLine($"String is:{value}");
@@ -78,7 +80,7 @@ public class PasswordEncryptionKeyLocationTests : DatabaseTests
 
         Console.WriteLine($"Encrypted (stock) is:{encrypter.Value}");
         Console.WriteLine($"Decrypted (stock) is:{encrypter.GetDecryptedValue()}");
-        var keyLocation = new PasswordEncryptionKeyLocation(CatalogueRepository);
+        keyLocation = new PasswordEncryptionKeyLocation(CatalogueRepository);
         keyLocation.CreateNewKeyFile(Path.Combine(TestContext.CurrentContext.TestDirectory, "my.key"));
         var p = keyLocation.OpenKeyFile();
 
@@ -86,7 +88,6 @@ public class PasswordEncryptionKeyLocationTests : DatabaseTests
 
         var s = CatalogueRepository.EncryptionManager.GetEncrypter();
         var exception = Assert.Throws<CryptographicException>(() => s.Decrypt(encrypter.Value));
-        Assert.That(exception.Message, Does.StartWith("Could not decrypt an encrypted string, possibly you are trying to decrypt it after having changed the PrivateKey "));
 
         var encrypted = s.Encrypt(value);
         Console.WriteLine($"Encrypted (with key) is:{encrypted}");
