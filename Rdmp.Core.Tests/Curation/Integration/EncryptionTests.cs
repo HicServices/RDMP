@@ -250,7 +250,7 @@ public class EncryptionTests : DatabaseTests
                 "Could not run test because there is already an encryption key set up.  Likely one that handles very long passwords");
 
         var password = "a";
-        for (var i = 0; i < 200; i++)
+        for (var i = 0; i < 300; i++)
             password += "a";
 
         var ex = Assert.Throws<InvalidOperationException>(() => TestFreakyPasswordValues(password));
