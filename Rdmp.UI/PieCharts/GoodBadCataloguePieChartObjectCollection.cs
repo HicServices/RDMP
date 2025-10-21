@@ -24,7 +24,6 @@ public class GoodBadCataloguePieChartObjectCollection : PersistableObjectCollect
     public bool IncludeNonExtractableCatalogues { get; set; }
     public bool IncludeDeprecatedCatalogues { get; set; }
     public bool IncludeInternalCatalogues { get; set; }
-    public bool IncludeColdStorageCatalogues { get; set; }
     public bool IncludeProjectSpecificCatalogues { get; set; }
 
     //Catalogue item filters
@@ -56,9 +55,6 @@ public class GoodBadCataloguePieChartObjectCollection : PersistableObjectCollect
 
         if (status.IsProjectSpecific)
             returnValue &= IncludeProjectSpecificCatalogues;
-
-        if (c.IsColdStorageDataset)
-            returnValue &= IncludeColdStorageCatalogues;
 
         if (c.IsDeprecated)
             returnValue &= IncludeDeprecatedCatalogues;
@@ -100,7 +96,6 @@ public class GoodBadCataloguePieChartObjectCollection : PersistableObjectCollect
             { nameof(IncludeNonExtractableCatalogues), IncludeNonExtractableCatalogues.ToString() },
             { nameof(IncludeDeprecatedCatalogues), IncludeDeprecatedCatalogues.ToString() },
             { nameof(IncludeInternalCatalogues), IncludeInternalCatalogues.ToString() },
-            { nameof(IncludeColdStorageCatalogues), IncludeColdStorageCatalogues.ToString() },
             { nameof(IncludeProjectSpecificCatalogues), IncludeProjectSpecificCatalogues.ToString() },
 
             { nameof(IncludeNonExtractableCatalogueItems), IncludeNonExtractableCatalogueItems.ToString() },
@@ -122,7 +117,6 @@ public class GoodBadCataloguePieChartObjectCollection : PersistableObjectCollect
             PersistStringHelper.GetBool(dict, nameof(IncludeNonExtractableCatalogues), true);
         IncludeDeprecatedCatalogues = PersistStringHelper.GetBool(dict, nameof(IncludeDeprecatedCatalogues), true);
         IncludeInternalCatalogues = PersistStringHelper.GetBool(dict, nameof(IncludeInternalCatalogues), true);
-        IncludeColdStorageCatalogues = PersistStringHelper.GetBool(dict, nameof(IncludeColdStorageCatalogues), true);
         IncludeProjectSpecificCatalogues =
             PersistStringHelper.GetBool(dict, nameof(IncludeProjectSpecificCatalogues), true);
 
