@@ -205,11 +205,6 @@ where    Optional SQL to set for the filter.  If <basedOn> is not null this will
 
             var c = GetCatalogue();
             _offerFilters = c?.GetAllFilters();
-            if(_host is SelectedDataSets sds)
-            {
-                var cohort = sds.ExtractionConfiguration.Cohort;
-
-            }
             if (_offerFilters == null || !_offerFilters.Any())
                 SetImpossible($"There are no Filters declared in Catalogue '{c?.ToString() ?? "NULL"}'");
 
