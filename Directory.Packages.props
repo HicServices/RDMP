@@ -1,9 +1,9 @@
 <Project>
   <ItemGroup>
-    <PackageVersion Include="AWSSDK.S3" Version="4.0.7.9" />
-    <PackageVersion Include="AWSSDK.SecurityToken" Version="4.0.2.8" />
-    <PackageVersion Include="AWSSDK.SSO" Version="4.0.1.8" />
-    <PackageVersion Include="AWSSDK.SSOOIDC" Version="4.0.2.5" />
+    <PackageVersion Include="AWSSDK.S3" Version="4.0.7.12" />
+    <PackageVersion Include="AWSSDK.SecurityToken" Version="4.0.2.9" />
+    <PackageVersion Include="AWSSDK.SSO" Version="4.0.1.9" />
+    <PackageVersion Include="AWSSDK.SSOOIDC" Version="4.0.2.6" />
     <PackageVersion Include="CommandLineParser" Version="2.9.1" />
     <PackageVersion Include="Equ" Version="2.3.0" />
     <PackageVersion Include="ExcelNumberFormat" Version="1.1.0" />
@@ -11,7 +11,7 @@
     <PackageVersion Include="HIC.SynthEHR" Version="2.0.1" />
     <PackageVersion Include="HIC.FAnsiSql" Version="3.2.7" />
     <PackageVersion Include="LibArchive.Net" Version="0.1.5" />
-    <PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="9.0.9" />
+    <PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="9.0.10" />
     <PackageVersion Include="Microsoft.Net.Sdk.Compilers.Toolset" Version="9.0.300" />
     <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="8.0.0">
       <PrivateAssets>all</PrivateAssets>
@@ -37,7 +37,7 @@
     <PackageVersion Include="NUnit" Version="4.4.0" />
     <PackageVersion Include="ObjectListView.Repack.NET6Plus" Version="2.9.5" />
     <PackageVersion Include="Scintilla.NET" Version="5.3.2.9" />
-    <PackageVersion Include="System.Resources.Extensions" Version="9.0.9" />
+    <PackageVersion Include="System.Resources.Extensions" Version="9.0.10" />
     <PackageVersion Include="VPKSoft.ScintillaLexers.NET" Version="1.1.16" />
     <PackageVersion Include="HIC.System.Windows.Forms.DataVisualization" Version="1.0.1" />
     <PackageVersion Include="NUnit3TestAdapter" Version="5.2.0" />
