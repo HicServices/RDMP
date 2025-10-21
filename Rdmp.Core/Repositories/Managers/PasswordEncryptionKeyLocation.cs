@@ -115,7 +115,7 @@ public class PasswordEncryptionKeyLocation : IEncryptionManager, IInjectKnown
         if (!fileInfo.Exists)
             throw new Exception("Created file but somehow it didn't exist!?!");
 
-        _catalogueRepository.SetEncryptionKeyPath(fileInfo.FullName);//todo
+        _catalogueRepository.SetEncryptionKeyPath(fileInfo.FullName);
 
         ClearAllInjections();
 
