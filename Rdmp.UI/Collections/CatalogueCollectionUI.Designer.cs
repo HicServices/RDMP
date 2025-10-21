@@ -29,12 +29,12 @@ namespace Rdmp.UI.Collections
             olvFilters = new OLVColumn();
             olvOrder = new OLVColumn();
             imageList_RightClickIcons = new ImageList(components);
-            gbColdStorage = new GroupBox();
+            gbCatalogueFilters = new GroupBox();
             catalogueCollectionFilterUI1 = new CatalogueCollectionFilterUI();
             panel2 = new Panel();
             tbFilter = new TextBox();
             ((ISupportInitialize)tlvCatalogues).BeginInit();
-            gbColdStorage.SuspendLayout();
+            gbCatalogueFilters.SuspendLayout();
             panel2.SuspendLayout();
             SuspendLayout();
             // 
@@ -90,17 +90,17 @@ namespace Rdmp.UI.Collections
             imageList_RightClickIcons.Images.SetKeyName(3, "LOG");
             imageList_RightClickIcons.Images.SetKeyName(4, "aggregates.png");
             // 
-            // gbColdStorage
+            // gbCatalogueFilters
             // 
-            gbColdStorage.Controls.Add(tbFilter);
-            gbColdStorage.Controls.Add(catalogueCollectionFilterUI1);
-            gbColdStorage.Dock = DockStyle.Bottom;
-            gbColdStorage.Location = new System.Drawing.Point(0, 414);
-            gbColdStorage.Name = "gbColdStorage";
-            gbColdStorage.Size = new System.Drawing.Size(500, 65);
-            gbColdStorage.TabIndex = 1;
-            gbColdStorage.TabStop = false;
-            gbColdStorage.Text = "Show";
+            gbCatalogueFilters.Controls.Add(tbFilter);
+            gbCatalogueFilters.Controls.Add(catalogueCollectionFilterUI1);
+            gbCatalogueFilters.Dock = DockStyle.Bottom;
+            gbCatalogueFilters.Location = new System.Drawing.Point(0, 414);
+            gbCatalogueFilters.Name = "gbCatalogueFilters";
+            gbCatalogueFilters.Size = new System.Drawing.Size(500, 65);
+            gbCatalogueFilters.TabIndex = 1;
+            gbCatalogueFilters.TabStop = false;
+            gbCatalogueFilters.Text = "Show";
             // 
             // catalogueCollectionFilterUI1
             // 
@@ -113,7 +113,7 @@ namespace Rdmp.UI.Collections
             // panel2
             // 
             panel2.Controls.Add(tlvCatalogues);
-            panel2.Controls.Add(gbColdStorage);
+            panel2.Controls.Add(gbCatalogueFilters);
             panel2.Dock = DockStyle.Fill;
             panel2.Location = new System.Drawing.Point(0, 0);
             panel2.Name = "panel2";
@@ -133,8 +133,8 @@ namespace Rdmp.UI.Collections
             Name = "CatalogueCollectionUI";
             Size = new System.Drawing.Size(500, 479);
             ((ISupportInitialize)tlvCatalogues).EndInit();
-            gbColdStorage.ResumeLayout(false);
-            gbColdStorage.PerformLayout();
+            gbCatalogueFilters.ResumeLayout(false);
+            gbCatalogueFilters.PerformLayout();
             panel2.ResumeLayout(false);
             ResumeLayout(false);
         }
@@ -145,7 +145,7 @@ namespace Rdmp.UI.Collections
         private ImageList imageList_RightClickIcons;
         private OLVColumn olvColumn1;
         private OLVColumn olvFilters;
-        private GroupBox gbColdStorage;
+        private GroupBox gbCatalogueFilters;
         private OLVColumn olvOrder;
         private CatalogueCollectionFilterUI catalogueCollectionFilterUI1;
         private Panel panel2;

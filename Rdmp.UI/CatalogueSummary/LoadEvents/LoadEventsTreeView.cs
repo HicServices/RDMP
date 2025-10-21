@@ -8,6 +8,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.DirectoryServices.ActiveDirectory;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -20,6 +21,7 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Logging.PastEvents;
 using Rdmp.Core.ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 using Rdmp.UI.Collections;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Menus.MenuItems;
@@ -50,7 +52,9 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
     private readonly ToolStripButton _btnApplyFilter = new("Apply");
     private readonly ToolStripTextBox _tbToFetch = new() { Text = "1000" };
     private readonly ToolStripButton _btnFetch = new("Go");
+    private readonly ToolStripButton _btnFlat = new("Flat View");
 
+    private bool _flatView = UserSettings.DefaultLogViewFlat;
     private int _toFetch = 1000;
 
 
@@ -58,7 +62,7 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
     public LoadEventsTreeView()
     {
         InitializeComponent();
-
+        if (_flatView) _btnFlat.Text = "Nested View";
         _populateLoadHistory.DoWork += _populateLoadHistory_DoWork;
         _populateLoadHistory.WorkerSupportsCancellation = true;
         _populateLoadHistory.RunWorkerCompleted += _populateLoadHistory_RunWorkerCompleted;
@@ -78,7 +82,7 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
         _btnApplyFilter.Click += (s, e) => ApplyFilter(_tbFilterBox.Text);
         _tbToFetch.TextChanged += TbToFetchTextChanged;
         _btnFetch.Click += (s, e) => PopulateLoadHistory();
-
+        _btnFlat.Click += (s,e) => ToggleView();
         RDMPCollectionCommonFunctionality.SetupColumnTracking(treeView1, olvDescription,
             new Guid("6b09f39c-2b88-41ed-a396-42a2d2288952"));
         RDMPCollectionCommonFunctionality.SetupColumnTracking(treeView1, olvDate,
@@ -101,6 +105,7 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
 
     private object olvDescription_AspectGetter(object rowObject)
     {
+        if (rowObject is null) return null;
         return rowObject switch
         {
             ArchivalDataLoadInfo adi => adi.ToString(),
@@ -117,6 +122,7 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
 
     private static object olvDate_AspectGetter(object rowObject)
     {
+        if (rowObject is null) return null;
         return rowObject switch
         {
             ArchivalDataLoadInfo adi => adi.StartTime,
@@ -128,9 +134,15 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
         };
     }
 
-    private static void treeView1_FormatRow(object sender, FormatRowEventArgs e)
+    private void treeView1_FormatRow(object sender, FormatRowEventArgs e)
     {
         // Only apply if it is a data load info thing
+        if (_flatView)
+        {
+            if (e.Model is ArchivalFatalError atli)
+                e.Item.ForeColor = Color.DarkOrange;
+        }
+
         if (e.Model is not ArchivalDataLoadInfo dli) return;
 
         if (dli.HasErrors)
@@ -206,7 +218,15 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
 
     public void AddObjects(ArchivalDataLoadInfo[] archivalDataLoadInfos)
     {
-        treeView1.AddObjects(archivalDataLoadInfos);
+        if (_flatView) {
+            treeView1.AddObjects(archivalDataLoadInfos.SelectMany(adli => adli.TableLoadInfos).ToList());
+            treeView1.AddObjects(archivalDataLoadInfos.SelectMany(adli => adli.Errors).ToList());
+            treeView1.AddObjects(archivalDataLoadInfos.SelectMany(adli => adli.Progress).ToList());
+        }
+        else
+        {
+            treeView1.AddObjects(archivalDataLoadInfos);
+        }
     }
 
     public void ClearObjects()
@@ -239,6 +259,13 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
         {
             CommonFunctionality.Fatal("Failed to populate load history", exception);
         }
+    }
+
+    private void ToggleView()
+    {
+        _flatView = !_flatView;
+        _btnFlat.Text = _flatView ?"Nested View": "Flat View";
+        PopulateLoadHistory();
     }
 
     private void PopulateLoadHistory()
@@ -282,11 +309,110 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
         AbortWorkers();
     }
 
+    private class LogFilter : AbstractModelFilter
+    {
+        public LogFilter()
+        {
+
+        }
+
+        public LogFilter(ObjectListView olv)
+        {
+            this.ListView = olv;
+        }
+
+        public LogFilter(ObjectListView olv, string text)
+        {
+            this.ListView = olv;
+            this.Text = text;
+        }
+
+        public LogFilter(ObjectListView olv, string text, StringComparison comparison)
+        {
+            this.ListView = olv;
+            this.Text = text;
+            this.StringComparison = comparison;
+        }
+
+        public string Text;
+        public StringComparison StringComparison = StringComparison.InvariantCultureIgnoreCase;
+
+        protected ObjectListView ListView;
+
+        private List<int> acceptableChildren = [];
+        private List<int> acceptableRoots = [];
+
+        public override bool Filter(object modelObject)
+        {
+            if (this.ListView == null || String.IsNullOrEmpty(this.Text))
+                return true;
+
+            foreach (OLVColumn column in this.ListView.Columns)
+            {
+                if (column.IsVisible)
+                {
+                    string cellText = column.GetStringValue(modelObject);
+                    if (cellText.IndexOf(this.Text, this.StringComparison) != -1)
+                    {
+                        if (modelObject is ArchivalDataLoadInfo adli)
+                        {
+                            acceptableChildren.AddRange(adli.Progress.Select(p => p.ID));
+                            acceptableRoots.Add(adli.ID);
+                        }
+                        return true;
+                    }
+                    else if (modelObject is ArchivalProgressLog log)
+                    {
+                        if (acceptableChildren.Contains(log.ID))
+                        {
+                            return true;
+                        }
+                    }
+                    else if (modelObject is LoadEventsTreeView_Category lec)
+                    {
+                        if (acceptableRoots.Contains(lec.RunId))
+                        {
+                            return true;
+                        }
+                        if (lec.Children is ArchivalProgressLog[] lapl)
+                        {
+                            if (lapl.Any(pl => column.GetStringValue(pl).IndexOf(this.Text, this.StringComparison) != -1)) return true;
+                        }
+                        if (lec.Children is ArchivalTableLoadInfo[] latli)
+                        {
+                            if (latli.Any(pl => column.GetStringValue(pl).IndexOf(this.Text, this.StringComparison) != -1)) return true;
+                        }
+                        if (lec.Children is ArchivalFatalError[] lafe)
+                        {
+                            if (lafe.Any(pl => column.GetStringValue(pl).IndexOf(this.Text, this.StringComparison) != -1)) return true;
+                        }
+                    }
+                    else if (modelObject is ArchivalTableLoadInfo dli)
+                    {
+                        if (acceptableRoots.Contains(dli.Parent.ID))
+                        {
+                            return true;
+                        }
+                    }
+                    else if (modelObject is ArchivalDataLoadInfo adli)
+                    {
+                        if (adli.Progress.Any(p => column.GetStringValue(p).IndexOf(this.Text, this.StringComparison) != -1)) return true;
+                        if (adli.TableLoadInfos.Any(p => column.GetStringValue(p).IndexOf(this.Text, this.StringComparison) != -1)) return true;
+                        if (adli.Errors.Any(p => column.GetStringValue(p).IndexOf(this.Text, this.StringComparison) != -1)) return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+    }
 
     public void ApplyFilter(string filter)
     {
-        treeView1.ModelFilter = new TextMatchFilter(treeView1, filter, StringComparison.CurrentCultureIgnoreCase);
+
+        treeView1.ModelFilter = new LogFilter(treeView1, filter, StringComparison.CurrentCultureIgnoreCase);
         treeView1.UseFiltering = !string.IsNullOrWhiteSpace(filter);
+        treeView1.DefaultRenderer = new HighlightTextRenderer(new TextMatchFilter(treeView1, filter));
     }
 
     private void treeView1_ColumnRightClick(object sender, CellRightClickEventArgs e)
@@ -406,7 +532,7 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
         CommonFunctionality.Add(new ToolStripLabel("Fetch:"));
         CommonFunctionality.Add(_tbToFetch);
         CommonFunctionality.Add(_btnFetch);
-
+        CommonFunctionality.Add(_btnFlat);
         PopulateLoadHistory();
     }
 }
