@@ -83,10 +83,12 @@ internal class CohortContainerManagerFromChildProvider : CohortContainerManager
 
             try
             {
+                var x = childProvider.AllAggregateConfigurations;
                 config = childProvider.AllAggregateConfigurations.Single(a => a.ID == currentChildId);
             }
-            catch (Exception)
+            catch (Exception e )
             {
+                Console.WriteLine(e);
                 throw new Exception(
                     $"Error occurred trying to find AggregateConfiguration with ID {currentChildId} which is allegedly a child of CohortAggregateContainer {currentParentId}");
             }

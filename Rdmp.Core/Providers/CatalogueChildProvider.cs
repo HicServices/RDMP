@@ -2343,6 +2343,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         if (t == typeof(CohortAggregateContainer))
         {
             _lazyAllCohortAggregateContainers.Reset();
+            _lazyAllCohortIdentificationConfigurations.Reset();
             return SelectiveRefreshParents(t);
         }
         if (t == typeof(JoinableCohortAggregateConfiguration))
