@@ -71,6 +71,7 @@ namespace Rdmp.Core.Dataset.Confluence
 
         private string SplitCamelCase(string input)
         {
+            if (input is null) return input;
             return System.Text.RegularExpressions.Regex.Replace(input.Replace(",", ", "), "([A-Z])", " $1", System.Text.RegularExpressions.RegexOptions.Compiled).Trim();
 
         }
