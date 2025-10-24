@@ -12,4 +12,4 @@ using System.Reflection;
 
 [assembly: AssemblyVersion("9.0.3")]
 [assembly: AssemblyFileVersion("9.0.3")]
-[assembly: AssemblyInformationalVersion("9.0.3-prerelease-for-sindy")]
+[assembly: AssemblyInformationalVersion("9.0.3")]

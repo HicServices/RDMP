@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [9.0.3] - Unreleased
 - Improve checking for default pipelines
+- Improve confluence catalogue metadata extraction
 
 ## [9.0.2] - 2025-10-21
 - Add ability to view logs as a flat list. Default settings can be updated via user settings
@@ -16,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Remove functionality to mark individual catalogues as extractable/not extractable. Favor use of marking as internal.
 - Move RSA key checks to fix bug where bad RSA keys were causing issues at launch
 - Add cli command to export catalogue metadata to a Atlassian Confluence space
-- Allow the use of netowrk share RSA keys
+- Allow the use of network share RSA keys
 
 
 ## [9.0.1] - 2025-07-31
