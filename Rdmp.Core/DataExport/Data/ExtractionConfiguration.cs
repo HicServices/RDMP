@@ -220,10 +220,6 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
 
     /// <inheritdoc cref="DefaultPipeline_ID"/>
     [NoMappingToDatabase]
-    //public IPipeline DefaultPipeline => 
-    //    DefaultPipeline_ID == null
-    //        ? null
-    //        : ((IDataExportRepository)Repository).CatalogueRepository.GetAllObjects<Pipeline>().FirstOrDefault(p => p.ID == DefaultPipeline_ID);
     public IPipeline DefaultPipeline => DefaultPipeline_ID == null?null: ((IDataExportRepository) Repository).CatalogueRepository.GetAllObjects<Pipeline>().FirstOrDefault(p => p.ID == DefaultPipeline_ID);
 
     /// <inheritdoc cref="CohortIdentificationConfiguration_ID"/>
