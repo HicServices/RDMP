@@ -18,7 +18,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
         private readonly IBasicActivateItems _activator;
         private readonly string _subdomain;
-        private readonly int _spaceId;
+        private readonly string _spaceId;
         private readonly string _apiKey;
         private readonly string _owner;
         private readonly string _description;
@@ -91,7 +91,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             public ConfluencePageVersion version { get; set; }
         }
 
-        public ExecuteCommandExportCataloguesToConfluence(IBasicActivateItems activator, string subdomain, int spaceId, string apiKey, string owner, string description)
+        public ExecuteCommandExportCataloguesToConfluence(IBasicActivateItems activator, string subdomain, string spaceId, string apiKey, string owner, string description)
         {
             _activator = activator;
             _subdomain = subdomain;
