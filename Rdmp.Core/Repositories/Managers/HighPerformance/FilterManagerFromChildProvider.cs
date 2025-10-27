@@ -4,12 +4,13 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using NPOI.POIFS.Properties;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Providers;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Rdmp.Core.Repositories.Managers.HighPerformance;
 
@@ -30,6 +31,7 @@ internal class FilterManagerFromChildProvider : AggregateFilterManager
     public FilterManagerFromChildProvider(CatalogueRepository repository, ICoreChildProvider childProvider) :
         base(repository)
     {
+        var containersDict = childProvider.AllAggregateContainersDictionary;
         _containersToFilters =
             childProvider.AllAggregateFilters.Where(f => f.FilterContainer_ID.HasValue)
                 .GroupBy(f => f.FilterContainer_ID.Value)
@@ -49,9 +51,10 @@ internal class FilterManagerFromChildProvider : AggregateFilterManager
             if (!_subcontainers.ContainsKey(parentId))
                 _subcontainers.Add(parentId, new List<AggregateFilterContainer>());
 
-            _subcontainers[parentId].Add(childProvider.AllAggregateContainersDictionary[subcontainerId]);
+            _subcontainers[parentId].Add(containersDict[subcontainerId]);
         }
         r.Close();
+      
     }
 
     public override IContainer[] GetSubContainers(IContainer container)

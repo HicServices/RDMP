@@ -42,6 +42,7 @@ internal class CohortContainerManagerFromChildProvider : CohortContainerManager
 
     public Dictionary<int, List<IOrderable>> FetchAllRelationships(ICoreChildProvider childProvider)
     {
+        var containers = childProvider.AllCohortAggregateContainers;
         Dictionary<int, List<IOrderable>> _internal_contents = new();
         using var con = CatalogueRepository.GetConnection();
         //find all the cohort SET operation subcontainers e.g. UNION Ag1,Ag2,(Agg3 INTERSECT Agg4) would have 2 CohortAggregateContainers (the UNION and the INTERSECT) in which the INTERSECT was the child container of the UNION
@@ -59,11 +60,11 @@ internal class CohortContainerManagerFromChildProvider : CohortContainerManager
                 _internal_contents.Add(currentParentId, new List<IOrderable>());
 
             _internal_contents[currentParentId]
-                .Add(childProvider.AllCohortAggregateContainers.Single(c => c.ID == currentChildId));
+                .Add(containers.Single(c => c.ID == currentChildId));
         }
 
         r.Close();
-
+        var configs = childProvider.AllAggregateConfigurations;
         //now find all the Agg configurations within the containers too, (in the above example we will find Agg1 in the UNION container at order 1 and Agg2 at order 2 and then we find Agg3 and Agg4 in the INTERSECT container)
         r = CatalogueRepository.DiscoveredServer
             .GetCommand(
@@ -83,8 +84,7 @@ internal class CohortContainerManagerFromChildProvider : CohortContainerManager
 
             try
             {
-                var x = childProvider.AllAggregateConfigurations;
-                config = childProvider.AllAggregateConfigurations.Single(a => a.ID == currentChildId);
+                config = configs.Single(a => a.ID == currentChildId);
             }
             catch (Exception e )
             {

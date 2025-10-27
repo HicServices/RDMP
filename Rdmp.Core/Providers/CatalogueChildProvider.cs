@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using NPOI.OpenXmlFormats.Dml;
 using Org.BouncyCastle.Asn1.X509.Qualified;
 using Rdmp.Core.Caching.Pipeline;
 using Rdmp.Core.CohortCommitting.Pipeline;
@@ -103,11 +104,11 @@ public class CatalogueChildProvider : ICoreChildProvider
     public SupportingSQLTable[] AllSupportingSQL { get => _lazyAllSupportingSQL.Value; }
 
     //tells you the immediate children of a given node.  Do not add to this directly instead add using AddToDictionaries unless you want the Key to be an 'on the sly' no known descendency child
-    private ConcurrentDictionary<object, HashSet<object>> _childDictionary = new();
+    //private ConcurrentDictionary<object, HashSet<object>> _childDictionary = new();
 
-    //This is the reverse of _childDictionary in some ways.  _childDictionary tells you the immediate children while
-    //this tells you for a given child object what the navigation tree down to get to it is e.g. ascendancy[child] would return [root,grandParent,parent]
-    private ConcurrentDictionary<object, DescendancyList> _descendancyDictionary = new();
+    ////This is the reverse of _childDictionary in some ways.  _childDictionary tells you the immediate children while
+    ////this tells you for a given child object what the navigation tree down to get to it is e.g. ascendancy[child] would return [root,grandParent,parent]
+    //private ConcurrentDictionary<object, DescendancyList> _descendancyDictionary = new();
 
 
     public IEnumerable<CatalogueItem> AllCatalogueItems { get => AllCatalogueItemsDictionary.Values; }
@@ -390,7 +391,6 @@ public class CatalogueChildProvider : ICoreChildProvider
         _lazyCatalogueRootFolder = new LazyWithReset<FolderNode<Catalogue>>(() =>
         {
             var tree = FolderHelper.BuildFolderTree(AllCatalogues);
-            AddChildren(tree, new DescendancyList(tree));
             return tree;
 
         });
@@ -409,7 +409,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         _lazyAllANOTableNodes = new LazyWithReset<AllANOTablesNode>(() =>
         {
-            var x = new AllANOTablesNode(); AddChildren(x);
+            var x = new AllANOTablesNode();
             return x;
         });
 
@@ -435,7 +435,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         _lazyAllCacheProgresses = new LazyWithReset<CacheProgress[]>(() => GetAllObjects<CacheProgress>(repository));
 
         _lazyAllPermissionWindows = new LazyWithReset<PermissionWindow[]>(() => GetAllObjects<PermissionWindow>(repository));
-        _lazyAllPermissionWindowsNode = new LazyWithReset<AllPermissionWindowsNode>(() => { var x = new AllPermissionWindowsNode(); AddChildren(x); return x; });
+        _lazyAllPermissionWindowsNode = new LazyWithReset<AllPermissionWindowsNode>(() => { var x = new AllPermissionWindowsNode(); return x; });
 
         _lazyAllRemoteRDMPs = new LazyWithReset<RemoteRDMP[]>(() =>
         {
@@ -449,15 +449,12 @@ public class CatalogueChildProvider : ICoreChildProvider
         _lazyAllDataAccessCredentialsNode = new LazyWithReset<AllDataAccessCredentialsNode>(() =>
         {
             var x = new AllDataAccessCredentialsNode();
-            AddChildren(x);
             return x;
         });
 
         _lazyAllConnectionStringKeyworksNode = new LazyWithReset<AllConnectionStringKeywordsNode>(() =>
         {
             var x = new AllConnectionStringKeywordsNode();
-            AddToDictionaries(new HashSet<object>(AllConnectionStringKeywords),
-          new DescendancyList(x));
             return x;
         });
         _lazyAllConnectionStringKeywords = new LazyWithReset<ConnectionStringKeyword[]>(() => GetAllObjects<ConnectionStringKeyword>(repository));
@@ -473,7 +470,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         ReportProgress("After credentials");
 
         _lazyTableInfosToColumnInfos = new LazyWithReset<Dictionary<int, List<ColumnInfo>>>(() => AllColumnInfos.GroupBy(c => c.TableInfo_ID)
-            .ToDictionaryEx(gdc => gdc.Key, gdc => gdc.ToList()));
+                .ToDictionaryEx(gdc => gdc.Key, gdc => gdc.ToList()));
 
         ReportProgress("After TableInfo to ColumnInfo mapping");
 
@@ -506,14 +503,14 @@ public class CatalogueChildProvider : ICoreChildProvider
         ReportProgress("After Filter and Joinable fetching");
 
         _lazyAllLookups = new LazyWithReset<Lookup[]>(() =>
-        {
-            var x = GetAllObjects<Lookup>(repository);
+            {
+                var x = GetAllObjects<Lookup>(repository);
 
-            foreach (var l in x)
-                l.SetKnownColumns(_allColumnInfos[l.PrimaryKey_ID], _allColumnInfos[l.ForeignKey_ID],
-                    _allColumnInfos[l.Description_ID]);
-            return x;
-        });
+                foreach (var l in x)
+                    l.SetKnownColumns(_allColumnInfos[l.PrimaryKey_ID], _allColumnInfos[l.ForeignKey_ID],
+                        _allColumnInfos[l.Description_ID]);
+                return x;
+            });
 
         _lazyAllJoinInfos = new LazyWithReset<JoinInfo[]>(() =>
         {
@@ -526,31 +523,30 @@ public class CatalogueChildProvider : ICoreChildProvider
         ReportProgress("After SetKnownColumns");
 
 
-        _lazyAllExternalServersNode = new LazyWithReset<AllExternalServersNode>(() => { var x = new AllExternalServersNode(); AddChildren(x); return x; });
+        _lazyAllExternalServersNode = new LazyWithReset<AllExternalServersNode>(() => { var x = new AllExternalServersNode(); return x; });
 
         _lazyAllRDMPRemotesNode = new LazyWithReset<AllRDMPRemotesNode>(() =>
         {
             var x = new AllRDMPRemotesNode();
-            AddChildren(x);
             return x;
         });
 
-        _lazyAllDashboardsNode = new LazyWithReset<AllDashboardsNode>(() => { var x = new AllDashboardsNode(); AddChildren(x); return x; });
+        _lazyAllDashboardsNode = new LazyWithReset<AllDashboardsNode>(() => { var x = new AllDashboardsNode(); return x; });
         _lazyAllDashboards = new LazyWithReset<DashboardLayout[]>(() => GetAllObjects<DashboardLayout>(repository));
 
-        _lazyAllObjectSharingNode = new LazyWithReset<AllObjectSharingNode>(() => { var x = new AllObjectSharingNode(); AddChildren(x); return x; });
+        _lazyAllObjectSharingNode = new LazyWithReset<AllObjectSharingNode>(() => { var x = new AllObjectSharingNode(); return x; });
         _lazyAllExports = new LazyWithReset<ObjectExport[]>(() =>
         {
             var x = GetAllObjects<ObjectExport>(repository);
             var searchables = new Dictionary<int, HashSet<IMapsDirectlyToDatabaseTable>>();
 
-            foreach (var o in _descendancyDictionary.Keys.OfType<IMapsDirectlyToDatabaseTable>())
-            {
-                if (!searchables.ContainsKey(o.ID))
-                    searchables.Add(o.ID, new HashSet<IMapsDirectlyToDatabaseTable>());
+            //foreach (var o in _descendancyDictionary.Keys.OfType<IMapsDirectlyToDatabaseTable>())
+            //{
+            //    if (!searchables.ContainsKey(o.ID))
+            //        searchables.Add(o.ID, new HashSet<IMapsDirectlyToDatabaseTable>());
 
-                searchables[o.ID].Add(o);
-            }
+            //    searchables[o.ID].Add(o);
+            //}
 
             ReportProgress("After building Searchables");
 
@@ -596,7 +592,7 @@ public class CatalogueChildProvider : ICoreChildProvider
                 //keep track of all the use cases
                 PipelineUseCases.Add(node);
 
-                foreach (var pipeline in AddChildren(node, descendancy.Add(node)))
+                foreach (var pipeline in GetChildren(node))
                     unknownPipelines.Remove(pipeline);
 
                 children.Add(node);
@@ -604,9 +600,6 @@ public class CatalogueChildProvider : ICoreChildProvider
 
             children.Add(OtherPipelinesNode);
             OtherPipelinesNode.Pipelines.AddRange(unknownPipelines.Cast<Pipeline>());
-            AddToDictionaries(unknownPipelines, descendancy.Add(OtherPipelinesNode));
-
-            AddToDictionaries(children, descendancy);
             return x;
         });
 
@@ -627,7 +620,6 @@ public class CatalogueChildProvider : ICoreChildProvider
         _lazyAllStandardRegexesNode = new LazyWithReset<AllStandardRegexesNode>(() =>
         {
             var x = new AllStandardRegexesNode();
-            AddToDictionaries(new HashSet<object>(AllStandardRegexes), new DescendancyList(x));
             return x;
         });
         _lazyAllStandardRegex = new LazyWithReset<StandardRegex[]>(() => GetAllObjects<StandardRegex>(repository));
@@ -645,7 +637,6 @@ public class CatalogueChildProvider : ICoreChildProvider
         _lazyDatasetRootFolder = new LazyWithReset<FolderNode<Curation.Data.Dataset>>(() =>
         {
             var x = FolderHelper.BuildFolderTree(AllDatasets);
-            AddChildren(x, new DescendancyList(x));
             return x;
         });
 
@@ -654,7 +645,6 @@ public class CatalogueChildProvider : ICoreChildProvider
         _lazyLoadMetadataRootFolder = new LazyWithReset<FolderNode<LoadMetadata>>(() =>
         {
             var x = FolderHelper.BuildFolderTree(AllLoadMetadatas.Where(lmd => lmd.RootLoadMetadata_ID is null).ToArray());
-            AddChildren(x, new DescendancyList(x));
             return x;
         });
 
@@ -662,14 +652,12 @@ public class CatalogueChildProvider : ICoreChildProvider
         _lazyCohortidentificationConfigurationRootFolder = new LazyWithReset<FolderNode<CohortIdentificationConfiguration>>(() =>
         {
             var x = FolderHelper.BuildFolderTree(AllCohortIdentificationConfigurations);
-            AddChildren(x, new DescendancyList(x));
             return x;
         });
 
         _lazyCohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations = new LazyWithReset<FolderNode<CohortIdentificationConfiguration>>(() =>
         {
             var x = FolderHelper.BuildFolderTree(AllCohortIdentificationConfigurations.Where(cic => cic.Version is null).ToArray());
-            AddChildren(x, new DescendancyList(x));
             return x;
         });
 
@@ -682,7 +670,6 @@ public class CatalogueChildProvider : ICoreChildProvider
         _lazyOrphanAggregateConfigurationsNode = new LazyWithReset<AllOrphanAggregateConfigurationsNode>(() =>
         {
             var x = new AllOrphanAggregateConfigurationsNode();
-            AddToDictionaries(new HashSet<object>(OrphanAggregateConfigurations), new DescendancyList(x));
             return x;
         });
 
@@ -691,7 +678,6 @@ public class CatalogueChildProvider : ICoreChildProvider
             var x = new AllTemplateAggregateConfigurationsNode();
             var dec = new DescendancyList(x);
             dec.SetBetterRouteExists();
-            AddToDictionaries(new HashSet<object>(TemplateAggregateConfigurations), dec);
             return x;
         });
 
@@ -701,7 +687,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         ReportProgress("After AggregateConfiguration injection");
 
-        _lazyAllGovernanceNode = new LazyWithReset<AllGovernanceNode>(() => { var x = new AllGovernanceNode(); AddChildren(x); return x; });
+        _lazyAllGovernanceNode = new LazyWithReset<AllGovernanceNode>(() => { var x = new AllGovernanceNode(); return x; });
         _lazyAllGovernancePeriods = new LazyWithReset<GovernancePeriod[]>(() => GetAllObjects<GovernancePeriod>(repository));
         _lazyAllGovernanceDocuments = new LazyWithReset<GovernanceDocument[]>(() => GetAllObjects<GovernanceDocument>(repository));
 
@@ -711,7 +697,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         ReportProgress("After Governance");
 
-        _lazyAllPluginsNode = new LazyWithReset<AllPluginsNode>(() => { var x = new AllPluginsNode(); AddChildren(x); return x; });
+        _lazyAllPluginsNode = new LazyWithReset<AllPluginsNode>(() => { var x = new AllPluginsNode(); return x; });
 
         ReportProgress("After Plugins");
 
@@ -719,12 +705,11 @@ public class CatalogueChildProvider : ICoreChildProvider
         _lazyAllRegexRedactionConfigurationsNode = new LazyWithReset<AllRegexRedactionConfigurationsNode>(() =>
         {
             var x = new AllRegexRedactionConfigurationsNode();
-            AddChildren(x);
             return x;
         });
 
 
-        _lazyAllDatasetsNode = new LazyWithReset<AllDatasetsNode>(() => { var x = new AllDatasetsNode(); AddChildren(x); return x; });
+        _lazyAllDatasetsNode = new LazyWithReset<AllDatasetsNode>(() => { var x = new AllDatasetsNode(); return x; });
 
         ReportProgress("After Configurations");
 
@@ -795,6 +780,9 @@ public class CatalogueChildProvider : ICoreChildProvider
             var x = GetAllObjects<AggregateConfiguration>(_catalogueRepository);
             var joinableDictionaryByAggregateConfigurationId = AllJoinables.ToDictionaryEx(j => j.AggregateConfiguration_ID, v => v);
 
+
+            var y = AllCataloguesDictionary;
+
             foreach (var ac in x) //if there's a joinable
                 ac.InjectKnown( //inject that we know the joinable (and what it is)
                     joinableDictionaryByAggregateConfigurationId.GetValueOrDefault(ac.ID)); //otherwise inject that it is not a joinable (suppresses database checking later)
@@ -831,8 +819,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     private void BuildAggregateFilterContainers()
     {
-        _lazyAllAggregateContainersDictionary = new LazyWithReset<Dictionary<int, AggregateFilterContainer>>(() => GetAllObjects<AggregateFilterContainer>(_catalogueRepository)
-            .ToDictionaryEx(o => o.ID, o2 => o2));
+        _lazyAllAggregateContainersDictionary = new LazyWithReset<Dictionary<int, AggregateFilterContainer>>(() => GetAllObjects<AggregateFilterContainer>(_catalogueRepository).ToDictionaryEx(o => o.ID, o2 => o2));
         _lazyAllAggregateFilters = new LazyWithReset<AggregateFilter[]>(() => GetAllObjects<AggregateFilter>(_catalogueRepository));
         _lazyAllAggregateFilterParameters = new LazyWithReset<AggregateFilterParameter[]>(() => GetAllObjects<AggregateFilterParameter>(_catalogueRepository));
 
@@ -853,100 +840,85 @@ public class CatalogueChildProvider : ICoreChildProvider
         }
     }
 
-    private void AddChildren(AllPluginsNode allPluginsNode)
+    private HashSet<object> GetChildren(AllPluginsNode allPluginsNode)
     {
-        var children = new HashSet<object>(LoadModuleAssembly.Assemblies);
-        var descendancy = new DescendancyList(allPluginsNode);
-        AddToDictionaries(children, descendancy);
+        return [.. LoadModuleAssembly.Assemblies];
     }
 
-    private void AddChildren(AllRegexRedactionConfigurationsNode allRegexRedactionConfigurationsNode)
+    private HashSet<object> GetChildren(AllRegexRedactionConfigurationsNode allRegexRedactionConfigurationsNode)
     {
-        var children = new HashSet<object>(AllRegexRedactionConfigurations);
-        var descendancy = new DescendancyList(allRegexRedactionConfigurationsNode);
-        AddToDictionaries(children, descendancy);
+        return new HashSet<object>(AllRegexRedactionConfigurations);
     }
 
-    private void AddChildren(AllDatasetsNode allDatasetsNode)
+    private HashSet<object> GetChildren(AllDatasetsNode allDatasetsNode)
     {
-        var children = new HashSet<object>(AllDatasets);
-        var descendancy = new DescendancyList(allDatasetsNode);
-        AddToDictionaries(children, descendancy);
+        return new HashSet<object>(AllDatasets);
     }
 
-    private void AddChildren(AllGovernanceNode allGovernanceNode)
+    private HashSet<object> GetChildren(AllGovernanceNode allGovernanceNode)
     {
-        var children = new HashSet<object>();
-        var descendancy = new DescendancyList(allGovernanceNode);
-
-        foreach (var gp in AllGovernancePeriods)
-        {
-            children.Add(gp);
-            AddChildren(gp, descendancy.Add(gp));
-        }
-
-        AddToDictionaries(children, descendancy);
+        return new HashSet<object>(AllGovernancePeriods);
     }
 
-    private void AddChildren(GovernancePeriod governancePeriod, DescendancyList descendancy)
+    private HashSet<object> GetChildren(GovernancePeriod governancePeriod)
     {
-        var children = new HashSet<object>();
-
-        foreach (var doc in AllGovernanceDocuments.Where(d => d.GovernancePeriod_ID == governancePeriod.ID))
-            children.Add(doc);
-
-        AddToDictionaries(children, descendancy);
+        return new HashSet<object>(AllGovernanceDocuments.Where(d => d.GovernancePeriod_ID == governancePeriod.ID));
     }
 
-    private void AddChildren(AllPermissionWindowsNode allPermissionWindowsNode)
+    private HashSet<object> GetChildren(AllPermissionWindowsNode allPermissionWindowsNode)
     {
-        var descendancy = new DescendancyList(allPermissionWindowsNode);
-
-        foreach (var permissionWindow in AllPermissionWindows)
-            AddChildren(permissionWindow, descendancy.Add(permissionWindow));
-
-
-        AddToDictionaries(new HashSet<object>(AllPermissionWindows), descendancy);
+        return new HashSet<object>(AllPermissionWindows);
     }
 
-    private void AddChildren(PermissionWindow permissionWindow, DescendancyList descendancy)
+    private HashSet<object> GetChildren(PermissionWindow permissionWindow)
     {
         var children = new HashSet<object>();
 
         foreach (var cacheProgress in AllCacheProgresses)
             if (cacheProgress.PermissionWindow_ID == permissionWindow.ID)
                 children.Add(new PermissionWindowUsedByCacheProgressNode(cacheProgress, permissionWindow, false));
-
-        AddToDictionaries(children, descendancy);
+        return children;
     }
 
-    private void AddChildren(AllExternalServersNode allExternalServersNode)
+    private HashSet<object> GetChildren(AllExternalServersNode allExternalServersNode)
     {
-        AddToDictionaries(new HashSet<object>(AllExternalServers), new DescendancyList(allExternalServersNode));
+        return new HashSet<object>(AllExternalServers);
     }
 
-    private void AddChildren(AllRDMPRemotesNode allRDMPRemotesNode)
+    private HashSet<object> GetChildren(AllRDMPRemotesNode allRDMPRemotesNode)
     {
-        AddToDictionaries(new HashSet<object>(AllRemoteRDMPs), new DescendancyList(allRDMPRemotesNode));
+        return new HashSet<object>(AllRemoteRDMPs);
     }
 
-    private void AddChildren(AllDashboardsNode allDashboardsNode)
+    private HashSet<object> GetChildren(AllDashboardsNode allDashboardsNode)
     {
-        AddToDictionaries(new HashSet<object>(AllDashboards), new DescendancyList(allDashboardsNode));
+        return new HashSet<object>(AllDashboards);
     }
 
-    private void AddChildren(AllObjectSharingNode allObjectSharingNode)
+    private HashSet<object> GetChildren(AllObjectExportsNode allObjectExportsNode)
     {
-        var descendancy = new DescendancyList(allObjectSharingNode);
-
         var allExportsNode = new AllObjectExportsNode();
         var allImportsNode = new AllObjectImportsNode();
-
-        AddToDictionaries(new HashSet<object>(AllExports), descendancy.Add(allExportsNode));
-        AddToDictionaries(new HashSet<object>(AllImports), descendancy.Add(allImportsNode));
-
-        AddToDictionaries(new HashSet<object>(new object[] { allExportsNode, allImportsNode }), descendancy);
+        return new HashSet<object>(new object[] { allExportsNode, allImportsNode });
     }
+
+    //private void AddChildren(AllObjectSharingNode allObjectSharingNode)
+    //{
+    //    var descendancy = new DescendancyList(allObjectSharingNode);
+
+    //    var allExportsNode = new AllObjectExportsNode();
+    //    var allImportsNode = new AllObjectImportsNode();
+
+    //    AddToDictionaries(new HashSet<object>(AllExports), descendancy.Add(allExportsNode));
+    //    AddToDictionaries(new HashSet<object>(AllImports), descendancy.Add(allImportsNode));
+
+    //    AddToDictionaries(new HashSet<object>(new object[] { allExportsNode, allImportsNode }), descendancy);
+    //}
+
+    //private HashSet<object> GetChildren()
+    //{
+    //    return new HashSet<object>();
+    //}
 
 
     /// <summary>
@@ -967,7 +939,7 @@ public class CatalogueChildProvider : ICoreChildProvider
             //keep track of all the use cases
             PipelineUseCases.Add(node);
 
-            foreach (var pipeline in AddChildren(node, descendancy.Add(node)))
+            foreach (var pipeline in GetChildren(node))
                 unknownPipelines.Remove(pipeline);
 
             children.Add(node);
@@ -975,13 +947,13 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         children.Add(OtherPipelinesNode);
         OtherPipelinesNode.Pipelines.AddRange(unknownPipelines.Cast<Pipeline>());
-        AddToDictionaries(unknownPipelines, descendancy.Add(OtherPipelinesNode));
+        //AddToDictionaries(unknownPipelines, descendancy.Add(OtherPipelinesNode));
 
         //it is the first standard use case
-        AddToDictionaries(children, descendancy);
+        //AddToDictionaries(children, descendancy);
     }
 
-    private IEnumerable<Pipeline> AddChildren(StandardPipelineUseCaseNode node, DescendancyList descendancy)
+    private HashSet<object> GetChildren(StandardPipelineUseCaseNode node)
     {
         var children = new HashSet<object>();
 
@@ -996,40 +968,28 @@ public class CatalogueChildProvider : ICoreChildProvider
         {
             var useCaseNode = new PipelineCompatibleWithUseCaseNode(repo, compatiblePipeline, node.UseCase);
 
-            AddChildren(useCaseNode, descendancy.Add(useCaseNode));
-
             node.Pipelines.Add(compatiblePipeline);
             children.Add(useCaseNode);
         }
-
-        //it is the first standard use case
-        AddToDictionaries(children, descendancy);
-
-        return children.Cast<PipelineCompatibleWithUseCaseNode>().Select(u => u.Pipeline);
+        return children.Cast<PipelineCompatibleWithUseCaseNode>().Select(u => u.Pipeline).ToHashSet<object>();
     }
 
-    private void AddChildren(PipelineCompatibleWithUseCaseNode pipelineNode, DescendancyList descendancy)
+    private HashSet<object> GetChildren(PipelineCompatibleWithUseCaseNode pipelineNode)
     {
         var components = AllPipelineComponents.Where(c => c.Pipeline_ID == pipelineNode.Pipeline.ID)
             .OrderBy(o => o.Order)
             .ToArray();
-
-        foreach (var component in components)
-            AddChildren(component, descendancy.Add(component));
-
         var children = new HashSet<object>(components);
-
-        AddToDictionaries(children, descendancy);
+        return children;
     }
 
-    private void AddChildren(PipelineComponent pipelineComponent, DescendancyList descendancy)
+    private HashSet<object> GetChildren(PipelineComponent pipelineComponent)
     {
         var components = AllPipelineComponentsArguments.Where(c => c.PipelineComponent_ID == pipelineComponent.ID)
-            .ToArray();
+           .ToArray();
 
         var children = new HashSet<object>(components);
-
-        AddToDictionaries(children, descendancy);
+        return children;
     }
 
     private void BuildServerNodes()
@@ -1054,7 +1014,6 @@ public class CatalogueChildProvider : ICoreChildProvider
             foreach (var server in serversByName)
             {
                 allServers.Add(server);
-                AddChildren(server, descendancy.Add(server));
             }
         }
 
@@ -1063,12 +1022,12 @@ public class CatalogueChildProvider : ICoreChildProvider
         //AllServers = allServers.ToArray();
 
         //record the fact that all the servers are children of the all servers node
-        AddToDictionaries(new HashSet<object>(AllServers), descendancy);
+        //AddToDictionaries(new HashSet<object>(AllServers), descendancy);
     }
 
-
-    private void AddChildren(AllDataAccessCredentialsNode allDataAccessCredentialsNode)
+    private HashSet<object> GetChildren(AllDataAccessCredentialsNode allDataAccessCredentialsNode)
     {
+
         var children = new HashSet<object>();
 
         var isKeyMissing = false;
@@ -1079,93 +1038,125 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         foreach (var creds in AllDataAccessCredentials)
             children.Add(creds);
-
-
-        AddToDictionaries(children, new DescendancyList(allDataAccessCredentialsNode));
+        return children;
     }
 
-    private void AddChildren(AllANOTablesNode anoTablesNode)
+    private HashSet<object> GetChildren(AllANOTablesNode aNOTablesNode)
     {
-        AddToDictionaries(new HashSet<object>(AllANOTables), new DescendancyList(anoTablesNode));
+        return new HashSet<object> { AllANOTables };
     }
 
-    private void AddChildren(FolderNode<Catalogue> folder, DescendancyList descendancy)
+    private HashSet<object> GetChildren(FolderNode<Catalogue> folder)
     {
-        foreach (var child in folder.ChildFolders)
-            //add subfolder children
-            AddChildren(child, descendancy.Add(child));
-
-        //add catalogues in folder
-        foreach (var c in folder.ChildObjects) AddChildren(c, descendancy.Add(c));
-
-        // Children are the folders + objects
-        AddToDictionaries(new HashSet<object>(
-                folder.ChildFolders.Cast<object>()
-                    .Union(folder.ChildObjects)), descendancy
-        );
+        var children = new List<object>();
+        var folders = folder.ChildFolders;
+        var objects = folder.ChildObjects;
+        children.AddRange(folders);
+        children.AddRange(objects);
+        return new HashSet<object>(children);
     }
+    //private void AddChildren(FolderNode<Catalogue> folder, DescendancyList descendancy)
+    //{
+    //    foreach (var child in folder.ChildFolders)
+    //        //add subfolder children
+    //        AddChildren(child, descendancy.Add(child));
 
-    private void AddChildren(FolderNode<LoadMetadata> folder, DescendancyList descendancy)
+    //    //add catalogues in folder
+    //    foreach (var c in folder.ChildObjects) AddChildren(c, descendancy.Add(c));
+
+    //    // Children are the folders + objects
+    //    AddToDictionaries(new HashSet<object>(
+    //            folder.ChildFolders.Cast<object>()
+    //                .Union(folder.ChildObjects)), descendancy
+    //    );
+    //}
+
+    private HashSet<object> GetChildren(FolderNode<LoadMetadata> folder)
     {
-        foreach (var child in folder.ChildFolders)
-            //add subfolder children
-            AddChildren(child, descendancy.Add(child));
-
-        //add loads in folder
-        foreach (var lmd in folder.ChildObjects.Where(lmd => lmd.RootLoadMetadata_ID == null).ToArray()) AddChildren(lmd, descendancy.Add(lmd));
-        // Children are the folders + objects
-        AddToDictionaries(new HashSet<object>(
-                folder.ChildFolders.Cast<object>()
-                    .Union(folder.ChildObjects)), descendancy
-        );
+        var children = new List<object>();
+        var folders = folder.ChildFolders;
+        var items= folder.ChildObjects;
+        children.AddRange(folders);
+        children.AddRange(items);
+        return new HashSet<object>(children);
     }
+    //private void AddChildren(FolderNode<LoadMetadata> folder, DescendancyList descendancy)
+    //{
+    //    foreach (var child in folder.ChildFolders)
+    //        //add subfolder children
+    //        AddChildren(child, descendancy.Add(child));
 
-    private void AddChildren(FolderNode<Curation.Data.Dataset> folder, DescendancyList descendancy)
+    //    //add loads in folder
+    //    foreach (var lmd in folder.ChildObjects.Where(lmd => lmd.RootLoadMetadata_ID == null).ToArray()) AddChildren(lmd, descendancy.Add(lmd));
+    //    // Children are the folders + objects
+    //    AddToDictionaries(new HashSet<object>(
+    //            folder.ChildFolders.Cast<object>()
+    //                .Union(folder.ChildObjects)), descendancy
+    //    );
+    //}
+
+
+    private HashSet<object> GetChildren(FolderNode<Curation.Data.Dataset> folder)
     {
-        foreach (var child in folder.ChildFolders)
-            //add subfolder children
-            AddChildren(child, descendancy.Add(child));
-
-        //add loads in folder
-        foreach (var ds in folder.ChildObjects) AddChildren(ds, descendancy.Add(ds));
-
-        // Children are the folders + objects
-        AddToDictionaries(new HashSet<object>(
-                folder.ChildFolders.Cast<object>()
-                    .Union(folder.ChildObjects)), descendancy
-        );
+        var folders = folder.ChildFolders;
+        var children = folder.ChildObjects;
+        var c = new List<object>();
+        c.AddRange(folders);
+        c.AddRange(children);
+        return new HashSet<object>(c);
     }
+    //private void AddChildren(FolderNode<Curation.Data.Dataset> folder, DescendancyList descendancy)
+    //{
+    //    foreach (var child in folder.ChildFolders)
+    //        //add subfolder children
+    //        AddChildren(child, descendancy.Add(child));
 
-    private void AddChildren(FolderNode<CohortIdentificationConfiguration> folder, DescendancyList descendancy)
+    //    //add loads in folder
+    //    foreach (var ds in folder.ChildObjects) AddChildren(ds, descendancy.Add(ds));
+
+    //    // Children are the folders + objects
+    //    AddToDictionaries(new HashSet<object>(
+    //            folder.ChildFolders.Cast<object>()
+    //                .Union(folder.ChildObjects)), descendancy
+    //    );
+    //}
+
+    private HashSet<object> GetChildren(FolderNode<CohortIdentificationConfiguration> folder)
     {
-        foreach (var child in folder.ChildFolders)
-            //add subfolder children
-            AddChildren(child, descendancy.Add(child));
-
-
-        //add cics in folder
-        foreach (var cic in folder.ChildObjects) AddChildren(cic, descendancy.Add(cic));
-
-        // Children are the folders + objects
-        AddToDictionaries(new HashSet<object>(
-                folder.ChildFolders.Cast<object>()
-                    .Union(folder.ChildObjects)), descendancy
-        );
+        var folders = folder.ChildFolders;
+        var children = folder.ChildObjects;
+        var c = new List<object>();
+        c.AddRange(folders);
+        c.AddRange(children);
+        return new HashSet<object>(c);
     }
+    //private void AddChildren(FolderNode<CohortIdentificationConfiguration> folder, DescendancyList descendancy)
+    //{
+    //    foreach (var child in folder.ChildFolders)
+    //        //add subfolder children
+    //        AddChildren(child, descendancy.Add(child));
 
-    private void AddChildren(Curation.Data.Dataset lmd, DescendancyList descendancy)
+
+    //    //add cics in folder
+    //    foreach (var cic in folder.ChildObjects) AddChildren(cic, descendancy.Add(cic));
+
+    //    // Children are the folders + objects
+    //    AddToDictionaries(new HashSet<object>(
+    //            folder.ChildFolders.Cast<object>()
+    //                .Union(folder.ChildObjects)), descendancy
+    //    );
+    //}
+
+    private HashSet<object> GetChildren(Curation.Data.Dataset dataset)
     {
-        var childObjects = new List<object>();
-        AddToDictionaries(new HashSet<object>(childObjects), descendancy);
+        return new HashSet<object>(new List<object>());
     }
-
 
     #region Load Metadata
 
-    private void AddChildren(LoadMetadata lmd, DescendancyList descendancy, bool includeSchedule = true, bool includeCatalogues = true, bool includeVersions = true)
+    private HashSet<object> GetChildren(LoadMetadata lmd, bool includeSchedule = true, bool includeCatalogues = true, bool includeVersions = true)
     {
         var childObjects = new List<object>();
-
         if (lmd.OverrideRAWServer_ID.HasValue)
         {
             var server = AllExternalServers.Single(s => s.ID == lmd.OverrideRAWServer_ID.Value);
@@ -1175,61 +1166,117 @@ public class CatalogueChildProvider : ICoreChildProvider
         if (includeSchedule)
         {
             var allSchedulesNode = new LoadMetadataScheduleNode(lmd);
-            AddChildren(allSchedulesNode, descendancy.Add(allSchedulesNode));
             childObjects.Add(allSchedulesNode);
         }
 
         if (includeCatalogues)
         {
             var allCataloguesNode = new AllCataloguesUsedByLoadMetadataNode(lmd);
-            AddChildren(allCataloguesNode, descendancy.Add(allCataloguesNode));
             childObjects.Add(allCataloguesNode);
         }
 
         var processTasksNode = new AllProcessTasksUsedByLoadMetadataNode(lmd);
-        AddChildren(processTasksNode, descendancy.Add(processTasksNode));
         childObjects.Add(processTasksNode);
 
         if (includeVersions)
         {
             var versionsNode = new LoadMetadataVersionNode(lmd);
-            AddChildren(versionsNode, descendancy.Add(versionsNode));
             childObjects.Add(versionsNode);
         }
 
         childObjects.Add(new LoadDirectoryNode(lmd));
 
-        AddToDictionaries(new HashSet<object>(childObjects), descendancy);
+        return new HashSet<object>(childObjects);
     }
 
-    private void AddChildren(LoadMetadataScheduleNode allSchedulesNode, DescendancyList descendancy)
+    //private void AddChildren(LoadMetadata lmd, DescendancyList descendancy, bool includeSchedule = true, bool includeCatalogues = true, bool includeVersions = true)
+    //{
+    //    var childObjects = new List<object>();
+
+    //    if (lmd.OverrideRAWServer_ID.HasValue)
+    //    {
+    //        var server = AllExternalServers.Single(s => s.ID == lmd.OverrideRAWServer_ID.Value);
+    //        var usage = new OverrideRawServerNode(lmd, server);
+    //        childObjects.Add(usage);
+    //    }
+    //    if (includeSchedule)
+    //    {
+    //        var allSchedulesNode = new LoadMetadataScheduleNode(lmd);
+    //        AddChildren(allSchedulesNode, descendancy.Add(allSchedulesNode));
+    //        childObjects.Add(allSchedulesNode);
+    //    }
+
+    //    if (includeCatalogues)
+    //    {
+    //        var allCataloguesNode = new AllCataloguesUsedByLoadMetadataNode(lmd);
+    //        AddChildren(allCataloguesNode, descendancy.Add(allCataloguesNode));
+    //        childObjects.Add(allCataloguesNode);
+    //    }
+
+    //    var processTasksNode = new AllProcessTasksUsedByLoadMetadataNode(lmd);
+    //    AddChildren(processTasksNode, descendancy.Add(processTasksNode));
+    //    childObjects.Add(processTasksNode);
+
+    //    if (includeVersions)
+    //    {
+    //        var versionsNode = new LoadMetadataVersionNode(lmd);
+    //        AddChildren(versionsNode, descendancy.Add(versionsNode));
+    //        childObjects.Add(versionsNode);
+    //    }
+
+    //    childObjects.Add(new LoadDirectoryNode(lmd));
+
+    //    AddToDictionaries(new HashSet<object>(childObjects), descendancy);
+    //}
+
+    private HashSet<object> GetChildren(LoadMetadataScheduleNode allScheduleNode)
     {
-        var childObjects = new HashSet<object>();
-
-        var lmd = allSchedulesNode.LoadMetadata;
-
+        var children = new HashSet<object>();
+        var lmd = allScheduleNode.LoadMetadata;
         foreach (var lp in AllLoadProgresses.Where(p => p.LoadMetadata_ID == lmd.ID))
         {
-            AddChildren(lp, descendancy.Add(lp));
-            childObjects.Add(lp);
+            children.Add(lp);
         }
-
-        if (childObjects.Any())
-            AddToDictionaries(childObjects, descendancy);
+        return children;
     }
 
-    private void AddChildren(LoadProgress loadProgress, DescendancyList descendancy)
+    //private void AddChildren(LoadMetadataScheduleNode allSchedulesNode, DescendancyList descendancy)
+    //{
+    //    var childObjects = new HashSet<object>();
+
+    //    var lmd = allSchedulesNode.LoadMetadata;
+
+    //    foreach (var lp in AllLoadProgresses.Where(p => p.LoadMetadata_ID == lmd.ID))
+    //    {
+    //        AddChildren(lp, descendancy.Add(lp));
+    //        childObjects.Add(lp);
+    //    }
+
+    //    if (childObjects.Any())
+    //        AddToDictionaries(childObjects, descendancy);
+    //}
+
+    private HashSet<object> GetChildren(LoadProgress loadProgress)
     {
+        var children = new HashSet<object>();
         var cacheProgresses = AllCacheProgresses.Where(cp => cp.LoadProgress_ID == loadProgress.ID).ToArray();
-
         foreach (var cacheProgress in cacheProgresses)
-            AddChildren(cacheProgress, descendancy.Add(cacheProgress));
-
-        if (cacheProgresses.Any())
-            AddToDictionaries(new HashSet<object>(cacheProgresses), descendancy);
+            children.Add(cacheProgress);
+        return children;
     }
 
-    private void AddChildren(CacheProgress cacheProgress, DescendancyList descendancy)
+    //private void AddChildren(LoadProgress loadProgress, DescendancyList descendancy)
+    //{
+    //    var cacheProgresses = AllCacheProgresses.Where(cp => cp.LoadProgress_ID == loadProgress.ID).ToArray();
+
+    //    foreach (var cacheProgress in cacheProgresses)
+    //        AddChildren(cacheProgress, descendancy.Add(cacheProgress));
+
+    //    if (cacheProgresses.Any())
+    //        AddToDictionaries(new HashSet<object>(cacheProgresses), descendancy);
+    //}
+
+    private HashSet<object> GetChildren(CacheProgress cacheProgress)
     {
         var children = new HashSet<object>();
 
@@ -1240,13 +1287,10 @@ public class CatalogueChildProvider : ICoreChildProvider
 
             children.Add(windowNode);
         }
-
-        if (children.Any())
-            AddToDictionaries(children, descendancy);
+        return children;
     }
 
-    private void AddChildren(AllProcessTasksUsedByLoadMetadataNode allProcessTasksUsedByLoadMetadataNode,
-        DescendancyList descendancy)
+    private HashSet<object> GetChildren(AllProcessTasksUsedByLoadMetadataNode allProcessTasksUsedByLoadMetadataNode)
     {
         var childObjects = new HashSet<object>();
 
@@ -1256,67 +1300,44 @@ public class CatalogueChildProvider : ICoreChildProvider
         childObjects.Add(new LoadStageNode(lmd, LoadStage.AdjustRaw));
         childObjects.Add(new LoadStageNode(lmd, LoadStage.AdjustStaging));
         childObjects.Add(new LoadStageNode(lmd, LoadStage.PostLoad));
-
-        foreach (LoadStageNode node in childObjects)
-            AddChildren(node, descendancy.Add(node));
-
-        AddToDictionaries(childObjects, descendancy);
+        return childObjects;
     }
 
-    private void AddChildren(LoadStageNode loadStageNode, DescendancyList descendancy)
+    private HashSet<object> GetChildren(LoadStageNode loadStageNode)
     {
         var tasks = AllProcessTasks.Where(
-               p => p.LoadMetadata_ID == loadStageNode.LoadMetadata.ID && p.LoadStage == loadStageNode.LoadStage)
-           .OrderBy(o => o.Order).ToArray();
-
-        foreach (var processTask in tasks)
-            AddChildren(processTask, descendancy.Add(processTask));
-
-        if (tasks.Any())
-            AddToDictionaries(new HashSet<object>(tasks), descendancy);
+              p => p.LoadMetadata_ID == loadStageNode.LoadMetadata.ID && p.LoadStage == loadStageNode.LoadStage)
+          .OrderBy(o => o.Order).ToArray();
+        return new HashSet<object>(tasks);
     }
 
-    private void AddChildren(ProcessTask procesTask, DescendancyList descendancy)
+    private HashSet<object> GetChildren(ProcessTask processTask)
     {
         var args = AllProcessTasksArguments.Where(
-            a => a.ProcessTask_ID == procesTask.ID).ToArray();
-
-        if (args.Any())
-            AddToDictionaries(new HashSet<object>(args), descendancy);
+           a => a.ProcessTask_ID == processTask.ID).ToArray();
+        return new HashSet<object>(args);
     }
 
-    private void AddChildren(LoadMetadataVersionNode LoadMetadataVersionNode, DescendancyList descendancy)
+    private HashSet<object> GetChildren(LoadMetadataVersionNode loadMetadataVersionNode)
     {
-        LoadMetadataVersionNode.LoadMetadataVersions = AllLoadMetadatas.Where(lmd => lmd.RootLoadMetadata_ID == LoadMetadataVersionNode.LoadMetadata.ID).ToList();
-        var childObjects = new List<object>();
-
-        foreach (var lmd in LoadMetadataVersionNode.LoadMetadataVersions)
-        {
-            AddChildren(lmd, descendancy.Add(lmd), false, false, false);
-            childObjects.Add(lmd);
-        }
-        AddToDictionaries(new HashSet<object>(childObjects), descendancy);
-
+        var childObjects = AllLoadMetadatas.Where(lmd => lmd.RootLoadMetadata_ID == loadMetadataVersionNode.LoadMetadata.ID).ToList();
+        return new HashSet<object> { childObjects };
     }
 
-    private void AddChildren(AllCataloguesUsedByLoadMetadataNode allCataloguesUsedByLoadMetadataNode,
-        DescendancyList descendancy)
+    private HashSet<object> GetChildren(AllCataloguesUsedByLoadMetadataNode allCataloguesUsedByLoadMetadataNode)
     {
         var loadMetadataId = allCataloguesUsedByLoadMetadataNode.LoadMetadata.ID;
         var linkedCatalogueIDs = AllLoadMetadataLinkage.Where(link => link.LoadMetadataID == loadMetadataId).Select(static link => link.CatalogueID);
         var usedCatalogues = linkedCatalogueIDs.Select(catalogueId => AllCatalogues.FirstOrDefault(c => c.ID == catalogueId)).Where(static foundCatalogue => foundCatalogue is not null).ToList();
         allCataloguesUsedByLoadMetadataNode.UsedCatalogues = usedCatalogues;
         var childObjects = usedCatalogues.Select(foundCatalogue => new CatalogueUsedByLoadMetadataNode(allCataloguesUsedByLoadMetadataNode.LoadMetadata, foundCatalogue)).Cast<object>().ToHashSet();
-
-        AddToDictionaries(childObjects, descendancy);
+        return new HashSet<object>(childObjects);
     }
-
     #endregion
 
-    protected void AddChildren(Catalogue c, DescendancyList descendancy)
+    private HashSet<object> GetChildren(Catalogue c)
     {
-        var childObjects = new List<object>();
-
+        var childObjects = new HashSet<object>();
         var catalogueAggregates = AllAggregateConfigurations.Where(a => a.Catalogue_ID == c.ID).ToArray();
         var cohortAggregates = catalogueAggregates.Where(a => a.IsCohortIdentificationAggregate).ToArray();
         var regularAggregates = catalogueAggregates.Except(cohortAggregates).ToArray();
@@ -1352,13 +1373,11 @@ public class CatalogueChildProvider : ICoreChildProvider
             ExtractionCategory.Supplemental);
         var notExtractable = new CatalogueItemsNode(c, cis.Where(ci => ci.ExtractionInformation == null), null);
 
-        AddChildren(core, descendancy.Add(core));
         childObjects.Add(core);
 
         foreach (var optional in new[] { deprecated, special, intern, supplemental, notExtractable })
             if (optional.CatalogueItems.Any())
             {
-                AddChildren(optional, descendancy.Add(optional));
                 childObjects.Add(optional);
             }
 
@@ -1375,9 +1394,6 @@ public class CatalogueChildProvider : ICoreChildProvider
 
             //add the documentations node
             childObjects.Add(documentationNode);
-
-            //record the children
-            AddToDictionaries(new HashSet<object>(docs.Cast<object>().Union(sql)), descendancy.Add(documentationNode));
         }
 
         if (lookups.Any())
@@ -1385,28 +1401,111 @@ public class CatalogueChildProvider : ICoreChildProvider
             var lookupsNode = new CatalogueLookupsNode(c, lookups);
             //add the documentations node
             childObjects.Add(lookupsNode);
-
-
-            //record the children
-            AddToDictionaries(new HashSet<object>(lookups.Select(l => new CatalogueLookupUsageNode(c, l))),
-                descendancy.Add(lookupsNode));
         }
 
         if (regularAggregates.Any())
         {
             var aggregatesNode = new AggregatesNode(c, regularAggregates);
             childObjects.Add(aggregatesNode);
-
-            var nodeDescendancy = descendancy.Add(aggregatesNode);
-            AddToDictionaries(new HashSet<object>(regularAggregates), nodeDescendancy);
-
-            foreach (var regularAggregate in regularAggregates)
-                AddChildren(regularAggregate, nodeDescendancy.Add(regularAggregate));
         }
 
-        //finalise
-        AddToDictionaries(new HashSet<object>(childObjects), descendancy);
+        return childObjects;
     }
+
+    //protected void AddChildren(Catalogue c, DescendancyList descendancy)
+    //{
+    //    var childObjects = new List<object>();
+
+    //    var catalogueAggregates = AllAggregateConfigurations.Where(a => a.Catalogue_ID == c.ID).ToArray();
+    //    var cohortAggregates = catalogueAggregates.Where(a => a.IsCohortIdentificationAggregate).ToArray();
+    //    var regularAggregates = catalogueAggregates.Except(cohortAggregates).ToArray();
+
+    //    //get all the CatalogueItems for this Catalogue (TryGet because Catalogue may not have any items
+    //    var cis = _catalogueToCatalogueItems.TryGetValue(c.ID, out var result)
+    //        ? result.ToArray()
+    //        : Array.Empty<CatalogueItem>();
+
+    //    //tell the CatalogueItems that we are are their parent
+    //    foreach (var ci in cis)
+    //        ci.InjectKnown(c);
+
+    //    // core includes project specific which basically means the same thing
+    //    var core = new CatalogueItemsNode(c,
+    //        cis.Where(ci => ci.ExtractionInformation?.ExtractionCategory == ExtractionCategory.Core ||
+    //                        ci.ExtractionInformation?.ExtractionCategory == ExtractionCategory.ProjectSpecific)
+    //        , ExtractionCategory.Core);
+
+    //    c.InjectKnown(cis);
+
+    //    var deprecated = new CatalogueItemsNode(c,
+    //        cis.Where(ci => ci.ExtractionInformation?.ExtractionCategory == ExtractionCategory.Deprecated),
+    //        ExtractionCategory.Deprecated);
+    //    var special = new CatalogueItemsNode(c,
+    //        cis.Where(ci => ci.ExtractionInformation?.ExtractionCategory == ExtractionCategory.SpecialApprovalRequired),
+    //        ExtractionCategory.SpecialApprovalRequired);
+    //    var intern = new CatalogueItemsNode(c,
+    //        cis.Where(ci => ci.ExtractionInformation?.ExtractionCategory == ExtractionCategory.Internal),
+    //        ExtractionCategory.Internal);
+    //    var supplemental = new CatalogueItemsNode(c,
+    //        cis.Where(ci => ci.ExtractionInformation?.ExtractionCategory == ExtractionCategory.Supplemental),
+    //        ExtractionCategory.Supplemental);
+    //    var notExtractable = new CatalogueItemsNode(c, cis.Where(ci => ci.ExtractionInformation == null), null);
+
+    //    AddChildren(core, descendancy.Add(core));
+    //    childObjects.Add(core);
+
+    //    foreach (var optional in new[] { deprecated, special, intern, supplemental, notExtractable })
+    //        if (optional.CatalogueItems.Any())
+    //        {
+    //            AddChildren(optional, descendancy.Add(optional));
+    //            childObjects.Add(optional);
+    //        }
+
+    //    //do we have any foreign key fields into this lookup table
+    //    var lookups = AllLookups.Where(l => c.CatalogueItems.Any(ci => ci.ColumnInfo_ID == l.ForeignKey_ID)).ToArray();
+
+    //    var docs = AllSupportingDocuments.Where(d => d.Catalogue_ID == c.ID).ToArray();
+    //    var sql = AllSupportingSQL.Where(d => d.Catalogue_ID == c.ID).ToArray();
+
+    //    //if there are supporting documents or supporting sql files then add  documentation node
+    //    if (docs.Any() || sql.Any())
+    //    {
+    //        var documentationNode = new DocumentationNode(c, docs, sql);
+
+    //        //add the documentations node
+    //        childObjects.Add(documentationNode);
+
+    //        //record the children
+    //        AddToDictionaries(new HashSet<object>(docs.Cast<object>().Union(sql)), descendancy.Add(documentationNode));
+    //    }
+
+    //    if (lookups.Any())
+    //    {
+    //        var lookupsNode = new CatalogueLookupsNode(c, lookups);
+    //        //add the documentations node
+    //        childObjects.Add(lookupsNode);
+
+
+    //        //record the children
+    //        AddToDictionaries(new HashSet<object>(lookups.Select(l => new CatalogueLookupUsageNode(c, l))),
+    //            descendancy.Add(lookupsNode));
+    //    }
+
+    //    if (regularAggregates.Any())
+    //    {
+    //        var aggregatesNode = new AggregatesNode(c, regularAggregates);
+    //        childObjects.Add(aggregatesNode);
+
+    //        var nodeDescendancy = descendancy.Add(aggregatesNode);
+    //        AddToDictionaries(new HashSet<object>(regularAggregates), nodeDescendancy);
+
+    //        foreach (var regularAggregate in regularAggregates)
+    //            AddChildren(regularAggregate, nodeDescendancy.Add(regularAggregate));
+    //    }
+
+    //    //finalise
+    //    AddToDictionaries(new HashSet<object>(childObjects), descendancy);
+    //}
 
     private void InjectCatalogueItems()
     {
@@ -1417,15 +1516,12 @@ public class CatalogueChildProvider : ICoreChildProvider
                 ci.InjectKnown((ExtractionInformation)null);
     }
 
-    private void AddChildren(CatalogueItemsNode node, DescendancyList descendancyList)
+    private HashSet<object> GetChildren(CatalogueItemsNode node)
     {
-        AddToDictionaries(new HashSet<object>(node.CatalogueItems), descendancyList);
-
-        foreach (var ci in node.CatalogueItems)
-            AddChildren(ci, descendancyList.Add(ci));
+        return new HashSet<object>(node.CatalogueItems);
     }
 
-    private void AddChildren(AggregateConfiguration aggregateConfiguration, DescendancyList descendancy)
+    private HashSet<object> GetChildren(AggregateConfiguration aggregateConfiguration)
     {
         var childrenObjects = new HashSet<object>();
 
@@ -1450,14 +1546,11 @@ public class CatalogueChildProvider : ICoreChildProvider
         {
             var container = AllAggregateContainersDictionary[(int)aggregateConfiguration.RootFilterContainer_ID];
 
-            AddChildren(container, descendancy.Add(container));
             childrenObjects.Add(container);
         }
-
-        AddToDictionaries(childrenObjects, descendancy);
+        return childrenObjects;
     }
-
-    private void AddChildren(AggregateFilterContainer container, DescendancyList descendancy)
+    private HashSet<object> GetChildren(AggregateFilterContainer container)
     {
         var childrenObjects = new List<object>();
 
@@ -1470,36 +1563,29 @@ public class CatalogueChildProvider : ICoreChildProvider
             childrenObjects.Add(subcontainer);
 
             //but also document its children
-            AddChildren(subcontainer, descendancy.Add(subcontainer));
         }
 
         //also add the filters for the container
         foreach (var f in filters)
         {
             // for filters add the parameters under them
-            AddChildren((AggregateFilter)f, descendancy.Add(f));
             childrenObjects.Add(f);
         }
-
-        //add our children to the dictionary
-        AddToDictionaries(new HashSet<object>(childrenObjects), descendancy);
+        return new HashSet<object>(childrenObjects);
     }
 
-    private void AddChildren(AggregateFilter f, DescendancyList descendancy)
+    private HashSet<object> GetChildren(AggregateFilter f)
     {
-        AddToDictionaries(new HashSet<object>(AllAggregateFilterParameters.Where(p => p.AggregateFilter_ID == f.ID)),
-            descendancy);
+        return new HashSet<object>(AllAggregateFilterParameters.Where(p => p.AggregateFilter_ID == f.ID));
     }
 
-    private void AddChildren(CatalogueItem ci, DescendancyList descendancy)
+    private HashSet<object> GetChildren(CatalogueItem ci)
     {
-        var childObjects = new List<object>();
-
+        var childObjects = new HashSet<object>();
         var ei = ci.ExtractionInformation;
         if (ei != null)
         {
             childObjects.Add(ei);
-            AddChildren(ei, descendancy.Add(ei));
         }
         else
         {
@@ -1509,25 +1595,24 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         if (ci.ColumnInfo_ID.HasValue && _allColumnInfos.TryGetValue(ci.ColumnInfo_ID.Value, out var col))
             childObjects.Add(new LinkedColumnInfoNode(ci, col));
-
-        AddToDictionaries(new HashSet<object>(childObjects), descendancy);
+        return childObjects;
     }
 
-    private void AddChildren(ExtractionInformation extractionInformation, DescendancyList descendancy)
+    private HashSet<object> GetChildren(ExtractionInformation extractionInformation)
     {
+
         var children = new HashSet<object>();
 
         foreach (var filter in AllCatalogueFilters.Where(f => f.ExtractionInformation_ID == extractionInformation.ID))
         {
             //add the filter as a child of the
             children.Add(filter);
-            AddChildren(filter, descendancy.Add(filter));
         }
-
-        AddToDictionaries(children, descendancy);
+        return children;
     }
 
-    private void AddChildren(ExtractionFilter filter, DescendancyList descendancy)
+
+    private HashSet<object> GetChildren(ExtractionFilter filter)
     {
         var children = new HashSet<object>();
         var parameters = AllCatalogueParameters.Where(p => p.ExtractionFilter_ID == filter.ID).ToArray();
@@ -1541,15 +1626,11 @@ public class CatalogueChildProvider : ICoreChildProvider
         foreach (var set in parameterSets)
         {
             children.Add(set);
-            AddChildren(set, descendancy.Add(set), parameters);
         }
-
-        if (children.Any())
-            AddToDictionaries(children, descendancy);
+        return children;
     }
 
-    private void AddChildren(ExtractionFilterParameterSet set, DescendancyList descendancy,
-        ExtractionFilterParameter[] filterParameters)
+    private HashSet<object> GetChildren(ExtractionFilterParameterSet set, ExtractionFilterParameter[] filterParameters)
     {
         var children = new HashSet<object>();
 
@@ -1558,12 +1639,12 @@ public class CatalogueChildProvider : ICoreChildProvider
             setValue.InjectKnown(filterParameters.SingleOrDefault(p => p.ID == setValue.ExtractionFilterParameter_ID));
             children.Add(setValue);
         }
-
-        AddToDictionaries(children, descendancy);
+        return children;
     }
 
-    private void AddChildren(CohortIdentificationConfiguration cic, DescendancyList descendancy)
+    private HashSet<object> GetChildren(CohortIdentificationConfiguration cic)
     {
+
         var children = new HashSet<object>();
 
         //it has an associated query cache
@@ -1578,20 +1659,17 @@ public class CatalogueChildProvider : ICoreChildProvider
         if (cic.RootCohortAggregateContainer_ID != null)
         {
             var container = AllCohortAggregateContainers.Single(c => c.ID == cic.RootCohortAggregateContainer_ID);
-            AddChildren(container, descendancy.Add(container).SetBetterRouteExists());
             children.Add(container);
         }
 
         //get the patient index tables
         var joinableNode = new JoinableCollectionNode(cic,
             AllJoinables.Where(j => j.CohortIdentificationConfiguration_ID == cic.ID).ToArray());
-        AddChildren(joinableNode, descendancy.Add(joinableNode).SetBetterRouteExists());
         children.Add(joinableNode);
-
-        AddToDictionaries(children, descendancy.SetBetterRouteExists());
+        return children;
     }
 
-    private void AddChildren(JoinableCollectionNode joinablesNode, DescendancyList descendancy)
+    private HashSet<object> GetChildren(JoinableCollectionNode joinablesNode)
     {
         var children = new HashSet<object>();
 
@@ -1599,13 +1677,11 @@ public class CatalogueChildProvider : ICoreChildProvider
             try
             {
                 var agg = AllAggregateConfigurations.Single(ac => ac.ID == joinable.AggregateConfiguration_ID);
-                ForceAggregateNaming(agg, descendancy);
+                //ForceAggregateNaming(agg, descendancy);
                 children.Add(agg);
 
                 //it's no longer an orphan because it's in a known cic (as a patient index table)
                 OrphanAggregateConfigurations.Remove(agg);
-
-                AddChildren(agg, descendancy.Add(agg));
             }
             catch (Exception e)
             {
@@ -1613,38 +1689,45 @@ public class CatalogueChildProvider : ICoreChildProvider
                     $"JoinableCohortAggregateConfiguration (patient index table) object (ID={joinable.ID}) references AggregateConfiguration_ID {joinable.AggregateConfiguration_ID} but that AggregateConfiguration was not found",
                     e);
             }
-
-        AddToDictionaries(children, descendancy);
+        return children;
     }
 
-    private void AddChildren(CohortAggregateContainer container, DescendancyList descendancy)
+    private HashSet<object> GetChildren(CohortAggregateContainer container)
     {
-        //get subcontainers
         var subcontainers = _cohortContainerManager.GetChildren(container).OfType<CohortAggregateContainer>().ToList();
-
-        //if there are subcontainers
-        foreach (var subcontainer in subcontainers)
-            AddChildren(subcontainer, descendancy.Add(subcontainer));
-
-        //get our configurations
         var configurations = _cohortContainerManager.GetChildren(container).OfType<AggregateConfiguration>().ToList();
-
-        //record the configurations children including full descendancy
-        foreach (var configuration in configurations)
-        {
-            ForceAggregateNaming(configuration, descendancy);
-            AddChildren(configuration, descendancy.Add(configuration));
-
-            //it's no longer an orphan because it's in a known cic
-            OrphanAggregateConfigurations.Remove(configuration);
-        }
-
-        //all our children (containers and aggregates)
-        //children are all aggregates and containers at the current hierarchy level in order
         var children = subcontainers.Union(configurations.Cast<IOrderable>()).OrderBy(o => o.Order).ToList();
-
-        AddToDictionaries(new HashSet<object>(children), descendancy);
+        return new HashSet<object>(children);
     }
+
+    //private void AddChildren(CohortAggregateContainer container, DescendancyList descendancy)
+    //{
+    //    //get subcontainers
+    //    var subcontainers = _cohortContainerManager.GetChildren(container).OfType<CohortAggregateContainer>().ToList();
+
+    //    //if there are subcontainers
+    //    foreach (var subcontainer in subcontainers)
+    //        AddChildren(subcontainer, descendancy.Add(subcontainer));
+
+    //    //get our configurations
+    //    var configurations = _cohortContainerManager.GetChildren(container).OfType<AggregateConfiguration>().ToList();
+
+    //    //record the configurations children including full descendancy
+    //    foreach (var configuration in configurations)
+    //    {
+    //        ForceAggregateNaming(configuration, descendancy);
+    //        AddChildren(configuration, descendancy.Add(configuration));
+
+    //        //it's no longer an orphan because it's in a known cic
+    //        OrphanAggregateConfigurations.Remove(configuration);
+    //    }
+
+    //    //all our children (containers and aggregates)
+    //    //children are all aggregates and containers at the current hierarchy level in order
+    //    var children = subcontainers.Union(configurations.Cast<IOrderable>()).OrderBy(o => o.Order).ToList();
+
+    //    AddToDictionaries(new HashSet<object>(children), descendancy);
+    //}
 
     private void ForceAggregateNaming(AggregateConfiguration configuration, DescendancyList descendancy)
     {
@@ -1660,9 +1743,9 @@ public class CatalogueChildProvider : ICoreChildProvider
         }
     }
 
-    private void AddChildren(TableInfoServerNode serverNode, DescendancyList descendancy)
+
+    private HashSet<object> GetChildren(TableInfoServerNode serverNode)
     {
-        //add empty hashset
         var children = new HashSet<object>();
 
         var databases =
@@ -1673,32 +1756,41 @@ public class CatalogueChildProvider : ICoreChildProvider
         foreach (var db in databases)
         {
             children.Add(db);
-            AddChildren(db, descendancy.Add(db));
         }
-
-        //now we have recorded all the children add them with descendancy
-        AddToDictionaries(children, descendancy);
+        return children;
     }
+    //private void AddChildren(TableInfoServerNode serverNode, DescendancyList descendancy)
+    //{
+    //    //add empty hashset
+    //    var children = new HashSet<object>();
 
-    private void AddChildren(TableInfoDatabaseNode dbNode, DescendancyList descendancy)
+    //    var databases =
+    //        serverNode.Tables.GroupBy(
+    //                k => k.Database ?? TableInfoDatabaseNode.NullDatabaseNode, StringComparer.CurrentCultureIgnoreCase)
+    //            .Select(g => new TableInfoDatabaseNode(g.Key, serverNode, g));
+
+    //    foreach (var db in databases)
+    //    {
+    //        children.Add(db);
+    //        AddChildren(db, descendancy.Add(db));
+    //    }
+
+    //    //now we have recorded all the children add them with descendancy
+    //    AddToDictionaries(children, descendancy);
+    //}
+
+    private HashSet<object> GetChildren(TableInfoDatabaseNode dbNode)
     {
-        //add empty hashset
         var children = new HashSet<object>();
 
         foreach (var t in dbNode.Tables)
         {
             //record the children of the table infos (mostly column infos)
             children.Add(t);
-
-            //the all servers node=>the TableInfoServerNode => the t
-            AddChildren(t, descendancy.Add(t));
         }
-
-        //now we have recorded all the children add them with descendancy
-        AddToDictionaries(children, descendancy);
+        return children;
     }
-
-    private void AddChildren(TableInfo tableInfo, DescendancyList descendancy)
+    private HashSet<object> GetChildren(TableInfo tableInfo)
     {
         //add empty hashset
         var children = new HashSet<object>();
@@ -1728,7 +1820,6 @@ public class CatalogueChildProvider : ICoreChildProvider
             children.Add(identifierDumpNode);
 
             //record that the discarded columns are children of identifier dump usage node
-            AddToDictionaries(discardedCols, descendancy.Add(identifierDumpNode));
         }
 
         //if it is a table valued function
@@ -1744,9 +1835,8 @@ public class CatalogueChildProvider : ICoreChildProvider
         if (TableInfosToColumnInfos.TryGetValue(tableInfo.ID, out var result))
             foreach (var c in result)
             {
-                children.Add(c);
                 c.InjectKnown(tableInfo);
-                AddChildren(c, descendancy.Add(c).SetBetterRouteExists());
+                children.Add(c);
             }
 
         //finally add any credentials objects
@@ -1754,11 +1844,10 @@ public class CatalogueChildProvider : ICoreChildProvider
             foreach (var node in nodes)
                 children.Add(node);
 
-        //now we have recorded all the children add them with descendancy via the TableInfo descendancy
-        AddToDictionaries(children, descendancy);
+        return children;
     }
 
-    private void AddChildren(ColumnInfo columnInfo, DescendancyList descendancy)
+    private HashSet<object> GetChildren(ColumnInfo columnInfo)
     {
         var lookups = AllLookups.Where(l => l.Description_ID == columnInfo.ID).ToArray();
         var joinInfos = AllJoinInfos.Where(j => j.PrimaryKey_ID == columnInfo.ID);
@@ -1770,40 +1859,38 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         foreach (var j in joinInfos)
             children.Add(j);
-
-        if (children.Any())
-            AddToDictionaries(children, descendancy);
+        return children;
     }
 
-    protected void AddToDictionaries(HashSet<object> children, DescendancyList list)
-    {
-        if (list.IsEmpty)
-            throw new ArgumentException("DescendancyList cannot be empty", nameof(list));
+    //protected void AddToDictionaries(HashSet<object> children, DescendancyList list)
+    //{
+    //    if (list.IsEmpty)
+    //        throw new ArgumentException("DescendancyList cannot be empty", nameof(list));
 
-        //document that the last parent has these as children
-        var parent = list.Last();
+    //    //document that the last parent has these as children
+    //    var parent = list.Last();
 
-        _childDictionary.AddOrUpdate(parent,
-            children, (p, s) => children);
+    //    _childDictionary.AddOrUpdate(parent,
+    //        children, (p, s) => children);
 
-        //now document the entire parent order to reach each child object i.e. 'Root=>Grandparent=>Parent'  is how you get to 'Child'
-        foreach (var o in children)
-            _descendancyDictionary.AddOrUpdate(o, list, (k, v) => HandleDescendancyCollision(k, v, list));
+    //    //now document the entire parent order to reach each child object i.e. 'Root=>Grandparent=>Parent'  is how you get to 'Child'
+    //    foreach (var o in children)
+    //        _descendancyDictionary.AddOrUpdate(o, list, (k, v) => HandleDescendancyCollision(k, v, list));
 
 
-        foreach (var masquerader in children.OfType<IMasqueradeAs>())
-        {
-            var key = masquerader.MasqueradingAs();
+    //    foreach (var masquerader in children.OfType<IMasqueradeAs>())
+    //    {
+    //        var key = masquerader.MasqueradingAs();
 
-            if (!AllMasqueraders.ContainsKey(key))
-                AllMasqueraders.AddOrUpdate(key, new HashSet<IMasqueradeAs>(), (o, set) => set);
+    //        if (!AllMasqueraders.ContainsKey(key))
+    //            AllMasqueraders.AddOrUpdate(key, new HashSet<IMasqueradeAs>(), (o, set) => set);
 
-            lock (AllMasqueraders)
-            {
-                AllMasqueraders[key].Add(masquerader);
-            }
-        }
-    }
+    //        lock (AllMasqueraders)
+    //        {
+    //            AllMasqueraders[key].Add(masquerader);
+    //        }
+    //    }
+    //}
 
     private static DescendancyList HandleDescendancyCollision(object key, DescendancyList oldRoute,
         DescendancyList newRoute)
@@ -1817,22 +1904,66 @@ public class CatalogueChildProvider : ICoreChildProvider
         // If in doubt use the newest one
     }
 
-    private HashSet<object> GetAllObjects()
-    {
-        //anything which has children or is a child of someone else (distinct because HashSet)
-        return new HashSet<object>(_childDictionary.SelectMany(kvp => kvp.Value).Union(_childDictionary.Keys));
-    }
+    //private HashSet<object> GetAllObjects()
+    //{
+    //    //anything which has children or is a child of someone else (distinct because HashSet)
+    //    return new HashSet<object>(_childDictionary.SelectMany(kvp => kvp.Value).Union(_childDictionary.Keys));
+    //}
 
     public virtual object[] GetChildren(object model)
     {
         lock (WriteLock)
         {
             //if we have a record of any children in the child dictionary for the parent model object
-            if (_childDictionary.TryGetValue(model, out var cached))
-                return cached.OrderBy(static o => o.ToString()).ToArray();
-
+            //if (_childDictionary.TryGetValue(model, out var cached))
+            //    return cached.OrderBy(static o => o.ToString()).ToArray();
             return model switch
             {
+                FolderNode<Catalogue> c => GetChildren(c).ToArray(),
+                AllPluginsNode a => GetChildren(a).ToArray(),
+                AllRegexRedactionConfigurationsNode a => GetChildren(a).ToArray(),
+                AllDashboardsNode a => GetChildren(a).ToArray(),
+                AllGovernanceNode a => GetChildren(a).ToArray(),
+                GovernancePeriod a => GetChildren(a).ToArray(),
+                AllPermissionWindowsNode a => GetChildren(a).ToArray(),
+                PermissionWindow a => GetChildren(a).ToArray(),
+                AllExternalServersNode a => GetChildren(a).ToArray(),
+                AllRDMPRemotesNode a => GetChildren(a).ToArray(),
+                AllObjectExportsNode a => GetChildren(a).ToArray(),
+                AllDatasetsNode a => GetChildren(a).ToArray(),
+                StandardPipelineUseCaseNode a => GetChildren(a).ToArray(),
+                PipelineCompatibleWithUseCaseNode a => GetChildren(a).ToArray(),
+                AllDataAccessCredentialsNode a => GetChildren(a).ToArray(),
+                AllANOTablesNode a => GetChildren(a).ToArray(),
+                FolderNode<LoadMetadata> a => GetChildren(a).ToArray(),
+                FolderNode<Curation.Data.Dataset> a => GetChildren(a).ToArray(),
+                FolderNode<CohortIdentificationConfiguration> a => GetChildren(a).ToArray(),
+                Curation.Data.Dataset a => GetChildren(a).ToArray(),
+                LoadMetadata a => GetChildren(a).ToArray(),
+                LoadMetadataScheduleNode a => GetChildren(a).ToArray(),
+                LoadProgress a => GetChildren(a).ToArray(),
+                CacheProgress a => GetChildren(a).ToArray(),
+                AllProcessTasksUsedByLoadMetadataNode a => GetChildren(a).ToArray(),
+                LoadStageNode a => GetChildren(a).ToArray(),
+                ProcessTask a => GetChildren(a).ToArray(),
+                LoadMetadataVersionNode a => GetChildren(a).ToArray(),
+                AllCataloguesUsedByLoadMetadataNode a => GetChildren(a).ToArray(),
+                Catalogue a => GetChildren(a).ToArray(),
+                CatalogueItemsNode a => GetChildren(a).ToArray(),
+                AggregateConfiguration a => GetChildren(a).ToArray(),
+                AggregateFilterContainer a => GetChildren(a).ToArray(),
+                AggregateFilter a => GetChildren(a).ToArray(),
+                CatalogueItem a => GetChildren(a).ToArray(),
+                ExtractionInformation a => GetChildren(a).ToArray(),
+                ExtractionFilter a => GetChildren(a).ToArray(),
+                //ExtractionFilterParameterSet a => GetChildren(a).ToArray(),
+                CohortIdentificationConfiguration a => GetChildren(a).ToArray(),
+                JoinableCollectionNode a => GetChildren(a).ToArray(),
+                CohortAggregateContainer a => GetChildren(a).ToArray(),
+                TableInfoDatabaseNode a => GetChildren(a).ToArray(),
+                TableInfoServerNode a => GetChildren(a).ToArray(),
+                TableInfo a => GetChildren(a).ToArray(),
+                ColumnInfo a => GetChildren(a).ToArray(),
                 //if they want the children of a Pipeline (which we don't track) just serve the components
                 Pipeline p => p.PipelineComponents.ToArray(),
                 //if they want the children of a PipelineComponent (which we don't track) just serve the arguments
@@ -1863,10 +1994,12 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     public DescendancyList GetDescendancyListIfAnyFor(object model)
     {
-        lock (WriteLock)
-        {
-            return _descendancyDictionary.GetValueOrDefault(model);
-        }
+        //TODO
+        return new DescendancyList();
+        //lock (WriteLock)
+        //{
+        //    return _descendancyDictionary.GetValueOrDefault(model);
+        //}
     }
 
 
@@ -1886,9 +2019,9 @@ public class CatalogueChildProvider : ICoreChildProvider
         lock (WriteLock)
         {
             var toReturn = new Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList>();
-
-            foreach (var kvp in _descendancyDictionary.Where(kvp => kvp.Key is IMapsDirectlyToDatabaseTable))
-                toReturn.Add((IMapsDirectlyToDatabaseTable)kvp.Key, kvp.Value);
+            //TODO
+            //foreach (var kvp in _descendancyDictionary.Where(kvp => kvp.Key is IMapsDirectlyToDatabaseTable))
+            //    toReturn.Add((IMapsDirectlyToDatabaseTable)kvp.Key, kvp.Value);
 
             return toReturn;
         }
@@ -1917,77 +2050,78 @@ public class CatalogueChildProvider : ICoreChildProvider
     /// <param name="objectsToAskAbout"></param>
     protected void GetPluginChildren(HashSet<object> objectsToAskAbout = null)
     {
-        lock (WriteLock)
-        {
-            var newObjectsFound = new HashSet<object>();
+        //TODO
+        //lock (WriteLock)
+        //{
+        //    var newObjectsFound = new HashSet<object>();
 
-            var sw = new Stopwatch();
+        //    var sw = new Stopwatch();
 
-            var providers = _pluginChildProviders.Except(_blockedPlugins).ToArray();
+        //    var providers = _pluginChildProviders.Except(_blockedPlugins).ToArray();
 
-            //for every object found so far
-            if (providers.Any())
-                foreach (var o in objectsToAskAbout ?? GetAllObjects())
-                    //for every plugin loaded (that is not forbidlisted)
-                    foreach (var plugin in providers)
-                        //ask about the children
-                        try
-                        {
-                            sw.Restart();
-                            //otherwise ask plugin what its children are
-                            var pluginChildren = plugin.GetChildren(o);
+        //    //for every object found so far
+        //    if (providers.Any())
+        //        foreach (var o in objectsToAskAbout ?? GetAllObjects())
+        //            //for every plugin loaded (that is not forbidlisted)
+        //            foreach (var plugin in providers)
+        //                //ask about the children
+        //                try
+        //                {
+        //                    sw.Restart();
+        //                    //otherwise ask plugin what its children are
+        //                    var pluginChildren = plugin.GetChildren(o);
 
-                            //if the plugin takes too long to respond we need to stop
-                            if (sw.ElapsedMilliseconds > 1000)
-                            {
-                                _blockedPlugins.Add(plugin);
-                                throw new Exception(
-                                    $"Plugin '{plugin}' was forbidlisted for taking too long to respond to GetChildren(o) where o was a '{o.GetType().Name}' ('{o}')");
-                            }
+        //                    //if the plugin takes too long to respond we need to stop
+        //                    if (sw.ElapsedMilliseconds > 1000)
+        //                    {
+        //                        _blockedPlugins.Add(plugin);
+        //                        throw new Exception(
+        //                            $"Plugin '{plugin}' was forbidlisted for taking too long to respond to GetChildren(o) where o was a '{o.GetType().Name}' ('{o}')");
+        //                    }
 
-                            //it has children
-                            if (pluginChildren != null && pluginChildren.Any())
-                            {
-                                //get the descendancy of the parent
-                                var parentDescendancy = GetDescendancyListIfAnyFor(o);
-                                var newDescendancy = parentDescendancy == null
-                                    ? new DescendancyList(new[] { o })
-                                    : //if the parent is a root level object start a new descendancy list from it
-                                    parentDescendancy
-                                        .Add(o); //otherwise keep going down, returns a new DescendancyList so doesn't corrupt the dictionary one
-                                newDescendancy =
-                                    parentDescendancy
-                                        .Add(o); //otherwise keep going down, returns a new DescendancyList so doesn't corrupt the dictionary one
+        //                    //it has children
+        //                    if (pluginChildren != null && pluginChildren.Any())
+        //                    {
+        //                        //get the descendancy of the parent
+        //                        var parentDescendancy = GetDescendancyListIfAnyFor(o);
+        //                        var newDescendancy = parentDescendancy == null
+        //                            ? new DescendancyList(new[] { o })
+        //                            : //if the parent is a root level object start a new descendancy list from it
+        //                            parentDescendancy
+        //                                .Add(o); //otherwise keep going down, returns a new DescendancyList so doesn't corrupt the dictionary one
+        //                        newDescendancy =
+        //                            parentDescendancy
+        //                                .Add(o); //otherwise keep going down, returns a new DescendancyList so doesn't corrupt the dictionary one
 
-                                //record that
-                                foreach (var pluginChild in pluginChildren)
-                                {
-                                    //if the parent didn't have any children before
-                                    if (!_childDictionary.ContainsKey(o))
-                                        _childDictionary.AddOrUpdate(o, new HashSet<object>(),
-                                            (o1, set) => set); //it does now
+        //                        //record that
+        //                        foreach (var pluginChild in pluginChildren)
+        //                        {
+        //                            //if the parent didn't have any children before
+        //                            if (!_childDictionary.ContainsKey(o))
+        //                                _childDictionary.AddOrUpdate(o, new HashSet<object>(),
+        //                                    (o1, set) => set); //it does now
 
 
-                                    //add us to the parent objects child collection
-                                    _childDictionary[o].Add(pluginChild);
+        //                            //add us to the parent objects child collection
+        //                            _childDictionary[o].Add(pluginChild);
 
-                                    //add to the child collection of the parent object kvp.Key
-                                    _descendancyDictionary.AddOrUpdate(pluginChild, newDescendancy,
-                                        (s, e) => newDescendancy);
+        //                            //add to the child collection of the parent object kvp.Key
+        //                            _descendancyDictionary.AddOrUpdate(pluginChild, newDescendancy,
+        //                                (s, e) => newDescendancy);
 
-                                    //we have found a new object so we must ask other plugins about it (chances are a plugin will have a whole tree of sub objects)
-                                    newObjectsFound.Add(pluginChild);
-                                }
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs(e.Message, CheckResult.Fail, e));
-                        }
+        //                            //we have found a new object so we must ask other plugins about it (chances are a plugin will have a whole tree of sub objects)
+        //                            newObjectsFound.Add(pluginChild);
+        //                        }
+        //                    }
+        //                }
+        //                catch (Exception e)
+        //                {
+        //                    _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs(e.Message, CheckResult.Fail, e));
+        //                }
 
-            if (newObjectsFound.Any())
-                GetPluginChildren(newObjectsFound);
-        }
+        //    if (newObjectsFound.Any())
+        //        GetPluginChildren(newObjectsFound);
+        //}
     }
 
     public IEnumerable<IMasqueradeAs> GetMasqueradersOf(object o)
@@ -2080,13 +2214,14 @@ public class CatalogueChildProvider : ICoreChildProvider
     public bool SelectiveRefreshParents(Type t)
     {
         var results = new List<bool>();
-        if (_descendancyDictionary.TryGetValue(t, out DescendancyList parents))
-        {
-            foreach (var parent in parents.Parents)
-            {
-                results.Add(SelectiveRefresh(parent.GetType()));
-            }
-        }
+        //TODO
+        //if (_descendancyDictionary.TryGetValue(t, out DescendancyList parents))
+        //{
+        //    foreach (var parent in parents.Parents)
+        //    {
+        //        results.Add(SelectiveRefresh(parent.GetType()));
+        //    }
+        //}
         return !results.Contains(false);
     }
 

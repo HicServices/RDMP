@@ -458,7 +458,7 @@ public partial class ExampleDatasetsCreation
         {
             container = (AggregateFilterContainer)graph.RootFilterContainer;
         }
-
+        _activator.CoreChildProvider.SelectiveRefresh(container);
         var filter = new AggregateFilter(_repos.CatalogueRepository, name, container)
         {
             WhereSQL = whereSql
@@ -525,7 +525,7 @@ public partial class ExampleDatasetsCreation
 
         var parameterCreator = new ParameterCreator(filter.GetFilterFactory(), null, null);
         parameterCreator.CreateAll(filter, null);
-
+        _activator.CoreChildProvider.SelectiveRefresh(filter);
         return filter;
     }
 
@@ -567,7 +567,7 @@ public partial class ExampleDatasetsCreation
             ac.PivotOnDimensionID = otherDimension.ID;
             ac.SaveToDatabase();
         }
-
+        _activator.CoreChildProvider.SelectiveRefresh(ac);
         return ac;
     }
 
@@ -672,7 +672,7 @@ public partial class ExampleDatasetsCreation
 
             new ExtractableDataSet(_repos.DataExportRepository, cata);
         }
-
+        _activator.CoreChildProvider.SelectiveRefresh(cata);
         return cata;
     }
 

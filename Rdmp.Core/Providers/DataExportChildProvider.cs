@@ -318,10 +318,10 @@ public class DataExportChildProvider : CatalogueChildProvider
         foreach (var project in folder.ChildObjects) AddChildren(project, descendancy.Add(project));
 
         // Children are the folders + objects
-        AddToDictionaries(new HashSet<object>(
-                folder.ChildFolders.Cast<object>()
-                    .Union(folder.ChildObjects)), descendancy
-        );
+        //AddToDictionaries(new HashSet<object>(
+        //        folder.ChildFolders.Cast<object>()
+        //            .Union(folder.ChildObjects)), descendancy
+        //);
     }
 
     private void BuildSelectedDatasets()
@@ -380,7 +380,7 @@ public class DataExportChildProvider : CatalogueChildProvider
         var children = new HashSet<object>(dataExportRepository.GetAllDataSets(package, ExtractableDataSets)
             .Select(ds => new PackageContentNode(package, ds, dataExportRepository)));
 
-        AddToDictionaries(children, descendancy);
+        //AddToDictionaries(children, descendancy);
     }
 
     private void AddChildren(Project project, DescendancyList descendancy)
@@ -402,7 +402,7 @@ public class DataExportChildProvider : CatalogueChildProvider
 
         var folder = new ExtractionDirectoryNode(project);
         children.Add(folder);
-        AddToDictionaries(children, descendancy);
+        //AddToDictionaries(children, descendancy);
     }
 
     private void AddChildren(ProjectCataloguesNode projectCataloguesNode, DescendancyList descendancy)
@@ -422,13 +422,13 @@ public class DataExportChildProvider : CatalogueChildProvider
                     if (cata != null)
                     {
                         children.Add(cata);
-                        AddChildren(cata, descendancy.Add(eds.Catalogue));
+                        //AddChildren(cata, descendancy.Add(eds.Catalogue));
                     }
                 }
             }
         }
 
-        AddToDictionaries(children, descendancy);
+        //AddToDictionaries(children, descendancy);
     }
 
     private void AddChildren(ProjectCohortsNode projectCohortsNode, DescendancyList descendancy)
@@ -446,7 +446,7 @@ public class DataExportChildProvider : CatalogueChildProvider
         children.Add(associatedCohortConfigurations);
         AddChildren(associatedCohortConfigurations, descendancy.Add(associatedCohortConfigurations));
 
-        AddToDictionaries(children, descendancy);
+        //AddToDictionaries(children, descendancy);
     }
 
     private void AddChildren(CommittedCohortIdentificationNode associatedCohortConfigurations, DescendancyList descendancy)
@@ -458,7 +458,7 @@ public class DataExportChildProvider : CatalogueChildProvider
             children.Add(cohort);
         }
 
-        AddToDictionaries(children, descendancy);
+        //AddToDictionaries(children, descendancy);
     }
 
     private void AddChildren(ProjectSavedCohortsNode savedCohortsNode, DescendancyList descendancy)
@@ -473,7 +473,7 @@ public class DataExportChildProvider : CatalogueChildProvider
             children.Add(cohortSourceUsedByProjectNode);
         }
 
-        AddToDictionaries(children, descendancy);
+        //AddToDictionaries(children, descendancy);
     }
 
     private void AddChildren(ProjectCohortIdentificationConfigurationAssociationsNode projectCiCsNode,
@@ -504,7 +504,7 @@ public class DataExportChildProvider : CatalogueChildProvider
             }
         }
 
-        AddToDictionaries(children, descendancy);
+        //AddToDictionaries(children, descendancy);
     }
 
     private void AddChildren(ExtractionConfigurationsNode extractionConfigurationsNode, DescendancyList descendancy)
@@ -528,7 +528,7 @@ public class DataExportChildProvider : CatalogueChildProvider
                 children.Add(config);
             }
 
-        AddToDictionaries(children, descendancy);
+        //AddToDictionaries(children, descendancy);
     }
 
     private void AddChildren(FrozenExtractionConfigurationsNode frozenExtractionConfigurationsNode,
@@ -545,7 +545,7 @@ public class DataExportChildProvider : CatalogueChildProvider
                 children.Add(config);
             }
 
-        AddToDictionaries(children, descendancy);
+        //AddToDictionaries(children, descendancy);
     }
 
     private void AddChildren(IExtractionConfiguration extractionConfiguration, DescendancyList descendancy)
@@ -573,7 +573,7 @@ public class DataExportChildProvider : CatalogueChildProvider
             AddChildren(ds, descendancy.Add(ds));
         }
 
-        AddToDictionaries(children, descendancy);
+        //AddToDictionaries(children, descendancy);
     }
 
     private void AddChildren(SelectedDataSets selectedDataSets, DescendancyList descendancy)
@@ -591,7 +591,7 @@ public class DataExportChildProvider : CatalogueChildProvider
             AddChildren(rootContainer, descendancy.Add(rootContainer));
         }
 
-        AddToDictionaries(children, descendancy);
+        //AddToDictionaries(children, descendancy);
     }
 
 
@@ -612,25 +612,25 @@ public class DataExportChildProvider : CatalogueChildProvider
         }
 
 
-        AddToDictionaries(children, descendancy);
+        //AddToDictionaries(children, descendancy);
     }
 
     private void AddChildren(DeployedExtractionFilter filter, DescendancyList descendancyList)
     {
-        AddToDictionaries(new HashSet<object>(_allParameters.Where(p => p.ExtractionFilter_ID == filter.ID)),
-            descendancyList);
+        //AddToDictionaries(new HashSet<object>(_allParameters.Where(p => p.ExtractionFilter_ID == filter.ID)),
+        //    descendancyList);
     }
 
     private void AddChildren(CohortSourceUsedByProjectNode cohortSourceUsedByProjectNode, DescendancyList descendancy)
     {
-        AddToDictionaries(new HashSet<object>(cohortSourceUsedByProjectNode.CohortsUsed), descendancy);
+        //AddToDictionaries(new HashSet<object>(cohortSourceUsedByProjectNode.CohortsUsed), descendancy);
     }
 
     private void AddChildren(AllCohortsNode cohortsNode, DescendancyList descendancy)
     {
         var validSources = CohortSources.ToArray();
 
-        AddToDictionaries(new HashSet<object>(validSources), descendancy);
+        //AddToDictionaries(new HashSet<object>(validSources), descendancy);
         foreach (var s in validSources)
             AddChildren(s, descendancy.Add(s));
     }
@@ -642,7 +642,7 @@ public class DataExportChildProvider : CatalogueChildProvider
         foreach (var cohort in cohorts)
             cohort.InjectKnown(externalCohortTable);
 
-        AddToDictionaries(new HashSet<object>(cohorts), descendancy);
+        //AddToDictionaries(new HashSet<object>(cohorts), descendancy);
     }
 
     private void GetCohortAvailability(ExternalCohortTable source, Dictionary<int, List<ExtractableCohort>> cohortList)
