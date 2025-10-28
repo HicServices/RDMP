@@ -5,8 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace Rdmp.Core.Providers
 {
+    /// <summary>
+    /// Wrapper class for C# Lazy with an additional Reset functionalty
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class LazyWithReset<T>
     {
         private readonly Func<T> _valueFactory;
