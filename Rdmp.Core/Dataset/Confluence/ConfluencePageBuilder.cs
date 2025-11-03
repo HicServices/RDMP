@@ -28,6 +28,7 @@ namespace Rdmp.Core.Dataset.Confluence
 
         private string BuildCatalogueOverviewHTML(Catalogue catalogue,string pageId)
         {
+            Console.WriteLine($"Building overview for catalogue '{catalogue.Name}'");
             string name = pageId != null ?$"<a href='https://{_subdomain}.atlassian.net/wiki/{pageId}'>{catalogue.Name}</a>" : catalogue.Name;
 
             return $"""
@@ -60,6 +61,7 @@ namespace Rdmp.Core.Dataset.Confluence
         }
 
         public string BuildContainerPage(Dictionary<int, string> cataloguePageLookup) {
+            Console.WriteLine($"Building container page. Found {_catalogues.Count} catalogues.");
             return $"""
            
             <h2>{_repositoryName} Catalogues</h2>
@@ -93,6 +95,7 @@ namespace Rdmp.Core.Dataset.Confluence
 
         public string BuildHTMLForCatalogue(Catalogue catalogue)
         {
+            Console.WriteLine($"Building HTML for catalogue '{catalogue.Name}'");
             //todo think about splitting and spacing of some of these values
             return $"""
             <h2>Dataset Summary</h2>
