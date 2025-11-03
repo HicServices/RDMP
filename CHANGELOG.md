@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [9.0.3] - Unreleased
 - Improve checking for default pipelines
 - Improve confluence catalogue metadata extraction
+- Improve project specific catalogue error handling
 
 ## [9.0.2] - 2025-10-21
 - Add ability to view logs as a flat list. Default settings can be updated via user settings
