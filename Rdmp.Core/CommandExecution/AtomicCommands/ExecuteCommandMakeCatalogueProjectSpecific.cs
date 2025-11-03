@@ -108,7 +108,7 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
         var eds = _activator.RepositoryLocator.DataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(_catalogue);
         var edsp = _activator.RepositoryLocator.DataExportRepository.GetAllObjects<ExtractableDataSetProject>().Where(edsp => eds.Contains(edsp.DataSet));
         var pti = edsp.Select(e => e.Project_ID).ToList();
-        var validProjects = dataExportChildProvider.Projects.Where(p => !pti.Contains(p.ID) && ProjectSpecificCatalogueManager.CanMakeCatalogueProjectSpecific(_activator.RepositoryLocator.DataExportRepository, _catalogue, p, new List<int>()));
+        var validProjects = dataExportChildProvider.Projects.Where(p => _force ||(!pti.Contains(p.ID) && ProjectSpecificCatalogueManager.CanMakeCatalogueProjectSpecific(_activator.RepositoryLocator.DataExportRepository, _catalogue, p, pti)));
         return validProjects.ToList();
     }
 
