@@ -50,6 +50,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             {
                 catalogues = catalogues.Where(c => !c.GetExtractabilityStatus(_activator.RepositoryLocator.DataExportRepository).IsExtractable).ToList();
             }
+            //todo what to do about non-extractable catalogues????
             return catalogues;
         }
 
