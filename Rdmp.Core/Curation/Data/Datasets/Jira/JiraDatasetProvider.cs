@@ -336,7 +336,7 @@ namespace Rdmp.Core.Curation.Data.Datasets.Jira
             Update(jiraDataset.GetRemoteID(), updateDataset);
 
             //update projects
-            var projectSpecificIDs = Activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", catalogue.ID).Where(eds => eds.Project_ID != null).Select(eds => eds.Project_ID);
+            var projectSpecificIDs = Activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", catalogue.ID).Where(eds => eds.Projects != null).SelectMany(eds => eds.Projects).Select(p => p.ID).Distinct();
             var projectSpecifics = Activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>().Where(p => projectSpecificIDs.Contains(p.ID));
             var projectsUsedIn = Activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>().Where(p => p.ExtractionConfigurations.Any(ec => ec.GetAllExtractableDataSets().Any(eds => eds.Catalogue_ID == catalogue.ID)));
             var linkedProjects = projectSpecifics.Concat(projectsUsedIn).ToList().Distinct();
@@ -357,7 +357,7 @@ namespace Rdmp.Core.Curation.Data.Datasets.Jira
 
 
 
-                    jsonString = $"{{\r\n  \"qlQuery\": \"objectType = Project and \\\"Project ID\\\" startswith \\\"Project {project.ProjectNumber} \\\"\"\r\n}}";
+                    jsonString = $"{{\r\n  \"qlQuery\": \"objectType = \\\"Project - This should have been a CM\\\" and \\\"Project ID\\\" startswith \\\"Project {project.ProjectNumber} \\\"\"\r\n}}";
                     httpContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
                     response = Task.Run(async () => await _client.PostAsync($"{API_URL}{_workspace}/v1/object/aql", httpContent)).Result;
                     if (response.StatusCode == HttpStatusCode.OK)
@@ -367,28 +367,33 @@ namespace Rdmp.Core.Curation.Data.Datasets.Jira
                         AQLResult projects = JsonConvert.DeserializeObject<AQLResult>(detailsString);
                         if (projects.objectTypeAttributes.Any())
                         {
-                            var datasetID = projects.objectTypeAttributes.First(ota => ota.name == DATASET).id;
-                            foreach (var jiraAssetProject in projects.values)
+                            var datasetTypeAttribute = projects.objectTypeAttributes.FirstOrDefault(ota => ota.name == DATASET);
+                            if (datasetTypeAttribute is not null)
                             {
-                                List<JiraDatasetObjects.Attribute> jiraAttributes = [];
-                                jiraAttributes.Add(new JiraDatasetObjects.Attribute()
-                                {
-                                    objectTypeAttributeId = datasetID,
-                                    objectAttributeValues = datasets.Select(ds => new JiraDatasetObjects.ObjectAttributeValue() { value = ((JiraDataset)FetchDatasetByID(int.Parse(ds.Url.Split('/').Last()))).objectKey }).ToList()
+                                var datasetID = datasetTypeAttribute.id;
 
-                                });
-                                using var stream = new MemoryStream();
-                                var o = new UpdateAttributes()
+                                foreach (var jiraAssetProject in projects.values)
                                 {
-                                    attributes = jiraAttributes
-                                };
-                                System.Text.Json.JsonSerializer.Serialize(stream, o, serializeOptions);
-                                jsonString = Encoding.UTF8.GetString(stream.ToArray());
-                                httpContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
-                                response = Task.Run(async () => await _client.PutAsync($"{API_URL}{_workspace}/v1/object/{jiraAssetProject.id}", httpContent)).Result;
-                                if (response.StatusCode != HttpStatusCode.OK)
-                                {
-                                    throw new Exception($"{response.StatusCode}: Unable to Link Dataset to project {jiraAssetProject.id}");
+                                    List<JiraDatasetObjects.Attribute> jiraAttributes = [];
+                                    jiraAttributes.Add(new JiraDatasetObjects.Attribute()
+                                    {
+                                        objectTypeAttributeId = datasetID,
+                                        objectAttributeValues = datasets.Select(ds => new JiraDatasetObjects.ObjectAttributeValue() { value = ((JiraDataset)FetchDatasetByID(int.Parse(ds.Url.Split('/').Last()))).objectKey }).ToList()
+
+                                    });
+                                    using var stream = new MemoryStream();
+                                    var o = new UpdateAttributes()
+                                    {
+                                        attributes = jiraAttributes
+                                    };
+                                    System.Text.Json.JsonSerializer.Serialize(stream, o, serializeOptions);
+                                    jsonString = Encoding.UTF8.GetString(stream.ToArray());
+                                    httpContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
+                                    response = Task.Run(async () => await _client.PutAsync($"{API_URL}{_workspace}/v1/object/{jiraAssetProject.id}", httpContent)).Result;
+                                    if (response.StatusCode != HttpStatusCode.OK)
+                                    {
+                                        throw new Exception($"{response.StatusCode}: Unable to Link Dataset to project {jiraAssetProject.id}");
+                                    }
                                 }
                             }
                         }
