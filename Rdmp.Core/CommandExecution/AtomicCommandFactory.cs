@@ -129,24 +129,34 @@ public class AtomicCommandFactory : CommandFactoryBase
             };
             if (!isApiCall)
             {
-                yield return new ExecuteCommandChangeExtractability(_activator, c)
-                {
-                    Weight = -99.0010f,
-                    SuggestedCategory = Extraction
-                };
+                yield return c.IsInternalDataset ?
+                    new ExecuteCommandMakeCatalogueNotInternal(_activator, c)
+                    {
+                        Weight = -99.0008f,
+                        SuggestedCategory = Extraction
+                    } : new ExecuteCommandMakeCatalogueInternal(_activator, c)
+                    {
+                        Weight = -99.0008f,
+                        SuggestedCategory = Extraction
+                    };
+
+
 
                 yield return new ExecuteCommandMakeCatalogueProjectSpecific(_activator, c, null, false)
                 {
                     Weight = -99.0009f,
                     SuggestedCategory = Extraction
                 };
-                yield return new ExecuteCommandMakeProjectSpecificCatalogueNormalAgain(_activator, c, null)
-                {
-                    Weight = -99.0009f,
-                    SuggestedCategory = Extraction,
-                    OverrideCommandName = "Remove Project Specific Catalogue from a Project"
-                };
 
+                if (c.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository))
+                {
+                    yield return new ExecuteCommandMakeProjectSpecificCatalogueNormalAgain(_activator, c, null)
+                    {
+                        Weight = -99.0009f,
+                        SuggestedCategory = Extraction,
+                        OverrideCommandName = "Remove Project Specific Catalogue from a Project"
+                    };
+                }
                 yield return new ExecuteCommandSetExtractionIdentifier(_activator, c, null, null)
                 {
                     Weight = -99.0008f,
