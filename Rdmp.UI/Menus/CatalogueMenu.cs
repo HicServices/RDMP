@@ -77,7 +77,7 @@ internal class CatalogueMenu : RDMPContextMenuStrip
         Add(new ExecuteCommandReOrderColumns(_activator, catalogue)
         { SuggestedCategory = CatalogueItems, Weight = -99.046f });
         Add(new ExecuteCommandRegexRedaction(_activator, catalogue)
-        { SuggestedCategory = CatalogueItems, Weight = -99.046f, OverrideCommandName="Regex Redactions" });
+        { SuggestedCategory = CatalogueItems, Weight = -99.046f, OverrideCommandName = "Regex Redactions" });
         Add(new ExecuteCommandGuessAssociatedColumns(_activator, catalogue, null)
         { SuggestedCategory = CatalogueItems, Weight = -99.045f, PromptForPartialMatching = true });
         Add(new ExecuteCommandChangeExtractionCategory(_activator,
@@ -86,9 +86,11 @@ internal class CatalogueMenu : RDMPContextMenuStrip
         Add(new ExecuteCommandImportCatalogueItemDescriptions(_activator, catalogue, null /*pick at runtime*/)
         { SuggestedCategory = CatalogueItems, Weight = -99.043f });
 
-        if (!catalogue.LoadMetadatas().Any())
+
+        var links = _activator.CoreChildProvider.AllLoadMetadataCatalogueLinkages.Where(lmdcl => lmdcl.CatalogueID == catalogue.ID).Select(lmdcl => lmdcl.LoadMetadataID);
+        if (!links.Any())
         {
-            foreach (var lmd in catalogue.LoadMetadatas())
+            foreach (var lmd in _activator.CoreChildProvider.AllLoadMetadatas.Where(lmd => links.Contains(lmd.ID)))
             {
                 if (lmd.GetRootDirectory() == null) return;
                 try

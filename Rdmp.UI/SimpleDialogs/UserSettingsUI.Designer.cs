@@ -70,12 +70,17 @@
             groupBox5 = new System.Windows.Forms.GroupBox();
             cbUseAliasInsteadOfTransformInGroupByAggregateGraphs = new System.Windows.Forms.CheckBox();
             flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            groupBox6 = new System.Windows.Forms.GroupBox();
+            cbSkipCohortBuilderValidationOnCommit = new System.Windows.Forms.CheckBox();
+            groupBox9 = new System.Windows.Forms.GroupBox();
+            label18 = new System.Windows.Forms.Label();
+            tbWebhookUsername = new System.Windows.Forms.TextBox();
+            label17 = new System.Windows.Forms.Label();
+            tbWebhookUrl = new System.Windows.Forms.TextBox();
             groupBox8 = new System.Windows.Forms.GroupBox();
             cbPromptFilterRename = new System.Windows.Forms.CheckBox();
             cbExpandAllInCohortBuilder = new System.Windows.Forms.CheckBox();
             cbStrictValidationForCohortBuilderContainers = new System.Windows.Forms.CheckBox();
-            groupBox6 = new System.Windows.Forms.GroupBox();
-            cbSkipCohortBuilderValidationOnCommit = new System.Windows.Forms.CheckBox();
             groupBox7 = new System.Windows.Forms.GroupBox();
             label16 = new System.Windows.Forms.Label();
             tbLogLocation = new System.Windows.Forms.TextBox();
@@ -95,6 +100,7 @@
             userSettingsToolTips = new System.Windows.Forms.ToolTip(components);
             tbFind = new System.Windows.Forms.TextBox();
             label14 = new System.Windows.Forms.Label();
+            cbFlatLogs = new System.Windows.Forms.CheckBox();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)olvErrorCodes).BeginInit();
             groupBox2.SuspendLayout();
@@ -102,8 +108,9 @@
             groupBox4.SuspendLayout();
             groupBox5.SuspendLayout();
             flowLayoutPanel1.SuspendLayout();
-            groupBox8.SuspendLayout();
             groupBox6.SuspendLayout();
+            groupBox9.SuspendLayout();
+            groupBox8.SuspendLayout();
             groupBox7.SuspendLayout();
             SuspendLayout();
             // 
@@ -335,7 +342,7 @@
             // 
             groupBox1.Anchor = System.Windows.Forms.AnchorStyles.None;
             groupBox1.Controls.Add(olvErrorCodes);
-            groupBox1.Location = new System.Drawing.Point(3, 478);
+            groupBox1.Location = new System.Drawing.Point(3, 649);
             groupBox1.Name = "groupBox1";
             groupBox1.Size = new System.Drawing.Size(978, 249);
             groupBox1.TabIndex = 16;
@@ -448,7 +455,7 @@
             // cbAutoRunSqlQueries
             // 
             cbAutoRunSqlQueries.AutoSize = true;
-            cbAutoRunSqlQueries.Location = new System.Drawing.Point(4, 102);
+            cbAutoRunSqlQueries.Location = new System.Drawing.Point(7, 104);
             cbAutoRunSqlQueries.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             cbAutoRunSqlQueries.Name = "cbAutoRunSqlQueries";
             cbAutoRunSqlQueries.Size = new System.Drawing.Size(138, 19);
@@ -483,7 +490,7 @@
             // cbNewFind
             // 
             cbNewFind.AutoSize = true;
-            cbNewFind.Location = new System.Drawing.Point(6, 97);
+            cbNewFind.Location = new System.Drawing.Point(7, 97);
             cbNewFind.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             cbNewFind.Name = "cbNewFind";
             cbNewFind.Size = new System.Drawing.Size(98, 19);
@@ -524,8 +531,9 @@
             flowLayoutPanel1.Controls.Add(groupBox3);
             flowLayoutPanel1.Controls.Add(groupBox4);
             flowLayoutPanel1.Controls.Add(groupBox5);
-            flowLayoutPanel1.Controls.Add(groupBox8);
             flowLayoutPanel1.Controls.Add(groupBox6);
+            flowLayoutPanel1.Controls.Add(groupBox9);
+            flowLayoutPanel1.Controls.Add(groupBox8);
             flowLayoutPanel1.Controls.Add(groupBox7);
             flowLayoutPanel1.Controls.Add(groupBox1);
             flowLayoutPanel1.Location = new System.Drawing.Point(13, 69);
@@ -533,13 +541,86 @@
             flowLayoutPanel1.Size = new System.Drawing.Size(1012, 671);
             flowLayoutPanel1.TabIndex = 24;
             // 
+            // groupBox6
+            // 
+            groupBox6.Controls.Add(cbSkipCohortBuilderValidationOnCommit);
+            groupBox6.Controls.Add(cbShowPipelineCompletedPopup);
+            groupBox6.Controls.Add(cbHideEmptyTableLoadRunAudits);
+            groupBox6.Location = new System.Drawing.Point(3, 174);
+            groupBox6.Name = "groupBox6";
+            groupBox6.Size = new System.Drawing.Size(360, 165);
+            groupBox6.TabIndex = 24;
+            groupBox6.TabStop = false;
+            groupBox6.Text = "Pipeline Components";
+            // 
+            // cbSkipCohortBuilderValidationOnCommit
+            // 
+            cbSkipCohortBuilderValidationOnCommit.AutoSize = true;
+            cbSkipCohortBuilderValidationOnCommit.Location = new System.Drawing.Point(4, 64);
+            cbSkipCohortBuilderValidationOnCommit.Name = "cbSkipCohortBuilderValidationOnCommit";
+            cbSkipCohortBuilderValidationOnCommit.Size = new System.Drawing.Size(247, 19);
+            cbSkipCohortBuilderValidationOnCommit.TabIndex = 16;
+            cbSkipCohortBuilderValidationOnCommit.Text = "Skip Cohort Builder validation on Commit";
+            cbSkipCohortBuilderValidationOnCommit.UseVisualStyleBackColor = true;
+            // 
+            // groupBox9
+            // 
+            groupBox9.Controls.Add(label18);
+            groupBox9.Controls.Add(tbWebhookUsername);
+            groupBox9.Controls.Add(label17);
+            groupBox9.Controls.Add(tbWebhookUrl);
+            groupBox9.Location = new System.Drawing.Point(369, 174);
+            groupBox9.Name = "groupBox9";
+            groupBox9.Size = new System.Drawing.Size(360, 96);
+            groupBox9.TabIndex = 25;
+            groupBox9.TabStop = false;
+            groupBox9.Text = "Extractions";
+            // 
+            // label18
+            // 
+            label18.AutoSize = true;
+            label18.Location = new System.Drawing.Point(10, 64);
+            label18.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label18.Name = "label18";
+            label18.Size = new System.Drawing.Size(138, 15);
+            label18.TabIndex = 23;
+            label18.Text = "Webhook Email Address:";
+            // 
+            // tbWebhookUsername
+            // 
+            tbWebhookUsername.Location = new System.Drawing.Point(163, 56);
+            tbWebhookUsername.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tbWebhookUsername.Name = "tbWebhookUsername";
+            tbWebhookUsername.Size = new System.Drawing.Size(190, 23);
+            tbWebhookUsername.TabIndex = 24;
+            tbWebhookUsername.TextChanged += tbWebhookUsername_TextChanged;
+            // 
+            // label17
+            // 
+            label17.AutoSize = true;
+            label17.Location = new System.Drawing.Point(8, 26);
+            label17.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label17.Name = "label17";
+            label17.Size = new System.Drawing.Size(151, 15);
+            label17.TabIndex = 21;
+            label17.Text = "Notification Webhook URL:";
+            // 
+            // tbWebhookUrl
+            // 
+            tbWebhookUrl.Location = new System.Drawing.Point(163, 20);
+            tbWebhookUrl.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tbWebhookUrl.Name = "tbWebhookUrl";
+            tbWebhookUrl.Size = new System.Drawing.Size(190, 23);
+            tbWebhookUrl.TabIndex = 22;
+            tbWebhookUrl.TextChanged += tbWebhookUrl_TextChanged;
+            // 
             // groupBox8
             // 
             groupBox8.Controls.Add(cbPromptFilterRename);
             groupBox8.Controls.Add(cbExpandAllInCohortBuilder);
             groupBox8.Controls.Add(cbStrictValidationForCohortBuilderContainers);
             groupBox8.Controls.Add(cbShowCohortWizard);
-            groupBox8.Location = new System.Drawing.Point(3, 174);
+            groupBox8.Location = new System.Drawing.Point(735, 174);
             groupBox8.Name = "groupBox8";
             groupBox8.Size = new System.Drawing.Size(240, 165);
             groupBox8.TabIndex = 26;
@@ -551,7 +632,7 @@
             cbPromptFilterRename.AutoSize = true;
             cbPromptFilterRename.Checked = true;
             cbPromptFilterRename.CheckState = System.Windows.Forms.CheckState.Checked;
-            cbPromptFilterRename.Location = new System.Drawing.Point(6, 89);
+            cbPromptFilterRename.Location = new System.Drawing.Point(7, 89);
             cbPromptFilterRename.Name = "cbPromptFilterRename";
             cbPromptFilterRename.Size = new System.Drawing.Size(222, 19);
             cbPromptFilterRename.TabIndex = 4;
@@ -578,30 +659,9 @@
             cbStrictValidationForCohortBuilderContainers.Text = "Strict Validation for Containers";
             cbStrictValidationForCohortBuilderContainers.UseVisualStyleBackColor = true;
             // 
-            // groupBox6
-            // 
-            groupBox6.Controls.Add(cbSkipCohortBuilderValidationOnCommit);
-            groupBox6.Controls.Add(cbShowPipelineCompletedPopup);
-            groupBox6.Controls.Add(cbHideEmptyTableLoadRunAudits);
-            groupBox6.Location = new System.Drawing.Point(249, 174);
-            groupBox6.Name = "groupBox6";
-            groupBox6.Size = new System.Drawing.Size(360, 165);
-            groupBox6.TabIndex = 24;
-            groupBox6.TabStop = false;
-            groupBox6.Text = "Pipeline Components";
-            // 
-            // cbSkipCohortBuilderValidationOnCommit
-            // 
-            cbSkipCohortBuilderValidationOnCommit.AutoSize = true;
-            cbSkipCohortBuilderValidationOnCommit.Location = new System.Drawing.Point(4, 64);
-            cbSkipCohortBuilderValidationOnCommit.Name = "cbSkipCohortBuilderValidationOnCommit";
-            cbSkipCohortBuilderValidationOnCommit.Size = new System.Drawing.Size(247, 19);
-            cbSkipCohortBuilderValidationOnCommit.TabIndex = 16;
-            cbSkipCohortBuilderValidationOnCommit.Text = "Skip Cohort Builder validation on Commit";
-            cbSkipCohortBuilderValidationOnCommit.UseVisualStyleBackColor = true;
-            // 
             // groupBox7
             // 
+            groupBox7.Controls.Add(cbFlatLogs);
             groupBox7.Controls.Add(label16);
             groupBox7.Controls.Add(tbLogLocation);
             groupBox7.Controls.Add(label15);
@@ -622,7 +682,7 @@
             groupBox7.Controls.Add(label4);
             groupBox7.Controls.Add(label7);
             groupBox7.Controls.Add(cbAlwaysJoinEverything);
-            groupBox7.Location = new System.Drawing.Point(615, 174);
+            groupBox7.Location = new System.Drawing.Point(3, 345);
             groupBox7.Name = "groupBox7";
             groupBox7.Size = new System.Drawing.Size(360, 298);
             groupBox7.TabIndex = 25;
@@ -793,6 +853,17 @@
             label14.TabIndex = 26;
             label14.Text = "Find Setting:";
             // 
+            // cbFlatLogs
+            // 
+            cbFlatLogs.AutoSize = true;
+            cbFlatLogs.Location = new System.Drawing.Point(7, 257);
+            cbFlatLogs.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            cbFlatLogs.Name = "cbFlatLogs";
+            cbFlatLogs.Size = new System.Drawing.Size(140, 19);
+            cbFlatLogs.TabIndex = 29;
+            cbFlatLogs.Text = "Show Logs as Flat List";
+            cbFlatLogs.UseVisualStyleBackColor = true;
+            // 
             // UserSettingsFileUI
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -821,10 +892,12 @@
             groupBox5.ResumeLayout(false);
             groupBox5.PerformLayout();
             flowLayoutPanel1.ResumeLayout(false);
-            groupBox8.ResumeLayout(false);
-            groupBox8.PerformLayout();
             groupBox6.ResumeLayout(false);
             groupBox6.PerformLayout();
+            groupBox9.ResumeLayout(false);
+            groupBox9.PerformLayout();
+            groupBox8.ResumeLayout(false);
+            groupBox8.PerformLayout();
             groupBox7.ResumeLayout(false);
             groupBox7.PerformLayout();
             ResumeLayout(false);
@@ -899,5 +972,11 @@
         private System.Windows.Forms.TextBox tbLogLocation;
         private System.Windows.Forms.CheckBox cbPromptFilterRename;
         private System.Windows.Forms.CheckBox cbNewFind;
+        private System.Windows.Forms.GroupBox groupBox9;
+        private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.TextBox tbWebhookUrl;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.TextBox tbWebhookUsername;
+        private System.Windows.Forms.CheckBox cbFlatLogs;
     }
 }

@@ -133,7 +133,7 @@ public class FilterImportWizard
             EntryLabel = "Import",
             TaskDescription =
                 "The following Catalogue filters are available for importing.  Selecting a filter will make a new cloned copy in your WHERE container.  If a filter has declared parameters you may be prompted to pick from an existing predetermined set of values."
-        }, typeof(ExtractionFilter), filtersThatCouldBeImported);
+        }, typeof(ConcreteFilter), filtersThatCouldBeImported);
 
         if (results is not null)
             foreach (var f in results)

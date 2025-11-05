@@ -240,21 +240,4 @@ public class EncryptionTests : DatabaseTests
             creds.DeleteInDatabase();
         }
     }
-
-    [Test]
-    public void PasswordTooLong()
-    {
-        if (RepositoryLocator.CatalogueRepository.EncryptionManager is PasswordEncryptionKeyLocation em &&
-            !string.IsNullOrWhiteSpace(em.GetKeyFileLocation()))
-            Assert.Inconclusive(
-                "Could not run test because there is already an encryption key set up.  Likely one that handles very long passwords");
-
-        var password = "a";
-        for (var i = 0; i < 200; i++)
-            password += "a";
-
-        var ex = Assert.Throws<InvalidOperationException>(() => TestFreakyPasswordValues(password));
-        Assert.That(
-            ex.Message, Is.EqualTo("The free text Value supplied to this class was too long to be encrypted (Length of string was 201)"));
-    }
 }

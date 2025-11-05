@@ -24,5 +24,9 @@ public enum DistinctStrategy
     /// <summary>
     /// Apply an ORDER BY release id and apply the DISTINCT in memory as batches are read
     /// </summary>
-    OrderByAndDistinctInMemory
+    OrderByAndDistinctInMemory,
+    /// <summary>
+    /// Perform a GROUP BY on columns marked as extraction primary keys
+    /// </summary>
+    DistinctByDestinationPKs
 }

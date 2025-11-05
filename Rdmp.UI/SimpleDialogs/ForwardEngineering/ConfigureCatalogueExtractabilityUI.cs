@@ -423,7 +423,7 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
         if (_projectSpecific == null) return;
 
         IAtomicCommandWithTarget cmd =
-            new ExecuteCommandMakeCatalogueProjectSpecific(Activator, _catalogue, _projectSpecific);
+            new ExecuteCommandMakeCatalogueProjectSpecific(Activator, _catalogue, _projectSpecific,false);
 
         if (cmd.IsImpossible)
             MessageBox.Show($"Could not make Catalogue ProjectSpecific:{cmd.ReasonCommandImpossible}");

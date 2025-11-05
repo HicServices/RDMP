@@ -108,6 +108,7 @@ public partial class UserSettingsFileUI : Form
         RegisterCheckbox(cbUseAliasInsteadOfTransformInGroupByAggregateGraphs,
             nameof(UserSettings.UseAliasInsteadOfTransformInGroupByAggregateGraphs));
         RegisterCheckbox(cbUseLocalFileSystem, nameof(UserSettings.UseLocalFileSystem));
+        RegisterCheckbox(cbFlatLogs, nameof(UserSettings.DefaultLogViewFlat));
         AddTooltip(label7, nameof(UserSettings.CreateDatabaseTimeout));
         AddTooltip(tbCreateDatabaseTimeout, nameof(UserSettings.CreateDatabaseTimeout));
         AddTooltip(label13, nameof(UserSettings.ArchiveTriggerTimeout));
@@ -141,6 +142,8 @@ public partial class UserSettingsFileUI : Form
         ddWordWrap.SelectedItem = (WrapMode)UserSettings.WrapMode;
 
         tbHeatmapColours.Text = UserSettings.HeatMapColours;
+        tbWebhookUrl.Text = UserSettings.ExtractionWebhookUrl;
+        tbWebhookUsername.Text = UserSettings.ExtractionWebhookUsername;
 
         _bLoaded = true;
 
@@ -268,5 +271,21 @@ public partial class UserSettingsFileUI : Form
             cb.Key.Visible = string.IsNullOrWhiteSpace(text) ||
                              cb.Key.Text.Contains(text, StringComparison.CurrentCultureIgnoreCase) ||
                              cb.Value.Name.Contains(text, StringComparison.CurrentCultureIgnoreCase);
+    }
+
+    private void label17_Click(object sender, EventArgs e)
+    {
+
+    }
+
+    private void tbWebhookUrl_TextChanged(object sender, EventArgs e)
+    {
+        UserSettings.ExtractionWebhookUrl = tbWebhookUrl.Text;
+    }
+
+    private void tbWebhookUsername_TextChanged(object sender, EventArgs e)
+    {
+        UserSettings.ExtractionWebhookUsername = tbWebhookUsername.Text;
+
     }
 }

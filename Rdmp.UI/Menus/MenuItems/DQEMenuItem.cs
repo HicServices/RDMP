@@ -20,23 +20,26 @@ namespace Rdmp.UI.Menus.MenuItems;
 internal class DQEMenuItem : RDMPToolStripMenuItem
 {
     private readonly Catalogue _catalogue;
-    private readonly IExternalDatabaseServer _dqeServer;
+    private IExternalDatabaseServer _dqeServer;
 
     public DQEMenuItem(IActivateItems activator, Catalogue catalogue) : base(activator, "Data Quality Engine...")
     {
-        _catalogue = catalogue;
-
-        _dqeServer = activator.RepositoryLocator.CatalogueRepository.GetDefaultFor(PermissableDefaults.DQE);
+        _catalogue = catalogue;       
 
         Image = activator.CoreIconProvider.GetImage(RDMPConcept.DQE).ImageToBitmap();
 
-        Text = _dqeServer == null ? "Create DQE Database..." : "Data Quality Engine...";
+        InitializeText();
+    }
+
+    private void InitializeText()
+    {
+        Text = "Data Quality Engine...";
     }
 
     protected override void OnClick(EventArgs e)
     {
         base.OnClick(e);
-
+        _dqeServer = _activator.RepositoryLocator.CatalogueRepository.GetDefaultFor(PermissableDefaults.DQE);
         if (_dqeServer == null)
         {
             var cmdCreateDb = new ExecuteCommandCreateNewExternalDatabaseServer(_activator,

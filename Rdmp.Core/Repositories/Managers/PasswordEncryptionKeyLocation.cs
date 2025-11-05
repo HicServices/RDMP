@@ -65,7 +65,7 @@ public class PasswordEncryptionKeyLocation : IEncryptionManager, IInjectKnown
     public string OpenKeyFile()
     {
         var location = GetKeyFileLocation();
-        return location is null ? null : File.ReadAllText(location);
+        return location is null ? null : File.ReadAllText($@"{location}");
     }
 
     private static void DeserializeFromLocation(string keyLocation)
@@ -74,7 +74,7 @@ public class PasswordEncryptionKeyLocation : IEncryptionManager, IInjectKnown
             return;
         try
         {
-            new RSACryptoServiceProvider().FromXmlString(File.ReadAllText(keyLocation));
+            new RSACryptoServiceProvider().FromXmlString(File.ReadAllText($@"{keyLocation}"));
         }
         catch (Exception ex)
         {
@@ -129,8 +129,8 @@ public class PasswordEncryptionKeyLocation : IEncryptionManager, IInjectKnown
     public void ChangeLocation(string newLocation)
     {
         ClearAllInjections();
-
-        if (!File.Exists(newLocation))
+        
+        if (!File.Exists($@"{newLocation}"))
             throw new FileNotFoundException($"Could not find key file at:{newLocation}");
 
         //confirms that it is accessible and deserializable

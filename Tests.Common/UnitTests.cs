@@ -627,6 +627,10 @@ public class UnitTests
         if(typeof(T) == typeof(JiraDataset))
         {
             return (T)(object)new JiraDataset(repository.CatalogueRepository,"Jira Dataset");
+	}
+	if(typeof(T) == typeof(ExtractableDataSetProject))
+        {
+            return (T)(object)new ExtractableDataSetProject(repository, WhenIHaveA<ExtractableDataSet>(repository), WhenIHaveA<Project>(repository));
         }
 
         throw new TestCaseNotWrittenYetException(typeof(T));
