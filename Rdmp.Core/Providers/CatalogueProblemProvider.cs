@@ -232,7 +232,7 @@ public class CatalogueProblemProvider : ProblemProvider
         }
 
         var expiredCatalogues = expiredCatalogueIds.Select(id => _childProvider.AllCataloguesDictionary[id])
-            .Where(c => !c.IsDeprecated /* || c.IsColdStorage || c.IsInternal*/).ToArray();
+            .Where(c => !c.IsDeprecated /* || c.IsInternal*/).ToArray();
 
         if (expiredCatalogues.Any())
             return

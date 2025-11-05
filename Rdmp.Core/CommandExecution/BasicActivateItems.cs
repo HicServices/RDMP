@@ -380,21 +380,20 @@ public abstract class BasicActivateItems : IBasicActivateItems
         {
             case Catalogue c:
                 {
-                    if (c.GetExtractabilityStatus(RepositoryLocator.DataExportRepository).IsExtractable)
+                    var extractableDataSets = RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", c.ID);
+                    if (extractableDataSets.Any())
                     {
-                        if (YesNo(
-                                "Catalogue must first be made non extractable before it can be deleted, mark non extractable?",
-                                "Make Non Extractable"))
+                        foreach (var ds in extractableDataSets)
                         {
-                            var cmd = new ExecuteCommandChangeExtractability(this, c);
-                            cmd.Execute();
+                            var selectedDatasets = RepositoryLocator.DataExportRepository.GetAllObjectsWhere<SelectedDataSets>("ExtractableDataSet_ID", ds.ID);
+                            if (selectedDatasets.Any())
+                            {
+                                this.Show("Catalogue is used in a number of projects. Remove this catalogue from all projects to allow deletion");
+                                return false;
+                            }
                         }
-                        else
-                        {
-                            return false;
-                        }
+                        foreach (var ds in extractableDataSets) ds.DeleteInDatabase();
                     }
-
                     break;
                 }
             case ExtractionFilter f:

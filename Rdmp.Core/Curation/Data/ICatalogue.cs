@@ -78,13 +78,6 @@ public interface ICatalogue : IHasDependencies, IHasQuerySyntaxHelper, INamed, I
     bool IsInternalDataset { get; set; }
 
     /// <summary>
-    /// Bit flag indicating whether the Catalogue is a seldom used dataset that should be hidden by default.  Use this if you are importing lots of researcher
-    /// datasets for cohort generation / extraction but don't want them to clog up your user interface.
-    /// </summary>
-    bool IsColdStorageDataset { get; set; }
-
-
-    /// <summary>
     /// User specified free text field.  Not used for anything by RDMP.
     /// <seealso cref="Periodicity"/>
     /// </summary>

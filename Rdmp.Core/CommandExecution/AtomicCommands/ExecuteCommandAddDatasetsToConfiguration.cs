@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Linq;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.DataExport.Data;
@@ -62,7 +63,17 @@ public class ExecuteCommandAddDatasetsToConfiguration : BasicCommandExecution
                 var _importableDataSets = childProvider.ExtractableDataSets.Except(_datasets)
 
                     //where it can be used in any Project OR this project only
-                    .Where(ds => !ds.Projects.Any()|| ds.Projects.Select(p => p.ID).Contains(targetExtractionConfiguration.Project_ID))
+                    .Where(ds =>
+                    {
+                        try
+                        {
+                            return (!ds.Projects.Any() || ds.Projects.Select(p => p.ID).Contains(targetExtractionConfiguration.Project_ID)) && !ds.Catalogue.IsInternalDataset;
+                        }
+                        catch (Exception)
+                        { 
+                            return false;
+                        }
+                    })
                     .ToArray();
 
                 SetExtractableDataSets(true, _importableDataSets);
@@ -97,8 +108,10 @@ public class ExecuteCommandAddDatasetsToConfiguration : BasicCommandExecution
             }, _toadd.Cast<ExtractableDataSet>().ToArray(), out var selected))
                 return;
 
-            foreach (var ds in selected)
+            foreach (var ds in selected.Where(ds => !ds.Catalogue.IsDeprecated || (BasicActivator.IsInteractive && ds.Catalogue.IsDeprecated && YesNo($"{ds.Catalogue.Name} is deprecated. Are you sure you wish to extract it?", "Confirm use of Deprecated Catalogue"))))
+            {
                 _targetExtractionConfiguration.AddDatasetToConfiguration(ds);
+            }
         }
         else
         {
