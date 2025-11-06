@@ -61,67 +61,43 @@
 		<ProjectReference Include="..\Rdmp.Core\Rdmp.Core.csproj" />
 	</ItemGroup>
 	<ItemGroup>
-		<Compile Update="CatalogueSummary\DataQualityReporting\AreaChartUI.cs">
-		  <SubType>UserControl</SubType>
-		</Compile>
-		<Compile Update="ChecksUI\ChecksUI.cs">
-			<SubType>UserControl</SubType>
-		</Compile>
+		<Compile Update="CatalogueSummary\DataQualityReporting\AreaChartUI.cs" />
+		<Compile Update="ChecksUI\ChecksUI.cs" />
 		<Compile Update="ChecksUI\ChecksUI.Designer.cs">
 			<DependentUpon>ChecksUI.cs</DependentUpon>
 		</Compile>
-		<Compile Update="ChecksUI\PopupChecksUI.cs">
-			<SubType>Form</SubType>
-		</Compile>
+		<Compile Update="ChecksUI\PopupChecksUI.cs" />
 		<Compile Update="ChecksUI\PopupChecksUI.Designer.cs">
 			<DependentUpon>PopupChecksUI.cs</DependentUpon>
 		</Compile>
-		<Compile Update="ChecksUI\RAGSmiley.cs">
-			<SubType>UserControl</SubType>
-		</Compile>
+		<Compile Update="ChecksUI\RAGSmiley.cs" />
 		<Compile Update="ChecksUI\RAGSmiley.Designer.cs">
 			<DependentUpon>RAGSmiley.cs</DependentUpon>
 		</Compile>
-		<Compile Update="ChecksUI\RAGSmileyToolStrip.cs">
-			<SubType>Component</SubType>
-		</Compile>
-		<Compile Update="Collections\CatalogueCollectionUI.cs">
-			<SubType>UserControl</SubType>
-		</Compile>
+		<Compile Update="ChecksUI\RAGSmileyToolStrip.cs" />
+		<Compile Update="Collections\CatalogueCollectionUI.cs" />
 		<Compile Update="Collections\CatalogueCollectionUI.Designer.cs">
 			<DependentUpon>CatalogueCollectionUI.cs</DependentUpon>
 		</Compile>
-		<Compile Update="Collections\FavouritesCollectionUI.cs">
-			<SubType>UserControl</SubType>
-		</Compile>
+		<Compile Update="Collections\FavouritesCollectionUI.cs" />
 		<Compile Update="Collections\FavouritesCollectionUI.Designer.cs">
 			<DependentUpon>FavouritesCollectionUI.cs</DependentUpon>
 		</Compile>
-		<Compile Update="Collections\LoadMetadataCollectionUI.cs">
-			<SubType>UserControl</SubType>
-		</Compile>
+		<Compile Update="Collections\LoadMetadataCollectionUI.cs" />
 		<Compile Update="Collections\LoadMetadataCollectionUI.Designer.cs">
 			<DependentUpon>LoadMetadataCollectionUI.cs</DependentUpon>
 		</Compile>
-		<Compile Update="Collections\RDMPCollectionUI.cs">
-			<SubType>UserControl</SubType>
-		</Compile>
-		<Compile Update="Collections\TableInfoCollectionUI.cs">
-			<SubType>UserControl</SubType>
-		</Compile>
+		<Compile Update="Collections\RDMPCollectionUI.cs" />
+		<Compile Update="Collections\TableInfoCollectionUI.cs" />
 		<Compile Update="Collections\TableInfoCollectionUI.Designer.cs">
 			<DependentUpon>TableInfoCollectionUI.cs</DependentUpon>
 		</Compile>
-		<Compile Update="CommandExecution\AtomicCommands\UIFactory\AtomicCommandLinkLabel.cs">
-			<SubType>UserControl</SubType>
-		</Compile>
+		<Compile Update="CommandExecution\AtomicCommands\UIFactory\AtomicCommandLinkLabel.cs" />
 		<Compile Update="CommandExecution\AtomicCommands\UIFactory\AtomicCommandLinkLabel.Designer.cs">
 			<DependentUpon>AtomicCommandLinkLabel.cs</DependentUpon>
 		</Compile>
 		<Compile Update="DataLoadUIs\LoadMetadataUIs\ProcessTasks\SqlBakFileProcessTaskUI.cs" />
-		<Compile Update="LocationsMenu\Versioning\VersioningControlUI.cs">
-		  <SubType>UserControl</SubType>
-		</Compile>
+		<Compile Update="LocationsMenu\Versioning\VersioningControlUI.cs" />
 		<Compile Update="Overview\ViewCatalogueOverviewUI.cs" />
 		<Compile Update="PieCharts\CatalogueToDatasetLinkagePieChart.cs">
 			<SubType>UserControl</SubType>
@@ -131,30 +107,20 @@
 			<AutoGen>True</AutoGen>
 			<DependentUpon>Resources.resx</DependentUpon>
 		</Compile>
-		<Compile Update="SimpleControls\DatabaseTypeUI.cs">
-			<SubType>UserControl</SubType>
-		</Compile>
+		<Compile Update="SimpleControls\DatabaseTypeUI.cs" />
 		<Compile Update="SimpleControls\DatabaseTypeUI.Designer.cs">
 			<DependentUpon>DatabaseTypeUI.cs</DependentUpon>
 		</Compile>
-		<Compile Update="SimpleControls\MultiSelectChips\DropdownOptionsChipDisplay.cs">
-		  <SubType>UserControl</SubType>
-		</Compile>
-		<Compile Update="SimpleDialogs\DataTableViewerUI.cs">
-			<SubType>UserControl</SubType>
-		</Compile>
+		<Compile Update="SimpleControls\MultiSelectChips\DropdownOptionsChipDisplay.cs" />
+		<Compile Update="SimpleDialogs\DataTableViewerUI.cs" />
 		<Compile Update="SimpleDialogs\DataTableViewerUI.Designer.cs">
 			<DependentUpon>DataTableViewerUI.cs</DependentUpon>
 		</Compile>
-		<Compile Update="SimpleDialogs\ExceptionViewerStackTraceWithHyperlinks.cs">
-			<SubType>Form</SubType>
-		</Compile>
+		<Compile Update="SimpleDialogs\ExceptionViewerStackTraceWithHyperlinks.cs" />
 		<Compile Update="SimpleDialogs\ExceptionViewerStackTraceWithHyperlinks.Designer.cs">
 			<DependentUpon>ExceptionViewerStackTraceWithHyperlinks.cs</DependentUpon>
 		</Compile>
-		<Compile Update="SimpleControls\HeatmapUI.cs">
-			<SubType>UserControl</SubType>
-		</Compile>
+		<Compile Update="SimpleControls\HeatmapUI.cs" />
 		<Compile Update="SimpleControls\HeatmapUI.Designer.cs">
 			<DependentUpon>HeatmapUI.cs</DependentUpon>
 		</Compile>
@@ -164,99 +130,63 @@
 		<Compile Update="SimpleControls\KeyboardReminder.Designer.cs">
 			<DependentUpon>KeyboardReminder.cs</DependentUpon>
 		</Compile>
-		<Compile Update="LinkLabels\PathLinkLabel.cs">
-			<SubType>Component</SubType>
-		</Compile>
-		<Compile Update="Performance\PerformanceCounterResultsUI.cs">
-			<SubType>UserControl</SubType>
-		</Compile>
+		<Compile Update="LinkLabels\PathLinkLabel.cs" />
+		<Compile Update="Performance\PerformanceCounterResultsUI.cs" />
 		<Compile Update="Performance\PerformanceCounterResultsUI.Designer.cs">
 			<DependentUpon>PerformanceCounterResultsUI.cs</DependentUpon>
 		</Compile>
-		<Compile Update="Progress\ProgressBarsUI.cs">
-			<SubType>UserControl</SubType>
-		</Compile>
+		<Compile Update="Progress\ProgressBarsUI.cs" />
 		<Compile Update="Progress\ProgressBarsUI.Designer.cs">
 			<DependentUpon>ProgressBarsUI.cs</DependentUpon>
 		</Compile>
-		<Compile Update="Progress\ProgressUI.cs">
-			<SubType>UserControl</SubType>
-		</Compile>
+		<Compile Update="Progress\ProgressUI.cs" />
 		<Compile Update="Progress\ProgressUI.Designer.cs">
 			<DependentUpon>ProgressUI.cs</DependentUpon>
 		</Compile>
-		<Compile Update="RichTextBoxEx.cs">
-			<SubType>Component</SubType>
-		</Compile>
-		<Compile Update="SimpleControls\ServerDatabaseTableSelector.cs">
-			<SubType>UserControl</SubType>
-		</Compile>
+		<Compile Update="RichTextBoxEx.cs" />
+		<Compile Update="SimpleControls\ServerDatabaseTableSelector.cs" />
 		<Compile Update="SimpleControls\ServerDatabaseTableSelector.Designer.cs">
 			<DependentUpon>ServerDatabaseTableSelector.cs</DependentUpon>
 		</Compile>
 		<Compile Update="SimpleDialogs\RedactCatalogueUI.cs" />
-		<Compile Update="SimpleDialogs\ServerDatabaseTableSelectorDialog.cs">
-			<SubType>Form</SubType>
-		</Compile>
+		<Compile Update="SimpleDialogs\ServerDatabaseTableSelectorDialog.cs" />
 		<Compile Update="SimpleDialogs\ServerDatabaseTableSelectorDialog.Designer.cs">
 			<DependentUpon>ServerDatabaseTableSelectorDialog.cs</DependentUpon>
 		</Compile>
-		<Compile Update="SimpleDialogs\UserSettingsUI.cs">
-			<SubType>Form</SubType>
-		</Compile>
+		<Compile Update="SimpleDialogs\UserSettingsUI.cs" />
 		<Compile Update="SimpleDialogs\UserSettingsUI.Designer.cs">
 			<DependentUpon>UserSettingsUI.cs</DependentUpon>
 		</Compile>
-		<Compile Update="SimpleControls\HelpIcon.cs">
-			<SubType>UserControl</SubType>
-		</Compile>
+		<Compile Update="SimpleControls\HelpIcon.cs" />
 		<Compile Update="SimpleControls\HelpIcon.Designer.cs">
 			<DependentUpon>HelpIcon.cs</DependentUpon>
 		</Compile>
-		<Compile Update="SimpleDialogs\ExceptionViewer.cs">
-			<SubType>Form</SubType>
-		</Compile>
-		<Compile Update="SimpleDialogs\SqlDialogs\SetSQLDialog.cs">
-			<SubType>Form</SubType>
-		</Compile>
+		<Compile Update="SimpleDialogs\ExceptionViewer.cs" />
+		<Compile Update="SimpleDialogs\SqlDialogs\SetSQLDialog.cs" />
 		<Compile Update="SimpleDialogs\SqlDialogs\SetSQLDialog.Designer.cs">
 			<DependentUpon>SetSQLDialog.cs</DependentUpon>
 		</Compile>
-		<Compile Update="SimpleDialogs\SqlDialogs\SQLBeforeAndAfterViewer.cs">
-			<SubType>Form</SubType>
-		</Compile>
+		<Compile Update="SimpleDialogs\SqlDialogs\SQLBeforeAndAfterViewer.cs" />
 		<Compile Update="SimpleDialogs\SqlDialogs\SQLBeforeAndAfterViewer.Designer.cs">
 			<DependentUpon>SQLBeforeAndAfterViewer.cs</DependentUpon>
 		</Compile>
-		<Compile Update="SimpleDialogs\SqlDialogs\SQLPreviewWindow.cs">
-			<SubType>Form</SubType>
-		</Compile>
+		<Compile Update="SimpleDialogs\SqlDialogs\SQLPreviewWindow.cs" />
 		<Compile Update="SimpleDialogs\SqlDialogs\SQLPreviewWindow.Designer.cs">
 			<DependentUpon>SQLPreviewWindow.cs</DependentUpon>
 		</Compile>
-		<Compile Update="SimpleDialogs\ViewSourceCodeDialog.cs">
-			<SubType>Form</SubType>
-		</Compile>
+		<Compile Update="SimpleDialogs\ViewSourceCodeDialog.cs" />
 		<Compile Update="SimpleDialogs\ViewSourceCodeDialog.Designer.cs">
 			<SubType>Form</SubType>
 			<DependentUpon>ViewSourceCodeDialog.cs</DependentUpon>
 		</Compile>
-		<Compile Update="SimpleDialogs\WideMessageBox.cs">
-			<SubType>Form</SubType>
-		</Compile>
+		<Compile Update="SimpleDialogs\WideMessageBox.cs" />
 		<Compile Update="SimpleDialogs\WideMessageBox.Designer.cs">
 			<DependentUpon>WideMessageBox.cs</DependentUpon>
 		</Compile>
 		<Compile Update="SubComponents\RegexRedactionConfigurationUI.cs" />
-		<Compile Update="SuggestComboBox.cs">
-			<SubType>Component</SubType>
-		</Compile>
-		<Compile Update="TransparentHelpSystem\HelpBox.cs">
-			<SubType>UserControl</SubType>
-		</Compile>
-		<Compile Update="SimpleDialogs\TypeTextOrCancelDialog.cs">
-			<SubType>Form</SubType>
-		</Compile>
+		<Compile Update="SuggestComboBox.cs" />
+		<Compile Update="TransparentHelpSystem\HelpBox.cs" />
+		<Compile Update="SimpleDialogs\TypeTextOrCancelDialog.cs" />
 		<Compile Update="SimpleDialogs\TypeTextOrCancelDialog.Designer.cs">
 			<DependentUpon>TypeTextOrCancelDialog.cs</DependentUpon>
 		</Compile>
@@ -265,76 +195,40 @@
 		</Compile>
 		<Compile Update="ExtractionUIs\JoinsAndLookups\LookupUI.cs" />
 		<Compile Update="ExtractionUIs\JoinsAndLookups\JoinConfigurationUI.cs" />
-		<Compile Update="ExtractionUIs\JoinsAndLookups\KeyDropLocationUI.cs">
-			<SubType>UserControl</SubType>
-		</Compile>
-		<Compile Update="SimpleDialogs\PerformanceCounterUI.cs">
-			<SubType>UserControl</SubType>
-		</Compile>
+		<Compile Update="ExtractionUIs\JoinsAndLookups\KeyDropLocationUI.cs" />
+		<Compile Update="SimpleDialogs\PerformanceCounterUI.cs" />
 		<Compile Update="ExtractionUIs\JoinsAndLookups\LookupBrowserUI.cs" />
 		<Compile Update="ExtractionUIs\JoinsAndLookups\LookupConfigurationUI.cs" />
 		<Compile Update="DataLoadUIs\ANOUIs\ANOTableManagement\ColumnInfoToANOTableConverterUI.cs" />
-		<Compile Update="CohortUI\CohortSourceManagement\CreateNewCohortDatabaseWizardUI.cs">
-			<SubType>UserControl</SubType>
-		</Compile>
-		<Compile Update="TestsAndSetup\StartupUI.cs">
-			<SubType>Form</SubType>
-		</Compile>
-		<Compile Update="SimpleDialogs\NavigateTo\RunUI.cs">
-			<SubType>Form</SubType>
-		</Compile>
+		<Compile Update="CohortUI\CohortSourceManagement\CreateNewCohortDatabaseWizardUI.cs" />
+		<Compile Update="TestsAndSetup\StartupUI.cs" />
+		<Compile Update="SimpleDialogs\NavigateTo\RunUI.cs" />
 		<Compile Update="CatalogueSummary\LoadEvents\LoadEventsTreeView.cs" />
-		<Compile Update="CatalogueSummary\LoadEvents\ResolveFatalErrors.cs">
-			<SubType>Form</SubType>
-		</Compile>
+		<Compile Update="CatalogueSummary\LoadEvents\ResolveFatalErrors.cs" />
 		<Compile Update="CohortUI\CohortSourceManagement\ExternalCohortTableUI.cs" />
 		<Compile Update="Logging\LoggingTabUI.cs" />
-		<Compile Update="PipelineUIs\Pipelines\PipelineSelectionUI.cs">
-			<SubType>UserControl</SubType>
-		</Compile>
-		<Compile Update="DataLoadUIs\LoadMetadataUIs\ChooseLoadFolderUI.cs">
-			<SubType>UserControl</SubType>
-		</Compile>
+		<Compile Update="PipelineUIs\Pipelines\PipelineSelectionUI.cs" />
+		<Compile Update="DataLoadUIs\LoadMetadataUIs\ChooseLoadFolderUI.cs" />
 		<Compile Update="UserControl1.Designer.cs">
 			<DependentUpon>UserControl1.cs</DependentUpon>
 		</Compile>
 		<Compile Update="SubComponents\CohortIdentificationConfigurationUI.cs" />
 		<Compile Update="Validation\ValidationSetupUI.cs" />
-		<Compile Update="SimpleDialogs\WaitUI.cs">
-			<SubType>Form</SubType>
-		</Compile>
-		<Compile Update="Wizard\CreateNewDataExtractionProjectUI.cs">
-			<SubType>Form</SubType>
-		</Compile>
-		<Compile Update="LocationsMenu\ChoosePlatformDatabasesUI.cs">
-			<SubType>Form</SubType>
-		</Compile>
-		<Compile Update="LocationsMenu\ChoosePlatformDatabasesUI.cs">
-			<SubType>Form</SubType>
-		</Compile>
+		<Compile Update="SimpleDialogs\WaitUI.cs" />
+		<Compile Update="Wizard\CreateNewDataExtractionProjectUI.cs" />
+		<Compile Update="LocationsMenu\ChoosePlatformDatabasesUI.cs" />
+		<Compile Update="LocationsMenu\ChoosePlatformDatabasesUI.cs" />
 		<Compile Update="ExtractionUIs\FilterUIs\ExtractionFilterUI.cs" />
-		<Compile Update="SimpleDialogs\ForwardEngineering\ConfigureCatalogueExtractabilityUI.cs">
-			<SubType>Form</SubType>
-		</Compile>
-		<Compile Update="SimpleDialogs\Reports\GenerateTestDataUI.cs">
-			<SubType>UserControl</SubType>
-		</Compile>
-		<Compile Update="SimpleDialogs\Reports\DataGeneratorUI.cs">
-			<SubType>Form</SubType>
-		</Compile>
-		<Compile Update="SimpleDialogs\Reports\MetadataReportUI.cs">
-			<SubType>Form</SubType>
-		</Compile>
+		<Compile Update="SimpleDialogs\ForwardEngineering\ConfigureCatalogueExtractabilityUI.cs" />
+		<Compile Update="SimpleDialogs\Reports\GenerateTestDataUI.cs" />
+		<Compile Update="SimpleDialogs\Reports\DataGeneratorUI.cs" />
+		<Compile Update="SimpleDialogs\Reports\MetadataReportUI.cs" />
 		<Compile Update="MainFormUITabs\SubComponents\TableInfoUI.cs" />
-		<Compile Update="Versioning/PatchingUI.cs">
-			<SubType>Form</SubType>
-		</Compile>
+		<Compile Update="Versioning/PatchingUI.cs" />
 		<Compile Update="Versioning/PatchingUI.Designer.cs">
 			<DependentUpon>PatchingUI.cs</DependentUpon>
 		</Compile>
-		<Compile Update="SimpleDialogs\YesNoYesToAllDialog.cs">
-			<SubType>Form</SubType>
-		</Compile>
+		<Compile Update="SimpleDialogs\YesNoYesToAllDialog.cs" />
 	</ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Update="ChecksUI\ChecksUI.resx">

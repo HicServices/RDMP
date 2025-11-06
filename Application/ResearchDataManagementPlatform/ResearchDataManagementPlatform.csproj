@@ -29,8 +29,8 @@
     <EmbeddedResource Remove="Updates\UpdaterUI.resx" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="ConsoleControl"/>
-    <PackageReference Include="Autoupdater.NET.Official"/>
+    <PackageReference Include="ConsoleControl" />
+    <PackageReference Include="Autoupdater.NET.Official" />
     <PackageReference Include="DockPanelSuite.ThemeVS2015" />
     <PackageReference Include="System.Resources.Extensions" />
   </ItemGroup>
@@ -44,15 +44,11 @@
     <Compile Update="WindowManagement\HomePane\HomeUI.Designer.cs">
       <DependentUpon>HomeUI.cs</DependentUpon>
     </Compile>
-    <Compile Update="WindowManagement\Licenses\LicenseUI.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Update="WindowManagement\Licenses\LicenseUI.cs" />
     <Compile Update="WindowManagement\Licenses\LicenseUI.Designer.cs">
       <DependentUpon>LicenseUI.cs</DependentUpon>
     </Compile>
-    <Compile Update="WindowManagement\TopBar\RDMPTaskBarUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="WindowManagement\TopBar\RDMPTaskBarUI.cs" />
     <Compile Update="WindowManagement\TopBar\RDMPTaskBarUI.Designer.cs">
       <DependentUpon>RDMPTaskBarUI.cs</DependentUpon>
     </Compile>

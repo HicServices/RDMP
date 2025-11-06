@@ -207,7 +207,6 @@ public class RDMPContextMenuStrip : ContextMenuStrip
         if (databaseEntity != null)
             Add(new ExecuteCommandRefreshObject(_activator, databaseEntity), Keys.F5);
 
-        Add(new ExecuteCommandShowTooltip(_activator, _args.Model));
         Add(new ExecuteCommandShowKeywordHelp(_activator, _args));
 
         var gotoMenu = Items.OfType<ToolStripMenuItem>().FirstOrDefault(i => i.Text.Equals(AtomicCommandFactory.GoTo));

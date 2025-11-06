@@ -32,7 +32,7 @@ public class MemoryDataExportRepository : MemoryCatalogueRepository, IDataExport
 
         return eds == null
             ? new CatalogueExtractabilityStatus(false, false)
-            : new CatalogueExtractabilityStatus(true, eds.Project_ID != null);
+            : new CatalogueExtractabilityStatus(true, !eds.Projects.Any());
     }
 
     public ISelectedDataSets[] GetSelectedDatasetsWithNoExtractionIdentifiers()

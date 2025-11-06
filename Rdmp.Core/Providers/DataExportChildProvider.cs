@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FAnsi.Discovery;
+using Org.BouncyCastle.Crypto.Signers;
 using Rdmp.Core.Caching.Pipeline;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.Curation.Data;
@@ -46,7 +47,7 @@ public class DataExportChildProvider : CatalogueChildProvider
 
     public ExternalCohortTable[] CohortSources { get; private set; }
     public ExtractableDataSet[] ExtractableDataSets { get; private set; }
-
+    public ExtractableDataSetProject[] ExtractableDataSetProjects { get; private set; }
     public SelectedDataSets[] SelectedDataSets { get; private set; }
     public Dictionary<int, ExtractionProgress> _extractionProgressesBySelectedDataSetID { get; private set; }
 
@@ -117,7 +118,7 @@ public class DataExportChildProvider : CatalogueChildProvider
 
         CohortSources = GetAllObjects<ExternalCohortTable>(dataExportRepository);
         ExtractableDataSets = GetAllObjects<ExtractableDataSet>(dataExportRepository);
-
+        ExtractableDataSetProjects = GetAllObjects<ExtractableDataSetProject>(dataExportRepository);
         //This means that the ToString method in ExtractableDataSet doesn't need to go lookup catalogue info
         var catalogueIdDict = AllCatalogues.ToDictionaryEx(c => c.ID, c2 => c2);
         foreach (var ds in ExtractableDataSets)
@@ -179,16 +180,19 @@ public class DataExportChildProvider : CatalogueChildProvider
         AddChildren(ProjectRootFolder, new DescendancyList(ProjectRootFolder));
 
         ReportProgress("Projects");
-
-        //work out all the Catalogues that are extractable (Catalogues are extractable if there is an ExtractableDataSet with the Catalogue_ID that matches them)
-        var cataToEds = new Dictionary<int, ExtractableDataSet>(ExtractableDataSets.ToDictionary(k => k.Catalogue_ID));
-
         //inject extractability into Catalogues
         foreach (var catalogue in AllCatalogues)
-            catalogue.InjectKnown(cataToEds.TryGetValue(catalogue.ID, out var result)
-                ? result.GetCatalogueExtractabilityStatus()
-                : new CatalogueExtractabilityStatus(false, false));
-
+        {
+            var eds = ExtractableDataSets.Where(e => e.Catalogue_ID == catalogue.ID).ToList();
+            if (!eds.Any())
+            {
+                catalogue.InjectKnown(new CatalogueExtractabilityStatus(false, false));
+            }
+            else
+            {
+                catalogue.InjectKnown(new CatalogueExtractabilityStatus(true, eds.First().Projects.Any()));
+            }
+        }
         ReportProgress("Catalogue extractability injection");
 
         try
@@ -310,16 +314,22 @@ public class DataExportChildProvider : CatalogueChildProvider
     {
         var children = new HashSet<object>();
 
-        foreach (var projectSpecificEds in ExtractableDataSets.Where(eds =>
-                     eds.Project_ID == projectCataloguesNode.Project.ID))
+        if (ExtractableDataSetProjects.Any())
         {
-            var cata = (Catalogue)projectSpecificEds.Catalogue;
-
-            // cata will be null if it has been deleted from the database
-            if (cata != null)
+            foreach (var projectSpecificEdsp in ExtractableDataSetProjects.Where(edsp => edsp.Project_ID == projectCataloguesNode.Project.ID))
             {
-                children.Add(cata);
-                AddChildren(cata, descendancy.Add(projectSpecificEds.Catalogue));
+                var eds = ExtractableDataSets.FirstOrDefault(eds => eds.ID == projectSpecificEdsp.ExtractableDataSet_ID);
+                if (eds != null)
+                {
+                    var cata = (Catalogue)eds.Catalogue;
+
+                    // cata will be null if it has been deleted from the database
+                    if (cata != null)
+                    {
+                        children.Add(cata);
+                        AddChildren(cata, descendancy.Add(eds.Catalogue));
+                    }
+                }
             }
         }
 
@@ -348,9 +358,9 @@ public class DataExportChildProvider : CatalogueChildProvider
     {
         var children = new HashSet<object>();
         var associatedCohorts = associatedCohortConfigurations.Project.GetAssociatedCohortIdentificationConfigurations();
-        foreach(var x in associatedCohorts)
+        foreach (var cohort in associatedCohorts)
         {
-            children.Add(x);
+            children.Add(cohort);
         }
 
         AddToDictionaries(children, descendancy);

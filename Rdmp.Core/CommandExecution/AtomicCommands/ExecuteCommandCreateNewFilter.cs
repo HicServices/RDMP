@@ -10,8 +10,10 @@ using Rdmp.Core.CommandLine.Interactive.Picking;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.FilterImporting;
 using Rdmp.Core.Curation.FilterImporting.Construction;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
@@ -32,7 +34,7 @@ public class ExecuteCommandCreateNewFilter : BasicCommandExecution, IAtomicComma
     public string Name { get; }
     public string WhereSQL { get; }
 
-    private IFilter[] _offerFilters;
+    private IFilter[] _offerFilters = [];
     private bool offerCatalogueFilters;
 
     public bool OfferCatalogueFilters
@@ -40,20 +42,9 @@ public class ExecuteCommandCreateNewFilter : BasicCommandExecution, IAtomicComma
         get => offerCatalogueFilters;
         set
         {
-            if (value)
-            {
-                var c = GetCatalogue();
-                _offerFilters = c?.GetAllFilters();
-
-                if (_offerFilters == null || !_offerFilters.Any())
-                    SetImpossible($"There are no Filters declared in Catalogue '{c?.ToString() ?? "NULL"}'");
-            }
-
-
             offerCatalogueFilters = value;
         }
     }
-
 
     private ExecuteCommandCreateNewFilter(IBasicActivateItems activator) : base(activator)
     {
@@ -135,7 +126,6 @@ where    Optional SQL to set for the filter.  If <basedOn> is not null this will
         _factory = host.GetFilterFactory();
         _container = host.RootFilterContainer;
         _host = host;
-
         if (_container == null && _host is AggregateConfiguration ac)
         {
             if (ac.Catalogue.IsApiCall())
@@ -203,6 +193,7 @@ where    Optional SQL to set for the filter.  If <basedOn> is not null this will
             container = _host.RootFilterContainer;
         }
 
+
         // if importing an existing filter instead of creating blank
         if (BasedOn != null)
         {
@@ -211,6 +202,12 @@ where    Optional SQL to set for the filter.  If <basedOn> is not null this will
         }
         else if (OfferCatalogueFilters)
         {
+
+            var c = GetCatalogue();
+            _offerFilters = c?.GetAllFilters();
+            if (_offerFilters == null || !_offerFilters.Any())
+                SetImpossible($"There are no Filters declared in Catalogue '{c?.ToString() ?? "NULL"}'");
+
             // we want user to make decision about what to import
             ImportExistingFilter(container);
             return;
@@ -240,7 +237,8 @@ where    Optional SQL to set for the filter.  If <basedOn> is not null this will
     {
         var wizard = new FilterImportWizard(BasicActivator);
 
-        var import = wizard.ImportManyFromSelection(container, _offerFilters).ToArray();
+        var filters = _offerFilters;
+        var import = wizard.ImportManyFromSelection(container, filters).ToArray();
 
         foreach (var f in import) container.AddChild(f);
 

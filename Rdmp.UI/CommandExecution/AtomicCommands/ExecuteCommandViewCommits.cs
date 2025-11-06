@@ -24,12 +24,6 @@ internal class ExecuteCommandViewCommits : BasicUICommandExecution
     {
         _o = o;
         OverrideCommandName = "View History";
-
-        if (
-            !activator.RepositoryLocator.CatalogueRepository
-                .GetAllObjectsWhere<Memento>(nameof(Memento.ReferencedObjectID), o.ID)
-                .Any(m => m.IsReferenceTo(o)))
-            SetImpossible("No commits have been made yet");
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) => iconProvider.GetImage(RDMPConcept.Commit);
