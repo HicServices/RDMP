@@ -51,14 +51,14 @@ namespace Rdmp.Core.Tests.Curation
             _activator.Publish(_extractionInfo1);
             if (projectCount > 0)
             {
-                _project1 = new Project(DataExportRepository, "Project1");
+                _project1 = new Project(DataExportRepository, $"Project{projectCount}");
                 _project1.SaveToDatabase();
                 _activator.Publish(_project1);
                 
             }
             if (projectCount > 1)
             {
-                _project2 = new Project(DataExportRepository, "Project1");
+                _project2 = new Project(DataExportRepository, $"Project{projectCount}");
                 _project2.SaveToDatabase();
                 _activator.Publish(_project2);
 
@@ -204,7 +204,7 @@ namespace Rdmp.Core.Tests.Curation
         public void MakeSingleCatalogueProjectSpecificWhenAlreadyInOtherProjectAllowExtractionTest()
         {
             SetupTests(2, 0, 1);
-            MakeProjectSpecific(_catalogue, _project1, new List<int>() { _project2.ID });
+            MakeProjectSpecific(_catalogue, _project1, new List<int>() { _project1.ID });
             MakeProjectSpecific(_catalogue, _project2, new List<int>() { _project1.ID });
             Assert.That(_activator.RepositoryLocator.CatalogueRepository.GetObjectByID<Catalogue>(_catalogue.ID).IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository), Is.True);
             Assert.That(_activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", _catalogue.ID).First().Projects.Count, Is.EqualTo(2));
