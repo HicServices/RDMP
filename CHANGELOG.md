@@ -4,14 +4,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [9.0.2] - Unreleased
+## [9.0.3] - 2025-11-03
+- Improve checking for default pipelines
+- Improve confluence catalogue metadata extraction
+- Improve project specific catalogue error handling
+
+## [9.0.2] - 2025-10-21
 - Add ability to view logs as a flat list. Default settings can be updated via user settings
-- allow the use of Catalogue CIC filters in coresponding Extractions
 - Add Data Load component to allow SQL to be executed on an external database server
 - Improve Extraction Log Viewer Filter
 - Add Dataset Variable document to extractions
 - Update extractability to only allow non-internal projects to be extracted
 - Remove functionality to mark individual catalogues as extractable/not extractable. Favor use of marking as internal.
+- Move RSA key checks to fix bug where bad RSA keys were causing issues at launch
+- Add cli command to export catalogue metadata to a Atlassian Confluence space
+- Allow the use of network share RSA keys
 
 
 ## [9.0.1] - 2025-07-31

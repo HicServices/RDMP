@@ -23,20 +23,22 @@ public class SimpleStringValueEncryption : IEncryptStrings
 
     private const string Key =
        @"<?xml version=""1.0"" encoding=""utf-16""?>
-<RSAParameters xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"">
-   <Exponent>AQAB</Exponent>
-    <Modulus>sMDeszVErUmbqOxQavw5OsWpL3frccEGtTJYM8G54Fw7NK6xFVUrq79nWB6px4/B</Modulus>
-    <P>6kcXnTVJrVuD9j6qUm+F71jIL2H92lgN</P>
-    <Q>wSRbrdj1qGBPBnYMO5dx11gvfNCKKdWF</Q>
-    <DP>aKdxaQzQ6Nwkyu+bbk/baNwkMOZ5W/xR</DP>
-    <DQ>B/B8rErM3l0HIpbbrd9t2JJRcWoJI+sZ</DQ>
-    <InverseQ>NFv4Z26nbMpOkOcAnO3rktoMffza+3Ul</InverseQ>
-    <D>Y8zC8dUF7gI9zeeAkKfReInauV6wpg4iVh7jaTDN5DAmKFURTAyv6Il6LEyr07JB</D>
-</RSAParameters>";
+        <RSAKeyValue>
+            <Modulus>xZ7V6twqlj+3L1hsjB+BwhzQEgcs8tpqzgSjwgjPwzfisLFBN9HkwX2u+ZrgrKhKmZgSOVBYRhZiGJeF1hY5gLz3/Zo05fcvtgL0ylEhi6wnH9y6CPu8+4xCOJ26eywtNS02v2CC/0HUWnw6kNHBqdyyNjwuC12Ll5YJ3wZ1kQZ2mce3DMjpgRDvYqnm8ldwLWpgreK7I5vggQgons3v39x+Cx501Eo0qd+iHzXf6/8pUhYqb+xhDdb9gnHcitipXVFG3Ts27OUiuO0uLAO4Es400ApyWpvHdCCNrBJ/EQWZGEO/qVKmfP0CWBmokVL+IUawX9lPl/Luo9W5AFpaIQ==</Modulus>
+            <Exponent>AQAB</Exponent>
+            <P>xvQflEOfLYAXiMFrG/alxcgUbimbY8Qc1/3Jm21CFVrkQL1rNQ/PEXavXYyNP3jRwUrqKbJrtcdz5MPgKpvA/iWdqjp4Qx+V7N2DkdzKL7liViKoCHf1eXfyeWkCErHOgInTerOSlCaeABqkqpr+eaAtzy2j4df5U/1+j8g7I48=</P>
+            <Q>/kjapfiD7aC1yQX8BYiJ29oTlvZx0sptfXA0Bx9qXvd1UFTqjDbVoIF7tXk+DsottRL97G52ImpYf4w4wJFb1F+d5sQCaCrEzIdQ/4mJdpn7FLYxErYXpoZl0e2knIoqQie7+vaw2oV9YSx3iJHoEVfDM+0NAW+aCUUJGNorD08=</Q>
+            <DP>mAYms0ZQtZXxZcBWNhHsbgsLAXqtkDhkye7VRPzhyCuhyo5zAyLHWVLVgahKrjuGHCtAbwg1Ibv8pMu/2Q8XE5xus4rmJnRWPZ6uUKDjpkAEEkl9GKuBWYX8NCW3Pc28O6AVhub8lFRF21KAjRTOauWo22zGk2ZS0IkdUoTwG6U=</DP>
+            <DQ>nQsrllNMT0bw3k0G3/f6hEBD1vkvROrmAhF44GlDjZEw78Lx9FStTOqLF4HglMvCvNEU55808H5TV7qnFi7v0tKWt32YqvK3BkYP/THZJtlkWt9GoXK6WosoeSVWg6NFBAR8MTuH7/1/eLM4w6yw8X0NPpWJcbiWHmF3g9TBwTs=</DQ>
+            <InverseQ>fbI4APSSbOOd07goBWzZYjdrEVEZDiboK4jFKYoMI19PrbQBTvpRmLsJxhg96fgjiFfmw05tsPIsLSQPczsav6JDq25sQyOaz7VE33Y8CEV4rVvI+l7vlWqvn/EfThPqYdR4UOHa6G5wcBTI48O4+SmKMhLQl1GK/ZA+XEmlHx8=</InverseQ>
+            <D>QC+Uv1F/K4nKT8BikShylr+Q/SoDeWVjp0Juhcki4f82y7jmu+CachYGTN/29V07zaNM1/y2jx0aA27Dc4OIbb3ythXt9HtSrcVMCKJNSPZDRuAENIK/INyvbYAdX4A7trfWvlX0dj/FXxZWV08pnagm4eKt+dcKTdPXpO6OJOnnSYMcdRBFdZLAj/sh8oMNXMHSxsCA7YHjL+4NGbpyTMYnfa6CUxFc36cLi2/Hm6JhV1nYEswTI5T1qRqmWpF1+H0ksxLKx6I5D61mzfaf7RQPJRCLhddXoLPIh8IaoNIomPcZyZQBxwBhtgj8pf9rcBN50aqNc5V2vKoEOt/gGQ==</D>
+        </RSAKeyValue>";
+
+    private readonly string _parameters;
 
     public SimpleStringValueEncryption(string parameters)
     {
-        _turing.FromXmlString(parameters ?? Key);
+        _parameters=parameters;
     }
 
     /// <summary>
@@ -46,7 +48,7 @@ public class SimpleStringValueEncryption : IEncryptStrings
     /// <returns></returns>
     public string Encrypt(string toEncrypt)
     {
-
+        _turing.FromXmlString(_parameters ?? Key);
         // Fall back on bad encryption if no private key is configured
         if (_turing.KeySize < 1024)
             return string.Join('-',
@@ -71,6 +73,7 @@ public class SimpleStringValueEncryption : IEncryptStrings
     /// <returns></returns>
     public string Decrypt(string toDecrypt)
     {
+        _turing.FromXmlString(_parameters ?? Key);
         if (toDecrypt.StartsWith("$js1$", StringComparison.Ordinal) && toDecrypt.EndsWith("$", StringComparison.Ordinal))
         {
             // Good, it's a new-style AES+RSA encrypted string
