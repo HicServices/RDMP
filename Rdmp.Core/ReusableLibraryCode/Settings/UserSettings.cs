@@ -27,7 +27,11 @@ public static class UserSettings
                                                           throw new NotImplementedException(
                                                               "Isolated Storage does not work in this environment...");
 
-
+    public static bool ShowFlatLists
+    {
+        get => AppSettings.GetValueOrDefault("ShowFlatLists", true);
+        set => AppSettings.AddOrUpdateValue("ShowFlatLists", value);
+    }
     public static bool UseLocalFileSystem
     {
         get => AppSettings.GetValueOrDefault("UseLocalFileSystem", false);
