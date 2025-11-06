@@ -1384,7 +1384,6 @@ $Explicit_consent
 $Geographical_coverage
 $Granularity
 $ID
-$IsColdStorageDataset
 $IsDeprecated
 $IsInternalDataset
 $Last_revision_date

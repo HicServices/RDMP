@@ -195,6 +195,12 @@ public static class UserSettings
         set => AppSettings.AddOrUpdateValue("ExtractionWebhookUrl", value);
     }
 
+    public static bool DefaultLogViewFlat
+    {
+        get => AppSettings.GetValueOrDefault("DefaultLogViewFlat", false);
+        set => AppSettings.AddOrUpdateValue("DefaultLogViewFlat", value);
+    }
+
     #region Catalogue flag visibility settings
 
     public static bool ShowInternalCatalogues
@@ -209,22 +215,10 @@ public static class UserSettings
         set => AppSettings.AddOrUpdateValue("ShowDeprecatedCatalogues", value);
     }
 
-    public static bool ShowColdStorageCatalogues
-    {
-        get => AppSettings.GetValueOrDefault("ShowColdStorageCatalogues", true);
-        set => AppSettings.AddOrUpdateValue("ShowColdStorageCatalogues", value);
-    }
-
     public static bool ShowProjectSpecificCatalogues
     {
         get => AppSettings.GetValueOrDefault("ShowProjectSpecificCatalogues", true);
         set => AppSettings.AddOrUpdateValue("ShowProjectSpecificCatalogues", value);
-    }
-
-    public static bool ShowNonExtractableCatalogues
-    {
-        get => AppSettings.GetValueOrDefault("ShowNonExtractableCatalogues", true);
-        set => AppSettings.AddOrUpdateValue("ShowNonExtractableCatalogues", value);
     }
 
     /// <summary>

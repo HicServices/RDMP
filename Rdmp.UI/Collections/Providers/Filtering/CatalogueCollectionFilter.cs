@@ -20,21 +20,17 @@ public class CatalogueCollectionFilter : IModelFilter
     public ICoreChildProvider ChildProvider { get; set; }
     private readonly bool _isInternal;
     private readonly bool _isDeprecated;
-    private readonly bool _isColdStorage;
     private readonly bool _isProjectSpecific;
-    private readonly bool _isNonExtractable;
 
     public CatalogueCollectionFilter(ICoreChildProvider childProvider)
     {
         ChildProvider = childProvider;
         _isInternal = UserSettings.ShowInternalCatalogues;
         _isDeprecated = UserSettings.ShowDeprecatedCatalogues;
-        _isColdStorage = UserSettings.ShowColdStorageCatalogues;
         _isProjectSpecific = UserSettings.ShowProjectSpecificCatalogues;
-        _isNonExtractable = UserSettings.ShowNonExtractableCatalogues;
     }
 
     public bool Filter(object modelObject) => SearchablesMatchScorer.Filter(modelObject,
-        ChildProvider.GetDescendancyListIfAnyFor(modelObject), _isInternal, _isDeprecated, _isColdStorage,
-        _isProjectSpecific, _isNonExtractable);
+        ChildProvider.GetDescendancyListIfAnyFor(modelObject), _isInternal, _isDeprecated,
+        _isProjectSpecific);
 }

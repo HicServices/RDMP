@@ -100,6 +100,7 @@
             userSettingsToolTips = new System.Windows.Forms.ToolTip(components);
             tbFind = new System.Windows.Forms.TextBox();
             label14 = new System.Windows.Forms.Label();
+            cbFlatLogs = new System.Windows.Forms.CheckBox();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)olvErrorCodes).BeginInit();
             groupBox2.SuspendLayout();
@@ -454,7 +455,7 @@
             // cbAutoRunSqlQueries
             // 
             cbAutoRunSqlQueries.AutoSize = true;
-            cbAutoRunSqlQueries.Location = new System.Drawing.Point(4, 102);
+            cbAutoRunSqlQueries.Location = new System.Drawing.Point(7, 104);
             cbAutoRunSqlQueries.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             cbAutoRunSqlQueries.Name = "cbAutoRunSqlQueries";
             cbAutoRunSqlQueries.Size = new System.Drawing.Size(138, 19);
@@ -489,7 +490,7 @@
             // cbNewFind
             // 
             cbNewFind.AutoSize = true;
-            cbNewFind.Location = new System.Drawing.Point(6, 97);
+            cbNewFind.Location = new System.Drawing.Point(7, 97);
             cbNewFind.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             cbNewFind.Name = "cbNewFind";
             cbNewFind.Size = new System.Drawing.Size(98, 19);
@@ -631,7 +632,7 @@
             cbPromptFilterRename.AutoSize = true;
             cbPromptFilterRename.Checked = true;
             cbPromptFilterRename.CheckState = System.Windows.Forms.CheckState.Checked;
-            cbPromptFilterRename.Location = new System.Drawing.Point(6, 89);
+            cbPromptFilterRename.Location = new System.Drawing.Point(7, 89);
             cbPromptFilterRename.Name = "cbPromptFilterRename";
             cbPromptFilterRename.Size = new System.Drawing.Size(222, 19);
             cbPromptFilterRename.TabIndex = 4;
@@ -660,6 +661,7 @@
             // 
             // groupBox7
             // 
+            groupBox7.Controls.Add(cbFlatLogs);
             groupBox7.Controls.Add(label16);
             groupBox7.Controls.Add(tbLogLocation);
             groupBox7.Controls.Add(label15);
@@ -851,6 +853,17 @@
             label14.TabIndex = 26;
             label14.Text = "Find Setting:";
             // 
+            // cbFlatLogs
+            // 
+            cbFlatLogs.AutoSize = true;
+            cbFlatLogs.Location = new System.Drawing.Point(7, 257);
+            cbFlatLogs.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            cbFlatLogs.Name = "cbFlatLogs";
+            cbFlatLogs.Size = new System.Drawing.Size(140, 19);
+            cbFlatLogs.TabIndex = 29;
+            cbFlatLogs.Text = "Show Logs as Flat List";
+            cbFlatLogs.UseVisualStyleBackColor = true;
+            // 
             // UserSettingsFileUI
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -964,5 +977,6 @@
         private System.Windows.Forms.TextBox tbWebhookUrl;
         private System.Windows.Forms.Label label18;
         private System.Windows.Forms.TextBox tbWebhookUsername;
+        private System.Windows.Forms.CheckBox cbFlatLogs;
     }
 }

@@ -303,6 +303,7 @@
 		<EmbeddedResource Include="Databases\DataExportDatabase\up\020_AddReleaseLogIDColumn.sql" />
 		<EmbeddedResource Include="Databases\DataExportDatabase\up\022_RowVer.sql" />
 		<EmbeddedResource Include="Databases\DataExportDatabase\up\025_AddFolders.sql" />
+		<EmbeddedResource Include="Databases\DataExportDatabase\up\027_AllowMultipleProjectsPerCatalogue.sql" />
 		<EmbeddedResource Include="Databases\DataExportDatabase\up\026_AddFilterOrder.sql" />
 		<EmbeddedResource Include="Databases\DataQualityEngineDatabase\runAfterCreateDatabase\CreateTables.sql" />
 		<EmbeddedResource Include="Databases\DataQualityEngineDatabase\up\001_AnnotationsAndDiagram.sql" />
