@@ -17,7 +17,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: setup .NET
         uses: actions/setup-dotnet@v5.0.0
       - name: Populate Databases.yaml
@@ -84,7 +84,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: setup .NET
         uses: actions/setup-dotnet@v5.0.0
       - name: Populate Databases.yaml
@@ -152,7 +152,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: setup .NET
         uses: actions/setup-dotnet@v5.0.0
       - name: Determine RDMP build version
