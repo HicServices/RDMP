@@ -21,7 +21,8 @@ namespace Rdmp.Core.Tests.CommandExecution
             var _cata2 = new Catalogue(GetMockActivator().RepositoryLocator.CatalogueRepository, "Dataset2");
             _cata1.SaveToDatabase();
             _cata2.SaveToDatabase();
-
+            var ext = new ExtractableDataSet(GetMockActivator().RepositoryLocator.DataExportRepository, _cata2);
+            ext.SaveToDatabase();
             var configuration = new DatasetProviderConfiguration(GetMockActivator().RepositoryLocator.CatalogueRepository, "test", "test", "test",1,"test");
             var provider = new InternalDatasetProvider(GetMockActivator(),configuration,null);
             var cmd = new ExecuteCommandImportExistingCataloguesIntoExternalDatasetProvider(GetMockActivator(), provider, false,true, false, false,false);
@@ -52,7 +53,8 @@ namespace Rdmp.Core.Tests.CommandExecution
             var _cata2 = new Catalogue(GetMockActivator().RepositoryLocator.CatalogueRepository, "Dataset2");
             _cata1.SaveToDatabase();
             _cata2.SaveToDatabase();
-
+            var ext = new ExtractableDataSet(GetMockActivator().RepositoryLocator.DataExportRepository, _cata2);
+            ext.SaveToDatabase();
             var configuration = new DatasetProviderConfiguration(GetMockActivator().RepositoryLocator.CatalogueRepository, "test", "test", "test", 1, "test");
             var provider = new InternalDatasetProvider(GetMockActivator(), configuration, null);
             var cmd = new ExecuteCommandImportExistingCataloguesIntoExternalDatasetProvider(GetMockActivator(), provider, false, false, false, true, false);
