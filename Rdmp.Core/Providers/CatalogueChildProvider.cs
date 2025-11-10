@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ClientModel.Primitives;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -1544,8 +1545,6 @@ public class CatalogueChildProvider : ICoreChildProvider
 		//document that the last parent has these as children
 		var parent = list.Last();
 
-		var x = _childDictionary.TryGetValue(parent, out var foundchild);
-
 		_childDictionary.AddOrUpdate(parent,
 			children, (p, s) => children);
 
@@ -1590,7 +1589,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 	{
 		lock (WriteLock)
 		{
-			//if we have a record of any children in the child dictionary for the parent model object
+;			//if we have a record of any children in the child dictionary for the parent model object
 			if (_childDictionary.TryGetValue(model, out var cached))
 				return cached.OrderBy(static o => o.ToString()).ToArray();
 

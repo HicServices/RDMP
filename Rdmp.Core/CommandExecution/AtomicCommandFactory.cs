@@ -478,10 +478,26 @@ public class AtomicCommandFactory : CommandFactoryBase
             yield return new ExecuteCommandViewData(_activator, cic, ViewType.All, null, true) { Weight = -99.7f };
             yield return new ExecuteCommandViewData(_activator, cic, ViewType.All, null, false) { Weight = -99.6f };
 
-            yield return new ExecuteCommandFreezeCohortIdentificationConfiguration(_activator, cic, !cic.Frozen)
-            { Weight = -50.5f };
-            yield return new ExecuteCommandCreateHoldoutLookup(_activator, cic)
-            { Weight = -50.5f };
+            if (cic.IsTemplate)
+            {
+                yield return new ExecuteCommandUseTemplateCohortIdentificationConfiguration(_activator, cic)
+                {
+                    Weight = -50.5f
+                };
+            }
+            else
+            {
+                yield return new ExecuteCommandCreateCohortIdentificationConfigurationTemplate(_activator, cic)
+                {
+                    Weight = -50.5f
+                };
+                yield return new ExecuteCommandFreezeCohortIdentificationConfiguration(_activator, cic, !cic.Frozen)
+                { Weight = -50.5f };
+                yield return new ExecuteCommandCreateHoldoutLookup(_activator, cic)
+                { Weight = -50.5f };
+            }
+
+               
 
             var clone = new ExecuteCommandCloneCohortIdentificationConfiguration(_activator)
             { Weight = -50.4f, OverrideCommandName = "Clone" }.SetTarget(cic);
