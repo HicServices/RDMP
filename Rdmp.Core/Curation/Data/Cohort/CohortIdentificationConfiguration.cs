@@ -64,6 +64,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     private DateTime? _frozenDate;
     private int? _clonedFrom_ID;
     private string _folder;
+    private bool _isTemplate;
 
     /// <inheritdoc/>
     [Unique]
@@ -171,6 +172,15 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
         set => SetField(ref _folder, FolderHelper.Adjust(value));
     }
 
+    /// <summary>
+    /// Marks if CIC is used like a template, and cannot be committed
+    /// </summary>
+    public bool IsTemplate
+    {
+        get => _isTemplate;
+        set => SetField(ref _isTemplate, value);
+    }
+
     #endregion
 
     #region Relationships
@@ -234,6 +244,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
         ClonedFrom_ID = ObjectToNullableInt(r["ClonedFrom_ID"]);
         Version = ObjectToNullableInt(r["Version"]);
         Folder = r["Folder"] as string ?? FolderHelper.Root;
+        IsTemplate = Convert.ToBoolean(r["IsTemplate"]);
     }
 
     /// <summary>

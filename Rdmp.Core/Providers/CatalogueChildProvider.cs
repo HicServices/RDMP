@@ -145,8 +145,11 @@ public class CatalogueChildProvider : ICoreChildProvider
 	public FolderNode<LoadMetadata> LoadMetadataRootFolder { get; set; }
 
 	public FolderNode<Curation.Data.Dataset> DatasetRootFolder { get; set; }
-	public FolderNode<CohortIdentificationConfiguration> CohortIdentificationConfigurationRootFolder { get; set; }
-	public FolderNode<CohortIdentificationConfiguration> CohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations { get; set; }
+    public FolderNode<CohortIdentificationConfiguration> CohortIdentificationConfigurationRootFolder { get; set; }
+    //public FolderNode<CohortIdentificationConfiguration> TemplateCohortIdentificationConfigurationRootFolder { get; set; }
+
+	public AllTemplateCohortIdentificationConfigurationsNode AllTemplateCohortIdentificationConfigurationsNode { get; set; }
+    public FolderNode<CohortIdentificationConfiguration> CohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations { get; set; }
 
 	public AllConnectionStringKeywordsNode AllConnectionStringKeywordsNode { get; set; }
 	public ConnectionStringKeyword[] AllConnectionStringKeywords { get; set; }
@@ -171,8 +174,9 @@ public class CatalogueChildProvider : ICoreChildProvider
 
 	private ICohortContainerManager _cohortContainerManager;
 
-	public CohortIdentificationConfiguration[] AllCohortIdentificationConfigurations { get; private set; }
-	public CohortAggregateContainer[] AllCohortAggregateContainers { get; set; }
+    public CohortIdentificationConfiguration[] AllCohortIdentificationConfigurations { get; private set; }
+    public CohortIdentificationConfiguration[] AllTemplateCohortIdentificationConfigurations { get; private set; }
+    public CohortAggregateContainer[] AllCohortAggregateContainers { get; set; }
 	public JoinableCohortAggregateConfiguration[] AllJoinables { get; set; }
 	public JoinableCohortAggregateConfigurationUse[] AllJoinUses { get; set; }
 
@@ -307,9 +311,10 @@ public class CatalogueChildProvider : ICoreChildProvider
 		AllSupportingDocuments = GetAllObjects<SupportingDocument>(repository);
 		AllSupportingSQL = GetAllObjects<SupportingSQLTable>(repository);
 
-		AllCohortIdentificationConfigurations = GetAllObjects<CohortIdentificationConfiguration>(repository);
+		AllCohortIdentificationConfigurations = GetAllObjects<CohortIdentificationConfiguration>(repository).Where(cic => !cic.IsTemplate).ToArray();
+        AllTemplateCohortIdentificationConfigurations = GetAllObjects<CohortIdentificationConfiguration>(repository).Where(cic => cic.IsTemplate).ToArray();
 
-		FetchCatalogueItems();
+        FetchCatalogueItems();
 
 		ReportProgress("After CatalogueItem injection");
 
@@ -410,13 +415,22 @@ public class CatalogueChildProvider : ICoreChildProvider
 		CohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations = FolderHelper.BuildFolderTree(AllCohortIdentificationConfigurations.Where(cic => cic.Version is null).ToArray());
 		AddChildren(CohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations,
 		   new DescendancyList(CohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations));
+		
 		var templateAggregateConfigurationIds =
 			new HashSet<int>(
 				repository.GetExtendedProperties(ExtendedProperty.IsTemplate)
 					.Where(p => p.ReferencedObjectType.Equals(nameof(AggregateConfiguration)))
 					.Select(r => r.ReferencedObjectID));
 
-		TemplateAggregateConfigurations = AllAggregateConfigurations
+        //TemplateCohortIdentificationConfigurationRootFolder = FolderHelper.BuildFolderTree(AllTemplateCohortIdentificationConfigurations);
+        //AddChildren(TemplateCohortIdentificationConfigurationRootFolder,
+        //    new DescendancyList(TemplateCohortIdentificationConfigurationRootFolder));
+
+        AllTemplateCohortIdentificationConfigurationsNode = new AllTemplateCohortIdentificationConfigurationsNode();
+		var templateCICTree = FolderHelper.BuildFolderTree(AllTemplateCohortIdentificationConfigurations);
+        AddChildren(templateCICTree, new DescendancyList(AllTemplateCohortIdentificationConfigurationsNode));
+
+        TemplateAggregateConfigurations = AllAggregateConfigurations
 			.Where(ac => templateAggregateConfigurationIds.Contains(ac.ID)).ToArray();
 
 		//add the orphans under the orphan folder
@@ -882,7 +896,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 		);
 	}
 
-	private void AddChildren(FolderNode<CohortIdentificationConfiguration> folder, DescendancyList descendancy)
+    private void AddChildren(FolderNode<CohortIdentificationConfiguration> folder, DescendancyList descendancy)
 	{
 		foreach (var child in folder.ChildFolders)
 			//add subfolder children
@@ -1521,6 +1535,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 			AddToDictionaries(children, descendancy);
 	}
 
+
 	protected void AddToDictionaries(HashSet<object> children, DescendancyList list)
 	{
 		if (list.IsEmpty)
@@ -1528,6 +1543,8 @@ public class CatalogueChildProvider : ICoreChildProvider
 
 		//document that the last parent has these as children
 		var parent = list.Last();
+
+		var x = _childDictionary.TryGetValue(parent, out var foundchild);
 
 		_childDictionary.AddOrUpdate(parent,
 			children, (p, s) => children);

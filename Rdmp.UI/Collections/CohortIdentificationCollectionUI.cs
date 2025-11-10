@@ -60,13 +60,22 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
         CommonTreeFunctionality.MaintainRootObjects = new[]
         {
             typeof(FolderNode<CohortIdentificationConfiguration>),
+            typeof(FolderNode<CohortIdentificationConfiguration>),
             typeof(AllOrphanAggregateConfigurationsNode),
             typeof(AllTemplateAggregateConfigurationsNode)
         };
         var rootFolder = Activator.CoreChildProvider.CohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations;
         rootFolder.ChildFolders = new List<FolderNode<CohortIdentificationConfiguration>>();
         rootFolder.ChildObjects = new List<CohortIdentificationConfiguration>();
+
+        //var templateRootFolder = Activator.CoreChildProvider.TemplateCohortIdentificationConfigurationRootFolder;
+        //templateRootFolder.Name = "Templates";
+        //templateRootFolder.ChildFolders = new List<FolderNode<CohortIdentificationConfiguration>>();
+        //templateRootFolder.ChildObjects = new List<CohortIdentificationConfiguration>();
+
         tlvCohortIdentificationConfigurations.AddObject(rootFolder);
+        //tlvCohortIdentificationConfigurations.AddObject(templateRootFolder);
+        tlvCohortIdentificationConfigurations.AddObject(Activator.CoreChildProvider.AllTemplateCohortIdentificationConfigurationsNode);
         tlvCohortIdentificationConfigurations.AddObject(Activator.CoreChildProvider.OrphanAggregateConfigurationsNode);
         tlvCohortIdentificationConfigurations.AddObject(Activator.CoreChildProvider
             .TemplateAggregateConfigurationsNode);
