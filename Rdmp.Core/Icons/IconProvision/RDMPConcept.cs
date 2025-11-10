@@ -214,5 +214,6 @@ public enum RDMPConcept
     RegexRedactionConfiguration,
     RegexRedactionKey,
     AllRegexRedactionConfigurationsNode,
-    AllTemplateCohortIdentificationConfigurationsNode
+    AllTemplateCohortIdentificationConfigurationsNode,
+    AssociatedCohortIdentificationTemplatesNode
 }
