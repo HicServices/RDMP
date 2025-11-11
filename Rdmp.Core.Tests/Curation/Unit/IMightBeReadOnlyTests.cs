@@ -22,7 +22,7 @@ internal class IMightBeReadOnlyTests : UnitTests
     {
         //im probably an orphan
         var c = WhenIHaveA<AggregateFilterContainer>();
-        Assert.That(c.ShouldBeReadOnly(out _), Is.False);
+        Assert.That(c.ShouldBeReadOnly(null,out _), Is.False);
 
         //now I am in a cic
         var cic = WhenIHaveA<CohortIdentificationConfiguration>();
@@ -30,12 +30,12 @@ internal class IMightBeReadOnlyTests : UnitTests
         cic.CreateRootContainerIfNotExists();
         cic.RootCohortAggregateContainer.AddChild(c.GetAggregate(), 0);
 
-        Assert.That(c.ShouldBeReadOnly(out _), Is.False);
+        Assert.That(c.ShouldBeReadOnly(null, out _), Is.False);
 
         cic.Frozen = true;
         Assert.Multiple(() =>
         {
-            Assert.That(c.ShouldBeReadOnly(out var reason));
+            Assert.That(c.ShouldBeReadOnly(null, out var reason));
 
             Assert.That(reason, Is.EqualTo("fff is Frozen"));
         });
@@ -45,17 +45,17 @@ internal class IMightBeReadOnlyTests : UnitTests
     public void IsReadonly_ExtractionFilterContainer()
     {
         var c = WhenIHaveA<FilterContainer>();
-        Assert.That(c.ShouldBeReadOnly(out _), Is.False);
+        Assert.That(c.ShouldBeReadOnly(null, out _), Is.False);
 
         var ec = c.GetSelectedDataSetIfAny().ExtractionConfiguration;
 
-        Assert.That(c.ShouldBeReadOnly(out _), Is.False);
+        Assert.That(c.ShouldBeReadOnly(null, out _), Is.False);
 
         ec.Name = "lll";
         ec.IsReleased = true;
         Assert.Multiple(() =>
         {
-            Assert.That(c.ShouldBeReadOnly(out var reason));
+            Assert.That(c.ShouldBeReadOnly(null, out var reason));
 
             Assert.That(reason, Is.EqualTo("lll has already been released"));
         });
@@ -66,8 +66,26 @@ internal class IMightBeReadOnlyTests : UnitTests
     {
         var memoryrepo = new MemoryCatalogueRepository();
         var c = new SpontaneouslyInventedFilterContainer(memoryrepo, null, null, FilterContainerOperation.AND);
-        Assert.That(c.ShouldBeReadOnly(out _), Is.False,
+        Assert.That(c.ShouldBeReadOnly(null, out _), Is.False,
             "Spont containers should never be in UI but let's not tell the programmer they shouldn't be edited");
+    }
+
+    [Test]
+    public void IsReadOnly_TemplateCohortIdentificationConfiguration()
+    {
+        var cic = WhenIHaveA<CohortIdentificationConfiguration>();
+        cic.IsTemplate = true;
+        Assert.That(cic.ShouldBeReadOnly(null, out _), Is.True);
+
+    }
+
+    [Test]
+    public void IsReadOnly_TemplateCohortIdentificationConfiguration_Rename()
+    {
+        var cic = WhenIHaveA<CohortIdentificationConfiguration>();
+        cic.IsTemplate = true;
+        Assert.That(cic.ShouldBeReadOnly("ExecuteCommandRename", out _), Is.False);
+
     }
 
 
@@ -76,7 +94,7 @@ internal class IMightBeReadOnlyTests : UnitTests
     {
         //im probably an orphan
         var f = WhenIHaveA<AggregateFilter>();
-        Assert.That(f.ShouldBeReadOnly(out _), Is.False);
+        Assert.That(f.ShouldBeReadOnly(null, out _), Is.False);
 
         //now I am in a cic
         var cic = WhenIHaveA<CohortIdentificationConfiguration>();
@@ -84,12 +102,12 @@ internal class IMightBeReadOnlyTests : UnitTests
         cic.CreateRootContainerIfNotExists();
         cic.RootCohortAggregateContainer.AddChild(f.GetAggregate(), 0);
 
-        Assert.That(f.ShouldBeReadOnly(out _), Is.False);
+        Assert.That(f.ShouldBeReadOnly(null, out _), Is.False);
 
         cic.Frozen = true;
         Assert.Multiple(() =>
         {
-            Assert.That(f.ShouldBeReadOnly(out var reason));
+            Assert.That(f.ShouldBeReadOnly(null, out var reason));
 
             Assert.That(reason, Is.EqualTo("fff is Frozen"));
         });
@@ -99,14 +117,14 @@ internal class IMightBeReadOnlyTests : UnitTests
     public void IsReadonly_DeployedExtractionFilter()
     {
         var f = WhenIHaveA<DeployedExtractionFilter>();
-        Assert.That(f.ShouldBeReadOnly(out _), Is.False);
+        Assert.That(f.ShouldBeReadOnly(null, out _), Is.False);
 
         var ec = ((FilterContainer)f.FilterContainer).GetSelectedDataSetIfAny().ExtractionConfiguration;
         ec.Name = "lll";
         ec.IsReleased = true;
         Assert.Multiple(() =>
         {
-            Assert.That(f.ShouldBeReadOnly(out var reason));
+            Assert.That(f.ShouldBeReadOnly(null, out var reason));
 
             Assert.That(reason, Is.EqualTo("lll has already been released"));
         });
