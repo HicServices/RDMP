@@ -1,2 +1,4 @@
 theme:
-  name: material
+  name: readthedocs
+
+site_name: RDMP
