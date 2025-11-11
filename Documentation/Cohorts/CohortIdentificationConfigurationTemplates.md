@@ -30,6 +30,6 @@ To use a CIC Template:
 
 ### Associating with a Project
 
-Just like associating a CIC with a Project, CIC Templates can also be associated with Projects.
+Just like associating a CIC with a [Project]:../CodeTutorials/Glossary.md#Project, CIC Templates can also be associated with Projects.
 While these templates can still be used outside the associated project, it does allow you to see the template from within the Project view.
 This may be helpful to keep track of what templates are typically used with each project
