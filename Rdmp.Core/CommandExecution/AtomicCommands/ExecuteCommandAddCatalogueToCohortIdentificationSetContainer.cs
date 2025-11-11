@@ -51,7 +51,7 @@ public class ExecuteCommandAddCatalogueToCohortIdentificationSetContainer : Basi
 
         _targetCohortAggregateContainer = targetCohortAggregateContainer;
 
-        if (targetCohortAggregateContainer.ShouldBeReadOnly(out var reason))
+        if (targetCohortAggregateContainer.ShouldBeReadOnly(this.GetType().Name, out var reason))
             SetImpossible(reason);
 
         if (catalogue != null)

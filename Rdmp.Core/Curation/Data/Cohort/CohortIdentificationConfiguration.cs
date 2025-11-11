@@ -283,8 +283,16 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     /// <inheritdoc/>
     public override string ToString() => Name;
 
-    public bool ShouldBeReadOnly(out string reason)
+    public bool ShouldBeReadOnly(string context, out string reason)
     {
+        if (IsTemplate)
+        {
+            if (context == "ExecuteCommandRename")
+            {
+                reason = null;
+                return false;
+            }
+        }
         if (Frozen)
         {
             reason = $"{Name} is Frozen";

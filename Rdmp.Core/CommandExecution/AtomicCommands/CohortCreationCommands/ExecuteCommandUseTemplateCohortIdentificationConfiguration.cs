@@ -68,6 +68,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands
                 cmd.Execute();
             }
             Publish(clone);
+            Emphasise(clone);
         }
 
         public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)

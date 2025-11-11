@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [9.0.4] - Unreleased
 - Fix bug with duplicate searchables
+- Add the ability to Template Cohort Identification Configurations (see [Documentation\cohorts\CohortIdentificationConfigurationTemplates.md])
 
 ## [9.0.3] - 2025-11-03
 - Improve checking for default pipelines

@@ -50,7 +50,7 @@ public class ExecuteCommandDelete : BasicCommandExecution
             SetImpossible("Cannot delete root containers");
         var reason = "";
 
-        if (_deletables.Any(d => d is IMightBeReadOnly ro && ro.ShouldBeReadOnly(out reason)))
+        if (_deletables.Any(d => d is IMightBeReadOnly ro && ro.ShouldBeReadOnly(this.GetType().Name, out reason)))
             SetImpossible(reason);
 
         Weight = 50.4f;
