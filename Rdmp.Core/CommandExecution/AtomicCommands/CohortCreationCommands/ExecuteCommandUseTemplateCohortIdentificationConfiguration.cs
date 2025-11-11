@@ -16,7 +16,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands
     {
         private CohortIdentificationConfiguration _cic;
         private IMapsDirectlyToDatabaseTable _selectedProject;
-        private IBasicActivateItems _activator;
+        private readonly IBasicActivateItems _activator;
         public ExecuteCommandUseTemplateCohortIdentificationConfiguration(IBasicActivateItems activator, CohortIdentificationConfiguration cic) : base(activator)
         {
             _activator = activator;

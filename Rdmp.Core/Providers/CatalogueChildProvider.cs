@@ -147,8 +147,6 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     public FolderNode<Curation.Data.Dataset> DatasetRootFolder { get; set; }
     public FolderNode<CohortIdentificationConfiguration> CohortIdentificationConfigurationRootFolder { get; set; }
-    //public FolderNode<CohortIdentificationConfiguration> TemplateCohortIdentificationConfigurationRootFolder { get; set; }
-
     public AllTemplateCohortIdentificationConfigurationsNode AllTemplateCohortIdentificationConfigurationsNode { get; set; }
     public FolderNode<CohortIdentificationConfiguration> CohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations { get; set; }
 
@@ -422,10 +420,6 @@ public class CatalogueChildProvider : ICoreChildProvider
                 repository.GetExtendedProperties(ExtendedProperty.IsTemplate)
                     .Where(p => p.ReferencedObjectType.Equals(nameof(AggregateConfiguration)))
                     .Select(r => r.ReferencedObjectID));
-
-        //TemplateCohortIdentificationConfigurationRootFolder = FolderHelper.BuildFolderTree(AllTemplateCohortIdentificationConfigurations);
-        //AddChildren(TemplateCohortIdentificationConfigurationRootFolder,
-        //    new DescendancyList(TemplateCohortIdentificationConfigurationRootFolder));
 
         AllTemplateCohortIdentificationConfigurationsNode = new AllTemplateCohortIdentificationConfigurationsNode();
         var templateCICTree = FolderHelper.BuildFolderTree(AllTemplateCohortIdentificationConfigurations);
