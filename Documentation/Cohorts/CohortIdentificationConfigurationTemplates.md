@@ -24,12 +24,12 @@ To create a new CIC Template:
 To use a CIC Template:
 1. Right click on an existing CIC Template
 2. Select the "Use Template Cohort Identification Configuration" option
-3. If your template CIC is associated with a project, it will ask you some questions about how you would like to associate the new CIC
+3. If your template CIC is associated with a [Project]:../CodeTutorials/Glossary.md#Project, it will ask you some questions about how you would like to associate the new CIC
 4. Congratulations, You've just made a new CIC from a template
 
 
-### Associating with a Project
+### Associating with a [Project]:../CodeTutorials/Glossary.md#Project
 
 Just like associating a CIC with a [Project]:../CodeTutorials/Glossary.md#Project, CIC Templates can also be associated with Projects.
-While these templates can still be used outside the associated project, it does allow you to see the template from within the Project view.
-This may be helpful to keep track of what templates are typically used with each project
+While these templates can still be used outside the associated [Project]:../CodeTutorials/Glossary.md#Project, it does allow you to see the template from within the [Project]:../CodeTutorials/Glossary.md#Project view.
+This may be helpful to keep track of what templates are typically used with each [Project]:../CodeTutorials/Glossary.md#Project
