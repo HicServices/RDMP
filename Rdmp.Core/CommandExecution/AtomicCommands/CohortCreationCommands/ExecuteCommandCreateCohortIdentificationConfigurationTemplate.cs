@@ -1,14 +1,11 @@
-﻿using NPOI.OpenXmlFormats.Encryption;
-using Rdmp.Core.Curation.Data;
+﻿using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection.Metadata.Ecma335;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands
 {
@@ -22,16 +19,21 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands
             _cic = cic;
         }
 
+        private string GenerateTemplateName(string name)
+        {
+            if (name.EndsWith(" Template")) return name;
+            return name + " Template";
+        }
+
         public override void Execute()
         {
-            //todo think about asking if we want to associate to he project if it already is
             var associations = _activator.RepositoryLocator.DataExportRepository.GetAllObjects<ProjectCohortIdentificationConfigurationAssociation>();
             var projectAssociations = associations.Where(a => a.CohortIdentificationConfiguration_ID == _cic.ID).ToList();
             base.Execute();
             var clone = _cic.CreateClone(ThrowImmediatelyCheckNotifier.Quiet);
             clone.IsTemplate = true;
             clone.Freeze();
-            clone.Name = clone.Name.Replace("(Clone)", "") + " Template";
+            clone.Name = GenerateTemplateName(clone.Name);
             clone.SaveToDatabase();
             IMapsDirectlyToDatabaseTable selectedProject = null;
 

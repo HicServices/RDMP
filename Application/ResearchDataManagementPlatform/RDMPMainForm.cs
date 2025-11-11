@@ -104,13 +104,8 @@ public partial class RDMPMainForm : RDMPForm
         _globalErrorCheckNotifier = exceptionCounter;
         _rdmpTopMenuStrip1.InjectButton(exceptionCounter);
 
-        try
-        {
-            _windowManager = new WindowManager(_theme, this, _refreshBus, dockPanel1, RepositoryLocator, exceptionCounter);
-        }catch(Exception ex)
-        {
-            Console.Write(ex.ToString());
-        }
+        _windowManager = new WindowManager(_theme, this, _refreshBus, dockPanel1, RepositoryLocator, exceptionCounter);
+
         SetItemActivator(_windowManager.ActivateItems);
 
         _rdmpTopMenuStrip1.SetWindowManager(_windowManager);

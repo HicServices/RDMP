@@ -22,6 +22,19 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands
             _cic = cic;
         }
 
+        private string RenameTemplateForUse(string name)
+        {
+            if (name.EndsWith("Template"))
+            {
+                name = name.Substring(0,name.Length - 8);
+            }
+            while(name.EndsWith(" "))
+            {
+                name = name.Substring(0,name.Length - 1);
+            }
+            return name;
+        }
+
         public override void Execute()
         {
             var associations = _activator.RepositoryLocator.DataExportRepository.GetAllObjects<ProjectCohortIdentificationConfigurationAssociation>();
@@ -58,7 +71,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands
             base.Execute();
             var clone = _cic.CreateClone(ThrowImmediatelyCheckNotifier.Quiet);
             clone.IsTemplate = false;
-            clone.Name = clone.Name.Replace(" Template", "");
+            clone.Name = RenameTemplateForUse(clone.Name);
             clone.SaveToDatabase();
             if (selectedProject != null)
             {
