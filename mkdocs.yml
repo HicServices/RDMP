@@ -1,3 +1,40 @@
+site_name: RDMP
 theme:
   name: material
-site_name: RDMP
+  logo: assets/logos/main.png
+  favicon: assets/logos/main.ico
+  palette:
+    # Palette toggle for automatic mode
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
+      primary: blue grey
+      accent: deep purple
+
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default 
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+      primary: blue grey
+      accent: deep purple
+
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to system preference
+      primary: blue grey
+      accent: deep purple
+    # accent: indigo
+    # scheme: slate
+    # primary: blue grey
+    # accent: indigo
+extra_css:
+  - stylesheets/extra.css
+plugins: 
+  - tags
+  - search
