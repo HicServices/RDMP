@@ -1,4 +1,5 @@
 ﻿using Rdmp.Core.CohortCommitting.Pipeline;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.UI.ItemActivation;
@@ -48,7 +49,6 @@ namespace Rdmp.UI.SimpleDialogs.Cohorts
 
         private void btnNewProject_Click(object sender, EventArgs e)
         {
-            //use existign ui
             var p = new ProjectUI.ProjectUI();
             var dialog = new RDMPForm(_activator);
 
@@ -95,18 +95,22 @@ namespace Rdmp.UI.SimpleDialogs.Cohorts
                 _activator.Publish(project);
                 DialogResult = DialogResult.OK;
                 Result = project;
+                Close();
             }
-            Close();
         }
         private void btnExistingProject_Click(object sender, EventArgs e)
         {
-            var selected = _activator.SelectOne("", _projects);
+            var selected = _activator.SelectOne(new DialogArgs
+            {
+                TaskDescription =
+                    "Choose a Project which this cohort will be associated with.  This will set the cohorts ProjectNumber.  A cohort can only be extracted from a Project whose ProjectNumber matches the cohort (multiple Projects are allowed to have the same ProjectNumber)"
+            }, _projects);
             if (selected != null)
             {
                 Result = selected as Project;
                 DialogResult = DialogResult.OK;
+                Close();
             }
-            Close();
         }
     }
 }
