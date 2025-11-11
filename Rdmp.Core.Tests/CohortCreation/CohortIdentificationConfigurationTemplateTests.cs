@@ -16,7 +16,7 @@ namespace Rdmp.Core.Tests.CohortCreation
 {
     public class CohortIdentificationConfigurationTemplateTests: DatabaseTests
     {
-        private  static Random random = new Random();
+        private  static readonly Random random = new();
         private static string RandomString(int length)
         {
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";

@@ -285,14 +285,12 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
 
     public bool ShouldBeReadOnly(string context, out string reason)
     {
-        if (IsTemplate)
+        if (IsTemplate && context == "ExecuteCommandRename")
         {
-            if (context == "ExecuteCommandRename")
-            {
-                reason = null;
-                return false;
-            }
+            reason = null;
+            return false;
         }
+
         if (Frozen)
         {
             reason = $"{Name} is Frozen";
