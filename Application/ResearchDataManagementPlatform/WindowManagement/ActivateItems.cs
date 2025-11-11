@@ -34,6 +34,7 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.Providers;
+using Rdmp.Core.Providers.Nodes.ProjectCohortNodes;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
@@ -55,6 +56,7 @@ using Rdmp.UI.PipelineUIs.Pipelines;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.Rules;
 using Rdmp.UI.SimpleDialogs;
+using Rdmp.UI.SimpleDialogs.Cohorts;
 using Rdmp.UI.SimpleDialogs.ForwardEngineering;
 using Rdmp.UI.SingleControlForms;
 using Rdmp.UI.SubComponents;
@@ -902,6 +904,12 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
             ui.CohortDescription = $"{cohortInitialDescription} ({Environment.UserName} - {DateTime.Now})";
 
         return ui.ShowDialog() == DialogResult.OK ? ui.Result : null;
+    }
+
+    public override IProject CohortCommitProjectSelect(IProject currentProject,Project[] projects)
+    {
+        var ui = new CohortCommitProjectSelectionUI(this, currentProject,projects);
+        return ui.ShowDialog() == DialogResult.OK ? ui.Result : null; ;
     }
 
     public override CohortHoldoutLookupRequest GetCohortHoldoutLookupRequest(ExternalCohortTable externalCohortTable,

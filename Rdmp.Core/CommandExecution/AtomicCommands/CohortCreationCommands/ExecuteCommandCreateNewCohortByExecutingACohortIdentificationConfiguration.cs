@@ -87,7 +87,11 @@ public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfig
         {
             var projAssociations = dx.AllProjectAssociatedCics
                 .Where(c => c.CohortIdentificationConfiguration_ID == cic.ID).ToArray();
-            if (projAssociations.Length == 1) Project = projAssociations[0].Project;
+            if (projAssociations.Length > 0) {
+                var currentProj = projAssociations.Length == 1 ? projAssociations[0].Project : null;
+                Project = BasicActivator.CohortCommitProjectSelect(currentProj, BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>().ToArray());
+                //if its a new project, it doesn't populate
+            }
         }
 
         var auditLogBuilder = new ExtractableCohortAuditLogBuilder();
