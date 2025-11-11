@@ -75,6 +75,7 @@ internal class IMightBeReadOnlyTests : UnitTests
     {
         var cic = WhenIHaveA<CohortIdentificationConfiguration>();
         cic.IsTemplate = true;
+        cic.Frozen = true;
         Assert.That(cic.ShouldBeReadOnly(null, out _), Is.True);
 
     }
