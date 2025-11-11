@@ -87,7 +87,8 @@ public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfig
         {
             var projAssociations = dx.AllProjectAssociatedCics
                 .Where(c => c.CohortIdentificationConfiguration_ID == cic.ID).ToArray();
-            if (projAssociations.Length > 0) {
+            if (projAssociations.Length > 0)
+            {
                 var currentProj = projAssociations.Length == 1 ? projAssociations[0].Project : null;
                 Project = BasicActivator.CohortCommitProjectSelect(currentProj, BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>().ToArray());
                 if (Project is null) return;
@@ -99,7 +100,10 @@ public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfig
 
         //user choose to cancel the cohort creation request dialogue
         if (request == null)
+        {
+            Project = null;
             return;
+        }
 
         request.CohortIdentificationConfiguration = cic;
 
