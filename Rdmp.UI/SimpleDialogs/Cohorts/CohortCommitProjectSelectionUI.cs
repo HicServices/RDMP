@@ -1,7 +1,11 @@
-﻿using Rdmp.Core.CohortCommitting.Pipeline;
+﻿using NPOI.SS.Formula.Functions;
+using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.Providers;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using System;
@@ -92,6 +96,16 @@ namespace Rdmp.UI.SimpleDialogs.Cohorts
             if (result == DialogResult.OK)
             {
                 project.SaveToDatabase();
+                if (_currentProject != null)
+                {
+                    var projectSpecificCatalogues = _currentProject.GetAllProjectCatalogues().Where(p => p.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository));
+                    foreach (var psc in projectSpecificCatalogues)
+                    {
+                        var cmd = new ExecuteCommandMakeCatalogueProjectSpecific(_activator, psc, project, true);
+                        cmd.Execute();
+                    }
+                }
+
                 _activator.Publish(project);
                 DialogResult = DialogResult.OK;
                 Result = project;

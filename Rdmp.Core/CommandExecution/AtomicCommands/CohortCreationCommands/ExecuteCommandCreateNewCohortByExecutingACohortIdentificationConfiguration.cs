@@ -83,13 +83,16 @@ public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfig
             }
         }
 
-        if (Project == null && BasicActivator.CoreChildProvider is DataExportChildProvider dx)
+
+        IProject currentProj = null;
+        ProjectCohortIdentificationConfigurationAssociation[] projAssociations = Array.Empty<ProjectCohortIdentificationConfigurationAssociation>();
+        if (BasicActivator.CoreChildProvider is DataExportChildProvider dx)
         {
-            var projAssociations = dx.AllProjectAssociatedCics
+            projAssociations = dx.AllProjectAssociatedCics
                 .Where(c => c.CohortIdentificationConfiguration_ID == cic.ID).ToArray();
             if (projAssociations.Length > 0)
             {
-                var currentProj = projAssociations.Length == 1 ? projAssociations[0].Project : null;
+                currentProj = Project != null ? Project : projAssociations.Length == 1 ? projAssociations[0].Project : null;
                 Project = BasicActivator.CohortCommitProjectSelect(currentProj, BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>().ToArray());
                 if (Project is null) return;
             }
@@ -111,7 +114,16 @@ public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfig
 
         configureAndExecute.PipelineExecutionFinishedsuccessfully += (s, u) => OnImportCompletedSuccessfully(cic);
 
-        configureAndExecute.Run(BasicActivator.RepositoryLocator, null, null, null);
+        var result = configureAndExecute.Run(BasicActivator.RepositoryLocator, null, null, null);
+        if (result ==0 && currentProj != null && currentProj.ID != Project.ID)
+        {
+            //move cic to new project
+            var oldAssociation = projAssociations.Where(a => a.Project_ID == currentProj.ID).FirstOrDefault();
+            if (oldAssociation != null)
+            {
+                oldAssociation.DeleteInDatabase();
+            }
+        }
     }
 
     private void OnImportCompletedSuccessfully(CohortIdentificationConfiguration cic)

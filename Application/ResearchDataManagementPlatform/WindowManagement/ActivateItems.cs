@@ -34,7 +34,6 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.Providers;
-using Rdmp.Core.Providers.Nodes.ProjectCohortNodes;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
@@ -908,7 +907,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
 
     public override IProject CohortCommitProjectSelect(IProject currentProject,Project[] projects)
     {
-        var ui = new CohortCommitProjectSelectionUI(this, currentProject,projects);
+        var ui = new CohortCommitProjectSelectionUI(this, currentProject, projects);
         return ui.ShowDialog() == DialogResult.OK ? ui.Result : null; ;
     }
 
