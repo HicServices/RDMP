@@ -14,6 +14,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using FAnsi.Discovery;
 using NUnit.Framework;
+using Org.BouncyCastle.Asn1.Mozilla;
+using Org.BouncyCastle.Tls;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
@@ -51,6 +53,8 @@ public class TestActivateItems : BasicActivateItems, IActivateItems, ITheme
 
     public Func<bool> ShouldReloadFreshCopyDelegate;
 
+    public IChildProvider ChildProvider  { get; private set;}
+
     /// <summary>
     /// All the activities that you might want to know happened during tests.  (not a member of <see cref="IActivateItems"/>)
     /// </summary>
@@ -62,7 +66,7 @@ public class TestActivateItems : BasicActivateItems, IActivateItems, ITheme
         _uiTests = uiTests;
         Results = new TestActivateItemsResults();
         RefreshBus = new RefreshBus();
-
+        RefreshBus.ChildProvider = GetChildProvider();
         //don't load the comment store for every single test
         if (_commentStore == null)
         {
@@ -73,7 +77,6 @@ public class TestActivateItems : BasicActivateItems, IActivateItems, ITheme
         CommentStore = _commentStore;
 
         HistoryProvider = new HistoryProvider(RepositoryLocator);
-
         _problemProviders = new List<IProblemProvider>(new IProblemProvider[]
         {
             new CatalogueProblemProvider(),
