@@ -9,6 +9,7 @@ using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories.Construction;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
@@ -29,7 +30,7 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
 
     [UseWithObjectConstructor]
     public ExecuteCommandMakeCatalogueProjectSpecific(IBasicActivateItems itemActivator, ICatalogue catalogue,
-        IProject project, [DemandsInitialization("Ignore Validation",DemandType.Unspecified,defaultValue:false)]bool force) : this(itemActivator)
+        IProject project, [DemandsInitialization("Ignore Validation", DemandType.Unspecified, defaultValue: false)] bool force) : this(itemActivator)
     {
         _catalogue = catalogue;
         _project = project;
@@ -49,14 +50,28 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
     public override void Execute()
     {
         if (_catalogue == null)
-            SetCatalogue(SelectOne(BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>().ToList()));
+        {
+            var catalogues = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>().ToList();
+            if (!catalogues.Any())
+            {
+                Show($"No valid catalogues found to make project specific.");
+                return;
+            }
+            SetCatalogue(SelectOne(catalogues));
+        }
         if (!_hasRanCatalogueValidation)
         {
             SetCatalogue(_catalogue);
         }
-        if(_existingProjectIDs is null)
+        if (_existingProjectIDs is null)
             GetExistingProjectIDs();
 
+        var projects = GetListOfValidProjects();
+        if (!projects.Any())
+        {
+            Show($"No valid projects found to make {_catalogue.Name} project specific.");
+            return;
+        }
         _project ??= SelectOne<Project>(GetListOfValidProjects());
 
         if (_project == null || _catalogue == null)
@@ -90,15 +105,17 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
     private List<Project> GetListOfValidProjects()
     {
         var dataExportChildProvider = ((DataExportChildProvider)_activator.CoreChildProvider);
-
-        var availableProjects = dataExportChildProvider.Projects.Where(p => !dataExportChildProvider.ExtractableDataSetProjects.Where(edsp => edsp.Project_ID == p.ID).Select(edsp => edsp.DataSet.Catalogue).Contains(_catalogue));
-        return availableProjects.Where(p => ProjectSpecificCatalogueManager.CanMakeCatalogueProjectSpecific(_activator.RepositoryLocator.DataExportRepository, _catalogue, p, _existingProjectIDs)).ToList();
+        var eds = _activator.RepositoryLocator.DataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(_catalogue);
+        var edsp = _activator.RepositoryLocator.DataExportRepository.GetAllObjects<ExtractableDataSetProject>().Where(edsp => eds.Contains(edsp.DataSet));
+        var pti = edsp.Select(e => e.Project_ID).ToList();
+        var validProjects = dataExportChildProvider.Projects.Where(p => _force ||(!pti.Contains(p.ID) && ProjectSpecificCatalogueManager.CanMakeCatalogueProjectSpecific(_activator.RepositoryLocator.DataExportRepository, _catalogue, p, pti)));
+        return validProjects.ToList();
     }
 
     private void GetExistingProjectIDs()
-    {  
+    {
         var dataExportChildProvider = ((DataExportChildProvider)_activator.CoreChildProvider);
-        var existingProjects = dataExportChildProvider.Projects.Where(p => dataExportChildProvider.ExtractableDataSetProjects.Where(edsp => edsp.Project_ID==p.ID).Select(edsp => edsp.DataSet.Catalogue).Contains(_catalogue));
+        var existingProjects = dataExportChildProvider.Projects.Where(p => dataExportChildProvider.ExtractableDataSetProjects.Where(edsp => edsp.Project_ID == p.ID).Select(edsp => edsp.DataSet.Catalogue).Contains(_catalogue));
         _existingProjectIDs = existingProjects.Select(p => p.ID).ToList();
     }
 
@@ -113,7 +130,7 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
             return;
         }
         var status = _catalogue.GetExtractabilityStatus(BasicActivator.RepositoryLocator.DataExportRepository);
-       if (!GetListOfValidProjects().Any() && !_force)
+        if (!GetListOfValidProjects().Any() && !_force)
         {
             SetImpossible("No valid Projects available");
         }
