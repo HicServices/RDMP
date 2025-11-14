@@ -33,7 +33,7 @@ namespace Rdmp.UI.SimpleDialogs.Cohorts
             _projects = projects;
             if (_currentProject != null)
             {
-                btnCurrentProject.Text = $"This project ({_currentProject.Name})";
+                btnCurrentProject.Text = $"This Project ({_currentProject.Name.Substring(0,Math.Min(10,_currentProject.Name.Length))}{(_currentProject.Name.Length>0?"...":"")})";
             }
             else
             {
