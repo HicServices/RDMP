@@ -29,7 +29,7 @@ public static class UserSettings
 
     public static bool ShowFlatLists
     {
-        get => AppSettings.GetValueOrDefault("ShowFlatLists", true);
+        get => AppSettings.GetValueOrDefault("ShowFlatLists", false);
         set => AppSettings.AddOrUpdateValue("ShowFlatLists", value);
     }
     public static bool UseLocalFileSystem
