@@ -156,7 +156,9 @@ public class DataExportChildProvider : CatalogueChildProvider
         DataExportChildProvider previousStateIfKnown) : base(repositoryLocator.CatalogueRepository,
         pluginChildProviders, errorsCheckNotifier, previousStateIfKnown)
     {
-        _lazyForbidListedSources = new LazyWithReset<List<ExternalCohortTable>>(() => previousStateIfKnown?.ForbidListedSources ?? new List<ExternalCohortTable>());
+        _lazyForbidListedSources = new LazyWithReset<List<ExternalCohortTable>>(() => {
+            return previousStateIfKnown?.ForbidListedSources ?? new List<ExternalCohortTable>();
+        });
         _errorsCheckNotifier = errorsCheckNotifier;
         dataExportRepository = repositoryLocator.DataExportRepository;
 
@@ -949,6 +951,7 @@ public class DataExportChildProvider : CatalogueChildProvider
         {
             _lazyCohortSources.Reset();
             _lazyRootCohortsNode.Reset();
+            _lazyForbidListedSources.Reset();
             return SelectiveRefreshParents(t);
         }
         if (t == typeof(ExtractableDataSet))
@@ -981,6 +984,7 @@ public class DataExportChildProvider : CatalogueChildProvider
         if (t == typeof(ExtractableCohort))
         {
             _lazyCohorts.Reset();
+            _lazyForbidListedSources.Reset();
             return SelectiveRefreshParents(t);
         }
         if (t == typeof(ExtractionConfiguration))
