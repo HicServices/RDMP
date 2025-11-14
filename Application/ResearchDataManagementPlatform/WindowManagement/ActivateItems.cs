@@ -550,7 +550,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
     private void RefreshProblemProviders()
     {
         foreach (var p in ProblemProviders)
-            p.RefreshProblems(CoreChildProvider);
+            p.RefreshProblems(RefreshBus.ChildProvider);
     }
 
     /// <inheritdoc />

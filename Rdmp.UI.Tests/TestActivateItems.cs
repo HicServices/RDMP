@@ -82,6 +82,7 @@ public class TestActivateItems : BasicActivateItems, IActivateItems, ITheme
             new CatalogueProblemProvider(),
             new DataExportProblemProvider()
         });
+        _problemProviders.ForEach(pp => pp.RefreshProblems(RefreshBus.ChildProvider));
     }
 
     public Form ShowWindow(Control singleControlForm, bool asDocument = false)
