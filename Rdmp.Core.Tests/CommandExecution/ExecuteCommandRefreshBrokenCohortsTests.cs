@@ -17,7 +17,7 @@ namespace Rdmp.Core.Tests.CommandExecution;
 internal class ExecuteCommandRefreshBrokenCohortsTests
 {
     [Test]
-    public void TestBrokenCohort()
+    public void TestBrokenCohort()//todo
     {
         var repo = new MemoryDataExportRepository();
 

@@ -137,7 +137,7 @@ public class DescendancyList
     /// returns the last object in the chain, for example Root=>GrandParent=>Parent would return 'Parent'
     /// </summary>
     /// <returns></returns>
-    public object Last() => Parents.Last();
+    public object Last() => Parents.LastOrDefault();
 
     /// <summary>
     /// Returns the first <see cref="Parents"/> which is meaningful to the user in locating the object within

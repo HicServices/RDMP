@@ -77,7 +77,7 @@ public class AllKeywordsDescribedTest : DatabaseTests
     }
 
     [Test]
-    public void AllUserIndexesDescribed()
+    public void AllUserIndexesDescribed()//todo
     {
         var allIndexes = new List<string>();
 

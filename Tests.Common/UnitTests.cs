@@ -4,12 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.CompilerServices;
 using FAnsi;
 using FAnsi.Implementation;
 using FAnsi.Implementations.MicrosoftSQL;
@@ -43,6 +37,12 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.Setting;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace Tests.Common;
 
@@ -592,24 +592,22 @@ public class UnitTests
             return (T)(object)new Setting(repository.CatalogueRepository, "", "");
         }
 
-        if(typeof(T) == typeof(RegexRedaction))
+        if (typeof(T) == typeof(RegexRedaction))
         {
             return (T)(object)new RegexRedaction(repository.CatalogueRepository, 0, 0, "", "", 0, new Dictionary<ColumnInfo, string>());
         }
         if (typeof(T) == typeof(RegexRedactionConfiguration))
         {
-            return (T)(object)new RegexRedactionConfiguration(repository.CatalogueRepository,"name",new System.Text.RegularExpressions.Regex(".*"),"T");
+            return (T)(object)new RegexRedactionConfiguration(repository.CatalogueRepository, "name", new System.Text.RegularExpressions.Regex(".*"), "T");
         }
         if (typeof(T) == typeof(RegexRedactionKey))
         {
-            return (T)(object)new RegexRedactionKey(repository.CatalogueRepository,WhenIHaveA<RegexRedaction>(repository),WhenIHaveA<ColumnInfo>(repository),"PK");
+            return (T)(object)new RegexRedactionKey(repository.CatalogueRepository, WhenIHaveA<RegexRedaction>(repository), WhenIHaveA<ColumnInfo>(repository), "PK");
         }
-        if(typeof(T) == typeof(ExtractableDataSetProject))
+        if (typeof(T) == typeof(ExtractableDataSetProject))
         {
             return (T)(object)new ExtractableDataSetProject(repository, WhenIHaveA<ExtractableDataSet>(repository), WhenIHaveA<Project>(repository));
         }
-
-
         throw new TestCaseNotWrittenYetException(typeof(T));
     }
 

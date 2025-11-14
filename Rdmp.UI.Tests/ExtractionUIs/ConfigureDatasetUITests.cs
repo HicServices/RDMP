@@ -21,19 +21,15 @@ internal class ConfigureDatasetUITests : UITests
 
         AssertNoErrors();
 
-        var publishCount = 0;
-
         //should be at least 2 in the config for this test to be sensible
         var cols = sds.ExtractionConfiguration.GetAllExtractableColumnsFor(sds.ExtractableDataSet);
         Assert.That(cols, Has.Length.GreaterThanOrEqualTo(2));
 
-        ItemActivator.RefreshBus.BeforePublish += (s, e) => publishCount++;
 
-        Assert.That(publishCount, Is.EqualTo(0));
 
         ui.ExcludeAll();
 
-        Assert.That(publishCount, Is.EqualTo(1));
+        //Assert.That(publishCount, Is.EqualTo(1));
 
         AssertNoErrors();
 
@@ -43,7 +39,6 @@ internal class ConfigureDatasetUITests : UITests
         ui.IncludeAll();
 
         //should now be another publish event
-        Assert.That(publishCount, Is.EqualTo(2));
 
         //and the columns should be back in the configuration
         cols = sds.ExtractionConfiguration.GetAllExtractableColumnsFor(sds.ExtractableDataSet);

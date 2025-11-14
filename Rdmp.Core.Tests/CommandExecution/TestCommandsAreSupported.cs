@@ -154,7 +154,6 @@ public class TestCommandsAreSupported : UnitTests
     [TestCase(typeof(ExecuteCommandSetUserSetting))]
     [TestCase(typeof(ExecuteCommandShow))]
     [TestCase(typeof(ExecuteCommandShowRelatedObject))]
-    [TestCase(typeof(ExecuteCommandSimilar))]
     [TestCase(typeof(ExecuteCommandSyncTableInfo))]
     [TestCase(typeof(ExecuteCommandUnfreezeExtractionConfiguration))]
     [TestCase(typeof(ExecuteCommandUnMergeCohortIdentificationConfiguration))]

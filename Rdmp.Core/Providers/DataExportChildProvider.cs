@@ -799,6 +799,7 @@ public class DataExportChildProvider : CatalogueChildProvider
     {
         lock (WriteLock)
         {
+            var x = GetChildren(project);
             //Get the extraction configurations node of the project
             var configurationsNode = GetChildren(project).OfType<ExtractionConfigurationsNode>().Single();
 
@@ -809,6 +810,42 @@ public class DataExportChildProvider : CatalogueChildProvider
             return GetChildren(configurationsNode).OfType<ExtractionConfiguration>()
                 .Union(GetChildren(frozenConfigurationsNode).OfType<ExtractionConfiguration>());
         }
+    }
+
+    public override object[] GetChildren(object model)
+    {
+        lock(WriteLock)
+        {
+            return model switch
+            {
+                Project p => GetChildren(p).ToArray(),
+                ExtractionConfigurationsNode ecn => GetChildren(ecn).ToArray(),
+                FrozenExtractionConfigurationsNode ecn => GetChildren(ecn).ToArray(),
+                _ => base.GetChildren(model)
+            };
+
+        }
+    }
+
+    private HashSet<object> GetChildren(Project project)
+    {
+        return new HashSet<object>(new object[]{
+            new ExtractionConfigurationsNode(project),
+        });
+    }
+
+    private HashSet<object> GetChildren(ExtractionConfigurationsNode node)
+    {
+        ExtractionConfigurationsByProject.TryGetValue(node.Project.ID, out List<ExtractionConfiguration> vals);
+        var x = new List<object>() { new FrozenExtractionConfigurationsNode(node.Project) };
+        x.AddRange(vals ?? new List<ExtractionConfiguration>());
+        return new HashSet<object>(x.ToArray());
+    }
+
+    private HashSet<object> GetChildren(FrozenExtractionConfigurationsNode node)
+    {
+        ExtractionConfigurationsByProject.TryGetValue(node.Project.ID, out List<ExtractionConfiguration> vals);
+        return new HashSet<object>(vals ?? new List<ExtractionConfiguration>());
     }
 
     public IEnumerable<IExtractableDataSet> GetDatasets(ExtractableDataSetPackage package)

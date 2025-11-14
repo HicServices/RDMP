@@ -6,6 +6,7 @@
 
 using NUnit.Framework;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.Providers;
 using Rdmp.UI.CohortUI.CohortSourceManagement;
 
 namespace Rdmp.UI.Tests.CohortUI.CohortSourceManagement;
@@ -19,6 +20,8 @@ public class ExternalCohortTableUITests : UITests
         var o = WhenIHaveA<ExternalCohortTable>();
         var ui = AndLaunch<ExternalCohortTableUI>(o);
         Assert.That(ui, Is.Not.Null);
+        var dx = ui.Activator.CoreChildProvider as DataExportChildProvider;
+        _ = dx.ProjectNumberToCohortsDictionary;
 
         //because cohort table doesnt actually go to a legit database the source should have been forbidlisted during the child provider stage (not really related to our UI).
         AssertErrorWasShown(ExpectedErrorType.GlobalErrorCheckNotifier,
