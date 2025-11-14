@@ -823,6 +823,8 @@ public class DataExportChildProvider : CatalogueChildProvider
                 Project p => GetChildren(p).ToArray(),
                 ExtractionConfigurationsNode ecn => GetChildren(ecn).ToArray(),
                 FrozenExtractionConfigurationsNode ecn => GetChildren(ecn).ToArray(),
+                ProjectCohortsNode pcn => GetChildren(pcn).ToArray(),
+                ProjectCohortIdentificationConfigurationAssociationsNode pcican => GetChildren(pcican).ToArray(),
                 _ => base.GetChildren(model)
             };
 
@@ -831,9 +833,25 @@ public class DataExportChildProvider : CatalogueChildProvider
 
     private HashSet<object> GetChildren(Project project)
     {
-        return new HashSet<object>(new object[]{
+        return [.. new object[]{
             new ExtractionConfigurationsNode(project),
-        });
+            new ProjectCohortsNode(project)
+        }];
+    }
+
+    private HashSet<object> GetChildren(ProjectCohortIdentificationConfigurationAssociationsNode pcican)
+    {
+        return new HashSet<object>(pcican.Project.GetAssociatedCohortIdentificationConfigurations());
+    }
+
+    private HashSet<object> GetChildren(ProjectCohortsNode pcn)
+    {
+        var configs  = pcn.Project.GetAssociatedCohortIdentificationConfigurations();//todo I don't think this is correct
+        var node = new ProjectCohortIdentificationConfigurationAssociationsNode(pcn.Project);
+        var x = new List<object>();
+        x.AddRange(configs);
+        x.Add(node);
+        return new HashSet<object>(x);
     }
 
     private HashSet<object> GetChildren(ExtractionConfigurationsNode node)

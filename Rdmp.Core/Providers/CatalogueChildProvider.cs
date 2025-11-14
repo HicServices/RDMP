@@ -1076,7 +1076,7 @@ public class CatalogueChildProvider : ICoreChildProvider
     {
         var children = new List<object>();
         var folders = folder.ChildFolders;
-        var items= folder.ChildObjects;
+        var items = folder.ChildObjects;
         children.AddRange(folders);
         children.AddRange(items);
         return new HashSet<object>(children);
@@ -2020,11 +2020,54 @@ public class CatalogueChildProvider : ICoreChildProvider
         lock (WriteLock)
         {
             var toReturn = new Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList>();
-            //TODO
-            //foreach (var kvp in _descendancyDictionary.Where(kvp => kvp.Key is IMapsDirectlyToDatabaseTable))
-            //    toReturn.Add((IMapsDirectlyToDatabaseTable)kvp.Key, kvp.Value);
-
-            return toReturn;
+            foreach (var c in AllCatalogues) toReturn.Add(c, new DescendancyList());
+            //AllLoadMetadatas
+            //    AllProcessTasks
+            //    AllProcessTasksArguments
+            //    AllLoadProgresses
+            //    AllCacheProgresses
+            //    AllPermissionWindows
+            //    AllDatasets
+            //    AllSupportingDocuments
+            //    AllSupportingSQL
+            //    AllCatalogueItems
+            //    AllAggregateConfigurations
+            //    AllAggregateDimensions
+            //    AllAggregateContinuousDateAxis
+            //    AllRemoteRDMPs
+            //    AllDashboards
+            //    AllImports
+            //    AllExports
+            //    AllPipelines
+            //    AllPipelineComponents
+            //    AllPipelineComponentsArguments
+            //    AllANOTables
+            //    AllExternalServers
+            //    AllServers
+            //    AllTableInfos
+            //    AllDataAccessCredentials
+            //    AllColumnInfos
+            //    AllLookups
+            //    AllAnyTableParameters
+            //    AllExtractionInformations
+            //    AllConnectionStringKeywords
+            //    AllAggregateContainers
+            //    AllAggregateFilters
+            //    AllAggregateFilterParameters
+            //    AllCatalogueFilters
+            //    AllCatalogueParameters
+            //    AllCatalogueValueSets
+            //    AllCatalogueValueSetValues
+            //    AllCohortIdentificationConfigurations
+            //    AllCohortAggregateContainers
+            //    AllJoinables
+            //    AllGovernancePeriods
+            //    AllGovernanceDocuments
+            //    GovernanceCoverage
+            //    AllRegexRedactionConfigurations
+            //    OrphanAggregateConfigurations
+            //    TemplateAggregateConfigurations
+                return toReturn;
         }
     }
 

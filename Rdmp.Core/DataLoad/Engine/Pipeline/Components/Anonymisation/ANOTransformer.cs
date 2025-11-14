@@ -179,7 +179,6 @@ public class ANOTransformer
             cmdSubstituteIdentifiers.Parameters["@numberOfCharactersToUseInAnonymousRepresentation"].Value =
                 _anoTable.NumberOfCharactersToUseInAnonymousRepresentation;
             cmdSubstituteIdentifiers.Parameters["@suffix"].Value = _anoTable.Suffix;
-
             var da = new SqlDataAdapter(cmdSubstituteIdentifiers);
             var dtToReturn = new DataTable();
             dtToReturn.BeginLoadData();
