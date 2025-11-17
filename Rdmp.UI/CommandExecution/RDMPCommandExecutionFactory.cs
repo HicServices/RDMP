@@ -161,10 +161,24 @@ public class RDMPCommandExecutionFactory : ICommandExecutionFactory
         JoinableCollectionNode targetJoinableCollectionNode)
     {
         if (cmd is AggregateConfigurationCombineable sourceAggregateConfigurationCombineable)
+        {
+            if (sourceAggregateConfigurationCombineable.Aggregate.Catalogue.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository))
+            {
+                var dx = (DataExportChildProvider)_activator.CoreChildProvider;
+                var acic = targetJoinableCollectionNode.Configuration;
+                var cicProjAssociations = dx.AllProjectAssociatedCics.Where(c => c.CohortIdentificationConfiguration_ID == acic.ID).ToArray().Select(a => a.Project);
+                var extractableDatasets = _activator.RepositoryLocator.DataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(sourceAggregateConfigurationCombineable.Aggregate.Catalogue).ToList();
+                var catalogueProjects = extractableDatasets.SelectMany(e => e.Projects);
+                if (!catalogueProjects.Any(c => cicProjAssociations.Contains(c)))
+                {
+                    return null;
+                }
+
+            }
             if (sourceAggregateConfigurationCombineable.Aggregate.IsCohortIdentificationAggregate)
                 return new ExecuteCommandConvertAggregateConfigurationToPatientIndexTable(_activator,
                     sourceAggregateConfigurationCombineable, targetJoinableCollectionNode.Configuration);
-
+        }
         if (cmd is CatalogueCombineable sourceCatalogueCombineable)
         {
             if (sourceCatalogueCombineable.Catalogue.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository))

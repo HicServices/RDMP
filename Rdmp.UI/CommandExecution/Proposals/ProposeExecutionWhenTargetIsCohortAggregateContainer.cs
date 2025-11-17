@@ -67,6 +67,19 @@ internal class
                     sourceAggregateCommand, targetCohortAggregateContainer);
             case AggregateConfigurationCombineable sourceAggregateCommand:
                 {
+                    if (sourceAggregateCommand.Aggregate.Catalogue.IsProjectSpecific(ItemActivator.RepositoryLocator.DataExportRepository))
+                    {
+                        var dx = (DataExportChildProvider)ItemActivator.CoreChildProvider;
+                        var acic = targetCohortAggregateContainer.GetCohortIdentificationConfiguration();
+                        var cicProjAssociations = dx.AllProjectAssociatedCics.Where(c => c.CohortIdentificationConfiguration_ID == acic.ID).ToArray().Select(a => a.Project);
+                        var extractableDatasets = ItemActivator.RepositoryLocator.DataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(sourceAggregateCommand.Aggregate.Catalogue).ToList();
+                        var catalogueProjects = extractableDatasets.SelectMany(e => e.Projects);
+                        if (!catalogueProjects.Any(c => cicProjAssociations.Contains(c)))
+                        {
+                            return null;
+                        }
+
+                    }
                     var cic = sourceAggregateCommand.CohortIdentificationConfigurationIfAny;
 
                     if (cic != null && !cic.Equals(targetCohortAggregateContainer.GetCohortIdentificationConfiguration()))
