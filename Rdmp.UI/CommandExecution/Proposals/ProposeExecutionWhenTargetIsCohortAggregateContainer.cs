@@ -8,8 +8,11 @@ using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.Providers;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
+using System.Linq;
 
 
 namespace Rdmp.UI.CommandExecution.Proposals;
@@ -39,8 +42,23 @@ internal class
         {
             //source is catalogue
             case CatalogueCombineable sourceCatalogueCombineable:
-                return new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator,
-                    sourceCatalogueCombineable, targetCohortAggregateContainer);
+                {
+                    if (sourceCatalogueCombineable.Catalogue.IsProjectSpecific(ItemActivator.RepositoryLocator.DataExportRepository))
+                    {
+                        var dx = (DataExportChildProvider)ItemActivator.CoreChildProvider;
+                        var cic = targetCohortAggregateContainer.GetCohortIdentificationConfiguration();
+                        var cicProjAssociations = dx.AllProjectAssociatedCics.Where(c => c.CohortIdentificationConfiguration_ID == cic.ID).ToArray().Select(a => a.Project);
+                        var extractableDatasets = ItemActivator.RepositoryLocator.DataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(sourceCatalogueCombineable.Catalogue).ToList();
+                        var catalogueProjects = extractableDatasets.SelectMany(e => e.Projects);
+                        if (!catalogueProjects.Any(c => cicProjAssociations.Contains(c)))
+                        {
+                            return null;
+                        }
+
+                    }
+                    return new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator,
+                        sourceCatalogueCombineable, targetCohortAggregateContainer);
+                }
             //source is aggregate
             //if it is not already involved in cohort identification
             case AggregateConfigurationCombineable sourceAggregateCommand
@@ -90,8 +108,8 @@ internal class
                     sourceCohortAggregateContainerCommand, targetCohortAggregateContainer);
             //it's being dragged above/below a container (reorder)
             case CohortAggregateContainerCombineable sourceCohortAggregateContainerCommand:
-            return new ExecuteCommandReOrderAggregateContainer(ItemActivator, sourceCohortAggregateContainerCommand,
-                targetCohortAggregateContainer, insertOption);
+                return new ExecuteCommandReOrderAggregateContainer(ItemActivator, sourceCohortAggregateContainerCommand,
+                    targetCohortAggregateContainer, insertOption);
         }
 
         return null;

@@ -4,14 +4,13 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.Providers;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
@@ -19,6 +18,10 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.CommandExecution.Proposals;
 using Rdmp.UI.ItemActivation;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace Rdmp.UI.CommandExecution;
 
@@ -162,10 +165,25 @@ public class RDMPCommandExecutionFactory : ICommandExecutionFactory
                 return new ExecuteCommandConvertAggregateConfigurationToPatientIndexTable(_activator,
                     sourceAggregateConfigurationCombineable, targetJoinableCollectionNode.Configuration);
 
-        return cmd is CatalogueCombineable sourceCatalogueCombineable
-            ? new ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable(_activator,
-                sourceCatalogueCombineable, targetJoinableCollectionNode.Configuration)
-            : (ICommandExecution)null;
+        if (cmd is CatalogueCombineable sourceCatalogueCombineable)
+        {
+            if (sourceCatalogueCombineable.Catalogue.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository))
+            {
+                var dx = (DataExportChildProvider)_activator.CoreChildProvider;
+                var cic = targetJoinableCollectionNode.Configuration;
+                var cicProjAssociations = dx.AllProjectAssociatedCics.Where(c => c.CohortIdentificationConfiguration_ID == cic.ID).ToArray().Select(a => a.Project);
+                var extractableDatasets = _activator.RepositoryLocator.DataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(sourceCatalogueCombineable.Catalogue).ToList();
+                var catalogueProjects = extractableDatasets.SelectMany(e => e.Projects);
+                if (!catalogueProjects.Any(c => cicProjAssociations.Contains(c)))
+                {
+                    return null;
+                }
+
+            }
+            return new ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable(_activator,
+                sourceCatalogueCombineable, targetJoinableCollectionNode.Configuration);
+        }
+        return (ICommandExecution)null;
     }
 
 
