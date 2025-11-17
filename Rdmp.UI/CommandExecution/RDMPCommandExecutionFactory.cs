@@ -197,7 +197,7 @@ public class RDMPCommandExecutionFactory : ICommandExecutionFactory
             return new ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable(_activator,
                 sourceCatalogueCombineable, targetJoinableCollectionNode.Configuration);
         }
-        return (ICommandExecution)null;
+        return null;
     }
 
 
