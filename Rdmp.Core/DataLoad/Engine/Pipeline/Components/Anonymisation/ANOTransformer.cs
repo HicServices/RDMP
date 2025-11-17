@@ -122,7 +122,6 @@ public class ANOTransformer
     {
         using var con = (SqlConnection)_server.GetConnection();
         con.InfoMessage += _con_InfoMessage;
-        con.ConnectionString = _server.GetConnection().ConnectionString;
         if (table.Rows.Count == 0)
             return table;
         try
@@ -162,7 +161,6 @@ public class ANOTransformer
                 CommandTimeout = 500,
                 Transaction = transaction
             };
-            cmdSubstituteIdentifiers.Connection.ConnectionString = _server.GetConnection().ConnectionString;
             cmdSubstituteIdentifiers.Parameters.Add("@batch", SqlDbType.Structured);
             cmdSubstituteIdentifiers.Parameters.Add("@tableName", SqlDbType.VarChar, 500);
             cmdSubstituteIdentifiers.Parameters.Add("@numberOfIntegersToUseInAnonymousRepresentation", SqlDbType.Int);
