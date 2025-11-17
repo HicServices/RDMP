@@ -308,7 +308,7 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable, ICheckable, IRev
                         CheckResult.Warning));
         }
 
-        using var con = forceConnection ?? server.GetConnection(); //use the forced connection or open a new one
+        var con = forceConnection ?? server.GetConnection(); //use the forced connection or open a new one
 
         try
         {
@@ -362,6 +362,10 @@ CONSTRAINT AK_{TableName} UNIQUE({anonymousColumnName})
                         $"Failed to successfully create the anonymous/identifier mapping Table in the ANO database on server {Server}",
                         CheckResult.Fail, e));
                 return;
+            }
+            finally
+            {
+                if (forceConnection == null) con.Close();
             }
         }
 
