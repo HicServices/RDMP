@@ -2021,6 +2021,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         {
             var toReturn = new Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList>();
             foreach (var c in AllCatalogues) toReturn.Add(c, new DescendancyList());
+            foreach (var c in AllCohortAggregateContainers) toReturn.Add(c, new DescendancyList());
             //AllLoadMetadatas
             //    AllProcessTasks
             //    AllProcessTasksArguments
@@ -2067,7 +2068,7 @@ public class CatalogueChildProvider : ICoreChildProvider
             //    AllRegexRedactionConfigurations
             //    OrphanAggregateConfigurations
             //    TemplateAggregateConfigurations
-                return toReturn;
+            return toReturn;
         }
     }
 

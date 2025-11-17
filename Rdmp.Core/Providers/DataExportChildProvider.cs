@@ -896,6 +896,8 @@ public class DataExportChildProvider : CatalogueChildProvider
         lock (WriteLock)
         {
             var toReturn = base.GetAllSearchables();
+            foreach (var c in Projects) toReturn.Add(c, new DescendancyList());
+
             AddToReturnSearchablesWithNoDecendancy(toReturn, AllPackages);
             return toReturn;
         }
