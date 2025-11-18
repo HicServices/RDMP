@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [9.1.0] - Unreleased
 - Fix bug with duplicate searchables
 - Add the ability to Template Cohort Identification Configurations (see [Documentation\cohorts\CohortIdentificationConfigurationTemplates.md])
+- Require all deletes to enter a commit message when using the commit system
+- Introduce ability to view Catalogues in a flat view
+- Fix bug where Internal catalogues were still able to be added to a CIC
 
 ## [9.0.3] - 2025-11-03
 - Improve checking for default pipelines
