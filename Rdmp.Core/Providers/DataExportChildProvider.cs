@@ -263,7 +263,7 @@ public class DataExportChildProvider : CatalogueChildProvider
         _lazyProjectRootFolder = new LazyWithReset<FolderNode<Project>>(() =>
         {
             var x = FolderHelper.BuildFolderTree(Projects);
-            //AddChildren(x, new DescendancyList(x));
+            AddChildren(x, new DescendancyList(x));
             return x;
         });
 
