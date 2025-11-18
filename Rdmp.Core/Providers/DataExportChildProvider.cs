@@ -263,7 +263,7 @@ public class DataExportChildProvider : CatalogueChildProvider
         _lazyProjectRootFolder = new LazyWithReset<FolderNode<Project>>(() =>
         {
             var x = FolderHelper.BuildFolderTree(Projects);
-            AddChildren(x, new DescendancyList(x));
+            //AddChildren(x, new DescendancyList(x));
             return x;
         });
 
@@ -825,10 +825,21 @@ public class DataExportChildProvider : CatalogueChildProvider
                 FrozenExtractionConfigurationsNode ecn => GetChildren(ecn).ToArray(),
                 ProjectCohortsNode pcn => GetChildren(pcn).ToArray(),
                 ProjectCohortIdentificationConfigurationAssociationsNode pcican => GetChildren(pcican).ToArray(),
+                FolderNode<Project> prf => GetChildren(prf).ToArray(),
                 _ => base.GetChildren(model)
             };
 
         }
+    }
+
+    private HashSet<object> GetChildren(FolderNode<Project> folder)
+    {
+        var folders = folder.ChildFolders;
+        var children = folder.ChildObjects;
+        var c = new List<object>();
+        c.AddRange(folders);
+        c.AddRange(children);
+        return new HashSet<object>(c);
     }
 
     private HashSet<object> GetChildren(Project project)

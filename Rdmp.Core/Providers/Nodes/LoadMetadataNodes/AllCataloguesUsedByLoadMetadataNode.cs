@@ -26,7 +26,7 @@ public class AllCataloguesUsedByLoadMetadataNode : Node, IOrderable
         set { }
     }
 
-    public List<Catalogue> UsedCatalogues { get; set; }
+    public List<Catalogue> UsedCatalogues { get; set; } = new();
 
     public AllCataloguesUsedByLoadMetadataNode(LoadMetadata lmd)
     {
