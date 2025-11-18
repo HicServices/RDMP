@@ -4,10 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [9.0.4] - Unreleased
+## [9.1.0] - Unreleased
 - Fix bug with duplicate searchables
 - Improve UI for committing cohorts across projects
+- Add the ability to Template Cohort Identification Configurations (see [Documentation\cohorts\CohortIdentificationConfigurationTemplates.md])
+- Require all deletes to enter a commit message when using the commit system
 - Introduce ability to view Catalogues in a flat view
+- Fix bug where Internal catalogues were still able to be added to a CIC
 
 ## [9.0.3] - 2025-11-03
 - Improve checking for default pipelines

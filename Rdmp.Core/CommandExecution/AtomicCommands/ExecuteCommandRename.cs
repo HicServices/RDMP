@@ -27,7 +27,7 @@ public class ExecuteCommandRename : BasicCommandExecution, IAtomicCommand
             case ITableInfo:
                 SetImpossible("TableInfos cannot not be renamed");
                 break;
-            case IMightBeReadOnly ro when ro.ShouldBeReadOnly(out var reason):
+            case IMightBeReadOnly ro when ro.ShouldBeReadOnly(this.GetType().Name, out var reason):
                 SetImpossible(reason);
                 break;
         }
