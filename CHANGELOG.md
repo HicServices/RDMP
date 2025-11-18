@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [9.0.4] - Unreleased
 - Fix bug with duplicate searchables
+- Require all deletes to enter a commit message when using the commit system
 - Introduce ability to view Catalogues in a flat view
 - Fix bug where Internal catalogues were still able to be added to a CIC
 
