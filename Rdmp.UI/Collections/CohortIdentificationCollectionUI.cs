@@ -60,13 +60,16 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
         CommonTreeFunctionality.MaintainRootObjects = new[]
         {
             typeof(FolderNode<CohortIdentificationConfiguration>),
+            typeof(AllTemplateCohortIdentificationConfigurationsNode),
             typeof(AllOrphanAggregateConfigurationsNode),
             typeof(AllTemplateAggregateConfigurationsNode)
         };
         var rootFolder = Activator.CoreChildProvider.CohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations;
         rootFolder.ChildFolders = new List<FolderNode<CohortIdentificationConfiguration>>();
         rootFolder.ChildObjects = new List<CohortIdentificationConfiguration>();
+
         tlvCohortIdentificationConfigurations.AddObject(rootFolder);
+        tlvCohortIdentificationConfigurations.AddObject(Activator.CoreChildProvider.AllTemplateCohortIdentificationConfigurationsNode);
         tlvCohortIdentificationConfigurations.AddObject(Activator.CoreChildProvider.OrphanAggregateConfigurationsNode);
         tlvCohortIdentificationConfigurations.AddObject(Activator.CoreChildProvider
             .TemplateAggregateConfigurationsNode);
@@ -140,7 +143,7 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
         // The root CohortIdentificationConfiguration FolderNode is a root element in this tree
         root is FolderNode<CohortIdentificationConfiguration> f
             ? f.Name == FolderHelper.Root
-            : root is AllOrphanAggregateConfigurationsNode or AllTemplateAggregateConfigurationsNode;
+            : root is AllOrphanAggregateConfigurationsNode or AllTemplateAggregateConfigurationsNode or AllTemplateCohortIdentificationConfigurationsNode;
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {
