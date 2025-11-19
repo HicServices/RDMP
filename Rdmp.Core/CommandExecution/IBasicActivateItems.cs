@@ -173,6 +173,7 @@ public interface IBasicActivateItems
     CohortCreationRequest GetCohortCreationRequest(ExternalCohortTable externalCohortTable, IProject project,
         string cohortInitialDescription);
 
+    IProject CohortCommitProjectSelect(IProject currentProject, Project[] projects);
 
 
     CohortHoldoutLookupRequest GetCohortHoldoutLookupRequest(ExternalCohortTable externalCohortTable, IProject project, CohortIdentificationConfiguration cic);

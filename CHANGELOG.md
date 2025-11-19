@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [9.1.0] - Unreleased
 - Fix bug with duplicate searchables
+- Improve UI for committing cohorts across projects
 - Add the ability to Template Cohort Identification Configurations (see [Documentation\cohorts\CohortIdentificationConfigurationTemplates.md])
 - Require all deletes to enter a commit message when using the commit system
 - Introduce ability to view Catalogues in a flat view
