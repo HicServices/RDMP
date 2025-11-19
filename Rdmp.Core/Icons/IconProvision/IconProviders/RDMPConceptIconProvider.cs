@@ -1,7 +1,36 @@
-﻿using Org.BouncyCastle.Pqc.Crypto.Utilities;
+﻿using MongoDB.Driver;
+using Org.BouncyCastle.Pqc.Crypto.Utilities;
+using Rdmp.Core.Curation;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Curation.Data.Cache;
+using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.Curation.Data.Dashboarding;
+using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.Curation.Data.Governance;
+using Rdmp.Core.Curation.Data.ImportExport;
+using Rdmp.Core.Curation.Data.Pipelines;
+using Rdmp.Core.Curation.Data.Remoting;
+using Rdmp.Core.Curation.Data.Spontaneous;
+using Rdmp.Core.Curation.DataHelper.RegexRedaction;
+using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.DataExport.DataRelease.Audit;
+using Rdmp.Core.DataLoad.Engine.Attachers;
+using Rdmp.Core.DataLoad.Engine.DataProvider;
+using Rdmp.Core.DataLoad.Engine.Mutilators;
+using Rdmp.Core.DataQualityEngine.Data;
+using Rdmp.Core.Providers;
+using Rdmp.Core.Providers.Nodes;
+using Rdmp.Core.Providers.Nodes.CohortNodes;
+using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
+using Rdmp.Core.Providers.Nodes.PipelineNodes;
+using Rdmp.Core.Providers.Nodes.ProjectCohortNodes;
+using Rdmp.Core.Providers.Nodes.SharingNodes;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
+using Terminal.Gui;
 
 namespace Rdmp.Core.Icons.IconProvision.IconProviders;
 
@@ -15,6 +44,328 @@ public class RDMPConceptIconProvider : IIconProvider
         {
             case RDMPConcept.CatalogueFolder:
                 return Image.Load<Rgba32>(CatalogueIcons.CatalogueFolder);
+            case RDMPConcept.Database:
+                return Image.Load<Rgba32>(CatalogueIcons.Database);
+            case RDMPConcept.SQL:
+                return Image.Load<Rgba32>(CatalogueIcons.SQL);
+            case RDMPConcept.ReOrder:
+                return Image.Load<Rgba32>(CatalogueIcons.ReOrder);
+            case RDMPConcept.Executable:
+                return Image.Load<Rgba32>(CatalogueIcons.Exe);
+            case RDMPConcept.DQE:
+                return Image.Load<Rgba32>(CatalogueIcons.DQE);
+            case RDMPConcept.TimeCoverageField:
+                return Image.Load<Rgba32>(CatalogueIcons.TimeCoverageField);
+            case RDMPConcept.Clipboard:
+                return Image.Load<Rgba32>(CatalogueIcons.Clipboard);
+            case RDMPConcept.ExternalDatabaseServer_Cache:
+                return Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_Cache);
+            case RDMPConcept.AllAutomationServerSlotsNode:
+                return Image.Load<Rgba32>(CatalogueIcons.AllAutomationServerSlotsNode);
+            case RDMPConcept.AutomationServiceSlot:
+                return Image.Load<Rgba32>(CatalogueIcons.AutomationServiceSlot);
+            case RDMPConcept.AutomateablePipeline:
+                return Image.Load<Rgba32>(CatalogueIcons.AutomateablePipeline);
+            case RDMPConcept.AutomationServiceException:
+                return Image.Load<Rgba32>(CatalogueIcons.AutomationServiceException);
+            case RDMPConcept.AllRDMPRemotesNode:
+                return Image.Load<Rgba32>(CatalogueIcons.AllRDMPRemotesNode);
+            case RDMPConcept.RemoteRDMP:
+                return Image.Load<Rgba32>(CatalogueIcons.RemoteRDMP);
+            case RDMPConcept.Favourite:
+                return Image.Load<Rgba32>(CatalogueIcons.Favourite);
+            case RDMPConcept.LoadMetadata:
+                return Image.Load<Rgba32>(CatalogueIcons.LoadMetadata);
+            case RDMPConcept.CacheProgress:
+                return Image.Load<Rgba32>(CatalogueIcons.CacheProgress);
+            case RDMPConcept.LoadProgress:
+                return Image.Load<Rgba32>(CatalogueIcons.LoadProgress);
+            case RDMPConcept.LoadPeriodically:
+                return Image.Load<Rgba32>(CatalogueIcons.LoadPeriodically);
+            case RDMPConcept.Plugin:
+                return Image.Load<Rgba32>(CatalogueIcons.Plugin);
+            case RDMPConcept.ExternalDatabaseServer:
+                return Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer);
+            case RDMPConcept.Catalogue:
+                return Image.Load<Rgba32>(CatalogueIcons.Catalogue);
+            case RDMPConcept.ProjectCatalogue:
+                return Image.Load<Rgba32>(CatalogueIcons.ProjectCatalogue);
+            case RDMPConcept.CatalogueItemsNode:
+                return Image.Load<Rgba32>(CatalogueIcons.CatalogueItemsNode);
+            case RDMPConcept.CatalogueItem:
+                return Image.Load<Rgba32>(CatalogueIcons.CatalogueItem);
+            case RDMPConcept.CatalogueItemIssue:
+                return Image.Load<Rgba32>(CatalogueIcons.CatalogueItemIssue);
+            case RDMPConcept.ExtractionInformation:
+                return Image.Load<Rgba32>(CatalogueIcons.ExtractionInformation);
+            case RDMPConcept.TableInfo:
+                return Image.Load<Rgba32>(CatalogueIcons.TableInfo);
+            case RDMPConcept.ColumnInfo:
+                return Image.Load<Rgba32>(CatalogueIcons.ColumnInfo);
+            case RDMPConcept.ANOColumnInfo:
+                return Image.Load<Rgba32>(CatalogueIcons.ANOColumnInfo);
+            case RDMPConcept.PreLoadDiscardedColumn:
+                return Image.Load<Rgba32>(CatalogueIcons.PreLoadDiscardedColumn);
+            case RDMPConcept.AllDataAccessCredentialsNode:
+                return Image.Load<Rgba32>(CatalogueIcons.AllDataAccessCredentialsNode);
+            case RDMPConcept.DataAccessCredentials:
+                return Image.Load<Rgba32>(CatalogueIcons.DataAccessCredentials);
+            case RDMPConcept.AllANOTablesNode:
+                return Image.Load<Rgba32>(CatalogueIcons.AllANOTablesNode);
+            case RDMPConcept.ANOTable:
+                return Image.Load<Rgba32>(CatalogueIcons.ANOTable);
+            case RDMPConcept.AllServersNode:
+                return Image.Load<Rgba32>(CatalogueIcons.AllServersNode);
+            case RDMPConcept.TableInfoServerNode:
+                return Image.Load<Rgba32>(CatalogueIcons.TableInfoServerNode);
+            case RDMPConcept.DocumentationNode:
+                return Image.Load<Rgba32>(CatalogueIcons.DocumentationNode);
+            case RDMPConcept.CatalogueLookupsNode:
+                return Image.Load<Rgba32>(CatalogueIcons.CatalogueLookupsNode);
+            case RDMPConcept.DashboardLayout:
+                return Image.Load<Rgba32>(CatalogueIcons.DashboardLayout);
+            case RDMPConcept.DashboardControl:
+                return Image.Load<Rgba32>(CatalogueIcons.DashboardControl);
+            case RDMPConcept.FilterContainer:
+                return Image.Load<Rgba32>(CatalogueIcons.FilterContainer);
+            case RDMPConcept.Filter:
+                return Image.Load<Rgba32>(CatalogueIcons.Filter);
+            case RDMPConcept.ExtractionFilterParameterSet:
+                return Image.Load<Rgba32>(CatalogueIcons.ExtractionFilterParameterSet);
+            case RDMPConcept.ParametersNode:
+                return Image.Load<Rgba32>(CatalogueIcons.ParametersNode);
+            case RDMPConcept.ExtendedProperty:
+                return Image.Load<Rgba32>(CatalogueIcons.ExtendedProperty);
+            case RDMPConcept.AggregateTopX:
+                return Image.Load<Rgba32>(CatalogueIcons.AggregateTopX);
+            case RDMPConcept.AggregateContinuousDateAxis:
+                return Image.Load<Rgba32>(CatalogueIcons.AggregateContinuousDateAxis);
+            case RDMPConcept.AggregatesNode:
+                return Image.Load<Rgba32>(CatalogueIcons.AggregatesNode);
+            case RDMPConcept.AggregateGraph:
+                return Image.Load<Rgba32>(CatalogueIcons.AggregateGraph);
+            case RDMPConcept.AllOrphanAggregateConfigurationsNode:
+                return Image.Load<Rgba32>(CatalogueIcons.AllOrphanAggregateConfigurationsNode);
+            case RDMPConcept.AllTemplateAggregateConfigurationsNode:
+                return Image.Load<Rgba32>(CatalogueIcons.AllTemplateAggregateConfigurationsNode);
+            case RDMPConcept.CohortAggregate:
+                return Image.Load<Rgba32>(CatalogueIcons.CohortAggregate);
+            case RDMPConcept.JoinableCollectionNode:
+                return Image.Load<Rgba32>(CatalogueIcons.JoinableCollectionNode);
+            case RDMPConcept.PatientIndexTable:
+                return Image.Load<Rgba32>(CatalogueIcons.PatientIndexTable);
+            case RDMPConcept.SupportingSQLTable:
+                return Image.Load<Rgba32>(CatalogueIcons.SupportingSQLTable);
+            case RDMPConcept.SupportingDocument:
+                return Image.Load<Rgba32>(CatalogueIcons.SupportingDocument);
+            case RDMPConcept.ExtractableDataSet:
+                return Image.Load<Rgba32>(CatalogueIcons.ExtractableDataSet);
+            case RDMPConcept.ExtractionConfiguration:
+                return Image.Load<Rgba32>(CatalogueIcons.ExtractionConfiguration);
+            case RDMPConcept.Project:
+                return Image.Load<Rgba32>(CatalogueIcons.Project);
+            case RDMPConcept.ExtractableDataSetPackage:
+                return Image.Load<Rgba32>(CatalogueIcons.ExtractableDataSetPackage);
+            case RDMPConcept.ExternalCohortTable:
+                return Image.Load<Rgba32>(CatalogueIcons.ExternalCohortTable);
+            case RDMPConcept.ExtractableCohort:
+                return Image.Load<Rgba32>(CatalogueIcons.ExtractableCohort);
+            case RDMPConcept.StandardRegex:
+                return Image.Load<Rgba32>(CatalogueIcons.StandardRegex);
+            case RDMPConcept.AllCohortsNode:
+                return Image.Load<Rgba32>(CatalogueIcons.AllCohortsNode);
+            case RDMPConcept.ProjectsNode:
+                return Image.Load<Rgba32>(CatalogueIcons.ProjectsNode);
+            case RDMPConcept.ProjectCohortIdentificationConfigurationAssociationsNode:
+                return Image.Load<Rgba32>(CatalogueIcons.ProjectCohortIdentificationConfigurationAssociationsNode);
+            case RDMPConcept.ProjectSavedCohortsNode:
+                return Image.Load<Rgba32>(CatalogueIcons.ProjectSavedCohortsNode);
+            case RDMPConcept.ExtractableDataSetsNode:
+                return Image.Load<Rgba32>(CatalogueIcons.ExtractableDataSetsNode);
+            case RDMPConcept.ExtractionDirectoryNode:
+                return Image.Load<Rgba32>(CatalogueIcons.ExtractionDirectoryNode);
+            case RDMPConcept.CohortIdentificationConfiguration:
+                return Image.Load<Rgba32>(CatalogueIcons.CohortIdentificationConfiguration);
+            case RDMPConcept.AggregateDimension:
+                return Image.Load<Rgba32>(CatalogueIcons.AggregateDimension);
+            case RDMPConcept.Lookup:
+                return Image.Load<Rgba32>(CatalogueIcons.Lookup);
+            case RDMPConcept.LookupCompositeJoinInfo:
+                return Image.Load<Rgba32>(CatalogueIcons.LookupCompositeJoinInfo);
+            case RDMPConcept.JoinInfo:
+                return Image.Load<Rgba32>(CatalogueIcons.JoinInfo);
+            case RDMPConcept.Release:
+                return Image.Load<Rgba32>(CatalogueIcons.Release);
+            case RDMPConcept.EmptyProject:
+                return Image.Load<Rgba32>(CatalogueIcons.EmptyProject);
+            case RDMPConcept.NoIconAvailable:
+                return Image.Load<Rgba32>(CatalogueIcons.NoIconAvailable);
+            case RDMPConcept.File:
+                return Image.Load<Rgba32>(CatalogueIcons.File);
+            case RDMPConcept.Help:
+                return Image.Load<Rgba32>(CatalogueIcons.Help);
+            case RDMPConcept.LoadDirectoryNode:
+                return Image.Load<Rgba32>(CatalogueIcons.LoadDirectoryNode);
+            case RDMPConcept.AllProcessTasksUsedByLoadMetadataNode:
+                return Image.Load<Rgba32>(CatalogueIcons.AllProcessTasksUsedByLoadMetadataNode);
+            case RDMPConcept.AllCataloguesUsedByLoadMetadataNode:
+                return Image.Load<Rgba32>(CatalogueIcons.AllCataloguesUsedByLoadMetadataNode);
+            case RDMPConcept.LoadMetadataScheduleNode:
+                return Image.Load<Rgba32>(CatalogueIcons.LoadMetadataScheduleNode);
+            case RDMPConcept.LoadMetadataVersionNode:
+                return Image.Load<Rgba32>(CatalogueIcons.LoadMetadataVersionNode);
+            case RDMPConcept.Logging:
+                return Image.Load<Rgba32>(CatalogueIcons.Logging);
+            case RDMPConcept.GetFilesStage:
+                return Image.Load<Rgba32>(CatalogueIcons.GetFilesStage);
+            case RDMPConcept.LoadBubbleMounting:
+                return Image.Load<Rgba32>(CatalogueIcons.LoadBubbleMounting);
+            case RDMPConcept.LoadBubble:
+                return Image.Load<Rgba32>(CatalogueIcons.LoadBubble);
+            case RDMPConcept.LoadFinalDatabase:
+                return Image.Load<Rgba32>(CatalogueIcons.LoadFinalDatabase);
+            case RDMPConcept.AllExternalServersNode:
+                return Image.Load<Rgba32>(CatalogueIcons.AllExternalServersNode);
+            case RDMPConcept.DecryptionPrivateKeyNode:
+                return Image.Load<Rgba32>(CatalogueIcons.DecryptionPrivateKeyNode);
+            case RDMPConcept.PreLoadDiscardedColumnsNode:
+                return Image.Load<Rgba32>(CatalogueIcons.PreLoadDiscardedColumnsNode);
+            case RDMPConcept.ExtractionConfigurationsNode:
+                return Image.Load<Rgba32>(CatalogueIcons.ExtractionConfigurationsNode);
+            case RDMPConcept.PermissionWindow:
+                return Image.Load<Rgba32>(CatalogueIcons.PermissionWindow);
+            case RDMPConcept.Pipeline:
+                return Image.Load<Rgba32>(CatalogueIcons.Pipeline);
+            case RDMPConcept.PipelineComponent:
+                return Image.Load<Rgba32>(CatalogueIcons.PipelineComponent);
+            case RDMPConcept.PipelineComponentArgument:
+                return Image.Load<Rgba32>(CatalogueIcons.PipelineComponentArgument);
+            case RDMPConcept.ObjectExport:
+                return Image.Load<Rgba32>(CatalogueIcons.ObjectExport);
+            case RDMPConcept.ObjectImport:
+                return Image.Load<Rgba32>(CatalogueIcons.ObjectImport);
+            case RDMPConcept.AllObjectSharingNode:
+                return Image.Load<Rgba32>(CatalogueIcons.AllObjectSharingNode);
+            case RDMPConcept.AllObjectImportsNode:
+                return Image.Load<Rgba32>(CatalogueIcons.AllObjectImportsNode);
+            case RDMPConcept.AllObjectExportsNode:
+                return Image.Load<Rgba32>(CatalogueIcons.AllObjectExportsNode);
+            case RDMPConcept.AllConnectionStringKeywordsNode:
+                return Image.Load<Rgba32>(CatalogueIcons.AllConnectionStringKeywordsNode);
+            case RDMPConcept.ExtractableColumn:
+                return Image.Load<Rgba32>(CatalogueIcons.ExtractableColumn);
+            case RDMPConcept.ProjectCohortsNode:
+                return Image.Load<Rgba32>(CatalogueIcons.ProjectCohortsNode);
+            case RDMPConcept.FrozenExtractionConfigurationsNode:
+                return Image.Load<Rgba32>(CatalogueIcons.FrozenExtractionConfigurationsNode);
+            case RDMPConcept.ProjectCataloguesNode:
+                return Image.Load<Rgba32>(CatalogueIcons.ProjectCataloguesNode);
+            case RDMPConcept.AllPermissionWindowsNode:
+                return Image.Load<Rgba32>(CatalogueIcons.AllPermissionWindowsNode);
+            case RDMPConcept.Waiting:
+                return Image.Load<Rgba32>(CatalogueIcons.Waiting);
+            case RDMPConcept.WaitingForDatabase:
+                return Image.Load<Rgba32>(CatalogueIcons.WaitingForDatabase);
+            case RDMPConcept.Writing:
+                return Image.Load<Rgba32>(CatalogueIcons.Writing);
+            case RDMPConcept.Warning:
+                return Image.Load<Rgba32>(CatalogueIcons.Warning);
+            case RDMPConcept.Diff:
+                return Image.Load<Rgba32>(CatalogueIcons.Diff);
+            case RDMPConcept.FileMissing:
+                return Image.Load<Rgba32>(CatalogueIcons.FileMissing);
+            case RDMPConcept.ConnectionStringKeyword:
+                return Image.Load<Rgba32>(CatalogueIcons.ConnectionStringKeyword);
+            case RDMPConcept.AllStandardRegexesNode:
+                return Image.Load<Rgba32>(CatalogueIcons.AllStandardRegexesNode);
+            case RDMPConcept.AllPipelinesNode:
+                return Image.Load<Rgba32>(CatalogueIcons.AllPipelinesNode);
+            case RDMPConcept.OtherPipelinesNode:
+                return Image.Load<Rgba32>(CatalogueIcons.OtherPipelinesNode);
+            case RDMPConcept.StandardPipelineUseCaseNode:
+                return Image.Load<Rgba32>(CatalogueIcons.StandardPipelineUseCaseNode);
+            case RDMPConcept.AllGovernanceNode:
+                return Image.Load<Rgba32>(CatalogueIcons.AllGovernanceNode);
+            case RDMPConcept.GovernancePeriod:
+                return Image.Load<Rgba32>(CatalogueIcons.GovernancePeriod);
+            case RDMPConcept.GovernanceDocument:
+                return Image.Load<Rgba32>(CatalogueIcons.GovernanceDocument);
+            case RDMPConcept.AllProjectCohortIdentificationConfigurationsNode:
+                return Image.Load<Rgba32>(CatalogueIcons.AllProjectCohortIdentificationConfigurationsNode);
+            case RDMPConcept.AllFreeCohortIdentificationConfigurationsNode:
+                return Image.Load<Rgba32>(CatalogueIcons.AllFreeCohortIdentificationConfigurationsNode);
+            case RDMPConcept.CohortAggregateContainer:
+                return Image.Load<Rgba32>(CatalogueIcons.CohortAggregateContainer);
+            case RDMPConcept.AllPluginsNode:
+                return Image.Load<Rgba32>(CatalogueIcons.AllPluginsNode);
+            case RDMPConcept.ProcessTask:
+                return Image.Load<Rgba32>(CatalogueIcons.ProcessTask);
+            case RDMPConcept.DQEGraphAnnotation:
+                return Image.Load<Rgba32>(CatalogueIcons.DQEGraphAnnotation);
+            case RDMPConcept.Evaluation:
+                return Image.Load<Rgba32>(CatalogueIcons.Evaluation);
+            case RDMPConcept.CumulativeExtractionResults:
+                return Image.Load<Rgba32>(CatalogueIcons.CumulativeExtractionResults);
+            case RDMPConcept.ProjectCohortIdentificationConfigurationAssociation:
+                return Image.Load<Rgba32>(CatalogueIcons.ProjectCohortIdentificationConfigurationAssociation);
+            case RDMPConcept.SelectedDataSetsForcedJoin:
+                return Image.Load<Rgba32>(CatalogueIcons.SelectedDataSetsForcedJoin);
+            case RDMPConcept.SupplementalExtractionResults:
+                return Image.Load<Rgba32>(CatalogueIcons.SupplementalExtractionResults);
+            case RDMPConcept.ReleaseLog:
+                return Image.Load<Rgba32>(CatalogueIcons.ReleaseLog);
+            case RDMPConcept.LoadModuleAssembly:
+                return Image.Load<Rgba32>(CatalogueIcons.LoadModuleAssembly);
+            case RDMPConcept.TicketingSystemConfiguration:
+                return Image.Load<Rgba32>(CatalogueIcons.TicketingSystemConfiguration);
+            case RDMPConcept.WindowLayout:
+                return Image.Load<Rgba32>(CatalogueIcons.WindowLayout);
+            case RDMPConcept.SpontaneouslyInventedColumn:
+                return Image.Load<Rgba32>(CatalogueIcons.SpontaneouslyInventedColumn);
+            case RDMPConcept.ProcessTaskArgument:
+                return Image.Load<Rgba32>(CatalogueIcons.ProcessTaskArgument);
+            case RDMPConcept.CacheFetchFailure:
+                return Image.Load<Rgba32>(CatalogueIcons.CacheFetchFailure);
+            case RDMPConcept.AllDashboardsNode:
+                return Image.Load<Rgba32>(CatalogueIcons.AllDashboardsNode);
+            case RDMPConcept.ExtractionProgress:
+                return Image.Load<Rgba32>(CatalogueIcons.ExtractionProgress);
+            case RDMPConcept.Attacher:
+                return Image.Load<Rgba32>(CatalogueIcons.Attacher);
+            case RDMPConcept.DataProvider:
+                return Image.Load<Rgba32>(CatalogueIcons.DataProvider);
+            case RDMPConcept.MutilateDataTables:
+                return Image.Load<Rgba32>(CatalogueIcons.MutilateDataTables);
+            case RDMPConcept.Commit:
+                return Image.Load<Rgba32>(CatalogueIcons.Commit);
+            case RDMPConcept.Memento:
+                return Image.Load<Rgba32>(CatalogueIcons.Memento);
+            case RDMPConcept.TableInfoDatabaseNode:
+                return Image.Load<Rgba32>(CatalogueIcons.TableInfoDatabaseNode);
+            case RDMPConcept.Dataset:
+                return Image.Load<Rgba32>(CatalogueIcons.Dataset);
+            case RDMPConcept.LoadMetadataCatalogueLinkage:
+                return Image.Load<Rgba32>(CatalogueIcons.LoadMetadataCatalogueLinkage);
+            case RDMPConcept.Setting:
+                return Image.Load<Rgba32>(CatalogueIcons.Setting);
+            case RDMPConcept.TicketingSystemReleaseStatus:
+                return Image.Load<Rgba32>(CatalogueIcons.TicketingSystemReleaseStatus);
+            case RDMPConcept.CommittedCohortIdentificationNode:
+                return Image.Load<Rgba32>(CatalogueIcons.CommittedCohortIdentificationNode);
+            case RDMPConcept.AllDatasetsNode:
+                return Image.Load<Rgba32>(CatalogueIcons.AllDatasetsNode);
+            //case RDMPConcept.RegexRedaction:
+            //    return Image.Load<Rgba32>(CatalogueIcons.RegexRedaction);
+            //case RDMPConcept.RegexRedactionConfiguration:
+            //    return Image.Load<Rgba32>(CatalogueIcons.RegexRedactionConfiguration);
+            //case RDMPConcept.RegexRedactionKey:
+            //    return Image.Load<Rgba32>(CatalogueIcons.RegexRedactionKey);
+            case RDMPConcept.AllRegexRedactionConfigurationsNode:
+                return Image.Load<Rgba32>(CatalogueIcons.AllRegexRedactionConfigurationsNode);
+            case RDMPConcept.AllTemplateCohortIdentificationConfigurationsNode:
+                return Image.Load<Rgba32>(CatalogueIcons.AllTemplateAggregateConfigurationsNode);
+            case RDMPConcept.AssociatedCohortIdentificationTemplatesNode:
+                return Image.Load<Rgba32>(CatalogueIcons.ProjectCohortIdentificationConfigurationAssociationsNode);
             default:
                 return Image.Load<Rgba32>(CatalogueIcons.NoIconAvailable);
         }

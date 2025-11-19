@@ -83,6 +83,41 @@ namespace Rdmp.Core.Icons.IconProvision
                 return ((Byte[])(obj));
             }
         }
+        
+
+        /// <summary>
+        ///   Looks up a localized resource of type Image.
+        /// </summary>
+        public static Byte[] ExtractionProgress
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("ExtractionProgress", resourceCulture);
+                return ((Byte[])(obj));
+            }
+        }
+        /// <summary>
+        ///   Looks up a localized resource of type Image.
+        /// </summary>
+        public static Byte[] TicketingSystemReleaseStatus
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("TicketingSystemReleaseStatus", resourceCulture);
+                return ((Byte[])(obj));
+            }
+        }
+        /// <summary>
+        ///   Looks up a localized resource of type Image.
+        /// </summary>
+        public static Byte[] AllObjectExportsNode
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("AllObjectExportsNode", resourceCulture);
+                return ((Byte[])(obj));
+            }
+        }
 
         /// <summary>
         ///   Looks up a localized resource of type Image.
@@ -164,6 +199,15 @@ namespace Rdmp.Core.Icons.IconProvision
             get
             {
                 object obj = ResourceManager.GetObject("AllCataloguesUsedByLoadMetadataNode", resourceCulture);
+                return ((Byte[])(obj));
+            }
+        }
+
+        public static Byte[] LoadMetadataVersionNode
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("LoadMetadataVersionNode", resourceCulture);
                 return ((Byte[])(obj));
             }
         }

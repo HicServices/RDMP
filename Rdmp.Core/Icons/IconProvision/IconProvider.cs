@@ -15,6 +15,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.DataFlowPipeline.Requirements;
+using Rdmp.Core.Icons.IconProvision.IconProviders;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
@@ -28,25 +29,16 @@ namespace Rdmp.Core.Icons.IconProvision;
 
 public class IconProvider : ICoreIconProvider
 {
-    private readonly IIconProvider[] _pluginIconProviders;
-
-
-    //protected readonly CatalogueStateBasedIconProvider CatalogueStateBasedIconProvider;
-
     public Image<Rgba32> ImageUnknown => Image.Load<Rgba32>(CatalogueIcons.NoIconAvailable);
 
-    public IconProvider(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
-        IIconProvider[] pluginIconProviders)
+    public IconProvider(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
     {
-        _pluginIconProviders = pluginIconProviders;
     }
 
     public virtual Image<Rgba32> GetImage(object concept, OverlayKind kind = OverlayKind.None)
     {
-        if(concept is RDMPConcept)
-        {
-
-        }
+        if (concept is RDMPConcept rc) return RDMPConceptIconProvider.GetIcon(rc,kind);
+        if(concept is Catalogue c) return CatalogueIconProvider.GetIcon(c,kind); 
         return ImageUnknown;
     }
 

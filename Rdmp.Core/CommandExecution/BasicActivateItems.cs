@@ -139,7 +139,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
         CoreChildProvider = GetChildProvider();
 
         //handle custom icons from plugin user interfaces in which
-        CoreIconProvider = new IconProvider(repositoryLocator, PluginUserInterfaces.ToArray());
+        CoreIconProvider = new IconProvider(repositoryLocator);//, PluginUserInterfaces.ToArray());
     }
 
     protected virtual ICoreChildProvider GetChildProvider()

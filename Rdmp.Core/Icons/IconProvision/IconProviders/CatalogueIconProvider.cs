@@ -14,6 +14,10 @@ namespace Rdmp.Core.Icons.IconProvision.IconProviders
     {
         public static Image<Rgba32> GetIcon(object concept, OverlayKind kind = OverlayKind.None)
         {
+            if(concept is Catalogue c)
+            {
+
+            }
             return Image.Load<Rgba32>(CatalogueIcons.Catalogue);
         }
     }
