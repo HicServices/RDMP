@@ -5,7 +5,6 @@ using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
-using Rdmp.Core.Icons.IconOverlays;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Providers;
@@ -285,9 +284,12 @@ namespace Rdmp.UI.SimpleDialogs
             if (_items?.TryGetValue(m, out var searchable) != true) return null;
 
             var parent = searchable?.GetMostDescriptiveParent();
+            //return parent == null
+            //    ? null
+            //    : IconOverlayProvider.GetGreyscale(_activator.CoreIconProvider.GetImage(parent)).ImageToBitmap();
             return parent == null
                 ? null
-                : IconOverlayProvider.GetGreyscale(_activator.CoreIconProvider.GetImage(parent)).ImageToBitmap();
+                : _activator.CoreIconProvider.GetImage(parent).ImageToBitmap();
         }
         private object GetHierarchy(object rowObject)
         {

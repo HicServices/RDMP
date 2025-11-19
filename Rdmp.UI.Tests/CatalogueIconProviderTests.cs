@@ -22,7 +22,7 @@ internal class CatalogueIconProviderTests : UITests
     [Test]
     public void CatalogueIconProvider_HasImage_NoImage()
     {
-        var provider = new CatalogueIconProvider(RepositoryLocator, null);
+        var provider = new IconProvider(RepositoryLocator, null);
 
         var img = provider.GetImage(new object(), OverlayKind.None);
 
@@ -33,7 +33,7 @@ internal class CatalogueIconProviderTests : UITests
     public void CatalogueIconProvider_HasImage_AllObjectsHave()
     {
         var objectCount = 0;
-        var provider = new DataExportIconProvider(RepositoryLocator, null);
+        var provider = new IconProvider(RepositoryLocator, null);
 
         foreach (var obj in WhenIHaveAll())
         {
@@ -62,7 +62,7 @@ internal class CatalogueIconProviderTests : UITests
     [Test]
     public void TestGrayscale()
     {
-        var provider = new CatalogueIconProvider(RepositoryLocator, null);
+        var provider = new IconProvider(RepositoryLocator, null);
 
         var ac = WhenIHaveA<AggregateConfiguration>();
 
@@ -81,7 +81,7 @@ internal class CatalogueIconProviderTests : UITests
     {
         var me = new IAmMe();
 
-        var provider = new CatalogueIconProvider(RepositoryLocator, null);
+        var provider = new IconProvider(RepositoryLocator, null);
         provider.GetImage(me, OverlayKind.Add);
 
         Assert.That(provider.HasIcon(me), Is.False);

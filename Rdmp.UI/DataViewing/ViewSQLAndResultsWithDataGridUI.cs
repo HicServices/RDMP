@@ -15,7 +15,6 @@ using FAnsi.Discovery;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.DataViewing;
-using Rdmp.Core.Icons.IconOverlays;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
@@ -113,9 +112,9 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
 
         btnExecuteSql.Image = activator.CoreIconProvider.GetImage(RDMPConcept.SQL, OverlayKind.Execute).ImageToBitmap();
 
-        btnResetSql.Image = IconOverlayProvider
-            .GetOverlay(Image.Load<Rgba32>(FamFamFamIcons.text_align_left), OverlayKind.Problem).ImageToBitmap();
-
+        //btnResetSql.Image = IconOverlayProvider
+        //    .GetOverlay(Image.Load<Rgba32>(FamFamFamIcons.text_align_left), OverlayKind.Problem).ImageToBitmap();
+        btnResetSql.Image = Image.Load<Rgba32>(FamFamFamIcons.text_align_left).ImageToBitmap();
         if (_scintilla == null)
         {
             // figure out what DBMS we are targeting

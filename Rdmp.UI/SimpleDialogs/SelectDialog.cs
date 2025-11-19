@@ -21,7 +21,6 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataExport.Data;
-using Rdmp.Core.Icons.IconOverlays;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
@@ -352,9 +351,12 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
             if (_searchables?.TryGetValue(m, out var searchable) != true) return null;
 
             var parent = searchable?.GetMostDescriptiveParent();
+            //return parent == null
+            //    ? null
+            //    : IconOverlayProvider.GetGreyscale(_activator.CoreIconProvider.GetImage(parent)).ImageToBitmap();
             return parent == null
                 ? null
-                : IconOverlayProvider.GetGreyscale(_activator.CoreIconProvider.GetImage(parent)).ImageToBitmap();
+                : _activator.CoreIconProvider.GetImage(parent).ImageToBitmap();
         }
     }
 

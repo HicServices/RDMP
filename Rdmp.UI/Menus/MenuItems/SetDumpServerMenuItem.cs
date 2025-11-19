@@ -12,7 +12,6 @@ using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Databases;
-using Rdmp.Core.Icons.IconOverlays;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
@@ -41,15 +40,22 @@ internal class SetDumpServerMenuItem : RDMPToolStripMenuItem
 
         _availableServers = cataRepo.GetAllDatabases<IdentifierDumpDatabasePatcher>();
 
+        //var miUseExisting = new ToolStripMenuItem("Use Existing...",
+        //    IconOverlayProvider.GetOverlayNoCache(img, OverlayKind.Link).ImageToBitmap(), UseExisting)
+        //{
+        //    Enabled = _availableServers.Any()
+        //};
         var miUseExisting = new ToolStripMenuItem("Use Existing...",
-            IconOverlayProvider.GetOverlayNoCache(img, OverlayKind.Link).ImageToBitmap(), UseExisting)
+           img.ImageToBitmap(), UseExisting)
         {
             Enabled = _availableServers.Any()
         };
 
         DropDownItems.Add(miUseExisting);
-        DropDownItems.Add("Create New...", IconOverlayProvider.GetOverlayNoCache(img, OverlayKind.Add).ImageToBitmap(),
-            CreateNewIdentifierDumpServer);
+        //DropDownItems.Add("Create New...", IconOverlayProvider.GetOverlayNoCache(img, OverlayKind.Add).ImageToBitmap(),
+        //    CreateNewIdentifierDumpServer);
+        DropDownItems.Add("Create New...", img.ImageToBitmap(),
+           CreateNewIdentifierDumpServer);
     }
 
     private void UseExisting(object sender, EventArgs e)

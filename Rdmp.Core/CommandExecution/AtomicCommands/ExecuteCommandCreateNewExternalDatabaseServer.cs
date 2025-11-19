@@ -8,9 +8,7 @@ using System;
 using FAnsi.Discovery;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Defaults;
-using Rdmp.Core.Icons.IconOverlays;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode;
@@ -23,7 +21,6 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 public class ExecuteCommandCreateNewExternalDatabaseServer : BasicCommandExecution, IAtomicCommand
 {
     private readonly PermissableDefaults _defaultToSet;
-    private readonly ExternalDatabaseServerStateBasedIconProvider _databaseIconProvider;
     private readonly IPatcher _patcher;
     private readonly DiscoveredDatabase _database;
 
@@ -44,8 +41,6 @@ public class ExecuteCommandCreateNewExternalDatabaseServer : BasicCommandExecuti
     {
         _patcher = patcher;
         _defaultToSet = defaultToSet;
-
-        _databaseIconProvider = new ExternalDatabaseServerStateBasedIconProvider();
 
         //do we already have a default server for this?
         var existingDefault = BasicActivator.ServerDefaults.GetDefaultFor(_defaultToSet);
@@ -93,7 +88,7 @@ public class ExecuteCommandCreateNewExternalDatabaseServer : BasicCommandExecuti
         {
             ServerCreatedIfAny = new ExternalDatabaseServer(BasicActivator.RepositoryLocator.CatalogueRepository,
                 $"New ExternalDatabaseServer {Guid.NewGuid()}", _patcher);
-            if(_database is not null)
+            if (_database is not null)
                 ServerCreatedIfAny.SetProperties(_database);
         }
         else
@@ -116,7 +111,8 @@ public class ExecuteCommandCreateNewExternalDatabaseServer : BasicCommandExecuti
     {
         if (_patcher == null) return iconProvider.GetImage(RDMPConcept.ExternalDatabaseServer, OverlayKind.Add);
 
-        var basicIcon = _databaseIconProvider.GetIconForAssembly(_patcher.GetDbAssembly());
-        return IconOverlayProvider.GetOverlay(basicIcon, OverlayKind.Add);
+        //var basicIcon = _databaseIconProvider.GetIconForAssembly(_patcher.GetDbAssembly());
+        //return IconOverlayProvider.GetOverlay(basicIcon, OverlayKind.Add);
+        return iconProvider.GetImage(null);
     }
 }
