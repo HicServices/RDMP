@@ -122,10 +122,10 @@ public class ProjectCohortIdentificationConfigurationAssociation : DatabaseEntit
         return assoc == null ? "Orphan Association" : assoc.Name;
     }
 
-    public bool ShouldBeReadOnly(out string reason)
+    public bool ShouldBeReadOnly(string context, out string reason)
     {
         reason = null;
-        return CohortIdentificationConfiguration?.ShouldBeReadOnly(out reason) ?? false;
+        return CohortIdentificationConfiguration?.ShouldBeReadOnly(context,out reason) ?? false;
     }
 
     /// <inheritdoc/>

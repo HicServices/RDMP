@@ -666,6 +666,12 @@ public abstract class BasicActivateItems : IBasicActivateItems
             RepositoryLocator.DataExportRepository, cohortInitialDescription);
     }
 
+    public virtual IProject CohortCommitProjectSelect(IProject currentProject, Project[] projects)
+    {
+        return currentProject;
+    }
+
+
     /// <inheritdoc/>
     public virtual CohortHoldoutLookupRequest GetCohortHoldoutLookupRequest(ExternalCohortTable externalCohortTable, IProject project, CohortIdentificationConfiguration cic)
     {
@@ -673,7 +679,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
         if (!TypeText("Name", "Enter name for cohort", 255, null, out var name, false))
             throw new Exception("User chose not to enter a name for the cohort and none was provided");
 
-        return new CohortHoldoutLookupRequest(cic, "empty", 1,false,"","");
+        return new CohortHoldoutLookupRequest(cic, "empty", 1, false, "", "");
     }
 
     /// <inheritdoc/>

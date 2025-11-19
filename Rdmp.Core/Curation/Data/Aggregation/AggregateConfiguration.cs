@@ -448,7 +448,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
         //strip the cic section from the front
         Regex.Replace(Name, $@"{CohortIdentificationConfiguration.CICPrefix}\d+_?", "");
 
-    public bool ShouldBeReadOnly(out string reason)
+    public bool ShouldBeReadOnly(string context,out string reason)
     {
         var cic = GetCohortIdentificationConfigurationIfAny();
         if (cic == null)
@@ -457,7 +457,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
             return false;
         }
 
-        return cic.ShouldBeReadOnly(out reason);
+        return cic.ShouldBeReadOnly(context,out reason);
     }
 
     /// <summary>
