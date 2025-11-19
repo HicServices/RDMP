@@ -1,7 +1,10 @@
-﻿using System.ComponentModel;
-using System.Windows.Forms;
-using BrightIdeasSoftware;
+﻿using BrightIdeasSoftware;
 using Rdmp.UI.Refreshing;
+using System;
+using System.ComponentModel;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Windows.Forms;
 
 namespace Rdmp.UI.Collections
 {
@@ -27,6 +30,7 @@ namespace Rdmp.UI.Collections
             tlvCatalogues = new TreeListView();
             olvColumn1 = new OLVColumn();
             olvFilters = new OLVColumn();
+            olvStatus = new OLVColumn();
             olvOrder = new OLVColumn();
             imageList_RightClickIcons = new ImageList(components);
             gbCatalogueFilters = new GroupBox();
@@ -41,6 +45,7 @@ namespace Rdmp.UI.Collections
             // tlvCatalogues
             // 
             tlvCatalogues.AllColumns.Add(olvColumn1);
+            tlvCatalogues.AllColumns.Add(olvStatus);
             tlvCatalogues.AllColumns.Add(olvFilters);
             tlvCatalogues.AllColumns.Add(olvOrder);
             tlvCatalogues.CellEditUseWholeCell = false;
@@ -65,6 +70,15 @@ namespace Rdmp.UI.Collections
             olvColumn1.Text = "Catalogues";
             olvColumn1.TextAlign = HorizontalAlignment.Center;
             olvColumn1.Width = 100;
+            // 
+            // olvStatus
+            // 
+            olvStatus.Renderer = new BarRenderer(0, 2);
+            olvStatus.HeaderTextAlign = HorizontalAlignment.Center;
+            olvStatus.MinimumWidth = 100;
+            olvStatus.IsEditable = false;
+            olvStatus.Text = "Status";
+            olvStatus.TextAlign = HorizontalAlignment.Center;
             // 
             // olvFilters
             // 
@@ -145,6 +159,7 @@ namespace Rdmp.UI.Collections
         private ImageList imageList_RightClickIcons;
         private OLVColumn olvColumn1;
         private OLVColumn olvFilters;
+        private OLVColumn olvStatus;
         private GroupBox gbCatalogueFilters;
         private OLVColumn olvOrder;
         private CatalogueCollectionFilterUI catalogueCollectionFilterUI1;

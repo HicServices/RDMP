@@ -38,7 +38,7 @@ public class IconProvider : ICoreIconProvider
     public virtual Image<Rgba32> GetImage(object concept, OverlayKind kind = OverlayKind.None)
     {
         if (concept is RDMPConcept rc) return RDMPConceptIconProvider.GetIcon(rc,kind);
-        if(concept is Catalogue c) return CatalogueIconProvider.GetIcon(c,kind); 
+        if(concept is Catalogue c) return Image.Load<Rgba32>(CatalogueIcons.Catalogue); 
         return ImageUnknown;
     }
 
