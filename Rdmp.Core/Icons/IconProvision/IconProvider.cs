@@ -4,26 +4,29 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using FAnsi;
 using FAnsi.Discovery;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.Curation.Data.Dashboarding;
+using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.Icons.IconProvision.IconProviders;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 using Rdmp.Core.Providers.Nodes.PipelineNodes;
+using Rdmp.Core.Reports;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Rdmp.Core.Icons.IconProvision;
 
@@ -37,8 +40,34 @@ public class IconProvider : ICoreIconProvider
 
     public virtual Image<Rgba32> GetImage(object concept, OverlayKind kind = OverlayKind.None)
     {
-        if (concept is RDMPConcept rc) return RDMPConceptIconProvider.GetIcon(rc,kind);
-        if(concept is Catalogue c) return Image.Load<Rgba32>(CatalogueIcons.Catalogue); 
+        if (concept is RDMPConcept rc) return RDMPConceptIconProvider.GetIcon(rc, kind);
+        if (concept is Catalogue) return Image.Load<Rgba32>(CatalogueIcons.Catalogue);
+        if (concept is CatalogueItem) return Image.Load<Rgba32>(CatalogueIcons.CatalogueItem);
+        if (concept is CatalogueItemsNode) return CatalogueItemsNodeIconProvider.GetIcon(concept, kind);
+        if (concept is ColumnInfo)
+        {
+            return Image.Load<Rgba32>(CatalogueIcons.ColumnInfo);
+        }
+        if (concept is ExtractionInformation) return Image.Load<Rgba32>(CatalogueIcons.ExtractionInformation);
+        if (concept is FolderNode<Catalogue>) return Image.Load<Rgba32>(CatalogueIcons.CatalogueFolder);
+        if (concept is AggregatesNode)
+        {
+            return Image.Load<Rgba32>(CatalogueIcons.AggregatesNode);
+        }
+        if (concept is AggregateConfiguration ac)
+        {
+            if (ac.IsJoinablePatientIndexTable()) return ImageUnknown;
+            if (ac.IsCohortIdentificationAggregate) return ImageUnknown;
+            return Image.Load<Rgba32>(CatalogueIcons.AggregateGraph);
+        }
+        if (concept is AggregateDimension) return Image.Load<Rgba32>(CatalogueIcons.AggregateDimension);
+        if (concept is AggregateContinuousDateAxis) return Image.Load<Rgba32>(CatalogueIcons.AggregateContinuousDateAxis);
+        if (concept is AllGovernanceNode) return Image.Load<Rgba32>(CatalogueIcons.AllGovernanceNode);
+        if (concept is GovernancePeriod) return Image.Load<Rgba32>(CatalogueIcons.GovernancePeriod);
+        if (concept is GovernanceDocument) return Image.Load<Rgba32>(CatalogueIcons.GovernanceDocument);
+
+
+
         return ImageUnknown;
     }
 

@@ -65,7 +65,7 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
         olvFilters.AspectGetter += FilterAspectGetter;
         olvOrder.AspectGetter += OrderAspectGetter;
         olvStatus.AspectGetter += StatusAspectGetter;
-        olvStatus.Renderer = new StatusRenderer();
+        //olvStatus.Renderer = new StatusRenderer(Activator);
         bLoading = false;
 
         catalogueCollectionFilterUI1.FiltersChanged += (s, e) => ApplyFilters();
@@ -146,6 +146,7 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
 
         if (isFirstTime)
         {
+            olvStatus.Renderer = new StatusRenderer(Activator);
             CommonTreeFunctionality.SetupColumnTracking(olvColumn1, new Guid("1d912137-22ab-4536-b40b-bd984e27dc7a"));
             CommonTreeFunctionality.SetupColumnTracking(olvOrder, new Guid("0d8e6e49-03ae-48f2-9bf8-acc5107f65f8"));
             CommonTreeFunctionality.SetupColumnTracking(olvFilters, new Guid("c4c9b2ac-c9b5-4d23-b06d-d1f55013b4e9"));

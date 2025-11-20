@@ -2,6 +2,7 @@
 using DnsClient;
 using NPOI.SS.Formula.Functions;
 using Rdmp.Core.Curation.Data;
+using Rdmp.UI.ItemActivation;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -18,42 +19,64 @@ namespace Rdmp.UI.Collections.Renderers
     public class StatusRenderer : AbstractRenderer
     {
 
+        private IActivateItems _activator;
 
+        public StatusRenderer(IActivateItems activator) : base()
+        {
+            _activator = activator;
+        }
+
+        private readonly StringFormat fmt = new StringFormat(StringFormatFlags.NoWrap)
+        {
+            Trimming = StringTrimming.EllipsisCharacter,
+            Alignment = StringAlignment.Center,
+            LineAlignment = StringAlignment.Near,
+        };
 
         public override bool RenderSubItem(DrawListViewSubItemEventArgs e, Graphics g, Rectangle cellBounds, object rowObject)
         {
             if (rowObject is Catalogue c)
             {
-                bool isInternal = true;
-                bool isProjectSpecific = true;
-                bool isDeprecated = true;
-                //const int rounding = 20;
-                GraphicsPath path = new GraphicsPath();
-
-                RectangleF arc = new RectangleF(cellBounds.X, cellBounds.Y, 20000, 16);
-                path.AddRectangle(arc);
-                path.CloseFigure();
-                g.FillPath(Brushes.White, path);
-                g.DrawPath(new Pen(Color.White), path);
-                g.Clip = new Region(cellBounds);
-                StringFormat fmt = new StringFormat(StringFormatFlags.NoWrap);
-                fmt.Trimming = StringTrimming.EllipsisCharacter;
-                fmt.Alignment = StringAlignment.Center;
-                fmt.LineAlignment = StringAlignment.Near;
+                bool isInternal = c.IsInternalDataset;
+                bool isProjectSpecific = c.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository);
+                bool isDeprecated = c.IsDeprecated;
+                DrawBackground(g, cellBounds);
                 int xOffset = 0;
                 if (isInternal)
                 {
-                    xOffset += RenderStatus("Internal", Color.Red,Color.Black, cellBounds, xOffset, g);
+                    xOffset += RenderStatus("Internal", StatusColours.Internal, StatusColours.InternalCompliment, cellBounds, xOffset, g);
                     xOffset += 5;
                 }
                 if (isProjectSpecific)
                 {
-                    xOffset += RenderStatus("Project Specific", Color.Blue,Color.White, cellBounds, xOffset, g);
+                    xOffset += RenderStatus("Project Specific", StatusColours.ProjectSpecific, StatusColours.ProjectSpecificCompliment, cellBounds, xOffset, g);
                     xOffset += 5;
                 }
                 if (isDeprecated)
                 {
-                    xOffset += RenderStatus("Deprecated", Color.Gray,Color.Black, cellBounds, xOffset, g);
+                    xOffset += RenderStatus("Deprecated", StatusColours.Deprecated, StatusColours.DeprecatedCompliment, cellBounds, xOffset, g);
+                    xOffset += 5;
+                }
+                return true;
+            }
+            if (rowObject is CatalogueItem ci)
+            {
+                DrawBackground(g, cellBounds);
+                int xOffset = 0;
+
+                if (ci.ExtractionInformation.IsExtractionIdentifier)
+                {
+                    xOffset += RenderStatus("Extraction Identifier", StatusColours.ExtractionIdentifier, StatusColours.ExtractionIdentifierCompliment, cellBounds, xOffset, g);
+                    xOffset += 5;
+                }
+                if (ci.ExtractionInformation.IsPrimaryKey)
+                {
+                    xOffset += RenderStatus("Primary Key", StatusColours.PrimaryKey, StatusColours.PrimaryKeyCompliment, cellBounds, xOffset, g);
+                    xOffset += 5;
+                }
+                if (ci.ExtractionInformation.HashOnDataRelease)
+                {
+                    xOffset += RenderStatus("Hash on Release", StatusColours.HashOnRelease, StatusColours.HashOnReleaseCompliment, cellBounds, xOffset, g);
                     xOffset += 5;
                 }
                 return true;
@@ -61,55 +84,41 @@ namespace Rdmp.UI.Collections.Renderers
             return false;
         }
 
-        private int RenderStatus(string text, Color colour,Color textColour, Rectangle cellBounds, int offset, Graphics g)
+        private static void DrawBackground(Graphics g, Rectangle r)
         {
-            using (Font font = new Font("Tahoma", 8))
+            Color backgroundColor = Color.White;
+
+            using (Brush brush = new SolidBrush(backgroundColor))
             {
-                RectangleF textBoxRect = cellBounds;
-                textBoxRect.X += offset;
-                textBoxRect.Width = 50;
-                StringFormat fmt = new StringFormat(StringFormatFlags.NoWrap);
-                fmt.Trimming = StringTrimming.EllipsisCharacter;
-                fmt.Alignment = StringAlignment.Center;
-                fmt.LineAlignment = StringAlignment.Near;
-                SizeF size = g.MeasureString(text, font, cellBounds.Width, fmt);
-                textBoxRect.Height = size.Height;
-                textBoxRect.Width = size.Width+2;
-                fmt.Alignment = StringAlignment.Near;
-                var textArc = GetRoundedRect(textBoxRect, 5);
-                textArc.AddRectangle(textBoxRect);
-                textArc.CloseFigure();
-                g.DrawPath(new Pen(colour), textArc);
-                g.FillPath(new SolidBrush(colour), textArc);
-                g.Clip = new Region(cellBounds);
-                g.DrawRectangle(new Pen(Color.Transparent), textBoxRect);
-                g.FillRectangle(new SolidBrush(colour), textBoxRect);
-                g.DrawString(text, font, new SolidBrush(textColour), textBoxRect, fmt);
-                return (int)Math.Ceiling(textBoxRect.Width);
+                g.FillRectangle(brush, r.X - 1, r.Y - 1, r.Width + 2, r.Height + 2);
             }
         }
 
-        public override bool RenderItem(DrawListViewItemEventArgs e, Graphics g, Rectangle itemBounds, object rowObject)
+
+        private int RenderStatus(string text, Color colour, Color textColour, Rectangle cellBounds, int offset, Graphics g)
         {
-            if (rowObject is Catalogue c)
-            {
-                using (LinearGradientBrush gradient = new LinearGradientBrush(itemBounds, Color.Black, Color.Fuchsia, 0.0))
-                {
-                    g.FillRectangle(gradient, itemBounds);
-                }
-                //StringFormat fmt = new StringFormat(StringFormatFlags.NoWrap);
-                //fmt.LineAlignment = StringAlignment.Center;
-                //fmt.Trimming = StringTrimming.EllipsisCharacter;
-                //Rectangle rectangle1 = new Rectangle(0, 0, 50, 16);
-                //g.DrawRectangle(Pens.Pink, rectangle1);
-                //g.DrawString("Internal", e.Item.Font, new SolidBrush(Color.Black), rectangle1, fmt);
-                //Rectangle rectangle2 = new Rectangle(55, 0, 50, 16);
-                //g.DrawRectangle(Pens.Orange, rectangle2);
-                //g.DrawString("Deprecated", this.Font, this.TextBrush, rectangle2, fmt);
-                return true;
-            }
-            return false;
+            using Font font = new Font("Roboto", 8);
+            RectangleF textBoxRect = cellBounds;
+            textBoxRect.X += offset;
+            textBoxRect.Width = 50;
+
+            SizeF size = g.MeasureString(text, font, cellBounds.Width, fmt);
+            textBoxRect.Height = 16;
+            textBoxRect.Width = size.Width + 4;
+            textBoxRect.Y += (cellBounds.Height - size.Height) / 2;
+            var textArc = GetRoundedRect(textBoxRect, textBoxRect.Height / 2);
+            textArc.CloseFigure();
+
+            g.DrawPath(new Pen(colour), textArc);
+            g.FillPath(new SolidBrush(colour), textArc);
+            g.Clip = new Region(cellBounds);
+            textBoxRect.Y += 2;
+            textBoxRect.Height -= 4;
+            g.DrawString(text, font, new SolidBrush(textColour), textBoxRect, fmt);
+
+            return (int)Math.Ceiling(textBoxRect.Width);
         }
+
         private GraphicsPath GetRoundedRect(RectangleF rect, float diameter)
         {
             GraphicsPath path = new GraphicsPath();

@@ -119,7 +119,7 @@
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="ColumnInfo" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\..\Icons\columninfo.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\ColumnInfo\ColumnInfo.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="DQE" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Icons\DQE.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -164,7 +164,7 @@
     <value>..\..\Icons\Filter.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="ExtractionInformation" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\..\Icons\ExtractionInformation.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\ExtractionInformation\ExtractionInformation.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="FilterContainer" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Icons\FilterContainer.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -197,10 +197,10 @@
     <value>..\..\Icons\ExtractionInformation_Supplemental.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="AggregatesNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\..\Icons\AggregatesNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\AggregateGraph\AggregatesNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="CatalogueItemsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\..\Icons\catalogueItemsNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\CatalogueItem\CatalogueItemFolder.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="BigCohort" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Icons\BigCohort.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -257,16 +257,16 @@
     <value>..\..\Icons\tableinfoTableValuedFunction.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="AggregateGraph" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\AggregateGraph.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\AggregateGraph\AggregateGraph.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="CatalogueFolder" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\CatalogueFolder.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\Folder\Folder.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="LoadMetadataVersionNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\CatalogueFolder.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="CatalogueItem" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\CatalogueItem.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\CatalogueItem\CatalogueItem.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="CatalogueItemTransform" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\CatalogueItemTransform.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -365,7 +365,7 @@
     <value>..\ProjectsNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="AggregateDimension" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\AggregateDimension.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\AggregateDimension\AggregateDimension.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="DashboardControl" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\DashboardControl.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -635,13 +635,13 @@
     <value>..\OtherPipelinesNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="AllGovernanceNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\AllGovernanceNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\Governance\AllGovernanceNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="GovernancePeriod" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\GovernancePeriod.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\Governance\GovernancePeriod.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="GovernanceDocument" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\GovernanceDocument.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\Governance\GovernanceDocument.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="LookupCompositeJoinInfo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\LookupCompositeJoinInfo.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -758,7 +758,7 @@
     <value>..\Dataset.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="AggregateContinuousDateAxis" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\AggregateContinuousDateAxis.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\AggregateContinuousDateAxis\AggregateContinuousDateAxis.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="LoadMetadataCatalogueLinkage" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\LoadMetadataCatalogueLinkage.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
