@@ -284,7 +284,7 @@
     <value>..\Database.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="ExtractionDirectoryNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\ExtractionDirectoryNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\ExtractionDirectoryNode\ExtractionDirectoryNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="SQL" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\SQL.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -305,13 +305,13 @@
     <value>..\ExtractableDataSetDisabled.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="ExtractionConfiguration" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\ExtractionConfiguration.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\ExtractionConfiguration\ExtractionConfiguration.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="Failed" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Failed.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="FrozenExtractionConfiguration" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\FrozenExtractionConfiguration.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\ExtractionConfiguration\ExtractionConfiguration.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="Project" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\material\Project\Project.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -329,7 +329,7 @@
     <value>..\AllANOTablesNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="ExtractableCohort" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\ExtractableCohort.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\ExtractableCohort\ExtractableCohort.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="ExtractableDataSet" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\ExtractableDataSet.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -350,7 +350,7 @@
     <value>..\TimeCoverageField.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="ExternalCohortTable" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\ExternalCohortTable.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\ExternalCohortTable\ExternalCohort Table.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="ExtractableDataSetPackage" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\ExtractableDataSetPackage.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -362,7 +362,7 @@
     <value>..\PivotField.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="ProjectsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\ProjectsNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\Project\ProjectsNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="AggregateDimension" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\material\AggregateDimension\AggregateDimension.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -503,16 +503,16 @@
     <value>..\Pipeline.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="ExtractionConfigurationsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\ExtractionConfigurationsNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\ExtractionConfiguration\ExtractionConfigurationsNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="AllCohortsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\AllCohortsNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\AllCohortsNode\AllCohortsNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="ProjectCohortIdentificationConfigurationAssociationsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\ProjectCohortIdentificationConfigurationAssociationsNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\Project\ProjectCohortIdentificationConfigurationAssociationsNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="ProjectSavedCohortsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\ProjectSavedCohortsNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\ExtractableCohort\ExtractableCohort.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="CommittedCohortIdentificationNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\material\CohortIdentificationConfiguration\CohortIdentificationConfigurationFolder.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -572,10 +572,10 @@
     <value>..\ExtractableColumn.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="ProjectCohortsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\ProjectCohortsNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\Project\ProjectsCohortsNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="FrozenExtractionConfigurationsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\FrozenExtractionConfigurationsNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\ExtractionConfiguration\FrozenExtractionConfigurationsNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="TinyGreen" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\TinyGreen.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -590,10 +590,10 @@
     <value>..\ExtractionInformation_ProjectSpecific.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="ProjectCatalogue" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\ProjectCatalogue.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\Catalogue\Catalogue.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="ProjectCataloguesNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\ProjectCataloguesNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\Project\ProjectCataloguesNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="DropHere" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\DropHere.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -650,7 +650,7 @@
     <value>..\material\CohortIdentificationConfiguration\CohortIdentificationConfigurationFolder.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="AllProjectCohortIdentificationConfigurationsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\AllProjectCohortIdentificationConfigurationsNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\Project\AllProjectCohortIdentificationConfigurationsNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="Menu" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Menu.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -701,7 +701,7 @@
     <value>..\ProcessTaskArgument.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="ProjectCohortIdentificationConfigurationAssociation" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\ProjectCohortIdentificationConfigurationAssociation.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\CohortIdentificationConfiguration\CohortIdentificationConfiguration.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="ReleaseLog" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\ReleaseLog.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>

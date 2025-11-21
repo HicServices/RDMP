@@ -14,6 +14,7 @@ using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Curation.Data.Governance;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.Icons.IconProvision.IconProviders;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
@@ -21,6 +22,7 @@ using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Providers.Nodes.CohortNodes;
 using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 using Rdmp.Core.Providers.Nodes.PipelineNodes;
+using Rdmp.Core.Providers.Nodes.ProjectCohortNodes;
 using Rdmp.Core.Reports;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
@@ -82,6 +84,24 @@ public class IconProvider : ICoreIconProvider
         if (concept is JoinableCollectionNode) return Image.Load<Rgba32>(CatalogueIcons.JoinableCollectionNode);
         if (concept is AggregateFilter) return Image.Load<Rgba32>(CatalogueIcons.Filter);
         if (concept is AggregateFilterContainer) return AggregateFilterContainerIconProvider.GetIcon(concept, kind);
+        if (concept is ExtractableCohort) return Image.Load<Rgba32>(CatalogueIcons.ExtractableCohort);
+        if (concept is ExternalCohortTable) return Image.Load<Rgba32>(CatalogueIcons.ExternalCohortTable);
+        if (concept is AllCohortsNode) return Image.Load<Rgba32>(CatalogueIcons.AllCohortsNode);
+
+        if (concept is FolderNode<Project>) return Image.Load<Rgba32>(CatalogueIcons.ProjectsNode);
+        if (concept is Project) return Image.Load<Rgba32>(CatalogueIcons.Project);
+        if (concept is ProjectCohortsNode) return Image.Load<Rgba32>(CatalogueIcons.ProjectCohortsNode);
+        if (concept is ProjectCohortIdentificationConfigurationAssociationsNode) return Image.Load<Rgba32>(CatalogueIcons.ProjectCohortIdentificationConfigurationAssociationsNode);
+        if (concept is ProjectCataloguesNode) return Image.Load<Rgba32>(CatalogueIcons.ProjectCataloguesNode);
+        if (concept is ExtractionConfigurationsNode) return Image.Load<Rgba32>(CatalogueIcons.ExtractionConfigurationsNode);
+        if (concept is ExtractionConfiguration) return Image.Load<Rgba32>(CatalogueIcons.ExtractionConfiguration);
+        if (concept is ExtractionDirectoryNode) return Image.Load<Rgba32>(CatalogueIcons.ExtractionDirectoryNode);
+        if (concept is CommittedCohortIdentificationNode) return Image.Load<Rgba32>(CatalogueIcons.AllProjectCohortIdentificationConfigurationsNode);
+        if (concept is AssociatedCohortIdentificationTemplatesNode) return Image.Load<Rgba32>(CatalogueIcons.AllTemplateCohortIdentificationConfigurationsNode);
+        if (concept is ProjectCohortIdentificationConfigurationAssociation) return Image.Load<Rgba32>(CatalogueIcons.ProjectCohortIdentificationConfigurationAssociation);
+        if (concept is ProjectSavedCohortsNode) return Image.Load<Rgba32>(CatalogueIcons.ProjectSavedCohortsNode);
+        if (concept is FrozenExtractionConfigurationsNode) return Image.Load<Rgba32>(CatalogueIcons.FrozenExtractionConfigurationsNode);
+
 
         return ImageUnknown;
     }

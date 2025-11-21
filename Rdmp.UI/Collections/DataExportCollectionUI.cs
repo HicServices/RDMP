@@ -88,7 +88,7 @@ public partial class DataExportCollectionUI : RDMPCollectionUI, ILifetimeSubscri
             Activator,
             olvName,
             olvName,
-            tbFilter
+            tbFilter,true
         );
 
         CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = a => GetWhitespaceRightClickMenu();
