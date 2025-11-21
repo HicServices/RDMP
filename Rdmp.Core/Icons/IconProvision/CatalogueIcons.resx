@@ -149,7 +149,7 @@
     <value>..\..\Icons\StarHollow.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="LoadMetadata" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\..\Icons\loadMetadata.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\DataLoad\DataLoad.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="Logging" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Icons\logging.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -161,7 +161,7 @@
     <value>..\..\Icons\material\Catalogue\Catalogue.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="Filter" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\..\Icons\Filter.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\AggregateFilter\AggregateFilter.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="ExtractionInformation" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\material\ExtractionInformation\ExtractionInformation.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -170,7 +170,7 @@
     <value>..\..\Icons\FilterContainer.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="CohortAggregate" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\..\Icons\cohortAggregate.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\CohortAggregate\CohortAggregate.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="GreenIssue" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Icons\greenIssue.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -212,7 +212,7 @@
     <value>..\..\Icons\BigPatientIndexTable.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="CohortIdentificationConfiguration" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\..\Icons\cohortIdentificationConfiguration.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\CohortIdentificationConfiguration\CohortIdentificationConfiguration.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="FrozenCohortIdentificationConfiguration" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Icons\frozenCohortIdentificationConfiguration.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -314,7 +314,7 @@
     <value>..\FrozenExtractionConfiguration.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="Project" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Project.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\Project\Project.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="Release" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Release.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -335,7 +335,7 @@
     <value>..\ExtractableDataSet.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="JoinableCollectionNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\JoinableCollectionNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\JoinableCollection\JoinableCollectionNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="ParametersNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\ParametersNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -419,13 +419,13 @@
     <value>..\Kill.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="EXCEPTCohortAggregate" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\EXCEPTCohortAggregate.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\CohortAggregateContainer\CohortAggregateContainerEXCEPT.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="INTERSECTCohortAggregate" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\INTERSECTCohortAggregate.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\CohortAggregateContainer\CohortAggregateContainerINTERSECT.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="UNIONCohortAggregate" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\UNIONCohortAggregate.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\CohortAggregateContainer\CohortAggregateContainerUNION.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="RowCounts_Ignore" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\RowCounts_Ignore.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -515,7 +515,7 @@
     <value>..\ProjectSavedCohortsNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="CommittedCohortIdentificationNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\CommittedCohortIdentificationNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\CohortIdentificationConfiguration\CohortIdentificationConfigurationFolder.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="collapseAllNodes" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\collapseAllNodes.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -647,7 +647,7 @@
     <value>..\LookupCompositeJoinInfo.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="AllFreeCohortIdentificationConfigurationsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\AllFreeCohortIdentificationConfigurationsNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\CohortIdentificationConfiguration\CohortIdentificationConfigurationFolder.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="AllProjectCohortIdentificationConfigurationsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\AllProjectCohortIdentificationConfigurationsNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -725,7 +725,7 @@
     <value>..\AllDashboardsNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="AllOrphanAggregateConfigurationsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\AllOrphanAggregateConfigurationsNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\AggregateConfiguration\OrghanAggregateConfigurationFolder.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="ExtendedProperty" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\ExtendedProperty.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -743,7 +743,7 @@
     <value>..\MutilateDataTables.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="AllTemplateAggregateConfigurationsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\AllTemplateAggregateConfigurationsNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\AggregateConfiguration\TemplateAggregateConfigurationFolder.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="Commit" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Commit.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -785,12 +785,18 @@
     <value>..\StandardRegex31.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="AllTemplateCohortIdentificationConfigurationsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\AllTemplateCohortIdentificationConfigurationsNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\CohortIdentificationConfiguration\TemplateCohortIdentificationConfigurationFolder.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="TemplateCohortIdentificationConfiguration" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\TemplateCohortIdentificationConfiguration.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="AssociatedCohortIdentificationTemplatesNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\AssociatedCohortIdentificationTemplatesNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="AggregateFilterContainerOR" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\material\AggregateFilterContainer\AggregateFilterContainerOR.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="AggregateFilterContainerAND" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\material\AggregateFilterContainer\AggregateFilterContainerAND.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>

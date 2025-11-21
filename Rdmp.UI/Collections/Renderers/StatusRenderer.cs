@@ -2,6 +2,9 @@
 using DnsClient;
 using NPOI.SS.Formula.Functions;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.Icons.IconProvision.IconProviders;
+using Rdmp.Core.Providers;
 using Rdmp.UI.ItemActivation;
 using System;
 using System.Collections.Generic;
@@ -77,6 +80,27 @@ namespace Rdmp.UI.Collections.Renderers
                 if (ci.ExtractionInformation.HashOnDataRelease)
                 {
                     xOffset += RenderStatus("Hash on Release", StatusColours.HashOnRelease, StatusColours.HashOnReleaseCompliment, cellBounds, xOffset, g);
+                    xOffset += 5;
+                }
+                return true;
+            }
+            if (rowObject is CohortIdentificationConfiguration cic)
+            {
+                DrawBackground(g, cellBounds);
+                int xOffset = 0;
+                if (cic.IsTemplate)
+                {
+                    xOffset += RenderStatus("Template", StatusColours.Template, StatusColours.TemplateCompliment, cellBounds, xOffset, g);
+                    xOffset += 5;
+                }
+                if (cic.Frozen)
+                {
+                    xOffset += RenderStatus("Frozen", StatusColours.Frozen, StatusColours.FrozenCompliment, cellBounds, xOffset, g);
+                    xOffset += 5;
+                }
+                if (cic.IsAssociatedToAProject(_activator.CoreChildProvider as DataExportChildProvider))
+                {
+                    xOffset += RenderStatus("Project Specific", StatusColours.ProjectSpecific, StatusColours.ProjectSpecificCompliment, cellBounds, xOffset, g);
                     xOffset += 5;
                 }
                 return true;

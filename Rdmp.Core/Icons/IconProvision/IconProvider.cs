@@ -10,6 +10,7 @@ using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Curation.Data.Governance;
@@ -17,6 +18,7 @@ using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.Icons.IconProvision.IconProviders;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Providers.Nodes;
+using Rdmp.Core.Providers.Nodes.CohortNodes;
 using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 using Rdmp.Core.Providers.Nodes.PipelineNodes;
 using Rdmp.Core.Reports;
@@ -57,16 +59,29 @@ public class IconProvider : ICoreIconProvider
         if (concept is AggregateConfiguration ac)
         {
             if (ac.IsJoinablePatientIndexTable()) return ImageUnknown;
-            if (ac.IsCohortIdentificationAggregate) return ImageUnknown;
+            if (ac.IsCohortIdentificationAggregate) return Image.Load<Rgba32>(CatalogueIcons.CohortAggregate); ;
             return Image.Load<Rgba32>(CatalogueIcons.AggregateGraph);
+        }
+        if (concept is CohortAggregateContainer cac)
+        {
+            if (cac.Operation == SetOperation.UNION) return Image.Load<Rgba32>(CatalogueIcons.UNIONCohortAggregate);
+            if (cac.Operation == SetOperation.INTERSECT) return Image.Load<Rgba32>(CatalogueIcons.INTERSECTCohortAggregate);
+            if (cac.Operation == SetOperation.EXCEPT) return Image.Load<Rgba32>(CatalogueIcons.EXCEPTCohortAggregate);
         }
         if (concept is AggregateDimension) return Image.Load<Rgba32>(CatalogueIcons.AggregateDimension);
         if (concept is AggregateContinuousDateAxis) return Image.Load<Rgba32>(CatalogueIcons.AggregateContinuousDateAxis);
         if (concept is AllGovernanceNode) return Image.Load<Rgba32>(CatalogueIcons.AllGovernanceNode);
         if (concept is GovernancePeriod) return Image.Load<Rgba32>(CatalogueIcons.GovernancePeriod);
         if (concept is GovernanceDocument) return Image.Load<Rgba32>(CatalogueIcons.GovernanceDocument);
+        if (concept is CohortIdentificationConfiguration) return Image.Load<Rgba32>(CatalogueIcons.CohortIdentificationConfiguration);
+        if (concept is FolderNode<CohortIdentificationConfiguration>) return Image.Load<Rgba32>(CatalogueIcons.AllFreeCohortIdentificationConfigurationsNode);
+        if (concept is AllOrphanAggregateConfigurationsNode) return Image.Load<Rgba32>(CatalogueIcons.AllOrphanAggregateConfigurationsNode);
+        if (concept is AllTemplateAggregateConfigurationsNode) return Image.Load<Rgba32>(CatalogueIcons.AllTemplateAggregateConfigurationsNode);
+        if (concept is AllTemplateCohortIdentificationConfigurationsNode) return Image.Load<Rgba32>(CatalogueIcons.AllTemplateCohortIdentificationConfigurationsNode);
 
-
+        if (concept is JoinableCollectionNode) return Image.Load<Rgba32>(CatalogueIcons.JoinableCollectionNode);
+        if (concept is AggregateFilter) return Image.Load<Rgba32>(CatalogueIcons.Filter);
+        if (concept is AggregateFilterContainer) return AggregateFilterContainerIconProvider.GetIcon(concept, kind);
 
         return ImageUnknown;
     }

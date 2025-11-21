@@ -26,6 +26,7 @@ using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Settings;
 using Rdmp.UI.Collections.Providers;
 using Rdmp.UI.Collections.Providers.Copying;
+using Rdmp.UI.Collections.Renderers;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
 using Rdmp.UI.ItemActivation;
@@ -69,6 +70,8 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     public Func<IActivateItems, IAtomicCommand[]> WhitespaceRightClickMenuCommandsGetter { get; set; }
 
     public OLVColumn IDColumn { get; set; }
+
+    public OLVColumn StatusColumn { get; set; }
     public CheckColumnProvider CheckColumnProvider { get; set; }
     public OLVColumn CheckColumn { get; set; }
 
@@ -167,11 +170,12 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     /// <param name="iconColumn">The column of tree view which should contain the icon for each row object</param>
     /// <param name="renameableColumn">Nullable field for specifying which column supports renaming on F2</param>
     /// <param name="filter">Optional TextBox Filter</param>
+    /// <param name="showStatus">Show the item status column</param>
     public void SetUp(RDMPCollection collection, TreeListView tree, IActivateItems activator, OLVColumn iconColumn,
-        OLVColumn renameableColumn,TextBox filter = null)
+        OLVColumn renameableColumn, TextBox filter = null, bool showStatus = false)
     {
         SetUp(collection, tree, activator, iconColumn, renameableColumn,
-            new RDMPCollectionCommonFunctionalitySettings(),filter);
+            new RDMPCollectionCommonFunctionalitySettings(), filter, showStatus);
     }
 
     /// <summary>
@@ -184,9 +188,9 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     /// <param name="renameableColumn">Nullable field for specifying which column supports renaming on F2</param>
     /// <param name="settings">Customise which common behaviours are turned on</param>
     /// <param name="filter">Optional TextBox Filter</param>
-
+    /// <param name="showStatus">Show the item status column</param>
     public void SetUp(RDMPCollection collection, TreeListView tree, IActivateItems activator, OLVColumn iconColumn,
-        OLVColumn renameableColumn, RDMPCollectionCommonFunctionalitySettings settings, TextBox filter = null)
+        OLVColumn renameableColumn, RDMPCollectionCommonFunctionalitySettings settings, TextBox filter = null, bool showStatus = false)
     {
         Settings = settings;
         Collection = collection;
@@ -204,14 +208,14 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         Tree.CellToolTip.InitialDelay = UserSettings.TooltipAppearDelay;
         Tree.CellToolTipShowing += (s, e) => Tree_CellToolTipShowing(activator, e);
 
-        if(Filter is not null)
+        if (Filter is not null)
         {
             Filter.TextChanged += HandleFilter;
             Filter.Text = FilterText;
             Filter.GotFocus += RemoveText;
             Filter.LostFocus += AddText;
         }
-      
+
 
         Tree.RevealAfterExpand = true;
 
@@ -253,6 +257,20 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         {
             RenameProvider = new RenameProvider(_activator, tree, renameableColumn);
             RenameProvider.RegisterEvents();
+        }
+
+        if (showStatus)
+        {
+            StatusColumn = new OLVColumn();
+            StatusColumn.HeaderTextAlign = HorizontalAlignment.Center;
+            StatusColumn.MinimumWidth = 100;
+            StatusColumn.IsEditable = false;
+            StatusColumn.Text = "Status";
+            StatusColumn.TextAlign = HorizontalAlignment.Center;
+            StatusColumn.Renderer = new StatusRenderer(_activator);
+            Tree.AllColumns.Insert(1, StatusColumn);
+            SetupColumnTracking(StatusColumn, new Guid("72ff92ad-39cd-4153-9dc2-d988cced5ae1"));
+            Tree.RebuildColumns();
         }
 
         if (Settings.AddFavouriteColumn)
@@ -323,7 +341,7 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     private void HandleFilter(object sender, EventArgs e)
     {
         var text = Filter.Text;
-        if(text == FilterText)
+        if (text == FilterText)
         {
             Tree.ModelFilter = TextMatchFilter.Contains(Tree, "");
             Tree.UseFiltering = true;
@@ -536,7 +554,7 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         _menu = Tree.SelectedObjects.Count <= 1
             ? GetMenuIfExists(_lastMenuObject = Tree.SelectedObject)
             : GetMenuIfExists(_lastMenuObject = Tree.SelectedObjects);
-
+        _menu.ShowImageMargin = false;
         _lastMenuBuilt = DateTime.Now;
     }
 

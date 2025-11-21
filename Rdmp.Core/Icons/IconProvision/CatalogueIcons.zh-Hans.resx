@@ -130,4 +130,10 @@
   <data name="AssociatedCohortIdentificationTemplatesNode" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
   </data>
+  <data name="AggregateFilterContainerOR" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="AggregateFilterContainerAND" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
 </root>

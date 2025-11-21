@@ -134,8 +134,8 @@ public class RDMPControlCommonFunctionality
         if (!string.IsNullOrWhiteSpace(overrideCommandName))
             button.Text = overrideCommandName;
 
-        if (overrideImage != null)
-            button.Image = overrideImage.ImageToBitmap();
+        //if (overrideImage != null)
+        //    button.Image = overrideImage.ImageToBitmap();
 
         Add(button, underMenu);
     }
