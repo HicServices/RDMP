@@ -35,7 +35,6 @@ namespace Rdmp.UI.Collections
             tlvCohortIdentificationConfigurations = new TreeListView();
             olvName = new OLVColumn();
             olvAssociatedProjects = new OLVColumn();
-            olvFrozen = new OLVColumn();
             tbFilter = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)tlvCohortIdentificationConfigurations).BeginInit();
             SuspendLayout();
@@ -44,9 +43,8 @@ namespace Rdmp.UI.Collections
             // 
             tlvCohortIdentificationConfigurations.AllColumns.Add(olvName);
             tlvCohortIdentificationConfigurations.AllColumns.Add(olvAssociatedProjects);
-            tlvCohortIdentificationConfigurations.AllColumns.Add(olvFrozen);
             tlvCohortIdentificationConfigurations.CellEditUseWholeCell = false;
-            tlvCohortIdentificationConfigurations.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { olvName, olvAssociatedProjects,olvFrozen });
+            tlvCohortIdentificationConfigurations.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { olvName, olvAssociatedProjects });
             tlvCohortIdentificationConfigurations.Dock = System.Windows.Forms.DockStyle.Fill;
             tlvCohortIdentificationConfigurations.Location = new System.Drawing.Point(0, 0);
             tlvCohortIdentificationConfigurations.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -70,11 +68,6 @@ namespace Rdmp.UI.Collections
             // 
             olvAssociatedProjects.IsEditable = false;
             olvAssociatedProjects.Text = "Associated Projects";
-            // 
-            // olvFrozen
-            // 
-            olvFrozen.IsEditable = false;
-            olvFrozen.Text = "Frozen";
             // 
             // tbFilter
             // 
@@ -103,7 +96,6 @@ namespace Rdmp.UI.Collections
         private TreeListView tlvCohortIdentificationConfigurations;
         private OLVColumn olvName;
         private OLVColumn olvAssociatedProjects;
-        private OLVColumn olvFrozen;
         private System.Windows.Forms.TextBox tbFilter;
     }
 }

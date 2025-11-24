@@ -37,7 +37,6 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
     public CohortIdentificationCollectionUI()
     {
         InitializeComponent();
-        olvFrozen.AspectGetter = FrozenAspectGetter;
         olvAssociatedProjects.AspectGetter = AssociatedProjectsAspectGetter;
     }
 
@@ -118,7 +117,6 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
         {
             CommonTreeFunctionality.SetupColumnTracking(olvName, new Guid("f8a42259-ce5a-4006-8ab8-e0305fce05aa"));
             CommonTreeFunctionality.SetupColumnTracking(olvAssociatedProjects, new Guid("f8a42259-ce5a-4006-8ab8-e0305fce05aa"));
-            CommonTreeFunctionality.SetupColumnTracking(olvFrozen, new Guid("d1e155ef-a28f-41b5-81e4-b763627ddb3c"));
 
             tlvCohortIdentificationConfigurations.Expand(rootFolder);
             var _refresh = new ToolStripMenuItem

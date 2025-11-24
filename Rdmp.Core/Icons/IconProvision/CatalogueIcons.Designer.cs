@@ -71,7 +71,61 @@ namespace Rdmp.Core.Icons.IconProvision
                 resourceCulture = value;
             }
         }
-
+        /// <summary>
+        ///   Looks up a localized resource of type Image.
+        /// </summary>
+        public static Byte[] LoadStage1
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("LoadStage1", resourceCulture);
+                return ((Byte[])(obj));
+            }
+        }
+        /// <summary>
+        ///   Looks up a localized resource of type Image.
+        /// </summary>
+        public static Byte[] LoadStage2
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("LoadStage2", resourceCulture);
+                return ((Byte[])(obj));
+            }
+        }
+        /// <summary>
+        ///   Looks up a localized resource of type Image.
+        /// </summary>
+        public static Byte[] LoadStage3
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("LoadStage3", resourceCulture);
+                return ((Byte[])(obj));
+            }
+        }
+        /// <summary>
+        ///   Looks up a localized resource of type Image.
+        /// </summary>
+        public static Byte[] LoadStage4
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("LoadStage4", resourceCulture);
+                return ((Byte[])(obj));
+            }
+        }
+        /// <summary>
+        ///   Looks up a localized resource of type Image.
+        /// </summary>
+        public static Byte[] LoadStage5
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("LoadStage5", resourceCulture);
+                return ((Byte[])(obj));
+            }
+        }
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>

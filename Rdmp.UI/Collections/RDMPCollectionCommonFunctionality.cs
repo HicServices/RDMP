@@ -268,7 +268,7 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
             StatusColumn.Text = "Status";
             StatusColumn.TextAlign = HorizontalAlignment.Center;
             StatusColumn.Renderer = new StatusRenderer(_activator);
-            Tree.AllColumns.Insert(1,StatusColumn);
+            Tree.AllColumns.Insert(1, StatusColumn);
             SetupColumnTracking(StatusColumn, new Guid("72ff92ad-39cd-4153-9dc2-d988cced5ae1"));
             Tree.RebuildColumns();
         }
@@ -554,7 +554,7 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         _menu = Tree.SelectedObjects.Count <= 1
             ? GetMenuIfExists(_lastMenuObject = Tree.SelectedObject)
             : GetMenuIfExists(_lastMenuObject = Tree.SelectedObjects);
-        _menu.ShowImageMargin = false;
+        if (_menu is not null) _menu.ShowImageMargin = false;
         _lastMenuBuilt = DateTime.Now;
     }
 

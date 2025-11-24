@@ -137,7 +137,7 @@
     <value>..\..\Icons\spanner.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="TableInfo" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\..\Icons\tableinfo.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\TableInfo\TableInfo.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="Backup" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Icons\backup.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -275,10 +275,10 @@
     <value>..\CatalogueItemIssue.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="DataAccessCredentials" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\DataAccessCredentials.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\DataAccessCredential\DataAccessCredential.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="AllDataAccessCredentialsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\AllDataAccessCredentialsNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\DataAccessCredential\DataAccessCeredentalFolder.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="Database" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Database.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -323,10 +323,10 @@
     <value>..\SqlThenVSNow.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="ANOTable" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\ANOTable.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\ANOTable\ANOTable.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="AllANOTablesNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\AllANOTablesNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\ANOTable\ANOTableFolder.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="ExtractableCohort" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\material\ExtractableCohort\ExtractableCohort.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -344,7 +344,7 @@
     <value>..\SupportingSQLTable.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="TableInfoServerNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\TableInfoServerNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\TableInfo\TableInfoServer.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="TimeCoverageField" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\TimeCoverageField.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -371,7 +371,7 @@
     <value>..\DashboardControl.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="DashboardLayout" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\DashboardLayout.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\Dashboard\DashboardLayout.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="ReOrder" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\ReOrder.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -449,10 +449,10 @@
     <value>..\AllCataloguesUsedByLoadMetadataNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="AllProcessTasksUsedByLoadMetadataNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\AllProcessTasksUsedByLoadMetadataNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\LoadMetadata\LoadMetadataFolder.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="LoadDirectoryNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\LoadDirectoryNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\LoadMetadata\LoadMetadataFolder.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="LoadBubble" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\LoadBubble.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -464,13 +464,13 @@
     <value>..\Exe.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="LoadMetadataScheduleNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\LoadMetadataScheduleNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\LoadMetadata\LoadMetadataSchedulingNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="LoadPeriodically" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\LoadPeriodically.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="LoadProgress" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\LoadProgress.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\LoadMetadata\LoadProgress.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="GetFilesStage" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\GetFilesStage.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -497,7 +497,7 @@
     <value>..\PreLoadDiscardedColumnsNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="PermissionWindow" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\PermissionWindow.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\PermissionWindow\PermissionWindow.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="Pipeline" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Pipeline.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -602,7 +602,7 @@
     <value>..\MakeProjectSpecificCatalogueNormalAgain.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="AllPermissionWindowsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\AllPermissionWindowsNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\PermissionWindow\PermissionWindowFolder.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="Waiting" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Waiting.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -617,10 +617,10 @@
     <value>..\FileMissing.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="AllConnectionStringKeywordsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\AllConnectionStringKeywordsNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\ConnectionStringKeyword\ConnectionStringFolder.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="ConnectionStringKeyword" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\ConnectionStringKeyword.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\ConnectionStringKeyword\ConnectionString.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="AllStandardRegexesNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\AllStandardRegexesNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -680,7 +680,7 @@
     <value>..\Main.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="ProcessTask" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\ProcessTask.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\LoadMetadata\ProcessTask\ProcessTask.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="CacheFetchFailure" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\CacheFetchFailure.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -698,7 +698,7 @@
     <value>..\LoadModuleAssembly.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="ProcessTaskArgument" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\ProcessTaskArgument.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\LoadMetadata\ProcessTask\ProcessTaskArgument.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="ProjectCohortIdentificationConfigurationAssociation" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\material\CohortIdentificationConfiguration\CohortIdentificationConfiguration.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -722,7 +722,7 @@
     <value>..\WindowLayout.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="AllDashboardsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\AllDashboardsNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\Dashboard\DashboardFolder.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="AllOrphanAggregateConfigurationsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\material\AggregateConfiguration\OrghanAggregateConfigurationFolder.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -752,7 +752,7 @@
     <value>..\Memento.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="TableInfoDatabaseNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\TableInfoDatabaseNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\TableInfo\TableInfoDatabase.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="Dataset" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Dataset.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -801,5 +801,20 @@
   </data>
   <data name="LoadMetadataFolder" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\material\LoadMetadata\LoadMetadataFolder.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="LoadStage1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\material\LoadMetadata\LoadStage\Stage1.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="LoadStage2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\material\LoadMetadata\LoadStage\Stage2.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="LoadStage3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\material\LoadMetadata\LoadStage\Stage3.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="LoadStage4" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\material\LoadMetadata\LoadStage\Stage4.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="LoadStage5" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\material\LoadMetadata\LoadStage\Stage5.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>

@@ -104,6 +104,30 @@ public class IconProvider : ICoreIconProvider
         if (concept is FrozenExtractionConfigurationsNode) return Image.Load<Rgba32>(CatalogueIcons.FrozenExtractionConfigurationsNode);
         if (concept is FolderNode<LoadMetadata>) return Image.Load<Rgba32>(CatalogueIcons.LoadMetadataFolder);
         if (concept is LoadMetadata) return Image.Load<Rgba32>(CatalogueIcons.LoadMetadata);
+        if (concept is AllPermissionWindowsNode) return Image.Load<Rgba32>(CatalogueIcons.AllPermissionWindowsNode);
+        if (concept is LoadMetadataScheduleNode) return Image.Load<Rgba32>(CatalogueIcons.LoadMetadataScheduleNode);
+        if (concept is LoadProgress) return Image.Load<Rgba32>(CatalogueIcons.LoadProgress);
+        if (concept is LoadMetadataVersionNode) return Image.Load<Rgba32>(CatalogueIcons.LoadMetadataFolder);
+        if (concept is AllProcessTasksUsedByLoadMetadataNode) return Image.Load<Rgba32>(CatalogueIcons.AllProcessTasksUsedByLoadMetadataNode);
+        if (concept is LoadDirectoryNode) return Image.Load<Rgba32>(CatalogueIcons.LoadDirectoryNode);
+        if (concept is LoadStageNode) return LoadStageNodeIconProvider.GetIcon(concept, kind);
+        if (concept is ProcessTask) return Image.Load<Rgba32>(CatalogueIcons.ProcessTask);
+        if (concept is ProcessTaskArgument) return Image.Load<Rgba32>(CatalogueIcons.ProcessTaskArgument);
+        if (concept is ANOTable) return Image.Load<Rgba32>(CatalogueIcons.ANOTable);
+        if (concept is AllANOTablesNode) return Image.Load<Rgba32>(CatalogueIcons.AllANOTablesNode);
+        if (concept is AllConnectionStringKeywordsNode) return Image.Load<Rgba32>(CatalogueIcons.AllConnectionStringKeywordsNode);
+        if (concept is ConnectionStringKeyword) return Image.Load<Rgba32>(CatalogueIcons.ConnectionStringKeyword);
+        if (concept is AllDashboardsNode) return Image.Load<Rgba32>(CatalogueIcons.AllDashboardsNode);
+        if (concept is DashboardLayout) return Image.Load<Rgba32>(CatalogueIcons.DashboardLayout);
+        if (concept is DataAccessCredentials) return Image.Load<Rgba32>(CatalogueIcons.DataAccessCredentials);
+        if (concept is AllDataAccessCredentialsNode) return Image.Load<Rgba32>(CatalogueIcons.AllDataAccessCredentialsNode);
+        if (concept is AllServersNode) return Image.Load<Rgba32>(CatalogueIcons.AllServersNode);
+        if (concept is TableInfoServerNode) return Image.Load<Rgba32>(CatalogueIcons.TableInfoServerNode);
+        if (concept is TableInfoDatabaseNode) return Image.Load<Rgba32>(CatalogueIcons.TableInfoDatabaseNode);
+        if (concept is TableInfo) return Image.Load<Rgba32>(CatalogueIcons.TableInfo);
+
+
+
 
         return ImageUnknown;
     }

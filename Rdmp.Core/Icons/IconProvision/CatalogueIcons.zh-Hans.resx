@@ -139,4 +139,19 @@
   <data name="LoadMetadataFolder" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
   </data>
+  <data name="LoadStage1" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="LoadStage2" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="LoadStage3" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="LoadStage4" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="LoadStage5" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
 </root>
