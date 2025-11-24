@@ -702,6 +702,15 @@ namespace Rdmp.Core.Icons.IconProvision
             }
         }
 
+
+        public static Byte[] TemplateCohortIdentificationConfiguration
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("TemplateCohortIdentificationConfiguration", resourceCulture);
+                return ((Byte[])(obj));
+            }
+        }
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>

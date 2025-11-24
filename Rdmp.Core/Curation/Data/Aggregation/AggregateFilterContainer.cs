@@ -74,9 +74,10 @@ public class AggregateFilterContainer : ConcreteContainer, IDisableable
     /// <summary>
     /// Returns true if the filter container belongs to a parent <see cref="CohortIdentificationConfiguration"/> that is frozen
     /// </summary>
+    /// <param name="context"></param>
     /// <param name="reason"></param>
     /// <returns></returns>
-    public override bool ShouldBeReadOnly(out string reason)
+    public override bool ShouldBeReadOnly(string context, out string reason)
     {
         var cic = GetAggregate()?.GetCohortIdentificationConfigurationIfAny();
         if (cic == null)
@@ -85,7 +86,7 @@ public class AggregateFilterContainer : ConcreteContainer, IDisableable
             return false;
         }
 
-        return cic.ShouldBeReadOnly(out reason);
+        return cic.ShouldBeReadOnly(context, out reason);
     }
 
     /// <summary>

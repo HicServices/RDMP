@@ -30,9 +30,9 @@ namespace Rdmp.UI.Collections
             olvOrder = new OLVColumn();
             imageList_RightClickIcons = new ImageList(components);
             gbCatalogueFilters = new GroupBox();
+            tbFilter = new TextBox();
             catalogueCollectionFilterUI1 = new CatalogueCollectionFilterUI();
             panel2 = new Panel();
-            tbFilter = new TextBox();
             ((ISupportInitialize)tlvCatalogues).BeginInit();
             gbCatalogueFilters.SuspendLayout();
             panel2.SuspendLayout();
@@ -49,7 +49,7 @@ namespace Rdmp.UI.Collections
             tlvCatalogues.Location = new System.Drawing.Point(0, 0);
             tlvCatalogues.Name = "tlvCatalogues";
             tlvCatalogues.ShowGroups = false;
-            tlvCatalogues.Size = new System.Drawing.Size(500, 414);
+            tlvCatalogues.Size = new System.Drawing.Size(500, 403);
             tlvCatalogues.TabIndex = 0;
             tlvCatalogues.Text = "label1";
             tlvCatalogues.UseCompatibleStateImageBehavior = false;
@@ -95,19 +95,26 @@ namespace Rdmp.UI.Collections
             gbCatalogueFilters.Controls.Add(tbFilter);
             gbCatalogueFilters.Controls.Add(catalogueCollectionFilterUI1);
             gbCatalogueFilters.Dock = DockStyle.Bottom;
-            gbCatalogueFilters.Location = new System.Drawing.Point(0, 414);
+            gbCatalogueFilters.Location = new System.Drawing.Point(0, 403);
             gbCatalogueFilters.Name = "gbCatalogueFilters";
-            gbCatalogueFilters.Size = new System.Drawing.Size(500, 65);
+            gbCatalogueFilters.Size = new System.Drawing.Size(500, 76);
             gbCatalogueFilters.TabIndex = 1;
             gbCatalogueFilters.TabStop = false;
             gbCatalogueFilters.Text = "Show";
+            // 
+            // tbFilter
+            // 
+            tbFilter.Location = new System.Drawing.Point(0, 53);
+            tbFilter.Name = "tbFilter";
+            tbFilter.Size = new System.Drawing.Size(500, 23);
+            tbFilter.TabIndex = 2;
             // 
             // catalogueCollectionFilterUI1
             // 
             catalogueCollectionFilterUI1.Dock = DockStyle.Fill;
             catalogueCollectionFilterUI1.Location = new System.Drawing.Point(3, 19);
             catalogueCollectionFilterUI1.Name = "catalogueCollectionFilterUI1";
-            catalogueCollectionFilterUI1.Size = new System.Drawing.Size(494, 43);
+            catalogueCollectionFilterUI1.Size = new System.Drawing.Size(494, 54);
             catalogueCollectionFilterUI1.TabIndex = 0;
             // 
             // panel2
@@ -119,13 +126,6 @@ namespace Rdmp.UI.Collections
             panel2.Name = "panel2";
             panel2.Size = new System.Drawing.Size(500, 479);
             panel2.TabIndex = 2;
-            // 
-            // tbFilter
-            // 
-            tbFilter.Location = new System.Drawing.Point(0, 39);
-            tbFilter.Name = "tbFilter";
-            tbFilter.Size = new System.Drawing.Size(500, 23);
-            tbFilter.TabIndex = 2;
             // 
             // CatalogueCollectionUI
             // 

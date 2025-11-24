@@ -39,7 +39,7 @@ public class ExecuteCommandMoveAggregateIntoContainer : BasicCommandExecution
             _sourceAggregateCommand.ContainerIfAny.Equals(targetCohortAggregateContainer))
             SetImpossible("Aggregate is already in container");
 
-        if (targetCohortAggregateContainer.ShouldBeReadOnly(out var reason))
+        if (targetCohortAggregateContainer.ShouldBeReadOnly(this.GetType().Name, out var reason))
             SetImpossible(reason);
     }
 

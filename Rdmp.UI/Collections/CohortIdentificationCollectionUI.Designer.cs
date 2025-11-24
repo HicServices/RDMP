@@ -34,6 +34,7 @@ namespace Rdmp.UI.Collections
             components = new System.ComponentModel.Container();
             tlvCohortIdentificationConfigurations = new TreeListView();
             olvName = new OLVColumn();
+            olvAssociatedProjects = new OLVColumn();
             olvFrozen = new OLVColumn();
             tbFilter = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)tlvCohortIdentificationConfigurations).BeginInit();
@@ -42,9 +43,10 @@ namespace Rdmp.UI.Collections
             // tlvCohortIdentificationConfigurations
             // 
             tlvCohortIdentificationConfigurations.AllColumns.Add(olvName);
+            tlvCohortIdentificationConfigurations.AllColumns.Add(olvAssociatedProjects);
             tlvCohortIdentificationConfigurations.AllColumns.Add(olvFrozen);
             tlvCohortIdentificationConfigurations.CellEditUseWholeCell = false;
-            tlvCohortIdentificationConfigurations.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { olvName, olvFrozen });
+            tlvCohortIdentificationConfigurations.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { olvName, olvAssociatedProjects,olvFrozen });
             tlvCohortIdentificationConfigurations.Dock = System.Windows.Forms.DockStyle.Fill;
             tlvCohortIdentificationConfigurations.Location = new System.Drawing.Point(0, 0);
             tlvCohortIdentificationConfigurations.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -63,6 +65,11 @@ namespace Rdmp.UI.Collections
             olvName.Sortable = false;
             olvName.Text = "Cohort Identification Configurations";
             olvName.Width = 100;
+            //
+            // olvAssociatedProjects
+            // 
+            olvAssociatedProjects.IsEditable = false;
+            olvAssociatedProjects.Text = "Associated Projects";
             // 
             // olvFrozen
             // 
@@ -95,6 +102,7 @@ namespace Rdmp.UI.Collections
 
         private TreeListView tlvCohortIdentificationConfigurations;
         private OLVColumn olvName;
+        private OLVColumn olvAssociatedProjects;
         private OLVColumn olvFrozen;
         private System.Windows.Forms.TextBox tbFilter;
     }
