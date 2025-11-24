@@ -12,24 +12,24 @@ public static class StatusColours
     private static Color Black = Color.FromArgb(33, 37, 41);
     private static Color White = Color.FromArgb(242, 240, 239);
 
-    public static Color Core = Color.FromArgb(60, 136, 103);
+    public static Color Core = Color.FromArgb(138, 196, 75);
     public static Color CoreCompliment = Color.White;
 
-    public static Color Internal = Color.FromArgb(253, 22, 22);
-    public static Color InternalCompliment = Black;
+    public static Color Internal = Color.FromArgb(240,68,56);
+    public static Color InternalCompliment = White;
 
 
-    public static Color ProjectSpecific = Color.FromArgb(27, 220, 242);
-    public static Color ProjectSpecificCompliment = Black;
+    public static Color ProjectSpecific = Color.FromArgb(71, 142, 204);
+    public static Color ProjectSpecificCompliment = White;
 
-    public static Color Deprecated = Color.FromArgb(217, 217, 217);
-    public static Color DeprecatedCompliment = Black;
+    public static Color Deprecated = Color.FromArgb(97,126,140);
+    public static Color DeprecatedCompliment = White;
 
-    public static Color Supplemental = Color.FromArgb(133, 183, 17);
+    public static Color Supplemental = Color.FromArgb(133, 183, 17);//todo
     public static Color SupplementalCompliment = Black;
 
-    public static Color SpecialistApproval = Color.FromArgb(255, 96, 10);
-    public static Color SpecialistApprovalCompliment = Black;
+    public static Color SpecialistApproval = Color.FromArgb(248,152,29);
+    public static Color SpecialistApprovalCompliment = White;
 
     public static Color ExtractionIdentifier = Core;
     public static Color ExtractionIdentifierCompliment = CoreCompliment;
