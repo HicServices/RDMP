@@ -13,6 +13,7 @@ using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.Curation.Data.Dashboarding;
+using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataFlowPipeline.Requirements;
@@ -101,7 +102,8 @@ public class IconProvider : ICoreIconProvider
         if (concept is ProjectCohortIdentificationConfigurationAssociation) return Image.Load<Rgba32>(CatalogueIcons.ProjectCohortIdentificationConfigurationAssociation);
         if (concept is ProjectSavedCohortsNode) return Image.Load<Rgba32>(CatalogueIcons.ProjectSavedCohortsNode);
         if (concept is FrozenExtractionConfigurationsNode) return Image.Load<Rgba32>(CatalogueIcons.FrozenExtractionConfigurationsNode);
-
+        if (concept is FolderNode<LoadMetadata>) return Image.Load<Rgba32>(CatalogueIcons.LoadMetadataFolder);
+        if (concept is LoadMetadata) return Image.Load<Rgba32>(CatalogueIcons.LoadMetadata);
 
         return ImageUnknown;
     }

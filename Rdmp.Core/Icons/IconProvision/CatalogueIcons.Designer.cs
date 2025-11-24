@@ -72,7 +72,17 @@ namespace Rdmp.Core.Icons.IconProvision
             }
         }
 
-
+        /// <summary>
+        ///   Looks up a localized resource of type Image.
+        /// </summary>
+        public static Byte[] LoadMetadataFolder
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("LoadMetadataFolder", resourceCulture);
+                return ((Byte[])(obj));
+            }
+        }
 
 
         /// <summary>

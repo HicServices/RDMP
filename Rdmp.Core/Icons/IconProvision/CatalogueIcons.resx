@@ -149,7 +149,7 @@
     <value>..\..\Icons\StarHollow.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="LoadMetadata" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\material\DataLoad\DataLoad.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\LoadMetadata\LoadMetadata.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="Logging" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Icons\logging.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -798,5 +798,8 @@
   </data>
   <data name="AggregateFilterContainerAND" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\material\AggregateFilterContainer\AggregateFilterContainerAND.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="LoadMetadataFolder" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\material\LoadMetadata\LoadMetadataFolder.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>

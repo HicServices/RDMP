@@ -136,4 +136,7 @@
   <data name="AggregateFilterContainerAND" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
   </data>
+  <data name="LoadMetadataFolder" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
 </root>
