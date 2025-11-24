@@ -15,10 +15,12 @@ using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Governance;
+using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.Icons.IconProvision.IconProviders;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.Providers;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Providers.Nodes.CohortNodes;
 using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
@@ -125,6 +127,19 @@ public class IconProvider : ICoreIconProvider
         if (concept is TableInfoServerNode) return Image.Load<Rgba32>(CatalogueIcons.TableInfoServerNode);
         if (concept is TableInfoDatabaseNode) return Image.Load<Rgba32>(CatalogueIcons.TableInfoDatabaseNode);
         if (concept is TableInfo) return Image.Load<Rgba32>(CatalogueIcons.TableInfo);
+        if (concept is DecryptionPrivateKeyNode) return Image.Load<Rgba32>(CatalogueIcons.DecryptionPrivateKeyNode);
+        if (concept is AllExternalServersNode) return Image.Load<Rgba32>(CatalogueIcons.AllExternalServersNode);
+        if (concept is ExternalDatabaseServer) return Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer);
+        if (concept is AllPipelinesNode) return Image.Load<Rgba32>(CatalogueIcons.AllPipelinesNode);
+        if (concept is Pipeline) return Image.Load<Rgba32>(CatalogueIcons.Pipeline);
+        if (concept is PipelineComponent) return PipelineComponentIconProvider.GetIcon(concept, kind);
+        if (concept is PipelineComponentArgument) return Image.Load<Rgba32>(CatalogueIcons.PipelineComponentArgument);
+        if (concept is PipelineCompatibleWithUseCaseNode) return Image.Load<Rgba32>(CatalogueIcons.Pipeline);
+        if (concept is StandardPipelineUseCaseNode) return Image.Load<Rgba32>(CatalogueIcons.AllPipelinesNode);
+        if (concept is AllPluginsNode) return Image.Load<Rgba32>(CatalogueIcons.AllPluginsNode);
+        if (concept is Plugin) return Image.Load<Rgba32>(CatalogueIcons.Plugin);
+        if (concept is AllStandardRegexesNode) return Image.Load<Rgba32>(CatalogueIcons.AllStandardRegexesNode);
+        if (concept is StandardRegex) return Image.Load<Rgba32>(CatalogueIcons.StandardRegex);
 
 
 

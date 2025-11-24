@@ -251,7 +251,7 @@
     <value>..\..\Icons\collisionResolution.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="AllServersNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\..\Icons\AllServersNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\TableInfo\AllServersNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="TableInfoTableValuedFunction" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Icons\tableinfoTableValuedFunction.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -380,7 +380,7 @@
     <value>..\JoinInfo.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="StandardRegex" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\StandardRegex.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\StandardRegex\StandardRegex.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="Favourite" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Favourite.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -395,7 +395,7 @@
     <value>..\CacheProgress.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="ExternalDatabaseServer" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\ExternalDatabaseServer.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\ExternalServer\ExternalServer.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="ExternalDatabaseServer_ANO" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\ExternalDatabaseServer_ANO.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -413,7 +413,7 @@
     <value>..\ExternalDatabaseServer_Logging.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="Plugin" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Plugin.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\Plugin\Plugins.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="Kill" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Kill.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -488,10 +488,10 @@
     <value>..\Warning.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="AllExternalServersNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\AllExternalServersNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\ExternalServer\ExternalServerFolder.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="DecryptionPrivateKeyNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\DecryptionPrivateKeyNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\DataAccessCredential\DecryptionPrivateKeyNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="PreLoadDiscardedColumnsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\PreLoadDiscardedColumnsNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -500,7 +500,7 @@
     <value>..\material\PermissionWindow\PermissionWindow.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="Pipeline" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Pipeline.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\Pipeline\Pipeline.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="ExtractionConfigurationsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\material\ExtractionConfiguration\ExtractionConfigurationsNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -542,7 +542,7 @@
     <value>..\PipelineComponentDestination.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="PipelineComponentArgument" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\PipelineComponentArgument.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\Pipeline\PipelineComponentArgument.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="AggregateTopX" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\AggregateTopX.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -623,10 +623,10 @@
     <value>..\material\ConnectionStringKeyword\ConnectionString.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="AllStandardRegexesNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\AllStandardRegexesNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\StandardRegex\StandardRegexFolder.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="AllPipelinesNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\AllPipelinesNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\Pipeline\PipelineFolder.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="StandardPipelineUseCaseNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\StandardPipelineUseCaseNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -671,7 +671,7 @@
     <value>..\WhatIsACohort.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="AllPluginsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\AllPluginsNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\Plugin\Plugins.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="Graph" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Graph.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -816,5 +816,14 @@
   </data>
   <data name="LoadStage5" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\material\LoadMetadata\LoadStage\Stage5.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="PipelineComponentStart" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\material\Pipeline\PipelineComponentStart.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="PipelineComponentMiddle" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\material\Pipeline\PipelineComponentMiddle.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="PipelineComponentEnd" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\material\Pipeline\PipelineComponentEnd.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>
