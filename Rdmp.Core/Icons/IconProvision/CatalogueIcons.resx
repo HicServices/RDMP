@@ -755,7 +755,7 @@
     <value>..\material\TableInfo\TableInfoDatabase.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="Dataset" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Dataset.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>..\material\Dataset\Dataset.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="AggregateContinuousDateAxis" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\material\AggregateContinuousDateAxis\AggregateContinuousDateAxis.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -770,7 +770,7 @@
     <value>..\TicketingSystemReleaseStatus.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="AllDatasetsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Dataset1.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\Dataset\DatasetFolder.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="AllRegexRedactionConfigurationsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\AllStandardRegexesNode1.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>

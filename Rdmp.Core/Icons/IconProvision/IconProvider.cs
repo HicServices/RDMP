@@ -135,11 +135,14 @@ public class IconProvider : ICoreIconProvider
         if (concept is PipelineComponent) return PipelineComponentIconProvider.GetIcon(concept, kind);
         if (concept is PipelineComponentArgument) return Image.Load<Rgba32>(CatalogueIcons.PipelineComponentArgument);
         if (concept is PipelineCompatibleWithUseCaseNode) return Image.Load<Rgba32>(CatalogueIcons.Pipeline);
+        if (concept is OtherPipelinesNode) return Image.Load<Rgba32>(CatalogueIcons.AllPipelinesNode);
         if (concept is StandardPipelineUseCaseNode) return Image.Load<Rgba32>(CatalogueIcons.AllPipelinesNode);
         if (concept is AllPluginsNode) return Image.Load<Rgba32>(CatalogueIcons.AllPluginsNode);
         if (concept is Plugin) return Image.Load<Rgba32>(CatalogueIcons.Plugin);
         if (concept is AllStandardRegexesNode) return Image.Load<Rgba32>(CatalogueIcons.AllStandardRegexesNode);
         if (concept is StandardRegex) return Image.Load<Rgba32>(CatalogueIcons.StandardRegex);
+        if (concept is AllDatasetsNode) return Image.Load<Rgba32>(CatalogueIcons.AllDatasetsNode);
+        if (concept is Curation.Data.Dataset) return Image.Load<Rgba32>(CatalogueIcons.Dataset);
 
 
 
