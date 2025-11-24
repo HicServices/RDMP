@@ -24,6 +24,8 @@ namespace Rdmp.UI.Collections.Renderers
 
         private IActivateItems _activator;
 
+        private bool _useShortStrings = false;
+
         public StatusRenderer(IActivateItems activator) : base()
         {
             _activator = activator;
@@ -121,12 +123,17 @@ namespace Rdmp.UI.Collections.Renderers
 
         private int RenderStatus(string text, Color colour, Color textColour, Rectangle cellBounds, int offset, Graphics g)
         {
+            string _text = text;
+            if (_useShortStrings)
+            {
+                _text = String.Join("", _text.Split(' ').Select(s => s[0]));
+            }
             using Font font = new Font("Roboto", 8);
             RectangleF textBoxRect = cellBounds;
             textBoxRect.X += offset;
             textBoxRect.Width = 50;
 
-            SizeF size = g.MeasureString(text, font, cellBounds.Width, fmt);
+            SizeF size = g.MeasureString(_text, font, cellBounds.Width, fmt);
             textBoxRect.Height = 16;
             textBoxRect.Width = size.Width + 4;
             textBoxRect.Y += (cellBounds.Height - size.Height) / 2;
@@ -138,7 +145,7 @@ namespace Rdmp.UI.Collections.Renderers
             g.Clip = new Region(cellBounds);
             textBoxRect.Y += 2;
             textBoxRect.Height -= 4;
-            g.DrawString(text, font, new SolidBrush(textColour), textBoxRect, fmt);
+            g.DrawString(_text, font, new SolidBrush(textColour), textBoxRect, fmt);
 
             return (int)Math.Ceiling(textBoxRect.Width);
         }
