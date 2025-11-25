@@ -144,9 +144,10 @@ public class IconProvider : ICoreIconProvider
         if (concept is AllDatasetsNode) return Image.Load<Rgba32>(CatalogueIcons.AllDatasetsNode);
         if (concept is Curation.Data.Dataset) return Image.Load<Rgba32>(CatalogueIcons.Dataset);
 
+        if (concept is ArbitraryFolderNode) return Image.Load<Rgba32>(CatalogueIcons.CatalogueFolder);
+        if (concept is ExtractionArbitraryFolderNode) return Image.Load<Rgba32>(CatalogueIcons.CatalogueFolder);
 
-
-
+        var x = concept.GetType();
         return ImageUnknown;
     }
 
