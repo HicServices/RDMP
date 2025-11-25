@@ -142,12 +142,6 @@ public class WindowManager
                 toReturn = Show(RDMPCollection.SavedCohorts, collection, "Saved Cohorts",
                     Image.Load<Rgba32>(CatalogueIcons.AllCohortsNode));
                 break;
-            case RDMPCollection.Configurations:
-                collection = new ConfigurationsCollectionUI();
-                toReturn = Show(RDMPCollection.Configurations, collection, "Configurations",
-                     Image.Load<Rgba32>(FamFamFamIcons.pencil_go));
-                break;
-
             default: throw new ArgumentOutOfRangeException(nameof(collectionToCreate));
         }
 

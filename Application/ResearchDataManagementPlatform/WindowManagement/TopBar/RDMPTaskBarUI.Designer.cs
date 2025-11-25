@@ -37,19 +37,13 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             btnCohorts = new System.Windows.Forms.ToolStripButton();
             btnDataExport = new System.Windows.Forms.ToolStripButton();
             btnTables = new System.Windows.Forms.ToolStripButton();
-            btnConfiguration = new System.Windows.Forms.ToolStripButton();
             toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             toolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
             toolStrip1 = new System.Windows.Forms.ToolStrip();
             btnBack = new System.Windows.Forms.ToolStripSplitButton();
             btnForward = new System.Windows.Forms.ToolStripButton();
-            btnSavedCohorts = new System.Windows.Forms.ToolStripButton();
             btnLoads = new System.Windows.Forms.ToolStripButton();
-            toolStripLabel2 = new System.Windows.Forms.ToolStripLabel();
-            cbxLayouts = new System.Windows.Forms.ToolStripComboBox();
-            btnSaveWindowLayout = new System.Windows.Forms.ToolStripButton();
-            btnDeleteLayout = new System.Windows.Forms.ToolStripButton();
-            toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            btnSavedCohorts = new System.Windows.Forms.ToolStripButton();
             cbCommits = new System.Windows.Forms.ToolStripButton();
             toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             toolStrip1.SuspendLayout();
@@ -100,18 +94,9 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             btnTables.Image = (System.Drawing.Image)resources.GetObject("btnTables.Image");
             btnTables.ImageTransparentColor = System.Drawing.Color.Magenta;
             btnTables.Name = "btnTables";
-            btnTables.Size = new System.Drawing.Size(123, 22);
-            btnTables.Text = "Tables (Advanced)";
+            btnTables.Size = new System.Drawing.Size(65, 22);
+            btnTables.Text = "System";
             btnTables.Click += ToolboxButtonClicked;
-            // 
-            // btnConfiguration
-            // 
-            btnConfiguration.Image = (System.Drawing.Image)resources.GetObject("btnConfiguration.Image");
-            btnConfiguration.ImageTransparentColor = System.Drawing.Color.Magenta;
-            btnConfiguration.Name = "btnConfiguration";
-            btnConfiguration.Size = new System.Drawing.Size(71, 22);
-            btnConfiguration.Text = "Configuration";
-            btnConfiguration.Click += ToolboxButtonClicked;
             // 
             // toolStripSeparator2
             // 
@@ -125,7 +110,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             // 
             // toolStrip1
             // 
-            toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { btnBack, btnForward, btnHome, toolStripSeparator1, btnCatalogues, btnCohorts, btnSavedCohorts, btnDataExport, toolStripSeparator, btnTables, btnLoads, btnConfiguration, toolStripSeparator2, toolStripLabel2, cbxLayouts, btnSaveWindowLayout, btnDeleteLayout, toolStripSeparator4, cbCommits, toolStripSeparator3 });
+            toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { btnBack, btnForward, btnHome, toolStripSeparator1, btnLoads, btnCatalogues, btnCohorts, btnDataExport, toolStripSeparator, btnTables, btnSavedCohorts, toolStripSeparator2, cbCommits, toolStripSeparator3 });
             toolStrip1.Location = new System.Drawing.Point(0, 0);
             toolStrip1.Name = "toolStrip1";
             toolStrip1.Size = new System.Drawing.Size(1539, 25);
@@ -155,15 +140,6 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             btnForward.Text = "Forward";
             btnForward.Click += btnForward_Click;
             // 
-            // btnSavedCohorts
-            // 
-            btnSavedCohorts.Image = (System.Drawing.Image)resources.GetObject("btnSavedCohorts.Image");
-            btnSavedCohorts.ImageTransparentColor = System.Drawing.Color.Magenta;
-            btnSavedCohorts.Name = "btnSavedCohorts";
-            btnSavedCohorts.Size = new System.Drawing.Size(103, 22);
-            btnSavedCohorts.Text = "Saved Cohorts";
-            btnSavedCohorts.Click += ToolboxButtonClicked;
-            // 
             // btnLoads
             // 
             btnLoads.Image = (System.Drawing.Image)resources.GetObject("btnLoads.Image");
@@ -173,45 +149,14 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             btnLoads.Text = "Data Load";
             btnLoads.Click += ToolboxButtonClicked;
             // 
-            // toolStripLabel2
+            // btnSavedCohorts
             // 
-            toolStripLabel2.Name = "toolStripLabel2";
-            toolStripLabel2.Size = new System.Drawing.Size(43, 22);
-            toolStripLabel2.Text = "Layout";
-            // 
-            // cbxLayouts
-            // 
-            cbxLayouts.Name = "cbxLayouts";
-            cbxLayouts.Size = new System.Drawing.Size(174, 25);
-            cbxLayouts.DropDownClosed += cbx_DropDownClosed;
-            cbxLayouts.SelectedIndexChanged += cbx_SelectedIndexChanged;
-            // 
-            // btnSaveWindowLayout
-            // 
-            btnSaveWindowLayout.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            btnSaveWindowLayout.Enabled = false;
-            btnSaveWindowLayout.Image = (System.Drawing.Image)resources.GetObject("btnSaveWindowLayout.Image");
-            btnSaveWindowLayout.ImageTransparentColor = System.Drawing.Color.Magenta;
-            btnSaveWindowLayout.Name = "btnSaveWindowLayout";
-            btnSaveWindowLayout.Size = new System.Drawing.Size(23, 22);
-            btnSaveWindowLayout.Text = "Save Window Layout";
-            btnSaveWindowLayout.Click += btnSaveWindowLayout_Click;
-            // 
-            // btnDeleteLayout
-            // 
-            btnDeleteLayout.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            btnDeleteLayout.Enabled = false;
-            btnDeleteLayout.Image = (System.Drawing.Image)resources.GetObject("btnDeleteLayout.Image");
-            btnDeleteLayout.ImageTransparentColor = System.Drawing.Color.Magenta;
-            btnDeleteLayout.Name = "btnDeleteLayout";
-            btnDeleteLayout.Size = new System.Drawing.Size(23, 22);
-            btnDeleteLayout.Text = "Delete Layout";
-            btnDeleteLayout.Click += btnDelete_Click;
-            // 
-            // toolStripSeparator4
-            // 
-            toolStripSeparator4.Name = "toolStripSeparator4";
-            toolStripSeparator4.Size = new System.Drawing.Size(6, 25);
+            btnSavedCohorts.Image = (System.Drawing.Image)resources.GetObject("btnSavedCohorts.Image");
+            btnSavedCohorts.ImageTransparentColor = System.Drawing.Color.Magenta;
+            btnSavedCohorts.Name = "btnSavedCohorts";
+            btnSavedCohorts.Size = new System.Drawing.Size(103, 22);
+            btnSavedCohorts.Text = "Saved Cohorts";
+            btnSavedCohorts.Click += ToolboxButtonClicked;
             // 
             // cbCommits
             // 
@@ -249,18 +194,12 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
         private System.Windows.Forms.ToolStripButton btnCohorts;
         private System.Windows.Forms.ToolStripButton btnDataExport;
         private System.Windows.Forms.ToolStripButton btnTables;
-        private System.Windows.Forms.ToolStripButton btnConfiguration;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton btnSavedCohorts;
-        private System.Windows.Forms.ToolStripLabel toolStripLabel2;
-        private System.Windows.Forms.ToolStripComboBox cbxLayouts;
-        private System.Windows.Forms.ToolStripButton btnDeleteLayout;
-        private System.Windows.Forms.ToolStripButton btnSaveWindowLayout;
         private System.Windows.Forms.ToolStripButton btnForward;
         private System.Windows.Forms.ToolStripSplitButton btnBack;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripButton cbCommits;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripButton btnLoads;
