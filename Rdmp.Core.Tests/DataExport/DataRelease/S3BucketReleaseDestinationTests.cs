@@ -14,9 +14,7 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 using System.Linq;
 using Minio.DataModel.Args;
 using System.Collections.Generic;
-using Minio.DataModel;
 using Rdmp.Core.Curation.Data.DataLoad;
-
 namespace Rdmp.Core.Tests.DataExport.DataRelease;
 
 public sealed class S3BucketReleaseDestinationTests : TestsRequiringAnExtractionConfiguration
@@ -65,9 +63,10 @@ public sealed class S3BucketReleaseDestinationTests : TestsRequiringAnExtraction
 
     private static List<Minio.DataModel.Item> GetObjects(string bucketName)
     {
-        var loArgs = new ListObjectsArgs().WithBucket(bucketName);
-        var x = _minioClient.ListObjectsEnumAsync(loArgs).ToListAsync();
-        return x.IsCompleted ? x.Result : x.AsTask().Result;
+        throw new Exception("This needs to be fixed by minio");
+        //var loArgs = new ListObjectsArgs().WithBucket(bucketName);
+        //var x = _minioClient.ListObjectsEnumAsync(loArgs).ToListAsync<Item>();
+        //return x.IsCompleted ? x.Result : x.AsTask().Result;
     }
 
     private static void SetArgs(IArgument[] args, Dictionary<string, object> values)

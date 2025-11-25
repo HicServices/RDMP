@@ -280,7 +280,6 @@ public static class SafeDirectoryCatalog
         "system.printing.dll",
         "system.private.corelib.dll",
         "system.private.datacontractserialization.dll",
-        "system.private.uri.dll",
         "system.private.xml.dll",
         "system.private.xml.linq.dll",
         "system.reflection.dispatchproxy.dll",
