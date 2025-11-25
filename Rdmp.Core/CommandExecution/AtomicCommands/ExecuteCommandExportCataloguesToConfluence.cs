@@ -23,6 +23,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         private readonly string _owner;
         private readonly string _description;
         private readonly bool _isServiceAccount;
+        private readonly int? _rootPageParent;
         private readonly HttpClient _client = new();
         private readonly Dictionary<int, string> _cataloguePageLookups = [];
         private string rootParentId = null;
@@ -92,7 +93,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             public ConfluencePageVersion version { get; set; }
         }
 
-        public ExecuteCommandExportCataloguesToConfluence(IBasicActivateItems activator, string subdomain, int spaceId, string apiKey, string owner, string description, bool isServiceaccount)
+        public ExecuteCommandExportCataloguesToConfluence(IBasicActivateItems activator, string subdomain, int spaceId, string apiKey, string owner, string description, bool isServiceaccount, int? rootPageParent = null)
         {
             _activator = activator;
             _subdomain = subdomain;
@@ -101,6 +102,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             _owner = owner;
             _description = description;
             _isServiceAccount = isServiceaccount;
+            _rootPageParent = rootPageParent;
         }
 
         private static ConfluencePageResponse ResponseToConfluenceResponseObject(HttpResponseMessage response)
@@ -164,6 +166,10 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 title = $"{_owner} Catalogues",
                 body = new ConfluencePageBody() { value = rootPageHTML }
             };
+            if (_rootPageParent != null)
+            {
+                request.parentId = _rootPageParent.ToString() ;
+            }
             var x = request.ToString();
             HttpResponseMessage response = Task.Run(async () => await _client.PostAsJsonAsync(uri, request)).Result;
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
@@ -203,7 +209,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             var request = new ConfluencePagePostRequest()
             {
                 spaceId = _spaceId.ToString(),
-                title = catalogue.Name,
+                title = $"{catalogue.Name}{(catalogue.Acronym != null ? $" ({catalogue.Acronym})" : "")}",
                 parentId = rootParentId,
                 body = new ConfluencePageBody() { value = cataloguePageHTML }
             };
