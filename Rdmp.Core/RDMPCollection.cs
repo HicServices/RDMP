@@ -16,7 +16,6 @@ public enum RDMPCollection
     Catalogue,
     DataExport,
     SavedCohorts,
-    Favourites,
 
     Cohort,
     DataLoad,

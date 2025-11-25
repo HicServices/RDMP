@@ -43,7 +43,6 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             toolStrip1 = new System.Windows.Forms.ToolStrip();
             btnBack = new System.Windows.Forms.ToolStripSplitButton();
             btnForward = new System.Windows.Forms.ToolStripButton();
-            btnFavourites = new System.Windows.Forms.ToolStripButton();
             btnSavedCohorts = new System.Windows.Forms.ToolStripButton();
             btnLoads = new System.Windows.Forms.ToolStripButton();
             toolStripLabel2 = new System.Windows.Forms.ToolStripLabel();
@@ -126,7 +125,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             // 
             // toolStrip1
             // 
-            toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { btnBack, btnForward, btnHome, toolStripSeparator1, btnFavourites, btnCatalogues, btnCohorts, btnSavedCohorts, btnDataExport, toolStripSeparator, btnTables, btnLoads, btnConfiguration, toolStripSeparator2, toolStripLabel2, cbxLayouts, btnSaveWindowLayout, btnDeleteLayout, toolStripSeparator4, cbCommits, toolStripSeparator3 });
+            toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { btnBack, btnForward, btnHome, toolStripSeparator1, btnCatalogues, btnCohorts, btnSavedCohorts, btnDataExport, toolStripSeparator, btnTables, btnLoads, btnConfiguration, toolStripSeparator2, toolStripLabel2, cbxLayouts, btnSaveWindowLayout, btnDeleteLayout, toolStripSeparator4, cbCommits, toolStripSeparator3 });
             toolStrip1.Location = new System.Drawing.Point(0, 0);
             toolStrip1.Name = "toolStrip1";
             toolStrip1.Size = new System.Drawing.Size(1539, 25);
@@ -155,15 +154,6 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             btnForward.Size = new System.Drawing.Size(23, 22);
             btnForward.Text = "Forward";
             btnForward.Click += btnForward_Click;
-            // 
-            // btnFavourites
-            // 
-            btnFavourites.Image = (System.Drawing.Image)resources.GetObject("btnFavourites.Image");
-            btnFavourites.ImageTransparentColor = System.Drawing.Color.Magenta;
-            btnFavourites.Name = "btnFavourites";
-            btnFavourites.Size = new System.Drawing.Size(81, 22);
-            btnFavourites.Text = "Favourites";
-            btnFavourites.Click += ToolboxButtonClicked;
             // 
             // btnSavedCohorts
             // 
@@ -264,7 +254,6 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton btnSavedCohorts;
-        private System.Windows.Forms.ToolStripButton btnFavourites;
         private System.Windows.Forms.ToolStripLabel toolStripLabel2;
         private System.Windows.Forms.ToolStripComboBox cbxLayouts;
         private System.Windows.Forms.ToolStripButton btnDeleteLayout;

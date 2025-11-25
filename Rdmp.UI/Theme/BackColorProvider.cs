@@ -26,7 +26,6 @@ public static class BackColorProvider
             RDMPCollection.Catalogue => Color.FromArgb(255, 255, 220),
             RDMPCollection.DataExport => Color.FromArgb(200, 255, 220),
             RDMPCollection.SavedCohorts => Color.FromArgb(255, 220, 220),
-            RDMPCollection.Favourites => SystemColors.Control,
             RDMPCollection.Cohort => Color.FromArgb(210, 240, 255),
             RDMPCollection.DataLoad => Color.DarkGray,
             RDMPCollection.Datasets => Color.PaleVioletRed,

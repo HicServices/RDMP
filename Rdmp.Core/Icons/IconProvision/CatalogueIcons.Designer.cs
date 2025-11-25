@@ -1456,18 +1456,6 @@ namespace Rdmp.Core.Icons.IconProvision
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] Favourite
-        {
-            get
-            {
-                object obj = ResourceManager.GetObject("Favourite", resourceCulture);
-                return ((Byte[])(obj));
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized resource of type Image.
-        /// </summary>
         public static Byte[] File
         {
             get

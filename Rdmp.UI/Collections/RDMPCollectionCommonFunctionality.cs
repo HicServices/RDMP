@@ -58,7 +58,6 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     public RenameProvider RenameProvider { get; private set; }
     public DragDropProvider DragDropProvider { get; private set; }
     public CopyPasteProvider CopyPasteProvider { get; private set; }
-    public FavouriteColumnProvider FavouriteColumnProvider { get; private set; }
     public TreeNodeParentFinder ParentFinder { get; private set; }
 
     public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
@@ -95,7 +94,6 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         { RDMPCollection.DataExport, new Guid("9fb651f6-3e4f-4629-b64e-f61551ae009e") },
         { RDMPCollection.SavedCohorts, new Guid("6d0e4560-9357-4ee1-91b6-a182a57f7a6f") },
         { RDMPCollection.Cohort, new Guid("5c7cceb3-4202-47b1-b271-e2eed869d9ef") },
-        { RDMPCollection.Favourites, new Guid("39d37439-ac7a-4346-8c79-9867384db92e") },
         { RDMPCollection.DataLoad, new Guid("600aad33-df6c-4013-ad92-65de19d494cf") }
     };
 
@@ -271,14 +269,6 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
             Tree.AllColumns.Insert(1, StatusColumn);
             SetupColumnTracking(StatusColumn, new Guid("72ff92ad-39cd-4153-9dc2-d988cced5ae1"));
             Tree.RebuildColumns();
-        }
-
-        if (Settings.AddFavouriteColumn)
-        {
-            FavouriteColumnProvider = new FavouriteColumnProvider(_activator, tree);
-            FavouriteColumn = FavouriteColumnProvider.CreateColumn();
-
-            SetupColumnTracking(FavouriteColumn, new Guid("ab25aa56-957c-4d1b-b395-48299be8e467"));
         }
 
         if (settings.AddIDColumn)

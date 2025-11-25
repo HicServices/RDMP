@@ -123,7 +123,6 @@ public class CatalogueRepository : TableRepository, ICatalogueRepository
         Constructors.Add(typeof(ExtractionFilterParameterSetValue),
             (rep, r) => new ExtractionFilterParameterSetValue((ICatalogueRepository)rep, r));
         Constructors.Add(typeof(LoadProgress), (rep, r) => new LoadProgress((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(Favourite), (rep, r) => new Favourite((ICatalogueRepository)rep, r));
         Constructors.Add(typeof(Pipeline), (rep, r) => new Pipeline((ICatalogueRepository)rep, r));
         Constructors.Add(typeof(Lookup), (rep, r) => new Lookup((ICatalogueRepository)rep, r));
         Constructors.Add(typeof(AggregateTopX), (rep, r) => new AggregateTopX((ICatalogueRepository)rep, r));

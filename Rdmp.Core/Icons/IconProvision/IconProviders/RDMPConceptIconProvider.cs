@@ -72,8 +72,6 @@ public class RDMPConceptIconProvider : IIconProvider
                 return Image.Load<Rgba32>(CatalogueIcons.AllRDMPRemotesNode);
             case RDMPConcept.RemoteRDMP:
                 return Image.Load<Rgba32>(CatalogueIcons.RemoteRDMP);
-            case RDMPConcept.Favourite:
-                return Image.Load<Rgba32>(CatalogueIcons.Favourite);
             case RDMPConcept.LoadMetadata:
                 return Image.Load<Rgba32>(CatalogueIcons.LoadMetadata);
             case RDMPConcept.CacheProgress:

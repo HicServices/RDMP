@@ -24,7 +24,7 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 namespace Rdmp.UI.Collections;
 
 /// <summary>
-/// Toolbox control for storing user defined collections of objects.  Similar to <see cref="FavouritesCollectionUI"/> but for limited lifetime scope.  Note that this class inherits from <see cref="RDMPUserControl"/> not <see cref="RDMPCollectionUI"/>
+/// Toolbox control for storing user defined collections of objects.  Note that this class inherits from <see cref="RDMPUserControl"/> not <see cref="RDMPCollectionUI"/>
 /// </summary>
 public class SessionCollectionUI : RDMPUserControl, IObjectCollectionControl, IConsultableBeforeClosing
 {
@@ -142,24 +142,25 @@ public class SessionCollectionUI : RDMPUserControl, IObjectCollectionControl, IC
 
     private void RefreshSessionObjects()
     {
-        var actualObjects = FavouritesCollectionUI.FindRootObjects(Activator, Collection.DatabaseObjects.Contains)
-            .Union(Collection.DatabaseObjects.OfType<Pipeline>()).ToList();
+        //TODO what is this UI?
+        //var actualObjects = FavouritesCollectionUI.FindRootObjects(Activator, Collection.DatabaseObjects.Contains)
+        //    .Union(Collection.DatabaseObjects.OfType<Pipeline>()).ToList();
 
-        //no change in root favouritism
-        if (actualObjects.SequenceEqual(olvTree.Objects.OfType<IMapsDirectlyToDatabaseTable>()))
-            return;
+        ////no change in root favouritism
+        //if (actualObjects.SequenceEqual(olvTree.Objects.OfType<IMapsDirectlyToDatabaseTable>()))
+        //    return;
 
-        //remove old objects
-        foreach (var old in Collection.DatabaseObjects.Except(actualObjects))
-            olvTree.RemoveObject(old);
+        ////remove old objects
+        //foreach (var old in Collection.DatabaseObjects.Except(actualObjects))
+        //    olvTree.RemoveObject(old);
 
-        //add new objects
-        foreach (var newObject in actualObjects.Except(olvTree.Objects.OfType<IMapsDirectlyToDatabaseTable>()))
-            olvTree.AddObject(newObject);
+        ////add new objects
+        //foreach (var newObject in actualObjects.Except(olvTree.Objects.OfType<IMapsDirectlyToDatabaseTable>()))
+        //    olvTree.AddObject(newObject);
 
-        //update to the new list
-        Collection.DatabaseObjects = actualObjects;
-        olvTree.RebuildAll(true);
+        ////update to the new list
+        //Collection.DatabaseObjects = actualObjects;
+        //olvTree.RebuildAll(true);
     }
 
     public override string ToString() => Collection?.SessionName ?? "Unnamed Session";

@@ -27,7 +27,6 @@ public enum RDMPConcept
     AutomationServiceException,
     AllRDMPRemotesNode,
     RemoteRDMP,
-    Favourite,
 
     LoadMetadata,
     CacheProgress,

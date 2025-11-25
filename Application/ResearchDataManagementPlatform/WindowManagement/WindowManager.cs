@@ -142,12 +142,6 @@ public class WindowManager
                 toReturn = Show(RDMPCollection.SavedCohorts, collection, "Saved Cohorts",
                     Image.Load<Rgba32>(CatalogueIcons.AllCohortsNode));
                 break;
-            case RDMPCollection.Favourites:
-                collection = new FavouritesCollectionUI();
-                toReturn = Show(RDMPCollection.Favourites, collection, "Favourites",
-                    Image.Load<Rgba32>(CatalogueIcons.Favourite));
-                break;
-
             case RDMPCollection.Configurations:
                 collection = new ConfigurationsCollectionUI();
                 toReturn = Show(RDMPCollection.Configurations, collection, "Configurations",
@@ -269,9 +263,6 @@ public class WindowManager
 
     public RDMPCollection GetCollectionForRootObject(object root)
     {
-        if (FavouritesCollectionUI.IsRootObject(ActivateItems, root))
-            return RDMPCollection.Favourites;
-
         if (CatalogueCollectionUI.IsRootObject(root))
             return RDMPCollection.Catalogue;
 

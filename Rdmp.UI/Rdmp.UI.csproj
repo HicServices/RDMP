@@ -79,10 +79,6 @@
 		<Compile Update="Collections\CatalogueCollectionUI.Designer.cs">
 			<DependentUpon>CatalogueCollectionUI.cs</DependentUpon>
 		</Compile>
-		<Compile Update="Collections\FavouritesCollectionUI.cs" />
-		<Compile Update="Collections\FavouritesCollectionUI.Designer.cs">
-			<DependentUpon>FavouritesCollectionUI.cs</DependentUpon>
-		</Compile>
 		<Compile Update="Collections\LoadMetadataCollectionUI.cs" />
 		<Compile Update="Collections\LoadMetadataCollectionUI.Designer.cs">
 			<DependentUpon>LoadMetadataCollectionUI.cs</DependentUpon>
@@ -248,9 +244,6 @@
 		</EmbeddedResource>
 		<EmbeddedResource Update="Collections\CatalogueCollectionUI.resx">
 			<DependentUpon>CatalogueCollectionUI.cs</DependentUpon>
-		</EmbeddedResource>
-		<EmbeddedResource Update="Collections\FavouritesCollectionUI.resx">
-			<DependentUpon>FavouritesCollectionUI.cs</DependentUpon>
 		</EmbeddedResource>
 		<EmbeddedResource Update="Collections\LoadMetadataCollectionUI.resx">
 			<DependentUpon>LoadMetadataCollectionUI.cs</DependentUpon>

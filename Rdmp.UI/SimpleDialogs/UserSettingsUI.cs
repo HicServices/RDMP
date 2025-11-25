@@ -147,15 +147,6 @@ public partial class UserSettingsFileUI : Form
 
         _bLoaded = true;
 
-        var cmd = new ExecuteCommandClearFavourites(activator);
-        btnClearFavourites.Enabled = !cmd.IsImpossible;
-
-        btnClearFavourites.Click += (s, e) =>
-        {
-            cmd.Execute();
-            btnClearFavourites.Enabled = !cmd.IsImpossible;
-        };
-
         var clearUserSettingsCmd = new ExecuteCommandClearUserSettings(activator);
         btnClearUserSettings.Enabled = true;
 

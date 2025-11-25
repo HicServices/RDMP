@@ -127,11 +127,6 @@ public interface IBasicActivateItems
     IServerDefaults ServerDefaults { get; }
 
     /// <summary>
-    /// Component for telling you whether a given DatabaseEntity is one of the current users favourite objects and for toggling it
-    /// </summary>
-    FavouritesProvider FavouritesProvider { get; }
-
-    /// <summary>
     /// Provides consistent icon representations of objects
     /// </summary>
     ICoreIconProvider CoreIconProvider { get; }

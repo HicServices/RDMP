@@ -57,7 +57,6 @@ public partial class RDMPTaskBarUI : UserControl
         btnLoads.Image = CatalogueIcons.LoadMetadata.ImageToBitmap();
         btnLoads.BackgroundImage = BackColorProvider.GetBackgroundImage(btnConfiguration.Size, RDMPCollection.DataLoad);
 
-        btnFavourites.Image = CatalogueIcons.Favourite.ImageToBitmap();
         btnDeleteLayout.Image = FamFamFamIcons.delete.ImageToBitmap();
 
         cbCommits.Image = CatalogueIcons.Commit.ImageToBitmap();
@@ -110,7 +109,6 @@ public partial class RDMPTaskBarUI : UserControl
             btnDataExport.ToolTipText = "Show Projects and Extractable Dataset Packages allowing data extraction";
             btnTables.ToolTipText = "Advanced features e.g. logging, credentials, dashboards etc";
             btnLoads.ToolTipText = "Load configurations for reading data into your databases";
-            btnFavourites.ToolTipText = "Collection of all objects that you have favourited";
             btnConfiguration.ToolTipText = "All external datasets that have been configured for use in RDMP";
         }
         catch (Exception e)
@@ -188,9 +186,7 @@ public partial class RDMPTaskBarUI : UserControl
             collectionToToggle = RDMPCollection.DataLoad;
         else if (button == btnSavedCohorts)
             collectionToToggle = RDMPCollection.SavedCohorts;
-        else if (button == btnFavourites)
-            collectionToToggle = RDMPCollection.Favourites;
-        else if (button == btnConfiguration)
+       else if (button == btnConfiguration)
             collectionToToggle = RDMPCollection.Configurations;
         else
             throw new ArgumentOutOfRangeException(nameof(button));
