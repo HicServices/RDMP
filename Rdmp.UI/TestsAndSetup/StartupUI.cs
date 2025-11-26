@@ -237,16 +237,13 @@ public partial class StartupUI : Form, ICheckNotifier
         if (latestConfig != null)
         {
             var isolated = IsolatedStorageFile.GetUserStoreForApplication();
-            foreach (var file in latestConfig.GetFiles())
+            foreach (var file in latestConfig.GetFiles().Where(f => !isolated.FileExists(f.Name)))
             {
-                if (!isolated.FileExists(file.Name))
+                try
                 {
-                    try
-                    {
-                        isolated.CopyFile(file.FullName, file.Name);
-                    }
-                    finally { }
+                    isolated.CopyFile(file.FullName, file.Name);
                 }
+                finally { }
             }
         }
 
