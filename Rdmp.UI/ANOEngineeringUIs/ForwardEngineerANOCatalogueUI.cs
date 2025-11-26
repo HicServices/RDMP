@@ -77,8 +77,8 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
 
         AssociatedCollection = RDMPCollection.Catalogue;
 
-        btnLoadPlan.Image = FamFamFamIcons.page_white_get.ImageToBitmap();
-        btnSavePlan.Image = FamFamFamIcons.page_white_put.ImageToBitmap();
+        //btnLoadPlan.Image = FamFamFamIcons.page_white_get.ImageToBitmap();
+        btnSavePlan.Image = CatalogueIcons.Save.ImageToBitmap();
     }
 
     #region Aspect Getters and Setters

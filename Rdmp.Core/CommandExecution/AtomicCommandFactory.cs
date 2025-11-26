@@ -913,7 +913,7 @@ public class AtomicCommandFactory : CommandFactoryBase
             {
                 AskForFile = true,
                 OverrideCommandName = "Save Cohort To File...",
-                OverrideIcon = Image.Load<Rgba32>(FamFamFamIcons.disk),
+                //OverrideIcon = Image.Load<Rgba32>(FamFamFamIcons.disk),
                 Weight = -99.8f
             };
             yield return new ExecuteCommandCreateNewExtractionConfigurationForProject(_activator)

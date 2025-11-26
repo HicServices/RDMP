@@ -38,8 +38,8 @@ public abstract class ExecuteCommandImportShare : BasicCommandExecution, IAtomic
         }
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        Image.Load<Rgba32>(FamFamFamIcons.page_white_get);
+    //public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+    //    Image.Load<Rgba32>(FamFamFamIcons.page_white_get);
 
     public sealed override void Execute()
     {

@@ -76,8 +76,8 @@ public class ExecuteCommandExportObjectsToFile : BasicCommandExecution
     public override string GetCommandHelp() =>
         "Creates a share file with definitions for the supplied objects and all children";
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        Image.Load<Rgba32>(FamFamFamIcons.page_white_put);
+    //public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+    //    Image.Load<Rgba32>(FamFamFamIcons.page_white_put);
 
 
     public override string GetCommandName() => "Export Object(s) to File...";

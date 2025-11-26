@@ -78,6 +78,6 @@ internal class ExecuteCommandGenerateReleaseDocument : BasicCommandExecution, IA
         }
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        Image.Load<Rgba32>(FamFamFamIcons.page_white_word);
+    //public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+    //    Image.Load<Rgba32>(FamFamFamIcons.page_white_word);
 }

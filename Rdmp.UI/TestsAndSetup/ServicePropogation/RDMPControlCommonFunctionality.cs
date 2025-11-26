@@ -62,7 +62,7 @@ public class RDMPControlCommonFunctionality
     private readonly RAGSmileyToolStrip _ragSmileyToolStrip;
 
     private readonly ToolStripButton _runChecksToolStripButton =
-        new("Run Checks", FamFamFamIcons.arrow_refresh.ImageToBitmap());
+        new("Run Checks", CatalogueIcons.Refresh.ImageToBitmap());
 
     private ICheckable _checkable;
     private IActivateItems _activator;

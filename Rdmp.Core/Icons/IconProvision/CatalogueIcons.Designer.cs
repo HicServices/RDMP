@@ -74,6 +74,39 @@ namespace Rdmp.Core.Icons.IconProvision
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
+        public static Byte[] Delete
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("Delete", resourceCulture);
+                return ((Byte[])(obj));
+            }
+        }
+        /// <summary>
+        ///   Looks up a localized resource of type Image.
+        /// </summary>
+        public static Byte[] Save
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("Save", resourceCulture);
+                return ((Byte[])(obj));
+            }
+        }
+        /// <summary>
+        ///   Looks up a localized resource of type Image.
+        /// </summary>
+        public static Byte[] Add
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("Add", resourceCulture);
+                return ((Byte[])(obj));
+            }
+        }
+        /// <summary>
+        ///   Looks up a localized resource of type Image.
+        /// </summary>
         public static Byte[] Home
         {
             get
@@ -485,6 +518,15 @@ namespace Rdmp.Core.Icons.IconProvision
             get
             {
                 object obj = ResourceManager.GetObject("AllPermissionWindowsNode", resourceCulture);
+                return ((Byte[])(obj));
+            }
+        }
+
+        public static Byte[] Refresh
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("Refresh", resourceCulture);
                 return ((Byte[])(obj));
             }
         }

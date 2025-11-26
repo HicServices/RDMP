@@ -181,7 +181,7 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
             var _refresh = new ToolStripMenuItem
             {
                 Visible = true,
-                Image = FamFamFamIcons.arrow_refresh.ImageToBitmap(),
+                Image = CatalogueIcons.Refresh.ImageToBitmap(),
                 Alignment = ToolStripItemAlignment.Right,
                 ToolTipText = "Refresh Object"
             };

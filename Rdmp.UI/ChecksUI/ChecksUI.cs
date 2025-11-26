@@ -53,11 +53,11 @@ public partial class ChecksUI : UserControl, ICheckNotifier
         olvResult.ImageGetter += ImageGetter;
         olvChecks.RowHeight = 19;
 
-        _tick = ChecksAndProgressIcons.Tick.ImageToBitmap();
-        _warning = ChecksAndProgressIcons.Warning.ImageToBitmap();
-        _warningEx = ChecksAndProgressIcons.WarningEx.ImageToBitmap();
-        _fail = ChecksAndProgressIcons.Fail.ImageToBitmap();
-        _failEx = ChecksAndProgressIcons.FailEx.ImageToBitmap();
+        _tick = CatalogueIcons.Tick.ImageToBitmap();
+        _warning = CatalogueIcons.Warning.ImageToBitmap();
+        _warningEx = CatalogueIcons.Warning.ImageToBitmap();
+        _fail = CatalogueIcons.Failed.ImageToBitmap();
+        _failEx = CatalogueIcons.Failed.ImageToBitmap();
 
         olvChecks.PrimarySortOrder = SortOrder.Descending;
 

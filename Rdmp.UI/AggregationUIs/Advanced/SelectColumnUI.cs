@@ -126,8 +126,8 @@ public partial class SelectColumnUI : RDMPUserControl
         olvAddRemove.ImageGetter += ImageGetter;
         olvSelectColumns.CellClick += olvSelectColumns_CellClick;
 
-        _add = FamFamFamIcons.add.ImageToBitmap();
-        _delete = FamFamFamIcons.delete.ImageToBitmap();
+        _add = CatalogueIcons.Add.ImageToBitmap();
+        _delete = CatalogueIcons.Delete.ImageToBitmap();
     }
 
     private void olvSelectColumns_CellClick(object sender, CellClickEventArgs e)
