@@ -184,6 +184,8 @@ public partial class StartupUI : Form, ICheckNotifier
             if (!forceClearRepositorySettings && (_startup.RepositoryLocator is null || _startup.RepositoryLocator.CatalogueRepository == null))
             {
                 CopyExistingConfigurationToNewApplication();
+                var finder = new UserSettingsRepositoryFinder();
+                _startup.RepositoryLocator = finder;
             }
         }
         escapePressed = false;
@@ -225,7 +227,7 @@ public partial class StartupUI : Form, ICheckNotifier
     {
         var dirs = Directory.GetDirectories(isolatedStoragePath, "AppFiles", SearchOption.AllDirectories);
         var dir = dirs.Select(d => new DirectoryInfo(d))
-            .OrderBy(d => d.LastWriteTime)
+            .OrderByDescending(d => d.LastWriteTime)
             .Where(d => d.GetFiles().Any(file => file.Name == "CatalogueConnectionString")).FirstOrDefault();
         return dir;
     }
