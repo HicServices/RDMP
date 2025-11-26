@@ -19,20 +19,21 @@ namespace Rdmp.Core.Dataset.Confluence
         private readonly string _repositoryName = "";
         private readonly string _repositoryDescription = "";
         private readonly string _subdomain = "";
-        public ConfluencePageBuilder(List<Catalogue> catalogues, string name,string description, string subdomain) { 
+        public ConfluencePageBuilder(List<Catalogue> catalogues, string name, string description, string subdomain)
+        {
             _catalogues = catalogues;
             _repositoryName = name;
             _repositoryDescription = description;
             _subdomain = subdomain;
         }
 
-        private string BuildCatalogueOverviewHTML(Catalogue catalogue,string pageId)
+        private string BuildCatalogueOverviewHTML(Catalogue catalogue, string pageId)
         {
             Console.WriteLine($"Building overview for catalogue '{catalogue.Name}'");
-            string name = pageId != null ?$"<a href='https://{_subdomain}.atlassian.net/wiki/{pageId}'>{catalogue.Name}</a>" : catalogue.Name;
+            string name = pageId != null ? $"<a href='https://{_subdomain}.atlassian.net/wiki{pageId}'>{catalogue.Name}</a>" : catalogue.Name;
 
             return $"""
-                <h2>{catalogue.Name}</h2>
+                <h2>{catalogue.Name}{(catalogue.Acronym != null ? $" ({catalogue.Acronym})" : "")}</h2>
                 <table>
                 <tr>
                     <th>
@@ -44,6 +45,9 @@ namespace Rdmp.Core.Dataset.Confluence
                     <th>
                         Tags
                     </th>
+                    <th>
+                        Acronym
+                    </th>
                 </tr>
                 <tr>
                     <td>
@@ -53,21 +57,25 @@ namespace Rdmp.Core.Dataset.Confluence
                         {catalogue.Description}
                     </td>
                     <td>
-                        {string.Join(", ",catalogue.Search_keywords)}
+                        {string.Join(", ", catalogue.Search_keywords)}
+                    </td>
+                    <td>
+                    {catalogue.Acronym}
                     </td>
                 </tr>
                 </table>
                 """;
         }
 
-        public string BuildContainerPage(Dictionary<int, string> cataloguePageLookup) {
+        public string BuildContainerPage(Dictionary<int, string> cataloguePageLookup)
+        {
             Console.WriteLine($"Building container page. Found {_catalogues.Count} catalogues.");
             return $"""
            
             <h2>{_repositoryName} Catalogues</h2>
             <p>{_repositoryDescription}</p>
             <p><ac:structured-macro ac:name='toc'/></p>
-            {string.Join("",_catalogues.Select(c => { cataloguePageLookup.TryGetValue(c.ID, out var pageId); return BuildCatalogueOverviewHTML(c, pageId); }))}
+            {string.Join("", _catalogues.Select(c => { cataloguePageLookup.TryGetValue(c.ID, out var pageId); return BuildCatalogueOverviewHTML(c, pageId); }))}
             """;
         }
 
@@ -230,7 +238,7 @@ namespace Rdmp.Core.Dataset.Confluence
                         Has Lookups
                     </th>
                 </tr>
-                {string.Join("",catalogue.CatalogueItems.Where(ci => ci.ExtractionInformation is not null).Select(ci => BuildDataVariableRecord(ci)))}
+                {string.Join("", catalogue.CatalogueItems.Where(ci => ci.ExtractionInformation is not null).Select(ci => BuildDataVariableRecord(ci)))}
             </table>
             """;
         }
