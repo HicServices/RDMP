@@ -4,13 +4,8 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.ComponentModel;
-using System.Linq;
-using System.Reflection;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+using FluentFTP.Exceptions;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Settings;
@@ -21,6 +16,15 @@ using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.Versioning;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
+using System;
+using System.ComponentModel;
+using System.IO;
+using System.IO.IsolatedStorage;
+using System.Linq;
+using System.Reflection;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 using WideMessageBox = Rdmp.UI.SimpleDialogs.WideMessageBox;
 
 namespace Rdmp.UI.TestsAndSetup;
@@ -158,7 +162,7 @@ public partial class StartupUI : Form, ICheckNotifier
 
         if (_startup == null)
             return;
-
+       
         StartOrRestart(false);
     }
 
@@ -167,6 +171,7 @@ public partial class StartupUI : Form, ICheckNotifier
         pbLoadProgress.Maximum = 1000;
 
         if (_startup.RepositoryLocator == null || forceClearRepositorySettings)
+        {
             try
             {
                 lblProgress.Text = "Constructing UserSettingsRepositoryFinder";
@@ -178,7 +183,11 @@ public partial class StartupUI : Form, ICheckNotifier
                 lblProgress.Text = "Constructing UserSettingsRepositoryFinder Failed";
                 ragSmiley1.Fatal(ex);
             }
-
+            if (_startup.RepositoryLocator is null || _startup.RepositoryLocator.CatalogueRepository == null)
+            {
+                CopyExistingConfigurationToNewApplication();
+            }
+        }
         escapePressed = false;
         countDownToClose = 5;
         lastStatus = RDMPPlatformDatabaseStatus.Healthy;
@@ -212,6 +221,43 @@ public partial class StartupUI : Form, ICheckNotifier
     private ChoosePlatformDatabasesUI _choosePlatformsUI;
     private ChooseLocalFileSystemLocationUI _chooseLocalFileSystem;
     private bool _haveWarnedAboutOutOfDate;
+
+
+    private DirectoryInfo FindLatestConfig(string isolatedStoragePath)
+    {
+        var dirs = Directory.GetDirectories(isolatedStoragePath)
+            .SelectMany(d => Directory.GetDirectories(d))
+            .SelectMany(d => Directory.GetDirectories(d))
+            .SelectMany(d => Directory.GetDirectories(d))
+            .Where(d => d.EndsWith("AppFiles"));
+        var dir = dirs.Select(d => new DirectoryInfo(d))
+            .OrderBy(d => d.LastWriteTime)
+            .Where(d => d.GetFiles().Any(file => file.Name == "CatalogueConnectionString")).FirstOrDefault();
+        return dir;
+    }
+
+    private void CopyExistingConfigurationToNewApplication()
+    {
+        var configPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\IsolatedStorage";
+        var latestConfig = FindLatestConfig(configPath);
+        if (latestConfig != null)
+        {
+            var isolated = IsolatedStorageFile.GetUserStoreForApplication();
+            foreach (var file in latestConfig.GetFiles())
+            {
+                if (!isolated.FileExists(file.Name))
+                {
+                    try
+                    {
+                        isolated.CopyFile(file.FullName, file.Name);
+                    }
+                    finally { }
+                }
+            }
+        }
+
+    }
+
 
     private void HandleDatabaseFoundOnSimpleUI(PlatformDatabaseFoundEventArgs eventArgs)
     {
@@ -275,7 +321,7 @@ public partial class StartupUI : Form, ICheckNotifier
                 }
                 else
                 {
-                    MessageBox.Show("Patching was cancelled. Apply Patch to use the latest version of RDMP. Application will exit."); 
+                    MessageBox.Show("Patching was cancelled. Apply Patch to use the latest version of RDMP. Application will exit.");
                     Environment.Exit(0);
                 }
 
