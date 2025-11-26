@@ -26,6 +26,7 @@ using Rdmp.Core.Providers.Nodes.CohortNodes;
 using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 using Rdmp.Core.Providers.Nodes.PipelineNodes;
 using Rdmp.Core.Providers.Nodes.ProjectCohortNodes;
+using Rdmp.Core.Providers.Nodes.SharingNodes;
 using Rdmp.Core.Reports;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
@@ -146,6 +147,11 @@ public class IconProvider : ICoreIconProvider
 
         if (concept is ArbitraryFolderNode) return Image.Load<Rgba32>(CatalogueIcons.CatalogueFolder);
         if (concept is ExtractionArbitraryFolderNode) return Image.Load<Rgba32>(CatalogueIcons.CatalogueFolder);
+        if (concept is SelectedDataSets) return Image.Load<Rgba32>(CatalogueIcons.Catalogue);
+        if (concept is LinkedColumnInfoNode) return Image.Load<Rgba32>(CatalogueIcons.ColumnInfo);
+        if (concept is AllCataloguesUsedByLoadMetadataNode) return Image.Load<Rgba32>(CatalogueIcons.CatalogueFolder);
+        if (concept is CatalogueUsedByLoadMetadataNode) return Image.Load<Rgba32>(CatalogueIcons.Catalogue);
+        if (concept is PermissionWindow) return Image.Load<Rgba32>(CatalogueIcons.PermissionWindow);
 
         var x = concept.GetType();
         return ImageUnknown;

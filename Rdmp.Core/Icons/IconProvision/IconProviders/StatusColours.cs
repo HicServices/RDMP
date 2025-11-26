@@ -41,7 +41,7 @@ public static class StatusColours
     public static Color HashOnReleaseCompliment = Black;
 
     public static Color Frozen = Color.FromArgb(171, 209, 221);
-    public static Color FrozenCompliment = Black;
+    public static Color FrozenCompliment = White;
 
     public static Color Template = Color.FromArgb(246, 215, 176);
     public static Color TemplateCompliment = Black;

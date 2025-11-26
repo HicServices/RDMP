@@ -115,8 +115,8 @@ public partial class TableInfoCollectionUI : RDMPCollectionUI, ILifetimeSubscrib
 
 
         tlvTableInfos.AddObject(Activator.CoreChildProvider.AllDashboardsNode);
-        tlvTableInfos.AddObject(Activator.CoreChildProvider.AllRDMPRemotesNode);
-        tlvTableInfos.AddObject(Activator.CoreChildProvider.AllObjectSharingNode);
+        //tlvTableInfos.AddObject(Activator.CoreChildProvider.AllRDMPRemotesNode);
+        //tlvTableInfos.AddObject(Activator.CoreChildProvider.AllObjectSharingNode);
         tlvTableInfos.AddObject(Activator.CoreChildProvider.AllPipelinesNode);
         tlvTableInfos.AddObject(Activator.CoreChildProvider.AllExternalServersNode);
         tlvTableInfos.AddObject(Activator.CoreChildProvider.AllDataAccessCredentialsNode);
@@ -126,7 +126,7 @@ public partial class TableInfoCollectionUI : RDMPCollectionUI, ILifetimeSubscrib
         tlvTableInfos.AddObject(Activator.CoreChildProvider.AllStandardRegexesNode);
         tlvTableInfos.AddObject(Activator.CoreChildProvider.AllPluginsNode);
         tlvTableInfos.AddObject(Activator.CoreChildProvider.AllDatasetsNode);
-        tlvTableInfos.AddObject(Activator.CoreChildProvider.AllRegexRedactionConfigurationsNode);
+        //tlvTableInfos.AddObject(Activator.CoreChildProvider.AllRegexRedactionConfigurationsNode);
 
     }
 

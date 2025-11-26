@@ -54,7 +54,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             btnHome.ImageTransparentColor = System.Drawing.Color.Magenta;
             btnHome.Name = "btnHome";
             btnHome.Size = new System.Drawing.Size(44, 22);
-            btnHome.Text = "Home";
+            btnHome.Text = "";
             btnHome.Click += btnHome_Click;
             // 
             // toolStripSeparator1

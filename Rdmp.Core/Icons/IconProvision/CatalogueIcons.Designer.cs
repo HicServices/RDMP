@@ -74,6 +74,17 @@ namespace Rdmp.Core.Icons.IconProvision
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
+        public static Byte[] Home
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("Home", resourceCulture);
+                return ((Byte[])(obj));
+            }
+        }
+        /// <summary>
+        ///   Looks up a localized resource of type Image.
+        /// </summary>
         public static Byte[] PipelineComponentStart
         {
             get

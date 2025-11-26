@@ -32,7 +32,7 @@ public partial class RDMPTaskBarUI : UserControl
     {
         InitializeComponent();
 
-        btnHome.Image = FamFamFamIcons.application_home.ImageToBitmap();
+        btnHome.Image = CatalogueIcons.Home.ImageToBitmap();
         btnCatalogues.Image = CatalogueIcons.Catalogue.ImageToBitmap();
         btnCatalogues.BackgroundImage =
             BackColorProvider.GetBackgroundImage(btnCatalogues.Size, RDMPCollection.Catalogue);
