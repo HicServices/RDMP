@@ -170,7 +170,6 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             {
                 request.parentId = _rootPageParent.ToString() ;
             }
-            var x = request.ToString();
             HttpResponseMessage response = Task.Run(async () => await _client.PostAsJsonAsync(uri, request)).Result;
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
