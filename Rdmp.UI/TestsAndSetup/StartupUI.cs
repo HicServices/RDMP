@@ -4,8 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using FluentFTP.Exceptions;
-using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Settings;
@@ -162,7 +160,7 @@ public partial class StartupUI : Form, ICheckNotifier
 
         if (_startup == null)
             return;
-       
+
         StartOrRestart(false);
     }
 
@@ -183,7 +181,7 @@ public partial class StartupUI : Form, ICheckNotifier
                 lblProgress.Text = "Constructing UserSettingsRepositoryFinder Failed";
                 ragSmiley1.Fatal(ex);
             }
-            if (_startup.RepositoryLocator is null || _startup.RepositoryLocator.CatalogueRepository == null)
+            if (!forceClearRepositorySettings && (_startup.RepositoryLocator is null || _startup.RepositoryLocator.CatalogueRepository == null))
             {
                 CopyExistingConfigurationToNewApplication();
             }
@@ -223,20 +221,16 @@ public partial class StartupUI : Form, ICheckNotifier
     private bool _haveWarnedAboutOutOfDate;
 
 
-    private DirectoryInfo FindLatestConfig(string isolatedStoragePath)
+    private static DirectoryInfo FindLatestConfig(string isolatedStoragePath)
     {
-        var dirs = Directory.GetDirectories(isolatedStoragePath)
-            .SelectMany(d => Directory.GetDirectories(d))
-            .SelectMany(d => Directory.GetDirectories(d))
-            .SelectMany(d => Directory.GetDirectories(d))
-            .Where(d => d.EndsWith("AppFiles"));
+        var dirs = Directory.GetDirectories(isolatedStoragePath, "AppFiles", SearchOption.AllDirectories);
         var dir = dirs.Select(d => new DirectoryInfo(d))
             .OrderBy(d => d.LastWriteTime)
             .Where(d => d.GetFiles().Any(file => file.Name == "CatalogueConnectionString")).FirstOrDefault();
         return dir;
     }
 
-    private void CopyExistingConfigurationToNewApplication()
+    private static void CopyExistingConfigurationToNewApplication()
     {
         var configPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\IsolatedStorage";
         var latestConfig = FindLatestConfig(configPath);
