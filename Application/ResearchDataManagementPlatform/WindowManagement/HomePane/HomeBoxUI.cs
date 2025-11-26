@@ -46,11 +46,11 @@ public partial class HomeBoxUI : UserControl
             _activator = activator;
             lblTitle.Text = title;
 
-            btnNew.Image = FamFamFamIcons.add.ImageToBitmap();
+            btnNew.Image =CatalogueIcons.Add.ImageToBitmap();
             btnNew.Text = "New";
             btnNew.DisplayStyle = ToolStripItemDisplayStyle.Text;
 
-            btnNewDropdown.Image = FamFamFamIcons.add.ImageToBitmap();
+            btnNewDropdown.Image =CatalogueIcons.Add.ImageToBitmap();
             btnNewDropdown.Text = "New...";
             btnNewDropdown.DisplayStyle = ToolStripItemDisplayStyle.Text;
 

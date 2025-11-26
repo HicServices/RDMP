@@ -69,7 +69,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
         if (command.File != null)
             SelectFile(command.File);
 
-        pbHelp.Image = FamFamFamIcons.help.ImageToBitmap();
+        pbHelp.Image = CatalogueIcons.Help.ImageToBitmap();
 
         BuildHelpFlow();
     }

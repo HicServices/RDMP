@@ -27,11 +27,11 @@ namespace Rdmp.UI.SimpleControls;
 /// </summary>
 public class ObjectSaverButton
 {
-    private static readonly Bitmap UndoImage = FamFamFamIcons.Undo.ImageToBitmap();
-    private static readonly Bitmap RedoImage = FamFamFamIcons.Redo.ImageToBitmap();
+    private static readonly Bitmap UndoImage = CatalogueIcons.Undo.ImageToBitmap();
+    private static readonly Bitmap RedoImage = CatalogueIcons.Redo.ImageToBitmap();
 
-    private readonly ToolStripButton _btnSave = new("Save", FamFamFamIcons.disk.ImageToBitmap());
-    private readonly ToolStripButton _btnUndoRedo = new("Undo", FamFamFamIcons.Undo.ImageToBitmap());
+    private readonly ToolStripButton _btnSave = new("Save", CatalogueIcons.Save.ImageToBitmap());
+    private readonly ToolStripButton _btnUndoRedo = new("Undo", CatalogueIcons.Undo.ImageToBitmap());
 
     private RevertableObjectReport _undoneChanges;
     private IRDMPControl _parent;

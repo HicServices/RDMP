@@ -410,7 +410,7 @@ public partial class RacewayRenderAreaUI : UserControl, INotifyMeOfEditState
 
                 if (_isEditModeOn)
                 {
-                    var deleteIcon = FamFamFamIcons.delete.ImageToBitmap();
+                    var deleteIcon = CatalogueIcons.Delete.ImageToBitmap();
                     var middleLineOfDeleteButtonY = eachRaceLaneHasThisMuchYSpace / 2 - deleteIcon.Height / 2.0 +
                                                     startDrawingLaneAtY;
                     var buttonPoint = new Point(Width / 2, (int)middleLineOfDeleteButtonY);

@@ -349,7 +349,7 @@ public class LoggingTabUI : LoggingTab_Design
 
             //set the initial filter
             _navigationTrack.Append(Filter);
-            _back = new ToolStripButton("Back", FamFamFamIcons.Back.ImageToBitmap(),
+            _back = new ToolStripButton("Back", CatalogueIcons.Back.ImageToBitmap(),
                 (s, e) => _navigationTrack.Back(true))
             { DisplayStyle = ToolStripItemDisplayStyle.Image };
         }

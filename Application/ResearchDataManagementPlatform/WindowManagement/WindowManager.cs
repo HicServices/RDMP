@@ -285,7 +285,7 @@ public class WindowManager
             _home = new HomeUI(ActivateItems);
 
             _homeContent = _windowFactory.Create(ActivateItems, _home, "Home",
-                Image.Load<Rgba32>(FamFamFamIcons.application_home));
+                Image.Load<Rgba32>(CatalogueIcons.Home));
             _homeContent.Closed += (s, e) => _home = null;
             _homeContent.Show(_mainDockPanel, DockState.Document);
         }

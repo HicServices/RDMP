@@ -41,8 +41,8 @@ public partial class SimpleCohortSetUI : UserControl
     {
         InitializeComponent();
 
-        _linkImage = FamFamFamIcons.link.ImageToBitmap();
-        _unlinkImage = FamFamFamIcons.link_break.ImageToBitmap();
+        _linkImage = CatalogueIcons.Link.ImageToBitmap();
+        _unlinkImage = CatalogueIcons.LinkBreak.ImageToBitmap();
 
         cbxColumns.PropertySelector = collection => collection.Cast<ExtractionInformation>().Select(i => i.ToString());
 

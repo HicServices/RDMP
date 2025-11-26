@@ -38,12 +38,12 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
     private ToolStripButton btnAllCatalogues =
         new("All", CatalogueIcons.AllCataloguesUsedByLoadMetadataNode.ImageToBitmap()) { Name = "btnAllCatalogues" };
 
-    private ToolStripButton btnRefresh = new("Refresh", FamFamFamIcons.text_list_bullets.ImageToBitmap())
+    private ToolStripButton btnRefresh = new("Refresh", CatalogueIcons.BulletList.ImageToBitmap())//could this just be a refresh?
     { Name = "btnRefresh" };
 
     private ToolStripLabel toolStripLabel1 = new("Type:") { Name = "toolStripLabel1" };
 
-    private ToolStripButton btnShowLabels = new("Labels", FamFamFamIcons.text_align_left.ImageToBitmap())
+    private ToolStripButton btnShowLabels = new("Labels", CatalogueIcons.TextAlignLeft.ImageToBitmap())
     { Name = "btnShowLabels", CheckOnClick = true };
 
     private List<ToolStripMenuItem> _flagOptions = new();

@@ -78,9 +78,9 @@ public sealed class RAGSmileyToolStrip : ToolStripButton, IRAGSmiley
 
     public bool IsFatal() => _worst == CheckResult.Fail;
 
-    private static readonly Bitmap Green = Images.TinyGreen.ImageToBitmap();
-    private static readonly Bitmap Yellow = Images.TinyYellow.ImageToBitmap();
-    private static readonly Bitmap Red = Images.TinyRed.ImageToBitmap();
+    private static readonly Bitmap Green = CatalogueIcons.Tick.ImageToBitmap();//todo needs colour
+    private static readonly Bitmap Yellow = CatalogueIcons.Warning.ImageToBitmap();//todo needs colour
+    private static readonly Bitmap Red = CatalogueIcons.Failed.ImageToBitmap(); //todo needs colour
 
     private ToMemoryCheckNotifier memoryCheckNotifier = new();
     private Task _checkTask;

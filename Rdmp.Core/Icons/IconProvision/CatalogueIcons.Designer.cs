@@ -74,11 +74,85 @@ namespace Rdmp.Core.Icons.IconProvision
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
+        public static Byte[] Info
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("Info", resourceCulture);
+                return ((Byte[])(obj));
+            }
+        }
+        public static Byte[] Link
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("Link", resourceCulture);
+                return ((Byte[])(obj));
+            }
+        }
+        public static Byte[] LinkBreak
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("LinkBreak", resourceCulture);
+                return ((Byte[])(obj));
+            }
+        }
+
         public static Byte[] Delete
         {
             get
             {
                 object obj = ResourceManager.GetObject("Delete", resourceCulture);
+                return ((Byte[])(obj));
+            }
+        }
+        public static Byte[] Forward
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("Forward", resourceCulture);
+                return ((Byte[])(obj));
+            }
+        }
+        public static Byte[] BulletList
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("BulletList", resourceCulture);
+                return ((Byte[])(obj));
+            }
+        }
+        public static Byte[] Back
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("Back", resourceCulture);
+                return ((Byte[])(obj));
+            }
+        }
+        public static Byte[] Undo
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("Undo", resourceCulture);
+                return ((Byte[])(obj));
+            }
+        }
+        public static Byte[] Redo
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("Redo", resourceCulture);
+                return ((Byte[])(obj));
+            }
+        }
+
+        public static Byte[] TextAlignLeft
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("TextAlignLeft", resourceCulture);
                 return ((Byte[])(obj));
             }
         }

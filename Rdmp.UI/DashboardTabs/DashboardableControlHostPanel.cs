@@ -41,7 +41,7 @@ public partial class DashboardableControlHostPanel : RDMPUserControl
         HostedControl = hostedControl;
         InitializeComponent();
 
-        pbDelete.Image = FamFamFamIcons.delete.ImageToBitmap();
+        pbDelete.Image = CatalogueIcons.Delete.ImageToBitmap();
 
         Margin = Padding.Empty;
 
