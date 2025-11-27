@@ -80,6 +80,8 @@
             cbExpandAllInCohortBuilder = new System.Windows.Forms.CheckBox();
             cbStrictValidationForCohortBuilderContainers = new System.Windows.Forms.CheckBox();
             groupBox7 = new System.Windows.Forms.GroupBox();
+            cbUseShortstatusChips = new System.Windows.Forms.CheckBox();
+            cbFlatLogs = new System.Windows.Forms.CheckBox();
             label16 = new System.Windows.Forms.Label();
             tbLogLocation = new System.Windows.Forms.TextBox();
             label15 = new System.Windows.Forms.Label();
@@ -98,7 +100,6 @@
             userSettingsToolTips = new System.Windows.Forms.ToolTip(components);
             tbFind = new System.Windows.Forms.TextBox();
             label14 = new System.Windows.Forms.Label();
-            cbFlatLogs = new System.Windows.Forms.CheckBox();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)olvErrorCodes).BeginInit();
             groupBox2.SuspendLayout();
@@ -447,7 +448,7 @@
             cbAutoRunSqlQueries.TabIndex = 20;
             cbAutoRunSqlQueries.Text = "Auto Run Sql Queries";
             cbAutoRunSqlQueries.UseVisualStyleBackColor = true;
-           // 
+            // 
             // groupBox4
             // 
             groupBox4.Controls.Add(cbNewFind);
@@ -635,6 +636,7 @@
             // 
             // groupBox7
             // 
+            groupBox7.Controls.Add(cbUseShortstatusChips);
             groupBox7.Controls.Add(cbFlatLogs);
             groupBox7.Controls.Add(label16);
             groupBox7.Controls.Add(tbLogLocation);
@@ -662,6 +664,27 @@
             groupBox7.TabIndex = 25;
             groupBox7.TabStop = false;
             groupBox7.Text = "Miscellaneous";
+            // 
+            // cbUseShortstatusChips
+            // 
+            cbUseShortstatusChips.AutoSize = true;
+            cbUseShortstatusChips.Location = new System.Drawing.Point(7, 278);
+            cbUseShortstatusChips.Name = "cbUseShortstatusChips";
+            cbUseShortstatusChips.Size = new System.Drawing.Size(144, 19);
+            cbUseShortstatusChips.TabIndex = 30;
+            cbUseShortstatusChips.Text = "Use Short Status Chips";
+            cbUseShortstatusChips.UseVisualStyleBackColor = true;
+            // 
+            // cbFlatLogs
+            // 
+            cbFlatLogs.AutoSize = true;
+            cbFlatLogs.Location = new System.Drawing.Point(7, 257);
+            cbFlatLogs.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            cbFlatLogs.Name = "cbFlatLogs";
+            cbFlatLogs.Size = new System.Drawing.Size(140, 19);
+            cbFlatLogs.TabIndex = 29;
+            cbFlatLogs.Text = "Show Logs as Flat List";
+            cbFlatLogs.UseVisualStyleBackColor = true;
             // 
             // label16
             // 
@@ -827,17 +850,6 @@
             label14.TabIndex = 26;
             label14.Text = "Find Setting:";
             // 
-            // cbFlatLogs
-            // 
-            cbFlatLogs.AutoSize = true;
-            cbFlatLogs.Location = new System.Drawing.Point(7, 257);
-            cbFlatLogs.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            cbFlatLogs.Name = "cbFlatLogs";
-            cbFlatLogs.Size = new System.Drawing.Size(140, 19);
-            cbFlatLogs.TabIndex = 29;
-            cbFlatLogs.Text = "Show Logs as Flat List";
-            cbFlatLogs.UseVisualStyleBackColor = true;
-            // 
             // UserSettingsFileUI
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -950,5 +962,6 @@
         private System.Windows.Forms.Label label18;
         private System.Windows.Forms.TextBox tbWebhookUsername;
         private System.Windows.Forms.CheckBox cbFlatLogs;
+        private System.Windows.Forms.CheckBox cbUseShortstatusChips;
     }
 }

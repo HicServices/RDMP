@@ -5,6 +5,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Icons.IconProvision.IconProviders;
 using Rdmp.Core.Providers;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 using Rdmp.UI.ItemActivation;
 using System;
 using System.Collections.Generic;
@@ -24,7 +25,7 @@ namespace Rdmp.UI.Collections.Renderers
 
         private IActivateItems _activator;
 
-        private bool _useShortStrings = false;
+        private bool _useShortStrings = UserSettings.UseShortStatusChips;
 
         public StatusRenderer(IActivateItems activator) : base()
         {
@@ -82,6 +83,31 @@ namespace Rdmp.UI.Collections.Renderers
                 if (ci.ExtractionInformation.HashOnDataRelease)
                 {
                     xOffset += RenderStatus("Hash on Release", StatusColours.HashOnRelease, StatusColours.HashOnReleaseCompliment, cellBounds, xOffset, g);
+                    xOffset += 5;
+                }
+                if(ci.ExtractionInformation.ExtractionCategory == ExtractionCategory.Supplemental)
+                {
+                    xOffset += RenderStatus("Supplemental", StatusColours.Supplemental, StatusColours.SupplementalCompliment, cellBounds, xOffset, g);
+                    xOffset += 5;
+                }
+                if (ci.ExtractionInformation.ExtractionCategory == ExtractionCategory.SpecialApprovalRequired)
+                {
+                    xOffset += RenderStatus("Special Approval", StatusColours.SpecialistApproval, StatusColours.SpecialistApprovalCompliment, cellBounds, xOffset, g);
+                    xOffset += 5;
+                }
+                if (ci.ExtractionInformation.ExtractionCategory == ExtractionCategory.Internal)
+                {
+                    xOffset += RenderStatus("Internal", StatusColours.Internal, StatusColours.InternalCompliment, cellBounds, xOffset, g);
+                    xOffset += 5;
+                }
+                if (ci.ExtractionInformation.ExtractionCategory == ExtractionCategory.Deprecated)
+                {
+                    xOffset += RenderStatus("Deprecated", StatusColours.Deprecated, StatusColours.DeprecatedCompliment, cellBounds, xOffset, g);
+                    xOffset += 5;
+                }
+                if (ci.ExtractionInformation.ExtractionCategory == ExtractionCategory.ProjectSpecific)
+                {
+                    xOffset += RenderStatus("Project Specific", StatusColours.ProjectSpecific, StatusColours.ProjectSpecificCompliment, cellBounds, xOffset, g);
                     xOffset += 5;
                 }
                 return true;

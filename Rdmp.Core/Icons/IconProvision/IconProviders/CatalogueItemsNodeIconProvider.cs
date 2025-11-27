@@ -69,7 +69,7 @@ namespace Rdmp.Core.Icons.IconProvision.IconProviders
                         pixelRow[5] = newcolour;
                         pixelRow[6] = newcolour;
                     }
-                    if (y > 5 && y < 8)
+                    if (y > 5 && y < 12)
                     {
                         pixelRow[3] = newcolour;
                         pixelRow[4] = newcolour;
@@ -82,33 +82,6 @@ namespace Rdmp.Core.Icons.IconProvision.IconProviders
                         pixelRow[11] = newcolour;
                         pixelRow[12] = newcolour;
                     }
-                    if (y == 8)
-                    {
-                        pixelRow[3] = newcolour;
-                        pixelRow[4] = newcolour;
-                        pixelRow[5] = newcolour;
-                        pixelRow[6] = newcolour;
-                        pixelRow[7] = newcolour;
-                        pixelRow[8] = newcolour;
-                    }
-                    if (y > 8 && y < 12)
-                    {
-                        pixelRow[3] = newcolour;
-                        pixelRow[4] = newcolour;
-                        pixelRow[5] = newcolour;
-                        pixelRow[6] = newcolour;
-                        pixelRow[7] = newcolour;
-                    }
-                    //for (int x = 0; x < pixelRow.Length; x++)
-                    //{
-                    //    // Get a reference to the pixel at position x
-                    //    ref Rgba32 pixel = ref pixelRow[x];
-                    //    if (pixel.A == 0)
-                    //    {
-                    //        // Overwrite the pixel referenced by 'ref Rgba32 pixel':
-                    //        pixel = newcolour;
-                    //    }
-                    //}
                 }
             });
         }

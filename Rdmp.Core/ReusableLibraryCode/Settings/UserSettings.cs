@@ -27,6 +27,12 @@ public static class UserSettings
                                                           throw new NotImplementedException(
                                                               "Isolated Storage does not work in this environment...");
 
+    public static bool UseShortStatusChips
+    {
+        get => AppSettings.GetValueOrDefault("UseShortStatusChips", false);
+        set => AppSettings.AddOrUpdateValue("UseShortStatusChips", value);
+    }
+
     public static bool ShowFlatLists
     {
         get => AppSettings.GetValueOrDefault("ShowFlatLists", false);
@@ -38,9 +44,9 @@ public static class UserSettings
         set => AppSettings.AddOrUpdateValue("UseLocalFileSystem", value);
     }
 
-    public static string LocalFileSystemLocation 
+    public static string LocalFileSystemLocation
     {
-        get => AppSettings.GetValueOrDefault("LocalFileSystemLocation", Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "rdmp")); 
+        get => AppSettings.GetValueOrDefault("LocalFileSystemLocation", Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "rdmp"));
         set => AppSettings.AddOrUpdateValue("LocalFileSystemLocation", value);
     }
 
