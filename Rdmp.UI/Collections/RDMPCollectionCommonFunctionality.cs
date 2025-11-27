@@ -262,7 +262,7 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
             StatusColumn.MinimumWidth = 100;
             StatusColumn.IsEditable = false;
             StatusColumn.Text = "Status";
-            StatusColumn.AspectGetter += (rowObject) => null;
+            StatusColumn.AspectGetter += (rowObject) => 2;
             StatusColumn.Renderer = new StatusRenderer(_activator);
             Tree.AllColumns.Insert(1, StatusColumn);
             SetupColumnTracking(StatusColumn, new Guid("72ff92ad-39cd-4153-9dc2-d988cced5ae1"));

@@ -226,7 +226,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         olv.UseCellFormatEvents = true;
         olv.FormatCell += Olv_FormatCell;
 
-        olvStatus.Renderer = new StatusRenderer(_activator);
+        //olvStatus.Renderer = new StatusRenderer(_activator);
         olv.AllColumns.Insert(3, olvStatus);
         olvName.ImageGetter = GetImage;
         olv.RowHeight = 19;
