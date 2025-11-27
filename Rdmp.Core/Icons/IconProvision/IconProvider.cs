@@ -38,6 +38,9 @@ using System.Linq;
 
 namespace Rdmp.Core.Icons.IconProvision;
 
+/// <summary>
+/// Provides all icons for RDMP
+/// </summary>
 public class IconProvider : ICoreIconProvider
 {
     public Image<Rgba32> ImageUnknown => Image.Load<Rgba32>(CatalogueIcons.NoIconAvailable);

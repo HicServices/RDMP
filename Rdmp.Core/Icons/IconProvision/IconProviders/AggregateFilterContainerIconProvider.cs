@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 
 namespace Rdmp.Core.Icons.IconProvision.IconProviders
 {
+    /// <summary>
+    /// Provides custom Icons
+    /// </summary>
     internal class AggregateFilterContainerIconProvider : IIconProvider
     {
         public static Image<Rgba32> GetIcon(object concept, ReusableLibraryCode.Icons.IconProvision.OverlayKind kind = ReusableLibraryCode.Icons.IconProvision.OverlayKind.None)

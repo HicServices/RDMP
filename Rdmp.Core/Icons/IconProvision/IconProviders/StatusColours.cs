@@ -6,7 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Rdmp.Core.Icons.IconProvision.IconProviders;
-
+/// <summary>
+/// named colours for use within RDMP
+/// </summary>
 public static class StatusColours
 {
     private static Color Black = Color.FromArgb(33, 37, 41);

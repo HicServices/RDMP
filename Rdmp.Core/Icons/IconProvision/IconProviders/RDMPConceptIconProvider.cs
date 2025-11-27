@@ -34,6 +34,9 @@ using Terminal.Gui;
 
 namespace Rdmp.Core.Icons.IconProvision.IconProviders;
 
+/// <summary>
+/// Provides custom Icons
+/// </summary>
 public class RDMPConceptIconProvider : IIconProvider
 {
 

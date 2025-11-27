@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 
 namespace Rdmp.Core.Icons.IconProvision.IconProviders
 {
+    /// <summary>
+    /// Provides custom Icons
+    /// </summary>
     public class LoadStageNodeIconProvider : IIconProvider
     {
         public static Image<Rgba32> GetIcon(object concept, ReusableLibraryCode.Icons.IconProvision.OverlayKind kind = ReusableLibraryCode.Icons.IconProvision.OverlayKind.None)
