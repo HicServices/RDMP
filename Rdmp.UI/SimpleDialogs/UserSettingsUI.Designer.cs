@@ -45,7 +45,6 @@
             label6 = new System.Windows.Forms.Label();
             cbWait5Seconds = new System.Windows.Forms.CheckBox();
             cbShowCohortWizard = new System.Windows.Forms.CheckBox();
-            btnClearFavourites = new System.Windows.Forms.Button();
             btnClearUserSettings = new System.Windows.Forms.Button();
             cbDoubleClickToExpand = new System.Windows.Forms.CheckBox();
             cbDebugPerformance = new System.Windows.Forms.CheckBox();
@@ -64,7 +63,6 @@
             groupBox2 = new System.Windows.Forms.GroupBox();
             groupBox3 = new System.Windows.Forms.GroupBox();
             cbAutoRunSqlQueries = new System.Windows.Forms.CheckBox();
-            label8 = new System.Windows.Forms.Label();
             groupBox4 = new System.Windows.Forms.GroupBox();
             cbNewFind = new System.Windows.Forms.CheckBox();
             groupBox5 = new System.Windows.Forms.GroupBox();
@@ -283,17 +281,6 @@
             cbShowCohortWizard.Text = "Show Cohort Wizard";
             cbShowCohortWizard.UseVisualStyleBackColor = true;
             // 
-            // btnClearFavourites
-            // 
-            btnClearFavourites.Location = new System.Drawing.Point(71, 73);
-            btnClearFavourites.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            btnClearFavourites.Name = "btnClearFavourites";
-            btnClearFavourites.Size = new System.Drawing.Size(100, 25);
-            btnClearFavourites.TabIndex = 10;
-            btnClearFavourites.Text = "Clear Favourites";
-            userSettingsToolTips.SetToolTip(btnClearFavourites, "Clear all the Favourites (items that have been 'started') from your collection views.");
-            btnClearFavourites.UseVisualStyleBackColor = true;
-            // 
             // btnClearUserSettings
             // 
             btnClearUserSettings.Location = new System.Drawing.Point(821, 40);
@@ -441,10 +428,8 @@
             // groupBox3
             // 
             groupBox3.Controls.Add(cbAutoRunSqlQueries);
-            groupBox3.Controls.Add(label8);
             groupBox3.Controls.Add(cbDoubleClickToExpand);
             groupBox3.Controls.Add(cbEmphasiseOnTabChanged);
-            groupBox3.Controls.Add(btnClearFavourites);
             groupBox3.Location = new System.Drawing.Point(249, 3);
             groupBox3.Name = "groupBox3";
             groupBox3.Size = new System.Drawing.Size(240, 165);
@@ -462,18 +447,7 @@
             cbAutoRunSqlQueries.TabIndex = 20;
             cbAutoRunSqlQueries.Text = "Auto Run Sql Queries";
             cbAutoRunSqlQueries.UseVisualStyleBackColor = true;
-            // 
-            // label8
-            // 
-            label8.AutoSize = true;
-            label8.Location = new System.Drawing.Point(4, 77);
-            label8.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            label8.Name = "label8";
-            label8.Size = new System.Drawing.Size(64, 15);
-            label8.TabIndex = 19;
-            label8.Text = "Favourites:";
-            userSettingsToolTips.SetToolTip(label8, "Clear all the Favourites (items that have been 'started') from your collection views.");
-            // 
+           // 
             // groupBox4
             // 
             groupBox4.Controls.Add(cbNewFind);
@@ -922,7 +896,6 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.CheckBox cbWait5Seconds;
         private System.Windows.Forms.CheckBox cbShowCohortWizard;
-        private System.Windows.Forms.Button btnClearFavourites;
         private System.Windows.Forms.Button btnClearUserSettings;
         private System.Windows.Forms.CheckBox cbDoubleClickToExpand;
         private System.Windows.Forms.CheckBox cbDebugPerformance;
@@ -945,7 +918,6 @@
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.GroupBox groupBox6;
         private System.Windows.Forms.GroupBox groupBox7;
-        private System.Windows.Forms.Label label8;
         private System.Windows.Forms.ToolTip userSettingsToolTips;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Label label10;

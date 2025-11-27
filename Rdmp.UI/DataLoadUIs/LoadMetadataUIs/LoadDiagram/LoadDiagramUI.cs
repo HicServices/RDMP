@@ -270,7 +270,6 @@ public partial class LoadDiagramUI : LoadDiagram_Design
             _collectionCommonFunctionality.SetUp(RDMPCollection.None, tlvLoadedTables, activator, null, null,
                 new RDMPCollectionCommonFunctionalitySettings
                 {
-                    AddFavouriteColumn = false,
                     AddIDColumn = false,
                     SuppressChildrenAdder = true,
                     SuppressActivate = true,

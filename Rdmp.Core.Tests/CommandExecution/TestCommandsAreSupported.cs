@@ -53,7 +53,6 @@ public class TestCommandsAreSupported : UnitTests
     [TestCase(typeof(ExecuteCommandAddDatasetsToConfiguration))]
     [TestCase(typeof(ExecuteCommandAddDimension))]
     [TestCase(typeof(ExecuteCommandAddExtractionProgress))]
-    [TestCase(typeof(ExecuteCommandAddFavourite))]
     [TestCase(typeof(ExecuteCommandAddMissingParameters))]
     [TestCase(typeof(ExecuteCommandAddNewAggregateGraph))]
     [TestCase(typeof(ExecuteCommandAddNewCatalogueItem))]

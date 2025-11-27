@@ -17,12 +17,6 @@ namespace Rdmp.UI.Collections;
 public class RDMPCollectionCommonFunctionalitySettings
 {
     /// <summary>
-    /// True to add an extra column to the tree view which shows if / allows changing the favourite objects status of objects.
-    ///  <para>Defaults to true</para>
-    /// </summary>
-    public bool AddFavouriteColumn { get; set; }
-
-    /// <summary>
     /// True to add an extra column (not visible by default) to the tree view which the ID property of objects that are
     ///  <see cref="IMapsDirectlyToDatabaseTable"/>
     ///  <para>Defaults to true</para>
@@ -57,7 +51,6 @@ public class RDMPCollectionCommonFunctionalitySettings
 
     public RDMPCollectionCommonFunctionalitySettings()
     {
-        AddFavouriteColumn = true;
         AddIDColumn = true;
         SuppressChildrenAdder = false;
         SuppressActivate = false;

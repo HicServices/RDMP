@@ -62,8 +62,6 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
     public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
 
-    public OLVColumn FavouriteColumn { get; private set; }
-
     public bool IsSetup { get; private set; }
 
     public Func<IActivateItems, IAtomicCommand[]> WhitespaceRightClickMenuCommandsGetter { get; set; }

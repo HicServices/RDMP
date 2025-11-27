@@ -181,7 +181,6 @@ public partial class DataReleaseUI : DataReleaseUI_Design
             _commonFunctionality.SetUp(RDMPCollection.None, tlvReleasePotentials, Activator, olvName, null,
                 new RDMPCollectionCommonFunctionalitySettings
                 {
-                    AddFavouriteColumn = false,
                     SuppressChildrenAdder = true,
                     AddCheckColumn = false
                 });

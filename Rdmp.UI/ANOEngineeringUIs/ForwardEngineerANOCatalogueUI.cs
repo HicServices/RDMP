@@ -326,7 +326,7 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
         if (!_setup)
         {
             var settings = new RDMPCollectionCommonFunctionalitySettings
-            { AddFavouriteColumn = false, AddCheckColumn = false };
+            { AddCheckColumn = false };
 
             //Set up tree view to show ANO Tables that are usable
             tlvANOTablesCommonFunctionality = new RDMPCollectionCommonFunctionality();

@@ -384,8 +384,6 @@ public partial class DatabaseTests
         DeleteAll<GovernanceDocument>(y);
         DeleteAll<GovernancePeriod>(y);
 
-        DeleteAll<Favourite>(y);
-
         DeleteAll<PipelineComponentArgument>(y);
         DeleteAll<Pipeline>(y);
         DeleteAll<PipelineComponent>(y);
