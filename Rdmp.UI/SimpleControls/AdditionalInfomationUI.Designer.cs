@@ -1,4 +1,6 @@
-﻿namespace Rdmp.UI.SimpleControls
+﻿using Rdmp.Core.Icons.IconProvision;
+
+namespace Rdmp.UI.SimpleControls
 {
     partial class AdditionalInfomationUI
     {
@@ -38,9 +40,9 @@
             // pictureBox1
             // 
             pictureBox1.Cursor = System.Windows.Forms.Cursors.Hand;
-            pictureBox1.ErrorImage = (System.Drawing.Image)resources.GetObject("pictureBox1.ErrorImage");
-            pictureBox1.Image = (System.Drawing.Image)resources.GetObject("pictureBox1.Image");
-            pictureBox1.InitialImage = (System.Drawing.Image)resources.GetObject("pictureBox1.InitialImage");
+            pictureBox1.ErrorImage = CatalogueIcons.Info.ImageToBitmap();
+            pictureBox1.Image = CatalogueIcons.Info.ImageToBitmap();
+            pictureBox1.InitialImage = CatalogueIcons.Info.ImageToBitmap();
             pictureBox1.Location = new System.Drawing.Point(0, 0);
             pictureBox1.Name = "pictureBox1";
             pictureBox1.Size = new System.Drawing.Size(20, 20);

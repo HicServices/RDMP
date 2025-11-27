@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Windows.Forms;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
@@ -170,6 +171,14 @@ public class RDMPControlCommonFunctionality
         {
             ToolStrip.Items.Add(item);
         }
+    }
+
+    public void AddDropdown(string name, Bitmap image, bool includeText = false)
+    {
+        if (!_dropDownButtons.ContainsKey(name))
+            _dropDownButtons.Add(name,
+                new ToolStripDropDownButton { Text = name, Image = image, DisplayStyle = includeText ? ToolStripItemDisplayStyle.ImageAndText : ToolStripItemDisplayStyle.Image });
+        ToolStrip.Items.Add(_dropDownButtons[name]);
     }
 
     /// <summary>

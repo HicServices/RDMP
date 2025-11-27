@@ -1,6 +1,4 @@
 ﻿using BrightIdeasSoftware;
-using DnsClient;
-using NPOI.SS.Formula.Functions;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Icons.IconProvision.IconProviders;
@@ -8,18 +6,16 @@ using Rdmp.Core.Providers;
 using Rdmp.Core.ReusableLibraryCode.Settings;
 using Rdmp.UI.ItemActivation;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
-using System.Net.NetworkInformation;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using static ScintillaNET.Style;
 
 namespace Rdmp.UI.Collections.Renderers
 {
+    /// <summary>
+    /// Renders status items for objects
+    /// </summary>
     public class StatusRenderer : AbstractRenderer
     {
 
@@ -105,11 +101,11 @@ namespace Rdmp.UI.Collections.Renderers
                     xOffset += RenderStatus("Deprecated", StatusColours.Deprecated, StatusColours.DeprecatedCompliment, cellBounds, xOffset, g);
                     xOffset += 5;
                 }
-                if (ci.ExtractionInformation.ExtractionCategory == ExtractionCategory.ProjectSpecific)
-                {
-                    xOffset += RenderStatus("Project Specific", StatusColours.ProjectSpecific, StatusColours.ProjectSpecificCompliment, cellBounds, xOffset, g);
-                    xOffset += 5;
-                }
+                //if (ci.ExtractionInformation.ExtractionCategory == ExtractionCategory.ProjectSpecific)
+                //{
+                //    xOffset += RenderStatus("Project Specific", StatusColours.ProjectSpecific, StatusColours.ProjectSpecificCompliment, cellBounds, xOffset, g);
+                //    xOffset += 5;
+                //}
                 return true;
             }
             if (rowObject is CohortIdentificationConfiguration cic)
@@ -133,17 +129,17 @@ namespace Rdmp.UI.Collections.Renderers
                 }
                 return true;
             }
-            return false;
+            return true;
         }
 
         private static void DrawBackground(Graphics g, Rectangle r)
         {
-            Color backgroundColor = Color.White;
+            //Color backgroundColor = Color.White;
 
-            using (Brush brush = new SolidBrush(backgroundColor))
-            {
-                g.FillRectangle(brush, r.X - 1, r.Y - 1, r.Width + 2, r.Height + 2);
-            }
+            //using (Brush brush = new SolidBrush(backgroundColor))
+            //{
+            //    g.FillRectangle(brush, r.X - 1, r.Y - 1, r.Width + 2, r.Height + 2);
+            //}
         }
 
 

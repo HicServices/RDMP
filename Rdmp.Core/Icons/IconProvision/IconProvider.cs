@@ -152,7 +152,7 @@ public class IconProvider : ICoreIconProvider
         if (concept is AllCataloguesUsedByLoadMetadataNode) return Image.Load<Rgba32>(CatalogueIcons.CatalogueFolder);
         if (concept is CatalogueUsedByLoadMetadataNode) return Image.Load<Rgba32>(CatalogueIcons.Catalogue);
         if (concept is PermissionWindow) return Image.Load<Rgba32>(CatalogueIcons.PermissionWindow);
-
+        if(concept is ExtractionCategory ec) return ExtractionCategoryIconProvider.GetIcon(concept);
         var x = concept.GetType();
         return ImageUnknown;
     }

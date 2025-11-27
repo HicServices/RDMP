@@ -1,4 +1,6 @@
-﻿namespace Rdmp.UI.SimpleControls
+﻿using Rdmp.Core.Icons.IconProvision;
+
+namespace Rdmp.UI.SimpleControls
 {
     partial class EditableLabelUI
     {
@@ -28,7 +30,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditableLabelUI));
             pictureBox1 = new System.Windows.Forms.PictureBox();
             lblEditable = new System.Windows.Forms.Label();
             tbEditable = new System.Windows.Forms.TextBox();
@@ -41,8 +42,7 @@
             // pictureBox1
             // 
             pictureBox1.Cursor = System.Windows.Forms.Cursors.Hand;
-            pictureBox1.Image = (System.Drawing.Image)resources.GetObject("pictureBox1.Image");
-            pictureBox1.Location = new System.Drawing.Point(235, 30);
+            pictureBox1.Location = new System.Drawing.Point(6, 30);
             pictureBox1.Name = "pictureBox1";
             pictureBox1.Size = new System.Drawing.Size(19, 19);
             pictureBox1.TabIndex = 0;

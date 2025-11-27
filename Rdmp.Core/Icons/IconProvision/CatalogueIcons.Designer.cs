@@ -90,6 +90,15 @@ namespace Rdmp.Core.Icons.IconProvision
                 return ((Byte[])(obj));
             }
         }
+
+        public static Byte[] Edit
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("Edit", resourceCulture);
+                return ((Byte[])(obj));
+            }
+        }
         public static Byte[] LinkBreak
         {
             get
