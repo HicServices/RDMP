@@ -1,4 +1,5 @@
 ﻿using BrightIdeasSoftware;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.LocationsMenu.Ticketing;
 using Rdmp.UI.LocationsMenu.Versioning;
 
@@ -176,7 +177,7 @@ namespace Rdmp.UI.SubComponents
             // 
             // btnAbortLoad
             // 
-            btnAbortLoad.Image = (System.Drawing.Image)resources.GetObject("btnAbortLoad.Image");
+            btnAbortLoad.Image = CatalogueIcons.StopLarge.ImageToBitmap();
             btnAbortLoad.Location = new System.Drawing.Point(178, 0);
             btnAbortLoad.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             btnAbortLoad.Name = "btnAbortLoad";
@@ -187,7 +188,7 @@ namespace Rdmp.UI.SubComponents
             // 
             // btnExecute
             // 
-            btnExecute.Image = (System.Drawing.Image)resources.GetObject("btnExecute.Image");
+            btnExecute.Image = CatalogueIcons.ExecuteLarge.ImageToBitmap();
             btnExecute.Location = new System.Drawing.Point(0, 0);
             btnExecute.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             btnExecute.Name = "btnExecute";
@@ -270,7 +271,7 @@ namespace Rdmp.UI.SubComponents
             // 
             // btnClearCache
             // 
-            btnClearCache.Image = (System.Drawing.Image)resources.GetObject("btnClearCache.Image");
+            btnClearCache.Image = CatalogueIcons.RefreshLarge.ImageToBitmap();
             btnClearCache.Location = new System.Drawing.Point(212, 0);
             btnClearCache.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             btnClearCache.Name = "btnClearCache";

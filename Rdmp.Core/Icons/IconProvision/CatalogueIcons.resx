@@ -127,9 +127,6 @@
   <data name="Lookup" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\NoIconAvailable.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="ExecuteArrow" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\NoIconAvailable.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="ExecuteArrowWithTickOverlay" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\NoIconAvailable.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
@@ -602,7 +599,7 @@
     <value>..\material\PermissionWindow\PermissionWindowFolder.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="Waiting" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\NoIconAvailable.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\General\Waiting.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="WaitingForDatabase" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\NoIconAvailable.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -870,5 +867,41 @@
   </data>
   <data name="Execute" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\material\General\Execute.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Remove" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\material\General\Remove.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Stop" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\material\General\Stop.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Execute_Large" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\material\General\Execute_Large.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Stop_Large" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\material\General\Stop_Large.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Failed_Large" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\material\General\Fail_Large.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Refresh_Large" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\material\General\Refresh_Large.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Warning_Large" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\material\General\Warning_Large.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Tick_Large" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\material\General\Tick_Large.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Microsoft" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Databases\Microsoft.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="MySql" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Databases\MySql.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Oracle" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Databases\Oracle.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="PostgreSql" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Databases\PostgreSql.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>

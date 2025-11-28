@@ -1,6 +1,7 @@
 ﻿using BrightIdeasSoftware;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision.IconProviders;
 using Rdmp.Core.Providers;
 using Rdmp.Core.ReusableLibraryCode.Settings;
@@ -103,6 +104,16 @@ namespace Rdmp.UI.Collections.Renderers
                 if (cic.IsAssociatedToAProject(_activator.CoreChildProvider as DataExportChildProvider))
                 {
                     xOffset += RenderChip("Project Specific", StatusColours.ProjectSpecific, StatusColours.ProjectSpecificCompliment, r, xOffset, g);
+                    xOffset += 5;
+                }
+            }
+            if (this.RowObject is ExtractionConfiguration ec)
+            {
+                DrawBackground(g, r);
+                int xOffset = 0;
+                if (ec.IsReleased)
+                {
+                    xOffset += RenderChip("Frozen", StatusColours.Frozen, StatusColours.FrozenCompliment, r, xOffset, g);
                     xOffset += 5;
                 }
             }

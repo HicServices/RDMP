@@ -5,8 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using FAnsi;
+using Rdmp.Core.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
+using System.Data.Common;
 
 namespace Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 
@@ -64,10 +66,10 @@ public class DatabaseTypeIconProvider
     {
         return type switch
         {
-            DatabaseType.MicrosoftSQLServer => _msBig,
-            DatabaseType.MySql => _mysBig,
-            DatabaseType.Oracle => _oraBig,
-            DatabaseType.PostgreSql => _postgresBig,
+            DatabaseType.MicrosoftSQLServer => Image.Load<Rgba32>(CatalogueIcons.Microsoft),
+            DatabaseType.MySql => Image.Load<Rgba32>(CatalogueIcons.MySql),
+            DatabaseType.Oracle => Image.Load<Rgba32>(CatalogueIcons.Oracle),
+            DatabaseType.PostgreSql => Image.Load<Rgba32>(CatalogueIcons.PostgreSQL),
             _ => _unknownBig
         };
     }

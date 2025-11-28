@@ -17,6 +17,7 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.DataExport.DataExtraction.Commands;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.Icons.IconProvision.IconProviders;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
@@ -27,8 +28,11 @@ using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 using Rdmp.Core.Providers.Nodes.PipelineNodes;
 using Rdmp.Core.Providers.Nodes.ProjectCohortNodes;
 using Rdmp.Core.Providers.Nodes.SharingNodes;
+using Rdmp.Core.Providers.Nodes.UsedByNodes;
+using Rdmp.Core.Providers.Nodes.UsedByProject;
 using Rdmp.Core.Reports;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
@@ -155,7 +159,13 @@ public class IconProvider : ICoreIconProvider
         if (concept is AllCataloguesUsedByLoadMetadataNode) return Image.Load<Rgba32>(CatalogueIcons.CatalogueFolder);
         if (concept is CatalogueUsedByLoadMetadataNode) return Image.Load<Rgba32>(CatalogueIcons.Catalogue);
         if (concept is PermissionWindow) return Image.Load<Rgba32>(CatalogueIcons.PermissionWindow);
-        if(concept is ExtractionCategory ec) return ExtractionCategoryIconProvider.GetIcon(concept);
+        if (concept is CheckResult) return CheckResultIconProvider.GetIcon(concept);
+        if (concept is ExtractionCategory ec) return ExtractionCategoryIconProvider.GetIcon(concept);
+        if (concept is ExtractCommandState) return ExtractCommandStateIconProvider.GetIcon(concept);
+        if (concept is LinkedCohortNode) return Image.Load<Rgba32>(CatalogueIcons.CohortIdentificationConfiguration);
+        if (concept is CohortSourceUsedByProjectNode) return Image.Load<Rgba32>(CatalogueIcons.AllCohortsNode);//todo is this right?
+        if (concept is DatabaseType) return IconProviders.DatabaseTypeIconProvider.GetIcon(concept);
+        //"ObjectUsedByOtherObjectNode`2" 
         var x = concept.GetType();
         return ImageUnknown;
     }

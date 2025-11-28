@@ -7,7 +7,7 @@ namespace Rdmp.UI.AggregationUIs
     partial class AggregateGraphUI
     {
         /// <summary> 
-        /// Required designer variable.
+        /// Required csigner variable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
 

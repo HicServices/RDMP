@@ -83,6 +83,106 @@ namespace Rdmp.Core.Icons.IconProvision
             }
        }
 
+        public static Byte[] WarningLarge
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("Warning_Large", resourceCulture);
+                return ((Byte[])(obj));
+            }
+        }
+        public static Byte[] TickLarge
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("Tick_Large", resourceCulture);
+                return ((Byte[])(obj));
+            }
+        }
+
+        public static Byte[] RefreshLarge
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("Refresh_Large", resourceCulture);
+                return ((Byte[])(obj));
+            }
+        }
+        public static Byte[] ExecuteLarge
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("Execute_Large", resourceCulture);
+                return ((Byte[])(obj));
+            }
+        }
+        public static Byte[] StopLarge
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("Stop_Large", resourceCulture);
+                return ((Byte[])(obj));
+            }
+        }
+        public static Byte[] PostgreSQL
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("PostgreSQL", resourceCulture);
+                return ((Byte[])(obj));
+            }
+        }
+        public static Byte[] Microsoft
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("Microsoft", resourceCulture);
+                return ((Byte[])(obj));
+            }
+        }
+        public static Byte[] MySql
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("MySql", resourceCulture);
+                return ((Byte[])(obj));
+            }
+        }
+        public static Byte[] Oracle
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("Oracle", resourceCulture);
+                return ((Byte[])(obj));
+            }
+        }
+        public static Byte[] FailedLarge
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("Failed_Large", resourceCulture);
+                return ((Byte[])(obj));
+            }
+        }
+
+        public static Byte[] Stop
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("Stop", resourceCulture);
+                return ((Byte[])(obj));
+            }
+        }
+
+        public static Byte[] Remove
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("Remove", resourceCulture);
+                return ((Byte[])(obj));
+            }
+        }
+
         public static Byte[] Execute
         {
             get
@@ -1285,19 +1385,6 @@ namespace Rdmp.Core.Icons.IconProvision
                 return ((Byte[])(obj));
             }
         }
-
-        /// <summary>
-        ///   Looks up a localized resource of type Image.
-        /// </summary>
-        public static Byte[] ExecuteArrow
-        {
-            get
-            {
-                object obj = ResourceManager.GetObject("ExecuteArrow", resourceCulture);
-                return ((Byte[])(obj));
-            }
-        }
-
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
