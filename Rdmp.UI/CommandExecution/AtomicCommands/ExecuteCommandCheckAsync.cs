@@ -57,5 +57,5 @@ internal class ExecuteCommandCheckAsync : BasicUICommandExecution, IAtomicComman
         popupChecksUI.StartChecking(_checkable);
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => Image.Load<Rgba32>(CatalogueIcons.TinyYellow);
+    //public override Image<Rgba32> GetImage(IIconProvider iconProvider) => Image.Load<Rgba32>(CatalogueIcons.TinyYellow);
 }

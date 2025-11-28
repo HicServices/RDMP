@@ -107,14 +107,14 @@ internal partial class CreateNewCohortDatabaseWizardUI : RDMPUserControl
 
     private void HelpIcon2_Click(object sender, EventArgs e)
     {
-        var bmp = CatalogueIcons.WhatIsACohort.ImageToBitmap();
+        //var bmp = CatalogueIcons.WhatIsACohort.ImageToBitmap();
 
-        var pb = new PictureBox
-        {
-            Image = bmp,
-            Size = new System.Drawing.Size(bmp.Width, bmp.Height)
-        };
+        //var pb = new PictureBox
+        //{
+        //    Image = bmp,
+        //    Size = new System.Drawing.Size(bmp.Width, bmp.Height)
+        //};
 
-        new SingleControlForm(pb).Show();
+        //new SingleControlForm(pb).Show();
     }
 }

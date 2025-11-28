@@ -83,7 +83,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
     private readonly ToolStripMenuItem _miSaveImages = new("Save Image", CatalogueIcons.Save.ImageToBitmap());
 
     private readonly ToolStripMenuItem _miCopyToClipboard =
-        new("Copy to Clipboard", CatalogueIcons.Clipboard.ImageToBitmap());
+        new("Copy to Clipboard", null);
 
     private readonly ToolStripMenuItem _miClipboardWord = new("Word Format");
     private readonly ToolStripMenuItem _miClipboardCsv = new("Comma Separated Format");

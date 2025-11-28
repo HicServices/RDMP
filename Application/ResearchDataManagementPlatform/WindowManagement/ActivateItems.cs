@@ -481,32 +481,32 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
             case IObjectCollectionControl uiCollection:
                 return Activate(uiCollection, instruction.ObjectCollection);
             case IRDMPSingleDatabaseObjectControl uiInstance:
-            {
-                var databaseObject = instruction.DatabaseObject;
-
-                //the database object is gone? deleted maybe
-                if (databaseObject == null)
-                    return null;
-
-                DockContent floatable = WindowFactory.Create(this, RefreshBus, uiInstance,
-                    CoreIconProvider.GetImage(databaseObject), databaseObject);
-
-                floatable.Show(_mainDockPanel, DockState.Document);
-                try
                 {
-                    uiInstance.SetDatabaseObject(this, (DatabaseEntity)databaseObject);
-                    SetTabText(floatable, uiInstance);
-                }
-                catch (Exception e)
-                {
-                    floatable.Close();
-                    throw new Exception(
-                        $"SetDatabaseObject failed on Control of Type '{instruction.UIControlType.Name}', control closed, see inner Exception for details",
-                        e);
-                }
+                    var databaseObject = instruction.DatabaseObject;
 
-                return floatable;
-            }
+                    //the database object is gone? deleted maybe
+                    if (databaseObject == null)
+                        return null;
+
+                    DockContent floatable = WindowFactory.Create(this, RefreshBus, uiInstance,
+                        CoreIconProvider.GetImage(databaseObject), databaseObject);
+
+                    floatable.Show(_mainDockPanel, DockState.Document);
+                    try
+                    {
+                        uiInstance.SetDatabaseObject(this, (DatabaseEntity)databaseObject);
+                        SetTabText(floatable, uiInstance);
+                    }
+                    catch (Exception e)
+                    {
+                        floatable.Close();
+                        throw new Exception(
+                            $"SetDatabaseObject failed on Control of Type '{instruction.UIControlType.Name}', control closed, see inner Exception for details",
+                            e);
+                    }
+
+                    return floatable;
+                }
             default:
                 return (DockContent)activator.ShowWindow(c, true);
         }
@@ -867,8 +867,10 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         var panel = WindowFactory.Create(this, new SessionCollectionUI(), new SessionCollection(sessionName)
         {
             DatabaseObjects = initialObjects.ToList()
-        }, Image.Load<Rgba32>(CatalogueIcons.WindowLayout));
+        }, null);
         panel.Show(_mainDockPanel, DockState.DockLeft);
+        //}, Image.Load<Rgba32>(CatalogueIcons.WindowLayout));
+
     }
 
 
@@ -905,7 +907,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         return ui.ShowDialog() == DialogResult.OK ? ui.Result : null;
     }
 
-    public override IProject CohortCommitProjectSelect(IProject currentProject,Project[] projects)
+    public override IProject CohortCommitProjectSelect(IProject currentProject, Project[] projects)
     {
         var ui = new CohortCommitProjectSelectionUI(this, currentProject, projects);
         return ui.ShowDialog() == DialogResult.OK ? ui.Result : null; ;

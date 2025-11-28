@@ -33,5 +33,5 @@ public sealed class ExecuteCommandCheck : BasicCommandExecution
         _checkable.Check(_notifier);
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => Image.Load<Rgba32>(CatalogueIcons.TinyYellow);
+    //public override Image<Rgba32> GetImage(IIconProvider iconProvider) => Image.Load<Rgba32>(CatalogueIcons.TinyYellow);
 }

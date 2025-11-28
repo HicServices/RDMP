@@ -223,12 +223,6 @@
   <data name="SupportingDocumentExtractable" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\NoIconAvailable.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="EXCEPT" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\NoIconAvailable.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="INTERSECT" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\NoIconAvailable.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="SupportingDocumentExtractableGlobal" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\NoIconAvailable.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
@@ -239,9 +233,6 @@
     <value>..\NoIconAvailable.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="SupportingSqlGlobal" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\NoIconAvailable.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="UNION" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\NoIconAvailable.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="CollisionResolution" type="System.Resources.ResXFileRef, System.Windows.Forms">
@@ -265,12 +256,6 @@
   <data name="CatalogueItem" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\material\CatalogueItem\CatalogueItem.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="CatalogueItemTransform" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\NoIconAvailable.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="CatalogueItemIssue" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\NoIconAvailable.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="DataAccessCredentials" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\material\DataAccessCredential\DataAccessCredential.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
@@ -287,9 +272,6 @@
     <value>..\NoIconAvailable.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="SupportingSqlExtractable" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\NoIconAvailable.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="ANOColumnInfo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\NoIconAvailable.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="CloneExtractionConfiguration" type="System.Resources.ResXFileRef, System.Windows.Forms">
@@ -436,11 +418,8 @@
   <data name="Help" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\material\General\Help.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="UnfreezeExtractionConfiguration" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\NoIconAvailable.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="AllCataloguesUsedByLoadMetadataNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\NoIconAvailable.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\material\Folder\Folder.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="AllProcessTasksUsedByLoadMetadataNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\material\LoadMetadata\LoadMetadataFolder.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -514,12 +493,6 @@
   <data name="collapseAllNodes" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\NoIconAvailable.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="AllAutomationServerSlotsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\NoIconAvailable.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="AllRDMPRemotesNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\NoIconAvailable.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="RemoteRDMP" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\NoIconAvailable.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
@@ -538,25 +511,13 @@
   <data name="PipelineComponentArgument" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\material\Pipeline\PipelineComponentArgument.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="AggregateTopX" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\NoIconAvailable.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="AutomationServiceException" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\NoIconAvailable.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="AllObjectExportsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\NoIconAvailable.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="AllObjectImportsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\NoIconAvailable.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="ObjectExport" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\NoIconAvailable.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="ObjectImport" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\NoIconAvailable.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="AllObjectSharingNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\NoIconAvailable.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="CohortCustomColumn" type="System.Resources.ResXFileRef, System.Windows.Forms">
@@ -570,15 +531,6 @@
   </data>
   <data name="FrozenExtractionConfigurationsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\material\ExtractionConfiguration\FrozenExtractionConfigurationsNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="TinyGreen" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\NoIconAvailable.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="TinyRed" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\NoIconAvailable.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="TinyYellow" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\NoIconAvailable.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="ExtractionInformation_ProjectSpecific" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\NoIconAvailable.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -600,12 +552,6 @@
   </data>
   <data name="Waiting" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\material\General\Waiting.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="WaitingForDatabase" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\NoIconAvailable.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="Writing" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\NoIconAvailable.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="FileMissing" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\NoIconAvailable.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -649,9 +595,6 @@
   <data name="Menu" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\material\General\Menu.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="CatalogueLookupsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\NoIconAvailable.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="DatabaseRefresh" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\NoIconAvailable.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
@@ -659,9 +602,6 @@
     <value>..\NoIconAvailable.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="CohortAggregateContainer" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\NoIconAvailable.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="WhatIsACohort" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\NoIconAvailable.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="AllPluginsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
@@ -710,9 +650,6 @@
     <value>..\NoIconAvailable.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="TicketingSystemConfiguration" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\NoIconAvailable.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="WindowLayout" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\NoIconAvailable.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="AllDashboardsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
@@ -765,9 +702,6 @@
   </data>
   <data name="AllDatasetsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\material\Dataset\DatasetFolder.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="AllRegexRedactionConfigurationsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\NoIconAvailable.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="RegexRedaction" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\NoIconAvailable.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>

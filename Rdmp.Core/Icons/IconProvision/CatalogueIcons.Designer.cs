@@ -81,7 +81,7 @@ namespace Rdmp.Core.Icons.IconProvision
                 object obj = ResourceManager.GetObject("Info", resourceCulture);
                 return ((Byte[])(obj));
             }
-       }
+        }
 
         public static Byte[] WarningLarge
         {
@@ -477,17 +477,6 @@ namespace Rdmp.Core.Icons.IconProvision
                 return ((Byte[])(obj));
             }
         }
-        /// <summary>
-        ///   Looks up a localized resource of type Image.
-        /// </summary>
-        public static Byte[] AllObjectExportsNode
-        {
-            get
-            {
-                object obj = ResourceManager.GetObject("AllObjectExportsNode", resourceCulture);
-                return ((Byte[])(obj));
-            }
-        }
 
         /// <summary>
         ///   Looks up a localized resource of type Image.
@@ -528,35 +517,11 @@ namespace Rdmp.Core.Icons.IconProvision
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] AggregateTopX
-        {
-            get
-            {
-                object obj = ResourceManager.GetObject("AggregateTopX", resourceCulture);
-                return ((Byte[])(obj));
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized resource of type Image.
-        /// </summary>
         public static Byte[] AllANOTablesNode
         {
             get
             {
                 object obj = ResourceManager.GetObject("AllANOTablesNode", resourceCulture);
-                return ((Byte[])(obj));
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized resource of type Image.
-        /// </summary>
-        public static Byte[] AllAutomationServerSlotsNode
-        {
-            get
-            {
-                object obj = ResourceManager.GetObject("AllAutomationServerSlotsNode", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
@@ -669,30 +634,6 @@ namespace Rdmp.Core.Icons.IconProvision
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] AllObjectImportsNode
-        {
-            get
-            {
-                object obj = ResourceManager.GetObject("AllObjectImportsNode", resourceCulture);
-                return ((Byte[])(obj));
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized resource of type Image.
-        /// </summary>
-        public static Byte[] AllObjectSharingNode
-        {
-            get
-            {
-                object obj = ResourceManager.GetObject("AllObjectSharingNode", resourceCulture);
-                return ((Byte[])(obj));
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized resource of type Image.
-        /// </summary>
         public static Byte[] AllOrphanAggregateConfigurationsNode
         {
             get
@@ -742,17 +683,6 @@ namespace Rdmp.Core.Icons.IconProvision
             get
             {
                 object obj = ResourceManager.GetObject("AllPipelinesNode", resourceCulture);
-                return ((Byte[])(obj));
-            }
-        }
-        /// <summary>
-        ///   Looks up a localized resource of type Image.
-        /// </summary>
-        public static Byte[] AllRegexRedactionConfigurationsNode
-        {
-            get
-            {
-                object obj = ResourceManager.GetObject("AllRegexRedactionConfigurationsNode", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
@@ -837,17 +767,6 @@ namespace Rdmp.Core.Icons.IconProvision
             }
         }
 
-        /// <summary>
-        ///   Looks up a localized resource of type Image.
-        /// </summary>
-        public static Byte[] ANOColumnInfo
-        {
-            get
-            {
-                object obj = ResourceManager.GetObject("ANOColumnInfo", resourceCulture);
-                return ((Byte[])(obj));
-            }
-        }
 
         /// <summary>
         ///   Looks up a localized resource of type Image.
@@ -1004,31 +923,6 @@ namespace Rdmp.Core.Icons.IconProvision
                 return ((Byte[])(obj));
             }
         }
-
-        /// <summary>
-        ///   Looks up a localized resource of type Image.
-        /// </summary>
-        public static Byte[] CatalogueItemTransform
-        {
-            get
-            {
-                object obj = ResourceManager.GetObject("CatalogueItemTransform", resourceCulture);
-                return ((Byte[])(obj));
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized resource of type Image.
-        /// </summary>
-        public static Byte[] CatalogueItemIssue
-        {
-            get
-            {
-                object obj = ResourceManager.GetObject("CatalogueItemIssue", resourceCulture);
-                return ((Byte[])(obj));
-            }
-        }
-
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
@@ -1049,18 +943,6 @@ namespace Rdmp.Core.Icons.IconProvision
             get
             {
                 object obj = ResourceManager.GetObject("CatalogueLookupsNode", resourceCulture);
-                return ((Byte[])(obj));
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized resource of type Image.
-        /// </summary>
-        public static Byte[] Clipboard
-        {
-            get
-            {
-                object obj = ResourceManager.GetObject("Clipboard", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
@@ -1346,18 +1228,6 @@ namespace Rdmp.Core.Icons.IconProvision
             get
             {
                 object obj = ResourceManager.GetObject("Evaluation", resourceCulture);
-                return ((Byte[])(obj));
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized resource of type Image.
-        /// </summary>
-        public static Byte[] EXCEPT
-        {
-            get
-            {
-                object obj = ResourceManager.GetObject("EXCEPT", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
@@ -1853,17 +1723,6 @@ namespace Rdmp.Core.Icons.IconProvision
             }
         }
 
-        /// <summary>
-        ///   Looks up a localized resource of type Image.
-        /// </summary>
-        public static Byte[] INTERSECT
-        {
-            get
-            {
-                object obj = ResourceManager.GetObject("INTERSECT", resourceCulture);
-                return ((Byte[])(obj));
-            }
-        }
 
         /// <summary>
         ///   Looks up a localized resource of type Image.
@@ -2505,18 +2364,6 @@ namespace Rdmp.Core.Icons.IconProvision
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] RemoteRDMP
-        {
-            get
-            {
-                object obj = ResourceManager.GetObject("RemoteRDMP", resourceCulture);
-                return ((Byte[])(obj));
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized resource of type Image.
-        /// </summary>
         public static Byte[] ReOrder
         {
             get
@@ -2841,66 +2688,6 @@ namespace Rdmp.Core.Icons.IconProvision
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] TinyGreen
-        {
-            get
-            {
-                object obj = ResourceManager.GetObject("TinyGreen", resourceCulture);
-                return ((Byte[])(obj));
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized resource of type Image.
-        /// </summary>
-        public static Byte[] TinyRed
-        {
-            get
-            {
-                object obj = ResourceManager.GetObject("TinyRed", resourceCulture);
-                return ((Byte[])(obj));
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized resource of type Image.
-        /// </summary>
-        public static Byte[] TinyYellow
-        {
-            get
-            {
-                object obj = ResourceManager.GetObject("TinyYellow", resourceCulture);
-                return ((Byte[])(obj));
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized resource of type Image.
-        /// </summary>
-        public static Byte[] UnfreezeExtractionConfiguration
-        {
-            get
-            {
-                object obj = ResourceManager.GetObject("UnfreezeExtractionConfiguration", resourceCulture);
-                return ((Byte[])(obj));
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized resource of type Image.
-        /// </summary>
-        public static Byte[] UNION
-        {
-            get
-            {
-                object obj = ResourceManager.GetObject("UNION", resourceCulture);
-                return ((Byte[])(obj));
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized resource of type Image.
-        /// </summary>
         public static Byte[] UNIONCohortAggregate
         {
             get
@@ -2925,18 +2712,6 @@ namespace Rdmp.Core.Icons.IconProvision
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] WaitingForDatabase
-        {
-            get
-            {
-                object obj = ResourceManager.GetObject("WaitingForDatabase", resourceCulture);
-                return ((Byte[])(obj));
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized resource of type Image.
-        /// </summary>
         public static Byte[] Warning
         {
             get
@@ -2945,43 +2720,7 @@ namespace Rdmp.Core.Icons.IconProvision
                 return ((Byte[])(obj));
             }
         }
-
-        /// <summary>
-        ///   Looks up a localized resource of type Image.
-        /// </summary>
-        public static Byte[] WhatIsACohort
-        {
-            get
-            {
-                object obj = ResourceManager.GetObject("WhatIsACohort", resourceCulture);
-                return ((Byte[])(obj));
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized resource of type Image.
-        /// </summary>
-        public static Byte[] WindowLayout
-        {
-            get
-            {
-                object obj = ResourceManager.GetObject("WindowLayout", resourceCulture);
-                return ((Byte[])(obj));
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized resource of type Image.
-        /// </summary>
-        public static Byte[] Writing
-        {
-            get
-            {
-                object obj = ResourceManager.GetObject("Writing", resourceCulture);
-                return ((Byte[])(obj));
-            }
-        }
-
+        
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>

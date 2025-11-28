@@ -59,12 +59,8 @@ public class RDMPConceptIconProvider : IIconProvider
                 return Image.Load<Rgba32>(CatalogueIcons.DQE);
             case RDMPConcept.TimeCoverageField:
                 return Image.Load<Rgba32>(CatalogueIcons.TimeCoverageField);
-            case RDMPConcept.Clipboard:
-                return Image.Load<Rgba32>(CatalogueIcons.Clipboard);
             case RDMPConcept.ExternalDatabaseServer_Cache:
                 return Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_Cache);
-            case RDMPConcept.AllAutomationServerSlotsNode:
-                return Image.Load<Rgba32>(CatalogueIcons.AllAutomationServerSlotsNode);
             case RDMPConcept.AutomationServiceSlot:
                 return Image.Load<Rgba32>(CatalogueIcons.AutomationServiceSlot);
             case RDMPConcept.AutomateablePipeline:
@@ -73,8 +69,6 @@ public class RDMPConceptIconProvider : IIconProvider
                 return Image.Load<Rgba32>(CatalogueIcons.AutomationServiceException);
             case RDMPConcept.AllRDMPRemotesNode:
                 return Image.Load<Rgba32>(CatalogueIcons.AllRDMPRemotesNode);
-            case RDMPConcept.RemoteRDMP:
-                return Image.Load<Rgba32>(CatalogueIcons.RemoteRDMP);
             case RDMPConcept.LoadMetadata:
                 return Image.Load<Rgba32>(CatalogueIcons.LoadMetadata);
             case RDMPConcept.CacheProgress:
@@ -95,16 +89,12 @@ public class RDMPConceptIconProvider : IIconProvider
                 return Image.Load<Rgba32>(CatalogueIcons.CatalogueItemsNode);
             case RDMPConcept.CatalogueItem:
                 return Image.Load<Rgba32>(CatalogueIcons.CatalogueItem);
-            case RDMPConcept.CatalogueItemIssue:
-                return Image.Load<Rgba32>(CatalogueIcons.CatalogueItemIssue);
             case RDMPConcept.ExtractionInformation:
                 return Image.Load<Rgba32>(CatalogueIcons.ExtractionInformation);
             case RDMPConcept.TableInfo:
                 return Image.Load<Rgba32>(CatalogueIcons.TableInfo);
             case RDMPConcept.ColumnInfo:
                 return Image.Load<Rgba32>(CatalogueIcons.ColumnInfo);
-            case RDMPConcept.ANOColumnInfo:
-                return Image.Load<Rgba32>(CatalogueIcons.ANOColumnInfo);
             case RDMPConcept.PreLoadDiscardedColumn:
                 return Image.Load<Rgba32>(CatalogueIcons.PreLoadDiscardedColumn);
             case RDMPConcept.AllDataAccessCredentialsNode:
@@ -137,8 +127,6 @@ public class RDMPConceptIconProvider : IIconProvider
                 return Image.Load<Rgba32>(CatalogueIcons.ParametersNode);
             case RDMPConcept.ExtendedProperty:
                 return Image.Load<Rgba32>(CatalogueIcons.ExtendedProperty);
-            case RDMPConcept.AggregateTopX:
-                return Image.Load<Rgba32>(CatalogueIcons.AggregateTopX);
             case RDMPConcept.AggregateContinuousDateAxis:
                 return Image.Load<Rgba32>(CatalogueIcons.AggregateContinuousDateAxis);
             case RDMPConcept.AggregatesNode:
@@ -245,12 +233,6 @@ public class RDMPConceptIconProvider : IIconProvider
                 return Image.Load<Rgba32>(CatalogueIcons.ObjectExport);
             case RDMPConcept.ObjectImport:
                 return Image.Load<Rgba32>(CatalogueIcons.ObjectImport);
-            case RDMPConcept.AllObjectSharingNode:
-                return Image.Load<Rgba32>(CatalogueIcons.AllObjectSharingNode);
-            case RDMPConcept.AllObjectImportsNode:
-                return Image.Load<Rgba32>(CatalogueIcons.AllObjectImportsNode);
-            case RDMPConcept.AllObjectExportsNode:
-                return Image.Load<Rgba32>(CatalogueIcons.AllObjectExportsNode);
             case RDMPConcept.AllConnectionStringKeywordsNode:
                 return Image.Load<Rgba32>(CatalogueIcons.AllConnectionStringKeywordsNode);
             case RDMPConcept.ExtractableColumn:
@@ -265,10 +247,6 @@ public class RDMPConceptIconProvider : IIconProvider
                 return Image.Load<Rgba32>(CatalogueIcons.AllPermissionWindowsNode);
             case RDMPConcept.Waiting:
                 return Image.Load<Rgba32>(CatalogueIcons.Waiting);
-            case RDMPConcept.WaitingForDatabase:
-                return Image.Load<Rgba32>(CatalogueIcons.WaitingForDatabase);
-            case RDMPConcept.Writing:
-                return Image.Load<Rgba32>(CatalogueIcons.Writing);
             case RDMPConcept.Warning:
                 return Image.Load<Rgba32>(CatalogueIcons.Warning);
             case RDMPConcept.Diff:
@@ -319,8 +297,6 @@ public class RDMPConceptIconProvider : IIconProvider
                 return Image.Load<Rgba32>(CatalogueIcons.LoadModuleAssembly);
             case RDMPConcept.TicketingSystemConfiguration:
                 return Image.Load<Rgba32>(CatalogueIcons.TicketingSystemConfiguration);
-            case RDMPConcept.WindowLayout:
-                return Image.Load<Rgba32>(CatalogueIcons.WindowLayout);
             case RDMPConcept.SpontaneouslyInventedColumn:
                 return Image.Load<Rgba32>(CatalogueIcons.SpontaneouslyInventedColumn);
             case RDMPConcept.ProcessTaskArgument:
@@ -361,8 +337,6 @@ public class RDMPConceptIconProvider : IIconProvider
             //    return Image.Load<Rgba32>(CatalogueIcons.RegexRedactionConfiguration);
             //case RDMPConcept.RegexRedactionKey:
             //    return Image.Load<Rgba32>(CatalogueIcons.RegexRedactionKey);
-            case RDMPConcept.AllRegexRedactionConfigurationsNode:
-                return Image.Load<Rgba32>(CatalogueIcons.AllRegexRedactionConfigurationsNode);
             case RDMPConcept.AllTemplateCohortIdentificationConfigurationsNode:
                 return Image.Load<Rgba32>(CatalogueIcons.AllTemplateAggregateConfigurationsNode);
             case RDMPConcept.AssociatedCohortIdentificationTemplatesNode:
