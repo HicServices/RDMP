@@ -35,7 +35,7 @@ internal class SetDumpServerMenuItem : RDMPToolStripMenuItem
         Image = activator.CoreIconProvider.GetImage(RDMPConcept.ExternalDatabaseServer, OverlayKind.Add)
             .ImageToBitmap();
 
-        Image<Rgba32> img = null;
+        //Image<Rgba32> img = null ;
 
         var cataRepo = activator.RepositoryLocator.CatalogueRepository;
 
@@ -47,7 +47,7 @@ internal class SetDumpServerMenuItem : RDMPToolStripMenuItem
         //    Enabled = _availableServers.Any()
         //};
         var miUseExisting = new ToolStripMenuItem("Use Existing...",
-           img.ImageToBitmap(), UseExisting)
+           null, UseExisting)
         {
             Enabled = _availableServers.Any()
         };
@@ -55,7 +55,7 @@ internal class SetDumpServerMenuItem : RDMPToolStripMenuItem
         DropDownItems.Add(miUseExisting);
         //DropDownItems.Add("Create New...", IconOverlayProvider.GetOverlayNoCache(img, OverlayKind.Add).ImageToBitmap(),
         //    CreateNewIdentifierDumpServer);
-        DropDownItems.Add("Create New...", img.ImageToBitmap(),
+        DropDownItems.Add("Create New...", null,
            CreateNewIdentifierDumpServer);
     }
 

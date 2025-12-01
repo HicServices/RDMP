@@ -82,6 +82,14 @@ namespace Rdmp.Core.Icons.IconProvision
                 return ((Byte[])(obj));
             }
         }
+        public static Byte[] SQL
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("SQL", resourceCulture);
+                return ((Byte[])(obj));
+            }
+        }
 
         public static Byte[] Logs
         {

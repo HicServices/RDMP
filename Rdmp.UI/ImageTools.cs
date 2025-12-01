@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Collections.Concurrent;
 using System.IO;
 using SixLabors.ImageSharp;
@@ -20,6 +21,7 @@ public static class ImageTools
 
     public static Bitmap ImageToBitmap(this Image<Rgba32> img)
     {
+
         return ImageToBitmapCacheRgba32.GetOrAdd(img, k =>
         {
             using var stream = new MemoryStream();
@@ -29,7 +31,7 @@ public static class ImageTools
         });
     }
 
-    private static ConcurrentDictionary<byte[], Bitmap> ImageToBitmapCacheByteArray = new ();
+    private static ConcurrentDictionary<byte[], Bitmap> ImageToBitmapCacheByteArray = new();
 
     public static Bitmap ImageToBitmap(this byte[] img)
     {
