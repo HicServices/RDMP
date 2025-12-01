@@ -28,7 +28,7 @@ internal class ExternalDatabaseServerMenu : RDMPContextMenuStrip
 
         if (server.WasCreatedBy(new LoggingDatabasePatcher()))
         {
-            var viewLogs = new ToolStripMenuItem("View Logs", CatalogueIcons.Logging.ImageToBitmap());
+            var viewLogs = new ToolStripMenuItem("View Logs",null);
             Add(new ExecuteCommandViewLogs(_activator, new LogViewerFilter(LoggingTables.DataLoadTask)), Keys.None,
                 viewLogs);
             Add(new ExecuteCommandViewLogs(_activator, new LogViewerFilter(LoggingTables.DataLoadRun)), Keys.None,
@@ -44,7 +44,7 @@ internal class ExternalDatabaseServerMenu : RDMPContextMenuStrip
 
             viewLogs.DropDownItems.Add(new ToolStripSeparator());
 
-            viewLogs.DropDownItems.Add(new ToolStripMenuItem("Query with SQL", CatalogueIcons.SQL.ImageToBitmap(),
+            viewLogs.DropDownItems.Add(new ToolStripMenuItem("Query with SQL",null,
                 ExecuteSqlOnLoggingDatabase));
 
             Items.Add(viewLogs);

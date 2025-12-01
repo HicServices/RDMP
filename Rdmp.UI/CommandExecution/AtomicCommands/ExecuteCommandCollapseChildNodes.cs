@@ -73,7 +73,4 @@ public class ExecuteCommandCollapseChildNodes : BasicUICommandExecution, IAtomic
             _commonFunctionality.Tree.EndUpdate();
         }
     }
-
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        Image.Load<Rgba32>(CatalogueIcons.collapseAllNodes);
 }

@@ -24,7 +24,7 @@ internal class ExtractableDatasetMenu : RDMPContextMenuStrip
                 _activator.CoreIconProvider.GetImage(RDMPConcept.ExtractableDataSet).ImageToBitmap(),
                 (s, e) => SetDisabled(false));
         else
-            Items.Add("Disable Extraction (temporarily)", CatalogueIcons.ExtractableDataSetDisabled.ImageToBitmap(),
+            Items.Add("Disable Extraction (temporarily)", null,
                 (s, e) => SetDisabled(true));
     }
 

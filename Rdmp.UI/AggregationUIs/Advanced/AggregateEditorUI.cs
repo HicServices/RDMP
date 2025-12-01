@@ -235,7 +235,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design, ISaveableUI
         if (_aggregate.IsJoinablePatientIndexTable())
             pictureBox1.Image = CatalogueIcons.BigPatientIndexTable.ImageToBitmap();
         else if (_aggregate.IsCohortIdentificationAggregate)
-            pictureBox1.Image = CatalogueIcons.BigCohort.ImageToBitmap();
+            pictureBox1.Image = CatalogueIcons.CohortIdentificationConfiguration.ImageToBitmap();
         else
             pictureBox1.Image = CatalogueIcons.BigGraph.ImageToBitmap();
 

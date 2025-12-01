@@ -1,4 +1,6 @@
-﻿namespace Rdmp.UI.SimpleControls.MultiSelectChips
+﻿using Rdmp.Core.Icons.IconProvision;
+
+namespace Rdmp.UI.SimpleControls.MultiSelectChips
 {
     partial class Chip
     {
@@ -44,7 +46,7 @@
             // 
             // btnClear
             // 
-            btnClear.BackgroundImage = (System.Drawing.Image)resources.GetObject("btnClear.BackgroundImage");
+            btnClear.BackgroundImage = CatalogueIcons.Failed.ImageToBitmap();
             btnClear.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             btnClear.FlatAppearance.BorderSize = 0;
             btnClear.FlatStyle = System.Windows.Forms.FlatStyle.Flat;

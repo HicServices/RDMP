@@ -1,4 +1,6 @@
-﻿namespace Rdmp.UI.SimpleDialogs
+﻿using Rdmp.Core.Icons.IconProvision;
+
+namespace Rdmp.UI.SimpleDialogs
 {
     partial class UpdateCatalogueDataLocationUI
     {
@@ -61,7 +63,7 @@
             // 
             helpIcon1.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             helpIcon1.BackColor = System.Drawing.Color.Transparent;
-            helpIcon1.BackgroundImage = (System.Drawing.Image)resources.GetObject("helpIcon1.BackgroundImage");
+            helpIcon1.BackgroundImage = CatalogueIcons.Help.ImageToBitmap();
             helpIcon1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             helpIcon1.Location = new System.Drawing.Point(1438, 9);
             helpIcon1.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
@@ -252,7 +254,7 @@
             // helpIcon2
             // 
             helpIcon2.BackColor = System.Drawing.Color.Transparent;
-            helpIcon2.BackgroundImage = (System.Drawing.Image)resources.GetObject("helpIcon2.BackgroundImage");
+            helpIcon2.BackgroundImage = CatalogueIcons.Help.ImageToBitmap();
             helpIcon2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             helpIcon2.Location = new System.Drawing.Point(728, 340);
             helpIcon2.Margin = new System.Windows.Forms.Padding(0);

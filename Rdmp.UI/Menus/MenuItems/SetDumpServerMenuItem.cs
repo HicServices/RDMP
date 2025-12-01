@@ -16,6 +16,7 @@ using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.Menus.MenuItems;
@@ -34,7 +35,7 @@ internal class SetDumpServerMenuItem : RDMPToolStripMenuItem
         Image = activator.CoreIconProvider.GetImage(RDMPConcept.ExternalDatabaseServer, OverlayKind.Add)
             .ImageToBitmap();
 
-        var img = SixLabors.ImageSharp.Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_IdentifierDump);
+        Image<Rgba32> img = null;
 
         var cataRepo = activator.RepositoryLocator.CatalogueRepository;
 

@@ -38,7 +38,7 @@ public partial class ExeProcessTaskUI : ExeProcessTaskUI_Design
     {
         InitializeComponent();
 
-        pbFile.Image = CatalogueIcons.Exe.ImageToBitmap();
+        pbFile.Image = null;
         AssociatedCollection = RDMPCollection.DataLoad;
     }
 

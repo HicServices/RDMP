@@ -36,8 +36,6 @@ public class ExecuteCommandViewDQEResultsForCatalogue : BasicUICommandExecution,
     public override string GetCommandHelp() =>
         "View the results of all data quality engine runs that have ever been run on the dataset";
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => Image.Load<Rgba32>(CatalogueIcons.DQE);
-
     public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
     {
         _catalogue = (Catalogue)target;

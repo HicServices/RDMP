@@ -79,7 +79,7 @@ public class IconProvider : ICoreIconProvider
         {
             if (cac.Operation == SetOperation.UNION) return Image.Load<Rgba32>(CatalogueIcons.UNIONCohortAggregate);
             if (cac.Operation == SetOperation.INTERSECT) return Image.Load<Rgba32>(CatalogueIcons.INTERSECTCohortAggregate);
-            if (cac.Operation == SetOperation.EXCEPT) return Image.Load<Rgba32>(CatalogueIcons.EXCEPTCohortAggregate);
+            //if (cac.Operation == SetOperation.EXCEPT) return Image.Load<Rgba32>(CatalogueIcons.EXCEPTCohortAggregate);
         }
         if (concept is AggregateDimension) return Image.Load<Rgba32>(CatalogueIcons.AggregateDimension);
         if (concept is AggregateContinuousDateAxis) return Image.Load<Rgba32>(CatalogueIcons.AggregateContinuousDateAxis);
@@ -115,7 +115,7 @@ public class IconProvider : ICoreIconProvider
         if (concept is FolderNode<LoadMetadata>) return Image.Load<Rgba32>(CatalogueIcons.LoadMetadataFolder);
         if (concept is LoadMetadata) return Image.Load<Rgba32>(CatalogueIcons.LoadMetadata);
         if (concept is AllPermissionWindowsNode) return Image.Load<Rgba32>(CatalogueIcons.AllPermissionWindowsNode);
-        if (concept is LoadMetadataScheduleNode) return Image.Load<Rgba32>(CatalogueIcons.LoadMetadataScheduleNode);
+        //if (concept is LoadMetadataScheduleNode) return Image.Load<Rgba32>(CatalogueIcons.LoadMetadataScheduleNode);
         if (concept is LoadProgress) return Image.Load<Rgba32>(CatalogueIcons.LoadProgress);
         if (concept is LoadMetadataVersionNode) return Image.Load<Rgba32>(CatalogueIcons.LoadMetadataFolder);
         if (concept is AllProcessTasksUsedByLoadMetadataNode) return Image.Load<Rgba32>(CatalogueIcons.AllProcessTasksUsedByLoadMetadataNode);
@@ -165,7 +165,10 @@ public class IconProvider : ICoreIconProvider
         if (concept is LinkedCohortNode) return Image.Load<Rgba32>(CatalogueIcons.CohortIdentificationConfiguration);
         if (concept is CohortSourceUsedByProjectNode) return Image.Load<Rgba32>(CatalogueIcons.AllCohortsNode);//todo is this right?
         if (concept is DatabaseType) return IconProviders.DatabaseTypeIconProvider.GetIcon(concept);
-        //"ObjectUsedByOtherObjectNode`2" 
+        if (concept is LoadMetadataScheduleNode) return Image.Load<Rgba32>(CatalogueIcons.CatalogueFolder);
+        if (concept is LoadBubble) return Image.Load<Rgba32>(CatalogueIcons.TableInfoDatabaseNode);
+        if (concept is LoadStage) return LoadStageNodeIconProvider.GetIcon(concept);
+        if (concept is ExtractableColumn) return Image.Load<Rgba32>(CatalogueIcons.ColumnInfo);
         var x = concept.GetType();
         return ImageUnknown;
     }

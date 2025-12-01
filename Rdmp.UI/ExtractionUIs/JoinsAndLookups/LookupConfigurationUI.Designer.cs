@@ -1,4 +1,5 @@
 ﻿using BrightIdeasSoftware;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.ChecksUI;
 using Rdmp.UI.SimpleControls;
 using System;
@@ -258,7 +259,7 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
             // 
             // pictureBox1
             // 
-            pictureBox1.ErrorImage = (System.Drawing.Image)resources.GetObject("pictureBox1.ErrorImage");
+            pictureBox1.ErrorImage = CatalogueIcons.FailedLarge.ImageToBitmap();
             pictureBox1.Image = (System.Drawing.Image)resources.GetObject("pictureBox1.Image");
             pictureBox1.InitialImage = (System.Drawing.Image)resources.GetObject("pictureBox1.InitialImage");
             pictureBox1.Location = new System.Drawing.Point(425, 60);

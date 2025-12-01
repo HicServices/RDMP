@@ -1,6 +1,7 @@
 ﻿using Rdmp.UI.SimpleControls;
 using Rdmp.UI.ChecksUI;
 using System;
+using Rdmp.Core.Icons.IconProvision;
 
 namespace Rdmp.UI.SimpleControls
 {
@@ -224,7 +225,7 @@ namespace Rdmp.UI.SimpleControls
             // btnRefreshDatabases
             // 
             btnRefreshDatabases.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            btnRefreshDatabases.Image = (System.Drawing.Image)resources.GetObject("btnRefreshDatabases.Image");
+            btnRefreshDatabases.Image = CatalogueIcons.Refresh.ImageToBitmap();
             btnRefreshDatabases.Location = new System.Drawing.Point(798, 82);
             btnRefreshDatabases.Name = "btnRefreshDatabases";
             btnRefreshDatabases.Size = new System.Drawing.Size(22, 24);
@@ -235,7 +236,7 @@ namespace Rdmp.UI.SimpleControls
             // btnRefreshTables
             // 
             btnRefreshTables.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            btnRefreshTables.Image = (System.Drawing.Image)resources.GetObject("btnRefreshTables.Image");
+            btnRefreshTables.Image = CatalogueIcons.Refresh.ImageToBitmap();
             btnRefreshTables.Location = new System.Drawing.Point(798, 162);
             btnRefreshTables.Name = "btnRefreshTables";
             btnRefreshTables.Size = new System.Drawing.Size(22, 24);

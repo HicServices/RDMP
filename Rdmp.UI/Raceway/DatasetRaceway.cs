@@ -65,8 +65,8 @@ public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
         ddShowPeriod.ComboBox.DataSource = Enum.GetValues(typeof(RacewayShowPeriod));
 
         btnRemoveAll.Image = CatalogueIcons.Delete.ImageToBitmap();
-        _ignoreRowCounts = CatalogueIcons.RowCounts_Ignore.ImageToBitmap();
-        _respectRowCounts = CatalogueIcons.RowCounts_Respect.ImageToBitmap();
+        _ignoreRowCounts = null;
+        _respectRowCounts = null;
     }
 
     private DashboardControl _dashboardControlDatabaseRecord;

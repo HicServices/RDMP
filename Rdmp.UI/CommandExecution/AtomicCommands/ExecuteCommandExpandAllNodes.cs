@@ -64,7 +64,4 @@ public class ExecuteCommandExpandAllNodes : BasicUICommandExecution, IAtomicComm
             _commonFunctionality.Tree.Visible = true;
         }
     }
-
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        Image.Load<Rgba32>(CatalogueIcons.ExpandAllNodes);
 }

@@ -1,5 +1,8 @@
 ﻿
 
+using Rdmp.Core.Icons.IconProvision;
+using Rdmp.UI;
+
 namespace ResearchDataManagementPlatform.WindowManagement.TopBar
 {
     partial class RDMPTaskBarUI
@@ -64,7 +67,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             // 
             // btnCatalogues
             // 
-            btnCatalogues.Image = (System.Drawing.Image)resources.GetObject("btnCatalogues.Image");
+            btnCatalogues.Image = CatalogueIcons.Catalogue.ImageToBitmap();
             btnCatalogues.ImageTransparentColor = System.Drawing.Color.Magenta;
             btnCatalogues.Name = "btnCatalogues";
             btnCatalogues.Size = new System.Drawing.Size(86, 22);
@@ -73,7 +76,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             // 
             // btnCohorts
             // 
-            btnCohorts.Image = (System.Drawing.Image)resources.GetObject("btnCohorts.Image");
+            btnCohorts.Image = CatalogueIcons.CohortIdentificationConfiguration.ImageToBitmap();
             btnCohorts.ImageTransparentColor = System.Drawing.Color.Magenta;
             btnCohorts.Name = "btnCohorts";
             btnCohorts.Size = new System.Drawing.Size(104, 22);
@@ -82,7 +85,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             // 
             // btnDataExport
             // 
-            btnDataExport.Image = (System.Drawing.Image)resources.GetObject("btnDataExport.Image");
+            btnDataExport.Image = CatalogueIcons.Project.ImageToBitmap();
             btnDataExport.ImageTransparentColor = System.Drawing.Color.Magenta;
             btnDataExport.Name = "btnDataExport";
             btnDataExport.Size = new System.Drawing.Size(69, 22);
@@ -91,7 +94,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             // 
             // btnTables
             // 
-            btnTables.Image = (System.Drawing.Image)resources.GetObject("btnTables.Image");
+            btnTables.Image = CatalogueIcons.Settings.ImageToBitmap();
             btnTables.ImageTransparentColor = System.Drawing.Color.Magenta;
             btnTables.Name = "btnTables";
             btnTables.Size = new System.Drawing.Size(65, 22);
@@ -121,7 +124,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             // 
             btnBack.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             btnBack.Enabled = false;
-            btnBack.Image = (System.Drawing.Image)resources.GetObject("btnBack.Image");
+            btnBack.Image = CatalogueIcons.Back.ImageToBitmap();
             btnBack.ImageTransparentColor = System.Drawing.Color.Magenta;
             btnBack.Name = "btnBack";
             btnBack.Size = new System.Drawing.Size(32, 22);
@@ -133,7 +136,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             // 
             btnForward.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             btnForward.Enabled = false;
-            btnForward.Image = (System.Drawing.Image)resources.GetObject("btnForward.Image");
+            btnForward.Image = CatalogueIcons.Forward.ImageToBitmap();
             btnForward.ImageTransparentColor = System.Drawing.Color.Magenta;
             btnForward.Name = "btnForward";
             btnForward.Size = new System.Drawing.Size(23, 22);
@@ -142,7 +145,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             // 
             // btnLoads
             // 
-            btnLoads.Image = (System.Drawing.Image)resources.GetObject("btnLoads.Image");
+            btnLoads.Image = CatalogueIcons.LoadMetadata.ImageToBitmap();
             btnLoads.ImageTransparentColor = System.Drawing.Color.Magenta;
             btnLoads.Name = "btnLoads";
             btnLoads.Size = new System.Drawing.Size(80, 22);
@@ -151,7 +154,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             // 
             // btnSavedCohorts
             // 
-            btnSavedCohorts.Image = (System.Drawing.Image)resources.GetObject("btnSavedCohorts.Image");
+            btnSavedCohorts.Image = CatalogueIcons.CohortIdentificationConfiguration.ImageToBitmap();
             btnSavedCohorts.ImageTransparentColor = System.Drawing.Color.Magenta;
             btnSavedCohorts.Name = "btnSavedCohorts";
             btnSavedCohorts.Size = new System.Drawing.Size(103, 22);
@@ -161,7 +164,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             // cbCommits
             // 
             cbCommits.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            cbCommits.Image = (System.Drawing.Image)resources.GetObject("cbCommits.Image");
+            cbCommits.Image = CatalogueIcons.Commit.ImageToBitmap();
             cbCommits.ImageTransparentColor = System.Drawing.Color.Magenta;
             cbCommits.Name = "cbCommits";
             cbCommits.Size = new System.Drawing.Size(23, 22);
