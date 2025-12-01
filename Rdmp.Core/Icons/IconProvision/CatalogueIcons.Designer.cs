@@ -92,16 +92,6 @@ namespace Rdmp.Core.Icons.IconProvision
             }
         }
 
-        public static Byte[] DQE
-        {
-            get
-            {
-                object obj = ResourceManager.GetObject("DQE", resourceCulture);
-                return ((Byte[])(obj));
-            }
-        }
-
-
         public static Byte[] Settings
         {
             get

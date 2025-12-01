@@ -121,9 +121,6 @@
   <data name="ColumnInfo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\material\ColumnInfo\ColumnInfo.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="DQE" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\material\DQE\DQE.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="TableInfo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\material\TableInfo\TableInfo.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
