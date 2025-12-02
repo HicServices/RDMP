@@ -16,7 +16,7 @@
 | WeCantSpell.Hunspell | [GitHub](https://github.com/aarondandy/WeCantSpell.Hunspell/) | [GPL-2 and others](https://github.com/aarondandy/WeCantSpell.Hunspell/blob/main/license.txt) | |
 | [DockPanelSuite.ThemeVS2015](http://dockpanelsuite.com/) | [GitHub](https://github.com/dockpanelsuite/dockpanelsuite) | [MIT](https://opensource.org/licenses/MIT)  | Provides Window layout and docking for RDMP. | There are no powershell initialization files in the package which can be run by the NuGet installer.|
 | [FAM FAM FAM Icons](https://github.com/markjames/famfamfam-silk-icons) | N\A | [CC 2.5](https://creativecommons.org/licenses/by/2.5/) | Icons for user interfaces |
-| CommandLineParser | [GitHub](https://github.cosystem.m/commandlineparser/commandline) | [MIT](https://opensource.org/licenses/MIT) | Allows command line arguments for main client application and CLI executables |
+| CommandLineParser | [GitHub](https://github.com/commandlineparser/commandline) | [MIT](https://opensource.org/licenses/MIT) | Allows command line arguments for main client application and CLI executables |
 | NPOI | [GitHub](https://github.com/tonyqus/npoi) | Apache 2.0 | Enables reading/writing Microsoft Excel files |
 | ExcelNumberFormat | [GitHub](https://github.com/andersnm/ExcelNumberFormat) |[MIT](https://opensource.org/licenses/MIT)  | Handles translating number formats from Excel formats into usable values | |
 | LibArchive.Net | [GitHub](https://github.com/jas88/libarchive.net) | [BSD](https://opensource.org/license/bsd-2-clause/) | Access archive formats without the LZMA bugs of SharpCompress | |
