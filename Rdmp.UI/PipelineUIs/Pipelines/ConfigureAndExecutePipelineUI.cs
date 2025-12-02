@@ -76,7 +76,6 @@ public partial class ConfigureAndExecutePipelineUI : RDMPUserControl, IPipelineR
         Text = args.WindowTitle;
 
         SetItemActivator(activator);
-        progressUI1.ApplyTheme(activator.Theme);
 
         pipelineDiagram1 = new PipelineDiagramUI(activator)
         {

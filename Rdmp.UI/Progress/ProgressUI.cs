@@ -108,12 +108,6 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
                 new Guid("d698faf6-2ff1-4f71-96e2-9a889c2e3f13"));
         }
     }
-
-    public void ApplyTheme(ITheme theme)
-    {
-        theme.ApplyTo(toolStrip1);
-    }
-
     private Bitmap ImageGetter(object rowObject)
     {
         return rowObject is ProgressUIEntry o

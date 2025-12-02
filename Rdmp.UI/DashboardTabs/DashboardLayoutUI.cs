@@ -57,8 +57,6 @@ public partial class DashboardLayoutUI : DashboardLayoutUI_Design
             .ImageToBitmap();
         _layout = databaseObject;
         ReLayout();
-
-        activator.Theme.ApplyTo(toolStrip1);
     }
 
     private void ReLayout()

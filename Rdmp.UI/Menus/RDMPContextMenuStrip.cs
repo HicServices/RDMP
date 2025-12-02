@@ -63,8 +63,6 @@ public class RDMPContextMenuStrip : ContextMenuStrip
 
         _activator = _args.ItemActivator;
 
-        _activator.Theme.ApplyTo(this);
-
         AtomicCommandUIFactory = new AtomicCommandUIFactory(_activator);
 
         RepositoryLocator = _activator.RepositoryLocator;

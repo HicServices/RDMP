@@ -104,7 +104,6 @@ public class RDMPControlCommonFunctionality
     {
         _activator = activator;
         atomicCommandUIFactory = new AtomicCommandUIFactory(_activator);
-        _activator.Theme.ApplyTo(ToolStrip);
     }
 
 

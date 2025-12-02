@@ -48,7 +48,6 @@ public class ExecuteCommandRefreshExtractionConfigurationsCohort : BasicUIComman
 
         //show the ui
         var progressUi = new ProgressUI();
-        progressUi.ApplyTheme(Activator.Theme);
 
         progressUi.Text = $"Refreshing Cohort ({_extractionConfiguration})";
         Activator.ShowWindow(progressUi, true);

@@ -4,13 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.ComponentModel;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
@@ -27,6 +20,14 @@ using ResearchDataManagementPlatform.WindowManagement;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.ExtenderFunctionality;
 using ResearchDataManagementPlatform.WindowManagement.Licenses;
+using System;
+using System.ComponentModel;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResearchDataManagementPlatform;
@@ -39,7 +40,6 @@ namespace ResearchDataManagementPlatform;
 public partial class RDMPMainForm : RDMPForm
 {
     private readonly PersistenceDecisionFactory _persistenceFactory = new();
-    private readonly ITheme _theme;
     private IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; set; }
 
     /// <summary>
@@ -53,27 +53,8 @@ public partial class RDMPMainForm : RDMPForm
 
         PatchController.EnableAll = true;
 
-        try
-        {
-            var t = UserSettings.Theme;
-            if (!string.IsNullOrWhiteSpace(t))
-            {
-                var type = Type.GetType(t);
-                _theme = type == null ? new MyVS2015BlueTheme() : (ITheme)System.Activator.CreateInstance(type);
-            }
-            else
-            {
-                _theme = new MyVS2015BlueTheme();
-            }
-        }
-        catch (Exception)
-        {
-            _theme = new MyVS2015BlueTheme();
-        }
+        dockPanel1.Theme = new VS2015BlueTheme();
 
-        _theme.ApplyThemeToMenus = UserSettings.ApplyThemeToMenus;
-
-        dockPanel1.Theme = (ThemeBase)_theme;
         dockPanel1.Theme.Extender.FloatWindowFactory = new CustomFloatWindowFactory();
         dockPanel1.DefaultFloatWindowSize = new Size(640, 520);
         dockPanel1.ShowDocumentIcon = true;
@@ -104,7 +85,7 @@ public partial class RDMPMainForm : RDMPForm
         _globalErrorCheckNotifier = exceptionCounter;
         _rdmpTopMenuStrip1.InjectButton(exceptionCounter);
 
-        _windowManager = new WindowManager(_theme, this, _refreshBus, dockPanel1, RepositoryLocator, exceptionCounter);
+        _windowManager = new WindowManager(null, this, _refreshBus, dockPanel1, RepositoryLocator, exceptionCounter);
 
         SetItemActivator(_windowManager.ActivateItems);
 

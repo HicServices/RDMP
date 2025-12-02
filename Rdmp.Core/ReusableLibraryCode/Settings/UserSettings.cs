@@ -120,15 +120,6 @@ public static class UserSettings
     }
 
     /// <summary>
-    /// The colour scheme and format for the RDMP gui client application
-    /// </summary>
-    public static string Theme
-    {
-        get => AppSettings.GetValueOrDefault("Theme", "ResearchDataManagementPlatform.Theme.MyVS2015BlueTheme");
-        set => AppSettings.AddOrUpdateValue("Theme", value);
-    }
-
-    /// <summary>
     /// When selecting a result from the Find dialog the selected item is pinned in the corresponding view.
     /// </summary>
     public static bool FindShouldPin
@@ -223,15 +214,6 @@ public static class UserSettings
     {
         get => AppSettings.GetValueOrDefault("ShowProjectSpecificCatalogues", true);
         set => AppSettings.AddOrUpdateValue("ShowProjectSpecificCatalogues", value);
-    }
-
-    /// <summary>
-    /// True to apply theme changes to context menus and tool strips.
-    /// </summary>
-    public static bool ApplyThemeToMenus
-    {
-        get => AppSettings.GetValueOrDefault("ApplyThemeToMenus", true);
-        set => AppSettings.AddOrUpdateValue("ApplyThemeToMenus", value);
     }
 
     /// <summary>

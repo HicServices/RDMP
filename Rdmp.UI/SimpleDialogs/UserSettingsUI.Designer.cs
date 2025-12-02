@@ -33,9 +33,6 @@
             label1 = new System.Windows.Forms.Label();
             cbEmphasiseOnTabChanged = new System.Windows.Forms.CheckBox();
             cbConfirmExit = new System.Windows.Forms.CheckBox();
-            label2 = new System.Windows.Forms.Label();
-            cbThemeMenus = new System.Windows.Forms.CheckBox();
-            ddTheme = new System.Windows.Forms.ComboBox();
             label3 = new System.Windows.Forms.Label();
             label4 = new System.Windows.Forms.Label();
             ddWordWrap = new System.Windows.Forms.ComboBox();
@@ -156,38 +153,6 @@
             cbConfirmExit.TabIndex = 2;
             cbConfirmExit.Text = "Confirm Application Exit";
             cbConfirmExit.UseVisualStyleBackColor = true;
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Location = new System.Drawing.Point(13, 39);
-            label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            label2.Name = "label2";
-            label2.Size = new System.Drawing.Size(51, 15);
-            label2.TabIndex = 3;
-            label2.Text = "Theme*:";
-            // 
-            // cbThemeMenus
-            // 
-            cbThemeMenus.AutoSize = true;
-            cbThemeMenus.Location = new System.Drawing.Point(514, 38);
-            cbThemeMenus.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            cbThemeMenus.Name = "cbThemeMenus";
-            cbThemeMenus.Size = new System.Drawing.Size(150, 19);
-            cbThemeMenus.TabIndex = 4;
-            cbThemeMenus.Text = "Apply Theme To Menus";
-            cbThemeMenus.UseVisualStyleBackColor = true;
-            // 
-            // ddTheme
-            // 
-            ddTheme.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            ddTheme.FormattingEnabled = true;
-            ddTheme.Location = new System.Drawing.Point(74, 36);
-            ddTheme.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            ddTheme.Name = "ddTheme";
-            ddTheme.Size = new System.Drawing.Size(432, 23);
-            ddTheme.TabIndex = 5;
-            ddTheme.SelectedIndexChanged += ddTheme_SelectedIndexChanged;
             // 
             // label3
             // 
@@ -873,9 +838,6 @@
             Controls.Add(btnClearUserSettings);
             Controls.Add(tbFind);
             Controls.Add(flowLayoutPanel1);
-            Controls.Add(ddTheme);
-            Controls.Add(cbThemeMenus);
-            Controls.Add(label2);
             Controls.Add(label1);
             Controls.Add(label3);
             Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -910,9 +872,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.CheckBox cbEmphasiseOnTabChanged;
         private System.Windows.Forms.CheckBox cbConfirmExit;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.CheckBox cbThemeMenus;
-        private System.Windows.Forms.ComboBox ddTheme;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.ComboBox ddWordWrap;

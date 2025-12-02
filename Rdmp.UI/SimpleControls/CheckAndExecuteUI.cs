@@ -66,7 +66,6 @@ public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClos
         CommonFunctionality.AddToMenu(new ExecuteCommandGenerateRunCommand(activator, Detatch_CommandGetter));
         CommonFunctionality.AddToMenu(new ExecuteCommandRunDetached(activator, Detatch_CommandGetter));
 
-        loadProgressUI1.ApplyTheme(activator.Theme);
     }
 
     private RDMPCommandLineOptions Detatch_CommandGetter() => CommandGetter(CommandLineActivity.run);

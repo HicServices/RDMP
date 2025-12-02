@@ -79,8 +79,6 @@ public partial class RDMPTaskBarUI : UserControl
 
         SetupToolTipText();
 
-        _manager.ActivateItems.Theme.ApplyTo(toolStrip1);
-
         // if we don't support commit system then disable the task bar button for it
         if (!_manager.ActivateItems.RepositoryLocator.CatalogueRepository.SupportsCommits)
         {

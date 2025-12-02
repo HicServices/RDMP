@@ -304,8 +304,6 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
             new ExecuteCommandChoosePlatformDatabase(Activator.RepositoryLocator)
             { OverrideCommandName = "Change Default Instance" }));
 
-        Activator.Theme.ApplyTo(menuStrip1);
-
         try
         {
             BuildSwitchInstanceMenuItems();

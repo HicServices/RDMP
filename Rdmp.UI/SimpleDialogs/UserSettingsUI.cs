@@ -44,7 +44,6 @@ public partial class UserSettingsFileUI : Form
         InitializeComponent();
         //Stop mouse wheel scroll from scrolling the combobox when it's closed to avoid the value being changed without user noticing.
         RDMPControlCommonFunctionality.DisableMouseWheel(ddWordWrap);
-        RDMPControlCommonFunctionality.DisableMouseWheel(ddTheme);
 
 
         olvErrorCodes.CellEditActivation = CellEditActivateMode.SingleClick;
@@ -83,7 +82,6 @@ public partial class UserSettingsFileUI : Form
         RegisterCheckbox(cbEmphasiseOnTabChanged, nameof(UserSettings.EmphasiseOnTabChanged));
         RegisterCheckbox(cbConfirmExit, nameof(UserSettings.ConfirmApplicationExiting));
         RegisterCheckbox(cbFindShouldPin, nameof(UserSettings.FindShouldPin));
-        RegisterCheckbox(cbThemeMenus, nameof(UserSettings.ApplyThemeToMenus));
         RegisterCheckbox(cbWait5Seconds, nameof(UserSettings.Wait5SecondsAfterStartupUI));
         RegisterCheckbox(cbShowCohortWizard, nameof(UserSettings.ShowCohortWizard));
         RegisterCheckbox(cbStrictValidationForCohortBuilderContainers,
@@ -116,8 +114,6 @@ public partial class UserSettingsFileUI : Form
         AddTooltip(tbTooltipAppearDelay, nameof(UserSettings.TooltipAppearDelay));
         AddTooltip(label4, nameof(UserSettings.WrapMode));
         AddTooltip(ddWordWrap, nameof(UserSettings.WrapMode));
-        AddTooltip(ddTheme, nameof(UserSettings.Theme));
-        AddTooltip(label2, nameof(UserSettings.Theme));
         AddTooltip(label5, nameof(UserSettings.HeatMapColours));
         AddTooltip(tbHeatmapColours, nameof(UserSettings.HeatMapColours));
 
@@ -128,15 +124,6 @@ public partial class UserSettingsFileUI : Form
         olvMessage.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
         olvMessage.MaximumWidth = olvMessage.Width;
         olvMessage.MinimumWidth = olvMessage.Width;
-
-        ddTheme.DataSource = new[]
-        {
-            "ResearchDataManagementPlatform.Theme.MyVS2015BlueTheme",
-            "ResearchDataManagementPlatform.Theme.MyVS2015DarkTheme",
-            "ResearchDataManagementPlatform.Theme.MyVS2015LightTheme"
-        };
-
-        ddTheme.SelectedItem = UserSettings.Theme;
 
         ddWordWrap.DataSource = Enum.GetValues(typeof(WrapMode));
         ddWordWrap.SelectedItem = (WrapMode)UserSettings.WrapMode;
@@ -215,15 +202,6 @@ public partial class UserSettingsFileUI : Form
 
         var cb = (CheckBox)sender;
         checkboxDictionary[cb].SetValue(null, cb.Checked);
-    }
-
-    private void ddTheme_SelectedIndexChanged(object sender, EventArgs e)
-    {
-        if (!_bLoaded)
-            return;
-
-        if (ddTheme.SelectedItem is string t)
-            UserSettings.Theme = t;
     }
 
     private void ddWordWrap_SelectedIndexChanged(object sender, EventArgs e)
