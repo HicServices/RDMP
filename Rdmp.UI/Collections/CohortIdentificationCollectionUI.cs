@@ -167,4 +167,9 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
     }
     private string FrozenAspectGetter(object o) =>
         o is CohortIdentificationConfiguration cic ? cic.Frozen ? "Yes" : "No" : null;
+
+    public void RefreshBus_DoWork(object sender, DoWorkEventArgs e)
+    {
+        //throw new NotImplementedException();
+    }
 }
