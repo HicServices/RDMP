@@ -154,7 +154,7 @@ public abstract class ConcreteContainer : DatabaseEntity, IContainer
     }
 
     /// <inheritdoc />
-    public abstract bool ShouldBeReadOnly(out string reason);
+    public abstract bool ShouldBeReadOnly(string context, out string reason);
 
     public abstract IContainer DeepCloneEntireTreeRecursivelyIncludingFilters();
 

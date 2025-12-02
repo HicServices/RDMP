@@ -209,7 +209,6 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
             //reset to flat view
             tlvCatalogues.RemoveObject(Activator.CoreChildProvider.CatalogueRootFolder);
             tlvCatalogues.AddObjects(Activator.CoreChildProvider.AllCatalogues);
-            tlvCatalogues.RefreshObjects(Activator.CoreChildProvider.AllCatalogues);
             _renderingFlatFiew = true;
         }
         else if(!UserSettings.ShowFlatLists && _renderingFlatFiew)

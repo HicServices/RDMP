@@ -50,6 +50,8 @@ public interface ICoreChildProvider : IChildProvider
     FolderNode<LoadMetadata> LoadMetadataRootFolder { get; }
     FolderNode<CohortIdentificationConfiguration> CohortIdentificationConfigurationRootFolder { get; }
     FolderNode<CohortIdentificationConfiguration> CohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations { get; }
+
+    AllTemplateCohortIdentificationConfigurationsNode AllTemplateCohortIdentificationConfigurationsNode { get; }
     Catalogue[] AllCatalogues { get; }
     Curation.Data.Dataset[] AllDatasets { get; }
     Dictionary<int, Catalogue> AllCataloguesDictionary { get; }

@@ -4,6 +4,13 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
+using System.ClientModel.Primitives;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
 using NPOI.OpenXmlFormats.Dml;
 using Org.BouncyCastle.Asn1.X509.Qualified;
 using Rdmp.Core.Caching.Pipeline;
@@ -36,14 +43,6 @@ using Rdmp.Core.Repositories.Managers.HighPerformance;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Comments;
 using Rdmp.Core.ReusableLibraryCode.Settings;
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
-using ZstdSharp.Unsafe;
 
 namespace Rdmp.Core.Providers;
 
@@ -359,6 +358,11 @@ public class CatalogueChildProvider : ICoreChildProvider
     LazyWithReset<AggregateConfiguration[]> _lazyTemplateAggregateConfigurations = new(() => []);
     public AggregateConfiguration[] TemplateAggregateConfigurations { get => _lazyTemplateAggregateConfigurations.Value; }
 
+    LazyWithReset<AllTemplateCohortIdentificationConfigurationsNode> _lazyAllTemplateCohortIdentificationConfigurationsNode = new(() => new AllTemplateCohortIdentificationConfigurationsNode());
+    public AllTemplateCohortIdentificationConfigurationsNode AllTemplateCohortIdentificationConfigurationsNode { get => _lazyAllTemplateCohortIdentificationConfigurationsNode.Value; }
+
+    LazyWithReset<CohortIdentificationConfiguration[]> _lazyAllTemplateCohortIdentificationConfigurations = new(() => []);
+    public CohortIdentificationConfiguration[] AllTemplateCohortIdentificationConfigurations { get => _lazyAllTemplateCohortIdentificationConfigurations.Value; }
 
     protected Stopwatch ProgressStopwatch = Stopwatch.StartNew();
     private int _progress;
@@ -649,7 +653,7 @@ public class CatalogueChildProvider : ICoreChildProvider
             return x;
         });
 
-
+        _lazyAllTemplateCohortIdentificationConfigurations = new LazyWithReset<CohortIdentificationConfiguration[]>(() => GetAllObjects<CohortIdentificationConfiguration>(repository).Where(cic => cic.IsTemplate).ToArray());
         _lazyCohortidentificationConfigurationRootFolder = new LazyWithReset<FolderNode<CohortIdentificationConfiguration>>(() =>
         {
             var x = FolderHelper.BuildFolderTree(AllCohortIdentificationConfigurations);

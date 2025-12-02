@@ -487,6 +487,7 @@ public class DataExportChildProvider : CatalogueChildProvider
                      assoc.Project_ID == projectCiCsNode.Project.ID))
         {
             var matchingCic = AllCohortIdentificationConfigurations.SingleOrDefault(cic =>
+                cic.ID == association.CohortIdentificationConfiguration_ID) ?? AllTemplateCohortIdentificationConfigurations.SingleOrDefault(cic =>
                 cic.ID == association.CohortIdentificationConfiguration_ID);
 
             if (matchingCic == null)

@@ -169,9 +169,9 @@ public abstract class ConcreteFilter : DatabaseEntity, IFilter, ICheckable, IOrd
     }
 
     /// <inheritdoc />
-    public bool ShouldBeReadOnly(out string reason)
+    public bool ShouldBeReadOnly(string context,out string reason)
     {
         reason = null;
-        return FilterContainer?.ShouldBeReadOnly(out reason) ?? false;
+        return FilterContainer?.ShouldBeReadOnly(context,out reason) ?? false;
     }
 }
