@@ -10,6 +10,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Providers.Nodes.CohortNodes;
 using Rdmp.UI.CommandExecution.AtomicCommands;
@@ -70,8 +71,6 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
             typeof(AllTemplateAggregateConfigurationsNode)
         };
         var rootFolder = Activator.CoreChildProvider.CohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations;
-        rootFolder.ChildFolders = new List<FolderNode<CohortIdentificationConfiguration>>();
-        rootFolder.ChildObjects = new List<CohortIdentificationConfiguration>();
 
         tlvCohortIdentificationConfigurations.AddObject(rootFolder);
         tlvCohortIdentificationConfigurations.AddObject(Activator.CoreChildProvider.AllTemplateCohortIdentificationConfigurationsNode);
@@ -170,6 +169,35 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
 
     public void RefreshBus_DoWork(object sender, DoWorkEventArgs e)
     {
-        //throw new NotImplementedException();
+        var o = (IMapsDirectlyToDatabaseTable)e.Argument;
+        if (tlvCohortIdentificationConfigurations.InvokeRequired)
+        {
+            switch (o)
+            {
+                case CohortIdentificationConfiguration:
+                    _ = Activator.CoreChildProvider.CohortIdentificationConfigurationRootFolder;
+                    _ = Activator.CoreChildProvider.AllCohortIdentificationConfigurations;
+                    _ = Activator.CoreChildProvider.AllTemplateCohortIdentificationConfigurationsNode;
+                    _ = Activator.CoreChildProvider.OrphanAggregateConfigurationsNode;
+                    _ = Activator.CoreChildProvider.TemplateAggregateConfigurationsNode;
+                    _ = Activator.CoreChildProvider.TemplateAggregateConfigurationsNode;
+                    break;
+            }
+            RefreshCallback rb = new RefreshCallback(RefreshBus_DoWork);
+            this.Invoke(rb, sender, e);
+
+        }
+        else
+        {
+            switch (o)
+            {
+                case CohortIdentificationConfiguration:
+                    tlvCohortIdentificationConfigurations.RefreshObject(Activator.CoreChildProvider.CohortIdentificationConfigurationRootFolder);
+                    tlvCohortIdentificationConfigurations.RefreshObject(Activator.CoreChildProvider.AllTemplateCohortIdentificationConfigurationsNode);
+                    tlvCohortIdentificationConfigurations.RefreshObject(Activator.CoreChildProvider.OrphanAggregateConfigurationsNode);
+                    tlvCohortIdentificationConfigurations.RefreshObject(Activator.CoreChildProvider.TemplateAggregateConfigurationsNode);
+                    break;
+            }
+        }
     }
 }

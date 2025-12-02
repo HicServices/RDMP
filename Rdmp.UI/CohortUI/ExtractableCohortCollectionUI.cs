@@ -6,8 +6,10 @@
 
 using BrightIdeasSoftware;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.CohortDescribing;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
@@ -236,6 +238,14 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
     {
         if (lbCohortDatabaseTable.InvokeRequired)
         {
+            var o = (IMapsDirectlyToDatabaseTable)e.Argument;
+            switch (o)
+            {
+                case CohortIdentificationConfiguration:
+                    _ = Activator.CoreChildProvider.AllCohortIdentificationConfigurations;
+                    break;
+            }
+
             RefreshCallback rb = new RefreshCallback(RefreshBus_DoWork);
             this.Invoke(rb, sender, e);
 
