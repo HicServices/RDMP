@@ -21,7 +21,7 @@ using System.Threading.Tasks;
 using Tests.Common.Scenarios;
 namespace Rdmp.Core.Tests.DataExport.DataRelease;
 
-public sealed class S3BucketReleaseDestinationTests : TestsRequiringAnExtractionConfiguration
+public class S3BucketReleaseDestinationTests : TestsRequiringAnExtractionConfiguration
 {
     private const string Username = "minioadmin";
     private const string Password = "minioadmin";
@@ -65,7 +65,7 @@ public sealed class S3BucketReleaseDestinationTests : TestsRequiringAnExtraction
         _minioClient.RemoveBucketAsync(rbArgs).Wait();
     }
 
-    private static List<Minio.DataModel.Item> GetObjects(string bucketName)
+    private List<Minio.DataModel.Item> GetObjects(string bucketName)
     {
         var loArgs = new ListObjectsArgs().WithBucket(bucketName);
         var x = _minioClient.ListObjectsEnumAsync(loArgs);
@@ -73,7 +73,7 @@ public sealed class S3BucketReleaseDestinationTests : TestsRequiringAnExtraction
         return results;
     }
 
-    public static async Task<List<T>> ToListAsync<T>(this IAsyncEnumerable<T> items,
+    private async Task<List<T>> ToListAsync<T>(IAsyncEnumerable<T> items,
         CancellationToken cancellationToken = default)
     {
         var results = new List<T>();
