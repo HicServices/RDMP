@@ -1,25 +1,27 @@
-﻿using NUnit.Framework;
-using Minio;
-using Rdmp.Core.ReusableLibraryCode.AWS;
-using Tests.Common.Scenarios;
-using Rdmp.Core.DataFlowPipeline;
-using Rdmp.Core.ReusableLibraryCode.Progress;
-using System;
-using Rdmp.Core.Curation.Data.Pipelines;
-using Rdmp.Core.DataExport.DataRelease;
+﻿using Minio;
+using Minio.ApiEndpoints;
+using Minio.DataModel.Args;
+using NUnit.Framework;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.CommandLine.Runners;
-using Rdmp.Core.CommandExecution;
-using Rdmp.Core.ReusableLibraryCode.Checks;
-using System.Linq;
-using Minio.DataModel.Args;
-using System.Collections.Generic;
-using Minio.DataModel;
 using Rdmp.Core.Curation.Data.DataLoad;
-
+using Rdmp.Core.Curation.Data.Pipelines;
+using Rdmp.Core.DataExport.DataRelease;
+using Rdmp.Core.DataFlowPipeline;
+using Rdmp.Core.ReusableLibraryCode.AWS;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Progress;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reactive.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Tests.Common.Scenarios;
 namespace Rdmp.Core.Tests.DataExport.DataRelease;
 
-public sealed class S3BucketReleaseDestinationTests : TestsRequiringAnExtractionConfiguration
+public class S3BucketReleaseDestinationTests : TestsRequiringAnExtractionConfiguration
 {
     private const string Username = "minioadmin";
     private const string Password = "minioadmin";
@@ -63,11 +65,22 @@ public sealed class S3BucketReleaseDestinationTests : TestsRequiringAnExtraction
         _minioClient.RemoveBucketAsync(rbArgs).Wait();
     }
 
-    private static List<Minio.DataModel.Item> GetObjects(string bucketName)
+    private List<Minio.DataModel.Item> GetObjects(string bucketName)
     {
         var loArgs = new ListObjectsArgs().WithBucket(bucketName);
-        var x = _minioClient.ListObjectsEnumAsync(loArgs).ToListAsync();
-        return x.IsCompleted ? x.Result : x.AsTask().Result;
+        var x = _minioClient.ListObjectsEnumAsync(loArgs);
+        var results = ToListAsync(x).Result;
+        return results;
+    }
+
+    private async Task<List<T>> ToListAsync<T>(IAsyncEnumerable<T> items,
+        CancellationToken cancellationToken = default)
+    {
+        var results = new List<T>();
+        await foreach (var item in items.WithCancellation(cancellationToken)
+                                        .ConfigureAwait(false))
+            results.Add(item);
+        return results;
     }
 
     private static void SetArgs(IArgument[] args, Dictionary<string, object> values)

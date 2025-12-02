@@ -4,13 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.ComponentModel;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
+using NPOI.OpenXmlFormats.Wordprocessing;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
@@ -27,6 +21,13 @@ using ResearchDataManagementPlatform.WindowManagement;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.ExtenderFunctionality;
 using ResearchDataManagementPlatform.WindowManagement.Licenses;
+using System;
+using System.ComponentModel;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResearchDataManagementPlatform;
@@ -52,7 +53,6 @@ public partial class RDMPMainForm : RDMPForm
         InitializeComponent();
 
         PatchController.EnableAll = true;
-
         try
         {
             var t = UserSettings.Theme;
