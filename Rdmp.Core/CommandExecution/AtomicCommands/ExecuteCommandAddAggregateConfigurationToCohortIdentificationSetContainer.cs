@@ -44,7 +44,7 @@ public class ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetCon
     {
         _targetCohortAggregateContainer = targetCohortAggregateContainer;
 
-        if (targetCohortAggregateContainer.ShouldBeReadOnly(out var reason))
+        if (targetCohortAggregateContainer.ShouldBeReadOnly(this.GetType().Name,out var reason))
             SetImpossible(reason);
 
         UseTripleDotSuffix = true;

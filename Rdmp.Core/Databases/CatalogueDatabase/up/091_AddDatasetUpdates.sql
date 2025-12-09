@@ -1,4 +1,4 @@
-﻿--Version: 8.4.4
+﻿--Version: 9.1.1
 --Description: Add new metadata fields for catalogues
 if not exists (select 1 from sys.tables where name = 'CatalogueDatasetLinkage')
 BEGIN

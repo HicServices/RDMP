@@ -86,7 +86,7 @@ public abstract class BasicCommandExecution : IAtomicCommand
 
     protected void SetImpossibleIfReadonly(IMightBeReadOnly m)
     {
-        if (m?.ShouldBeReadOnly(out var reason) == true)
+        if (m?.ShouldBeReadOnly(this.GetType().Name,out var reason) == true)
             SetImpossible(
                 $"{(m is IContainer ? "Container" : '\'' + m.ToString() + '\'')} is readonly because:{reason}");
     }

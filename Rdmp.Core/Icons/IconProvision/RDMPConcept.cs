@@ -216,5 +216,7 @@ public enum RDMPConcept
     AllRegexRedactionConfigurationsNode,
     DatasetProviderConfiguration,
     AllDatasetProviderConfigurationsNode,
-    PluginDataset
+    PluginDataset,
+    AllTemplateCohortIdentificationConfigurationsNode,
+    AssociatedCohortIdentificationTemplatesNode
 }

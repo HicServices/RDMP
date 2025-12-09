@@ -784,6 +784,15 @@
   <data name="RegexRedactionKey" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\StandardRegex31.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="AllTemplateCohortIdentificationConfigurationsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\AllTemplateCohortIdentificationConfigurationsNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="TemplateCohortIdentificationConfiguration" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\TemplateCohortIdentificationConfiguration.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="AssociatedCohortIdentificationTemplatesNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\AssociatedCohortIdentificationTemplatesNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="AllDatasetProviderConfigurationsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\DataProvider.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
