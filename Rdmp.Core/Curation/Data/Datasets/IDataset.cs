@@ -7,7 +7,7 @@
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 
-namespace Rdmp.Core.Curation.Data;
+namespace Rdmp.Core.Curation.Data.Datasets;
 
 /// <summary>
 /// The core of datasets within RDMP.
@@ -20,6 +20,26 @@ public interface IDataset: IMapsDirectlyToDatabaseTable
     /// </summary>
     ICatalogueRepository CatalogueRepository { get; }
 
+    /// <summary>
+    /// The Name of the Dataset
+    /// </summary>
     string Name { get; }
+
+    /// <summary>
+    /// The (optional) DOI of the dataset
+    /// </summary>
     string DigitalObjectIdentifier { get; }
+
+    /// <summary>
+    /// The Source of the Dataset e.g. Pure, HDR
+    /// </summary>
+    string Type { get; }
+
+    /// <summary>
+    /// The URL to access the dataset
+    /// </summary>
+    string Url { get; }
+
+    public abstract string GetID();
+    public abstract string GetRemoteID();
 }

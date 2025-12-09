@@ -9,6 +9,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.Providers;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
@@ -28,8 +29,7 @@ public sealed class ExecuteCommandAssociateCohortIdentificationConfigurationWith
         if (!activator.CoreChildProvider.AllCohortIdentificationConfigurations.Any())
             SetImpossible("There are no Cohort Identification Configurations yet");
 
-        _existingAssociations = BasicActivator.RepositoryLocator.DataExportRepository
-            .GetAllObjects<ProjectCohortIdentificationConfigurationAssociation>();
+        _existingAssociations = ((DataExportChildProvider)activator.CoreChildProvider).AllProjectAssociatedCics;
     }
 
     public override string GetCommandHelp() =>

@@ -351,6 +351,23 @@ public class DataExportChildProvider : CatalogueChildProvider
         children.Add(associatedCohortConfigurations);
         AddChildren(associatedCohortConfigurations, descendancy.Add(associatedCohortConfigurations));
 
+
+        var associatedTemplatesNode = new AssociatedCohortIdentificationTemplatesNode(projectCohortsNode.Project);
+        children.Add(associatedTemplatesNode);
+        AddChildren(associatedTemplatesNode, descendancy.Add(associatedTemplatesNode));
+
+        AddToDictionaries(children, descendancy);
+    }
+
+    private void AddChildren(AssociatedCohortIdentificationTemplatesNode associatedCohortIdentificationTemplatesNode, DescendancyList descendancy)
+    {
+        var children = new HashSet<object>();
+        var associatedCohorts = associatedCohortIdentificationTemplatesNode.Project.GetAssociatedTemplateCohortIdentificationConfigurations();
+        foreach (var cohort in associatedCohorts)
+        {
+            children.Add(cohort);
+        }
+
         AddToDictionaries(children, descendancy);
     }
 
@@ -390,6 +407,7 @@ public class DataExportChildProvider : CatalogueChildProvider
                      assoc.Project_ID == projectCiCsNode.Project.ID))
         {
             var matchingCic = AllCohortIdentificationConfigurations.SingleOrDefault(cic =>
+                cic.ID == association.CohortIdentificationConfiguration_ID) ?? AllTemplateCohortIdentificationConfigurations.SingleOrDefault(cic =>
                 cic.ID == association.CohortIdentificationConfiguration_ID);
 
             if (matchingCic == null)
@@ -830,6 +848,7 @@ public class DataExportChildProvider : CatalogueChildProvider
             AllDatasetsNode = dxOther.AllDatasetsNode;
             AllRegexRedactionConfigurations = dxOther.AllRegexRedactionConfigurations;
             AllRegexRedactionConfigurationsNode = dxOther.AllRegexRedactionConfigurationsNode;
+            AllDatasetProviderConfigurationsNode = dxOther.AllDatasetProviderConfigurationsNode;
         }
     }
 

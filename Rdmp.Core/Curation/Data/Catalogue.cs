@@ -14,8 +14,10 @@ using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.CohortCreation.Execution;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.Curation.Data.Datasets;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Serialization;
@@ -30,6 +32,7 @@ using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Annotations;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
+using Rdmp.Core.Startup;
 using Rdmp.Core.Ticketing;
 
 namespace Rdmp.Core.Curation.Data;
@@ -85,7 +88,6 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
     private int? _pivotCategoryExtractionInformationID;
     private bool _isDeprecated;
     private bool _isInternalDataset;
-    private bool _isColdStorageDataset;
     private int? _liveLoggingServerID;
 
     private string _shortDescription;
@@ -490,15 +492,6 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
     }
 
     /// <inheritdoc/>
-    [DoNotExtractProperty]
-    [DoNotImportDescriptions]
-    public bool IsColdStorageDataset
-    {
-        get => _isColdStorageDataset;
-        set => SetField(ref _isColdStorageDataset, value);
-    }
-
-    /// <inheritdoc/>
     [Relationship(typeof(ExternalDatabaseServer), RelationshipType.LocalReference)]
     [DoNotExtractProperty]
     public int? LiveLoggingServer_ID
@@ -559,6 +552,7 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
     /// <inheritdoc/>
     public LoadMetadata[] LoadMetadatas()
     {
+        
         var loadMetadataLinkIDs = Repository.GetAllObjectsWhere<LoadMetadataCatalogueLinkage>("CatalogueID", ID).Select(l => l.LoadMetadataID);
 
         return Repository.GetAllObjects<LoadMetadata>().Where(cat => loadMetadataLinkIDs.Contains(cat.ID)).ToArray();
@@ -1103,7 +1097,6 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
         Source_URL = ParseUrl(r, "Source_URL");
         IsDeprecated = (bool)r["IsDeprecated"];
         IsInternalDataset = (bool)r["IsInternalDataset"];
-        IsColdStorageDataset = (bool)r["IsColdStorageDataset"];
 
         Folder = r["Folder"].ToString();
 
@@ -1146,6 +1139,25 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
 
     /// <inheritdoc/>
     public override string ToString() => Name;
+
+    public List<Datasets.Dataset> GetLinkedDatasets()
+    {
+        return CatalogueRepository.GetAllObjectsWhere<CatalogueDatasetLinkage>("Catalogue_ID", this.ID).Select(l => l.Dataset).Distinct().ToList();
+    }
+
+    public override void SaveToDatabase()
+    {
+        base.SaveToDatabase();
+        foreach (var dataset in CatalogueRepository.GetAllObjectsWhere<CatalogueDatasetLinkage>("Catalogue_ID", this.ID).Where(cdl => cdl.Autoupdate).Select(cld => cld.Dataset))
+        {
+            var provider = CatalogueRepository.GetObjectByID<DatasetProviderConfiguration>((int)dataset.Provider_ID);
+            var providerConfiguration = CatalogueRepository.GetObjectByID<DatasetProviderConfiguration>((int)dataset.Provider_ID);
+            var repositoryProvider = new UserSettingsRepositoryFinder();
+            var activator = new ThrowImmediatelyActivator(repositoryProvider, ThrowImmediatelyCheckNotifier.Quiet);
+            var providerInstance = providerConfiguration.GetProviderInstance(activator);
+            providerInstance.UpdateUsingCatalogue(dataset, this);
+        }
+    }
 
     /// <summary>
     /// Sorts alphabetically based on <see cref="Name"/>

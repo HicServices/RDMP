@@ -169,7 +169,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
         if (IsDatabaseObjects())
         {
-            _allObjects = toSelectFrom.ToArray();
+            _allObjects = toSelectFrom.Distinct().ToArray();
             _searchables = _allObjects.Cast<IMapsDirectlyToDatabaseTable>()
                 .ToDictionary(k => k, activator.CoreChildProvider.GetDescendancyListIfAnyFor);
             _usefulPropertyFinder = new AttributePropertyFinder<UsefulPropertyAttribute>(_searchables.Keys);
@@ -188,7 +188,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         }
         else
         {
-            _allObjects = toSelectFrom.ToArray();
+            _allObjects = toSelectFrom.Distinct().ToArray();
 
             // don't bother with the tool strip because its not database objects so we can't filter by ID/type etc
             Controls.Remove(toolStrip1);
@@ -448,12 +448,8 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
                 v => UserSettings.ShowInternalCatalogues = v, "I", "Include Internal");
             AddUserSettingCheckbox(() => UserSettings.ShowDeprecatedCatalogues,
                 v => UserSettings.ShowDeprecatedCatalogues = v, "D", "Include Deprecated");
-            AddUserSettingCheckbox(() => UserSettings.ShowColdStorageCatalogues,
-                v => UserSettings.ShowColdStorageCatalogues = v, "C", "Include Cold Storage");
             AddUserSettingCheckbox(() => UserSettings.ShowProjectSpecificCatalogues,
                 v => UserSettings.ShowProjectSpecificCatalogues = v, "P", "Include Project Specific");
-            AddUserSettingCheckbox(() => UserSettings.ShowNonExtractableCatalogues,
-                v => UserSettings.ShowNonExtractableCatalogues = v, "E", "Include Extractable");
         }
     }
 

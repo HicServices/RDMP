@@ -4,6 +4,40 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [9.1.1] - 2025-12-02
+- Allow Atlassian service workers to write to Confluence from RDMP
+
+## [9.1.0] - 2025-11-24
+- Fix bug with duplicate searchables
+- Improve UI for committing cohorts across projects
+- Add the ability to Template Cohort Identification Configurations (see [Documentation\cohorts\CohortIdentificationConfigurationTemplates.md])
+- Require all deletes to enter a commit message when using the commit system
+- Introduce ability to view Catalogues in a flat view
+- Fix bug where Internal catalogues were still able to be added to a CIC
+- Add ability to use archive trigger when re-releasing to a database
+
+## [9.0.3] - 2025-11-03
+- Improve checking for default pipelines
+- Improve confluence catalogue metadata extraction
+- Improve project specific catalogue error handling
+
+## [9.0.2] - 2025-10-21
+- Add ability to view logs as a flat list. Default settings can be updated via user settings
+- allow the use of Catalogue CIC filters in corresponding Extractions
+- Add Data Load component to allow SQL to be executed on an external database server
+- Improve Extraction Log Viewer Filter
+- Add Dataset Variable document to extractions
+- Update extractability to only allow non-internal projects to be extracted
+- Remove functionality to mark individual catalogues as extractable/not extractable. Favor use of marking as internal.
+- Move RSA key checks to fix bug where bad RSA keys were causing issues at launch
+- Add cli command to export catalogue metadata to a Atlassian Confluence space
+- Allow the use of network share RSA keys
+
+
+## [9.0.1] - 2025-07-31
+- Improve Right-click performance
+- Fix bug where orphaned filters were causing issues with cohort configurations
+
 ## [9.0.0] - 2025-07-23
 - Add ability to use Extraction Configuration ID in the naming scheme of the extract to database Pipeline component
 - Update Cohort Versioning Icons and Interface

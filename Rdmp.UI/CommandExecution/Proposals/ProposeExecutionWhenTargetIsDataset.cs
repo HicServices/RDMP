@@ -5,7 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.CommandExecution;
-using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Datasets;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Annotations;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SubComponents;
@@ -25,7 +26,11 @@ internal class
 
     public override void Activate(Dataset target)
     {
-        ItemActivator.Activate<DatasetConfigurationUI, Dataset>(target);
+        var providerConfiguration = ItemActivator.RepositoryLocator.CatalogueRepository.GetObjectByID<DatasetProviderConfiguration>((int)target.Provider_ID);
+        var provider = providerConfiguration.GetProviderInstance(ItemActivator);
+        var remoteURL = provider.GetRemoteURL(target);
+        if(remoteURL != null)
+            UsefulStuff.OpenUrl(remoteURL);
     }
 
     [CanBeNull]

@@ -4,12 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Data;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
 using FAnsi.Discovery;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
@@ -18,7 +12,10 @@ using Rdmp.Core.DataExport.DataExtraction.UserPicks;
 using Rdmp.Core.DataExport.DataRelease.Pipeline;
 using Rdmp.Core.DataExport.DataRelease.Potential;
 using Rdmp.Core.DataFlowPipeline;
+using Rdmp.Core.DataLoad.Engine.Job.Scheduling;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
+using Rdmp.Core.DataLoad.Triggers.Exceptions;
+using Rdmp.Core.DataLoad.Triggers.Implementations;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
@@ -26,6 +23,12 @@ using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.Core.ReusableLibraryCode.Progress;
+using System;
+using System.Data;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
 using YamlDotNet.Core;
 
 namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
@@ -109,6 +112,10 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
     [DemandsInitialization("An optional list of columns to index on e.g \"Column1, Column2\"")]
     public string UserDefinedIndex { get; set; }
 
+
+    [DemandsInitialization("When writing to an existing database, will update records and store historical versions via a view", DefaultValue = false)]
+    public bool UseArchiveTrigger { get; set; }
+
     private DiscoveredDatabase _destinationDatabase;
     private DataTableUploadDestination _destination;
 
@@ -177,6 +184,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
             var existing = _destinationDatabase.ExpectTable(tblName);
             if (existing.Exists())
             {
+                var hasPKs = existing.DiscoverColumns().Any(col => col.IsPrimaryKey);
                 if (_request.IsBatchResume)
                 {
                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
@@ -193,6 +201,26 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
 
                     // since we dropped it we should treat it as if it was never there to begin with
                     _tableDidNotExistAtStartOfLoad = true;
+                }
+                else if (UseArchiveTrigger && hasPKs)
+                {
+
+                    TriggerImplementerFactory triggerFactory = new TriggerImplementerFactory(FAnsi.DatabaseType.MicrosoftSQLServer);
+                    var implementor = triggerFactory.Create(existing);
+                    bool present;
+                    try
+                    {
+                        present = implementor.GetTriggerStatus() == DataLoad.Triggers.TriggerStatus.Enabled;
+                    }
+                    catch (TriggerMissingException)
+                    {
+                        present = false;
+                    }
+                    if (!present)
+                    {
+                        implementor.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
+                    }
+
                 }
                 else
                 {
@@ -223,10 +251,12 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         _destination.IncludeTimeStamp = IncludeTimeStamp;
         _destination.UseTrigger = AppendDataIfTableExists;
         _destination.IndexTables = IndexTables;
+        _destination.UseTrigger = UseArchiveTrigger;
         _destination.IndexTableName = GetIndexName();
         if (UserDefinedIndex is not null)
             _destination.UserDefinedIndexes = UserDefinedIndex.Split(',').Select(i => i.Trim()).ToList();
         _destination.PreInitialize(_destinationDatabase, listener);
+
 
         return _destination;
     }
@@ -343,7 +373,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         }
 
 
-        return indexName.Replace(" ","");
+        return indexName.Replace(" ", "");
     }
 
     private string GetTableName(string suffix = null)
@@ -664,12 +694,32 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                     $"Catalogue '{dsRequest.Catalogue}' does not have an Acronym but TableNamingPattern contains $a",
                     CheckResult.Fail));
 
+       
+
         base.Check(notifier);
 
         try
         {
             var server = DataAccessPortal.ExpectServer(TargetDatabaseServer, DataAccessContext.DataExport, false);
             var database = _destinationDatabase = server.ExpectDatabase(GetDatabaseName());
+
+            if (UseArchiveTrigger)
+            {
+                if (_request is ExtractDatasetCommand dsRequest)
+                {
+                    var existing = _destinationDatabase.ExpectTable(dsRequest.Catalogue.Name);
+                    if (existing.Exists())
+                    {
+                        var hasPKs = existing.DiscoverColumns().Any(col => col.IsPrimaryKey);
+                        if (!hasPKs)
+                        {
+                            notifier.OnCheckPerformed(new CheckEventArgs(
+                               $"Catalogue does not have any PKS. Cannot apply the archive trigger",
+                               CheckResult.Fail));
+                        }
+                    }
+                }
+            }
 
             if (database.Exists())
             {
