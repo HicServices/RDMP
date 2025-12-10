@@ -5,8 +5,10 @@ using MathNet.Numerics;
 using Newtonsoft.Json;
 using NPOI.POIFS.Crypt;
 using NPOI.SS.UserModel.Charts;
+using NPOI.XWPF.UserModel;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Dataset.Confluence;
+using Renci.SshNet.Sftp;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -33,31 +35,67 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         private readonly HttpClient _client = new();
         private readonly string _datasetsEndpoint = "/v2/datasets";
 
+        public class HDRDatasetDataCustodian
+        {
+            public HDRDatasetDataCustodian() { }
+            public HDRDatasetDataCustodian(Catalogue catalogue)
+            {
+                //todo check this
+                name = catalogue.DataController;
+                contactPoint = catalogue.Contact_details;
+            }
+            public string name { get; set; }//this needs to be populated
+            public int identifier { get; set; } = 0;
+            public string contactPoint { get; set; }//this needs to be populated
+            public object logo { get; set; }
+            public object description { get; set; }
+            public object memberOf { get; set; }
+        }
+
+        public class HDRDatasetDocumentation
+        {
+            public HDRDatasetDocumentation() { }
+            public HDRDatasetDocumentation(Catalogue catalogue)
+            {
+                description = catalogue.Description;
+            }
+            public string description { get; set; }//this needs to be populated;
+        }
         public class HDRDatasetMetadataSummary
         {
+
             public HDRDatasetMetadataSummary(Catalogue catalogue)
             {
                 title = catalogue.Name;
                 populationSize = 0;
-                contactPoint = "";
+                @abstract = catalogue.ShortDescription;
+                contactPoint = catalogue.Administrative_contact_email;
+                dataCustodian = new HDRDatasetDataCustodian(catalogue);
             }
             public HDRDatasetMetadataSummary() { }
-            public string @abstract { get; set; }
-            public string contactPoint { get; set; }
+            public string @abstract { get; set; }//this needs to be populated
+            public string contactPoint { get; set; }//this needs to be populated
             public List<object> keywords { get; set; }
             public object doiName { get; set; }
             public string title { get; set; }
-            //public DataCustodian dataCustodian { get; set; }
+            public HDRDatasetDataCustodian dataCustodian { get; set; } = new HDRDatasetDataCustodian();
             public int populationSize { get; set; }
             public object alternateIdentifiers { get; set; }
         }
         public class HDRDatasetAccess
         {
+            public HDRDatasetAccess() { }
+            public HDRDatasetAccess(Catalogue catalogue)
+            {
+                //todo access rights
+                accessRights = catalogue.Access_options;
+                //jurisdiction = catalogue.Juristiction.Split(',').ToList();
+            }
             public string deliveryLeadTime { get; set; }
-            public List<string> jurisdiction { get; set; }
+            //public List<string> jurisdiction { get; set; }
             public string dataController { get; set; }
             public string dataProcessor { get; set; }
-            public string accessRights { get; set; }
+            public string accessRights { get; set; }//this needs to be populated
             public string accessService { get; set; }
             public string accessRequestCost { get; set; }
             public object accessServiceCategory { get; set; }
@@ -67,7 +105,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         {
             public override DateTime ReadJson(JsonReader reader, Type objectType, DateTime existingValue, bool hasExistingValue, Newtonsoft.Json.JsonSerializer serializer)
             {
-                return DateTime.Parse(reader.ReadAsString());
+                return existingValue;
             }
 
 
@@ -79,23 +117,35 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
         public class HDRDatasetTemporal
         {
-            [JsonConverter(typeof(CustomDateTimeConverterThreeMilliseconds))]
+            public HDRDatasetTemporal() { }
+            public HDRDatasetTemporal(Catalogue catalogue)
+            {
+                timeLag = catalogue.UpdateLag.ToString();
+                publishingFrequency = catalogue.Update_freq.ToString();
+            }
 
+            [JsonConverter(typeof(CustomDateTimeConverterThreeMilliseconds))]
             public DateTime? endDate { get; set; }
 
             [JsonConverter(typeof(CustomDateTimeConverterThreeMilliseconds))]
-            public DateTime startDate { get; set; }
-            public string timeLag { get; set; }
-            public string publishingFrequency { get; set; }
+            public DateTime startDate { get; set; } = DateTime.Now;
+            public string timeLag { get; set; }//this needs to be populated
+            public string publishingFrequency { get; set; }//this needs to be populated
             public object distributionReleaseDate { get; set; }
         }
 
         public class HDRDatasetFormatAndStandards
         {
-            public List<string> conformsTo { get; set; }
-            public List<string> vocabularyEncodingScheme { get; set; }
-            public List<string> language { get; set; }
-            public List<string> format { get; set; }
+            public HDRDatasetFormatAndStandards() { }
+            public HDRDatasetFormatAndStandards(Catalogue catalogue)
+            {
+                //todo
+            }
+
+            public string conformsTo { get; set; } = "LOCAL";// new List<string>() { "LOCAL" };
+            public string vocabularyEncodingScheme { get; set; } = "LOCAL";// new List<string>() { "LOCAL" };
+            public string language { get; set; } = "en";// new List<string>() { "en" };
+            public string format { get; set; } = "CSV;,Database;";//new List<string>() { "CSV", "Database" };
         }
 
         public class HDRDatasetOrigin
@@ -116,14 +166,25 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         }
         public class HDRDatasetAccessibility
         {
-            public HDRDatasetAccess access { get; set; }
+            public HDRDatasetAccessibility() { }
+            public HDRDatasetAccessibility(Catalogue catalogue)
+            {
+                //access = new HDRDatasetAccess(catalogue);
+                formatAndStandards = new HDRDatasetFormatAndStandards(catalogue);
+            }
+            //public HDRDatasetAccess access = new HDRDatasetAccess();
             public HDRDatasetUsage usage { get; set; }
-            public HDRDatasetFormatAndStandards formatAndStandards { get; set; }
+            public HDRDatasetFormatAndStandards formatAndStandards { get; set; } = new HDRDatasetFormatAndStandards();
         }
         public class HDRDatasetProvenance
         {
+            public HDRDatasetProvenance() { }
+            public HDRDatasetProvenance(Catalogue catalogue)
+            {
+                temporal = new HDRDatasetTemporal(catalogue);
+            }
             public HDRDatasetOrigin origin { get; set; }
-            public HDRDatasetTemporal temporal { get; set; }
+            public HDRDatasetTemporal temporal { get; set; } = new HDRDatasetTemporal();
         }
         public class HDRDatasetRevision
         {
@@ -131,12 +192,32 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             public string url { get; set; }
         }
 
+        public class HDRDatasetCoverage
+        {
+
+            public HDRDatasetCoverage() { }
+            public HDRDatasetCoverage(Catalogue catalogue)
+            {
+                spatial = catalogue.Country_of_origin;
+            }
+            public string spatial { get; set; } = "Prussia";
+        }
+
+        public class HDRDatasetRequired{
+            public string issued { get; set; }
+            public string version { get; set; }
+            public string modified { get; set; }
+            public string gatewayId { get; set; }
+            public string gatewayPid { get; set; }
+
+            public List<HDRDatasetRevision> revisions { get; set; } = new();
+        }
+
         public class HDRDatasetMetadata
         {
-       
+
             public HDRDatasetMetadata(Catalogue catalogue)
             {
-                identifier = "";
                 version = "1.0.0";
                 modified = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
                 issued = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
@@ -151,30 +232,21 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             public HDRDatasetMetadataSummary summary = new HDRDatasetMetadataSummary();
             public HDRDatasetAccessibility accessibility = new HDRDatasetAccessibility();
             public List<object> observations = new List<object>();
+            public HDRDatasetDocumentation documentation = new HDRDatasetDocumentation();
+            public HDRDatasetCoverage coverage = new HDRDatasetCoverage();
             public HDRDatasetProvenance provenance = new HDRDatasetProvenance();
+            public List<object> tissueSampleCollection = new List<object> { };
         }
 
         public class HDRDatasetInterMetadata
         {
             public HDRDatasetMetadata metadata { get; set; }
-            public HDRDatasetInterMetadata() { }
-            public HDRDatasetInterMetadata(Catalogue catalogue)
-            {
-                metadata = new HDRDatasetMetadata(catalogue);
-            }
         }
 
         private class HDRDatasetLatestMetadata
         {
             public int id { get; set; }
             public HDRDatasetInterMetadata metadata { get; set; }
-
-            public HDRDatasetLatestMetadata() { }
-            public HDRDatasetLatestMetadata(Catalogue catalogue)
-            {
-                metadata = new HDRDatasetInterMetadata(catalogue);
-            }
-
         }
 
         private class HDRDatasetObject
@@ -192,10 +264,12 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
         private class HDRDatasetCreationBody
         {
+            public string status = "ACTIVE";
+            public string create_origin = "MANUAL";
             public HDRDatasetMetadata metadata = new();
             public HDRDatasetCreationBody(Catalogue catalogue)
             {
-                metadata =  new HDRDatasetMetadata(catalogue);
+                metadata = new HDRDatasetMetadata(catalogue);
             }
         }
 
@@ -208,15 +282,17 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             _clientID = clientID;
         }
 
-        private bool CatalogueExists(Catalogue catalogue)
+        private HDRDatasetObject CatalogueExists(Catalogue catalogue)
         {
-            var url = $"{_url}{_datasetsEndpoint}?title={catalogue.Name}&team={_team}";
+            var url = $"{_url}{_datasetsEndpoint}?title={catalogue.Name}&team={_team}&with_metadata=true";
             var response = Task.Run(async () => await _client.GetAsync(url)).Result;
             var contentString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
             var content = JsonConvert.DeserializeObject<HDRResponse>(contentString);
-            if (!content.data.Any()) return false;
-            if (content.data.Any(dataset => dataset.latest_metadata.metadata.metadata.summary.title == catalogue.Name)) return true;
-            return false;
+            if (!content.data.Any()) return null;
+            var found = content.data.FirstOrDefault(dataset => dataset.latest_metadata.metadata.metadata.summary.title == catalogue.Name);
+            if (found != null) return found;
+            return null;
+
         }
 
         private void CreateDataset(Catalogue catalogue)
@@ -230,13 +306,60 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 IncludeFields = true,
                 DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
             };
-            var jsonString = "{\"metadata\":{\"identifier\":\"05ec5a13-3955-45a3-b449-8aba78622113\",\"issued\":\"2025-01-08T11:23:35.000Z\",\"modified\":\"2025-01-08T11:23:35.000Z\",\"revisions\":[{\"version\":\"1.0.0\",\"url\":\"http://www.example.com/\"}],\"version\":\"1.0.0\",\"summary\":{\"abstract\":\"Thisisatestdatasetabstract-update11\",\"contactPoint\":\"jfriel001@dundee.ac.uk\",\"keywords\":[],\"doiName\":null,\"title\":\"JFRIELTESTDataset\",\"dataCustodian\":{\"name\":\"HealthInformaticsCentre-UniversityofDundee\",\"identifier\":\"12\",\"contactPoint\":\"jfriel001@dundee.ac.uk\",\"logo\":null,\"description\":null,\"memberOf\":null},\"populationSize\":-1,\"alternateIdentifiers\":null},\"documentation\":{\"description\":\"TESTDescription3\",\"associatedMedia\":null,\"inPipeline\":\"Notavailable\"},\"coverage\":{\"pathway\":null,\"spatial\":\"Prussia,OttomanEmpire,GranColombia\",\"followUp\":null,\"datasetCompleteness\":null,\"materialType\":[\"Other\"],\"typicalAgeRangeMin\":0,\"typicalAgeRangeMax\":0},\"provenance\":{\"origin\":{\"purpose\":[],\"source\":[],\"collectionSource\":[],\"datasetType\":[\"Healthanddisease\"],\"datasetSubType\":[\"Notapplicable\"],\"imageContrast\":\"Notstated\"},\"temporal\":{\"endDate\":null,\"startDate\":\"2025-01-01T11:26:16.000Z\",\"timeLag\":\"Variable\",\"publishingFrequency\":\"Irregular\",\"distributionReleaseDate\":null}},\"accessibility\":{\"access\":{\"deliveryLeadTime\":\"Notapplicable\",\"jurisdiction\":[\"UK\",\"SC\"],\"dataController\":\"HealthInformaticsCentre-UniversityofDundee\",\"dataProcessor\":\"HealthInformaticsCentre-UniversityofDundee\",\"accessRights\":\"https://www.dundee.ac.uk/hic/governance-service\",\"accessService\":\"HIChasimplementedaremote-accessTrustedResearchEnvironmenttoprotectdataconfidentiality,satisfypublicconcernsaboutdatalossandreassureDataControllersaboutHIC\\u00e2\\u20ac\\u2122ssecuremanagementandprocessingoftheirdata.\\n\\nDataisnotreleasedexternallytodatausersforanalysisontheirowncomputersbutplacedonaserveratHIC,withinarestricted,secureITenvironment,wherethedatauserisgivensecureremoteaccesstocarryouttheiranalysis.\\n\\nFulldetailsareavailableviathefollowinglink:\\nhttps://www.dundee.ac.uk/hic/safe-haven\",\"accessRequestCost\":\"Quotationavailableonrequest\",\"accessServiceCategory\":null},\"usage\":{\"dataUseLimitation\":[\"Generalresearchuse\"],\"resourceCreator\":null,\"dataUseRequirements\":null},\"formatAndStandards\":{\"conformsTo\":[\"I2B2\"],\"vocabularyEncodingScheme\":[\"LOCAL\"],\"language\":[\"en\"],\"format\":[\"CSV\",\"Database\"]}},\"enrichmentAndLinkage\":{\"tools\":[],\"investigations\":[],\"publicationAboutDataset\":[],\"publicationUsingDataset\":[],\"derivedFrom\":null,\"isPartOf\":null,\"linkableDatasets\":null,\"similarToDatasets\":null},\"observations\":[],\"structuralMetadata\":{\"tables\":[],\"syntheticDataWebLink\":null},\"demographicFrequency\":null,\"omics\":null}}";//System.Text.Json.JsonSerializer.Serialize(body, serializeOptions);
+            var jsonString = System.Text.Json.JsonSerializer.Serialize(body, serializeOptions);
             var httpContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
             var response = Task.Run(async () => await _client.PostAsync(url, httpContent)).Result;
+            if (response.StatusCode != System.Net.HttpStatusCode.Created)
+            {
+                //couldn't create, so will try draft - maybe the metadata is missing something
+                body.status = "DRAFT";
+                jsonString = System.Text.Json.JsonSerializer.Serialize(body, serializeOptions);
+                httpContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
+                response = Task.Run(async () => await _client.PostAsync(url, httpContent)).Result;
+                if(response.StatusCode != System.Net.HttpStatusCode.Created)
+                {
+                    Console.WriteLine($"Unable to create dataset for {catalogue.Name}");
+                    return;
+                }
+            }
             var contentString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
             var content = JsonConvert.DeserializeObject<HDRResponse>(contentString);
             Console.WriteLine($"Created Dataset '{catalogue.Name}'");
+        }
 
+        private void UpdateDataset(Catalogue catalogue,HDRDatasetObject existingObject)
+        {
+            var url = $"{_url}/v2/teams/{_team}/datasets/{existingObject.id}?input_schema=HDRUK&input_version=3.0.0?input_schema=HDRUK&input_version=3.0.0";
+            var body = existingObject.latest_metadata;
+
+            //HDRDatasetCreationBody body = new HDRDatasetCreationBody(catalogue);
+            var serializeOptions = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                WriteIndented = true,
+                IncludeFields = true,
+                DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+            };
+            //body.metadata.summary.title = body.metadata.summary.title + new Random().NextInt64(30);
+            var jsonString = System.Text.Json.JsonSerializer.Serialize(body, serializeOptions);
+            var httpContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
+            var response = Task.Run(async () => await _client.PatchAsync(url, httpContent)).Result;
+            //if (response.StatusCode != System.Net.HttpStatusCode.Created)
+            //{
+            //    //couldn't create, so will try draft - maybe the metadata is missing something
+            //    body.status = "DRAFT";
+            //    jsonString = System.Text.Json.JsonSerializer.Serialize(body, serializeOptions);
+            //    httpContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
+            //    response = Task.Run(async () => await _client.PostAsync(url, httpContent)).Result;
+            //    if (response.StatusCode != System.Net.HttpStatusCode.Created)
+            //    {
+            //        Console.WriteLine($"Unable to create dataset for {catalogue.Name}");
+            //        return;
+            //    }
+            //}
+            var contentString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
+            var content = JsonConvert.DeserializeObject<HDRResponse>(contentString);
+            Console.WriteLine($"Updated Dataset '{catalogue.Name}'");
         }
 
         public override void Execute()
@@ -250,10 +373,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 .ToList();
             foreach (var catalogue in catalogues)
             {
-                if (CatalogueExists(catalogue))
+                var existingDataset = CatalogueExists(catalogue);
+                if (existingDataset != null)
                 {
                     //update
-                    Console.WriteLine($"update {catalogue.Name}");
+                    UpdateDataset(catalogue,existingDataset);
                 }
                 else
                 {
