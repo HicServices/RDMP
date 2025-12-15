@@ -17,6 +17,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
@@ -40,9 +41,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             public HDRDatasetDataCustodian() { }
             public HDRDatasetDataCustodian(Catalogue catalogue)
             {
-                //todo check this
-                name = catalogue.DataController;
-                contactPoint = catalogue.Contact_details;
+                name = catalogue.DataProcessor;
+                contactPoint = catalogue.Administrative_contact_email;
             }
             public string name { get; set; }//this needs to be populated
             public int identifier { get; set; } = 0;
@@ -63,10 +63,6 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         }
         private class HDRDatasetMetadataSummary
         {
-            public HDRDatasetMetadataSummary(HDRDatasetObject datasetObject)
-            {
-                //todo
-            }
             public HDRDatasetMetadataSummary(Catalogue catalogue)
             {
                 title = catalogue.Name;
@@ -74,6 +70,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 @abstract = catalogue.ShortDescription;
                 contactPoint = catalogue.Administrative_contact_email;
                 dataCustodian = new HDRDatasetDataCustodian(catalogue);
+                controlledKeywords = catalogue.Search_keywords;
+                doiName = catalogue.Doi;
             }
             public HDRDatasetMetadataSummary() { }
             public string @abstract { get; set; }//this needs to be populated
@@ -88,15 +86,43 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         }
         public class HDRDatasetAccess
         {
+
+            private string mapUpdateLag(Catalogue.UpdateLagTimes time)
+            {
+                switch (time)
+                {
+                    case Catalogue.UpdateLagTimes.LessThanAWeek:
+                        return "Less than 1 week";
+                    case Catalogue.UpdateLagTimes.OneToTwoWeeks:
+                        return "1-2 weeks";
+                    case Catalogue.UpdateLagTimes.TwoToFourWeeks:
+                        return "2-4 weeks";
+                    case Catalogue.UpdateLagTimes.OneToTwoMonths:
+                        return "1-2 months";
+                    case Catalogue.UpdateLagTimes.TwoToSixMonths:
+                        return "2-6 months";
+                    case Catalogue.UpdateLagTimes.SixMonthsPlus:
+                        return "More than 6 months";
+                    case Catalogue.UpdateLagTimes.Variable:
+                        return "Variable";
+                    case Catalogue.UpdateLagTimes.NotApplicable:
+                        return "Not applicable";
+                    case Catalogue.UpdateLagTimes.Other:
+                        return "Other";
+                }
+                return null;
+            }
+
             public HDRDatasetAccess() { }
             public HDRDatasetAccess(Catalogue catalogue)
             {
                 //todo access rights
-                accessRights = catalogue.Access_options;
-                //jurisdiction = catalogue.Juristiction.Split(',').ToList();
+                accessRights = "TODO";// catalogue.Access_options;
+                jurisdiction = catalogue.Juristiction.Split(',').ToList();
+                deliveryLeadTime = mapUpdateLag(catalogue.UpdateLag);
             }
             public string deliveryLeadTime { get; set; }
-            //public List<string> jurisdiction { get; set; }
+            public object jurisdiction { get; set; }
             public string dataController { get; set; }
             public string dataProcessor { get; set; }
             public string accessRights { get; set; }//this needs to be populated
@@ -148,19 +174,89 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 //todo
             }
 
-            public string conformsTo { get; set; } = "LOCAL";
-            public string vocabularyEncodingSchemes { get; set; } = "LOCAL";
-            public string languages { get; set; } = "en";
-            public string formats { get; set; } = "CSV;,Database;";
+            public object conformsTo { get; set; } = new List<string>() { "LOCAL" };
+            public object vocabularyEncodingScheme { get; set; } = new List<string>() { "LOCAL" };
+            public object language { get; set; } = new List<string>() { "en" };
+            public object format { get; set; } = new List<string>() { "CSV", "Database" };
         }
 
         public class HDRDatasetOrigin
         {
-            public List<object> purpose { get; set; }
-            public List<object> source { get; set; }
-            public List<object> collectionSource { get; set; }
-            public List<string> datasetType { get; set; }
-            public List<string> datasetSubType { get; set; }
+
+
+            public HDRDatasetOrigin() { }
+
+
+            private string mapDatasetType(string datasetType)
+            {
+                switch (datasetType)
+                {
+                    case "HealthcareAndDisease":
+                        return "Health and disease";
+                    case "TreatmentsAndInterventions":
+                        return "Treatments/Interventions";
+                    case "MeasurementsAndTests":
+                        return "Measurements/Tests";
+                    case "ImagingTypes":
+                        return "Imaging Types";
+                    case "Omics":
+                        return "Omics";
+                    case "Socioeconomic":
+                        return "Socioeconomic";
+                    case "Lifestyle":
+                        return "Lifestyle";
+                    case "Registry":
+                        return "Registry";
+                    case "EnvironmentalAndEnergy":
+                        return "Environment and energy";
+                    case "InformationAndCommunication":
+                        return "Information and communication";
+                    case "Politics":
+                        return "Politics";
+                }
+                return "";
+            }
+
+            private string mapDataSourceType(string dataSourceType)
+            {
+                switch (dataSourceType)
+                {
+                    case "Other":
+                        return "Other";
+                    case "EPR":
+                        return "EPR";
+                    case "ElectronicSurvey":
+                        return "Electronic survey";
+                    case "LIMS":
+                        return "LIMS";
+                    case "PaperBased":
+                        return "Paper-based";
+                    case "FreeTextNLP":
+                        return "TODO";
+                    case "MachineLearning":
+                        return "Machine generated";
+                }
+                return "";
+            }
+            private class DataTypeObject
+            {
+                public string name;
+                public List<string> subTypes = new();
+            }
+
+            public HDRDatasetOrigin(Catalogue catalogue)
+            {
+                source = catalogue.DataSource.Split(',').Select(s => mapDataSourceType(s)).Where(s => s != "");
+                //collectionSource = catalogue.Source_of_data_collection != null? string.Join(";,", catalogue.Source_of_data_collection.Split(',')) + ';':null; 
+                datasetType = catalogue.DataType != null ? catalogue.DataType.Split(',').Select(s => mapDatasetType(s)).Where(s => s != "").Select(s => new DataTypeObject() { name = s }) : null; //catalogue.DataType;//this has been updated
+                Console.WriteLine('w');
+                //datasetSubType = catalogue.DataSubType != null? string.Join(";,", catalogue.DataSubType.Split(',')) + ';':null; //catalogue.DataSubType;
+            }
+            public string purpose { get; set; }
+            public object source { get; set; }
+            public string collectionSource { get; set; }
+            public object datasetType { get; set; }//sometimes string ,somelimes list
+            public string datasetSubType { get; set; }
             public string imageContrast { get; set; }
         }
 
@@ -173,29 +269,24 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         private class HDRDatasetAccessibility
         {
             public HDRDatasetAccessibility() { }
-            public HDRDatasetAccessibility(HDRDatasetObject datasetObject)
-            {
-                //todo
-            }
+
             public HDRDatasetAccessibility(Catalogue catalogue)
             {
-                //access = new HDRDatasetAccess(catalogue);
+                access = new HDRDatasetAccess(catalogue);
                 formatAndStandards = new HDRDatasetFormatAndStandards(catalogue);
             }
-            public object access { get; set; }// = new HDRDatasetAccess();//todo there is an issue descerialising this
+            public object access { get; set; }// there is an issue descerialising this as it's sometimes an object, sometimes a list
             public HDRDatasetUsage usage { get; set; }
             public HDRDatasetFormatAndStandards formatAndStandards { get; set; } = new HDRDatasetFormatAndStandards();
         }
         private class HDRDatasetProvenance
         {
             public HDRDatasetProvenance() { }
-            public HDRDatasetProvenance(HDRDatasetObject datasetObject)
-            {
-                //todo
-            }
+
             public HDRDatasetProvenance(Catalogue catalogue)
             {
                 temporal = new HDRDatasetTemporal(catalogue);
+                origin = new HDRDatasetOrigin(catalogue);
             }
             public HDRDatasetOrigin origin { get; set; }
             public HDRDatasetTemporal temporal { get; set; } = new HDRDatasetTemporal();
@@ -210,25 +301,20 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         {
 
             public HDRDatasetCoverage() { }
-            public HDRDatasetCoverage(HDRDatasetObject datasetObject)
-            {
-                //todo
-            }
+
             public HDRDatasetCoverage(Catalogue catalogue)
             {
-                spatial = catalogue.Country_of_origin;
+                spatial = catalogue.Geographical_coverage;
             }
             public string spatial { get; set; } = "Prussia";
+            //TODO - min age, max age, coverage, pathway
         }
 
         private class HDRDatasetRequired
         {
 
             public HDRDatasetRequired() { }
-            public HDRDatasetRequired(HDRDatasetObject datasetObject)
-            {
-                //todo
-            }
+
             public string issued { get; set; }
             public string version { get; set; }
             public string modified { get; set; }
@@ -247,6 +333,10 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 modified = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
                 issued = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
                 summary = new HDRDatasetMetadataSummary(catalogue);
+                documentation = new HDRDatasetDocumentation(catalogue);
+                provenance = new HDRDatasetProvenance(catalogue);
+                coverage = new HDRDatasetCoverage(catalogue);
+                accessibility = new HDRDatasetAccessibility(catalogue);
             }
             public HDRDatasetMetadata() { }
             public string identifier = "";
@@ -260,7 +350,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             public HDRDatasetDocumentation documentation = new HDRDatasetDocumentation();
             public HDRDatasetCoverage coverage = new HDRDatasetCoverage();
             public HDRDatasetProvenance provenance = new HDRDatasetProvenance();
-            public List<object> tissueSampleCollection = new List<object> { };
+            //public List<object> tissueSampleCollection = new List<object> { };
             public HDRDatasetRequired required { get; set; }
         }
 
@@ -312,11 +402,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             public HDRDatasetUpdateMetadata() { }
             public HDRDatasetUpdateMetadata(HDRDatasetObject datasetObject)
             {
-                summary = datasetObject.latest_metadata.metadata.metadata.summary;//new HDRDatasetMetadataSummary(datasetObject);
-                coverage = datasetObject.latest_metadata.metadata.metadata.coverage;// new HDRDatasetCoverage(datasetObject);
-                required = datasetObject.latest_metadata.metadata.metadata.required; //new HDRDatasetRequired(datasetObject);
-                provenance = datasetObject.latest_metadata.metadata.metadata.provenance; //new HDRDatasetProvenance(datasetObject);
-                accessibility = datasetObject.latest_metadata.metadata.metadata.accessibility; //new HDRDatasetAccessibility(datasetObject);
+                summary = datasetObject.latest_metadata.metadata.metadata.summary;
+                coverage = datasetObject.latest_metadata.metadata.metadata.coverage;
+                required = datasetObject.latest_metadata.metadata.metadata.required;
+                provenance = datasetObject.latest_metadata.metadata.metadata.provenance;
+                accessibility = datasetObject.latest_metadata.metadata.metadata.accessibility;
             }
         }
 
@@ -333,7 +423,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
         private class HDRDatasetUpdateBody
         {
-            public string status = "ACTIVE";
+            public string status = "DRAFT";
             public HDRDatasetUpdateInterMetadata metadata { get; set; }
 
             public HDRDatasetUpdateBody() { }
@@ -342,63 +432,6 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 metadata = new HDRDatasetUpdateInterMetadata(datasetObject);
             }
 
-        }
-
-        private class HDRDatasetPUTBody
-        {
-            public string status = "ACTIVE";
-            public string create_origin = "MANUAL";
-            //todo put metadata/metadata in here for put specific
-
-            //            {
-            //    "status":"ACTIVE",
-            //    "metadata": {
-            //        "metadata": {
-            //            "summary": {
-            //                "title": "jf_Biochemistry3",
-            //                "abstract": "12345",
-            //                "controlledKeywords": null
-            //            },
-            //            "coverage": {
-            //                "spatial": "Prussia"
-            //            },
-            //            "required": {
-            //                "issued": "2025-12-09T14:53:07.260524Z",
-            //                "version": "1.0.0",
-            //                "modified": "2025-12-09T14:53:07.260541Z",
-            //                "gatewayId": "1995",
-            //                "revisions": [
-            //                    {
-            //                        "url": "https://web.preprod.hdruk.cloud/dataset/1995?version=1.0.0",
-            //                        "version": "1.0.0"
-            //                    }
-            //                ],
-            //                "gatewayPid": "7e01763e-3d8f-4801-8fe1-548ede6e2f4e"
-            //            },
-            //            "provenance": {
-            //                "temporal": {
-            //                    "timeLag": "Less than 1 week",
-            //                    "startDate": "2025-12-09T14:53:06.9626377+00:00",
-            //                    "accrualPeriodicity": "Quarterly",
-            //                    "distributionReleaseDate": null
-            //                }
-            //            },
-            //            "observations": [],
-            //            "accessibility": {
-            //    "access": {
-            //        "accessRights": "123"
-            //                },
-            //                "formatAndStandards": {
-            //        "formats": "CSV",
-            //                    "languages": "en",
-            //                    "conformsTo": "HL7 FHIR",
-            //                    "vocabularyEncodingSchemes": "LOCAL"
-            //                }
-            //},
-            //            "tissuesSampleCollection": []
-            //        }
-            //    }
-            //}
         }
 
         public ExecuteCommandExportCataloguesToHDRGateway(IBasicActivateItems activator, string url, int team, string appID, string clientID)
@@ -425,7 +458,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
         private void CreateDataset(Catalogue catalogue)
         {
-            var url = $"{_url}/v2/teams/{_team}/datasets?input_schema=HDRUK&input_version=3.0.0?input_schema=HDRUK&input_version=3.0.0";
+            var url = $"{_url}/v2/teams/{_team}/datasets?input_schema=HDRUK&input_version=4.0.0?input_schema=HDRUK&input_version=4.0.0";
             HDRDatasetCreationBody body = new HDRDatasetCreationBody(catalogue);
             var serializeOptions = new JsonSerializerOptions
             {
@@ -450,14 +483,12 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                     return;
                 }
             }
-            var contentString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
-            var content = JsonConvert.DeserializeObject<HDRResponse>(contentString);
             Console.WriteLine($"Created Dataset '{catalogue.Name}'");
         }
 
         private void UpdateDataset(Catalogue catalogue, HDRDatasetObject existingObject)
         {
-            var url = $"{_url}/v2/teams/{_team}/datasets/{existingObject.id}?input_schema=HDRUK&input_version=3.0.0?input_schema=HDRUK&input_version=3.0.0";
+            var url = $"{_url}/v2/teams/{_team}/datasets/{existingObject.id}?input_schema=HDRUK&input_version=4.0.0?input_schema=HDRUK&input_version=4.0.0";
 
             HDRDatasetUpdateBody body = new HDRDatasetUpdateBody(existingObject);
             var serializeOptions = new JsonSerializerOptions
@@ -472,8 +503,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             body.metadata.metadata.summary.controlledKeywords = "this;,that;";
             body.metadata.metadata.provenance.temporal.timeLag = "Less than 1 week";
             body.metadata.metadata.provenance.temporal.distributionReleaseDate = null;
-            body.metadata.metadata.provenance.temporal.accrualPeriodicity = "Quarterly";
-            body.metadata.metadata.accessibility.access = new HDRDatasetAccess() { accessRights="123"};
+            body.metadata.metadata.provenance.temporal.accrualPeriodicity = body.metadata.metadata.provenance.temporal.publishingFrequency;//todo check this?
+            body.metadata.metadata.accessibility.access = new HDRDatasetAccess() { accessRights = "123" };
             body.metadata.metadata.accessibility.usage = null;
             var jsonString = System.Text.Json.JsonSerializer.Serialize(body, serializeOptions);
             var httpContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
