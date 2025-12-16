@@ -34,8 +34,7 @@ public class EvaluateNamespacesAndSolutionFoldersTests : DatabaseTests
         "ProjectInstaller.cs",
         "ProjectInstaller.Designer.cs",
         "TableView.cs",
-        "TreeView.cs",
-        "ExecuteCommandExportCataloguesToHDRGateway.cs"
+        "TreeView.cs"
     };
 
     [Test]
