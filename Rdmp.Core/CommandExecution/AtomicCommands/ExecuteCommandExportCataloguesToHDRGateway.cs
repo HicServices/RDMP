@@ -1,26 +1,14 @@
-﻿using Amazon.Runtime.Internal.Endpoints.StandardLibrary;
-using Amazon.SecurityToken.Model;
-using Azure;
-using MathNet.Numerics;
+﻿
 using MongoDB.Driver;
 using Newtonsoft.Json;
-using NPOI.OpenXmlFormats.Dml;
-using NPOI.POIFS.Crypt;
-using NPOI.SS.UserModel.Charts;
-using NPOI.XWPF.UserModel;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Dataset.Confluence;
-using Rdmp.Core.Repositories;
-using Renci.SshNet.Sftp;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
@@ -47,9 +35,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 name = catalogue.DataProcessor;
                 contactPoint = catalogue.Administrative_contact_email;
             }
-            public string name { get; set; }//this needs to be populated
+            public string name { get; set; }
             public int identifier { get; set; } = 0;
-            public string contactPoint { get; set; }//this needs to be populated
+            public string contactPoint { get; set; }
             public object logo { get; set; }
             public object description { get; set; }
             public object memberOf { get; set; }
@@ -68,7 +56,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 description = catalogue.Description;
 
             }
-            public string description { get; set; }//this needs to be populated;
+            public string description { get; set; }
         }
         private class HDRDatasetMetadataSummary
         {
@@ -79,7 +67,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             public void Update(Catalogue catalogue)
             {
                 title = catalogue.Name;
-                populationSize = 0;
+                populationSize = 0;//todo
                 @abstract = catalogue.ShortDescription;
                 contactPoint = catalogue.Administrative_contact_email;
                 dataCustodian = new HDRDatasetDataCustodian(catalogue);
@@ -88,8 +76,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             }
 
             public HDRDatasetMetadataSummary() { }
-            public string @abstract { get; set; }//this needs to be populated
-            public string contactPoint { get; set; }//this needs to be populated
+            public string @abstract { get; set; }
+            public string contactPoint { get; set; }
             public object keywords { get; set; }
             public object doiName { get; set; }
             public string title { get; set; }
@@ -97,11 +85,12 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             public int populationSize { get; set; }
             public object alternateIdentifiers { get; set; }
             public object controlledKeywords { get; set; }
+            //public string inPipeline = "Available";
         }
         private class HDRDatasetAccess
         {
 
-            private string mapUpdateLag(Catalogue.UpdateLagTimes time)
+            private static string MapUpdateLag(Catalogue.UpdateLagTimes time)
             {
                 switch (time)
                 {
@@ -130,10 +119,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             public HDRDatasetAccess() { }
             public HDRDatasetAccess(Catalogue catalogue)
             {
-                //todo access rights
-                accessRights = "  ";// catalogue.Access_options;
                 jurisdiction = catalogue.Juristiction != null ? catalogue.Juristiction.Split(',').ToList() : null;
-                deliveryLeadTime = mapUpdateLag(catalogue.UpdateLag);
+                deliveryLeadTime = MapUpdateLag(catalogue.UpdateLag);
                 dataController = catalogue.DataController;
                 dataProcessor = catalogue.DataProcessor;
             }
@@ -141,17 +128,17 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             public void Update(Catalogue catalogue)
             {
                 jurisdiction = catalogue.Juristiction.Split(',').ToList();
-                deliveryLeadTime = mapUpdateLag(catalogue.UpdateLag);
+                deliveryLeadTime = MapUpdateLag(catalogue.UpdateLag);
             }
 
             public string deliveryLeadTime { get; set; }
             public object jurisdiction { get; set; }
             public string dataController { get; set; }
             public string dataProcessor { get; set; }
-            public string accessRights { get; set; }//this needs to be populated
-            public string accessService { get; set; }
+            public string accessRights { get; set; } = "https://www.dundee.ac.uk/hic/governance-service";
+            public string accessService { get; set; } = "TODO this is some desc";
             public string accessRequestCost { get; set; }
-            public object accessServiceCategory { get; set; }
+            public object accessServiceCategory { get; set; } = "TRE/SDE";
         }
 
         private class CustomDateTimeConverterThreeMilliseconds : JsonConverter<DateTime>
@@ -193,12 +180,10 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             public DateTime? endDate { get; set; }
 
             [JsonConverter(typeof(CustomDateTimeConverterThreeMilliseconds))]
-            public DateTime startDate { get; set; }// = DateTime.Now;
-            public string timeLag { get; set; }//this needs to be populated
-            public string publishingFrequency { get; set; }//this needs to be populated
+            public DateTime startDate { get; set; }
+            public string timeLag { get; set; }
+            public string publishingFrequency { get; set; }
             public object distributionReleaseDate { get; set; }
-
-            //public string accrualPeriodicity { get; set; }//this is the same as publishign frequency?
         }
 
         public class HDRDatasetFormatAndStandards
@@ -225,7 +210,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             public HDRDatasetOrigin() { }
 
 
-            private string mapDatasetType(string datasetType)
+            private static string MapDatasetType(string datasetType)
             {
                 switch (datasetType)
                 {
@@ -255,7 +240,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 return "";
             }
 
-            private string mapDataSourceType(string dataSourceType)
+            private static string MapDataSourceType(string dataSourceType)
             {
                 switch (dataSourceType)
                 {
@@ -277,7 +262,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 return "";
             }
 
-            private string mapPurpose(Catalogue.DatasetPurpose purpose)
+            private static string MapPurpose(Catalogue.DatasetPurpose purpose)
             {
                 switch (purpose)
                 {
@@ -313,7 +298,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 public List<string> subTypes = new();
             }
 
-            private string mapCollectionSource(string source)
+            private static string MapCollectionSource(string source)
             {
                 switch (source)
                 {
@@ -371,34 +356,30 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             public HDRDatasetOrigin(Catalogue catalogue)
             {
-                //todo purpose and collectionSource not populating
-                source = catalogue.DataSource != null ? catalogue.DataSource.Split(',').Select(s => mapDataSourceType(s)).Where(s => s != "") : null;
-                purpose = new List<String>() { mapPurpose(catalogue.Purpose) };
-                collectionSource = catalogue.DataSourceSetting != null ? catalogue.DataSourceSetting.Split(',').Select(source => mapCollectionSource(source)) : null;
-                datasetType = catalogue.DataType != null ? catalogue.DataType.Split(',').Select(s => mapDatasetType(s)).Where(s => s != "").Select(s => new DataTypeObject() { name = s }) : null; //catalogue.DataType;//this has been 
+                Update(catalogue);
             }
 
             public void Update(Catalogue catalogue)
             {
-                source = catalogue.DataSource != null ? catalogue.DataSource.Split(',').Select(s => mapDataSourceType(s)).Where(s => s != "") : null;
-                purpose = new List<String>() { mapPurpose(catalogue.Purpose) };
-                collectionSource = catalogue.DataSourceSetting != null ? catalogue.DataSourceSetting.Split(',').Select(source => mapCollectionSource(source)) : null;
-                datasetType = catalogue.DataType != null ? catalogue.DataType.Split(',').Select(s => mapDatasetType(s)).Where(s => s != "").Select(s => new DataTypeObject() { name = s }) : null; //catalogue.DataType;//this has been 
+                source = catalogue.DataSource != null ? catalogue.DataSource.Split(',').Select(s => MapDataSourceType(s)).Where(s => s != "") : null;
+                purpose = new List<String>() { MapPurpose(catalogue.Purpose) };
+                collectionSource = catalogue.DataSourceSetting != null ? catalogue.DataSourceSetting.Split(',').Select(source => MapCollectionSource(source)) : null;
+                datasetType = catalogue.DataType != null ? catalogue.DataType.Split(',').Select(s => MapDatasetType(s)).Where(s => s != "").Select(s => new DataTypeObject() { name = s }) : null;
 
             }
             public object purpose { get; set; }
             public object source { get; set; }
             public object collectionSource { get; set; }
-            public object datasetType { get; set; }//sometimes string ,somelimes list
+            public object datasetType { get; set; }
             public string datasetSubType { get; set; }
             public string imageContrast { get; set; }
         }
 
         public class HDRDatasetUsage
         {
-            public object dataUseLimitation { get; set; }
+            public object dataUseLimitation = new List<String>() { "General research use" };
             public object resourceCreator { get; set; }
-            public List<string> dataUseRequirements { get; set; } = [];
+            public List<string> dataUseRequirements = ["Disclosure control"];
         }
         private class HDRDatasetAccessibility
         {
@@ -408,6 +389,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             {
                 access = new HDRDatasetAccess(catalogue);
                 formatAndStandards = new HDRDatasetFormatAndStandards(catalogue);
+                usage = new HDRDatasetUsage();
+                usage.resourceCreator = "This is a citation";
             }
 
             public void Update(Catalogue catalogue)
@@ -415,8 +398,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 if (access is HDRDatasetAccess) ((HDRDatasetAccess)access).Update(catalogue);
                 formatAndStandards.Update(catalogue);
             }
-            public object access { get; set; }// there is an issue descerialising this as it's sometimes an object, sometimes a list
-            public HDRDatasetUsage usage { get; set; }
+            public object access { get; set; }
+            public HDRDatasetUsage usage { get; set; } = new();
             public HDRDatasetFormatAndStandards formatAndStandards { get; set; } = new HDRDatasetFormatAndStandards();
         }
         private class HDRDatasetProvenance
@@ -457,7 +440,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             {
                 spatial = catalogue.Geographical_coverage;
             }
-            public string spatial { get; set; } = "Prussia";
+            public string spatial { get; set; }
             //TODO - min age, max age, coverage, pathway
         }
 
@@ -480,9 +463,6 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             public HDRDatasetMetadata(Catalogue catalogue)
             {
-                version = "1.0.0";
-                modified = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
-                issued = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
                 summary = new HDRDatasetMetadataSummary(catalogue);
                 documentation = new HDRDatasetDocumentation(catalogue);
                 provenance = new HDRDatasetProvenance(catalogue);
@@ -494,8 +474,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             public string identifier = "";
             public string version = "1.0.0";
             public List<HDRDatasetRevision> revisions = new List<HDRDatasetRevision>();
-            public string modified;
-            public string issued;
+            public string modified= DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
+            public string issued = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
             public HDRDatasetMetadataSummary summary = new HDRDatasetMetadataSummary();
             public HDRDatasetAccessibility accessibility = new HDRDatasetAccessibility();
             public List<object> observations = new List<object>();
@@ -571,7 +551,6 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             {
                 summary = datasetObject.latest_metadata.metadata.metadata.summary;
                 coverage = datasetObject.latest_metadata.metadata.metadata.coverage;
-                //required = datasetObject.latest_metadata.metadata.metadata.required;
                 provenance = datasetObject.latest_metadata.metadata.metadata.provenance;
                 accessibility = datasetObject.latest_metadata.metadata.metadata.accessibility;
                 documentation = datasetObject.latest_metadata.metadata.metadata.documentation;
@@ -579,13 +558,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             }
             public void Update(Catalogue catalogue)
             {
-                //todo
                 summary.Update(catalogue);
                 coverage.Update(catalogue);
                 provenance.Update(catalogue);
                 accessibility.Update(catalogue);
                 documentation = new HDRDatasetDocumentation(catalogue);
-
             }
         }
 
@@ -686,6 +663,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
             };
             body.Update(catalogue);
+            //todo this needs improved
             body.metadata.metadata.accessibility.usage.dataUseLimitation = new List<string>() { "General research use" };
             body.metadata.metadata.accessibility.usage.resourceCreator = null;
             body.metadata.metadata.accessibility.access = new HDRDatasetAccess(catalogue)
@@ -723,12 +701,6 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             foreach (var catalogue in catalogues)
             {
                 var existingDataset = CatalogueExists(catalogue);
-                //if(existingDataset != null)
-                //{
-                //    var response = Task.Run(async () => await _client.DeleteAsync($"{_url}/v2/teams/{_team}/datasets/{existingDataset.id}")).Result;
-
-                //}
-                //CreateDataset(catalogue);
                 if (existingDataset != null)
                 {
                     //update
