@@ -48,10 +48,10 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             public string accessService { get; set; }
             public string accessRequestCost { get; set; }
             public string accessServiceCategory { get; set; }
-            public List<string> conformsTo { get; set; }// = new List<string>() { "LOCAL" };
-            public List<string> vocabularyEncodingScheme { get; set; }// = new List<string>() { "LOCAL" };
-            public List<string> language { get; set; }// = new List<string>() { "en" };
-            public List<string> format { get; set; }// = new List<string>() { "CSV", "Database" };
+            public List<string> conformsTo { get; set; }
+            public List<string> vocabularyEncodingScheme { get; set; }
+            public List<string> language { get; set; }
+            public List<string> format { get; set; }
             public List<string> dataUseLimitation { get; set; }
             public string resourceCreator { get; set; }
             public List<string> dataUseRequirements { get; set; }
@@ -436,7 +436,6 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             public void Update(Catalogue catalogue, InputJSONDetails details)
             {
-                //if (access is HDRDatasetAccess) ((HDRDatasetAccess)access).Update(catalogue, details);
                 access = new HDRDatasetAccess(catalogue, details);
                 formatAndStandards.Update(catalogue, details);
                 usage = new HDRDatasetUsage(details);
@@ -707,13 +706,6 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
             };
             body.Update(catalogue,_inputJsonDetails);
-            //body.metadata.metadata.accessibility.usage.dataUseLimitation = new List<string>() { "General research use" };
-            //body.metadata.metadata.accessibility.usage.resourceCreator = "Ciration!";
-            //body.metadata.metadata.accessibility.access = new HDRDatasetAccess(catalogue,_inputJsonDetails)
-            //{
-                //accessRights = "null"
-            //};
-            //body.metadata.metadata.accessibility.formatAndStandards.conformsTo = new List<string>() { "LOCAL" };
             var jsonString = System.Text.Json.JsonSerializer.Serialize(body, serializeOptions);
             var httpContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
             var response = Task.Run(async () => await _client.PutAsync(url, httpContent)).Result;
