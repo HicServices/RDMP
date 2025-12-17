@@ -7,7 +7,7 @@ rdmp.exe exportcataloguestohdrgateway https://api.hdruk.cloud/api {teamID} {AppI
 
 ```
 
-Running this command will create new dataets on the HDR Gateway, as well as update an existing datasets with the same name as the catalogue.
+Running this command will create new dataets on the HDR Gateway, as well as update any existing datasets with the same name as the catalogue.
 
 ### Command Variables
 * teamId - the TeamID that you and the dataset(s) you want to create belong to
