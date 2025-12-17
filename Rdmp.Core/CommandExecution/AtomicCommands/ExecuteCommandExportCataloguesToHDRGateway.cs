@@ -27,7 +27,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         private readonly string _clientID;
         private readonly HttpClient _client = new();
         private readonly string _datasetsEndpoint = "/v2/datasets";
-        private InputJSONDetails _inputJsonDetails = new();
+        private readonly InputJSONDetails _inputJsonDetails = new();
         private class InputJSONDetails
         {
             /// <summary>
@@ -329,7 +329,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             private class DataTypeObject
             {
                 public string name;
-                public List<string> subTypes = new();
+                public List<string> subTypes = [];
             }
 
             private static string MapCollectionSource(string source)
@@ -617,8 +617,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             }
 
             public HDRDatasetUpdateMetadata metadata { get; set; }
-            public string schemaModel = "HDRUK";
-            public string schemaVersion = "4.0.0";
+            public readonly string schemaModel = "HDRUK";
+            public readonly string schemaVersion = "4.0.0";
         }
 
         private class HDRDatasetUpdateBody
@@ -646,7 +646,6 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             _team = team;
             _appID = appID;
             _clientID = clientID;
-            var x = File.ReadAllText(configFile.Name);
             _inputJsonDetails = JsonConvert.DeserializeObject<InputJSONDetails>(File.ReadAllText(configFile.Name));
         }
 
