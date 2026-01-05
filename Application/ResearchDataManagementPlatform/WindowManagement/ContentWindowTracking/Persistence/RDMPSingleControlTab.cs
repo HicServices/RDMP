@@ -51,7 +51,7 @@ public class RDMPSingleControlTab : DockContent, IRefreshBusSubscriber
         Control = c;
     }
 
-    public virtual void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
+    public virtual void RefreshBus_DoWork(object sender, DoWorkEventArgs e)
     {
     }
 

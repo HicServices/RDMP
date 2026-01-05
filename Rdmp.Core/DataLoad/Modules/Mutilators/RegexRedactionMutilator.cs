@@ -98,7 +98,7 @@ public class RegexRedactionMutilator : MatchingTablesMutilatorWithDataLoadJob
                     ";
                 var dt = new DataTable();
                 dt.BeginLoadData();
-                var conn = table.Database.Server.GetConnection();
+                using var conn = table.Database.Server.GetConnection();
                 conn.Open();
                 using (var cmd = table.Database.Server.GetCommand(sql, conn))
                 {

@@ -4,21 +4,25 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Forms;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Providers.Nodes.CohortNodes;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Windows.Forms;
+using static Rdmp.UI.Refreshing.IRefreshBusSubscriber;
 
 namespace Rdmp.UI.Collections;
 
@@ -67,8 +71,6 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
             typeof(AllTemplateAggregateConfigurationsNode)
         };
         var rootFolder = Activator.CoreChildProvider.CohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations;
-        rootFolder.ChildFolders = new List<FolderNode<CohortIdentificationConfiguration>>();
-        rootFolder.ChildObjects = new List<CohortIdentificationConfiguration>();
 
         tlvCohortIdentificationConfigurations.AddObject(rootFolder);
         tlvCohortIdentificationConfigurations.AddObject(Activator.CoreChildProvider.AllTemplateCohortIdentificationConfigurationsNode);
@@ -164,4 +166,38 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
     }
     private string FrozenAspectGetter(object o) =>
         o is CohortIdentificationConfiguration cic ? cic.Frozen ? "Yes" : "No" : null;
+
+    public void RefreshBus_DoWork(object sender, DoWorkEventArgs e)
+    {
+        var o = (IMapsDirectlyToDatabaseTable)e.Argument;
+        if (tlvCohortIdentificationConfigurations.InvokeRequired)
+        {
+            switch (o)
+            {
+                case CohortIdentificationConfiguration:
+                    _ = Activator.CoreChildProvider.CohortIdentificationConfigurationRootFolder;
+                    _ = Activator.CoreChildProvider.AllCohortIdentificationConfigurations;
+                    _ = Activator.CoreChildProvider.AllTemplateCohortIdentificationConfigurationsNode;
+                    _ = Activator.CoreChildProvider.OrphanAggregateConfigurationsNode;
+                    _ = Activator.CoreChildProvider.TemplateAggregateConfigurationsNode;
+                    _ = Activator.CoreChildProvider.TemplateAggregateConfigurationsNode;
+                    break;
+            }
+            RefreshCallback rb = new RefreshCallback(RefreshBus_DoWork);
+            this.Invoke(rb, sender, e);
+
+        }
+        else
+        {
+            switch (o)
+            {
+                case CohortIdentificationConfiguration:
+                    tlvCohortIdentificationConfigurations.RefreshObject(Activator.CoreChildProvider.CohortIdentificationConfigurationRootFolder);
+                    tlvCohortIdentificationConfigurations.RefreshObject(Activator.CoreChildProvider.AllTemplateCohortIdentificationConfigurationsNode);
+                    tlvCohortIdentificationConfigurations.RefreshObject(Activator.CoreChildProvider.OrphanAggregateConfigurationsNode);
+                    tlvCohortIdentificationConfigurations.RefreshObject(Activator.CoreChildProvider.TemplateAggregateConfigurationsNode);
+                    break;
+            }
+        }
+    }
 }

@@ -62,9 +62,6 @@ public class GoToCommandFactory : CommandFactoryBase
             if (SupportsReplacement(forObject))
                 yield return new ExecuteCommandShow(_activator, () => GetReplacementIfAny(mt))
                 { OverrideCommandName = "Replacement" };
-
-
-            yield return new ExecuteCommandSimilar(_activator, mt, false) { GoTo = true };
         }
 
         // cic => associated projects
@@ -83,13 +80,6 @@ public class GoToCommandFactory : CommandFactoryBase
 
         if (Is(forObject, out ColumnInfo columnInfo))
         {
-            yield return new ExecuteCommandSimilar(_activator, columnInfo, true)
-            {
-                OverrideCommandName = "Different",
-                GoTo = true,
-                OverrideIcon = GetImage(RDMPConcept.ColumnInfo)
-            };
-
             yield return new ExecuteCommandShow(_activator, columnInfo.TableInfo_ID, typeof(TableInfo))
             {
                 OverrideCommandName = "Table Info",

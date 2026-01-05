@@ -29,13 +29,18 @@ internal class UniqueRule<T> : BinderRule<T> where T : IMapsDirectlyToDatabaseTa
         if (currentValue == null || string.IsNullOrWhiteSpace(currentValue.ToString()))
             return null;
 
-        return Activator.CoreChildProvider.GetAllSearchables()
-            .Keys.OfType<T>()
+        return Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<T>()
             .Except(new[] { ToTest })
-            .Where(t => t.GetType() == typeToTest)
             .Any(v => AreEqual(v, currentValue))
             ? _problemDescription
             : null;
+        //return Activator.CoreChildProvider.GetAllSearchables()
+        //    .Keys.OfType<T>()
+        //    .Except(new[] { ToTest })
+        //    .Where(t => t.GetType() == typeToTest)
+        //    .Any(v => AreEqual(v, currentValue))
+        //    ? _problemDescription
+        //    : null;
     }
 
     private bool AreEqual(T arg, object currentValue) =>

@@ -6,10 +6,15 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Providers;
+using Rdmp.UI.Collections;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
@@ -30,6 +35,10 @@ public class RefreshBus
     public event RefreshObjectEventHandler AfterPublish;
     private event RefreshObjectEventHandler RefreshObject;
 
+    public BackgroundWorker worker = new BackgroundWorker()
+    {
+        WorkerReportsProgress = true,
+    };
     public bool PublishInProgress { get; private set; }
 
     public ICoreChildProvider ChildProvider { get; set; }
@@ -38,13 +47,20 @@ public class RefreshBus
 
     public void Publish(object sender, RefreshObjectEventArgs e)
     {
+        //if (Debugger.IsAttached)
+        //{
+        worker.RunWorkerCompleted += workerComplete;
+        //}
+
+        var obj = e.Object;//this isthe UPDATE OBJECT
         if (PublishInProgress)
             throw new SubscriptionException(
                 $"Refresh Publish Cascade error.  Subscriber {sender} just attempted a publish during an existing publish execution, cyclic inception publishing is not allowed, you cannot respond to a refresh callback by issuing more refresh publishes");
 
         lock (oPublishLock)
         {
-            BeforePublish?.Invoke(sender, e);
+            if (DateTime.Now.Year < 2000)
+                BeforePublish?.Invoke(sender, e);
 
             try
             {
@@ -62,15 +78,39 @@ public class RefreshBus
                     if (ChildProvider != null && e.DeletedObjectDescendancy == null)
                         e.DeletedObjectDescendancy = ChildProvider.GetDescendancyListIfAnyFor(e.Object);
                 }
-
-                RefreshObject?.Invoke(sender, e);
+                ChildProvider.SelectiveRefresh(e.Object);
+                //worker.RunWorkerAsync(argument: e.Object);
+                //while (worker.IsBusy)
+                //{
+                //    Thread.Sleep(1);
+                //}
+                var x = Environment.StackTrace;
+                worker.RunWorkerAsync(argument: e.Object);
+                if (DateTime.Now.Year < 2000)
+                    RefreshObject?.Invoke(sender, e);
+            }catch(Exception err)
+            {
+                Console.WriteLine(err.ToString());
             }
             finally
             {
-                AfterPublish?.Invoke(this, e);
+                //if (Debugger.IsAttached)
+                //{
+                //worker.RunWorkerCompleted -= workerComplete;
+                //}
+                if (DateTime.Now.Year < 2000)
+                    AfterPublish?.Invoke(this, e);
                 PublishInProgress = false;
                 Cursor.Current = Cursors.Default;
             }
+        }
+    }
+
+    private void workerComplete(object sender, RunWorkerCompletedEventArgs e)
+    {
+        if (e.Error is not null)
+        {
+            Console.Write('w');
         }
     }
 
@@ -78,24 +118,17 @@ public class RefreshBus
 
     public void Subscribe(IRefreshBusSubscriber subscriber)
     {
-        if (subscribers.Contains(subscriber))
-            throw new SubscriptionException(
-                $"You cannot subscribe to the RefreshBus more than once. Subscriber '{subscriber}' just attempted to register a second time its type was({subscriber.GetType().Name})");
-
-        RefreshObject += subscriber.RefreshBus_RefreshObject;
-
         subscribers.Add(subscriber);
+
+        worker.DoWork += subscriber.RefreshBus_DoWork;
     }
 
     public void Unsubscribe(IRefreshBusSubscriber unsubscriber)
     {
-        if (!subscribers.Contains(unsubscriber))
-            throw new SubscriptionException(
-                $"You cannot unsubscribe from the RefreshBus if never subscribed in the first place. '{unsubscriber}' just attempted to unsubscribe when it wasn't subscribed in the first place its type was ({unsubscriber.GetType().Name})");
-
-        RefreshObject -= unsubscriber.RefreshBus_RefreshObject;
         subscribers.Remove(unsubscriber);
+        worker.DoWork -= unsubscriber.RefreshBus_DoWork;
     }
+
 
     public void EstablishLifetimeSubscription(ILifetimeSubscriber c)
     {

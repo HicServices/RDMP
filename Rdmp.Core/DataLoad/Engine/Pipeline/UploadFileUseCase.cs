@@ -36,7 +36,7 @@ public sealed class UploadFileUseCase : PipelineUseCase
         return context;
     }
 
-    private UploadFileUseCase() : base(new[]
+    public UploadFileUseCase() : base(new[]
     {
         typeof(FlatFileToLoad),
         typeof(DiscoveredDatabase),

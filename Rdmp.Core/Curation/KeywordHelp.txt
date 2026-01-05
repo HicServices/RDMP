@@ -61,6 +61,7 @@ idxGovernancePeriodNameMustBeUnique:Prevents you creating two or more Governance
 idx_ANOTableNamesMustBeUnique:Prevents you creating two or more ANOTables with the same name
 ix_suffixMustBeUnique:Prevents you using the same suffix for two or more ANOTables 
 ix_ConceptNamesMustBeUnique:Prevents you naming two StandardRegex the same name (ConceptName)
+IX_MSchange_tracking_history_start_time:changes tracking history start time
 ix_PreventDuplicateParameterNamesOnSameEntity:Prevents the same SQL parameter being declared twice on a given table that is ICollectSqlParameters e.g. TableInfo cannot have two global parameters with the same name @bob
 ix_PluginNamesMustBeUnique:Prevents you uploading two copies of the same plugin e.g. MyPlugin.zip, if you want to update your plugin you should delete the old one
 ix_CataloguesCanOnlyBeLockedByOneAutomationJobAtATime:Prevents the Automation server from performing conflicting operations on a Catalogue e.g. trying to DQE it while also loading it.

@@ -4,19 +4,23 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
 using BrightIdeasSoftware;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.CohortDescribing;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
+using System;
+using System.ComponentModel;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
+using static Rdmp.UI.Refreshing.IRefreshBusSubscriber;
 using WideMessageBox = Rdmp.UI.SimpleDialogs.WideMessageBox;
 
 namespace Rdmp.UI.CohortUI;
@@ -230,10 +234,26 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
         SelectedCohortChanged?.Invoke(this, selected);
     }
 
-    public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
+    public void RefreshBus_DoWork(object sender, DoWorkEventArgs e)
     {
-        if (e.Object is ExtractableCohort || e.Object is ExternalCohortTable)
+        if (lbCohortDatabaseTable.InvokeRequired)
+        {
+            var o = (IMapsDirectlyToDatabaseTable)e.Argument;
+            switch (o)
+            {
+                case CohortIdentificationConfiguration:
+                    _ = Activator.CoreChildProvider.AllCohortIdentificationConfigurations;
+                    break;
+            }
+
+            RefreshCallback rb = new RefreshCallback(RefreshBus_DoWork);
+            this.Invoke(rb, sender, e);
+
+        }
+        else if (e.Argument is ExtractableCohort || e.Argument is ExternalCohortTable)
+        {
             ReFetchCohortDetailsAsync();
+        }
     }
 }
 

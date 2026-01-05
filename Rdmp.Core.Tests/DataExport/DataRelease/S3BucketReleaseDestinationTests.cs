@@ -82,7 +82,7 @@ public sealed class S3BucketReleaseDestinationTests : TestsRequiringAnExtraction
     }
 
     [Test]
-    public void AWSLoginTest()
+    public void AWSLoginTest()//todo
     {
         var awss3 = new AWSS3("minio", Amazon.RegionEndpoint.EUWest2);
         Assert.DoesNotThrow(() => MakeBucket("logintest"));
@@ -90,7 +90,7 @@ public sealed class S3BucketReleaseDestinationTests : TestsRequiringAnExtraction
     }
 
     [Test]
-    public void ReleaseToAWSBasicTest()
+    public void ReleaseToAWSBasicTest()//todo
     {
         MakeBucket("releasetoawsbasictest");
         DoExtraction();
@@ -293,7 +293,7 @@ public sealed class S3BucketReleaseDestinationTests : TestsRequiringAnExtraction
 
 
     [Test]
-    public void LocationAlreadyExists()
+    public void LocationAlreadyExists()//todo
     {
         MakeBucket("locationalreadyexist");
 

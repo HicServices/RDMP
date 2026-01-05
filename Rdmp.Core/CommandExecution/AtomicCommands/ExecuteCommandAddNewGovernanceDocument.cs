@@ -52,7 +52,7 @@ public sealed class ExecuteCommandAddNewGovernanceDocument : BasicCommandExecuti
             return;
 
         var doc = new GovernanceDocument(BasicActivator.RepositoryLocator.CatalogueRepository, p, f);
-        Publish(_period);
+        Publish(doc);
         Emphasise(doc);
         Activate(doc);
     }

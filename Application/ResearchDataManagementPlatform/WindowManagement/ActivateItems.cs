@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
@@ -163,9 +164,9 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         IsAbleToLaunchSubprocesses = true;
     }
 
-    protected override ICoreChildProvider GetChildProvider()
+    protected override ICoreChildProvider GetChildProvider(bool force = false)
     {
-        var provider = base.GetChildProvider();
+        var provider = base.GetChildProvider(force);
 
         if (RefreshBus != null) RefreshBus.ChildProvider = provider;
 
@@ -534,13 +535,13 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         return floatable;
     }
 
-    public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
+    public void RefreshBus_DoWork(object sender, DoWorkEventArgs e)
     {
         // if we don't want to do selective refresh or can't (because partial refreshes are not supported on the type)
-        if (HardRefresh || !UserSettings.SelectiveRefresh || !CoreChildProvider.SelectiveRefresh(e.Object))
+        if (HardRefresh || !UserSettings.SelectiveRefresh || !CoreChildProvider.SelectiveRefresh((IMapsDirectlyToDatabaseTable)e.Argument))
         {
             //update the child provider with a full refresh
-            GetChildProvider();
+            GetChildProvider(true);
             HardRefresh = false;
         }
 
@@ -550,7 +551,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
     private void RefreshProblemProviders()
     {
         foreach (var p in ProblemProviders)
-            p.RefreshProblems(CoreChildProvider);
+            p.RefreshProblems(RefreshBus.ChildProvider);
     }
 
     /// <inheritdoc />

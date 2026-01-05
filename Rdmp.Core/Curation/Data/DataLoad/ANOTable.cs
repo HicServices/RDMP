@@ -363,6 +363,10 @@ CONSTRAINT AK_{TableName} UNIQUE({anonymousColumnName})
                         CheckResult.Fail, e));
                 return;
             }
+            finally
+            {
+                if (forceConnection == null) con.Close();
+            }
         }
 
         try

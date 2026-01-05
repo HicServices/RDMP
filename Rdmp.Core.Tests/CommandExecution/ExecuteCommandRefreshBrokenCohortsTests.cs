@@ -11,16 +11,18 @@ using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.Startup;
 
 namespace Rdmp.Core.Tests.CommandExecution;
 
 internal class ExecuteCommandRefreshBrokenCohortsTests
 {
     [Test]
-    public void TestBrokenCohort()
+    public void TestBrokenCohort()//todo
     {
+        Startup.Startup.PreStartup();
         var repo = new MemoryDataExportRepository();
-
+        
         var ect = new ExternalCohortTable(repo, "yarg", FAnsi.DatabaseType.MicrosoftSQLServer)
         {
             Server = "IDontExist",
@@ -29,7 +31,6 @@ internal class ExecuteCommandRefreshBrokenCohortsTests
             ReleaseIdentifierField = "haha"
         };
         ect.SaveToDatabase();
-
         var cohort = new ExtractableCohort
         {
             Repository = repo,
@@ -44,7 +45,9 @@ internal class ExecuteCommandRefreshBrokenCohortsTests
         {
             DisallowInput = true
         };
-
+        activator.Publish(ect);
+        activator.Publish(cohort);
+        _ = ((DataExportChildProvider)activator.CoreChildProvider).ProjectNumberToCohortsDictionary;
         Assert.That(((DataExportChildProvider)activator.CoreChildProvider).ForbidListedSources, Has.Count.EqualTo(1));
 
         var cmd = new ExecuteCommandRefreshBrokenCohorts(activator)

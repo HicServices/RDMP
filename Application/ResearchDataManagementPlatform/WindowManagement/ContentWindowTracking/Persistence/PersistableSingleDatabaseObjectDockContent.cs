@@ -4,8 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.ComponentModel;
-using System.Windows.Forms;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
@@ -16,6 +14,9 @@ using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ResearchDataManagementPlatform.WindowManagement.ExtenderFunctionality;
+using System.ComponentModel;
+using System.Windows.Forms;
+using static Rdmp.UI.Refreshing.IRefreshBusSubscriber;
 
 
 namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
@@ -61,14 +62,22 @@ public class PersistableSingleDatabaseObjectDockContent : RDMPSingleControlTab
                DatabaseObject.GetType().FullName + s + DatabaseObject.ID;
     }
 
-    public override void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
+    public override void RefreshBus_DoWork(object sender, DoWorkEventArgs e)
     {
-        var newTabName = ((IRDMPSingleDatabaseObjectControl)Control).GetTabName();
+        if (this.InvokeRequired)
+        {
+            RefreshCallback rb = new RefreshCallback(RefreshBus_DoWork);
+            this.Invoke(rb, sender, e);
+        }
+        else
+        {
+            var newTabName = ((IRDMPSingleDatabaseObjectControl)Control).GetTabName();
 
-        if (ParentForm is CustomFloatWindow floatWindow)
-            floatWindow.Text = newTabName;
+            if (ParentForm is CustomFloatWindow floatWindow)
+                floatWindow.Text = newTabName;
 
-        TabText = newTabName;
+            TabText = newTabName;
+        }
     }
 
     public override void HandleUserRequestingTabRefresh(IActivateItems activator)

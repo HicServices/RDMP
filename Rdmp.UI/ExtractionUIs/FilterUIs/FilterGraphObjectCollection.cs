@@ -4,13 +4,14 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.UI.Refreshing;
+using System;
+using System.ComponentModel;
+using System.Linq;
 
 namespace Rdmp.UI.ExtractionUIs.FilterUIs;
 
@@ -42,9 +43,9 @@ public class FilterGraphObjectCollection : PersistableObjectCollection
         return (IFilter)DatabaseObjects.Single(o => o is IFilter);
     }
 
-    public void HandleRefreshObject(RefreshObjectEventArgs e)
+    public void HandleRefreshObject(DoWorkEventArgs e)
     {
-        foreach (var o in DatabaseObjects.Where(o => o.Equals(e.Object)))
+        foreach (var o in DatabaseObjects.Where(o => o.Equals(e.Argument)))
             ((IRevertable)o).RevertToDatabaseState();
     }
 }

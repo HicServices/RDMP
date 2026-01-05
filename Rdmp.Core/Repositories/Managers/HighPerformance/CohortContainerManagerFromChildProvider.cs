@@ -22,12 +22,14 @@ namespace Rdmp.Core.Repositories.Managers.HighPerformance;
 /// </summary>
 internal class CohortContainerManagerFromChildProvider : CohortContainerManager
 {
-    private readonly Dictionary<int, List<IOrderable>> _contents = new();
+
+    private Lazy<Dictionary<int, List<IOrderable>>> _lazy_contents = new();
+    private Dictionary<int, List<IOrderable>> _contents { get => _lazy_contents.Value; }
 
     public CohortContainerManagerFromChildProvider(CatalogueRepository repository, CatalogueChildProvider childProvider)
         : base(repository)
     {
-        FetchAllRelationships(childProvider);
+        _lazy_contents = new Lazy<Dictionary<int, List<IOrderable>>>(()=>FetchAllRelationships(childProvider));
     }
 
     /// <summary>
@@ -38,8 +40,10 @@ internal class CohortContainerManagerFromChildProvider : CohortContainerManager
     public override IOrderable[] GetChildren(CohortAggregateContainer parent) =>
         _contents.TryGetValue(parent.ID, out var content) ? content.ToArray() : Array.Empty<IOrderable>();
 
-    public void FetchAllRelationships(ICoreChildProvider childProvider)
+    public Dictionary<int, List<IOrderable>> FetchAllRelationships(ICoreChildProvider childProvider)
     {
+        var containers = childProvider.AllCohortAggregateContainers;
+        Dictionary<int, List<IOrderable>> _internal_contents = new();
         using var con = CatalogueRepository.GetConnection();
         //find all the cohort SET operation subcontainers e.g. UNION Ag1,Ag2,(Agg3 INTERSECT Agg4) would have 2 CohortAggregateContainers (the UNION and the INTERSECT) in which the INTERSECT was the child container of the UNION
         var r = CatalogueRepository.DiscoveredServer
@@ -52,15 +56,15 @@ internal class CohortContainerManagerFromChildProvider : CohortContainerManager
             var currentParentId = Convert.ToInt32(r["CohortAggregateContainer_ParentID"]);
             var currentChildId = Convert.ToInt32(r["CohortAggregateContainer_ChildID"]);
 
-            if (!_contents.ContainsKey(currentParentId))
-                _contents.Add(currentParentId, new List<IOrderable>());
+            if (!_internal_contents.ContainsKey(currentParentId))
+                _internal_contents.Add(currentParentId, new List<IOrderable>());
 
-            _contents[currentParentId]
-                .Add(childProvider.AllCohortAggregateContainers.Single(c => c.ID == currentChildId));
+            _internal_contents[currentParentId]
+                .Add(containers.Single(c => c.ID == currentChildId));
         }
 
         r.Close();
-
+        var configs = childProvider.AllAggregateConfigurations;
         //now find all the Agg configurations within the containers too, (in the above example we will find Agg1 in the UNION container at order 1 and Agg2 at order 2 and then we find Agg3 and Agg4 in the INTERSECT container)
         r = CatalogueRepository.DiscoveredServer
             .GetCommand(
@@ -73,26 +77,28 @@ internal class CohortContainerManagerFromChildProvider : CohortContainerManager
             var currentChildId = Convert.ToInt32(r["AggregateConfiguration_ID"]);
             var currentOrder = Convert.ToInt32(r["Order"]);
 
-            if (!_contents.ContainsKey(currentParentId))
-                _contents.Add(currentParentId, new List<IOrderable>());
+            if (!_internal_contents.ContainsKey(currentParentId))
+                _internal_contents.Add(currentParentId, new List<IOrderable>());
 
             AggregateConfiguration config;
 
             try
             {
-                config = childProvider.AllAggregateConfigurations.Single(a => a.ID == currentChildId);
+                config = configs.Single(a => a.ID == currentChildId);
             }
-            catch (Exception)
+            catch (Exception e )
             {
+                Console.WriteLine(e);
                 throw new Exception(
                     $"Error occurred trying to find AggregateConfiguration with ID {currentChildId} which is allegedly a child of CohortAggregateContainer {currentParentId}");
             }
 
             config.SetKnownOrder(currentOrder);
 
-                _contents[currentParentId].Add(config);
+            _internal_contents[currentParentId].Add(config);
         }
 
         r.Close();
+        return _internal_contents;
     }
 }

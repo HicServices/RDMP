@@ -4,14 +4,14 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Linq;
-using System.Windows.Forms;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Pipelines;
+using Rdmp.Core.Curation.Data.Remoting;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Providers.Nodes.PipelineNodes;
@@ -19,6 +19,11 @@ using Rdmp.Core.Providers.Nodes.SharingNodes;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.LocationsMenu;
 using Rdmp.UI.Refreshing;
+using System;
+using System.ComponentModel;
+using System.Linq;
+using System.Windows.Forms;
+using static Rdmp.UI.Refreshing.IRefreshBusSubscriber;
 
 namespace Rdmp.UI.Collections;
 
@@ -127,20 +132,65 @@ public partial class TableInfoCollectionUI : RDMPCollectionUI, ILifetimeSubscrib
         tlvTableInfos.AddObject(Activator.CoreChildProvider.AllPluginsNode);
     }
 
-    public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
+    public void RefreshBus_DoWork(object sender, DoWorkEventArgs e)
     {
-        switch (e.Object)
+        if (tlvTableInfos.InvokeRequired)
         {
-            case DataAccessCredentials:
-                tlvTableInfos.RefreshObject(tlvTableInfos.Objects.OfType<AllDataAccessCredentialsNode>());
-                break;
-            case Catalogue or TableInfo:
-                tlvTableInfos.RefreshObject(tlvTableInfos.Objects.OfType<AllServersNode>());
-                break;
+            _ = Activator.CoreChildProvider.AllDashboardsNode;
+            _ = Activator.CoreChildProvider.AllRDMPRemotesNode;
+            _ = Activator.CoreChildProvider.AllObjectSharingNode;
+            _ = Activator.CoreChildProvider.AllPipelinesNode;
+            _ = Activator.CoreChildProvider.AllExternalServersNode;
+            _ = Activator.CoreChildProvider.AllDataAccessCredentialsNode;
+            _ = Activator.CoreChildProvider.AllANOTablesNode;
+            _ = Activator.CoreChildProvider.AllServersNode;
+            _ = Activator.CoreChildProvider.AllConnectionStringKeywordsNode;
+            _ = Activator.CoreChildProvider.AllStandardRegexesNode;
+            _ = Activator.CoreChildProvider.AllPluginsNode;
+            RefreshCallback rb = new RefreshCallback(RefreshBus_DoWork);
+            this.Invoke(rb, sender, e);
         }
+        else
+        {
+            switch (e.Argument)
+            {
+                case DataAccessCredentials:
+                    tlvTableInfos.RefreshObject(Activator.CoreChildProvider.AllDataAccessCredentialsNode);
+                    break;
+                case DashboardLayout:
+                    tlvTableInfos.RefreshObject(Activator.CoreChildProvider.AllDashboardsNode);
+                    break;
+                case RemoteRDMP:
+                    tlvTableInfos.RefreshObject(Activator.CoreChildProvider.AllRDMPRemotesNode);
+                    break;
+                case ObjectImport or ObjectExport:
+                    tlvTableInfos.RefreshObject(Activator.CoreChildProvider.AllObjectSharingNode);
+                    break;
+                case Pipeline:
+                    tlvTableInfos.RefreshObject(Activator.CoreChildProvider.AllPipelinesNode);
+                    break;
+                case ExternalDatabaseServer:
+                    tlvTableInfos.RefreshObject(Activator.CoreChildProvider.AllExternalServersNode);
+                    break;
+                case ANOTable:
+                    tlvTableInfos.RefreshObject(Activator.CoreChildProvider.AllANOTablesNode);
+                    break;
+                case ConnectionStringKeyword:
+                    tlvTableInfos.RefreshObject(Activator.CoreChildProvider.AllConnectionStringKeywordsNode);
+                    break;
+                case StandardRegex:
+                    tlvTableInfos.RefreshObject(Activator.CoreChildProvider.AllStandardRegexesNode);
+                    break;
+                case Catalogue or TableInfo:
+                    tlvTableInfos.RefreshObject(Activator.CoreChildProvider.AllServersNode);
+                    break;
+                //todo not sure plugins will refresh
 
-        if (tlvTableInfos.IndexOf(Activator.CoreChildProvider.AllPipelinesNode) != -1)
-            tlvTableInfos.RefreshObject(Activator.CoreChildProvider.AllPipelinesNode);
+            }
+
+            if (tlvTableInfos.IndexOf(Activator.CoreChildProvider.AllPipelinesNode) != -1)
+                tlvTableInfos.RefreshObject(Activator.CoreChildProvider.AllPipelinesNode);
+        }
     }
 
     public static bool IsRootObject(object root) => root is AllRDMPRemotesNode or AllObjectSharingNode

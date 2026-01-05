@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -160,7 +161,7 @@ public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
         LastSixMonths
     }
 
-    public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
+    public void RefreshBus_DoWork(object sender, DoWorkEventArgs e)
     {
     }
 

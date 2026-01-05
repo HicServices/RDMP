@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
@@ -40,11 +41,11 @@ public interface ICoreChildProvider : IChildProvider
     TableInfo[] AllTableInfos { get; }
     Dictionary<int, List<ColumnInfo>> TableInfosToColumnInfos { get; }
     CohortIdentificationConfiguration[] AllCohortIdentificationConfigurations { get; }
-    CohortAggregateContainer[] AllCohortAggregateContainers { get; set; }
-    JoinableCohortAggregateConfiguration[] AllJoinables { get; set; }
-    JoinableCohortAggregateConfigurationUse[] AllJoinUses { get; set; }
+    CohortAggregateContainer[] AllCohortAggregateContainers { get;  }
+    JoinableCohortAggregateConfiguration[] AllJoinables { get;  }
+    JoinableCohortAggregateConfigurationUse[] AllJoinUses { get; }
 
-    FolderNode<Catalogue> CatalogueRootFolder { get; }
+    FolderNode<Catalogue> CatalogueRootFolder { get; set; }
     FolderNode<Curation.Data.Dataset> DatasetRootFolder { get; }
     FolderNode<LoadMetadata> LoadMetadataRootFolder { get; }
     FolderNode<CohortIdentificationConfiguration> CohortIdentificationConfigurationRootFolder { get; }
@@ -99,8 +100,8 @@ public interface ICoreChildProvider : IChildProvider
 
     Dictionary<int, ExtractionInformation> AllExtractionInformationsDictionary { get; }
 
-    AllPermissionWindowsNode AllPermissionWindowsNode { get; set; }
-    AllConnectionStringKeywordsNode AllConnectionStringKeywordsNode { get; set; }
+    AllPermissionWindowsNode AllPermissionWindowsNode { get; }
+    AllConnectionStringKeywordsNode AllConnectionStringKeywordsNode { get;  }
     AllStandardRegexesNode AllStandardRegexesNode { get; }
     AllPipelinesNode AllPipelinesNode { get; }
 
@@ -116,12 +117,6 @@ public interface ICoreChildProvider : IChildProvider
 
     JoinableCohortAggregateConfigurationUse[] AllJoinableCohortAggregateConfigurationUse { get; }
 
-
-    /// <summary>
-    /// Copy updated values for all properties from the <paramref name="other"/>
-    /// </summary>
-    /// <param name="other"></param>
-    void UpdateTo(ICoreChildProvider other);
 
     /// <summary>
     /// Returns all known objects who are masquerading as o

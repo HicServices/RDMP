@@ -51,7 +51,7 @@ public class SessionCollectionUI : RDMPUserControl, IObjectCollectionControl, IC
 
     public string GetTabToolTip() => null;
 
-    public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
+    public void RefreshBus_DoWork(object sender, DoWorkEventArgs e)
     {
     }
 

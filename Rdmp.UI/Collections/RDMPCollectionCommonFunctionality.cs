@@ -4,13 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
 using BrightIdeasSoftware;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution;
@@ -33,6 +26,15 @@ using Rdmp.UI.Menus;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.Theme;
 using Rdmp.UI.TreeHelper;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+using static Rdmp.UI.Refreshing.IRefreshBusSubscriber;
 
 namespace Rdmp.UI.Collections;
 
@@ -856,6 +858,7 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     public void CommonItemActivation(object sender, EventArgs eventArgs)
     {
         var o = Tree.SelectedObject;
+        //here will want to re-fetch if updated
 
         if (o == null)
             return;
@@ -874,23 +877,43 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
                 return;
             }
         }
-
+        if(o is DatabaseEntity)
+        {
+            //check if we're out of date
+            var dbe = (DatabaseEntity)o;
+            if(dbe.HasLocalChanges().Differences.Count > 0)//todo is out of date on first load
+            {
+                dbe.RevertToDatabaseState();
+                o = dbe;
+            }
+        }
         var cmd = new ExecuteCommandActivate(_activator, o);
         if (!cmd.IsImpossible)
             cmd.Execute();
     }
 
-    public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
+    public void RefreshBus_DoWork(object sender, DoWorkEventArgs e)
     {
-        RefreshObject(e.Object, e.Exists);
+        if (Tree.InvokeRequired)
+        {
+            RefreshCallback rb = new RefreshCallback(RefreshBus_DoWork);
+            Tree.Invoke(rb, sender, e);
+        }
+        else
+        {
 
-        //now tell tree view to refresh the object
+            //todo
+            var exists = true;
+            RefreshObject(e.Argument, exists);
 
-        RefreshContextMenuStrip();
+            //now tell tree view to refresh the object
 
-        //also refresh anyone who is masquerading as e.Object
-        foreach (var masquerader in _activator.CoreChildProvider.GetMasqueradersOf(e.Object))
-            RefreshObject(masquerader, e.Exists);
+            RefreshContextMenuStrip();
+
+            //also refresh anyone who is masquerading as e.Object
+            foreach (var masquerader in _activator.CoreChildProvider.GetMasqueradersOf(e.Argument))
+                RefreshObject(masquerader, exists);
+        }
     }
 
     private void RefreshObject(object o, bool exists)

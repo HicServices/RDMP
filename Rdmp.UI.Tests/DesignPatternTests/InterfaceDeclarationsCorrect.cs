@@ -28,7 +28,7 @@ public class InterfaceDeclarationsCorrect
             MEF.GetAllTypes()
                 .Where(static t => typeof(DatabaseEntity).IsAssignableFrom(t))
                 .Select(static dbEntities => typeof(Catalogue).Assembly.GetTypes()
-                    .SingleOrDefault(t => t.Name.Equals($"I{dbEntities.Name}")))
+                    .FirstOrDefault(t => t.Name.Equals($"I{dbEntities.Name}")))
                 .Where(static matchingInterface => matchingInterface != null &&
                                                    !Exemptions.Contains(matchingInterface.Name) &&
                                                    !typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(

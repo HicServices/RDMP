@@ -100,10 +100,9 @@ public class ExecuteCommandAssociateCatalogueWithLoadMetadata : BasicCommandExec
             }
             cata.SaveToDatabase();
             //associate them
-            _loadMetadata.LinkToCatalogue(cata);
+            var linkage = _loadMetadata.LinkToCatalogue(cata);
+            Publish(linkage);
         }
-
-        Publish(_loadMetadata);
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>

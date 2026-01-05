@@ -1,12 +1,15 @@
-﻿using Rdmp.Core.CommandExecution.AtomicCommands;
-using Rdmp.Core;
+﻿using Rdmp.Core;
+using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.DataHelper.RegexRedaction;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.Providers.Nodes;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
+using System.ComponentModel;
 using System.Linq;
-using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Providers.Nodes;
-using Rdmp.Core.Curation.DataHelper.RegexRedaction;
+using static Rdmp.UI.Refreshing.IRefreshBusSubscriber;
 
 namespace Rdmp.UI.Collections;
 
@@ -47,16 +50,27 @@ public partial class ConfigurationsCollectionUI : RDMPCollectionUI, ILifetimeSub
         tlvConfigurations.Refresh();
         }
 
-    public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
+    public void RefreshBus_DoWork(object sender, DoWorkEventArgs e)
     {
-        switch (e.Object)
+        if (tlvConfigurations.InvokeRequired)
         {
-            case Dataset:
-                tlvConfigurations.RefreshObject(tlvConfigurations.Objects.OfType<AllDatasetsNode>());
-                break;
-            case RegexRedactionConfiguration:
-                tlvConfigurations.RefreshObject(tlvConfigurations.Objects.OfType<AllRegexRedactionConfigurationsNode>());
-                break;
+            _ = Activator.CoreChildProvider.AllDatasetsNode;
+            _ = Activator.CoreChildProvider.AllRegexRedactionConfigurationsNode;
+            RefreshCallback rb = new RefreshCallback(RefreshBus_DoWork);
+            this.Invoke(rb, sender, e);
+        }
+        else
+        {
+
+            switch ((IMapsDirectlyToDatabaseTable)e.Argument)
+            {
+                case Dataset:
+                    tlvConfigurations.RefreshObject(Activator.CoreChildProvider.AllDatasetsNode);
+                    break;
+                case RegexRedactionConfiguration:
+                    tlvConfigurations.RefreshObject(Activator.CoreChildProvider.AllRegexRedactionConfigurationsNode);
+                    break;
+            }
         }
     }
 

@@ -47,7 +47,7 @@ public partial class DatasetConfigurationUI : DatsetConfigurationUI_Design, IRef
     }
 
 
-    public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
+    public void RefreshBus_DoWork(object sender, DoWorkEventArgs e)
     {
     }
 

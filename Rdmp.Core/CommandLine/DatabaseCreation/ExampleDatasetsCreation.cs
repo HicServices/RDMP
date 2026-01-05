@@ -287,7 +287,7 @@ public partial class ExampleDatasetsCreation
                     Pipeline = releasePipeline.ID.ToString()
                 };
 
-                var runnerRelease = new ReleaseRunner(_activator,optsRelease);
+                var runnerRelease = new ReleaseRunner(_activator, optsRelease);
                 runnerRelease.Run(_repos, ThrowImmediatelyDataLoadEventListener.Quiet, notifier,
                     new GracefulCancellationToken());
             }
@@ -430,13 +430,19 @@ public partial class ExampleDatasetsCreation
         ac.Name = $"People with {inclusionFilter1.Name}";
         ac.RootFilterContainer_ID = whereContainer.ID;
         cic.EnsureNamingConvention(ac); //this will put cicx at the front and cause implicit SaveToDatabase
-
         var filterImporter = new FilterImporter(new AggregateFilterFactory(_repos.CatalogueRepository), null);
         var cloneFilter = filterImporter.ImportFilter(whereContainer, inclusionFilter1, null);
 
         whereContainer.AddChild(cloneFilter);
 
-        return cic;
+        var x = _activator.CoreChildProvider.GetAllChildrenRecursively(container).OfType<AggregateConfiguration>();
+        _activator.CoreChildProvider.SelectiveRefresh(ac);
+        _activator.CoreChildProvider.SelectiveRefresh(container);
+        _activator.CoreChildProvider.SelectiveRefresh(cic);
+        container = _repos.CatalogueRepository.GetObjectByID<CohortAggregateContainer>(container.ID);
+        var y = _activator.CoreChildProvider.GetAllChildrenRecursively(container).OfType<AggregateConfiguration>();
+        var z = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<AggregateConfiguration>();
+        return _repos.CatalogueRepository.GetObjectByID<CohortIdentificationConfiguration>(cic.ID);
     }
 
     private IFilter CreateFilter(AggregateConfiguration graph, string name, string whereSql)
@@ -452,7 +458,7 @@ public partial class ExampleDatasetsCreation
         {
             container = (AggregateFilterContainer)graph.RootFilterContainer;
         }
-
+        _activator.CoreChildProvider.SelectiveRefresh(container);
         var filter = new AggregateFilter(_repos.CatalogueRepository, name, container)
         {
             WhereSQL = whereSql
@@ -519,7 +525,7 @@ public partial class ExampleDatasetsCreation
 
         var parameterCreator = new ParameterCreator(filter.GetFilterFactory(), null, null);
         parameterCreator.CreateAll(filter, null);
-
+        _activator.CoreChildProvider.SelectiveRefresh(filter);
         return filter;
     }
 
@@ -561,7 +567,7 @@ public partial class ExampleDatasetsCreation
             ac.PivotOnDimensionID = otherDimension.ID;
             ac.SaveToDatabase();
         }
-
+        _activator.CoreChildProvider.SelectiveRefresh(ac);
         return ac;
     }
 
@@ -666,7 +672,7 @@ public partial class ExampleDatasetsCreation
 
             new ExtractableDataSet(_repos.DataExportRepository, cata);
         }
-
+        _activator.CoreChildProvider.SelectiveRefresh(cata);
         return cata;
     }
 

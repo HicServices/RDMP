@@ -48,7 +48,7 @@ internal class AggregateEditorUITests : UITests
 
         //publish a refresh
         Publish(config);
-
+        ui.SetDatabaseObject(ItemActivator,config);
         //should show one available columns
         available = colsUi.AvailableColumns;
         Assert.That(available, Has.Count.EqualTo(1));
@@ -94,7 +94,7 @@ internal class AggregateEditorUITests : UITests
         config.SaveToDatabase();
 
         Publish(config);
-
+        ui.SetDatabaseObject(ItemActivator, config);
         AssertNoErrors(ExpectedErrorType.Any);
     }
 

@@ -141,8 +141,8 @@ public class ExecuteCommandCreateNewExtractionConfigurationForProject : BasicCom
         }
 
         //refresh the project
-        Publish(p);
-        Activate(newConfig);
+        Publish(newConfig);
+        //Activate(newConfig);
         Emphasise(newConfig);
     }
 

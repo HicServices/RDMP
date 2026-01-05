@@ -5,9 +5,12 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using Rdmp.Core;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Dashboarding;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.UI.AggregationUIs;
 using Rdmp.UI.ItemActivation;
@@ -41,9 +44,9 @@ public class CohortSummaryAggregateGraphUI : AggregateGraphUI, IObjectCollection
         AssociatedCollection = RDMPCollection.Cohort;
     }
 
-    public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
+    public void RefreshBus_DoWork(object sender, DoWorkEventArgs e)
     {
-        _collection.RevertIfMatchedInCollectionObjects(e.Object, out var shouldCloseInstead);
+        _collection.RevertIfMatchedInCollectionObjects((DatabaseEntity)e.Argument, out var shouldCloseInstead);
 
         if (shouldCloseInstead)
             ParentForm?.Close();

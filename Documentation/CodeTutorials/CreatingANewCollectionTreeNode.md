@@ -138,7 +138,7 @@ private void AddChildren(ExtractionConfigurationsNode extractionConfigurationsNo
         children.Add(config);
     }
 
-    AddToDictionaries(children, descendancy);
+    //AddToDictionaries(children, descendancy);
 }
 ```
 
@@ -247,7 +247,7 @@ private void AddChildren(ExtractionConfigurationsNode extractionConfigurationsNo
 		children.Add(config);
 	}
 
-	AddToDictionaries(children, descendancy);
+	//AddToDictionaries(children, descendancy);
 }
 
 private void AddChildren(FrozenExtractionConfigurationsNode frozenExtractionConfigurationsNode, DescendancyList descendancy)
@@ -262,7 +262,7 @@ private void AddChildren(FrozenExtractionConfigurationsNode frozenExtractionConf
 		children.Add(config);
 	}
 
-	AddToDictionaries(children, descendancy);
+	//AddToDictionaries(children, descendancy);
 }
 ```
 Now when you run RDMP, the final tree should look something like:

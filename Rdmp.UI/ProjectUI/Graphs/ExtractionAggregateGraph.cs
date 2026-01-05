@@ -106,27 +106,27 @@ public sealed class ExtractionAggregateGraphUI : AggregateGraphUI, IObjectCollec
             : new object[] { Request.Configuration, "Graphing Extraction Query" };
     }
 
-    public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
+    public void RefreshBus_DoWork(object sender, DoWorkEventArgs e)
     {
-        if (e.Object.Equals(_collection.SelectedDataSets))
-            if (e.Exists)
+        if (e.Argument.Equals(_collection.SelectedDataSets))
+            if (true)//e.Exists
             {
                 _collection.SelectedDataSets.RevertToDatabaseState();
             }
             else
             {
-                Close();
-                return;
+                //Close();
+                //return;
             }
-        else if (e.Object.Equals(_collection.Graph))
-            if (e.Exists)
+        else if (e.Argument.Equals(_collection.Graph))
+            if (true)//e.Exists
             {
                 _collection.Graph.RevertToDatabaseState();
             }
             else
             {
-                Close();
-                return;
+                //Close();
+                //return;
             }
         else
             return; //change was not to a relevant object

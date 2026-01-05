@@ -142,13 +142,11 @@ public abstract class BasicActivateItems : IBasicActivateItems
         CoreIconProvider = new DataExportIconProvider(repositoryLocator, PluginUserInterfaces.ToArray());
     }
 
-    protected virtual ICoreChildProvider GetChildProvider()
+    protected virtual ICoreChildProvider GetChildProvider(bool force=false)
     {
-        // Build new CoreChildProvider in a temp then update to it to avoid stale references
-        ICoreChildProvider temp = null;
-
-        //prefer a linked repository with both
-        if (RepositoryLocator.DataExportRepository != null)
+        if (CoreChildProvider is null || force)
+        {
+            ICoreChildProvider temp = null;
             try
             {
                 temp = new DataExportChildProvider(RepositoryLocator, PluginUserInterfaces.ToArray(),
@@ -158,20 +156,12 @@ public abstract class BasicActivateItems : IBasicActivateItems
             {
                 ShowException("Error constructing DataExportChildProvider", e);
             }
-
-        //there was an error generating a data export repository or there was no repository specified
-
-        //so just create a catalogue one
-        temp ??= new CatalogueChildProvider(RepositoryLocator.CatalogueRepository, PluginUserInterfaces.ToArray(),
-            GlobalErrorCheckNotifier, CoreChildProvider as CatalogueChildProvider);
-
-        // first time
-        if (CoreChildProvider == null)
+            temp ??= new CatalogueChildProvider(RepositoryLocator.CatalogueRepository, PluginUserInterfaces.ToArray(),
+           GlobalErrorCheckNotifier, CoreChildProvider as CatalogueChildProvider);
             CoreChildProvider = temp;
-        else
-            CoreChildProvider.UpdateTo(temp);
-
+        }
         return CoreChildProvider;
+
     }
 
     private void ConstructPluginChildProviders()
@@ -478,7 +468,6 @@ public abstract class BasicActivateItems : IBasicActivateItems
 
             if (deletable is IMasqueradeAs masqueradeAs)
                 databaseObject ??= masqueradeAs.MasqueradingAs() as DatabaseEntity;
-
             return databaseObject == null
                 ? throw new NotSupportedException(
                     $"IDeletable {deletable} was not a DatabaseObject and it did not have a Parent in its tree which was a DatabaseObject (DescendancyList)")
@@ -530,10 +519,11 @@ public abstract class BasicActivateItems : IBasicActivateItems
     /// <inheritdoc/>
     public virtual void Publish(IMapsDirectlyToDatabaseTable databaseEntity)
     {
-        if (!HardRefresh && UserSettings.SelectiveRefresh && CoreChildProvider.SelectiveRefresh(databaseEntity)) return;
+        //if (!HardRefresh && UserSettings.SelectiveRefresh && CoreChildProvider.SelectiveRefresh(databaseEntity)) return;
+        if (!HardRefresh && CoreChildProvider.SelectiveRefresh(databaseEntity)) return;
 
-        var fresh = GetChildProvider();
-        CoreChildProvider.UpdateTo(fresh);
+        var fresh = GetChildProvider(true);//don't know what to do with Entity, so start fresh
+        CoreChildProvider = fresh;
         HardRefresh = false;
     }
 

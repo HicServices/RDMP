@@ -110,7 +110,7 @@ public class CatalogueUITests : UITests
         //now cata 2 has an acronym
         cata2.Acronym = "AB";
         cata2.SaveToDatabase();
-
+        Publish(cata2);
         AssertNoErrors(ExpectedErrorType.Any);
 
         //when I type the Acronym of another Catalogue

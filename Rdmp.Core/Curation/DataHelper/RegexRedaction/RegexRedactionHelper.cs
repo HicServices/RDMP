@@ -152,7 +152,7 @@ namespace Rdmp.Core.Curation.DataHelper.RegexRedaction
 
             }
             var sql = updateHelper.BuildUpdate(_discoveredTable, redactionTable, sqlLines);
-            var conn = _server.GetConnection();
+            using var conn = _server.GetConnection();
             conn.Open();
             using (var cmd = _server.GetCommand(sql, conn))
             {

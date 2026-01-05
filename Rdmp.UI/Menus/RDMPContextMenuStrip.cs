@@ -95,13 +95,6 @@ public class RDMPContextMenuStrip : ContextMenuStrip
                     mi.Enabled = !cmd.IsImpossible;
                     mi.ToolTipText = cmd.ReasonCommandImpossible;
                 }
-
-                if (mi.Tag is ExecuteCommandSimilar cmdSimilar)
-                {
-                    cmdSimilar.FetchMatches();
-                    mi.Enabled = !cmdSimilar.IsImpossible;
-                    mi.ToolTipText = cmdSimilar.ReasonCommandImpossible;
-                }
             }
         };
     }

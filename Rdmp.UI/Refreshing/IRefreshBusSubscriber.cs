@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
+using System.ComponentModel;
 
 namespace Rdmp.UI.Refreshing;
 
@@ -15,10 +16,14 @@ namespace Rdmp.UI.Refreshing;
 /// </summary>
 public interface IRefreshBusSubscriber
 {
-    /// <summary>
-    /// Called when
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e);
+    ///// <summary>
+    ///// Called when
+    ///// </summary>
+    ///// <param name="sender"></param>
+    ///// <param name="e"></param>
+    //void RefreshBus_DoWork(object sender, DoWorkEventArgs e);
+
+    void RefreshBus_DoWork(object sender, DoWorkEventArgs e);
+    delegate void RefreshCallback(object sender, DoWorkEventArgs e);
+
 }

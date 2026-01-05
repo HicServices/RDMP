@@ -4,9 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Linq;
-using System.Windows.Forms;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation;
@@ -18,6 +15,11 @@ using Rdmp.Core.Providers.Nodes;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
+using System;
+using System.ComponentModel;
+using System.Linq;
+using System.Windows.Forms;
+using static Rdmp.UI.Refreshing.IRefreshBusSubscriber;
 
 namespace Rdmp.UI.Collections;
 
@@ -80,7 +82,7 @@ public partial class LoadMetadataCollectionUI : RDMPCollectionUI, ILifetimeSubsc
             tlvLoadMetadata,
             activator,
             olvName,
-            olvName,tbFilter);
+            olvName, tbFilter);
 
         CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = a => new IAtomicCommand[]
             { new ExecuteCommandCreateNewLoadMetadata(a) };
@@ -101,18 +103,30 @@ public partial class LoadMetadataCollectionUI : RDMPCollectionUI, ILifetimeSubsc
     }
 
 
-    public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
+    public void RefreshBus_DoWork(object sender, DoWorkEventArgs e)
     {
-        if (e.Object is LoadMetadata)
-            tlvLoadMetadata.RefreshObject(Activator.CoreChildProvider.LoadMetadataRootFolder);
+        if (tlvLoadMetadata.InvokeRequired)
+        {
+            _ = Activator.CoreChildProvider.LoadMetadataRootFolder;
+            _ = Activator.CoreChildProvider.AllPermissionWindowsNode;
+            RefreshCallback rb = new RefreshCallback(RefreshBus_DoWork);
+            this.Invoke(rb, sender, e);
+        }
+        else
+        {
+            var x = e.Argument.GetType();
+            if (e.Argument is LoadMetadata)
+                tlvLoadMetadata.RefreshObject(Activator.CoreChildProvider.LoadMetadataRootFolder);
 
-        if (e.Object is PermissionWindow)
-            tlvLoadMetadata.RefreshObject(tlvLoadMetadata.Objects.OfType<AllPermissionWindowsNode>());
+            if (e.Argument is PermissionWindow)
+                tlvLoadMetadata.RefreshObject(Activator.CoreChildProvider.AllPermissionWindowsNode);
 
-        if (e.Object is CacheProgress)
-            tlvLoadMetadata.RefreshObject(tlvLoadMetadata.Objects.OfType<AllPermissionWindowsNode>());
-
-        BuildCommandList();
+            if (e.Argument is CacheProgress)
+                tlvLoadMetadata.RefreshObject(Activator.CoreChildProvider.AllPermissionWindowsNode);
+            if (e.Argument is ProcessTask)
+                tlvLoadMetadata.RefreshObject(Activator.CoreChildProvider.LoadMetadataRootFolder);
+            BuildCommandList();
+        }
     }
 
     public static bool IsRootObject(object root) =>
@@ -130,7 +144,8 @@ public partial class LoadMetadataCollectionUI : RDMPCollectionUI, ILifetimeSubsc
             Alignment = ToolStripItemAlignment.Right,
             ToolTipText = "Refresh Object"
         };
-        _refresh.Click += delegate (object sender, EventArgs e) {
+        _refresh.Click += delegate (object sender, EventArgs e)
+        {
             var lmd = Activator.CoreChildProvider.AllLoadMetadatas.First();
             if (lmd is not null)
             {

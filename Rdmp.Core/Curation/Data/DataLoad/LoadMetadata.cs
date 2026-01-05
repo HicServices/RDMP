@@ -308,10 +308,11 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         shareManager.UpsertAndHydrate(this, shareDefinition);
     }
 
-    public void LinkToCatalogue(ICatalogue catalogue)
+    public LoadMetadataCatalogueLinkage LinkToCatalogue(ICatalogue catalogue)
     {
         var linkage = new LoadMetadataCatalogueLinkage(CatalogueRepository, this, catalogue);
         linkage.SaveToDatabase();
+        return linkage;
     }
 
     public void UnlinkFromCatalogue(ICatalogue catalogue)

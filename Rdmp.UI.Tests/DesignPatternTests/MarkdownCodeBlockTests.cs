@@ -103,7 +103,7 @@ internal class MarkdownCodeBlockTests
                     children.Add(config);
                 }
 
-                AddToDictionaries(children, descendancy);
+                //AddToDictionaries(children, descendancy);
             }
 
             #endregion
@@ -149,7 +149,7 @@ internal class MarkdownCodeBlockTests
                     children.Add(config);
                 }
 
-                AddToDictionaries(children, descendancy);
+                //AddToDictionaries(children, descendancy);
             }
 
             private void AddChildren(FrozenExtractionConfigurationsNode frozenExtractionConfigurationsNode,
@@ -166,7 +166,7 @@ internal class MarkdownCodeBlockTests
                     children.Add(config);
                 }
 
-                AddToDictionaries(children, descendancy);
+                //AddToDictionaries(children, descendancy);
             }
 
             #endregion

@@ -114,7 +114,7 @@ public sealed class CachingPipelineUseCase : PipelineUseCase
     /// <summary>
     /// Design time types
     /// </summary>
-    private CachingPipelineUseCase() : base(new Type[]
+    public CachingPipelineUseCase() : base(new Type[]
     {
         typeof(ICacheFetchRequestProvider),
         typeof(IPermissionWindow),
