@@ -63,7 +63,7 @@ public class DublinCoreDefinition
     public string Format { get; set; }
 
     /// <summary>
-    /// Writes the defintion in the format listed in http://dublincore.org/documents/dc-xml-guidelines/
+    /// Writes the definition in the format listed in http://dublincore.org/documents/dc-xml-guidelines/
     /// </summary>
     /// <param name="to"></param>
     public void WriteXml(Stream to)
@@ -99,7 +99,7 @@ public class DublinCoreDefinition
     }
 
     /// <summary>
-    /// Parses elements such as title, subject, description etc out of a metadata tag expected to follow the Dublin Core Xml guidlines ( http://dublincore.org/documents/dc-xml-guidelines/)
+    /// Parses elements such as title, subject, description etc out of a metadata tag expected to follow the Dublin Core Xml guidelines ( http://dublincore.org/documents/dc-xml-guidelines/)
     /// </summary>
     /// <param name="element"></param>
     public void LoadFrom(XElement element)

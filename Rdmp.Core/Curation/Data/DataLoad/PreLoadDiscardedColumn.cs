@@ -22,12 +22,12 @@ namespace Rdmp.Core.Curation.Data.DataLoad;
 public enum DiscardedColumnDestination
 {
     /// <summary>
-    /// Column appears in RAW and might be used in AdjustRaw but is droped completely prior to migration to Staging
+    /// Column appears in RAW and might be used in AdjustRaw but is dropped completely prior to migration to Staging
     /// </summary>
     Oblivion = 1,
 
     /// <summary>
-    /// Column appears in RAW but is seperated off and stored in an IdentifierDump (See IdentifierDumper) and not passed through to Staging
+    /// Column appears in RAW but is separated off and stored in an IdentifierDump (See IdentifierDumper) and not passed through to Staging
     /// </summary>
     StoreInIdentifiersDump = 2,
 

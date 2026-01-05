@@ -13,6 +13,7 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
+using System.ComponentModel;
 
 namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs;
 
@@ -34,6 +35,8 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
     /// The users final choice of project directory, also check DialogResult for Ok / Cancel
     /// </summary>
     //public string Result { get; private set; }
+
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public LoadDirectory ResultDirectory { get; private set; }
 
     private Regex _endsWithDataFolder = new(@"[/\\]Data[/\\ ]*$", RegexOptions.IgnoreCase);

@@ -142,7 +142,6 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
     {
         Common.Activator = Activator;
         var descendancy = Activator.CoreChildProvider.GetDescendancyListIfAnyFor(e.Object);
-
         //if publish event was for a child of the cic (_cic is in the objects descendancy i.e. it sits below our cic)
         if (descendancy != null && descendancy.Parents.Contains(Common.Configuration))
         {
@@ -177,7 +176,10 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
         gbCicInfo.Text = $"Name: {databaseObject.Name}";
         tbDescription.Text = $"Description: {databaseObject.Description}";
         ticket.TicketText = databaseObject.Ticket;
-
+        if (databaseObject.IsTemplate)
+        {
+            version.Visible = false;
+        }
         if (_commonFunctionality == null)
         {
             activator.RefreshBus.Subscribe(this);
@@ -216,12 +218,14 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
         CommonFunctionality.AddToMenu(
             new ExecuteCommandShowXmlDoc(activator, "CohortIdentificationConfiguration.QueryCachingServer_ID",
                 "Query Caching"), "Help (What is Query Caching)");
-        CommonFunctionality.Add(
-            new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(activator, null).SetTarget(
-                databaseObject),
-            "Commit Cohort",
-            activator.CoreIconProvider.GetImage(RDMPConcept.ExtractableCohort, OverlayKind.Add));
-
+        if (!databaseObject.IsTemplate)
+        {
+            CommonFunctionality.Add(
+                new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(activator, null).SetTarget(
+                    databaseObject),
+                "Commit Cohort",
+                activator.CoreIconProvider.GetImage(RDMPConcept.ExtractableCohort, OverlayKind.Add));
+        }
         foreach (var c in _timeoutControls.GetControls())
             CommonFunctionality.Add(c);
 
@@ -405,9 +409,9 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
         return menuItem;
     }
 
-    private static void ViewCrashMessage(ICompileable compileable)
+    private static void ViewCrashMessage(ICompileable compilable)
     {
-        ExceptionViewer.Show(compileable.CrashMessage);
+        ExceptionViewer.Show(compilable.CrashMessage);
     }
 
     private void cbKnownVersions_SelectedIndexChanged(object sender, EventArgs e)

@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -33,6 +34,7 @@ public partial class StartupUI : Form, ICheckNotifier
     /// <summary>
     /// True if we failed to reach the catalogue database
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public bool CouldNotReachTier1Database { get; private set; }
 
 
@@ -74,6 +76,7 @@ public partial class StartupUI : Form, ICheckNotifier
     }
 
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public bool DoNotContinue { get; set; }
 
     private void StartupDatabaseFound(object sender, PlatformDatabaseFoundEventArgs eventArgs)
@@ -262,8 +265,8 @@ public partial class StartupUI : Form, ICheckNotifier
 
             case RDMPPlatformDatabaseStatus.RequiresPatching:
 
-                if (MessageBox.Show($"Patching Required on database of type {eventArgs.Patcher.Name}", "Patch",
-                        MessageBoxButtons.YesNo) == DialogResult.Yes)
+                if (MessageBox.Show($"Patching Required on database of type {eventArgs.Patcher.Name}", "Patch RDMP",
+                        MessageBoxButtons.OKCancel) == DialogResult.OK)
                 {
                     PatchingUI.ShowIfRequired(
                         eventArgs.Repository.DiscoveredServer.GetCurrentDatabase(),
@@ -272,8 +275,8 @@ public partial class StartupUI : Form, ICheckNotifier
                 }
                 else
                 {
-                    MessageBox.Show("Patching was cancelled, application will exit");
-                    Application.Exit();
+                    MessageBox.Show("Patching was cancelled. Apply Patch to use the latest version of RDMP. Application will exit."); 
+                    Environment.Exit(0);
                 }
 
                 break;

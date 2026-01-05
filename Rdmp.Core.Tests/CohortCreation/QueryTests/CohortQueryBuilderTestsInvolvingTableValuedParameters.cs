@@ -54,7 +54,7 @@ public class CohortQueryBuilderTestsInvolvingTableValuedParameters : DatabaseTes
             _function.ExtractionInformations[1].IsExtractionIdentifier = true;
             _function.ExtractionInformations[1].SaveToDatabase();
 
-            //add the extraction identtifier as the only dimension one ach of the aggregate configurations that we will use for the cohort identification query
+            //add the extraction identifier as the only dimension one ach of the aggregate configurations that we will use for the cohort identification query
             new AggregateDimension(CatalogueRepository, _function.ExtractionInformations[1], config1);
             new AggregateDimension(CatalogueRepository, _function.ExtractionInformations[1], config2);
 

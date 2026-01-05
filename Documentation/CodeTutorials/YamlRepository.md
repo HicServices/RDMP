@@ -53,7 +53,7 @@ Using a file system backend removes the requirement for having an Sql Server ins
 ## Limitations
 
 YamlRepository does not support multiple concurrent user writes.  ID allocations for new objects are 
-based on the current system state and therefore if multiple seperate processes are creating objects 
+based on the current system state and therefore if multiple separate processes are creating objects 
 at once there will be a mismatch in allocation which will lead to corruption.
 
  Multiple concurrent read-only processes **are** permitted.  The easiest way to achieve this is to remove

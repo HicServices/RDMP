@@ -176,7 +176,14 @@ public class Project : DatabaseEntity, IProject, ICustomSearchString, ICheckable
     {
         var associations =
             Repository.GetAllObjectsWithParent<ProjectCohortIdentificationConfigurationAssociation>(this);
-        return associations.Select(a => a.CohortIdentificationConfiguration).Where(c => c != null).ToArray();
+        return associations.Select(a => a.CohortIdentificationConfiguration).Where(c => c != null && !c.IsTemplate).ToArray();
+    }
+
+    public CohortIdentificationConfiguration[] GetAssociatedTemplateCohortIdentificationConfigurations()
+    {
+        var associations =
+            Repository.GetAllObjectsWithParent<ProjectCohortIdentificationConfigurationAssociation>(this);
+        return associations.Select(a => a.CohortIdentificationConfiguration).Where(c => c != null && c.IsTemplate).ToArray();
     }
 
     /// <summary>
@@ -192,7 +199,7 @@ public class Project : DatabaseEntity, IProject, ICustomSearchString, ICheckable
     /// <inheritdoc/>
     public ICatalogue[] GetAllProjectCatalogues()
     {
-        return Repository.GetAllObjectsWithParent<ExtractableDataSet>(this).Select(eds => eds.Catalogue).ToArray();
+        return Repository.GetAllObjects<ExtractableDataSetProject>().Where(edsp => edsp.Project_ID == this.ID).Select(edsp => edsp.DataSet.Catalogue).ToArray(); 
     }
 
     /// <inheritdoc/>
@@ -205,7 +212,7 @@ public class Project : DatabaseEntity, IProject, ICustomSearchString, ICheckable
     public ExtractionInformation[] GetAllProjectCatalogueColumns(ICoreChildProvider childProvider, ExtractionCategory c)
     {
         return childProvider is DataExportChildProvider dx
-            ? dx.ExtractableDataSets.Where(eds => eds.Project_ID == ID)
+            ? dx.ExtractableDataSets.Where(eds => eds.Projects.Select(p=>p.ID).Contains(ID))
                 .Select(e => dx.AllCataloguesDictionary[e.Catalogue_ID])
                 .SelectMany(cata => cata.GetAllExtractionInformation(c)).ToArray()
             : GetAllProjectCatalogueColumns(c);

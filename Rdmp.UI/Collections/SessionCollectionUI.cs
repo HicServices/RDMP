@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core;
@@ -31,7 +32,9 @@ public class SessionCollectionUI : RDMPUserControl, IObjectCollectionControl, IC
     private BrightIdeasSoftware.OLVColumn olvName;
     private bool _firstTime = true;
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public SessionCollection Collection { get; private set; }
+
     public RDMPCollectionCommonFunctionality CommonTreeFunctionality { get; } = new();
 
     public SessionCollectionUI()
@@ -167,7 +170,7 @@ public class SessionCollectionUI : RDMPUserControl, IObjectCollectionControl, IC
     {
         olvTree = new BrightIdeasSoftware.TreeListView();
         olvName = new BrightIdeasSoftware.OLVColumn();
-        ((System.ComponentModel.ISupportInitialize)olvTree).BeginInit();
+        ((ISupportInitialize)olvTree).BeginInit();
         SuspendLayout();
         // 
         // olvRecent
@@ -202,7 +205,7 @@ public class SessionCollectionUI : RDMPUserControl, IObjectCollectionControl, IC
         Controls.Add(olvTree);
         Name = "SessionCollectionUI";
         Size = new System.Drawing.Size(487, 518);
-        ((System.ComponentModel.ISupportInitialize)olvTree).EndInit();
+        ((ISupportInitialize)olvTree).EndInit();
         ResumeLayout(false);
     }
 

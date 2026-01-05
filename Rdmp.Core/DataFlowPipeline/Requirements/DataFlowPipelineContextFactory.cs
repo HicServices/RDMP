@@ -10,7 +10,7 @@ using Rdmp.Core.Logging;
 namespace Rdmp.Core.DataFlowPipeline.Requirements;
 
 /// <summary>
-/// Factory for constructing DataFlowPipelineContexts based on some handy presets.  Particularly helpful because of the wierd way we enforce FixedDestination
+/// Factory for constructing DataFlowPipelineContexts based on some handy presets.  Particularly helpful because of the weird way we enforce FixedDestination
 /// (basically we forbid the IPipeline from having any IDataFlowDestination).  Feel free to adjust your context after the factory creates it.  This is very low
 /// level functionality you should only need it if you are trying to define a new IPipelineUseCase for an entirely novel kind of pipeline usage.
 /// </summary>

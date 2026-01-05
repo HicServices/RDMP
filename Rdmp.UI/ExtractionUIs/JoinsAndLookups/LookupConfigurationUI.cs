@@ -259,29 +259,38 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
             HandleError("No Lookup table selected");
             return false;
         }
-        if (PKRelations.Where(d => d.SelectedItem != null).Count() == 0 || FKRelations.Where(d => d.SelectedItem != null).Count() == 0)
+
+        var pk = PKRelations.Count(static d => d.SelectedItem != null);
+        var fk = FKRelations.Count(static d => d.SelectedItem != null);
+
+        if (pk == 0 || fk == 0)
         {
             HandleError("At least one PK FK mapping must be set");
             return false;
         }
-        if (PKRelations.Where(d => d.SelectedItem != null).Count() != FKRelations.Where(d => d.SelectedItem != null).Count())
+
+        if (pk != fk)
         {
             HandleError("Must have a 1-to-1 mapping of PK and FK mappings");
             return false;
         }
-        if (Descriptions.Where(d => d.SelectedItem != null).Count() == 0)
+
+        var descColumnInfos = Descriptions.Where(static d => d.SelectedItem != null).Select(static d => ((ColumnInfo)d.SelectedItem).ID).ToArray();
+        if (descColumnInfos.Length == 0)
         {
             HandleError("At least one Description column must be set");
             return false;
         }
-        var descColumnInfos = Descriptions.Where(d => d.SelectedItem != null).Select(d => ((ColumnInfo)d.SelectedItem).ID);
-        var pkColumnInfos = PKRelations.Where(d => d.SelectedItem != null).Select(d => ((ColumnInfo)d.SelectedItem).ID);
-        var fkColumnInfos = FKRelations.Where(d => d.SelectedItem != null).Select(d => ((ColumnInfo)d.SelectedItem).ID);
+
+        var pkColumnInfos = PKRelations.Where(static d => d.SelectedItem != null).Select(static d => ((ColumnInfo)d.SelectedItem).ID);
+        var fkColumnInfos = FKRelations.Where(static d => d.SelectedItem != null).Select(static d => ((ColumnInfo)d.SelectedItem).ID);
+
         if (pkColumnInfos.Intersect(descColumnInfos).Any() || fkColumnInfos.Intersect(descColumnInfos).Any())
         {
             HandleError("A Description Column cannot be used in the PK FK mapping");
             return false;
         }
+
         return true;
     }
 

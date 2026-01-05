@@ -222,7 +222,7 @@ public partial class PropagateCatalogueItemChangesToSimilarNamedUI : RDMPForm
         }
     }
 
-    //yes = do save and do propogate
+    //yes = do save and do propagate
     private void btnYes_Click(object sender, EventArgs e)
     {
         DialogResult = DialogResult.Yes;

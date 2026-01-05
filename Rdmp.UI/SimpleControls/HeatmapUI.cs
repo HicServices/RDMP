@@ -17,7 +17,7 @@ using Rdmp.UI.SimpleDialogs;
 namespace Rdmp.UI.SimpleControls;
 
 /// <summary>
-/// Displays complicated many dimension pivot Aggregate graphs in an understandable format.  Requires a result data table that contains an axis in the first column of hte data table
+/// Displays complicated many dimension pivot Aggregate graphs in an understandable format.  Requires a result data table that contains an axis in the first column of the data table
 /// followed by any number (usually high e.g. 500+) additional columns which contain values that correspond to the axis.  A typical usage of this control would be to display drug
 /// prescriptions by month where there are thousands of different prescribeable drugs.
 /// 

@@ -120,7 +120,7 @@ public class ParameterCreator
                     if (proposedNewParameterName != requiredParameterName)
                         toCreate = toCreate.Replace(requiredParameterName, proposedNewParameterName);
 
-                    //construct it as a match to the existing parameter declared at the template level (see below for full match propogation)
+                    //construct it as a match to the existing parameter declared at the template level (see below for full match propagation)
                     newParameter = _factory.CreateNewParameter(filterToCreateFor, toCreate);
                 }
                 else

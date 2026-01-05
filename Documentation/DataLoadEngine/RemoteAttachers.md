@@ -50,6 +50,7 @@ The full configuration options are
 | Culture                                      | Optionally specify a custom date format                                                                                                                                                                                                                                                                                                                     |
 | Explicit Date Time Format                    | Optionally specify a specific datetime format    
 | Selected Columns                             | Optionally select which columns you wish to pull from the remote server (defaults to "*" )
+| RawTableDateColumn                           | Optionally give the date column in RAW a different name than in the select statement for delta loads. This may be due to awkward joins in a custom select query 
 
 ## Configuring the Remote Database Attacher
 The Remote Database Attacher has a number of configuration options the required fields are:
@@ -75,5 +76,5 @@ The Remote Database Attacher has a number of configuration options the required 
 
 ## Using Historical Loading with custom SQL
 By default, historical fetch configuration will be ignored in custome select SQL.
-To enable the use of hostorical fetching, include the string "$RDMPDefinedWhereClause" in the where clause of your query
+To enable the use of historical fetching, include the string "$RDMPDefinedWhereClause" in the where clause of your query
 e.e. "Select * from Biochemistry Where $RDMPDefinedWhereClause"

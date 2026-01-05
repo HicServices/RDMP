@@ -13,6 +13,7 @@ using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.Providers;
 using Rdmp.Core.Providers.Nodes.CohortNodes;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
@@ -37,6 +38,7 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
     {
         InitializeComponent();
         olvFrozen.AspectGetter = FrozenAspectGetter;
+        olvAssociatedProjects.AspectGetter = AssociatedProjectsAspectGetter;
     }
 
     public override void SetItemActivator(IActivateItems activator)
@@ -60,13 +62,16 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
         CommonTreeFunctionality.MaintainRootObjects = new[]
         {
             typeof(FolderNode<CohortIdentificationConfiguration>),
+            typeof(AllTemplateCohortIdentificationConfigurationsNode),
             typeof(AllOrphanAggregateConfigurationsNode),
             typeof(AllTemplateAggregateConfigurationsNode)
         };
         var rootFolder = Activator.CoreChildProvider.CohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations;
         rootFolder.ChildFolders = new List<FolderNode<CohortIdentificationConfiguration>>();
         rootFolder.ChildObjects = new List<CohortIdentificationConfiguration>();
+
         tlvCohortIdentificationConfigurations.AddObject(rootFolder);
+        tlvCohortIdentificationConfigurations.AddObject(Activator.CoreChildProvider.AllTemplateCohortIdentificationConfigurationsNode);
         tlvCohortIdentificationConfigurations.AddObject(Activator.CoreChildProvider.OrphanAggregateConfigurationsNode);
         tlvCohortIdentificationConfigurations.AddObject(Activator.CoreChildProvider
             .TemplateAggregateConfigurationsNode);
@@ -111,6 +116,7 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
         if (_firstTime)
         {
             CommonTreeFunctionality.SetupColumnTracking(olvName, new Guid("f8a42259-ce5a-4006-8ab8-e0305fce05aa"));
+            CommonTreeFunctionality.SetupColumnTracking(olvAssociatedProjects, new Guid("f8a42259-ce5a-4006-8ab8-e0305fce05aa"));
             CommonTreeFunctionality.SetupColumnTracking(olvFrozen, new Guid("d1e155ef-a28f-41b5-81e4-b763627ddb3c"));
 
             tlvCohortIdentificationConfigurations.Expand(rootFolder);
@@ -140,12 +146,22 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
         // The root CohortIdentificationConfiguration FolderNode is a root element in this tree
         root is FolderNode<CohortIdentificationConfiguration> f
             ? f.Name == FolderHelper.Root
-            : root is AllOrphanAggregateConfigurationsNode or AllTemplateAggregateConfigurationsNode;
+            : root is AllOrphanAggregateConfigurationsNode or AllTemplateAggregateConfigurationsNode or AllTemplateCohortIdentificationConfigurationsNode;
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {
     }
-
+    private string AssociatedProjectsAspectGetter(object o)
+    {
+        var cic = o as CohortIdentificationConfiguration;
+        if (cic != null)
+        {
+            var dx = Activator.CoreChildProvider as DataExportChildProvider;
+            var associations = dx.AllProjectAssociatedCics.Where(c => c.CohortIdentificationConfiguration_ID == cic.ID);
+            return string.Join(", ", associations.Select(a => a.Project.ID));
+        }
+        return "";
+    }
     private string FrozenAspectGetter(object o) =>
         o is CohortIdentificationConfiguration cic ? cic.Frozen ? "Yes" : "No" : null;
 }

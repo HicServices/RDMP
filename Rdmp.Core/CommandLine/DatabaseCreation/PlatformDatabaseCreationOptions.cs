@@ -43,7 +43,7 @@ public class PlatformDatabaseCreationOptions
             "Skips creating the default Pipelines and Managed Server References in the Catalogue database once created.")]
     public bool SkipPipelines { get; set; }
 
-    [Option('l', "Create Logging Server", Default = true, HelpText = "Create the default logging server in the Catalogue database once created. Is superseeded by 'Skip Pipelines'")]
+    [Option('l', "Create Logging Server", Default = true, HelpText = "Create the default logging server in the Catalogue database once created. Is superseded by 'Skip Pipelines'")]
     public bool CreateLoggingServer { get; set; }
 
     [Option('e', "ExampleDatasets", Default = false,
@@ -82,6 +82,9 @@ public class PlatformDatabaseCreationOptions
         HelpText =
             "Optional connection string keywords to use e.g. \"Key1=Value1; Key2=Value2\".  When using this option you must manually specify IntegratedSecurity if required.")]
     public string OtherKeywords { get; set; }
+
+    [Option(Required = false, HelpText = "The collation to use for the databases. Will override any other collation settings")]
+    public string Collation { get; set; }
 
 
     [Usage]

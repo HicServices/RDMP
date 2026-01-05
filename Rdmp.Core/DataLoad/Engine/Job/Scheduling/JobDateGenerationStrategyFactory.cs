@@ -21,7 +21,7 @@ public class JobDateGenerationStrategyFactory
     private readonly Type _typeToCreate;
 
     /// <summary>
-    /// Always respects the LoadProgress dates and crashes if there arent any load progresses associated with the given load metadata
+    /// Always respects the LoadProgress dates and crashes if there aren't any load progresses associated with the given load metadata
     /// Uses SingleScheduleCacheDateTrackingStrategy if there is a cache associated with any of the load progresses otherwise uses SingleScheduleConsecutiveDateStrategy (meaning for example each day for the next 5 days)
     /// </summary>
     /// <param name="strategy"></param>

@@ -17,7 +17,7 @@ namespace Rdmp.Core.Repositories.Managers;
 
 /// <summary>
 /// Allows you to create and destroy usage relationships between TableInfos and DataAccessCredentials (under context X).  For example you might have a DataAccessCredentials
-/// called 'RoutineLoaderAccount' and give tables A,B and C permission to use it under DataAccessContext.DataLoad then have a seperate DataAccessCredentials called
+/// called 'RoutineLoaderAccount' and give tables A,B and C permission to use it under DataAccessContext.DataLoad then have a separate DataAccessCredentials called
 /// 'ReadonlyUserAccount' and give tables A,B,C and D permission to use it under DataAccessContext.Any
 /// 
 /// <para></para>
@@ -107,7 +107,7 @@ internal class TableInfoCredentialsManager : ITableInfoCredentialsManager
             cmd.Parameters["@context"].Value = context;
 
             using var r = cmd.ExecuteReader();
-            //gets the first liscenced usage
+            //gets the first licenced usage
             if (r.Read())
             {
                 //there is one

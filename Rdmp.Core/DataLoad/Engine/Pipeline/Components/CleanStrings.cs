@@ -32,13 +32,13 @@ public class CleanStrings : IPluginDataFlowComponent<DataTable>, IPipelineRequir
     {
         timer.Start();
         toProcess.BeginLoadData();
-    StartAgain:
+        StartAgain:
         foreach (DataRow row in toProcess.Rows)
         {
             for (var i = 0; i < columnsToClean.Count; i++)
             {
                 var toClean = columnsToClean[i];
-                string val = null;
+                string val;
                 try
                 {
                     var o = row[toClean];

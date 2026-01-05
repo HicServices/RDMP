@@ -30,7 +30,7 @@ namespace Rdmp.Core.DataExport.Data;
 /// in your database for example if you need to support different identifier datatypes / formats.</para>
 /// 
 /// <para><see cref="Rdmp.Core.CohortCommitting.CreateNewCohortDatabaseWizard"/> to automatically generate a database that is compatible with the format requirements and has
-/// release identifiers assigned automatically either as autonums or GUIDs (I suggest using GUIDs to prevent accidental crosstalk from ever occuring if you handle magic numbers from
+/// release identifiers assigned automatically either as autonums or GUIDs (I suggest using GUIDs to prevent accidental crosstalk from ever occurring if you handle magic numbers from
 /// other agencies). </para>
 /// </summary>
 public interface IExternalCohortTable : ICheckable, IDataAccessPoint, IHasDependencies, INamed

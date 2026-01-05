@@ -52,7 +52,7 @@ public abstract class ReleasePotential : ICheckable
     public string SqlExtracted { get; private set; }
 
     /// <summary>
-    /// The SQL that would be generated if the configuration/dataset were executed today (if this differes from SqlExtracted then there is an Sql Desynchronisation)
+    /// The SQL that would be generated if the configuration/dataset were executed today (if this differs from SqlExtracted then there is an Sql Desynchronisation)
     /// </summary>
     public string SqlCurrentConfiguration { get; private set; }
 

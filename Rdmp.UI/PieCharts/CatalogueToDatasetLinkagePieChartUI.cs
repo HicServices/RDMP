@@ -73,8 +73,6 @@ public partial class CatalogueToDatasetLinkagePieChartUI : RDMPUserControl, IDas
         AddFlag("Deprecated Catalogues", c => c.IncludeDeprecatedCatalogues,
             (c, r) => c.IncludeDeprecatedCatalogues = r);
         AddFlag("Internal Catalogues", c => c.IncludeInternalCatalogues, (c, r) => c.IncludeInternalCatalogues = r);
-        AddFlag("Cold Storage Catalogues", c => c.IncludeColdStorageCatalogues,
-            (c, r) => c.IncludeColdStorageCatalogues = r);
         AddFlag("Project Specific Catalogues", c => c.IncludeProjectSpecificCatalogues,
             (c, r) => c.IncludeProjectSpecificCatalogues = r);
 

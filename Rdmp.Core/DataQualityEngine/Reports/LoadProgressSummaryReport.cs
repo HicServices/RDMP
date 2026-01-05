@@ -22,7 +22,7 @@ namespace Rdmp.Core.DataQualityEngine.Reports;
 
 /// <summary>
 /// Generates two DataTable.  One containing the row counts (according to DQE) for every Catalogue in a LoadMetadata.  The second containing all cached fetch
-/// counts and counts of all files in the Caching directory for the CacheProgress (if any) of the LoadProgress passed into the contructor.  These tables are
+/// counts and counts of all files in the Caching directory for the CacheProgress (if any) of the LoadProgress passed into the constructor.  These tables are
 /// intended to assist the user in rapidly determining how much of a given dataset collection based on a cache fetch/load DLE job has currently been loaded
 /// (according to the DQE).  See LoadProgressDiagram
 /// </summary>
@@ -363,7 +363,7 @@ BEGIN
     set @len = CHARINDEX(',', @Columns +',', @pos+1) - @pos
     set @value = SUBSTRING(@Columns +',', @pos, @len)
         
-    --We are constructing a version that turns: '[fish],[lama]' into 'ISNULL([fish],0) as [fish], ISNULL([lama],0) as [lama]'
+    --We are constructing a version that turns: '[fish],[llama]' into 'ISNULL([fish],0) as [fish], ISNULL([llama],0) as [llama]'
     SET @FinalSelectList = @FinalSelectList + ', ISNULL(' + @value  + ',0) as ' + @value 
 
     set @pos = CHARINDEX(',', @Columns +',', @pos+@len) +1

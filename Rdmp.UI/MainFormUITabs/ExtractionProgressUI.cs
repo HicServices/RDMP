@@ -24,6 +24,8 @@ namespace Rdmp.UI.MainFormUITabs;
 public partial class ExtractionProgressUI : ExtractionProgressUI_Design, ISaveableUI
 {
     public ExtractionProgress ExtractionProgress => (ExtractionProgress)DatabaseObject;
+
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public IDetermineDatasetTimespan TimespanCalculator { get; set; } = new DatasetTimespanCalculator();
 
     private Tuple<DateTime?, DateTime?> dqeResult;

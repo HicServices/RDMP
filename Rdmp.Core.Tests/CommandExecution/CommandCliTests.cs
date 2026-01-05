@@ -21,7 +21,7 @@ using Tests.Common;
 namespace Rdmp.Core.Tests.CommandExecution;
 
 /// <summary>
-/// Base class for all tests which test RDMP CLI command line arguments to run <see cref="BasicCommandExecution"/> derrived
+/// Base class for all tests which test RDMP CLI command line arguments to run <see cref="BasicCommandExecution"/> derived
 /// classes
 /// </summary>
 public abstract class CommandCliTests : UnitTests

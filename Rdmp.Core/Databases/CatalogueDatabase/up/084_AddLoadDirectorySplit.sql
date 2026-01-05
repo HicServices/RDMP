@@ -1,6 +1,6 @@
 --Version:8.2.0
 --Description: Allow for dispirate locations for data load directories
-if not exists (select 1 from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='LoadMetaData' and COLUMN_NAME='LocationOfForLoadingDirectory')
+if not exists (select 1 from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='LoadMetadata' and COLUMN_NAME='LocationOfForLoadingDirectory')
 BEGIN       
 	ALTER TABLE [dbo].[LoadMetadata] ADD LocationOfForLoadingDirectory varchar(3000) NULL;
 	ALTER TABLE [dbo].[LoadMetadata] ADD LocationOfForArchivingDirectory [varchar](3000) NULL;
@@ -9,7 +9,7 @@ BEGIN
 END
 GO
 
-if exists(select 1 from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='LoadMetaData' and COLUMN_NAME='LocationOfFlatFiles')
+if exists(select 1 from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='LoadMetadata' and COLUMN_NAME='LocationOfFlatFiles')
 BEGIN
 	Declare @SplitMetaDataSQL varchar(max)= '
 	update [dbo].[LoadMetadata] 

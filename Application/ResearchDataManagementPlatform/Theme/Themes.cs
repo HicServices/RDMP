@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.ComponentModel;
 using System.Globalization;
 using System.Windows.Forms;
 using Rdmp.UI.Theme;
@@ -12,10 +13,12 @@ using WeifenLuo.WinFormsUI.Docking;
 namespace ResearchDataManagementPlatform.Theme;
 
 //These classes should not be moved.  They are referenced by name in UserSettingsFileUI and UserSettings
-[System.ComponentModel.DesignerCategory("")]
+[DesignerCategory("")]
 public class MyVS2015BlueTheme : VS2015BlueTheme, ITheme
 {
     private ThemeExtender _extender;
+
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public bool ApplyThemeToMenus { get; set; }
 
     public MyVS2015BlueTheme()
@@ -40,6 +43,8 @@ public class MyVS2015BlueTheme : VS2015BlueTheme, ITheme
 public class MyVS2015DarkTheme : VS2015DarkTheme, ITheme
 {
     private ThemeExtender _extender;
+
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public bool ApplyThemeToMenus { get; set; }
 
     public MyVS2015DarkTheme()
@@ -64,6 +69,8 @@ public class MyVS2015DarkTheme : VS2015DarkTheme, ITheme
 public class MyVS2015LightTheme : VS2015LightTheme, ITheme
 {
     private ThemeExtender _extender;
+
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public bool ApplyThemeToMenus { get; set; }
 
     public MyVS2015LightTheme()

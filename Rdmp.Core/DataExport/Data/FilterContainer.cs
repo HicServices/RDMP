@@ -15,7 +15,7 @@ namespace Rdmp.Core.DataExport.Data;
 
 /// <summary>
 /// Sometimes you need to limit which records are extracted as part of an ExtractionConfiguration (See DeployedExtractionFilter).  In order to assemble valid WHERE SQL for this use
-/// case each DeployedExtractionFilter must be in either an AND or an OR container.  These FilterContainers ensure that each subcontainer / filter beyond the first is seperated by
+/// case each DeployedExtractionFilter must be in either an AND or an OR container.  These FilterContainers ensure that each subcontainer / filter beyond the first is separated by
 /// the appropriate operator (AND or OR) and brackets/tab indents where appropriate.
 /// </summary>
 public class FilterContainer : ConcreteContainer, IContainer
@@ -51,7 +51,7 @@ public class FilterContainer : ConcreteContainer, IContainer
         return (Catalogue)sel?.ExtractableDataSet.Catalogue;
     }
 
-    public override bool ShouldBeReadOnly(out string reason)
+    public override bool ShouldBeReadOnly(string context, out string reason)
     {
         var ec = GetSelectedDataSetsRecursively()?.ExtractionConfiguration;
 
@@ -61,7 +61,7 @@ public class FilterContainer : ConcreteContainer, IContainer
             return false;
         }
 
-        return ec.ShouldBeReadOnly(out reason);
+        return ec.ShouldBeReadOnly(context, out reason);
     }
 
     /// <summary>
@@ -97,7 +97,7 @@ public class FilterContainer : ConcreteContainer, IContainer
             //clone the subcontainer recursively
             var clonedSubcontainer = toCloneSubcontainer.DeepCloneEntireTreeRecursivelyIncludingFilters();
 
-            //get the returned filter subcontainer and assocaite it with the cloned version of this
+            //get the returned filter subcontainer and associate it with the cloned version of this
             clonedFilterContainer.AddChild(clonedSubcontainer);
         }
 

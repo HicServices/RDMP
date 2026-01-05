@@ -8,11 +8,14 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
+using System;
+using System.Linq;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
@@ -65,6 +68,17 @@ public class ExecuteCommandCloneCohortIdentificationConfiguration : BasicCommand
         return this;
     }
 
+    private bool Validate(out string reason)
+    {
+        if(_cic.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively().Select(a => a.Catalogue).Where(c => c.IsInternalDataset).Any())
+        {
+            reason = "Configuration contains Catalogues marked as Internal";
+            return false;
+        }
+        reason = null;
+        return true;
+    }
+
     public override void Execute()
     {
         base.Execute();
@@ -74,6 +88,12 @@ public class ExecuteCommandCloneCohortIdentificationConfiguration : BasicCommand
         if (_cic == null)
             return;
 
+        if (!Validate(out string reason))
+        {
+            Show("Unable to clone Cohort Identification Configuration",$"Cohort Identification Configuration is not in a valid state to clone.{reason}.");
+            return;
+        }
+
         // Confirm creating yes/no (assuming activator is interactive)
         if (!_autoConfirm && BasicActivator.IsInteractive && !YesNo(
                 "This will create a 100% copy of the entire CohortIdentificationConfiguration including all datasets, filters, parameters and set operations. Are you sure this is what you want?",
@@ -82,7 +102,7 @@ public class ExecuteCommandCloneCohortIdentificationConfiguration : BasicCommand
         if (CloneCreatedIfAny != null && _version is not null)
         {
             CloneCreatedIfAny.Version = _version;
-            //If no name is provided, use the existing name, but repalce the "(Clone) with the version number"
+            //If no name is provided, use the existing name, but replace the "(Clone) with the version number"
             if(CloneCreatedIfAny.Version != null)
                 CloneCreatedIfAny.Name = _name ?? $"{CloneCreatedIfAny.Name[..^7]}:{CloneCreatedIfAny.Version}";
             if (_version is not null)

@@ -15,7 +15,7 @@ namespace Rdmp.Core.Curation.Data.Dashboarding;
 
 /// <summary>
 /// Describes a specific object used by a DashboardControl.  For example if you create a pie chart of issues on a specific catalogue on your DashboardLayout then there will be a
-/// DashboardControl for the pie chart and a DashboardObjectUse pointing at that specific Catalogue.  These refernces do not stop objects being deleted.  References can also be
+/// DashboardControl for the pie chart and a DashboardObjectUse pointing at that specific Catalogue.  These references do not stop objects being deleted.  References can also be
 /// cross database (e.g. pointing at objects in a DataExport database like Project etc).
 /// </summary>
 public class DashboardObjectUse : ReferenceOtherObjectDatabaseEntity

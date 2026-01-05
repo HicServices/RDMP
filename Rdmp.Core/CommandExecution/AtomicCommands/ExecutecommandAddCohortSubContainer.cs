@@ -22,7 +22,7 @@ public class ExecuteCommandAddCohortSubContainer : BasicCommandExecution, IAtomi
         Weight = 0.12f;
         _container = container;
 
-        if (container.ShouldBeReadOnly(out var reason)) SetImpossible(reason);
+        if (container.ShouldBeReadOnly(this.GetType().Name, out var reason)) SetImpossible(reason);
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>

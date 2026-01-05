@@ -38,9 +38,8 @@ internal class ExecuteCommandUpdateCatalogueDataLocationUI : BasicUICommandExecu
 
     public override void Execute()
     {
-        UpdateCatalogueDataLocationUI ui;
-        ui = _columnInfo is not null ? ui = new UpdateCatalogueDataLocationUI(_activator, _columnInfo) : new UpdateCatalogueDataLocationUI(_activator, _catalogue);
-      
+        var ui = _columnInfo is not null ? new UpdateCatalogueDataLocationUI(_activator, _columnInfo) : new UpdateCatalogueDataLocationUI(_activator, _catalogue);
+
         ui.Show();
     }
 }

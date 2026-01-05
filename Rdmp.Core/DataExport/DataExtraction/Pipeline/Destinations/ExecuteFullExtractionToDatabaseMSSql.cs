@@ -4,12 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Data;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
 using FAnsi.Discovery;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
@@ -18,7 +12,10 @@ using Rdmp.Core.DataExport.DataExtraction.UserPicks;
 using Rdmp.Core.DataExport.DataRelease.Pipeline;
 using Rdmp.Core.DataExport.DataRelease.Potential;
 using Rdmp.Core.DataFlowPipeline;
+using Rdmp.Core.DataLoad.Engine.Job.Scheduling;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
+using Rdmp.Core.DataLoad.Triggers.Exceptions;
+using Rdmp.Core.DataLoad.Triggers.Implementations;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
@@ -26,6 +23,13 @@ using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.Core.ReusableLibraryCode.Progress;
+using System;
+using System.Data;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
+using YamlDotNet.Core;
 
 namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
 
@@ -45,6 +49,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
          $t - Master Ticket (e.g. 'LINK-1234')
          $r - Request Ticket (e.g. 'LINK-1234')
          $l - Release Ticket (e.g. 'LINK-1234')
+         $e - Extraction Configuration Id (e.g. 14)
          ", Mandatory = true, DefaultValue = "Proj_$n_$l")]
     public string DatabaseNamingPattern { get; set; }
 
@@ -54,7 +59,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
          $c - Configuration Name (e.g. 'Cases')
          $d - Dataset name (e.g. 'Prescribing')
          $a - Dataset acronym (e.g. 'Presc') 
-
+         $e - Extraction Configuration Id (e.g. 14)
          You must have either $a or $d
          ", Mandatory = true, DefaultValue = "$c_$d")]
     public string TableNamingPattern { get; set; }
@@ -90,7 +95,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
     public bool IncludeTimeStamp { get; set; } = false;
 
 
-    [DemandsInitialization("If chekced, indexed will be created using the primary keys specified")]
+    [DemandsInitialization("If checked, indexed will be created using the primary keys specified")]
     public bool IndexTables { get; set; } = true;
 
     [DemandsInitialization(@"How do you want to name the created index, use the following tokens if you need them:   
@@ -99,13 +104,17 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
          $c - Configuration Name (e.g. 'Cases')
          $d - Dataset name (e.g. 'Prescribing')
          $a - Dataset acronym (e.g. 'Presc') 
-
+         $e - Extraction Configuration Id (e.g. 14)
          You must have either $a or $d
-         ",DefaultValue = "Index_$c_$d")]
+         ", DefaultValue = "Index_$c_$d")]
     public string IndexNamingPattern { get; set; }
 
     [DemandsInitialization("An optional list of columns to index on e.g \"Column1, Column2\"")]
     public string UserDefinedIndex { get; set; }
+
+
+    [DemandsInitialization("When writing to an existing database, will update records and store historical versions via a view", DefaultValue = false)]
+    public bool UseArchiveTrigger { get; set; }
 
     private DiscoveredDatabase _destinationDatabase;
     private DataTableUploadDestination _destination;
@@ -175,6 +184,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
             var existing = _destinationDatabase.ExpectTable(tblName);
             if (existing.Exists())
             {
+                var hasPKs = existing.DiscoverColumns().Any(col => col.IsPrimaryKey);
                 if (_request.IsBatchResume)
                 {
                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
@@ -191,6 +201,26 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
 
                     // since we dropped it we should treat it as if it was never there to begin with
                     _tableDidNotExistAtStartOfLoad = true;
+                }
+                else if (UseArchiveTrigger && hasPKs)
+                {
+
+                    TriggerImplementerFactory triggerFactory = new TriggerImplementerFactory(FAnsi.DatabaseType.MicrosoftSQLServer);
+                    var implementor = triggerFactory.Create(existing);
+                    bool present;
+                    try
+                    {
+                        present = implementor.GetTriggerStatus() == DataLoad.Triggers.TriggerStatus.Enabled;
+                    }
+                    catch (TriggerMissingException)
+                    {
+                        present = false;
+                    }
+                    if (!present)
+                    {
+                        implementor.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
+                    }
+
                 }
                 else
                 {
@@ -221,10 +251,12 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         _destination.IncludeTimeStamp = IncludeTimeStamp;
         _destination.UseTrigger = AppendDataIfTableExists;
         _destination.IndexTables = IndexTables;
+        _destination.UseTrigger = UseArchiveTrigger;
         _destination.IndexTableName = GetIndexName();
         if (UserDefinedIndex is not null)
             _destination.UserDefinedIndexes = UserDefinedIndex.Split(',').Select(i => i.Trim()).ToList();
         _destination.PreInitialize(_destinationDatabase, listener);
+
 
         return _destination;
     }
@@ -327,6 +359,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         indexName = indexName.Replace("$p", project.Name);
         indexName = indexName.Replace("$n", project.ProjectNumber.ToString());
         indexName = indexName.Replace("$c", _request.Configuration.Name);
+        indexName = indexName.Replace("$e", _request.Configuration.ID.ToString());
         if (_request is ExtractDatasetCommand extractDatasetCommand)
         {
             indexName = indexName.Replace("$d", extractDatasetCommand.DatasetBundle.DataSet.Catalogue.Name);
@@ -340,7 +373,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         }
 
 
-        return indexName.Replace(" ","");
+        return indexName.Replace(" ", "");
     }
 
     private string GetTableName(string suffix = null)
@@ -362,6 +395,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         tblName = tblName.Replace("$p", project.Name);
         tblName = tblName.Replace("$n", project.ProjectNumber.ToString());
         tblName = tblName.Replace("$c", _request.Configuration.Name);
+        tblName = tblName.Replace("$e", _request.Configuration.ID.ToString());
 
         if (_request is ExtractDatasetCommand extractDatasetCommand)
         {
@@ -591,8 +625,8 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
             .Replace("$n", _project.ProjectNumber.ToString())
             .Replace("$t", _project.MasterTicket)
             .Replace("$r", _request.Configuration.RequestTicket)
-            .Replace("$l", _request.Configuration.ReleaseTicket);
-
+            .Replace("$l", _request.Configuration.ReleaseTicket)
+            .Replace("$e", _request.Configuration.ID.ToString());
         return dbName;
     }
 
@@ -660,12 +694,32 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                     $"Catalogue '{dsRequest.Catalogue}' does not have an Acronym but TableNamingPattern contains $a",
                     CheckResult.Fail));
 
+       
+
         base.Check(notifier);
 
         try
         {
             var server = DataAccessPortal.ExpectServer(TargetDatabaseServer, DataAccessContext.DataExport, false);
             var database = _destinationDatabase = server.ExpectDatabase(GetDatabaseName());
+
+            if (UseArchiveTrigger)
+            {
+                if (_request is ExtractDatasetCommand dsRequest)
+                {
+                    var existing = _destinationDatabase.ExpectTable(dsRequest.Catalogue.Name);
+                    if (existing.Exists())
+                    {
+                        var hasPKs = existing.DiscoverColumns().Any(col => col.IsPrimaryKey);
+                        if (!hasPKs)
+                        {
+                            notifier.OnCheckPerformed(new CheckEventArgs(
+                               $"Catalogue does not have any PKS. Cannot apply the archive trigger",
+                               CheckResult.Fail));
+                        }
+                    }
+                }
+            }
 
             if (database.Exists())
             {

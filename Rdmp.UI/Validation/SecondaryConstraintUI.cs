@@ -58,7 +58,7 @@ public partial class SecondaryConstraintUI : UserControl
         string[] otherColumns)
     {
         const int rowHeight = 30;
-        //the amount of additional space required to accomodate description labels
+        //the amount of additional space required to accommodate description labels
         var inflation = 0;
         SecondaryConstriant = secondaryConstriant;
 

@@ -72,7 +72,7 @@ public class PipelineUser : IPipelineUser
     }
 
     /// <summary>
-    /// Gets a <see cref="PipelineUser"/> targetting <see cref="CacheProgress.Pipeline_ID"/>
+    /// Gets a <see cref="PipelineUser"/> targeting <see cref="CacheProgress.Pipeline_ID"/>
     /// </summary>
     /// <param name="cacheProgress"></param>
     public PipelineUser(CacheProgress cacheProgress) : this(typeof(CacheProgress).GetProperty("Pipeline_ID"),

@@ -38,7 +38,7 @@ public interface IFilter : ICollectSqlParameters, INamed, IHasQuerySyntaxHelper,
     bool IsMandatory { get; set; }
 
     /// <summary>
-    /// Only applicable for non Catalogue level filters (<see cref="ExtractionFilter"/>) i.e. derrived/deployed filters.  This is the ID of the original master <see cref="ExtractionFilter"/>
+    /// Only applicable for non Catalogue level filters (<see cref="ExtractionFilter"/>) i.e. derived/deployed filters.  This is the ID of the original master <see cref="ExtractionFilter"/>
     /// that the current filter was cloned as a copy of.
     /// 
     /// <para>Null if a master filter (<see cref="ExtractionFilter"/>) or a deployed filter that was written from scratch </para>
@@ -65,7 +65,7 @@ public interface IFilter : ICollectSqlParameters, INamed, IHasQuerySyntaxHelper,
     ColumnInfo GetColumnInfoIfExists();
 
     /// <summary>
-    /// Gets an appropriate <see cref="IFilterFactory"/> for creating arguments and other filters of the Type compatible the derrived class (e.g. if the <see cref="IFilter"/> is an
+    /// Gets an appropriate <see cref="IFilterFactory"/> for creating arguments and other filters of the Type compatible the derived class (e.g. if the <see cref="IFilter"/> is an
     /// <see cref="ExtractionFilter"/> then an <see cref="ExtractionFilterFactory"/>  would be returned).
     /// </summary>
     /// <returns></returns>

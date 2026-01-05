@@ -17,7 +17,7 @@ public class ContainerCombineable : ICombineToMakeCommand
     public IContainer Container { get; private set; }
 
     /// <summary>
-    /// All the containers that are further down the container heirarchy from this Container.  This includes all children containers, their children and their children and so on.
+    /// All the containers that are further down the container hierarchy from this Container.  This includes all children containers, their children and their children and so on.
     /// </summary>
     public List<IContainer> AllSubContainersRecursive { get; private set; }
 

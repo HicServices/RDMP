@@ -187,7 +187,7 @@ internal class IdentifierDumperSynchronizer
                 = allColumnsInLiveDatabase.FirstOrDefault(
                     col => col.GetRuntimeName().Equals(columnInIdentifierDump.GetRuntimeName()));
 
-            //we straight up found a column in the dump that doesn't exist in the metadata, thats fine (presumably the user nuked the column at some point and left the archival dumped stuff still in the dump)
+            //we straight up found a column in the dump that doesn't exist in the metadata, that's fine (presumably the user nuked the column at some point and left the archival dumped stuff still in the dump)
             if (columnThatShouldHaveTheSameType == null)
                 continue;
 

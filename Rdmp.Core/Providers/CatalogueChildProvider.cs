@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ClientModel.Primitives;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -21,6 +22,7 @@ using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.Curation.Data.Remoting;
+using Rdmp.Core.Curation.DataHelper.RegexRedaction;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Providers.Nodes.CohortNodes;
@@ -54,6 +56,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 {
     //Load System
     public LoadMetadata[] AllLoadMetadatas { get; set; }
+    public LoadMetadataCatalogueLinkage[] AllLoadMetadataCatalogueLinkages { get; set; }
 
     private LoadMetadataCatalogueLinkage[] AllLoadMetadataLinkage { get; set; }
     public ProcessTask[] AllProcessTasks { get; set; }
@@ -71,7 +74,7 @@ public class CatalogueChildProvider : ICoreChildProvider
     public SupportingDocument[] AllSupportingDocuments { get; set; }
     public SupportingSQLTable[] AllSupportingSQL { get; set; }
 
-    //tells you the imediate children of a given node.  Do not add to this directly instead add using AddToDictionaries unless you want the Key to be an 'on the sly' no known descendency child
+    //tells you the immediate children of a given node.  Do not add to this directly instead add using AddToDictionaries unless you want the Key to be an 'on the sly' no known descendency child
     private ConcurrentDictionary<object, HashSet<object>> _childDictionary = new();
 
     //This is the reverse of _childDictionary in some ways.  _childDictionary tells you the immediate children while
@@ -144,6 +147,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     public FolderNode<Curation.Data.Dataset> DatasetRootFolder { get; set; }
     public FolderNode<CohortIdentificationConfiguration> CohortIdentificationConfigurationRootFolder { get; set; }
+    public AllTemplateCohortIdentificationConfigurationsNode AllTemplateCohortIdentificationConfigurationsNode { get; set; }
     public FolderNode<CohortIdentificationConfiguration> CohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations { get; set; }
 
     public AllConnectionStringKeywordsNode AllConnectionStringKeywordsNode { get; set; }
@@ -170,6 +174,7 @@ public class CatalogueChildProvider : ICoreChildProvider
     private ICohortContainerManager _cohortContainerManager;
 
     public CohortIdentificationConfiguration[] AllCohortIdentificationConfigurations { get; private set; }
+    public CohortIdentificationConfiguration[] AllTemplateCohortIdentificationConfigurations { get; private set; }
     public CohortAggregateContainer[] AllCohortAggregateContainers { get; set; }
     public JoinableCohortAggregateConfiguration[] AllJoinables { get; set; }
     public JoinableCohortAggregateConfigurationUse[] AllJoinUses { get; set; }
@@ -203,6 +208,11 @@ public class CatalogueChildProvider : ICoreChildProvider
     public AllOrphanAggregateConfigurationsNode OrphanAggregateConfigurationsNode { get; set; } = new();
     public AllTemplateAggregateConfigurationsNode TemplateAggregateConfigurationsNode { get; set; } = new();
     public FolderNode<Catalogue> CatalogueRootFolder { get; private set; }
+
+    public AllDatasetsNode AllDatasetsNode { get; set; }
+
+    public RegexRedactionConfiguration[] AllRegexRedactionConfigurations { get; set; }
+    public AllRegexRedactionConfigurationsNode AllRegexRedactionConfigurationsNode { get; set; }
 
     public HashSet<AggregateConfiguration> OrphanAggregateConfigurations;
     public AggregateConfiguration[] TemplateAggregateConfigurations;
@@ -250,6 +260,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         AllDatasets = GetAllObjects<Curation.Data.Dataset>(repository);
 
         AllLoadMetadatas = GetAllObjects<LoadMetadata>(repository);
+        AllLoadMetadataCatalogueLinkages = GetAllObjects<LoadMetadataCatalogueLinkage>(repository);
         AllLoadMetadataLinkage = GetAllObjects<LoadMetadataCatalogueLinkage>(repository);
         AllProcessTasks = GetAllObjects<ProcessTask>(repository);
         AllProcessTasksArguments = GetAllObjects<ProcessTaskArgument>(repository);
@@ -299,7 +310,8 @@ public class CatalogueChildProvider : ICoreChildProvider
         AllSupportingDocuments = GetAllObjects<SupportingDocument>(repository);
         AllSupportingSQL = GetAllObjects<SupportingSQLTable>(repository);
 
-        AllCohortIdentificationConfigurations = GetAllObjects<CohortIdentificationConfiguration>(repository);
+        AllCohortIdentificationConfigurations = GetAllObjects<CohortIdentificationConfiguration>(repository).Where(cic => !cic.IsTemplate).ToArray();
+        AllTemplateCohortIdentificationConfigurations = GetAllObjects<CohortIdentificationConfiguration>(repository).Where(cic => cic.IsTemplate).ToArray();
 
         FetchCatalogueItems();
 
@@ -391,7 +403,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         ReportProgress("Build Catalogue Folder Root");
 
-        LoadMetadataRootFolder = FolderHelper.BuildFolderTree(AllLoadMetadatas);
+        LoadMetadataRootFolder = FolderHelper.BuildFolderTree(AllLoadMetadatas.Where(lmd => lmd.RootLoadMetadata_ID is null).ToArray());
         AddChildren(LoadMetadataRootFolder, new DescendancyList(LoadMetadataRootFolder));
 
         CohortIdentificationConfigurationRootFolder =
@@ -402,11 +414,16 @@ public class CatalogueChildProvider : ICoreChildProvider
         CohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations = FolderHelper.BuildFolderTree(AllCohortIdentificationConfigurations.Where(cic => cic.Version is null).ToArray());
         AddChildren(CohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations,
            new DescendancyList(CohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations));
+
         var templateAggregateConfigurationIds =
             new HashSet<int>(
                 repository.GetExtendedProperties(ExtendedProperty.IsTemplate)
                     .Where(p => p.ReferencedObjectType.Equals(nameof(AggregateConfiguration)))
                     .Select(r => r.ReferencedObjectID));
+
+        AllTemplateCohortIdentificationConfigurationsNode = new AllTemplateCohortIdentificationConfigurationsNode();
+        var templateCICTree = FolderHelper.BuildFolderTree(AllTemplateCohortIdentificationConfigurations);
+        AddChildren(templateCICTree, new DescendancyList(AllTemplateCohortIdentificationConfigurationsNode));
 
         TemplateAggregateConfigurations = AllAggregateConfigurations
             .Where(ac => templateAggregateConfigurationIds.Contains(ac.ID)).ToArray();
@@ -443,6 +460,17 @@ public class CatalogueChildProvider : ICoreChildProvider
         AddChildren(AllPluginsNode);
 
         ReportProgress("After Plugins");
+
+        AllRegexRedactionConfigurations = GetAllObjects<RegexRedactionConfiguration>(repository);
+        AllRegexRedactionConfigurationsNode = new AllRegexRedactionConfigurationsNode();
+        AddChildren(AllRegexRedactionConfigurationsNode);
+
+
+        AllDatasets = GetAllObjects<Curation.Data.Dataset>(repository);
+        AllDatasetsNode = new AllDatasetsNode();
+        AddChildren(AllDatasetsNode);
+
+        ReportProgress("After Configurations");
 
         var searchables = new Dictionary<int, HashSet<IMapsDirectlyToDatabaseTable>>();
 
@@ -586,6 +614,20 @@ public class CatalogueChildProvider : ICoreChildProvider
     {
         var children = new HashSet<object>(LoadModuleAssembly.Assemblies);
         var descendancy = new DescendancyList(allPluginsNode);
+        AddToDictionaries(children, descendancy);
+    }
+
+    private void AddChildren(AllRegexRedactionConfigurationsNode allRegexRedactionConfigurationsNode)
+    {
+        var children = new HashSet<object>(AllRegexRedactionConfigurations);
+        var descendancy = new DescendancyList(allRegexRedactionConfigurationsNode);
+        AddToDictionaries(children, descendancy);
+    }
+
+    private void AddChildren(AllDatasetsNode allDatasetsNode)
+    {
+        var children = new HashSet<object>(AllDatasets);
+        var descendancy = new DescendancyList(allDatasetsNode);
         AddToDictionaries(children, descendancy);
     }
 
@@ -825,7 +867,7 @@ public class CatalogueChildProvider : ICoreChildProvider
             AddChildren(child, descendancy.Add(child));
 
         //add loads in folder
-        foreach (var lmd in folder.ChildObjects) AddChildren(lmd, descendancy.Add(lmd));
+        foreach (var lmd in folder.ChildObjects.Where(lmd => lmd.RootLoadMetadata_ID == null).ToArray()) AddChildren(lmd, descendancy.Add(lmd));
         // Children are the folders + objects
         AddToDictionaries(new HashSet<object>(
                 folder.ChildFolders.Cast<object>()
@@ -875,7 +917,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     #region Load Metadata
 
-    private void AddChildren(LoadMetadata lmd, DescendancyList descendancy)
+    private void AddChildren(LoadMetadata lmd, DescendancyList descendancy, bool includeSchedule = true, bool includeCatalogues = true, bool includeVersions = true)
     {
         var childObjects = new List<object>();
 
@@ -885,18 +927,30 @@ public class CatalogueChildProvider : ICoreChildProvider
             var usage = new OverrideRawServerNode(lmd, server);
             childObjects.Add(usage);
         }
+        if (includeSchedule)
+        {
+            var allSchedulesNode = new LoadMetadataScheduleNode(lmd);
+            AddChildren(allSchedulesNode, descendancy.Add(allSchedulesNode));
+            childObjects.Add(allSchedulesNode);
+        }
 
-        var allSchedulesNode = new LoadMetadataScheduleNode(lmd);
-        AddChildren(allSchedulesNode, descendancy.Add(allSchedulesNode));
-        childObjects.Add(allSchedulesNode);
-
-        var allCataloguesNode = new AllCataloguesUsedByLoadMetadataNode(lmd);
-        AddChildren(allCataloguesNode, descendancy.Add(allCataloguesNode));
-        childObjects.Add(allCataloguesNode);
+        if (includeCatalogues)
+        {
+            var allCataloguesNode = new AllCataloguesUsedByLoadMetadataNode(lmd);
+            AddChildren(allCataloguesNode, descendancy.Add(allCataloguesNode));
+            childObjects.Add(allCataloguesNode);
+        }
 
         var processTasksNode = new AllProcessTasksUsedByLoadMetadataNode(lmd);
         AddChildren(processTasksNode, descendancy.Add(processTasksNode));
         childObjects.Add(processTasksNode);
+
+        if (includeVersions)
+        {
+            var versionsNode = new LoadMetadataVersionNode(lmd);
+            AddChildren(versionsNode, descendancy.Add(versionsNode));
+            childObjects.Add(versionsNode);
+        }
 
         childObjects.Add(new LoadDirectoryNode(lmd));
 
@@ -967,8 +1021,8 @@ public class CatalogueChildProvider : ICoreChildProvider
     private void AddChildren(LoadStageNode loadStageNode, DescendancyList descendancy)
     {
         var tasks = AllProcessTasks.Where(
-                p => p.LoadMetadata_ID == loadStageNode.LoadMetadata.ID && p.LoadStage == loadStageNode.LoadStage)
-            .OrderBy(o => o.Order).ToArray();
+               p => p.LoadMetadata_ID == loadStageNode.LoadMetadata.ID && p.LoadStage == loadStageNode.LoadStage)
+           .OrderBy(o => o.Order).ToArray();
 
         foreach (var processTask in tasks)
             AddChildren(processTask, descendancy.Add(processTask));
@@ -984,6 +1038,20 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         if (args.Any())
             AddToDictionaries(new HashSet<object>(args), descendancy);
+    }
+
+    private void AddChildren(LoadMetadataVersionNode LoadMetadataVersionNode, DescendancyList descendancy)
+    {
+        LoadMetadataVersionNode.LoadMetadataVersions = AllLoadMetadatas.Where(lmd => lmd.RootLoadMetadata_ID == LoadMetadataVersionNode.LoadMetadata.ID).ToList();
+        var childObjects = new List<object>();
+
+        foreach (var lmd in LoadMetadataVersionNode.LoadMetadataVersions)
+        {
+            AddChildren(lmd, descendancy.Add(lmd), false, false, false);
+            childObjects.Add(lmd);
+        }
+        AddToDictionaries(new HashSet<object>(childObjects), descendancy);
+
     }
 
     private void AddChildren(AllCataloguesUsedByLoadMetadataNode allCataloguesUsedByLoadMetadataNode,
@@ -1402,7 +1470,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         //get the discarded columns in this table
         var discardedCols = new HashSet<object>(AllPreLoadDiscardedColumns.Where(c => c.TableInfo_ID == tableInfo.ID));
 
-        //tell the column who thier parent is so they don't need to look up the database
+        //tell the column who their parent is so they don't need to look up the database
         foreach (PreLoadDiscardedColumn discardedCol in discardedCols)
             discardedCol.InjectKnown(tableInfo);
 
@@ -1462,6 +1530,7 @@ public class CatalogueChildProvider : ICoreChildProvider
             AddToDictionaries(children, descendancy);
     }
 
+
     protected void AddToDictionaries(HashSet<object> children, DescendancyList list)
     {
         if (list.IsEmpty)
@@ -1514,7 +1583,7 @@ public class CatalogueChildProvider : ICoreChildProvider
     {
         lock (WriteLock)
         {
-            //if we have a record of any children in the child dictionary for the parent model object
+            ;           //if we have a record of any children in the child dictionary for the parent model object
             if (_childDictionary.TryGetValue(model, out var cached))
                 return cached.OrderBy(static o => o.ToString()).ToArray();
 
@@ -1790,6 +1859,8 @@ public class CatalogueChildProvider : ICoreChildProvider
         AllCatalogueValueSets = otherCat.AllCatalogueValueSets;
         AllCatalogueValueSetValues = otherCat.AllCatalogueValueSetValues;
         OrphanAggregateConfigurations = otherCat.OrphanAggregateConfigurations;
+        AllTemplateCohortIdentificationConfigurationsNode = other.AllTemplateCohortIdentificationConfigurationsNode;
+
     }
 
     public virtual bool SelectiveRefresh(IMapsDirectlyToDatabaseTable databaseEntity)

@@ -419,14 +419,14 @@ public class CohortQueryBuilderResult
         ITableInfo dependantTable)
     {
         _log.AppendLine(
-            $"Found dependant table '{dependantTable}' (Server:{dependantTable.Server} DatabaseType:{dependantTable.DatabaseType})");
+            $"Found dependent table '{dependantTable}' (Server:{dependantTable.Server} DatabaseType:{dependantTable.DatabaseType})");
 
         //if dependencies are on different servers / access credentials
         if (DependenciesSingleServer != null)
             if (!DependenciesSingleServer.TryAdd(dependantTable))
             {
                 //we can no longer establish a consistent connection to all the dependencies
-                _log.AppendLine($"Found problematic dependant table '{dependantTable}'");
+                _log.AppendLine($"Found problematic dependent table '{dependantTable}'");
 
                 //if there's no cache server that's a problem!
                 if (CacheServer == null)
@@ -441,7 +441,7 @@ public class CohortQueryBuilderResult
                 //can we go to the cache server instead?
                 if (canUseCacheForDependantTable && DependenciesSingleServer.TryAdd(CacheServer))
                 {
-                    _log.AppendLine($"Avoided problematic dependant table '{dependantTable}' by using the cache");
+                    _log.AppendLine($"Avoided problematic dependent table '{dependantTable}' by using the cache");
                 }
                 else
                 {

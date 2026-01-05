@@ -19,6 +19,7 @@ public static class ApplicationRestarter
         try
         {
             Application.Restart();
+            Environment.Exit(0);
         }
         catch (Exception)
         {

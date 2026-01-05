@@ -22,7 +22,7 @@ internal class AvailableForceJoinNode : IMasqueradeAs
     public bool IsMandatory { get; set; }
 
     /// <summary>
-    /// The table will be in the query if it IsMandatory (becaues of the columns the user has selected) or is explicitly picked for inclusion by the user (ForcedJoin)
+    /// The table will be in the query if it IsMandatory (because of the columns the user has selected) or is explicitly picked for inclusion by the user (ForcedJoin)
     /// </summary>
     public bool IsIncludedInQuery => ForcedJoin != null || IsMandatory;
 

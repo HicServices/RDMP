@@ -1,15 +1,9 @@
-// Copyright (c) The University of Dundee 2018-2019
+// Copyright (c) The University of Dundee 2018-2025
 // This file is part of the Research Data Management Platform (RDMP).
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 using FAnsi;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
@@ -24,6 +18,14 @@ using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.Core.ReusableLibraryCode.Progress;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.Common;
+using System.Diagnostics;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using IContainer = Rdmp.Core.Curation.Data.IContainer;
 
 namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources;
@@ -72,7 +74,8 @@ public class ExecuteDatasetExtractionSource : IPluginDataFlowSource<DataTable>, 
     [DemandsInitialization(@"Determines how the system achieves DISTINCT on extraction.  These include:
 None - Do not DISTINCT the records, can result in duplication in your extract (not recommended)
 SqlDistinct - Adds the DISTINCT keyword to the SELECT sql sent to the server
-OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies the DISTINCT in memory as records are read from the server (this can help when extracting very large data sets where DISTINCT keyword blocks record streaming until all records are ready to go)"
+OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies the DISTINCT in memory as records are read from the server (this can help when extracting very large data sets where DISTINCT keyword blocks record streaming until all records are ready to go)
+DistinctByDestinationPKs - Performs a GROUP BY on each batch of records to ensure unique extraction primary key values in the batch"
         , DefaultValue = DistinctStrategy.SqlDistinct)]
     public DistinctStrategy DistinctStrategy { get; set; }
 
@@ -88,6 +91,9 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
         "Exclusion list.  A collection of Catalogues which will never be considered for HASH JOIN even when UseHashJoins is enabled.  Being on this list takes precedence for a Catalogue even if it is on UseHashJoinsForCatalogues.")]
     public Catalogue[] DoNotUseHashJoinsForCatalogues { get; set; }
 
+    [DemandsInitialization("When performing an extracton, copy the cohort into a temporary table to improve extraction speed", defaultValue: false)]
+    public bool UseTempTablesWhenExtractingCohort { get; set; }
+
 
     /// <summary>
     /// This is a dictionary containing all the CatalogueItems used in the query, the underlying datatype in the origin database and the
@@ -99,13 +105,19 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
     private DbDataCommandDataFlowSource _hostedSource;
 
+    private IExternalCohortTable _externalCohortTable;
+    private string _whereSQL;
+    private DbConnection _con;
+    private string _uuid;
+    private List<string> _knownPKs = new();
     protected virtual void Initialize(ExtractDatasetCommand request)
     {
         Request = request;
 
         if (request == ExtractDatasetCommand.EmptyCommand)
             return;
-
+        _externalCohortTable = request.ExtractableCohort.ExternalCohortTable;
+        _whereSQL = request.ExtractableCohort.WhereSQL();
         _timeSpentValidating = new Stopwatch();
         _timeSpentCalculatingDISTINCT = new Stopwatch();
         _timeSpentBuckettingDates = new Stopwatch();
@@ -123,6 +135,10 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
         _catalogue = request.Catalogue;
 
+        if (DistinctStrategy == DistinctStrategy.DistinctByDestinationPKs)
+        {
+            _knownPKs = _catalogue.CatalogueItems.Where(ci => ci.ExtractionInformation != null && ci.ExtractionInformation.IsPrimaryKey).Select(ci => ci.ColumnInfo.GetRuntimeName()).ToList();
+        }
         if (!string.IsNullOrWhiteSpace(_catalogue.ValidatorXML))
             ExtractionTimeValidator = new ExtractionTimeValidator(_catalogue, request.ColumnsToExtract);
 
@@ -156,6 +172,72 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
     private RowPeeker _peeker = new();
 
+    private static readonly Random random = new Random();
+
+    private static string RandomString(int length)
+    {
+        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        return new string(Enumerable.Repeat(chars, length)
+            .Select(s => s[random.Next(s.Length)]).ToArray());
+    }
+
+    private void CreateCohortTempTable(DbConnection con, IDataLoadEventListener listener)
+    {
+        _uuid = $"#{RandomString(24)}";
+        var sql = "";
+        var db = _externalCohortTable.Discover();
+        switch (db.Server.DatabaseType)
+        {
+            case DatabaseType.MicrosoftSQLServer:
+                sql = $"""
+                    SELECT *
+                    INTO {_uuid}
+                    FROM(
+                    SELECT * FROM {_externalCohortTable.TableName}
+                    WHERE {_whereSQL}
+                    ) as cohortTempTable
+                """;
+                break;
+            case DatabaseType.MySql:
+                sql = $"""
+                    CREATE TEMPORARY TABLE {_uuid} ENGINE=MEMORY
+                    as (SELECT * FROM {_externalCohortTable.TableName} WHERE {_whereSQL})
+                """;
+                break;
+            case DatabaseType.Oracle:
+                sql = $"""
+                    CREATE TEMPORARY TABLE {_uuid} SELECT * FROM {_externalCohortTable.TableName} WHERE {_whereSQL}
+                """;
+                break;
+            case DatabaseType.PostgreSql:
+                sql = $"""
+                    CREATE TEMP TABLE {_uuid} AS
+                    SELECT * FROM {_externalCohortTable.TableName} WHERE {_whereSQL}
+                """;
+                break;
+            default:
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Unable to create temporary table for cohort. Original cohort table will be used"));
+                return;
+
+
+        }
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"About to copy the cohort into a temporary table using the SQL: {sql}"));
+
+        using var cmd = db.Server.GetCommand(sql, con);
+        cmd.CommandTimeout = ExecutionTimeout;
+        try
+        {
+            cmd.ExecuteNonQuery();
+        }
+        catch (Exception ex)
+        {
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Unable to create temporary table for cohort. Original cohort table will be used", ex));
+            _uuid = null;
+        }
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Cohort successfully copied to temporary table"));
+
+    }
+
     public virtual DataTable GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
         // we are in the Global Commands case, let's return an empty DataTable (not null)
@@ -185,21 +267,36 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
         if (_hostedSource == null)
         {
-            StartAudit(Request.QueryBuilder.SQL);
+            if (UseTempTablesWhenExtractingCohort)
+            {
+                _con = DatabaseCommandHelper.GetConnection(Request.GetDistinctLiveDatabaseServer().Builder);
+                _con.Open();
+                CreateCohortTempTable(_con, listener);
+            }
+            var cmdSql = GetCommandSQL(listener);
+            StartAudit(cmdSql);
 
             if (Request.DatasetBundle.DataSet.DisableExtraction)
                 throw new Exception(
                     $"Cannot extract {Request.DatasetBundle.DataSet} because DisableExtraction is set to true");
 
-            _hostedSource = new DbDataCommandDataFlowSource(GetCommandSQL(listener),
+            _hostedSource = UseTempTablesWhenExtractingCohort ? new DbDataCommandDataFlowSource(cmdSql,
                 $"ExecuteDatasetExtraction {Request.DatasetBundle.DataSet}",
-                Request.GetDistinctLiveDatabaseServer().Builder,
+               _con,
                 ExecutionTimeout)
             {
-                // If we are running in batches then always allow empty extractions
                 AllowEmptyResultSets = AllowEmptyExtractions || Request.IsBatchResume,
                 BatchSize = BatchSize
-            };
+            }
+                : new DbDataCommandDataFlowSource(cmdSql,
+                $"ExecuteDatasetExtraction {Request.DatasetBundle.DataSet}",
+               Request.GetDistinctLiveDatabaseServer().Builder,
+                ExecutionTimeout)
+                {
+                    // If we are running in batches then always allow empty extractions
+                    AllowEmptyResultSets = AllowEmptyExtractions || Request.IsBatchResume,
+                    BatchSize = BatchSize
+                };
         }
 
         DataTable chunk = null;
@@ -317,17 +414,31 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
         _timeSpentBuckettingDates.Stop();
 
         _timeSpentCalculatingDISTINCT.Start();
+
+
+        if (DistinctStrategy == DistinctStrategy.DistinctByDestinationPKs && _knownPKs.Any())
+        {
+            var columnNames = _knownPKs;
+            Func<DataRow, String> groupingFunction = (DataRow dr) => GroupData(dr, _knownPKs.ToArray());
+
+            chunk = chunk.AsEnumerable()
+                        .GroupBy(groupingFunction)
+                        .Select(g => g.First())
+                   .CopyToDataTable();
+        }
+
         var pks = new List<DataColumn>();
 
         //record unique release identifiers found
         if (includesReleaseIdentifier)
             foreach (var idx in _extractionIdentifiersidx.Distinct().ToList())
             {
-                var sub = Request.ReleaseIdentifierSubstitutions.Where(s => s.Alias == chunk.Columns[idx].ColumnName).FirstOrDefault();
-                if (sub != null && sub.ColumnInfo.ExtractionInformations.FirstOrDefault() != null && sub.ColumnInfo.ExtractionInformations.FirstOrDefault().IsPrimaryKey)
+                var sub = Request.ReleaseIdentifierSubstitutions.FirstOrDefault(s => s.Alias == chunk.Columns[idx].ColumnName);
+                if (sub?.ColumnInfo.ExtractionInformations.FirstOrDefault()?.IsPrimaryKey == true)
                 {
                     pks.Add(chunk.Columns[idx]);
                 }
+
                 foreach (DataRow r in chunk.Rows)
                 {
                     if (r[idx] == DBNull.Value)
@@ -335,7 +446,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
                             throw new Exception(
                                 $"Null release identifier found in extract of dataset {Request.DatasetBundle.DataSet}");
                         else
-                            continue; //there are multiple extraction identifiers thats fine if one or two are null
+                            continue; //there are multiple extraction identifiers that's fine if one or two are null
 
                     UniqueReleaseIdentifiersEncountered.Add(r[idx]);
                 }
@@ -347,10 +458,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
             }
 
         _timeSpentCalculatingDISTINCT.Stop();
-        foreach (string name in Request.ColumnsToExtract.Where(c => ((ExtractableColumn)(c)).CatalogueExtractionInformation.IsPrimaryKey).Select(column => ((ExtractableColumn)column).CatalogueExtractionInformation.ToString()))
-        {
-            pks.Add(chunk.Columns[name]);
-        }
+        pks.AddRange(Request.ColumnsToExtract.Where(static c => ((ExtractableColumn)c).CatalogueExtractionInformation.IsPrimaryKey).Select(static column => ((ExtractableColumn)column).CatalogueExtractionInformation.ToString()).Select(name => chunk.Columns[name]));
         chunk.PrimaryKey = pks.ToArray();
 
         return chunk;
@@ -415,6 +523,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
                 break;
 
             //system default behaviour
+            case DistinctStrategy.DistinctByDestinationPKs:
             case DistinctStrategy.SqlDistinct:
                 break;
 
@@ -453,7 +562,10 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
             $"/*Decided on extraction SQL:*/{Environment.NewLine}{sql}"));
-
+        if (UseTempTablesWhenExtractingCohort && _uuid is not null)
+        {
+            sql = sql.Replace(_externalCohortTable.TableName, _uuid);
+        }
         return sql;
     }
 
@@ -465,7 +577,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
         if (dbms == null || dbms.Value != DatabaseType.MicrosoftSQLServer)
             return false;
 
-        // this Catalogue is explicilty marked as never hash join? i.e. its on the exclusion list
+        // this Catalogue is explicitly marked as never hash join? i.e. its on the exclusion list
         if (DoNotUseHashJoinsForCatalogues?.Contains(Request.Catalogue) ?? false)
             return false;
 
@@ -609,5 +721,18 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
             notifier.OnCheckPerformed(new CheckEventArgs("ExtractionRequest has not been set", CheckResult.Fail));
             return;
         }
+    }
+
+    private static String GroupData(DataRow dataRow, String[] columnNames)
+    {
+
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.Remove(0, stringBuilder.Length);
+        foreach (String column in columnNames)
+        {
+            stringBuilder.Append(dataRow[column].ToString());
+        }
+        return stringBuilder.ToString();
+
     }
 }

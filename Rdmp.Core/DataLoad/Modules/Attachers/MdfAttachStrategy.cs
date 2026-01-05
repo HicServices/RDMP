@@ -17,7 +17,7 @@ public enum MdfAttachStrategy
     AttachWithConnectionString,
 
     /// <summary>
-    /// Runs the tsql command to attatch the database once an active connection has been established with the server
+    /// Runs the tsql command to attach the database once an active connection has been established with the server
     /// </summary>
     ExecuteCreateDatabaseForAttachSql
 }

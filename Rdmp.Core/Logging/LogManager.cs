@@ -63,7 +63,8 @@ public class LogManager : ILogManager
 
         using var con = Server.GetConnection();
         con.Open();
-        using var cmd = Server.GetCommand("SELECT * FROM DataLoadTask", con);
+        var sh = Server.GetQuerySyntaxHelper();
+        using var cmd = Server.GetCommand($"SELECT * FROM {sh.EnsureWrapped("DataLoadTask")}", con);
         using var r = cmd.ExecuteReader();
         while (r.Read())
             if (!hideTests || !(bool)r["isTest"])
@@ -113,7 +114,8 @@ public class LogManager : ILogManager
         using var con = Server.GetConnection();
         con.Open();
 
-        using var cmd = Server.GetCommand("SELECT * FROM DataSet", con);
+        var sh = Server.GetQuerySyntaxHelper();
+        using var cmd = Server.GetCommand($"SELECT * FROM {sh.EnsureWrapped("DataSet")}", con);
         using var r = cmd.ExecuteReader();
         while (r.Read())
             tasks.Add(r["dataSetID"].ToString());
@@ -133,7 +135,8 @@ public class LogManager : ILogManager
         int? specificDataLoadRunIDOnly = null, int? topX = null)
     {
         var db = Server.GetCurrentDatabase();
-        var run = db.ExpectTable("DataLoadRun");
+        var sh = Server.GetQuerySyntaxHelper();
+        var run = db.ExpectTable(sh.EnsureWrapped("DataLoadRun"));
 
         using var con = Server.GetConnection();
         con.Open();
@@ -144,11 +147,11 @@ public class LogManager : ILogManager
         string where;
         if (specificDataLoadRunIDOnly != null)
         {
-            where = $"WHERE ID={specificDataLoadRunIDOnly.Value}";
+            where = $"WHERE {sh.EnsureWrapped("ID")}={specificDataLoadRunIDOnly.Value}";
         }
         else
         {
-            where = "WHERE dataLoadTaskID = @dataTaskId";
+            where = $"WHERE {sh.EnsureWrapped("dataLoadTaskID")} = @dataTaskId";
             var p = cmd.CreateParameter();
             p.ParameterName = "@dataTaskId";
             p.Value = dataTaskId;
@@ -158,13 +161,13 @@ public class LogManager : ILogManager
         TopXResponse top = null;
 
         if (topX.HasValue)
-            top = Server.GetQuerySyntaxHelper().HowDoWeAchieveTopX(topX.Value);
+            top = sh.HowDoWeAchieveTopX(topX.Value);
 
         var sb = new StringBuilder("SELECT ");
 
         if (top?.Location == QueryComponent.SELECT) sb.AppendLine(top.SQL);
 
-        sb.AppendLine($" * FROM {run.GetFullyQualifiedName()}  {where} ORDER BY ID desc");
+        sb.AppendLine($" * FROM {run.GetFullyQualifiedName()}  {where} ORDER BY {sh.EnsureWrapped("ID")} desc");
 
         if (top?.Location == QueryComponent.Postfix) sb.AppendLine(top.SQL);
 
@@ -204,7 +207,8 @@ public class LogManager : ILogManager
 
     private static int GetDataTaskId(string dataTask, DiscoveredServer server, DbConnection con)
     {
-        using var cmd = server.GetCommand("SELECT ID FROM DataLoadTask WHERE name = @name", con);
+        var sh = server.GetQuerySyntaxHelper();
+        using var cmd = server.GetCommand($"SELECT {sh.EnsureWrapped("ID")} FROM {sh.EnsureWrapped("DataLoadTask")} WHERE name = @name", con);
         var p = cmd.CreateParameter();
         p.ParameterName = "@name";
         p.Value = dataTask;
@@ -236,9 +240,10 @@ public class LogManager : ILogManager
     public void CreateNewLoggingTask(int id, string dataSetID)
     {
         using var conn = Server.GetConnection();
+        var sh = Server.GetQuerySyntaxHelper();
         conn.Open();
         var sql =
-            $"INSERT INTO DataLoadTask (ID, description, name, createTime, userAccount, statusID, isTest, dataSetID) VALUES ({id}, @dataSetID, @dataSetID, @date, @username, 1, 0, @dataSetID)";
+            $"INSERT INTO {sh.EnsureWrapped("DataLoadTask")} ({sh.EnsureWrapped("ID")}, description, name, {sh.EnsureWrapped("createTime")}, {sh.EnsureWrapped("userAccount")}, {sh.EnsureWrapped("statusID")}, {sh.EnsureWrapped("isTest")}, {sh.EnsureWrapped("dataSetID")}) VALUES ({id}, @dataSetID, @dataSetID, @date, @username, 1, {sh.False}, @dataSetID)";
 
         using var cmd = Server.GetCommand(sql, conn);
         Server.AddParameterWithValueToCommand("@date", cmd, DateTime.Now);
@@ -251,9 +256,10 @@ public class LogManager : ILogManager
     private void CreateNewDataSet(string datasetName)
     {
         using var conn = Server.GetConnection();
+        var sh = Server.GetQuerySyntaxHelper();
         conn.Open();
         {
-            const string sql = "INSERT INTO DataSet (dataSetID,name) VALUES (@datasetName,@datasetName)";
+            var sql = $"INSERT INTO {sh.EnsureWrapped("DataSet")} ({sh.EnsureWrapped("dataSetID")},name) VALUES (@datasetName,@datasetName)";
 
             using var cmd = Server.GetCommand(sql, conn);
             Server.AddParameterWithValueToCommand("@datasetName", cmd, datasetName.Substring(Math.Max(0, datasetName.Length - 150)));
@@ -274,8 +280,9 @@ public class LogManager : ILogManager
     private int GetMaxTaskID()
     {
         using var conn = Server.GetConnection();
+        var sh = Server.GetQuerySyntaxHelper();
         conn.Open();
-        const string sql = "SELECT MAX(ID) FROM DataLoadTask";
+        var sql = $"SELECT MAX({sh.EnsureWrapped("ID")}) FROM {sh.EnsureWrapped("DataLoadTask")}";
 
         using var cmd = Server.GetCommand(sql, conn);
         var result = cmd.ExecuteScalar();
@@ -285,9 +292,10 @@ public class LogManager : ILogManager
     public void ResolveFatalErrors(int[] ids, DataLoadInfo.FatalErrorStates newState, string newExplanation)
     {
         using var conn = Server.GetConnection();
+        var sh = Server.GetQuerySyntaxHelper();
         conn.Open();
         var sql =
-            $"UPDATE FatalError SET explanation =@explanation, statusID=@statusID where ID in ({string.Join(",", ids)})";
+            $"UPDATE {sh.EnsureWrapped("FatalError")} SET explanation =@explanation, {sh.EnsureWrapped("statusID")}=@statusID where {sh.EnsureWrapped("ID")} in ({string.Join(",", ids)})";
 
         using var cmd = Server.GetCommand(sql, conn);
         Server.AddParameterWithValueToCommand("@explanation", cmd, newExplanation);

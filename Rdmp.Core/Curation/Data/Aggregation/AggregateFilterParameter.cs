@@ -76,7 +76,7 @@ public class AggregateFilterParameter : DatabaseEntity, ISqlParameter
     #endregion
 
     /// <summary>
-    /// extracts the name ofthe parameter from the SQL
+    /// extracts the name of the parameter from the SQL
     /// </summary>
     [NoMappingToDatabase]
     public string ParameterName => QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL);

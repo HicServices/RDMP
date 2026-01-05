@@ -57,7 +57,7 @@ public class DistincterTests : DatabaseTests
         var importer = new TableInfoImporter(CatalogueRepository, tbl);
         importer.DoImport(out var tableInfo, out var colInfos);
 
-        //lie about what hte primary key is because this component is designed to run in the RAW environment and we are simulating a LIVE TableInfo (correctly)
+        //lie about what the primary key is because this component is designed to run in the RAW environment and we are simulating a LIVE TableInfo (correctly)
         var pk = colInfos.Single(c => c.GetRuntimeName().Equals("pk"));
         pk.IsPrimaryKey = true;
         pk.SaveToDatabase();
@@ -116,7 +116,7 @@ public class DistincterTests : DatabaseTests
         var importer = new TableInfoImporter(CatalogueRepository, tbl);
         importer.DoImport(out var tableInfo, out var colInfos);
 
-        //lie about what hte primary key is because this component is designed to run in the RAW environment and we are simulating a LIVE TableInfo (correctly)
+        //lie about what the primary key is because this component is designed to run in the RAW environment and we are simulating a LIVE TableInfo (correctly)
         var pk = colInfos.Single(c => c.GetRuntimeName().Equals("pk"));
         pk.IsPrimaryKey = true;
         pk.SaveToDatabase();

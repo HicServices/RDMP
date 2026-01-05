@@ -11,6 +11,6 @@ You main Data Load will run as normal. Once the Data Chainer is activated, it wi
 
 ### Why would I need to automatically accept checks?
 We run the checks for all Data Loads prior to running, but we don't perform the tidy-up step of one data load ebfore running the next in the chain.
-This can lead to issues where both data loads are trying to create the same resouce, such as a temporary database.
+This can lead to issues where both data loads are trying to create the same resource, such as a temporary database.
 Accepting checks means that you want RDMP to run any fixes it can to ensure your chained data load runs as expected.
-If you don't check this option the Data Load may fail, but it is recommended to test each data load independantly before attempting to chain them.
+If you don't check this option the Data Load may fail, but it is recommended to test each data load independently before attempting to chain them.

@@ -31,7 +31,7 @@ public class ObjectImport : ReferenceOtherObjectDatabaseEntity
     #endregion
 
     /// <summary>
-    /// The globally unique identifier for refering to the shared object.  This allows the object to be updated later / new versions to be distributed
+    /// The globally unique identifier for referring to the shared object.  This allows the object to be updated later / new versions to be distributed
     /// even though the ID is different (e.g. it has been imported into another instance of RDMP).
     /// </summary>
     public string SharingUID

@@ -50,7 +50,7 @@ public class PipelineComponentArgument : Argument, IPipelineComponentArgument
     /// <summary>
     /// Creates a new argument storage object for one of the arguments in <see cref="PipelineComponent"/>.
     /// 
-    /// <para>You should probably call <see cref="IArgumentHost.CreateArgumentsForClassIfNotExists{T}"/> intead</para>
+    /// <para>You should probably call <see cref="IArgumentHost.CreateArgumentsForClassIfNotExists{T}"/> instead</para>
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="parent"></param>

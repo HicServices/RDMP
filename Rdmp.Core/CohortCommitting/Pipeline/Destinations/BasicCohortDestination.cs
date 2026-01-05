@@ -53,7 +53,7 @@ public class BasicCohortDestination : IPluginCohortDestination
     private readonly Dictionary<object, object> _cohortDictionary = new();
 
     /// <summary>
-    /// Extracts private identifiers from table <paramref name="toProcess"/> and allocates release identifiers.  Cohort is only finalised and comitted into the database
+    /// Extracts private identifiers from table <paramref name="toProcess"/> and allocates release identifiers.  Cohort is only finalised and committed into the database
     /// in the <see cref="Dispose"/> method (to prevent incomplete cohorts existing in the database).
     /// 
     /// <para>Method can be called multiple times in the lifetime of a pipeline (e.g. if you have very large cohorts and the pipeline source is batching).</para>
@@ -140,7 +140,7 @@ public class BasicCohortDestination : IPluginCohortDestination
     private static bool IsNull(object o) => o == null || o == DBNull.Value || string.IsNullOrWhiteSpace(o.ToString());
 
     /// <summary>
-    /// Commits the cohort created into the database (assuming no error occured during pipeline processing - See <paramref name="pipelineFailureExceptionIfAny"/>).
+    /// Commits the cohort created into the database (assuming no error occurred during pipeline processing - See <paramref name="pipelineFailureExceptionIfAny"/>).
     /// </summary>
     /// <param name="listener"></param>
     /// <param name="pipelineFailureExceptionIfAny"></param>

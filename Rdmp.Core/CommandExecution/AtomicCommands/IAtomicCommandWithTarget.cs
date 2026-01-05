@@ -12,7 +12,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 /// An executable command with variable target.  SetTarget should be obvious based on your class name e.g. ExecuteCommandRelease (pass a Project to release).
 /// 
 /// <para>In general you should also provide a constructor overload that hydrates the command properly decorated with [UseWithObjectConstructor] so that it is
-/// useable with RunUI</para>
+/// usable with RunUI</para>
 /// </summary>
 public interface IAtomicCommandWithTarget : IAtomicCommand
 {

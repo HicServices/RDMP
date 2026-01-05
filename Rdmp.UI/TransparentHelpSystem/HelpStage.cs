@@ -24,7 +24,7 @@ public class HelpStage
     public readonly string HelpText;
 
     /// <summary>
-    /// If true then HostLocationForStageBox will be ignored and the positioning of hte HelpBox will be decided based on the location of the highlighted control and the
+    /// If true then HostLocationForStageBox will be ignored and the positioning of the HelpBox will be decided based on the location of the highlighted control and the
     /// surrounding available placement space on the host Form.
     /// </summary>
     public bool UseDefaultPosition { get; set; }

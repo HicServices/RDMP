@@ -25,7 +25,7 @@ public class ClonedFilterChecker : ICheckable
     /// Prepares to check the supplied IFilter which must be of a lower filter type to its parent ExtractionFilter
     /// </summary>
     /// <param name="child"></param>
-    /// <param name="allegedParentExtractionFilterID">ExtractionFilter from which the IFilter was derrived</param>
+    /// <param name="allegedParentExtractionFilterID">ExtractionFilter from which the IFilter was derived</param>
     /// <param name="catalogueDatabaseRepository"></param>
     public ClonedFilterChecker(IFilter child, int? allegedParentExtractionFilterID,
         IRepository catalogueDatabaseRepository)

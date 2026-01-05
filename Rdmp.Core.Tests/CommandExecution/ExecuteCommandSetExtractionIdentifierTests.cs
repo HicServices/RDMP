@@ -57,7 +57,7 @@ internal class ExecuteCommandSetExtractionIdentifierTests : CommandCliTests
 
         Assert.Multiple(() =>
         {
-            // original should no longer be the extraction identifer
+            // original should no longer be the extraction identifier
             Assert.That(ei1.IsExtractionIdentifier, Is.False);
 
             // and the one picked should now be the only one

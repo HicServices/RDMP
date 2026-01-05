@@ -35,7 +35,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     ICustomSearchString, IMightBeReadOnly, IHasFolder
 {
     /// <summary>
-    /// Characters that apear in front of any <see cref="AggregateConfiguration"/> which is acting as a cohort identification list or patient index table
+    /// Characters that appear in front of any <see cref="AggregateConfiguration"/> which is acting as a cohort identification list or patient index table
     /// <seealso cref="AggregateConfiguration.IsCohortIdentificationAggregate"/>.
     /// </summary>
     public const string CICPrefix = "cic_";
@@ -64,6 +64,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     private DateTime? _frozenDate;
     private int? _clonedFrom_ID;
     private string _folder;
+    private bool _isTemplate;
 
     /// <inheritdoc/>
     [Unique]
@@ -171,6 +172,15 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
         set => SetField(ref _folder, FolderHelper.Adjust(value));
     }
 
+    /// <summary>
+    /// Marks if CIC is used like a template, and cannot be committed
+    /// </summary>
+    public bool IsTemplate
+    {
+        get => _isTemplate;
+        set => SetField(ref _isTemplate, value);
+    }
+
     #endregion
 
     #region Relationships
@@ -234,6 +244,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
         ClonedFrom_ID = ObjectToNullableInt(r["ClonedFrom_ID"]);
         Version = ObjectToNullableInt(r["Version"]);
         Folder = r["Folder"] as string ?? FolderHelper.Root;
+        IsTemplate = Convert.ToBoolean(r["IsTemplate"]);
     }
 
     /// <summary>
@@ -272,8 +283,14 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     /// <inheritdoc/>
     public override string ToString() => Name;
 
-    public bool ShouldBeReadOnly(out string reason)
+    public bool ShouldBeReadOnly(string context, out string reason)
     {
+        if (IsTemplate && context == "ExecuteCommandRename")
+        {
+            reason = null;
+            return false;
+        }
+
         if (Frozen)
         {
             reason = $"{Name} is Frozen";
@@ -526,7 +543,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
 
     /// <summary>
     /// Delegate for handling the situation in which the user wants to create a cohort based on a given Catalogue but there are multiple IsExtractionIdentifier columns.
-    /// For example SMR02 (baby birth records) might have (Mother CHI, Father CHI, Baby CHI).  In this situation the descision on which column to use is resolved by this
+    /// For example SMR02 (baby birth records) might have (Mother CHI, Father CHI, Baby CHI).  In this situation the decision on which column to use is resolved by this
     /// class.
     /// </summary>
     /// <param name="catalogue"></param>
@@ -622,7 +639,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
             toClone.AggregateDimensions.Where(d => d.IsExtractionIdentifier).ToArray();
         IColumn extractionIdentifier = null;
 
-        //very unexpected, he had multiple IsExtractionIdentifier Dimensions all configured for simultaneous use on this Aggregate, it is very freaky and we definetly don't want to let him import it for cohort identification
+        //very unexpected, he had multiple IsExtractionIdentifier Dimensions all configured for simultaneous use on this Aggregate, it is very freaky and we definitely don't want to let him import it for cohort identification
         if (existingExtractionIdentifierDimensions.Length > 1)
             throw new NotSupportedException(
                 $"Cannot clone the AggregateConfiguration {toClone} because it has multiple IsExtractionIdentifier dimensions (must be 0 or 1)");

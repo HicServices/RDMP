@@ -6,7 +6,7 @@
   <Comment CommentText="Records position and Type of an IDashboardableControl on a DashboardLayout, the PersistenceString is used to Hydrate the IPersistableObjectCollection (along with the DashboardObjectUse list)">
     <Position X="7.365" Y="4.062" Height="1" Width="3.565" />
   </Comment>
-  <Comment CommentText="  The lifecycle goes:&#xD;&#xA;    /// 1. Control instance created (must have a blank constructor)&#xD;&#xA;    /// 2. ConstructEmptyCollection called on instance of control to get a default collection (must be valid usable state)&#xD;&#xA;    /// 3. Step2 collection Hydrated witht he PersistenceString (which can be null/empty)&#xD;&#xA;    /// 4. Step2 collection given the Objects referenced by ObjectsUsed (which can be blank)&#xD;&#xA;    /// 5. Control instance given the Hydrated collection with SetCollection method (along with IActivateItems)">
+  <Comment CommentText="  The lifecycle goes:&#xD;&#xA;    /// 1. Control instance created (must have a blank constructor)&#xD;&#xA;    /// 2. ConstructEmptyCollection called on instance of control to get a default collection (must be valid usable state)&#xD;&#xA;    /// 3. Step2 collection Hydrated with the PersistenceString (which can be null/empty)&#xD;&#xA;    /// 4. Step2 collection given the Objects referenced by ObjectsUsed (which can be blank)&#xD;&#xA;    /// 5. Control instance given the Hydrated collection with SetCollection method (along with IActivateItems)">
     <Position X="6.01" Y="10.958" Height="1.354" Width="6.742" />
   </Comment>
   <Comment CommentText="Main UI Tab">

@@ -105,7 +105,7 @@ You can add a `HAVING` block e.g. `count(*)>100` to show only bars / plot values
 
 ![HAVING results in bars <100 being lost even if there is a 'T' entry](Images/Graphs/BadHaving.png)
 
-_Bars with values <100 are not shown due to the HAVING condition.  This results in several orange 'F' bars disapearing, even when there is a 'T' bar over 100_
+_Bars with values <100 are not shown due to the HAVING condition.  This results in several orange 'F' bars disappearing, even when there is a 'T' bar over 100_
 
 ### TOP X
 

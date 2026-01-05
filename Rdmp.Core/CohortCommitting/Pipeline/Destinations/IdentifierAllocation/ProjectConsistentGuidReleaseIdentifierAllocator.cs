@@ -14,7 +14,7 @@ namespace Rdmp.Core.CohortCommitting.Pipeline.Destinations.IdentifierAllocation;
 /// <summary>
 /// Allocates a Guid for each private identifier supplied.  This is similar to <see cref="GuidReleaseIdentifierAllocator"/> except that it will preserve previous
 /// allocations within the <see cref="Project"/>.  For example if you commit a cohort 'Cases' with private id '123' to project '10' then might get a guid 'abc...',
-/// if you then submit verison 2 of the cohort you will get the same guid ('abc...') for persion '123'.
+/// if you then submit version 2 of the cohort you will get the same guid ('abc...') for persion '123'.
 /// 
 /// <para>Guids are always different between <see cref="Project"/> for example person 'abc' in project '10' will have a different Guid release identifier than if he
 /// was committed to project '11' and it would be impossible to link the two release identifiers</para>

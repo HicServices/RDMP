@@ -44,7 +44,7 @@ public enum CacheArchiveType
 
 /// <inheritdoc cref="ILoadMetadata"/>
 public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHasQuerySyntaxHelper,
-    ILoggedActivityRootObject, IHasFolder
+    ILoggedActivityRootObject, IHasFolder, IVersionable
 {
     #region Database Properties
 
@@ -61,6 +61,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     private string _folder;
     private DateTime? _lastLoadTime;
     private bool _allowReservedPrefix;
+    private int? _rootLoadMetadata_ID;
 
     public string DefaultForLoadingPath = Path.Combine("Data", "ForLoading");
     public string DefaultForArchivingPath = Path.Combine("Data", "ForArchiving");
@@ -148,7 +149,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
 
     /// <summary>
     /// The format for storing files in when reading/writing to a cache with a <see cref="CacheProgress"/>.  This may not be respected
-    /// depending on the implementation of the sepecific ICacheLayout
+    /// depending on the implementation of the specific ICacheLayout
     /// </summary>
     public CacheArchiveType CacheArchiveType
     {
@@ -192,6 +193,9 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         set => SetField(ref _lastLoadTime, value);
     }
 
+    /// <inheritdoc/>
+    public int? RootLoadMetadata_ID { get => _rootLoadMetadata_ID; private set => SetField(ref _rootLoadMetadata_ID, value); }
+
     #endregion
 
 
@@ -231,16 +235,17 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="name"></param>
-    public LoadMetadata(ICatalogueRepository repository, string name = null)
+    /// <param name="rootLoadMetadata"></param>
+    public LoadMetadata(ICatalogueRepository repository, string name = null, LoadMetadata rootLoadMetadata = null)
     {
         name ??= $"NewLoadMetadata{Guid.NewGuid()}";
-
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
             { "Name", name },
             { "IgnoreTrigger", false /*todo could be system global default here*/ },
             { "Folder", FolderHelper.Root },
-            {"LastLoadTime", null }
+            {"LastLoadTime", null },
+            {"RootLoadMetadata_ID", rootLoadMetadata is null? null: rootLoadMetadata.ID }
         });
     }
 
@@ -261,6 +266,41 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         Folder = r["Folder"] as string ?? FolderHelper.Root;
         LastLoadTime = string.IsNullOrWhiteSpace(r["LastLoadTime"].ToString()) ? null : DateTime.Parse(r["LastLoadTime"].ToString());
         AllowReservedPrefix = ObjectToNullableBool(r["AllowReservedPrefix"]) ?? false;
+        RootLoadMetadata_ID = ObjectToNullableInt(r["RootLoadMetadata_ID"]);
+    }
+
+
+    public LoadMetadata Clone()
+    {
+        var lmd = new LoadMetadata(CatalogueRepository, Name)
+        {
+            LocationOfForLoadingDirectory = LocationOfForLoadingDirectory,
+            LocationOfForArchivingDirectory = LocationOfForArchivingDirectory,
+            LocationOfCacheDirectory = LocationOfCacheDirectory,
+            LocationOfExecutablesDirectory = LocationOfExecutablesDirectory,
+            AnonymisationEngineClass = AnonymisationEngineClass,
+            Name = Name,
+            Description = Description,
+            CacheArchiveType = CacheArchiveType,
+            AllowReservedPrefix = false,
+            LastLoadTime = LastLoadTime,
+            OverrideRAWServer_ID = OverrideRAWServer_ID,
+            IgnoreTrigger = IgnoreTrigger,
+            Folder = Folder,
+        };
+        lmd.SaveToDatabase();
+        //link to catalogue
+        foreach (var catalogue in GetAllCatalogues())
+        {
+            lmd.LinkToCatalogue(catalogue);
+        }
+        //process task
+        var pts = CatalogueRepository.GetAllObjectsWhere<ProcessTask>("LoadMetadata_ID", ID);
+        foreach (ProcessTask pt in pts)
+        {
+            pt.Clone(lmd);
+        }
+        return lmd;
     }
 
     internal LoadMetadata(ShareManager shareManager, ShareDefinition shareDefinition) : base()
@@ -276,7 +316,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
 
     public void UnlinkFromCatalogue(ICatalogue catalogue)
     {
-        foreach (var l in CatalogueRepository.GetAllObjects<LoadMetadataCatalogueLinkage>().Where(link => link.CatalogueID == catalogue.ID && link.LoadMetadataID == this.ID))
+        foreach (var l in CatalogueRepository.GetAllObjects<LoadMetadataCatalogueLinkage>().Where(link => link.CatalogueID == catalogue.ID && link.LoadMetadataID == ID))
         {
             l.DeleteInDatabase();
         }
@@ -287,9 +327,24 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     {
         var firstOrDefault = GetAllCatalogues().FirstOrDefault();
 
-        if (firstOrDefault != null)
+        if (firstOrDefault != null && RootLoadMetadata_ID == null)
             throw new Exception(
                 $"This load is used by {firstOrDefault.Name} so cannot be deleted (Disassociate it first)");
+
+        var versions = Repository.GetAllObjectsWhere<LoadMetadata>("RootLoadMetadata_ID", ID);
+        foreach (var version in versions)
+        {
+            version.DeleteInDatabase();
+        }
+        if (RootLoadMetadata_ID != null)
+        {
+            var catalogueLinkIDs = Repository.GetAllObjectsWhere<LoadMetadataCatalogueLinkage>("LoadMetadataID", ID);
+            foreach (var link in catalogueLinkIDs)
+            {
+                link.DeleteInDatabase();
+            }
+        }
+
 
         base.DeleteInDatabase();
     }
@@ -464,5 +519,16 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     {
         return loadMetadata.CatalogueRepository.GetExtendedProperties(ExtendedProperty.PersistentRaw,
             loadMetadata).Any(p => p.Value == "true");
+    }
+
+
+    /// <inheritdoc/>
+    public DatabaseEntity SaveNewVersion()
+    {
+        var lmd = Clone();
+        lmd.RootLoadMetadata_ID = RootLoadMetadata_ID != null ? RootLoadMetadata_ID : ID;
+        lmd.Name = $"{Name} - {DateTime.Now}";
+        lmd.SaveToDatabase();
+        return lmd;
     }
 }

@@ -158,10 +158,10 @@ public class JoinInfo : DatabaseEntity, IJoin, IHasDependencies
         ExtractionJoinType type, string collation)
     {
         if (foreignKey.ID == primaryKey.ID)
-            throw new ArgumentException("Joink Key 1 and Join Key 2 cannot be the same");
+            throw new ArgumentException("Join Key 1 and Join Key 2 cannot be the same");
 
         if (foreignKey.TableInfo_ID == primaryKey.TableInfo_ID)
-            throw new ArgumentException("Joink Key 1 and Join Key 2 are from the same table, this is not cool");
+            throw new ArgumentException("Join Key 1 and Join Key 2 cannot be from the same table");
 
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {

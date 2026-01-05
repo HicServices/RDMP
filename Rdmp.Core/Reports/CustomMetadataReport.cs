@@ -62,7 +62,7 @@ public partial class CustomMetadataReport
 
 
     /// <summary>
-    /// Specify a replacement for the token element seperator replacement <see cref="Comma"/> (note that this option
+    /// Specify a replacement for the token element separator replacement <see cref="Comma"/> (note that this option
     /// only affects the token not regular commas in the template).
     /// </summary>
     public string CommaSubstitution { get; set; } = ",";

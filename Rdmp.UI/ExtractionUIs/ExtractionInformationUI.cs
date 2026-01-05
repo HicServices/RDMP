@@ -53,6 +53,7 @@ namespace Rdmp.UI.ExtractionUIs;
 /// </summary>
 public partial class ExtractionInformationUI : ExtractionInformationUI_Design, ISaveableUI
 {
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public ExtractionInformation ExtractionInformation { get; private set; }
 
     //Editor that user can type into

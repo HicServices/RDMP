@@ -335,7 +335,7 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
         var propertyInfo =
             GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
-        //Assign all source property to taget object 's properties
+        //Assign all source property to target object 's properties
         foreach (var property in propertyInfo)
             //Check whether property can be written to
             if (property.CanWrite && !property.Name.Equals("ID") && !property.Name.Equals("Catalogue_ID"))

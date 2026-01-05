@@ -12,7 +12,7 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.DataExport.CohortDescribing;
 
 /// <summary>
-/// Creates ExtractableCohortDescription objects for each of your cohorts, this involves issuing an async request to the cohort endpoints to calcualte things like
+/// Creates ExtractableCohortDescription objects for each of your cohorts, this involves issuing an async request to the cohort endpoints to calculate things like
 /// Count, CountDistinct etc.  The ExtractableCohortDescription objects returned from Create will not be populated with values until the async finishes and will have only
 /// placeholder values like "Loading..." etc
 /// </summary>
@@ -22,11 +22,11 @@ public class CohortDescriptionFactory
     private ExtractableCohort[] _cohorts;
 
     /// <summary>
-    /// Creates ExtractableCohortDescription objects for each of your cohorts, this involves issuing an async request to the cohort endpoints to calcualte things like
+    /// Creates ExtractableCohortDescription objects for each of your cohorts, this involves issuing an async request to the cohort endpoints to calculate things like
     /// Count, CountDistinct etc.  The ExtractableCohortDescription objects returned from Create will not be populated with values until the async finishes and will have only
     /// placeholder values like "Loading..." etc
     /// </summary>
-    /// <param name="repository">The DataExportRepository containing all your cohort refrences (ExtractableCohorts)</param>
+    /// <param name="repository">The DataExportRepository containing all your cohort references (ExtractableCohorts)</param>
     public CohortDescriptionFactory(IDataExportRepository repository)
     {
         _sources = repository.GetAllObjects<ExternalCohortTable>();
@@ -37,7 +37,7 @@ public class CohortDescriptionFactory
     /// Starts 1 async fetch request for each cohort endpoint e.g. NormalCohorts ExternalCohortTable database contains 100 cohorts while FreakyCohorts ExternalCohortTable database
     /// has another 30.
     /// 
-    /// <para>These async requests are managed by the CohortDescriptionDataTableAsyncFetch object which has a callback for compeltion.  Each ExtractableCohortDescription subscribes to
+    /// <para>These async requests are managed by the CohortDescriptionDataTableAsyncFetch object which has a callback for completion.  Each ExtractableCohortDescription subscribes to
     /// the callback to self populate</para>
     /// </summary>
     /// <returns></returns>
@@ -47,7 +47,7 @@ public class CohortDescriptionFactory
 
         foreach (var source in _sources)
         {
-            //setup the async data retreival which can take a long time if there are a lot of cohorts or millions of identifiers
+            //setup the async data retrieval which can take a long time if there are a lot of cohorts or millions of identifiers
             var asyncFetch = new CohortDescriptionDataTableAsyncFetch(source);
             var cohorts = _cohorts.Where(c => c.ExternalCohortTable_ID == source.ID)
                 .Select(c => new ExtractableCohortDescription(c, asyncFetch)).ToArray();

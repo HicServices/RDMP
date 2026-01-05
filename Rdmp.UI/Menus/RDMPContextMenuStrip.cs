@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -31,11 +32,14 @@ namespace Rdmp.UI.Menus;
 /// Base class for all right click context menus in <see cref="RDMPCollectionUI"/> controls.  These menus are built by reflection
 /// when the selected object is changed.
 /// </summary>
-[System.ComponentModel.DesignerCategory("")]
+[DesignerCategory("")]
 public class RDMPContextMenuStrip : ContextMenuStrip
 {
     private readonly object _o;
+
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
+
     protected IActivateItems _activator;
 
     protected readonly AtomicCommandUIFactory AtomicCommandUIFactory;
@@ -203,7 +207,6 @@ public class RDMPContextMenuStrip : ContextMenuStrip
         if (databaseEntity != null)
             Add(new ExecuteCommandRefreshObject(_activator, databaseEntity), Keys.F5);
 
-        Add(new ExecuteCommandShowTooltip(_activator, _args.Model));
         Add(new ExecuteCommandShowKeywordHelp(_activator, _args));
 
         var gotoMenu = Items.OfType<ToolStripMenuItem>().FirstOrDefault(i => i.Text.Equals(AtomicCommandFactory.GoTo));

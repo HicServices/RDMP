@@ -131,7 +131,7 @@ public partial class ExtractableCohortAuditLogBuilder
         catch (System.Exception)
         {
             // user may have hacked the AuditLog or the CohortIdentificationConfiguration may have been deleted
-            // or whever knows what
+            // or wherever knows what
             return null;
         }
     }

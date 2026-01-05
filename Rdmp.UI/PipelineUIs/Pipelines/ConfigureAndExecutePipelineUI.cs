@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Threading;
 using System.Threading.Tasks;
@@ -103,6 +104,7 @@ public partial class ConfigureAndExecutePipelineUI : RDMPUserControl, IPipelineR
     private bool _pipelineOptionsSet;
 
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public DataFlowPipelineEngineFactory PipelineFactory { get; private set; }
 
     private void SetPipelineOptions(ICatalogueRepository repository)

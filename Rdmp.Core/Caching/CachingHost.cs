@@ -133,7 +133,7 @@ public class CachingHost
                         {
                             listener.OnNotify(this,
                                 new NotifyEventArgs(ProgressEventType.Information,
-                                    "Download not permitted at this time so exitting"));
+                                    "Download not permitted at this time so exiting"));
 
                             return;
                         }

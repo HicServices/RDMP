@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
@@ -27,6 +28,7 @@ public partial class DataGeneratorUI : UserControl
         cbGenerate.Checked = true;
     }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public IDataGenerator Generator
     {
         get => _generator;
@@ -82,6 +84,7 @@ public partial class DataGeneratorUI : UserControl
         TrackBarMouseUp?.Invoke();
     }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public bool Generate
     {
         get => cbGenerate.Checked;

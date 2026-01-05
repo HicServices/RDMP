@@ -17,7 +17,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.Caching.Pipeline.Destinations;
 
 /// <summary>
-/// Time period for which cache chunks are stored / fetched.  Some caching tasks produce so many file system entries it is nessesary to subdivide the cache by Hour.
+/// Time period for which cache chunks are stored / fetched.  Some caching tasks produce so many file system entries it is necessary to subdivide the cache by Hour.
 /// </summary>
 public enum CacheFileGranularity
 {

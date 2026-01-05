@@ -25,7 +25,7 @@ namespace Rdmp.UI.CohortUI;
 /// Shows a collection of cohorts that are ready for data extraction (typically all the cohorts associated with a project or a global list of all cohorts).  These are identifier lists
 /// and release identifier substitutions stored in the external cohort database(s).  The control provides a readonly summary of the number of unique patient identifiers in each cohort.
 /// If a project/global list includes more than one Cohort Source (e.g. you link NHS numbers to ReleaseIdentifiers but also link CHI numbers to ReleaseIdentifiers or if you have the same
-/// private identifier but different release identifier formats) then each seperate cohort source table will be listed along with the associated cohorts found by RDMP.
+/// private identifier but different release identifier formats) then each separate cohort source table will be listed along with the associated cohorts found by RDMP.
 /// </summary>
 public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeSubscriber
 {

@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
@@ -72,14 +73,18 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
 
     public ICatalogue CatalogueCreatedIfAny => _catalogue;
     public ITableInfo TableInfoCreated => _tableInfo;
+
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public DiscoveredTable TableCreated { get; set; }
+
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public string TargetFolder { get; set; }
 
     private BinderWithErrorProviderFactory _binder;
     private ObjectSaverButton objectSaverButton1 = new();
 
     /// <summary>
-    /// True if we are making programatic changes to values and shouldn't respond to control events (e.g. dropdown changes)
+    /// True if we are making programmatic changes to values and shouldn't respond to control events (e.g. dropdown changes)
     /// </summary>
     private bool isLoading;
 
@@ -418,7 +423,7 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
         if (_projectSpecific == null) return;
 
         IAtomicCommandWithTarget cmd =
-            new ExecuteCommandMakeCatalogueProjectSpecific(Activator, _catalogue, _projectSpecific);
+            new ExecuteCommandMakeCatalogueProjectSpecific(Activator, _catalogue, _projectSpecific,false);
 
         if (cmd.IsImpossible)
             MessageBox.Show($"Could not make Catalogue ProjectSpecific:{cmd.ReasonCommandImpossible}");
@@ -469,7 +474,7 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
 
         ITableInfo joinFrom;
 
-        // if user is adding a second table and theres currently only 1 TableInfo
+        // if user is adding a second table and there's currently only 1 TableInfo
         // associated with the Catalogue
         if (existingTables.Length == 1)
         {

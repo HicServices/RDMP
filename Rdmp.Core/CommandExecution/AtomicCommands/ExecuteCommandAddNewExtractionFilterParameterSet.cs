@@ -14,7 +14,7 @@ using SixLabors.ImageSharp.PixelFormats;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Creates a new set of paramter values that model a concept (e.g. dementia
+/// Creates a new set of parameter values that model a concept (e.g. dementia
 /// ICD codes).  The filter must have parameters defined in it and the value
 /// set must provide accurate values for those parameters to model the concept
 /// </summary>

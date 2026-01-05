@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using System.Text;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data.Dashboarding;
@@ -19,13 +20,14 @@ namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.
 /// <summary>
 /// TECHNICAL: Base class for all dockable tabs that host a single control
 /// </summary>
-[System.ComponentModel.DesignerCategory("")]
+[DesignerCategory("")]
 [TechnicalUI]
 public class RDMPSingleControlTab : DockContent, IRefreshBusSubscriber
 {
     /// <summary>
     /// The control hosted on this tab
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Control Control { get; protected set; }
 
     public const string BasicPrefix = "BASIC";

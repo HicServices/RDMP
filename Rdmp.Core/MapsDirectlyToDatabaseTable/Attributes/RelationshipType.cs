@@ -15,7 +15,7 @@ public enum RelationshipType
 
     /// <summary>
     /// The decorated property reflects a system boundary between shared objects and local objects.  The decorated property should not
-    /// be a reference to a shared object.  Instead it should be maped to a local object on import.  For example when sharing a CatalogueItem,
+    /// be a reference to a shared object.  Instead it should be mapped to a local object on import.  For example when sharing a CatalogueItem,
     /// the associated ColumnInfo is not something that should be transmitted but it must exist and be selected before CatalogueItem can be imported.
     /// </summary>
     LocalReference,

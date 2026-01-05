@@ -46,7 +46,9 @@ namespace Rdmp.UI.ProjectUI.Datasets;
 /// </summary>
 public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design, ILifetimeSubscriber
 {
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public SelectedDataSets SelectedDataSet { get; private set; }
+
     private IExtractableDataSet _dataSet;
     private ExtractionConfiguration _config;
 
@@ -190,7 +192,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design, ILifetimeSu
 
     /// <summary>
     /// The left list contains ExtractionInformation from the Data Catalogue, this is columns in the database which could be extracted
-    /// The right list contains ExtractableColumn which is a more advanced class that contains runtime configurations such as order to be outputed in etc.
+    /// The right list contains ExtractableColumn which is a more advanced class that contains runtime configurations such as order to be outputted in etc.
     /// </summary>
     private void SetupUserInterface()
     {
@@ -608,7 +610,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design, ILifetimeSu
         //identify those we are already joining to based on the columns selected
         var tablesInQuery = GetTablesUsedInQuery();
 
-        //add those as readonly (you cant unjoin from those)
+        //add those as readonly (you can't unjoin from those)
         foreach (TableInfo tableInfo in tablesInQuery)
             nodes.Add(new AvailableForceJoinNode(tableInfo, true));
 

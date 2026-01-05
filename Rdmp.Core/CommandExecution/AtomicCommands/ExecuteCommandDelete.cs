@@ -48,10 +48,9 @@ public class ExecuteCommandDelete : BasicCommandExecution
         _allowDeleteMany = deleteMany;
         if (_deletables.Any(d => d is CohortAggregateContainer c && c.IsRootContainer()))
             SetImpossible("Cannot delete root containers");
-
         var reason = "";
 
-        if (_deletables.Any(d => d is IMightBeReadOnly ro && ro.ShouldBeReadOnly(out reason)))
+        if (_deletables.Any(d => d is IMightBeReadOnly ro && ro.ShouldBeReadOnly(this.GetType().Name, out reason)))
             SetImpossible(reason);
 
         Weight = 50.4f;
@@ -81,22 +80,13 @@ public class ExecuteCommandDelete : BasicCommandExecution
     public override void Execute()
     {
         base.Execute();
-
-        // if the thing we are deleting is important and sensitive then we should use a transaction
-        if (_deletables.Count > 1 || ShouldUseTransactionsWhenDeleting(_deletables.FirstOrDefault()))
-        {
-            ExecuteWithCommit(ExecuteImpl, GetDescription(),
-                _deletables.OfType<IMapsDirectlyToDatabaseTable>().ToArray());
-            PublishNearest();
-        }
-        else
-        {
-            ExecuteImpl();
-        }
+        ExecuteWithCommit(ExecuteImpl, GetDescription(),
+               _deletables.OfType<IMapsDirectlyToDatabaseTable>().ToArray());
+        PublishNearest();
     }
 
-    private static bool ShouldUseTransactionsWhenDeleting(IDeleteable deleteable) =>
-        deleteable is CatalogueItem or ExtractionInformation;
+    private static bool ShouldUseTransactionsWhenDeleting(IDeleteable deletable) =>
+        deletable is CatalogueItem or ExtractionInformation;
 
     private string GetDescription() =>
         _deletables.Count == 1

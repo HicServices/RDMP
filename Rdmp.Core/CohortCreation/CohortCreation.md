@@ -14,7 +14,7 @@
 
 A Cohort is a collection of unique person identifiers which can be linked against datasets during an extraction.  This namespace covers the creation of queries that identify lists of patients (based on inclusion / exclusion criteria).
 
-See [CohortComitting](../CohortCommitting/Readme.md) for committing (saving) a final list of patients (or for generating cohorts directly from a file etc).
+See [CohortComitting](../CohortCommitting/CohortCommitting.md) for committing (saving) a final list of patients (or for generating cohorts directly from a file etc).
 
 Cohorts are always created by performing set operations and/or joins on distinct patients (determined by the selected [IsExtractionIdentifier] column in the dataset(s))
 
@@ -24,7 +24,7 @@ Cohorts are always created by performing set operations and/or joins on distinct
 
 A complicated cohort can easily include 10 or more criteria (prescribed drug X; never prescribed drug y etc).  Each criteria can involve querying a large number of records and can take some time.  The traditional approach to this problem is to use temporary tables (e.g. `tempdb`) or a scratch area (e.g. MyWorkingDb) to create tables that store results for subsections of the overall query.  RDMP automates this practice through its query caching subsystem.
 
-The RDMP query cache also get's around [DBMS] limitations e.g. MySql not supporting Set operations ([UNION] / [INTERSECT] / [EXCEPT]) and enables cross server (and [DBMS]) query generation.
+The RDMP query cache also gets around [DBMS] limitations e.g. MySql not supporting Set operations ([UNION] / [INTERSECT] / [EXCEPT]) and enables cross server (and [DBMS]) query generation.
 
 ### Creating a Cache
 
@@ -87,7 +87,7 @@ The following flow chart describes the process RDMP uses to build a SET containe
 
 ![Flowchart showing when/if RDMP will use a cache fetch in an SQL query](./Images/flowchart.png)
 
-_* If you are using credentials to access a table (e.g. username and password rather than integrated security) then differing credentials is treated as different servers (since a connection cannot be openned to both objects)_
+_* If you are using credentials to access a table (e.g. username and password rather than integrated security) then differing credentials is treated as different servers (since a connection cannot be opened to both objects)_
 
 When run from the cache the above query would be:
 
@@ -126,7 +126,7 @@ The following classes play a role in building and executing cohort building quer
 |ICompileable| A subcomponent that could be executed (or encountered an error while building) | 
 |CohortIdentificationTaskExecution | The current state of an `ICompileable` including result / crashed etc |
 |CohortQueryBuilder | Manages configuration/tailoring of cohort sets e.g. run as normal or run TOP x only etc |
-|CohortQueryBuilderResults | Identifies all subcomponents in the container / cohort and makes descisions about cache usage |
+|CohortQueryBuilderResults | Identifies all subcomponents in the container / cohort and makes decisions about cache usage |
 |CohortQueryBuilderDependency| Stores the uncached and cached (if available) SQL for the subcomponent|
 |CohortQueryBuilderHelper| Builds the uncached SQL for each atomic subcomponent (uses an `AggregateBuilder` to do most of the work)|
 
@@ -136,7 +136,7 @@ Consider the following cohort identification configuration.  We have an inclusio
 
 ![Flowchart showing when/if RDMP will use a cache fetch in an SQL query](./Images/renaming.png)
 
-In the ideal situation we can use the cache to avoid the colliding parameters by running each subquery seperately and then running the container ([EXCEPT]) from the cache:
+In the ideal situation we can use the cache to avoid the colliding parameters by running each subquery separately and then running the container ([EXCEPT]) from the cache:
 
 ```sql
 /*Cached:cic_15_People with high HBA1C*/
@@ -194,7 +194,7 @@ AND
 )
 ```
 
-Notice that the parameter has been renamed `@Result_2` and `@code_2` in the compiled SQL.  This is a runtime descision and does not affect the persisted configuration. 
+Notice that the parameter has been renamed `@Result_2` and `@code_2` in the compiled SQL.  This is a runtime decision and does not affect the persisted configuration. 
 
 ## Class Diagram
 

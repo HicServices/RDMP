@@ -173,6 +173,7 @@ public interface IBasicActivateItems
     CohortCreationRequest GetCohortCreationRequest(ExternalCohortTable externalCohortTable, IProject project,
         string cohortInitialDescription);
 
+    IProject CohortCommitProjectSelect(IProject currentProject, Project[] projects);
 
 
     CohortHoldoutLookupRequest GetCohortHoldoutLookupRequest(ExternalCohortTable externalCohortTable, IProject project, CohortIdentificationConfiguration cic);
@@ -343,6 +344,13 @@ public interface IBasicActivateItems
     void Show(string message);
 
     /// <summary>
+    /// Display the given message to the user (e.g. in a MessageBox or out into the Console) as a warning
+    /// </summary>
+    /// <param name="message"></param>
+    void ShowWarning(string message);
+
+
+    /// <summary>
     /// Display the given message to the user (e.g. in a MessageBox or out into the Console).  If provided <paramref name="title"/> may also be featured in the presentation
     /// </summary>
     /// <param name="title"></param>
@@ -493,7 +501,7 @@ public interface IBasicActivateItems
 
 
     /// <summary>
-    /// Prompts user or directly creates a new satelite database (e.g. logging / dqe etc) and returns a persistent reference to it
+    /// Prompts user or directly creates a new satellite database (e.g. logging / dqe etc) and returns a persistent reference to it
     /// </summary>
     /// <param name="catalogueRepository">The main catalogue database</param>
     /// <param name="defaultToSet">If the created database is to become the new default database of its type provide this</param>
@@ -518,11 +526,11 @@ public interface IBasicActivateItems
     IEnumerable<IMapsDirectlyToDatabaseTable> GetAll(Type t);
 
     /// <summary>
-    /// Delete the <paramref name="deleteable"/> ideally asking the user for confirmation first (if appropriate)
+    /// Delete the <paramref name="deletable"/> ideally asking the user for confirmation first (if appropriate)
     /// </summary>
-    /// <param name="deleteable"></param>
+    /// <param name="deletable"></param>
     /// <returns></returns>
-    bool DeleteWithConfirmation(IDeleteable deleteable);
+    bool DeleteWithConfirmation(IDeleteable deletable);
 
     /// <summary>
     /// Component for auditing errors that should be brought to the users attention subtly (e.g. if a plugin crashes while attempting to create menu items)

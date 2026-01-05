@@ -27,7 +27,7 @@ public class VerboseValidationResults
     public Dictionary<string, Dictionary<Consequence, int>> DictionaryOfFailure { get; private set; }
 
     /// <summary>
-    /// Every time a row is Invalidated (this List get's the reason for Invalidation added to it)
+    /// Every time a row is Invalidated (this List gets the reason for Invalidation added to it)
     /// </summary>
     public List<string> ReasonsRowsInvalidated { get; set; }
 

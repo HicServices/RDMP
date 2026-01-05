@@ -36,7 +36,7 @@ _Example Unit Test_
 
 User interface tests which confirm behaviours of RDMP client user interfaces e.g. `CatalogueUI`.  These tests create instances of Forms/Controls but do not actually show them (we do not use UI automation).
 
-You can write new user interface tests by inheriting `UITests` and specifying a `UITimeoutAttribute` on the Test (this prevents messageboxes blocking the test indefinetly in failure conditions and ensures that an STA thread is used.)
+You can write new user interface tests by inheriting `UITests` and specifying a `UITimeoutAttribute` on the Test (this prevents messageboxes blocking the test indefinitely in failure conditions and ensures that an STA thread is used.)
 
 ```csharp
 public class CatalogueUITests : UITests

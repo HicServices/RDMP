@@ -147,7 +147,7 @@ public class CredentialsTests : DatabaseTests
             //now create the association as Any
             tableInfo.SetCredentials(creds, DataAccessContext.Any);
 
-            //because the credential is liscenced to be used under ANY context, you can make requests under any of the specific contexts and be served the Any result
+            //because the credential is licenced to be used under ANY context, you can make requests under any of the specific contexts and be served the Any result
             var creds2 = tableInfo.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
             Assert.That(creds2, Is.Not.Null);
             creds2 = tableInfo.GetCredentialsIfExists(DataAccessContext.DataExport);

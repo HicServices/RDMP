@@ -104,11 +104,11 @@ False - Trigger an error reporting the missing table(s)
                     ? tableInfo.GetColumnsAtStage(LoadStage.AdjustRaw)
                     : tableInfo.ColumnInfos;
                 sql =
-                    $"SELECT {string.Join(",", rawColumns.Select(c => syntaxFrom.EnsureWrapped(c.GetRuntimeName(LoadStage.AdjustRaw))))} FROM {syntaxFrom.EnsureWrapped(table)} {SqlHistoricalDataFilter(job.LoadMetadata, dbFrom.Server.DatabaseType)}";
+                    $"SELECT {string.Join(",", rawColumns.Select(c => syntaxFrom.EnsureWrapped(c.GetRuntimeName(LoadStage.AdjustRaw))))} FROM {syntaxFrom.EnsureWrapped(table)} {SqlHistoricalDataFilter(job.LoadMetadata, dbFrom.Server.DatabaseType,RemoteTableDateColumn)}";
             }
             else
             {
-                sql = $"SELECT * FROM {syntaxFrom.EnsureWrapped(table)} {SqlHistoricalDataFilter(job.LoadMetadata,RemoteSource.DatabaseType)}";
+                sql = $"SELECT * FROM {syntaxFrom.EnsureWrapped(table)} {SqlHistoricalDataFilter(job.LoadMetadata,RemoteSource.DatabaseType, RemoteTableDateColumn)}";
             }
             job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
                 $"About to execute SQL:{Environment.NewLine}{sql}"));

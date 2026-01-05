@@ -41,6 +41,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
 {
     private string _noPrimaryConstraintText = "No Primary Constraint Defined";
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Validator Validator { get; private set; }
 
     private bool bSuppressChangeEvents;

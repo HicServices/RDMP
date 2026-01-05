@@ -27,7 +27,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.CommandLine.Runners;
 
 /// <summary>
-/// Runs the release process for one or more <see cref="ExtractionConfiguration"/> in the same <see cref="Project"/>.  This is the proces by which we gather all the artifacts
+/// Runs the release process for one or more <see cref="ExtractionConfiguration"/> in the same <see cref="Project"/>.  This is the process by which we gather all the artifacts
 /// produced by the Extraction Engine (anonymised project extracts, bundled lookups and documents etc) and transmit them somewhere as a final released package.
 /// </summary>
 public class ReleaseRunner : ManyRunner
@@ -293,7 +293,7 @@ public class ReleaseRunner : ManyRunner
         if (releasePotential is NoReleasePotential)
             return Releaseability.NeverBeenSuccessfullyExecuted;
 
-        //do we know the release state of the assesments
+        //do we know the release state of the assessments
         if (releasePotential.Assessments != null && releasePotential.Assessments.Any())
         {
             var releasability = releasePotential.Assessments.Values.Min();

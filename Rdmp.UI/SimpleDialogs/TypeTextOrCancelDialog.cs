@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using FAnsi.Discovery;
@@ -29,6 +30,7 @@ public partial class TypeTextOrCancelDialog : Form
     /// <summary>
     /// True to require that text typed be sane for usage as a column name, table name etc e.g. "bob" but not "bob::bbbbb".
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public bool RequireSaneHeaderText { get; set; }
 
     //"Column Name","Enter name for column (this should NOT include any qualifiers e.g. database name)", 300);
@@ -154,7 +156,7 @@ public partial class TypeTextOrCancelDialog : Form
             //If the OK button is enabled AND... (we're not multiline OR we are multiline but they're holding shift)
             if (btnOk.Enabled && (!_multiline || (_multiline && e.Shift)))
             {
-                //Supress the enter key (so a new line isn't created) and press the OK button
+                //Suppress the enter key (so a new line isn't created) and press the OK button
                 e.Handled = true;
                 e.SuppressKeyPress = true;
                 btnOk_Click(null, null);

@@ -22,7 +22,7 @@ namespace Rdmp.Core.DataExport.Data;
 /// <summary>
 /// Sometimes you want to define global parameters that apply to an entire ExtractionConfiguration and all the Catalogues/ExtractableDataSets within it.  For example you might
 /// want to define @studyStartWindow and @studyEndWindow as global parameters which can be used to restrict the extraction window of each dataset.  GlobalExtractionFilterParameters
-/// are created and assocaited with a single ExtractionConfiguration after which they are available for use in all DeployedExtractionFilters of all datasets within the configuration.
+/// are created and associated with a single ExtractionConfiguration after which they are available for use in all DeployedExtractionFilters of all datasets within the configuration.
 /// 
 /// <para>It also means you have a single point you can change the parameter if you need to adjust it later on.</para>
 /// </summary>

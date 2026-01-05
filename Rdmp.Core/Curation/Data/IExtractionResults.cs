@@ -42,7 +42,7 @@ public interface IExtractionResults : IReferenceOtherObject, IMapsDirectlyToData
     DateTime DateOfExtraction { get; }
 
     /// <summary>
-    /// Null if the extraction completed succesfully.  Otherwise populated with the fatal error that caused the extraction to stop.
+    /// Null if the extraction completed successfully.  Otherwise populated with the fatal error that caused the extraction to stop.
     /// 
     /// <para>If this is not null then the extraction is considered to have been a failure.</para>
     /// </summary>

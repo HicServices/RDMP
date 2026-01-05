@@ -38,7 +38,7 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
 
     /// <summary>
     /// If Destination is an IExecuteDatasetExtractionDestination then it will be initialized properly with the configuration, cohort etc otherwise the destination will have to react properly
-    /// / dynamically based on what comes down the pipeline just like it would normally e.g. SqlBulkInsertDestination would be a logically permissable destination for an ExtractionPipeline
+    /// / dynamically based on what comes down the pipeline just like it would normally e.g. SqlBulkInsertDestination would be a logically permissible destination for an ExtractionPipeline
     /// </summary>
     public IExecuteDatasetExtractionDestination Destination { get; private set; }
 
@@ -314,6 +314,19 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
 
             listener.OnNotify(this,
                 new NotifyEventArgs(ProgressEventType.Error, "Word metadata document NOT CREATED", e));
+            return;
+        }
+        try
+        {
+            var datasetVariableReportWriter = new DatasetVariableReportGenerator(this);
+            datasetVariableReportWriter.GenerateDatasetVariableReport();
+        }
+        catch (Exception e)
+        {
+            ExtractCommand.ElevateState(ExtractCommandState.Warning);
+
+            listener.OnNotify(this,
+                new NotifyEventArgs(ProgressEventType.Error, "Dataset variable document NOT CREATED", e));
             return;
         }
 

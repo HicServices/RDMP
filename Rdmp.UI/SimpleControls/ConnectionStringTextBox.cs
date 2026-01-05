@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -17,13 +18,15 @@ namespace Rdmp.UI.SimpleControls;
 /// <summary>
 /// Text box for entering Sql Server connection strings, includes autocomplete support for keywords (e.g. Database)
 /// </summary>
-[System.ComponentModel.DesignerCategory("")]
+[DesignerCategory("")]
 public class ConnectionStringTextBox : TextBox
 {
     private DatabaseType _databaseType;
     private List<string> supportedKeywords = new();
     private bool suppressAutocomplete;
 
+
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public DatabaseType DatabaseType
     {
         get => _databaseType;

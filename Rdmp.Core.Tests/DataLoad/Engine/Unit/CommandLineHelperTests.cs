@@ -33,7 +33,7 @@ internal class CommandLineHelperTests
 
         ImplementationManager.Load<MicrosoftSQLImplementation>();
 
-        //notice how server and db don't actually exist, thats cool they implement IMightNotExist
+        //notice how server and db don't actually exist, that's cool they implement IMightNotExist
         var dbInfo =
             new DiscoveredServer(new SqlConnectionStringBuilder { DataSource = "server" }).ExpectDatabase("db");
         Assert.That(CommandLineHelper.CreateArgString("DbInfo", dbInfo), Is.EqualTo("--database-name=db --database-server=server"));

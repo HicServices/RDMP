@@ -22,7 +22,7 @@ namespace Rdmp.Core.Curation.ANOEngineering;
 
 /// <summary>
 /// Creates a new 'anonymous' version of a Catalogue based on a configuration the user has set up in a ForwardEngineerANOCataloguePlanManager.  This involves creating
-/// a new empty data table in the destination database (adjusted to accomodate anonymous datatypes / dropped columns etc), importing the empty table as a new
+/// a new empty data table in the destination database (adjusted to accommodate anonymous datatypes / dropped columns etc), importing the empty table as a new
 /// TableInfo(s) and creating a new Catalogue entry.  Since Catalogues can have multiple underlying tables (e.g. lookup tables shared join tables etc) the engine
 /// supports migrating only a subset of tables across (the remaining tables must have already been migrated and exist in the destination database).
 /// 
@@ -281,7 +281,7 @@ public class ForwardEngineerANOCatalogueEngine
                         new Lookup(_catalogueRepository, newDesc, newFk, newPk, lookup.ExtractionJoinType,
                             lookup.Collation);
 
-                    //also mirror any composite (secondary, tertiary join column pairs needed for the Lookup to operate correclty e.g. where TestCode 'HAB1' means 2 different things depending on healthboard)
+                    //also mirror any composite (secondary, tertiary join column pairs needed for the Lookup to operate correctly e.g. where TestCode 'HAB1' means 2 different things depending on healthboard)
                     foreach (var compositeJoin in lookup.GetSupplementalJoins().Cast<LookupCompositeJoinInfo>())
                     {
                         var newCompositeFk = GetNewColumnInfoForOld(compositeJoin.ForeignKey);
@@ -294,7 +294,7 @@ public class ForwardEngineerANOCatalogueEngine
                     }
                 }
 
-                //create new data load confguration
+                //create new data load configuration
                 LoadMetadata = new LoadMetadata(_catalogueRepository, $"Anonymising {NewCatalogue}");
                 LoadMetadata.EnsureLoggingWorksFor(NewCatalogue);
                 NewCatalogue.SaveToDatabase();
@@ -417,7 +417,7 @@ public class ForwardEngineerANOCatalogueEngine
             }
             catch (Exception)
             {
-                //oh well couldnt find it
+                //oh well couldn't find it
                 failedANOToo = true;
             }
 

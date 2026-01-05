@@ -29,7 +29,7 @@ public class ExecuteCommandSetContainerOperation : BasicCommandExecution
         _container = container;
         _operation = operation;
 
-        if (container.ShouldBeReadOnly(out var reason)) SetImpossible(reason);
+        if (container.ShouldBeReadOnly(this.GetType().Name, out var reason)) SetImpossible(reason);
 
         Weight = _operation switch
         {

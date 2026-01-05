@@ -449,7 +449,7 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
     private static void Tree_KeyPress(object sender, KeyPressEventArgs e)
     {
-        //Prevents keyboard 'bong' sound occuring when using Enter to activate an object
+        //Prevents keyboard 'bong' sound occurring when using Enter to activate an object
         if (e.KeyChar == (char)Keys.Enter)
             e.Handled = true;
     }

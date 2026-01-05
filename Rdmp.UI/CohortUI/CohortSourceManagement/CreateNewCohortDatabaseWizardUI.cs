@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using System.Windows.Forms;
 using Rdmp.Core.CohortCommitting;
 using Rdmp.Core.DataExport.Data;
@@ -36,7 +37,7 @@ internal partial class CreateNewCohortDatabaseWizardUI : RDMPUserControl
     {
         InitializeComponent();
         helpIcon1.SetHelpText("Null Release Identifiers",
-            @"In RMDP a cohort is a list of private identifiers paired to release identifiers.  Normally these release identifiers are allocated as part of the committing pipeline (e.g. as a new GUID).  If you want to allocate these later yourself e.g. with a stored proceedure then you can tick 'AllowNullReleaseIdentifiers' to create a cohort schema where the release identifier can be null.");
+            @"In RMDP a cohort is a list of private identifiers paired to release identifiers.  Normally these release identifiers are allocated as part of the committing pipeline (e.g. as a new GUID).  If you want to allocate these later yourself e.g. with a stored procedure then you can tick 'AllowNullReleaseIdentifiers' to create a cohort schema where the release identifier can be null.");
 
         helpIcon2.SetHelpText("Cohort Databases", "Click to view a diagram of what a cohort store is");
         helpIcon2.SuppressClick = true;
@@ -53,9 +54,13 @@ internal partial class CreateNewCohortDatabaseWizardUI : RDMPUserControl
             Activator.RepositoryLocator.DataExportRepository, false);
     }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public CreateNewCohortDatabaseWizard Wizard { get; private set; }
+
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public PrivateIdentifierPrototype PrivateIdentifierPrototype { get; private set; }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public ExternalCohortTable ExternalCohortTableCreatedIfAny { get; private set; }
 
     private void btnDiscoverExtractionIdentifiers_Click(object sender, EventArgs e)

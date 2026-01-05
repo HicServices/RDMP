@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
@@ -46,6 +47,7 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs;
 /// </summary>
 public partial class ParameterCollectionUI : RDMPUserControl
 {
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public ParameterCollectionUIOptions Options { get; private set; }
 
     private ToolStripMenuItem miAddNewParameter = new("New Parameter...");

@@ -422,7 +422,7 @@ public class LoggingTabUI : LoggingTab_Design
 
     private void pbRemoveFilter_Click(object sender, EventArgs e)
     {
-        //get a fresh clear filter (but targetting the same table)
+        //get a fresh clear filter (but targeting the same table)
         SetFilter(new LogViewerFilter(Filter.LoggingTable));
     }
 

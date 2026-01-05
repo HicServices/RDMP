@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using Rdmp.Core.Icons.IconProvision;
@@ -13,7 +14,7 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery;
 
 /// <summary>
 /// Tells you what state the LoadDiagram is in.  This starts at 'Unknown' which means no database requests have been sent and the visible tables are the 'Anticipated' state of the tables
-/// during a load.  Checking the state when RAW/STAGING do not exist indicates that no load is underway and that the last load was succesful (or RAW/STAGING were cleaned up after a problem
+/// during a load.  Checking the state when RAW/STAGING do not exist indicates that no load is underway and that the last load was successful (or RAW/STAGING were cleaned up after a problem
 /// was resolved).  The final state is 'Load Underway/Crashed' this indicates that RAW and/or STAGING exist which means that either a data load is in progress (not nesessarily started by you)
 /// or one has completed with an error and has therefore left RAW/STAGING for debugging (See LoadDiagram).
 /// </summary>
@@ -22,6 +23,8 @@ public partial class LoadStateUI : UserControl
     private Bitmap _unknown;
     private Bitmap _noLoadUnderway;
     private Bitmap _executingOrCrashed;
+
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public LoadState State { get; private set; }
 
     public LoadStateUI()

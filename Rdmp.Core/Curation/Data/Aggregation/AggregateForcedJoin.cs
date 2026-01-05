@@ -16,7 +16,7 @@ internal class AggregateForcedJoin : IAggregateForcedJoinManager
     private readonly CatalogueRepository _repository;
 
     /// <summary>
-    /// Creates a new instance targetting the catalogue database referenced by the repository.  The instance can be used to populate / edit the AggregateForcedJoin in
+    /// Creates a new instance targeting the catalogue database referenced by the repository.  The instance can be used to populate / edit the AggregateForcedJoin in
     /// the database.  Access via <see cref="CatalogueRepository.AggregateForcedJoinManager"/>
     /// </summary>
     /// <param name="repository"></param>

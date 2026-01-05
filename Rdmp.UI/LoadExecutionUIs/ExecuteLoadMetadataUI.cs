@@ -17,7 +17,7 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-
+using Rdmp.Core.Setting;
 
 namespace Rdmp.UI.LoadExecutionUIs;
 
@@ -36,7 +36,6 @@ public partial class ExecuteLoadMetadataUI : DatasetLoadControl_Design
 {
     private LoadMetadata _loadMetadata;
     private ILoadProgress[] _allLoadProgresses;
-
 
     private ToolStripComboBox dd_DebugOptions = new();
 
@@ -73,6 +72,16 @@ public partial class ExecuteLoadMetadataUI : DatasetLoadControl_Design
         _loadMetadata = databaseObject;
 
         checkAndExecuteUI1.SetItemActivator(activator);
+
+        checkAndExecuteUI1.AllowsYesNoToAll = false;
+
+        if (activator.IsInteractive)
+        {
+            var showYestoAllNotoAlldataloadcheck = false;
+            var showYestoAllNotoAlldataloadcheckSetting = activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Setting>().FirstOrDefault(static s => s.Key == "ToggleYestoAllNotoAlldataloadcheck");
+            if (showYestoAllNotoAlldataloadcheckSetting is not null) showYestoAllNotoAlldataloadcheck = Convert.ToBoolean(showYestoAllNotoAlldataloadcheckSetting.Value);
+            checkAndExecuteUI1.AllowsYesNoToAll = showYestoAllNotoAlldataloadcheck;
+        }
 
         SetButtonStates(null, null);
 

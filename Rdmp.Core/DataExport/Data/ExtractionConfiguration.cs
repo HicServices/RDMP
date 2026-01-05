@@ -220,12 +220,7 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
 
     /// <inheritdoc cref="DefaultPipeline_ID"/>
     [NoMappingToDatabase]
-    public IPipeline DefaultPipeline =>
-        DefaultPipeline_ID == null
-            ? null
-            : (IPipeline)((IDataExportRepository)Repository).CatalogueRepository.GetObjectByID<Pipeline>(
-                DefaultPipeline_ID.Value);
-
+    public IPipeline DefaultPipeline => DefaultPipeline_ID == null?null: ((IDataExportRepository) Repository).CatalogueRepository.GetAllObjects<Pipeline>().FirstOrDefault(p => p.ID == DefaultPipeline_ID);
 
     /// <inheritdoc cref="CohortIdentificationConfiguration_ID"/>
     [NoMappingToDatabase]
@@ -347,7 +342,7 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
     /// <returns></returns>
     public override string ToString() => Name;
 
-    public bool ShouldBeReadOnly(out string reason)
+    public bool ShouldBeReadOnly(string context,out string reason)
     {
         if (IsReleased)
         {
@@ -361,7 +356,7 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
 
     /// <summary>
     /// Creates a complete copy of the <see cref="IExtractionConfiguration"/>, all selected datasets, filters etc.  The copy is created directly into
-    /// the <see cref="DatabaseEntity.Repository"/> database using a transaction (to prevent a half succesful clone being generated).
+    /// the <see cref="DatabaseEntity.Repository"/> database using a transaction (to prevent a half successful clone being generated).
     /// </summary>
     /// <returns></returns>
     public ExtractionConfiguration DeepCloneWithNewIDs()
@@ -371,8 +366,21 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
         {
             try
             {
-                //clone the root object (the configuration) - this includes cloning the link to the correct project and cohort
+                //clone the root object (the configuration) - this includes cloning the link to the correct project and cohort       
                 var clone = ShallowClone();
+
+                // Clone GlobalExtractionFilterParameters
+                foreach (var param in GlobalExtractionFilterParameters.OfType<GlobalExtractionFilterParameter>())
+                {
+                    // Create the new parameter with the same SQL declaration
+                    var clonedParam = new GlobalExtractionFilterParameter(repo, clone, param.ParameterSQL);
+
+                    // Copy value and comment if present
+                    clonedParam.Value = param.Value;
+                    clonedParam.Comment = param.Comment;
+
+                    clonedParam.SaveToDatabase();
+                }
 
                 //find each of the selected datasets for ourselves and clone those too
                 foreach (SelectedDataSets selected in SelectedDataSets)
@@ -387,7 +395,7 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
                         cloneExtractableColumn.SaveToDatabase();
                     }
 
-                    //clone should copy accross the forced joins (if any)
+                    //clone should copy across the forced joins (if any)
                     foreach (var oldForcedJoin in Repository.GetAllObjectsWithParent<SelectedDataSetsForcedJoin>(
                                  selected))
                         new SelectedDataSetsForcedJoin((IDataExportRepository)Repository, newSelectedDataSet,
@@ -400,7 +408,7 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
                         var clonedProgress = new ExtractionProgress(repo, newSelectedDataSet, old.StartDate,
                             old.EndDate, old.NumberOfDaysPerBatch, old.Name, old.ExtractionInformation_ID);
 
-                        // Notice that we do not set the ProgressDate because the cloned copy should be extracting from the begining
+                        // Notice that we do not set the ProgressDate because the cloned copy should be extracting from the beginning
                         // when it is run.  We don't want the user to have to manually reset it
                         clonedProgress.SaveToDatabase();
                     }
@@ -710,6 +718,10 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
     /// <inheritdoc/>
     public override void DeleteInDatabase()
     {
+        // Delete only GlobalExtractionFilterParameters for this configuration
+        foreach (var param in Repository.GetAllObjectsWithParent<GlobalExtractionFilterParameter>(this))
+            param.DeleteInDatabase();
+
         foreach (var result in Repository.GetAllObjectsWithParent<SupplementalExtractionResults>(this))
             result.DeleteInDatabase();
 

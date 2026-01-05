@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using System.Windows.Forms;
 using Rdmp.UI.SimpleControls;
 
@@ -14,11 +15,12 @@ namespace Rdmp.UI.Menus.MenuItems;
 /// Provides a shortcut to save the currently selected ISaveableUI.  This class requires that you track and regularly update the Saveable property to match
 /// the currently selected saveable tab
 /// </summary>
-[System.ComponentModel.DesignerCategory("")]
+[DesignerCategory("")]
 public class SaveMenuItem : ToolStripMenuItem
 {
     private ISaveableUI _saveable;
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public ISaveableUI Saveable
     {
         get => _saveable;

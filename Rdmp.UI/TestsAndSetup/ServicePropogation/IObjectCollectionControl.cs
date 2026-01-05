@@ -11,7 +11,7 @@ using Rdmp.UI.Refreshing;
 namespace Rdmp.UI.TestsAndSetup.ServicePropogation;
 
 /// <summary>
-/// Only use if you know what you are doing.  What you are doing is anouncing that you cannot function on a single root database object alone (e.g. Project / ExtractionConfiguration etc).
+/// Only use if you know what you are doing.  What you are doing is announcing that you cannot function on a single root database object alone (e.g. Project / ExtractionConfiguration etc).
 /// and that you require a combination of objects and/or custom settings to be persisted/refreshed.  If you can manage with only one object (which you really should be able to) then use
 /// RDMPSingleDatabaseObjectControl instead which is much easier to implement
 /// 

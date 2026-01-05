@@ -24,7 +24,7 @@ public interface IExtractCommand
 
     /// <summary>
     /// Flag that can be set by sources that support resume.  This indicates that the request is for the next
-    /// set of new data that has not been succesfully outputted yet and should be appended to the destination
+    /// set of new data that has not been successfully outputted yet and should be appended to the destination
     /// instead of overwriting.
     /// </summary>
     bool IsBatchResume { get; set; }

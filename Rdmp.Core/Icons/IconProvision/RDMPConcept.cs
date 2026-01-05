@@ -122,6 +122,7 @@ public enum RDMPConcept
     AllProcessTasksUsedByLoadMetadataNode,
     AllCataloguesUsedByLoadMetadataNode,
     LoadMetadataScheduleNode,
+    LoadMetadataVersionNode,
     Logging,
 
     GetFilesStage,
@@ -207,5 +208,12 @@ public enum RDMPConcept
     LoadMetadataCatalogueLinkage,
     Setting,
     TicketingSystemReleaseStatus,
-    CommittedCohortIdentificationNode
+    CommittedCohortIdentificationNode,
+    AllDatasetsNode,
+    RegexRedaction,
+    RegexRedactionConfiguration,
+    RegexRedactionKey,
+    AllRegexRedactionConfigurationsNode,
+    AllTemplateCohortIdentificationConfigurationsNode,
+    AssociatedCohortIdentificationTemplatesNode
 }

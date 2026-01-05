@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using System.Windows.Forms;
 using FAnsi;
 using FAnsi.Discovery;
@@ -38,6 +39,7 @@ public partial class ServerDatabaseTableSelectorDialog : Form
     public DiscoveredDatabase SelectedDatabase => serverDatabaseTableSelector1.GetDiscoveredDatabase();
     public DiscoveredTable SelectedTable => serverDatabaseTableSelector1.GetDiscoveredTable();
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public bool AllowTableValuedFunctionSelection
     {
         get => serverDatabaseTableSelector1.AllowTableValuedFunctionSelection;

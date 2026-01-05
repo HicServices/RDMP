@@ -53,26 +53,26 @@ public class DitaCatalogueExtractor : ICheckable
     public void Extract(IDataLoadEventListener listener)
     {
         var xml = new StringBuilder();
-        xml.Append($"""
-                    <?xml version="1.0" encoding="UTF-8"?>
-                    <!DOCTYPE map PUBLIC "-//OASIS//DTD DITA Map//EN"
-                    "map.dtd">
-                    <map>
-                    <title>HIC Data Catalogue</title>
-                    <topicmeta product="hicdc" rev="1">
-                    <author>Wilfred Bonney; Thomas Nind; Mikhail Ghattas</author>
-                    <publisher>Health Informatics Centre (HIC), University of Dundee</publisher
-                    </topicmeta>
-                    <topicref href="introduction.dita"/>
-                    <topicref href="dataset.dita">
+        xml.Append("""
+                   <?xml version="1.0" encoding="UTF-8"?>
+                   <!DOCTYPE map PUBLIC "-//OASIS//DTD DITA Map//EN"
+                   "map.dtd">
+                   <map>
+                   <title>HIC Data Catalogue</title>
+                   <topicmeta product="hicdc" rev="1">
+                   <author>Wilfred Bonney; Thomas Nind; Mikhail Ghattas</author>
+                   <publisher>Health Informatics Centre (HIC), University of Dundee</publisher
+                   </topicmeta>
+                   <topicref href="introduction.dita"/>
+                   <topicref href="dataset.dita">
 
-                    """);
+                   """);
         GenerateIntroductionFile("introduction.dita");
         GenerateDataSetFile("dataset.dita");
 
         //get all the catalogues then sort them alphabetically
         var catas = new List<Catalogue>(_repository.GetAllObjects<Catalogue>()
-            .Where(c => !(c.IsDeprecated || c.IsInternalDataset || c.IsColdStorageDataset)));
+            .Where(c => !(c.IsDeprecated || c.IsInternalDataset)));
         catas.Sort();
 
         var sw = Stopwatch.StartNew();
@@ -265,12 +265,12 @@ public class DitaCatalogueExtractor : ICheckable
 
 
     /// <summary>
-    /// Checks whether the dita file generation is likely to work e.g. that all datasets have unique acronymns etc
+    /// Checks whether the dita file generation is likely to work e.g. that all datasets have unique acronyms etc
     /// </summary>
     /// <param name="notifier"></param>
     public void Check(ICheckNotifier notifier)
     {
-        var catas = _repository.GetAllObjects<Catalogue>().Where(c => !c.IsInternalDataset && !c.IsColdStorageDataset)
+        var catas = _repository.GetAllObjects<Catalogue>().Where(c => !c.IsInternalDataset)
             .ToArray();
 
         //Catalogues with no acronyms

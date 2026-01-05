@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using FAnsi;
@@ -37,6 +38,8 @@ public partial class CreatePlatformDatabase : Form
     private IPatcher _patcher;
 
     private Task _tCreateDatabase;
+
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public DiscoveredDatabase DatabaseCreatedIfAny { get; private set; }
 
     /// <summary>

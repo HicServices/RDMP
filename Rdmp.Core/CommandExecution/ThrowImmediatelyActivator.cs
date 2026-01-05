@@ -24,7 +24,6 @@ namespace Rdmp.Core.CommandExecution;
 /// </summary>
 public class ThrowImmediatelyActivator : BasicActivateItems
 {
-    // DONE: This should not inherit from ConsoleInputManager
     public ThrowImmediatelyActivator(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
         ICheckNotifier notifier = null) : base(repositoryLocator, notifier ?? ThrowImmediatelyCheckNotifier.Quiet)
     {
@@ -90,6 +89,11 @@ public class ThrowImmediatelyActivator : BasicActivateItems
     public override void Show(string title, string message)
     {
     }
+
+    public override void ShowWarning(string message)
+    {
+    }
+
 
     public override bool TypeText(DialogArgs args, int maxLength, string initialText, out string text,
         bool requireSaneHeaderText)

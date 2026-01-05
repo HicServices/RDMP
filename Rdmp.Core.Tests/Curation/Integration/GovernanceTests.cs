@@ -60,7 +60,7 @@ public class GovernanceTests : DatabaseTests
         //local change not applied yet
         Assert.That(freshCopy.Name, Is.Not.EqualTo(gov.Name));
 
-        //comitted change to database
+        //committed change to database
         gov.SaveToDatabase();
 
         //notice that this fresh copy is still desynced

@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Modules.DataProvider;
@@ -19,6 +20,7 @@ namespace Rdmp.UI.DataLoadUIs.ModuleUIs.DataProvider;
 ///</summary>
 public partial class WebServiceConfigurationUI : Form, ICustomUI<WebServiceConfiguration>
 {
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public ICatalogueRepository CatalogueRepository { get; set; }
 
     public WebServiceConfigurationUI()

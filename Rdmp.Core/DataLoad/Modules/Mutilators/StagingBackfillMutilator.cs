@@ -34,7 +34,7 @@ namespace Rdmp.Core.DataLoad.Modules.Mutilators;
 /// from the historical batch except where there has been an update since).</para>
 /// 
 /// <para>This is done by selecting a 'TimePeriodicity' field that identifies the 'dataset time' of the record (as opposed to the load time) e.g. 'date blood sample
-///  taken'.  STAGING records will be deleted where there are records in LIVE wich  have the same primary key but a newer TimePeriodicity date.</para>
+///  taken'.  STAGING records will be deleted where there are records in LIVE which  have the same primary key but a newer TimePeriodicity date.</para>
 /// </summary>
 public class StagingBackfillMutilator : IPluginMutilateDataTables
 {

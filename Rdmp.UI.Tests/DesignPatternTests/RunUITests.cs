@@ -31,7 +31,6 @@ public class RunUITests : DatabaseTests
             typeof(ExecuteCommandSetDataAccessContextForCredentials),
             typeof(ExecuteCommandActivate),
             typeof(ExecuteCommandCreateNewExternalDatabaseServer),
-            typeof(ExecuteCommandShowTooltip),
             typeof(ExecuteCommandShowKeywordHelp),
             typeof(ExecuteCommandCollapseChildNodes),
             typeof(ExecuteCommandExpandAllNodes),
@@ -74,7 +73,8 @@ public class RunUITests : DatabaseTests
             typeof(ExecuteCommandImportFilterDescriptionsFromShare),
             typeof(ExecuteCommandSetArgument),
             typeof(ExecuteCommandAddToSession),
-            typeof(ExecuteCommandDeletePlugin)
+            typeof(ExecuteCommandDeletePlugin),
+            typeof(ExecuteCommandPerformRegexRedactionOnCatalogue)
         });
 
     [Test]

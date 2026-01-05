@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.ComponentModel;
 using System.Windows.Forms;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
@@ -21,13 +22,14 @@ namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.
 
 /// <summary>
 /// A Document Tab that hosts an RDMPSingleDatabaseObjectControl T, the control knows how to save itself to the persistence settings file for the user ensuring that when they next open the
-/// software the Tab can be reloaded and displayed.  Persistance involves storing this Tab type, the Control type being hosted by the Tab (a RDMPSingleDatabaseObjectControl) and the object
+/// software the Tab can be reloaded and displayed.  Persistence involves storing this Tab type, the Control type being hosted by the Tab (a RDMPSingleDatabaseObjectControl) and the object
 /// ID , object Type and Repository (DataExport or Catalogue) of the T object currently held in the RDMPSingleDatabaseObjectControl.
 /// </summary>
-[System.ComponentModel.DesignerCategory("")]
+[DesignerCategory("")]
 [TechnicalUI]
 public class PersistableSingleDatabaseObjectDockContent : RDMPSingleControlTab
 {
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public IMapsDirectlyToDatabaseTable DatabaseObject { get; private set; }
 
     public const string Prefix = "RDMPSingleDatabaseObjectControl";

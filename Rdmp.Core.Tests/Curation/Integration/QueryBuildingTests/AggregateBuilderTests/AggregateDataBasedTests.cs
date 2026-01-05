@@ -90,8 +90,8 @@ public class AggregateDataBasedTests : DatabaseTests
     private static void Destroy(DiscoveredTable tbl, params IDeleteable[] deletablesInOrderOfDeletion)
     {
         tbl.Drop();
-        foreach (var deleteable in deletablesInOrderOfDeletion)
-            deleteable.DeleteInDatabase();
+        foreach (var deletable in deletablesInOrderOfDeletion)
+            deletable.DeleteInDatabase();
     }
 
     private static DataTable GetResultForBuilder(AggregateBuilder builder, DiscoveredTable tbl)
@@ -294,7 +294,7 @@ public class AggregateDataBasedTests : DatabaseTests
 
             //T is matched on all records so they are summed
             VerifyRowExist(resultTable, "T", 139);
-            //VerifyRowExist(resultTable, "F", 60); //F does not have any records over 42 and isn't T so shouldnt be matched
+            //VerifyRowExist(resultTable, "F", 60); //F does not have any records over 42 and isn't T so shouldn't be matched
             VerifyRowExist(resultTable, "E&, %a' mp;E", 59); //E has 1 records over 42
             VerifyRowExist(resultTable, "G", 100); //47 + 53
             Assert.That(resultTable.Rows, Has.Count.EqualTo(3));

@@ -55,7 +55,7 @@ public interface IArgument : IMapsDirectlyToDatabaseTable, ISaveable
     Type GetSystemType();
 
     /// <summary>
-    /// Similar to <see cref="GetSystemType"/> except it will look for a non interface/abstract derrived class e.g. if <see cref="Type"/> is <see cref="ICatalogue"/>
+    /// Similar to <see cref="GetSystemType"/> except it will look for a non interface/abstract derived class e.g. if <see cref="Type"/> is <see cref="ICatalogue"/>
     /// it will return <see cref="Catalogue"/>
     /// </summary>
     /// <returns></returns>

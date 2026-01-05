@@ -264,7 +264,7 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
         if (HashOnDataRelease)
             return true;
 
-        //if the selct sql is different from the column underlying it then it is a proper transform (not just a copy paste)
+        //if the select sql is different from the column underlying it then it is a proper transform (not just a copy paste)
         return !SelectSQL.Equals(ColumnInfo.Name);
     }
 

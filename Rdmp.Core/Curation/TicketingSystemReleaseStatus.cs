@@ -12,7 +12,7 @@ using System.Data.Common;
 namespace Rdmp.Core.Curation
 {
     /// <summary>
-    /// Stored a status name and which ticketing system it coresponds to
+    /// Stored a status name and which ticketing system it corresponds to
     /// </summary>
     public class TicketingSystemReleaseStatus : DatabaseEntity
     {

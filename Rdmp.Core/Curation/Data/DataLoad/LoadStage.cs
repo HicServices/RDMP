@@ -39,8 +39,8 @@ public enum LoadStage
 
     /// <summary>
     /// "Processes in this category should be concerned with modifying the content (not structure) of the data in the
-    /// STAGING database.  This data will be annonymous.  After all processes have been executed and assuming the _STAGING
-    /// database structure still matches the LIVE structure, the data load engine will use the primary key informtion
+    /// STAGING database.  This data will be anonymous.  After all processes have been executed and assuming the _STAGING
+    /// database structure still matches the LIVE structure, the data load engine will use the primary key information
     /// defined in the Catalogue ColumnInfos to merge the new data into the current LIVE database
     /// </summary>
     AdjustStaging,

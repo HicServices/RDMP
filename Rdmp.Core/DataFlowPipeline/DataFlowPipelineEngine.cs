@@ -96,11 +96,11 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
     private void UIAlert(string alert, IBasicActivateItems activator)
     {
         if (!activator.IsInteractive) return;
-
         new Thread(() =>
         {
             // run as a separate thread to not halt the UI
-            activator.Show(alert);
+            activator.ShowWarning(alert);
+
         })
         {
             IsBackground = true

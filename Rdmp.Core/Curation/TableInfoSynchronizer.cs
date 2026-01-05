@@ -20,7 +20,7 @@ namespace Rdmp.Core.Curation;
 
 /// <summary>
 /// Synchronizes a <see cref="TableInfo"/> against the live table on your database server.  This involves confirming it still exists, identifying new ColumnInfos and ones that have
-/// disapeared as well as checking column types and primary keys etc still match the current RDMP records.
+/// disappeared as well as checking column types and primary keys etc still match the current RDMP records.
 /// </summary>
 public class TableInfoSynchronizer
 {

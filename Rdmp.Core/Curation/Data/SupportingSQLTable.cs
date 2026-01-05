@@ -19,7 +19,7 @@ namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
 /// Describes an SQL query that can be run to generate useful information for the understanding of a given Catalogue (dataset).  If it is marked as
-/// Extractable then it will be bundled along with the Catalogue every time it is extracted.  This can be used as an alternative to definining Lookups
+/// Extractable then it will be bundled along with the Catalogue every time it is extracted.  This can be used as an alternative to defining Lookups
 /// through the Lookup class or to extract other useful administrative data etc to be provided to researchers
 /// 
 /// <para>It is VITAL that you do not use this as a method of extracting sensitive/patient data as this data is run as is and is not joined against a cohort
@@ -85,7 +85,7 @@ public class SupportingSQLTable : DatabaseEntity, INamed, ISupportingObject
     /// <summary>
     /// If true then the query will be executed and the resulting table will be copied to the output directory of project extractions that include the <see cref="Catalogue_ID"/>.
     /// 
-    /// <para>This will fail if the query contains mulitple select statements.  Ensure that there is no identifiable data returned by the query since it will not be linked
+    /// <para>This will fail if the query contains multiple select statements.  Ensure that there is no identifiable data returned by the query since it will not be linked
     /// against the project cohort / anonymised in any way.</para>
     /// </summary>
     public bool Extractable
@@ -113,7 +113,7 @@ public class SupportingSQLTable : DatabaseEntity, INamed, ISupportingObject
     }
 
     /// <summary>
-    /// If <see cref="Extractable"/>  and <see cref="IsGlobal"/> then the table will be copied to the ouptut directory of all project extractions
+    /// If <see cref="Extractable"/>  and <see cref="IsGlobal"/> then the table will be copied to the output directory of all project extractions
     /// regardless of whether or not the <see cref="Catalogue_ID"/> dataset is included in the extraction
     /// </summary>
     public bool IsGlobal

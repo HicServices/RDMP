@@ -27,7 +27,11 @@ public static class UserSettings
                                                           throw new NotImplementedException(
                                                               "Isolated Storage does not work in this environment...");
 
-
+    public static bool ShowFlatLists
+    {
+        get => AppSettings.GetValueOrDefault("ShowFlatLists", false);
+        set => AppSettings.AddOrUpdateValue("ShowFlatLists", value);
+    }
     public static bool UseLocalFileSystem
     {
         get => AppSettings.GetValueOrDefault("UseLocalFileSystem", false);
@@ -107,7 +111,7 @@ public static class UserSettings
 
     /// <summary>
     /// The connection string to the data export RDMP platform database.  This database will contain
-    /// refrerences to objects in the <see cref="CatalogueConnectionString"/> database
+    /// references to objects in the <see cref="CatalogueConnectionString"/> database
     /// </summary>
     public static string DataExportConnectionString
     {
@@ -184,6 +188,23 @@ public static class UserSettings
     }
 
 
+    public static string ExtractionWebhookUsername
+    {
+        get => AppSettings.GetValueOrDefault("ExtractionWebhookUsername", null);
+        set => AppSettings.AddOrUpdateValue("ExtractionWebhookUsername", value);
+    }
+    public static string ExtractionWebhookUrl
+    {
+        get => AppSettings.GetValueOrDefault("ExtractionWebhookUrl", null);
+        set => AppSettings.AddOrUpdateValue("ExtractionWebhookUrl", value);
+    }
+
+    public static bool DefaultLogViewFlat
+    {
+        get => AppSettings.GetValueOrDefault("DefaultLogViewFlat", false);
+        set => AppSettings.AddOrUpdateValue("DefaultLogViewFlat", value);
+    }
+
     #region Catalogue flag visibility settings
 
     public static bool ShowInternalCatalogues
@@ -198,22 +219,10 @@ public static class UserSettings
         set => AppSettings.AddOrUpdateValue("ShowDeprecatedCatalogues", value);
     }
 
-    public static bool ShowColdStorageCatalogues
-    {
-        get => AppSettings.GetValueOrDefault("ShowColdStorageCatalogues", true);
-        set => AppSettings.AddOrUpdateValue("ShowColdStorageCatalogues", value);
-    }
-
     public static bool ShowProjectSpecificCatalogues
     {
         get => AppSettings.GetValueOrDefault("ShowProjectSpecificCatalogues", true);
         set => AppSettings.AddOrUpdateValue("ShowProjectSpecificCatalogues", value);
-    }
-
-    public static bool ShowNonExtractableCatalogues
-    {
-        get => AppSettings.GetValueOrDefault("ShowNonExtractableCatalogues", true);
-        set => AppSettings.AddOrUpdateValue("ShowNonExtractableCatalogues", value);
     }
 
     /// <summary>
@@ -306,7 +315,7 @@ public static class UserSettings
 
     /// <summary>
     /// <para>Automatically resize columns in the RDMP user interface with fit contents.</para>
-    /// <para>Can be disabled if problems arrise with column content or header visibility</para>
+    /// <para>Can be disabled if problems arise with column content or header visibility</para>
     /// </summary>
     public static bool AutoResizeColumns
     {
@@ -596,7 +605,7 @@ public static class UserSettings
         AppSettings.GetValueOrDefault($"SplitterDistance_{controlGuid:N}", -1);
 
     /// <summary>
-    /// Records that the user has manaully changed the splitter distance of the Control
+    /// Records that the user has manually changed the splitter distance of the Control
     /// who is identified by <paramref name="controlGuid"/>
     /// </summary>
     /// <param name="controlGuid"></param>

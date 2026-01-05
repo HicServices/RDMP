@@ -20,7 +20,7 @@ namespace Rdmp.Core.DataExport.Data;
 public interface ISelectedDataSetsForcedJoin : IMapsDirectlyToDatabaseTable
 {
     /// <summary>
-    /// The dataset in an <see cref="IExtractionConfiguration"/> which should always be joined against the refered <see cref="TableInfo_ID"/>
+    /// The dataset in an <see cref="IExtractionConfiguration"/> which should always be joined against the referred <see cref="TableInfo_ID"/>
     /// </summary>
     int SelectedDataSets_ID { get; }
 

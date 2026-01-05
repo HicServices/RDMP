@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Rdmp.Core.CommandExecution.AtomicCommands.Automation;
@@ -23,7 +24,7 @@ using Rdmp.UI.TransparentHelpSystem;
 namespace Rdmp.UI.SimpleControls;
 
 /// <summary>
-/// Enables the launching of one of the core RDMP engines (<see cref="RDMPCommandLineOptions"/>) either as a detatched process or as a hosted process (where the
+/// Enables the launching of one of the core RDMP engines (<see cref="RDMPCommandLineOptions"/>) either as a detached process or as a hosted process (where the
 /// UI will show the checking/executing progress messages).  This class ensures that the behaviour is the same between console run rdmp and the UI applications.
 /// </summary>
 public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClosing
@@ -33,19 +34,23 @@ public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClos
 
     public CommandGetterHandler CommandGetter;
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public bool ChecksPassed { get; private set; }
+
     public bool IsExecuting => _runningTask is { IsCompleted: false };
 
     /// <summary>
     /// Called every time the execution of the runner completes (does not get called if the runner was detached - running
-    /// in a seperate process).
+    /// in a separate process).
     /// </summary>
     public event EventHandler<ExecutionEventArgs> ExecutionFinished;
 
     private RunnerFactory _factory;
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public IRunner CurrentRunner { get; private set; }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public bool AllowsYesNoToAll
     {
         get => checksUI1.AllowsYesNoToAll;
@@ -66,6 +71,7 @@ public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClos
 
     private RDMPCommandLineOptions Detatch_CommandGetter() => CommandGetter(CommandLineActivity.run);
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public List<HelpStage> HelpStages { get; private set; }
 
     //constructor

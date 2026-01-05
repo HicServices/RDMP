@@ -3,7 +3,7 @@
   <Comment CommentText="Used to Serialize DatabaseEntity objects as pointers">
     <Position X="5" Y="1" Height="0.313" Width="3.283" />
   </Comment>
-  <Comment CommentText="Used to Deserialize objects which have no blank constructors.  Pass array of objects it will pick the most compatible constructor but won't nessesarily use all the objects.  Also supports invoking AfterConstructor callback if you implement IPickAnyConstructorFinishedCallback">
+  <Comment CommentText="Used to Deserialize objects which have no blank constructors.  Pass array of objects it will pick the most compatible constructor but won't necessarily use all the objects.  Also supports invoking AfterConstructor callback if you implement IPickAnyConstructorFinishedCallback">
     <Position X="5.104" Y="2.354" Height="1.229" Width="3.919" />
   </Comment>
   <Comment CommentText="Structure Serialization ">

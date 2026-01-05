@@ -11,7 +11,7 @@ using Rdmp.Core.Validation.Constraints;
 namespace Rdmp.Core.DataQualityEngine.Reports.PeriodicityHelpers;
 
 /// <summary>
-/// Records the number of records passing / failing validation with each consquence (See PeriodicityState).
+/// Records the number of records passing / failing validation with each consequence (See PeriodicityState).
 /// 
 /// <para>This class handles the Consequence dimension (See PeriodicityCubesOverTime for the time aspect handling).</para>
 /// </summary>

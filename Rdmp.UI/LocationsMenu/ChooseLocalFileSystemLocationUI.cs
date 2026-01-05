@@ -22,7 +22,7 @@ public partial class ChooseLocalFileSystemLocationUI : Form
         label1 = new Label();
         lblBadFilePath = new Label();
         lblBadFilePath.Visible = false;
-        this.Text = "Choose Local File System Location";
+        Text = "Choose Local File System Location";
         SuspendLayout();
         // 
         // tbLocalFileSystemLocation

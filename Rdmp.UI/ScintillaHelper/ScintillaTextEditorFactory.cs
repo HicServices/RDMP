@@ -52,7 +52,7 @@ public partial class ScintillaTextEditorFactory
         IQuerySyntaxHelper syntaxHelper = null, bool spellCheck = false, bool lineNumbers = true,
         string currentDirectory = null)
     {
-        Scintilla toReturn = null;
+        Scintilla toReturn;
 
         try
         {

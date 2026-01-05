@@ -49,7 +49,7 @@ public class DashboardControlFactory
     }
 
     /// <summary>
-    /// Creates a new instance of Type t (which must be an IDashboardableControl derrived ultimately from UserControl) which is then hydrated with an empty collection and a database
+    /// Creates a new instance of Type t (which must be an IDashboardableControl derived ultimately from UserControl) which is then hydrated with an empty collection and a database
     /// record is created which can be used to save its collection state for the lifetime of the control (allowing you to restore the state later)
     /// </summary>
     /// <param name="forLayout"></param>

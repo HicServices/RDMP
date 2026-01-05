@@ -818,12 +818,12 @@ internal class QueryCachingCrossServerTests : TestsRequiringA
     {
         Assert.That(compiler.Tasks, Is.Not.Empty);
 
-        TestContext.WriteLine("| Task | Type | State | Error | RowCount | CacheUse |");
+        TestContext.Out.WriteLine("| Task | Type | State | Error | RowCount | CacheUse |");
 
 
         var i = 0;
         foreach (var kvp in compiler.Tasks.Keys)
-            TestContext.WriteLine(
+            TestContext.Out.WriteLine(
                 $"{i++} - {kvp.ToString()} | {kvp.GetType()} | {kvp.State} | {kvp.CrashMessage} | {kvp.FinalRowCount} | {kvp.GetCachedQueryUseCount()}");
 
         Assert.That(compiler.Tasks.All(static t => t.Key.State == CompilationState.Finished),

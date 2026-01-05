@@ -72,7 +72,7 @@ public abstract class ConcreteContainer : DatabaseEntity, IContainer
                 return; //It's already a child of us
             else
                 throw new NotSupportedException(
-                    $"Filter {filter} is already a child of nother container (ID={filter.FilterContainer_ID})");
+                    $"Filter {filter} is already a child of another container (ID={filter.FilterContainer_ID})");
 
         _manager.AddChild(this, filter);
     }
@@ -154,7 +154,7 @@ public abstract class ConcreteContainer : DatabaseEntity, IContainer
     }
 
     /// <inheritdoc />
-    public abstract bool ShouldBeReadOnly(out string reason);
+    public abstract bool ShouldBeReadOnly(string context, out string reason);
 
     public abstract IContainer DeepCloneEntireTreeRecursivelyIncludingFilters();
 

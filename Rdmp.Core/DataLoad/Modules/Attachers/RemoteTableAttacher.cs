@@ -37,7 +37,10 @@ public class RemoteTableAttacher : RemoteAttacher
 {
     private const string FutureLoadMessage = "Cannot load data from the future";
 
-    public RemoteTableAttacher() : base()
+    public RemoteTableAttacher(bool requestsExternalDatabaseCreation=true) : base(requestsExternalDatabaseCreation)
+    {
+    }
+    public RemoteTableAttacher() : base(true)
     {
     }
 
@@ -303,7 +306,7 @@ public class RemoteTableAttacher : RemoteAttacher
             if (!_remoteDatabase.Exists())
                 throw new Exception($"Database {_remoteDatabase} did not exist on the remote server");
 
-            //still worthwhile doing this incase we cannot connect to the server
+            //still worthwhile doing this in case we cannot connect to the server
             var tables = _remoteDatabase.DiscoverTables(true).Select(t => t.GetRuntimeName()).ToArray();
 
             //overrides table level checks
@@ -364,12 +367,12 @@ public class RemoteTableAttacher : RemoteAttacher
         string sql;
         if (!string.IsNullOrWhiteSpace(RemoteSelectSQL))
         {
-            var injectedWhereClause = SqlHistoricalDataFilter(job.LoadMetadata, DatabaseType).Replace(" WHERE", "");
+            var injectedWhereClause = SqlHistoricalDataFilter(job.LoadMetadata, DatabaseType, RemoteTableDateColumn).Replace(" WHERE", "");
             sql = Regex.Replace(RemoteSelectSQL, "\\$RDMPDefinedWhereClause", injectedWhereClause);
         }
         else
         {
-            sql = $"Select {SelectedColumns} from {syntax.EnsureWrapped(RemoteTableName)}  {SqlHistoricalDataFilter(job.LoadMetadata, DatabaseType)}";
+            sql = $"Select {SelectedColumns} from {syntax.EnsureWrapped(RemoteTableName)}  {SqlHistoricalDataFilter(job.LoadMetadata, DatabaseType, RemoteTableDateColumn)}";
         }
 
         var scheduleMismatch = false;
@@ -466,7 +469,7 @@ public class RemoteTableAttacher : RemoteAttacher
 
         if (SetDeltaReadingToLatestSeenDatePostLoad)
         {
-            FindMostRecentDateInLoadedData(rawSyntax, _dbInfo.Server.DatabaseType, rawTableName, job);
+            FindMostRecentDateInLoadedData(rawSyntax, _dbInfo.Server.DatabaseType, rawTableName, job,true);
         }
 
 

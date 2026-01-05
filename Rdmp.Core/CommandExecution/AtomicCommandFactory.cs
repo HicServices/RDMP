@@ -129,24 +129,34 @@ public class AtomicCommandFactory : CommandFactoryBase
             };
             if (!isApiCall)
             {
-                yield return new ExecuteCommandChangeExtractability(_activator, c)
-                {
-                    Weight = -99.0010f,
-                    SuggestedCategory = Extraction
-                };
-
-                yield return c.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository)
-                    ? new ExecuteCommandMakeProjectSpecificCatalogueNormalAgain(_activator, c)
+                yield return c.IsInternalDataset ?
+                    new ExecuteCommandMakeCatalogueNotInternal(_activator, c)
                     {
-                        Weight = -99.0009f,
+                        Weight = -99.0008f,
                         SuggestedCategory = Extraction
-                    }
-                    : new ExecuteCommandMakeCatalogueProjectSpecific(_activator, c, null)
+                    } : new ExecuteCommandMakeCatalogueInternal(_activator, c)
                     {
-                        Weight = -99.0009f,
+                        Weight = -99.0008f,
                         SuggestedCategory = Extraction
                     };
 
+
+
+                yield return new ExecuteCommandMakeCatalogueProjectSpecific(_activator, c, null, false)
+                {
+                    Weight = -99.0009f,
+                    SuggestedCategory = Extraction
+                };
+
+                if (c.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository))
+                {
+                    yield return new ExecuteCommandMakeProjectSpecificCatalogueNormalAgain(_activator, c, null)
+                    {
+                        Weight = -99.0009f,
+                        SuggestedCategory = Extraction,
+                        OverrideCommandName = "Remove Project Specific Catalogue from a Project"
+                    };
+                }
                 yield return new ExecuteCommandSetExtractionIdentifier(_activator, c, null, null)
                 {
                     Weight = -99.0008f,
@@ -455,34 +465,51 @@ public class AtomicCommandFactory : CommandFactoryBase
         {
             if (pcic != null) cic = pcic.CohortIdentificationConfiguration;
 
-            var commit =
-                new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(_activator, null)
-                {
-                    OverrideCommandName = "Commit Cohort",
-                    Weight = -99.8f
-                }.SetTarget(cic);
-            if (pcic != null) commit.SetTarget((DatabaseEntity)pcic.Project);
 
-            yield return commit;
 
             yield return new ExecuteCommandViewData(_activator, cic, ViewType.All, null, true) { Weight = -99.7f };
             yield return new ExecuteCommandViewData(_activator, cic, ViewType.All, null, false) { Weight = -99.6f };
 
-            yield return new ExecuteCommandFreezeCohortIdentificationConfiguration(_activator, cic, !cic.Frozen)
-            { Weight = -50.5f };
-            yield return new ExecuteCommandCreateHoldoutLookup(_activator, cic)
-            { Weight = -50.5f };
+            if (cic != null && cic.IsTemplate)
+            {
+                yield return new ExecuteCommandUseTemplateCohortIdentificationConfiguration(_activator, cic)
+                {
+                    Weight = -50.5f
+                };
+            }
+            else
+            {
+                var commit =
+              new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(_activator, null)
+              {
+                  OverrideCommandName = "Commit Cohort",
+                  Weight = -99.8f
+              }.SetTarget(cic);
+                if (pcic != null) commit.SetTarget((DatabaseEntity)pcic.Project);
 
-            var clone = new ExecuteCommandCloneCohortIdentificationConfiguration(_activator)
-            { Weight = -50.4f, OverrideCommandName = "Clone" }.SetTarget(cic);
-            if (pcic != null) clone.SetTarget((DatabaseEntity)pcic.Project);
-            yield return clone;
+                yield return commit;
+                yield return new ExecuteCommandCreateCohortIdentificationConfigurationTemplate(_activator, cic)
+                {
+                    Weight = -50.5f
+                };
+                yield return new ExecuteCommandFreezeCohortIdentificationConfiguration(_activator, cic, !cic.Frozen)
+                { Weight = -50.5f };
+                yield return new ExecuteCommandCreateHoldoutLookup(_activator, cic)
+                { Weight = -50.5f };
+                var clone = new ExecuteCommandCloneCohortIdentificationConfiguration(_activator)
+                { Weight = -50.4f, OverrideCommandName = "Clone" }.SetTarget(cic);
+                if (pcic != null) clone.SetTarget((DatabaseEntity)pcic.Project);
+                yield return clone;
+
+                yield return new ExecuteCommandSetQueryCachingDatabase(_activator, cic)
+                { Weight = -50.4f, OverrideCommandName = "Change Query Cache" };
+            }
+
+
             //associate with project
             yield return new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(_activator)
             { Weight = -50.3f, OverrideCommandName = "Associate with Project" }.SetTarget(cic);
 
-            yield return new ExecuteCommandSetQueryCachingDatabase(_activator, cic)
-            { Weight = -50.4f, OverrideCommandName = "Change Query Cache" };
         }
 
         if (Is(o, out AllGovernanceNode _))
@@ -502,38 +529,59 @@ public class AtomicCommandFactory : CommandFactoryBase
 
         if (Is(o, out LoadMetadata lmd))
         {
-            yield return new ExecuteCommandExportObjectsToFile(_activator, new IMapsDirectlyToDatabaseTable[] { lmd });
-
-            yield return new ExecuteCommandOverrideRawServer(_activator, lmd);
-            yield return new ExecuteCommandCreateNewLoadMetadata(_activator);
-            var reservedTest = lmd.AllowReservedPrefix ? "Drop" : "Allow";
-            yield return new ExecuteCommandToggleAllowReservedPrefixForLoadMetadata(lmd)
+            if (lmd.RootLoadMetadata_ID is null)
             {
-                OverrideCommandName=$"{reservedTest} Reserved Prefix Columns"
-            };
+                yield return new ExecuteCommandExportObjectsToFile(_activator, new IMapsDirectlyToDatabaseTable[] { lmd });
 
-            yield return new ExecuteCommandSetGlobalDleIgnorePattern(_activator) { SuggestedCategory = Advanced };
-            yield return new ExecuteCommandSetIgnoredColumns(_activator, lmd) { SuggestedCategory = Advanced };
-            yield return new ExecuteCommandSetIgnoredColumns(_activator, lmd, null)
-            { OverrideCommandName = "Clear Ignored Columns", SuggestedCategory = Advanced };
+                yield return new ExecuteCommandOverrideRawServer(_activator, lmd);
+                yield return new ExecuteCommandCreateNewLoadMetadata(_activator);
+                var reservedTest = lmd.AllowReservedPrefix ? "Drop" : "Allow";
+                yield return new ExecuteCommandToggleAllowReservedPrefixForLoadMetadata(lmd)
+                {
+                    OverrideCommandName = $"{reservedTest} Reserved Prefix Columns"
+                };
+                yield return new ExecuteCommandCreateLoadMetadataVersion(_activator, lmd)
+                {
+                    OverrideCommandName = "Save Version"
+                };
+                yield return new ExecuteCommandCloneLoadMetadata(_activator, lmd)
+                {
+                    OverrideCommandName = "Clone Load Metadata"
+                };
 
-            yield return new ExecuteCommandSetExtendedProperty(_activator, new[] { lmd },
-                ExtendedProperty.PersistentRaw, null)
+                yield return new ExecuteCommandSetGlobalDleIgnorePattern(_activator) { SuggestedCategory = Advanced };
+                yield return new ExecuteCommandSetIgnoredColumns(_activator, lmd) { SuggestedCategory = Advanced };
+                yield return new ExecuteCommandSetIgnoredColumns(_activator, lmd, null)
+                { OverrideCommandName = "Clear Ignored Columns", SuggestedCategory = Advanced };
+
+                yield return new ExecuteCommandSetExtendedProperty(_activator, new[] { lmd },
+                    ExtendedProperty.PersistentRaw, null)
+                {
+                    OverrideCommandName = "Persistent RAW",
+                    PromptForValue = true,
+                    PromptForValueTaskDescription = ExtendedProperty.PersistentRawDescription,
+                    SuggestedCategory = Advanced
+                };
+
+                yield return new ExecuteCommandSet(_activator, lmd,
+                    typeof(LoadMetadata).GetProperty(nameof(LoadMetadata.IgnoreTrigger)))
+                {
+                    OverrideCommandName = $"Ignore Trigger (Current value:{lmd.IgnoreTrigger})",
+                    SuggestedCategory = Advanced
+                };
+            }
+            else
             {
-                OverrideCommandName = "Persistent RAW",
-                PromptForValue = true,
-                PromptForValueTaskDescription = ExtendedProperty.PersistentRawDescription,
-                SuggestedCategory = Advanced
-            };
-
-            yield return new ExecuteCommandSet(_activator, lmd,
-                typeof(LoadMetadata).GetProperty(nameof(LoadMetadata.IgnoreTrigger)))
-            {
-                OverrideCommandName = $"Ignore Trigger (Current value:{lmd.IgnoreTrigger})",
-                SuggestedCategory = Advanced
-            };
+                yield return new ExecuteCommandRestoreLoadMetadataVersion(_activator, lmd)
+                {
+                    OverrideCommandName = "Restore Version"
+                };
+                yield return new ExecuteCommandCloneLoadMetadata(_activator, lmd)
+                {
+                    OverrideCommandName = "Clone Load Metadata"
+                };
+            }
         }
-
 
         if (Is(o, out LoadMetadataScheduleNode scheduleNode))
             yield return new ExecuteCommandCreateNewLoadProgress(_activator, scheduleNode.LoadMetadata);
@@ -894,42 +942,48 @@ public class AtomicCommandFactory : CommandFactoryBase
 
         if (Is(o, out CohortAggregateContainer cohortAggregateContainer))
         {
-            yield return new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(_activator,
-                cohortAggregateContainer, null, null)
-            { SuggestedCategory = Add, OverrideCommandName = "Catalogue" };
-            yield return new ExecuteCommandAddCohortSubContainer(_activator, cohortAggregateContainer)
-            { SuggestedCategory = Add, OverrideCommandName = "Sub Container" };
-            yield return new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(_activator,
-                    cohortAggregateContainer, true)
-            { SuggestedCategory = Add, OverrideCommandName = "Existing Cohort Set (copy of)" };
-            yield return new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(_activator,
-                cohortAggregateContainer, false)
-            { SuggestedCategory = Add, OverrideCommandName = "Aggregate" };
-            yield return new ExecuteCommandImportCohortIdentificationConfiguration(_activator, null,
+            var associatedCIC = cohortAggregateContainer.GetCohortIdentificationConfiguration();
+            if (!associatedCIC.Frozen)
+            {
+                yield return new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(_activator,
+                    cohortAggregateContainer, null, null)
+                { SuggestedCategory = Add, OverrideCommandName = "Catalogue" };
+                yield return new ExecuteCommandAddCohortSubContainer(_activator, cohortAggregateContainer)
+                { SuggestedCategory = Add, OverrideCommandName = "Sub Container" };
+                yield return new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(_activator,
+                        cohortAggregateContainer, true)
+                { SuggestedCategory = Add, OverrideCommandName = "Existing Cohort Set (copy of)" };
+                yield return new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(_activator,
+                    cohortAggregateContainer, false)
+                { SuggestedCategory = Add, OverrideCommandName = "Aggregate" };
+                yield return new ExecuteCommandImportCohortIdentificationConfiguration(_activator, null,
+                        cohortAggregateContainer)
+                { SuggestedCategory = Add, OverrideCommandName = "Existing Cohort Builder Query (copy of)" };
+
+                //Set Operation
+                yield return new ExecuteCommandSetContainerOperation(_activator, cohortAggregateContainer,
+                    SetOperation.UNION)
+                { SuggestedCategory = SetContainerOperation, OverrideCommandName = "UNION" };
+                yield return new ExecuteCommandSetContainerOperation(_activator, cohortAggregateContainer,
+                    SetOperation.EXCEPT)
+                { SuggestedCategory = SetContainerOperation, OverrideCommandName = "EXCEPT" };
+                yield return new ExecuteCommandSetContainerOperation(_activator, cohortAggregateContainer,
+                        SetOperation.INTERSECT)
+                { SuggestedCategory = SetContainerOperation, OverrideCommandName = "INTERSECT" };
+
+                yield return new ExecuteCommandUnMergeCohortIdentificationConfiguration(_activator,
                     cohortAggregateContainer)
-            { SuggestedCategory = Add, OverrideCommandName = "Existing Cohort Builder Query (copy of)" };
-
-            //Set Operation
-            yield return new ExecuteCommandSetContainerOperation(_activator, cohortAggregateContainer,
-                SetOperation.UNION)
-            { SuggestedCategory = SetContainerOperation, OverrideCommandName = "UNION" };
-            yield return new ExecuteCommandSetContainerOperation(_activator, cohortAggregateContainer,
-                SetOperation.EXCEPT)
-            { SuggestedCategory = SetContainerOperation, OverrideCommandName = "EXCEPT" };
-            yield return new ExecuteCommandSetContainerOperation(_activator, cohortAggregateContainer,
-                    SetOperation.INTERSECT)
-            { SuggestedCategory = SetContainerOperation, OverrideCommandName = "INTERSECT" };
-
-            yield return new ExecuteCommandUnMergeCohortIdentificationConfiguration(_activator,
-                cohortAggregateContainer)
-            { OverrideCommandName = "Separate Cohort Builder Query" };
+                { OverrideCommandName = "Separate Cohort Builder Query" };
+            }
         }
 
         if (Is(o, out IDisableable disable))
+            //todo this calls the db
             yield return new ExecuteCommandDisableOrEnable(_activator, disable);
 
         // If the root object is deletable offer deleting
         if (Is(o, out IDeleteable deletable))
+            //todo this calls the db
             yield return new ExecuteCommandDelete(_activator, deletable) { SuggestedShortcut = "Delete" };
 
         if (Is(o, out ReferenceOtherObjectDatabaseEntity reference))

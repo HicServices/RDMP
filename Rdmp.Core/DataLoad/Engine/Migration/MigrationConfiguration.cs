@@ -64,7 +64,7 @@ public class MigrationConfiguration
                     continue;
                 else
                     throw new Exception(
-                        $"Table {fromTableName} was not found on on server {_fromDatabaseInfo.Server} (Database {_fromDatabaseInfo})"); //its not a lookup table if it isn't in STAGING thats a problem!
+                        $"Table {fromTableName} was not found on on server {_fromDatabaseInfo.Server} (Database {_fromDatabaseInfo})"); //its not a lookup table if it isn't in STAGING that's a problem!
 
             columnSet.Add(new MigrationColumnSet(fromTable, toTable, migrationFieldProcessor));
         }

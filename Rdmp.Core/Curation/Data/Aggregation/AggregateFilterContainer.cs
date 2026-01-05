@@ -74,9 +74,10 @@ public class AggregateFilterContainer : ConcreteContainer, IDisableable
     /// <summary>
     /// Returns true if the filter container belongs to a parent <see cref="CohortIdentificationConfiguration"/> that is frozen
     /// </summary>
+    /// <param name="context"></param>
     /// <param name="reason"></param>
     /// <returns></returns>
-    public override bool ShouldBeReadOnly(out string reason)
+    public override bool ShouldBeReadOnly(string context, out string reason)
     {
         var cic = GetAggregate()?.GetCohortIdentificationConfigurationIfAny();
         if (cic == null)
@@ -85,11 +86,11 @@ public class AggregateFilterContainer : ConcreteContainer, IDisableable
             return false;
         }
 
-        return cic.ShouldBeReadOnly(out reason);
+        return cic.ShouldBeReadOnly(context, out reason);
     }
 
     /// <summary>
-    /// Creates a copy of the current AggregateFilterContainer including new copies of all subcontainers, filters (including those in subcontainers) and paramaters of those
+    /// Creates a copy of the current AggregateFilterContainer including new copies of all subcontainers, filters (including those in subcontainers) and parameters of those
     /// filters.  This is a recursive operation that will clone the entire tree no matter how deep.
     /// </summary>
     /// <returns></returns>
@@ -116,7 +117,7 @@ public class AggregateFilterContainer : ConcreteContainer, IDisableable
             var clonedSubcontainer =
                 toCloneSubcontainer.DeepCloneEntireTreeRecursivelyIncludingFilters();
 
-            //get the returned filter subcontainer and assocaite it with the cloned version of this
+            //get the returned filter subcontainer and associate it with the cloned version of this
             clone.AddChild(clonedSubcontainer);
         }
 

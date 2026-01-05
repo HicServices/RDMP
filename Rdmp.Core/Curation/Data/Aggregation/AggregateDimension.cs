@@ -50,7 +50,7 @@ public class AggregateDimension : DatabaseEntity, ISaveable, IDeleteable, IColum
 
     /// <summary>
     /// An <see cref="AggregateDimension"/> is a column in the SELECT, GROUP BY and ORDER BY sections of an <see cref="AggregateConfiguration"/>.
-    /// This property returns if the dimention should be added to any GROUP BY section of an <see cref="AggregateConfiguration"/>.
+    /// This property returns if the dimension should be added to any GROUP BY section of an <see cref="AggregateConfiguration"/>.
     /// </summary>
     public bool GroupBy
     {
@@ -61,7 +61,7 @@ public class AggregateDimension : DatabaseEntity, ISaveable, IDeleteable, IColum
     /// <summary>
     /// An <see cref="AggregateDimension"/> is a column in the SELECT, GROUP BY and/or ORDER BY sections of an <see cref="AggregateConfiguration"/>.  The column must have
     /// come from an extractable column in the parent <see cref="Catalogue"/>.  The Catalogue column definition is an <see cref="ExtractionInformation"/> and documents the
-    /// master SELECT Sql (which can be overriden in the current AggregateDimension) as well as what the underlying <see cref="ColumnInfo"/> / <see cref="TableInfo"/>.
+    /// master SELECT Sql (which can be overridden in the current AggregateDimension) as well as what the underlying <see cref="ColumnInfo"/> / <see cref="TableInfo"/>.
     /// 
     /// <para>This property is the ID of the associated Catalogue master <see cref="ExtractionInformation"/>.</para>
     /// </summary>
@@ -276,7 +276,7 @@ public class AggregateDimension : DatabaseEntity, ISaveable, IDeleteable, IColum
         }
         catch (Exception)
         {
-            //it's some kind of wierd type eh?
+            //it's some kind of weird type eh?
             return false;
         }
     }

@@ -355,46 +355,45 @@ public abstract class BasicActivateItems : IBasicActivateItems
     }
 
     /// <inheritdoc/>
-    public virtual bool DeleteWithConfirmation(IDeleteable deleteable)
+    public virtual bool DeleteWithConfirmation(IDeleteable deletable)
     {
         if (IsInteractive && InteractiveDeletes)
         {
-            var didDelete = InteractiveDelete(deleteable);
+            var didDelete = InteractiveDelete(deletable);
 
-            if (didDelete) PublishNearest(deleteable);
+            if (didDelete) PublishNearest(deletable);
 
             return didDelete;
         }
 
-        deleteable.DeleteInDatabase();
-        PublishNearest(deleteable);
+        deletable.DeleteInDatabase();
+        PublishNearest(deletable);
 
         return true;
     }
 
-    protected virtual bool InteractiveDelete(IDeleteable deleteable)
+    protected virtual bool InteractiveDelete(IDeleteable deletable)
     {
-        var databaseObject = deleteable as DatabaseEntity;
+        var databaseObject = deletable as DatabaseEntity;
 
         switch (databaseObject)
         {
             case Catalogue c:
                 {
-                    if (c.GetExtractabilityStatus(RepositoryLocator.DataExportRepository).IsExtractable)
+                    var extractableDataSets = RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", c.ID);
+                    if (extractableDataSets.Any())
                     {
-                        if (YesNo(
-                                "Catalogue must first be made non extractable before it can be deleted, mark non extractable?",
-                                "Make Non Extractable"))
+                        foreach (var ds in extractableDataSets)
                         {
-                            var cmd = new ExecuteCommandChangeExtractability(this, c);
-                            cmd.Execute();
+                            var selectedDatasets = RepositoryLocator.DataExportRepository.GetAllObjectsWhere<SelectedDataSets>("ExtractableDataSet_ID", ds.ID);
+                            if (selectedDatasets.Any())
+                            {
+                                this.Show("Catalogue is used in a number of projects. Remove this catalogue from all projects to allow deletion");
+                                return false;
+                            }
                         }
-                        else
-                        {
-                            return false;
-                        }
+                        foreach (var ds in extractableDataSets) ds.DeleteInDatabase();
                     }
-
                     break;
                 }
             case ExtractionFilter f:
@@ -460,29 +459,29 @@ public abstract class BasicActivateItems : IBasicActivateItems
 
         var overrideConfirmationText =
             //If there is some special way of describing the effects of deleting this object e.g. Selected Datasets
-            deleteable is IDeletableWithCustomMessage customMessageDeletable
+            deletable is IDeletableWithCustomMessage customMessageDeletable
                 ? $"Are you sure you want to {customMessageDeletable.GetDeleteMessage()}?"
-                : $"Are you sure you want to delete '{deleteable}'?{Environment.NewLine}({deleteable.GetType().Name}{idText})";
+                : $"Are you sure you want to delete '{deletable}'?{Environment.NewLine}({deletable.GetType().Name}{idText})";
         if (
             YesNo(
                 overrideConfirmationText,
-                $"Delete {deleteable.GetType().Name}"))
+                $"Delete {deletable.GetType().Name}"))
         {
-            deleteable.DeleteInDatabase();
+            deletable.DeleteInDatabase();
 
             if (databaseObject == null)
             {
-                var descendancy = CoreChildProvider.GetDescendancyListIfAnyFor(deleteable);
+                var descendancy = CoreChildProvider.GetDescendancyListIfAnyFor(deletable);
                 if (descendancy != null)
                     databaseObject = descendancy.Parents.OfType<DatabaseEntity>().LastOrDefault();
             }
 
-            if (deleteable is IMasqueradeAs masqueradeAs)
+            if (deletable is IMasqueradeAs masqueradeAs)
                 databaseObject ??= masqueradeAs.MasqueradingAs() as DatabaseEntity;
 
             return databaseObject == null
                 ? throw new NotSupportedException(
-                    $"IDeletable {deleteable} was not a DatabaseObject and it did not have a Parent in its tree which was a DatabaseObject (DescendancyList)")
+                    $"IDeletable {deletable} was not a DatabaseObject and it did not have a Parent in its tree which was a DatabaseObject (DescendancyList)")
                 : true;
         }
 
@@ -543,6 +542,9 @@ public abstract class BasicActivateItems : IBasicActivateItems
     {
         Show("Message", message);
     }
+
+    /// <inheritdoc/>
+    public abstract void ShowWarning(string message);
 
     public abstract void Show(string title, string message);
 
@@ -664,6 +666,12 @@ public abstract class BasicActivateItems : IBasicActivateItems
             RepositoryLocator.DataExportRepository, cohortInitialDescription);
     }
 
+    public virtual IProject CohortCommitProjectSelect(IProject currentProject, Project[] projects)
+    {
+        return currentProject;
+    }
+
+
     /// <inheritdoc/>
     public virtual CohortHoldoutLookupRequest GetCohortHoldoutLookupRequest(ExternalCohortTable externalCohortTable, IProject project, CohortIdentificationConfiguration cic)
     {
@@ -671,7 +679,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
         if (!TypeText("Name", "Enter name for cohort", 255, null, out var name, false))
             throw new Exception("User chose not to enter a name for the cohort and none was provided");
 
-        return new CohortHoldoutLookupRequest(cic, "empty", 1,false,"","");
+        return new CohortHoldoutLookupRequest(cic, "empty", 1, false, "", "");
     }
 
     /// <inheritdoc/>
@@ -702,7 +710,9 @@ public abstract class BasicActivateItems : IBasicActivateItems
             // Catalogue must be extractable to be project specific
             if (projectSpecific != null)
             {
-                eds.Project_ID = projectSpecific.ID;
+                var edsp = new ExtractableDataSetProject(RepositoryLocator.DataExportRepository, eds, projectSpecific);
+                edsp.SaveToDatabase();
+                eds.Projects.Add(projectSpecific);
                 eds.SaveToDatabase();
             }
         }

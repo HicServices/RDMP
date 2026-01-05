@@ -15,7 +15,7 @@ The above command would be broken down as follows (see [ExecuteCommandOptions]):
 | Operand | Role |
 | ------------- | ------------- |
 | `cmd` | Verb to pick an `IRunner` (in this case `ExecuteCommandRunner`).  Note that 'cmd' is the default verb and so can be skipped|
-| `Set` | CommandName, determines which `BasicCommandExecution` derrived Type to attempt to run.  If missing then an [interactive command loop] is triggered|
+| `Set` | CommandName, determines which `BasicCommandExecution` derived Type to attempt to run.  If missing then an [interactive command loop] is triggered|
 | `Catalogue:1 Name "My cool new name"`  | CommandArgs (3 in this case) for [constructing the command]|
 
 [CommandArgs are optional](#running-without-arguments)
@@ -30,7 +30,7 @@ First [CommandLineObjectPicker] processes the provided arguments to determine wh
 | `Name` | String|
 | `My cool new name`  | String |
  
-Note that some values can be classified as compatible with mulitple different use cases (see [CommandLineObjectPickerArgumentValue])
+Note that some values can be classified as compatible with multiple different use cases (see [CommandLineObjectPickerArgumentValue])
 
 For example `Catalogue` could either mean 'The `System.Type` called Catalogue' or 'a System.String value Catalogue' or 'all the `Catalogue` objects in the RDMP database' (e.g. `cmd list Catalogue`)
 

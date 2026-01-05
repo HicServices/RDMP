@@ -6,6 +6,7 @@
 
 
 using System;
+using System.ComponentModel;
 using System.Windows.Forms;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CommandExecution;
@@ -26,6 +27,7 @@ public partial class CreateHoldoutLookupUI : RDMPForm
     private readonly CohortIdentificationConfiguration _cic;
 
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public string CohortDescription
     {
         get => tbDescription.Text;
@@ -53,6 +55,7 @@ public partial class CreateHoldoutLookupUI : RDMPForm
         });
     }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public CohortHoldoutLookupRequest Result { get; set; }
 
     private void btnOk_Click(object sender, EventArgs e)

@@ -35,6 +35,7 @@ public interface ICoreChildProvider : IChildProvider
 {
     JoinInfo[] AllJoinInfos { get; }
     LoadMetadata[] AllLoadMetadatas { get; }
+    LoadMetadataCatalogueLinkage[] AllLoadMetadataCatalogueLinkages { get; }
     TableInfoServerNode[] AllServers { get; }
     TableInfo[] AllTableInfos { get; }
     Dictionary<int, List<ColumnInfo>> TableInfosToColumnInfos { get; }
@@ -48,6 +49,8 @@ public interface ICoreChildProvider : IChildProvider
     FolderNode<LoadMetadata> LoadMetadataRootFolder { get; }
     FolderNode<CohortIdentificationConfiguration> CohortIdentificationConfigurationRootFolder { get; }
     FolderNode<CohortIdentificationConfiguration> CohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations { get; }
+
+    AllTemplateCohortIdentificationConfigurationsNode AllTemplateCohortIdentificationConfigurationsNode { get; }
     Catalogue[] AllCatalogues { get; }
     Curation.Data.Dataset[] AllDatasets { get; }
     Dictionary<int, Catalogue> AllCataloguesDictionary { get; }
@@ -79,6 +82,10 @@ public interface ICoreChildProvider : IChildProvider
 
     AllDashboardsNode AllDashboardsNode { get; }
     DashboardLayout[] AllDashboards { get; }
+
+    AllDatasetsNode AllDatasetsNode { get; }
+
+    AllRegexRedactionConfigurationsNode AllRegexRedactionConfigurationsNode { get; }
 
     AllObjectSharingNode AllObjectSharingNode { get; }
     ObjectImport[] AllImports { get; }
@@ -128,7 +135,7 @@ public interface ICoreChildProvider : IChildProvider
     AllTemplateAggregateConfigurationsNode TemplateAggregateConfigurationsNode { get; }
 
     /// <summary>
-    /// All standard (i.e. not plugin) use cases for editting <see cref="IPipeline"/> under.
+    /// All standard (i.e. not plugin) use cases for editing <see cref="IPipeline"/> under.
     /// </summary>
     HashSet<StandardPipelineUseCaseNode> PipelineUseCases { get; }
 

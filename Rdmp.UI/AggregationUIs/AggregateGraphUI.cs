@@ -64,10 +64,13 @@ public partial class AggregateGraphUI : AggregateGraph_Design
     /// the sensible decision is taken e.g. to not try to render.
     /// 
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public bool Silent { get; set; }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Scintilla QueryEditor { get; private set; }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public int Timeout
     {
         get => _timeoutControls.Timeout;
@@ -166,8 +169,13 @@ public partial class AggregateGraphUI : AggregateGraph_Design
         llCancel.Visible = false;
     }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Exception Exception { get; private set; }
+
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public bool Crashed { get; private set; }
+
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public bool Done { get; private set; }
 
     private Task _loadTask;
@@ -298,7 +306,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
                 var endDate = ConvertAxisOverridetoDate(endDateOverride.Trim('\''), incriment);
                 var rowsToDelete = _dt.Rows.Cast<DataRow>().Where(r =>
                 {
-                    //this could maybe be more efficient with some sort of lookup atfer the first time?
+                    //this could maybe be more efficient with some sort of lookup after the first time?
                     var currentDT = new DateTime();
                     if (incriment == AxisIncrement.Day)
                     {
@@ -310,7 +318,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
                     }
                     if (incriment == AxisIncrement.Quarter)
                     {
-                        var year = r.ItemArray[columnIndex].ToString()[0..4];
+                        var year = r.ItemArray[columnIndex].ToString()[..4];
                         var asString = r.ItemArray[columnIndex].ToString();
                         var quarter = Int32.Parse(asString.Substring(asString.Length - 1)) * 3;
                         DateTime.TryParseExact($"{year}-{quarter}", "yyyy-mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out currentDT);
@@ -580,7 +588,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
             chart1.ChartAreas[0].AxisY.MinorGrid.LineDashStyle = ChartDashStyle.Dot;
             chart1.ChartAreas[0].AxisY.LabelStyle.Format = "{0:#,#}";
 
-            //avoid buffer overun
+            //avoid buffer overrun
             if (index > chart1.Series.Count - 1)
                 chart1.Series.Add(new Series());
 
@@ -655,7 +663,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
                 .WebServiceQueryCachingServer_ID) != null;
         btnClearFromCache.Enabled = false;
 
-        //Make publish button enabledness be dependant on cache
+        //Make publish button enabledness be dependent on cache
         if (_btnCache.Enabled)
             //let them clear if there is a query caching server and the manager has cached results already
             btnClearFromCache.Enabled =
@@ -832,7 +840,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
     /// <param name="graph"></param>
     public void SetAggregate(IActivateItems activator, AggregateConfiguration graph)
     {
-        //graphs cant edit so no need to even record refresher/activator
+        //graphs can't edit so no need to even record refresher/activator
         _aggregateConfiguration = graph;
 
         SetItemActivator(activator);

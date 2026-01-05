@@ -2,7 +2,7 @@
 
 ## Background
 
-RDMP is a large application with many complicated user interfaces.  In order to manage these a strict architecture has been built.  This architecture is bult around a single base class `IRDMPControl` for all top level controls.  This interface provides access to the UI API `IActivateItems`.  Unit testing of UIs is supported via `TestActivateItems`.
+RDMP is a large application with many complicated user interfaces.  In order to manage these a strict architecture has been built.  This architecture is built around a single base class `IRDMPControl` for all top level controls.  This interface provides access to the UI API `IActivateItems`.  Unit testing of UIs is supported via `TestActivateItems`.
 ![user interface class diagram](Images/UserInterfaceOverview/ClassDiagram.png) 
 
 ## Collections
@@ -22,8 +22,8 @@ Where possible RDMP associates any top level tab (that isn't a [collection](#col
 
 1. Blank constructor invoked
 1. Control shown on Form
-1. SetDatabaseObject entered in derrived class
-   1. `base.SetDatabaseObject` invoked by derrived class
+1. SetDatabaseObject entered in derived class
+   1. `base.SetDatabaseObject` invoked by derived class
    1. `SetBindings` called (virtual)
 1. SetDatabaseObject exited
 
@@ -121,7 +121,7 @@ class ProposeExecutionWhenTargetIsProject:RDMPCommandExecutionProposal<Project>
 
 ## Drag and Drop
 
-For full docs on drag/drop see [Double Cick And Drag Drop](./DoubleClickAndDragDrop.md)
+For full docs on drag/drop see [Double Click And Drag Drop](./DoubleClickAndDragDrop.md)
 
 Drag and drop in tree views is handled through the `RDMPCommandExecutionProposal<T>` class (which also deals with [double clicking](#double-clicking)).  All dragged objects are encapsulated in an `ICombineToMakeCommand` which is generated when a drag operation begins in the program.  The sequence is:
 
@@ -196,7 +196,7 @@ class CatalogueItemMenu : RDMPContextMenuStrip
 
 ![right click menu of a CatalogueItem](Images/UserInterfaceOverview/ExampleMenu.png) 
 
-Where multiple objects have very similar/identical menus then it is permissable (though still not recommended) to include them in the same class via constructor overloading.  It is the constructor signature which defines what menu is shown for a given object(if any) not the class name.  For example:
+Where multiple objects have very similar/identical menus then it is permissible (though still not recommended) to include them in the same class via constructor overloading.  It is the constructor signature which defines what menu is shown for a given object(if any) not the class name.  For example:
 
 ```csharp
     [System.ComponentModel.DesignerCategory("")]

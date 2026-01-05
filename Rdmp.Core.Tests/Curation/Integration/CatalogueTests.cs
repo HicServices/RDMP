@@ -64,7 +64,7 @@ public class CatalogueTests : UnitTests
                 catalogue.SaveToDatabase();
             }
 
-        //find it again and see if its name has changed - then delete it so we don't polute the db
+        //find it again and see if its name has changed - then delete it so we don't pollute the db
         var catasAfter = Repository.GetAllObjects<Catalogue>().ToArray();
 
         foreach (var catalogue in catasAfter)
@@ -108,7 +108,7 @@ public class CatalogueTests : UnitTests
                 catalogue.Time_coverage = "comprehensive";
                 catalogue.Search_keywords = "excitement,fishmongery";
                 catalogue.Type = Catalogue.CatalogueType.ResearchStudy;
-                catalogue.Update_freq = "Every darmn second!";
+                catalogue.Update_freq =Catalogue.UpdateFrequencies.Daily;
                 catalogue.Update_sched = "periodically on request";
 
                 catalogue.Country_of_origin = "United Kingdom";
@@ -126,7 +126,7 @@ public class CatalogueTests : UnitTests
             }
 
 
-        //find it again and see if it has changed - then delete it so we don't polute the db
+        //find it again and see if it has changed - then delete it so we don't pollute the db
         var catasAfter = Repository.GetAllObjects<Catalogue>().ToArray();
 
         foreach (var catalogue in catasAfter)
@@ -154,7 +154,7 @@ public class CatalogueTests : UnitTests
                     Assert.That(catalogue.Time_coverage, Is.EqualTo("comprehensive"));
                     Assert.That(catalogue.Search_keywords, Is.EqualTo("excitement,fishmongery"));
                     Assert.That(catalogue.Type, Is.EqualTo(Catalogue.CatalogueType.ResearchStudy));
-                    Assert.That(catalogue.Update_freq, Is.EqualTo("Every darmn second!"));
+                    Assert.That(catalogue.Update_freq, Is.EqualTo(Catalogue.UpdateFrequencies.Daily));
                     Assert.That(catalogue.Update_sched, Is.EqualTo("periodically on request"));
 
 

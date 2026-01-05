@@ -122,6 +122,6 @@
 
 Changes will only take effect on RESTART.
 
-The following database table contains these values incase you need to change them manually through Sql Management Studio etc:</value>
+The following database table contains these values in case you need to change them manually through Sql Management Studio etc:</value>
   </data>
 </root>

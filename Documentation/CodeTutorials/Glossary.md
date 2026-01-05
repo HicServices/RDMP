@@ -144,14 +144,14 @@ Every ExtractionInformation has an ExtractionCategory which lets you flag the se
 
 ## ExtractionProgress![Icon](./../../Rdmp.Core/Icons/ExtractionProgress.png)
 
-When declared on a dataset in an [ExtractionConfiguration] results in batch/resume system being enabled.  This means extracting the dataset is split from one chunked operation to multiple seperate executions.  This allows recovery of a failed extraction by resuming from the point in data time that the load failed at.
+When declared on a dataset in an [ExtractionConfiguration] results in batch/resume system being enabled.  This means extracting the dataset is split from one chunked operation to multiple separate executions.  This allows recovery of a failed extraction by resuming from the point in data time that the load failed at.
 
 For example if you have a dataset Biochemistry that spans 1980 to 2020 then you can extract it in 1 year chunks.
 
 ## FilterContainer![Icon](./../../Rdmp.Core/Icons/FilterContainer.png)
 
 Sometimes you need to limit which records are extracted as part of an [ExtractionConfiguration] or [CohortIdentificationConfiguration].  In order to assemble valid WHERE SQL for this use
- case, each [ExtractionFilter] must be in either an AND or an OR container.  These containers ensure that each subcontainer / filter beyond the first is seperated by the appropriate operator
+ case, each [ExtractionFilter] must be in either an AND or an OR container.  These containers ensure that each subcontainer / filter beyond the first is separated by the appropriate operator
  (AND or OR) and brackets/tab indents where appropriate.
 
 ## GovernanceDocument![Icon](./../../Rdmp.Core/Icons/GovernanceDocument.png)
@@ -190,7 +190,7 @@ A JoinInfo can include multiple columns.  Each JoinInfo has a direction (e.g. LE
 
 Records how to load data into one or more [Catalogues]. This includes name, description, scheduled start dates etc. 
 
-A LoadMetadata contains at least one [ProcessTask] which is an ETL step e.g. Unzip files called *.zip / Dowload all files from FTP server X.
+A LoadMetadata contains at least one [ProcessTask] which is an ETL step e.g. Unzip files called *.zip / Download all files from FTP server X.
 
 ## Lookup![Lookup Icon](./../../Rdmp.Core/Icons/Lookup.png)
 
@@ -253,7 +253,7 @@ Describes an SQL query that can be run to generate useful information for the un
 
 If it is marked as Extractable then it will be bundled along with the [Catalogue] every time it is extracted (for this reason it is important to ensure that no [PII] data is returned by the query).
 
-This can be used as an alternative to definining [Lookups] or to extract other useful administrative data etc to be provided to researchers  
+This can be used as an alternative to defining [Lookups] or to extract other useful administrative data etc to be provided to researchers  
 
 If the Global flag is set then the SQL will be run and the result provided to every researcher regardless of what datasets they have asked for in an extraction, this is useful for large lookups like ICD / SNOMED CT which are likely to be used by many datasets.
 

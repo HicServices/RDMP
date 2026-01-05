@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -50,22 +51,23 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
 
     private bool _bLoading;
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public ExtractionConfiguration ExtractionConfigurationCreatedIfAny { get; private set; }
+
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Project ProjectCreatedIfAny { get; private set; }
 
     private void GetNextProjectNumber(IActivateItems activator)
     {
-
-        var AutoSuggestProjectNumbers = false;
-        var AutoSuggestProjectNumbersSetting = activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Setting>().Where(s => s.Key == "AutoSuggestProjectNumbers").FirstOrDefault();
-        if (AutoSuggestProjectNumbersSetting is not null) AutoSuggestProjectNumbers = Convert.ToBoolean(AutoSuggestProjectNumbersSetting.Value);
+        var autoSuggestProjectNumbers = false;
+        var autoSuggestProjectNumbersSetting = activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Setting>().FirstOrDefault(static s => s.Key == "AutoSuggestProjectNumbers");
+        if (autoSuggestProjectNumbersSetting is not null) autoSuggestProjectNumbers = Convert.ToBoolean(autoSuggestProjectNumbersSetting.Value);
         _existingProjects = activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>();
-        if (AutoSuggestProjectNumbers)
-        {
-            var highestNumber = _existingProjects.Max(p => p.ProjectNumber);
-            tbProjectNumber.Text = highestNumber == null ? "1" : (highestNumber.Value + 1).ToString();
-        }
 
+        if (!autoSuggestProjectNumbers) return;
+
+        var highestNumber = _existingProjects.Max(static p => p.ProjectNumber);
+        tbProjectNumber.Text = highestNumber == null ? "1" : (highestNumber.Value + 1).ToString();
     }
 
     public CreateNewDataExtractionProjectUI(IActivateItems activator) : base(activator)

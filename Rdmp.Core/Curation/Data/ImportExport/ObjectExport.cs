@@ -16,7 +16,7 @@ namespace Rdmp.Core.Curation.Data.ImportExport;
 
 /// <summary>
 /// Identifies an object in the local Catalogue database (or DataExport database) which has been shared externally (via its SharingUID).  The use of a SharingUID
-/// allows multiple external users to access and import the shared object (and any dependant objects).  Having an ObjectExport declared on an object prevents it from
+/// allows multiple external users to access and import the shared object (and any dependent objects).  Having an ObjectExport declared on an object prevents it from
 /// being deleted (see ObjectSharingObscureDependencyFinder) since this would leave external users with orphaned objects.
 /// </summary>
 public class ObjectExport : ReferenceOtherObjectDatabaseEntity, IInjectKnown<IMapsDirectlyToDatabaseTable>
@@ -28,7 +28,7 @@ public class ObjectExport : ReferenceOtherObjectDatabaseEntity, IInjectKnown<IMa
     #endregion
 
     /// <summary>
-    /// The globally unique identifier for refering to the shared object.  This allows the object to be updated later / new versions to be distributed
+    /// The globally unique identifier for referring to the shared object.  This allows the object to be updated later / new versions to be distributed
     /// even though the ID is different (e.g. it has been imported into another instance of RDMP).
     /// </summary>
     public string SharingUID

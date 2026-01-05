@@ -94,7 +94,7 @@ public sealed class ExecuteCommandClearQueryCache : BasicCommandExecution
 
         foreach (var ag in _cic.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively())
         {
-            // just incase they changed the role or something wierd we should nuke all its roles
+            // just in case they changed the role or something weird we should nuke all its roles
             found += cacheManager.GetLatestResultsTableUnsafe(ag, AggregateOperation.IndexedExtractionIdentifierList) !=
                      null
                 ? 1
@@ -106,7 +106,7 @@ public sealed class ExecuteCommandClearQueryCache : BasicCommandExecution
 
         foreach (var joinable in _cic.GetAllJoinables())
         {
-            // just incase they changed the role or something wierd we should nuke all its roles
+            // just in case they changed the role or something weird we should nuke all its roles
             found += cacheManager.GetLatestResultsTableUnsafe(joinable.AggregateConfiguration,
                 AggregateOperation.IndexedExtractionIdentifierList) != null
                 ? 1

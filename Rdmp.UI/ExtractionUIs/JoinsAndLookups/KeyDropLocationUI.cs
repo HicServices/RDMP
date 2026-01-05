@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using Rdmp.Core.Curation.Data;
@@ -19,8 +20,11 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups;
 public partial class KeyDropLocationUI : UserControl
 {
     private JoinKeyType _keyType;
+
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public ColumnInfo SelectedColumn { get; private set; }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public JoinKeyType KeyType
     {
         get => _keyType;
@@ -39,6 +43,7 @@ public partial class KeyDropLocationUI : UserControl
     /// <summary>
     /// Set this to allow dragging only certain items onto the control.  Return true to allow drop and false to prevent it.
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Func<ColumnInfo, bool> IsValidGetter { get; set; }
 
     public event Action SelectedColumnChanged;

@@ -161,7 +161,7 @@ public partial class TicketingSystemConfigurationUI : RDMPUserControl
             {
                 var knownStatuses = instance.GetAvailableStatuses();
                 var requestedStatuses = tbReleases.Text.Split(',').Where(s => s.Trim() != "");
-                if (!requestedStatuses.Any()) checksUI1.OnCheckPerformed(new CheckEventArgs($"No Release status set", CheckResult.Fail));
+                if (!requestedStatuses.Any()) checksUI1.OnCheckPerformed(new CheckEventArgs("No Release status set", CheckResult.Fail));
 
                 foreach (var status in requestedStatuses.Where(s => !knownStatuses.Contains(s.Trim())))
                 {

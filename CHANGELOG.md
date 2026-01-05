@@ -4,7 +4,97 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [8.3.1] - 2024-10-16
+## [9.1.1] - 2025-12-02
+- Allow Atlassian service workers to write to Confluence from RDMP
+
+## [9.1.0] - 2025-11-24
+- Fix bug with duplicate searchables
+- Improve UI for committing cohorts across projects
+- Add the ability to Template Cohort Identification Configurations (see [Documentation\cohorts\CohortIdentificationConfigurationTemplates.md])
+- Require all deletes to enter a commit message when using the commit system
+- Introduce ability to view Catalogues in a flat view
+- Fix bug where Internal catalogues were still able to be added to a CIC
+- Add ability to use archive trigger when re-releasing to a database
+
+## [9.0.3] - 2025-11-03
+- Improve checking for default pipelines
+- Improve confluence catalogue metadata extraction
+- Improve project specific catalogue error handling
+
+## [9.0.2] - 2025-10-21
+- Add ability to view logs as a flat list. Default settings can be updated via user settings
+- allow the use of Catalogue CIC filters in corresponding Extractions
+- Add Data Load component to allow SQL to be executed on an external database server
+- Improve Extraction Log Viewer Filter
+- Add Dataset Variable document to extractions
+- Update extractability to only allow non-internal projects to be extracted
+- Remove functionality to mark individual catalogues as extractable/not extractable. Favor use of marking as internal.
+- Move RSA key checks to fix bug where bad RSA keys were causing issues at launch
+- Add cli command to export catalogue metadata to a Atlassian Confluence space
+- Allow the use of network share RSA keys
+
+
+## [9.0.1] - 2025-07-31
+- Improve Right-click performance
+- Fix bug where orphaned filters were causing issues with cohort configurations
+
+## [9.0.0] - 2025-07-23
+- Add ability to use Extraction Configuration ID in the naming scheme of the extract to database Pipeline component
+- Update Cohort Versioning Icons and Interface
+- Fix issue with global contextual search
+- Add MS Teams Extraction notifications (see [Documentation\DataExtractions\ExtractionTeamsNotifications.md])
+- Add ability to use Cohort Catalogue Filters in an Extraction Configuration
+- Add ability to associate a Catalogue with multiple Projects
+- Add DistinctByDestinationPKs distinction strategy to the DatasetExtractionSource Extraction pipeline component
+- Update clone extraction configuration to include generic parameters
+- Fix copy-paste issue in bulk edit Catalogue Items UI
+
+## [8.4.4] - 2025-05-08 
+
+- Re-add AggregateGraph functionality
+- Add ability to show/hide quick edit pipeline controls during extractions
+- Fix issue with columnForbidder crashing when no Regex specified
+- Add contextual global search (CRTL+f)
+- Fix Issue with Multiselect cancel dialog
+- Improve UI Tab ordering
+- Add ability to specify DB collation on new DB creation
+- Display warnings about pipeline issues in the tables(advanced) tree
+
+## [8.4.3] - 2025-02-24
+
+- Build on and target .Net 9 rather than 8
+- Simplify DB Patching Interface
+- Fix issue with Simple File Extractor pipeline component checking
+- Update Catalogue metadata options
+- Add Load Metadata versioning
+- Fix application restart not closing all windows
+- Add Filters for CatalogueItems to Dashboard graphs
+- Add ability to use cohort temp table during extractions
+- Fix bug where cohort configuration versions could not be deleted
+- Extraction UI alerts are now marked as warnings as opposed to information
+
+## [8.4.2] - 2024-12-18
+
+- Fix issue with MEF constructing Remote Table Attachers
+
+## [8.4.1] - 2024-12-10
+
+- Improve Overview Model Generation Speed
+- Add Remote Table Without DB Creation Attacher
+
+## [8.4.0] - 2024-12-02
+
+- Add Ordering to Filters
+- [MSSQL ONLY] Add ability to perform Regex redactions on data loads and existing catalogues
+- Add overview page for Catalogues
+- Add RAW Table Date Column Override for Delta Loads
+- Fix Delta Load off by one issue
+- Update Migration strategy to account for all Primary Keys when moving from staging -> live
+- Fix UI issue with viewing cross-database SQL results
+- Add UI Steps to deprecate old cohorts when importing a cohort
+- Add instance setting to enable and disable Yes/No to all
+
+## [8.3.1] - 2024-10-22
 
 - Improve Performance of regenerating problems with child providers
 - Update UI Tab opening Logic
@@ -13,7 +103,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [8.3.0] - 2024-09-23
 
 - Add New Find & Replace, currently available via User Settings
-- Add instance setting to prompt for cohort versioning when comitting
+- Add instance setting to prompt for cohort versioning when committing
 - Improve Cohort Versioning Interface
 - Re-Instantiate connection to FTP server on FTP Downloader cleanup
 - Add AWS S3 Bucket Release component for flat files
@@ -97,7 +187,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Allow for custom .bak file physical locations during data loads
 - Add ability to have multiple data loads for a single catalogue
 - Allow for Project Specific Catalogues to have multiple extraction identifiers
-- Fix issue with notification popups being inaccessable when RDMP is minimised
+- Fix issue with notification popups being inaccessible when RDMP is minimised
 - Allow for Catalogues with Non-Core extraction categories to be made Project specific
 - Bump coverlet.collector from 6.0.0 to 6.0.1
 - Bump svenstaro/upload-release-action from 2.7.0 to 2.9.0 
@@ -223,7 +313,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed `ViewLogs` command not working properly on command line when passed an [ExternalDatabaseServer](logging server) [#1447](https://github.com/HicServices/RDMP/issues/1447)
 - Fixed bulk import (existing) tables breaking in some corner cases (e.g. when there are broken [Catalogue] from a previous import)
 - Fixed YamlRepository not implementing Release Logs API member
-- Fixed issues with YamlRepository loosing stored [DataAccessCredentials] passwords
+- Fixed issues with YamlRepository losing stored [DataAccessCredentials] passwords
 - Fixed `--help` on command line showing help text twice
 
 ## [8.0.2] - 2022-10-03
@@ -420,7 +510,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Added Error/Warn highlighting in console gui run/check windows
-- Added 'RAWTableToLoad' dropdown property to RemoteTableAttacher to prevent mispellings when typing table names - [#1134](https://github.com/HicServices/RDMP/issues/1134)
+- Added 'RAWTableToLoad' dropdown property to RemoteTableAttacher to prevent misspellings when typing table names - [#1134](https://github.com/HicServices/RDMP/issues/1134)
 - Added optional argument to 'ExecuteCommandConfirmLogs' that requires rows were loaded by the DLE to pass
 - Added ability to search the UserSettings UI 
 - Added a prompt to configure JoinInfos when adding a new table to an existing Catalogue
@@ -441,7 +531,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added new command 'RefreshBrokenCohorts' for clearing the 'forbid list' of unreachable cohort sources - [#1094](https://github.com/HicServices/RDMP/issues/1094)
 - Added new command 'SetAggregateDimension' for changing the linkage column in cohort builder for an [AggregateConfiguration] - [#1102](https://github.com/HicServices/RDMP/issues/1102)
-- Added abilty to skip CIC validation checks when opening the commit cohort dialogue - [#1118](https://github.com/HicServices/RDMP/issues/1118)
+- Added ability to skip CIC validation checks when opening the commit cohort dialogue - [#1118](https://github.com/HicServices/RDMP/issues/1118)
 - Ability to change cohort table name when using ExecuteCrossServerDatasetExtractionSource - [#1099](https://github.com/HicServices/RDMP/issues/1099)
 - Added Success bar to ProgressUI
 - Added new user setting Auto Resize Columns which will automatically resize columns within the RDMP interface where it makes sense to. E.g. the execute pipeline window and "checks" ui. More changes to be implemneted over time.
@@ -485,18 +575,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fixed bug preventing example datasets being created from the RDMP UI client because checkbox was disabled
-- "Exisiting" filter typo corrected - https://github.com/HicServices/RDMP/issues/1029
+- "Existing" filter typo corrected - https://github.com/HicServices/RDMP/issues/1029
 - Fixed refreshes sometimes changing selection in Data Export tree - https://github.com/HicServices/RDMP/issues/1008
 
 
 ### Changed
 
 - New filters are now highlighted correctly when added to a CIC - https://github.com/HicServices/RDMP/issues/1031
-- Creating a new Extracion Configuration will now ask the user for Name, Cohort and Datasets to be included for the extraction - https://github.com/HicServices/RDMP/issues/983
-- AllowIdentifiableExtractions is now an ErrorCode so can be set to Success instead of always being Fail or Warning (i.e. to completley ignore it).
+- Creating a new Extraction Configuration will now ask the user for Name, Cohort and Datasets to be included for the extraction - https://github.com/HicServices/RDMP/issues/983
+- AllowIdentifiableExtractions is now an ErrorCode so can be set to Success instead of always being Fail or Warning (i.e. to completely ignore it).
 - The extractability of columns are no longer saved if a Dataset is removed from an Extraction Configuration - https://github.com/HicServices/RDMP/issues/1023
 - "Show Pipeline Completed Popup" now enabled by default - https://github.com/HicServices/RDMP/issues/1069
-- Cohorts are now "emphasise" after being commited. If part of one project it will highlight under that project.
+- Cohorts are now "emphasise" after being committed. If part of one project it will highlight under that project.
 
 
 ## [7.0.9] - 2022-03-29
@@ -518,7 +608,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed iterative data loads run on the CLI throwing and returning non zero when caught up to date with load progress (when running in iterative mode)
 - Pipeline component order is now "correct" and will list more important variables at the top rather than at the bottom - https://github.com/HicServices/RDMP/issues/996
 - Fixed bug where Pipeline objects could not be deleted from the `Tables (Advanced)` tree
-- Removing a datset from an [ExtractionConfiguration] now deletes any extraction specific column changes (i.e. changes are not persisted if the dataset is added back in again)
+- Removing a dataset from an [ExtractionConfiguration] now deletes any extraction specific column changes (i.e. changes are not persisted if the dataset is added back in again)
 - Fixed Release button prompting to pick [Project] when clicked in the ExecuteExtractionUI [#963](https://github.com/HicServices/RDMP/issues/963)
 
 ### Changed
@@ -751,7 +841,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added CatalogueFolder column to Select Catalogue dialog
 - Added custom metadata report tokens:
-  - $Comma (for use with formats that require seperation e.g. JSON when using the `$foreach` operation)
+  - $Comma (for use with formats that require separation e.g. JSON when using the `$foreach` operation)
   - $TimeCoverage_ExtractionInformation (the column that provides the time element of a dataset to the DQE e.g. StudyDate)
 - Added support for default values in constructors invoked from the command line (previously command line had to specify all arguments.  Now you can skip default ones at the end of the line)
 - Added support for deleting multiple objects at once with the delete command (e.g. `rdmp cmd Delete Plugin true` to delete all plugins)
@@ -850,7 +940,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Pipeline and DLE components with object list arguments now show the previously selected items in the 'Select Object(s)' popup
 - Pressing 'delete' key in console gui edit window now offers to set value of property to null
 - Editing a foreign key property (e.g. `PivotCategory_ExtractionInformation_ID`) now shows objects rather than asking for an `int` value directly
-- Fatal errrors in console gui now get logged by NLog (e.g. to console/file)
+- Fatal errors in console gui now get logged by NLog (e.g. to console/file)
 - Added user setting `CreateDatabaseTimeout`
 
 ### Removed
@@ -945,7 +1035,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added new command RunSupportingSql
 - Console GUI root nodes now offer sensible commands (e.g. create new Catalogue)
 - Added Value column to tree views (allows user to quickly see current arguments' values)
-- Added 'other' checkbox to 'Create Catalogue by importing a file' (for selecting custom piplelines)
+- Added 'other' checkbox to 'Create Catalogue by importing a file' (for selecting custom pipelines)
 - Command SetExtractionIdentifier now supports changing the linkage identifier for specific ExtractionConfigurations only
 - Added new command `AlterTableMakeDistinct`
 - Added CLI GUI window for running Pipelines that displays progress
@@ -1050,7 +1140,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Fixed startup error when user enters a corrupt connection string for platform database locations.  This bug affected syntactically invalid (malformed) connection strings (i.e. not simply connection strings that point to non existant databases)
+- Fixed startup error when user enters a corrupt connection string for platform database locations.  This bug affected syntactically invalid (malformed) connection strings (i.e. not simply connection strings that point to non existent databases)
 - Fixed various issues in ColumnSwapper
   - If input table contains nulls these are now passed through unchanged
   - If mapping table contains nulls these are ignored (and not used to map input nulls)
@@ -1142,7 +1232,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Added Merge command, for combining two or more configurations in cohort builder into one
-- Added Un Merge command for splitting one cohort builder configuration into multiple seperate ones
+- Added Un Merge command for splitting one cohort builder configuration into multiple separate ones
 - Improved error messages in extraction checking when there are:
   -  2+ columns with the same name
   -  2+ columns with the same location in extraction order
@@ -1294,7 +1384,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed DLE backup trigger creation for old versions of MySql (5.5 and earlier)
 - Fixed some forms not getting launched when new objects are created (e.g. Supporting Documents)
 - Fixed null reference when cancelling adding a SupportingDocument
-- Fixed bug in axis section of graph editor where changing value would result in text box loosing focus
+- Fixed bug in axis section of graph editor where changing value would result in text box losing focus
 - Fixed ticketing system Reason [for not being able to release a configuration] not being displayed on the ReleaseUI
 
 ## [4.0.2] - 2020-01-23
@@ -1323,7 +1413,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed issue where ProjectNumber and Version appeared editable in some tree controls (changes were ignored).  These cells are now correctly readonly.
 - Fixed bug in log viewer right click (introduced in 4.0.1 command refactoring)
 - TestConnection now shows obfuscated connection string when a connection cannot be established (affects RDMP API users only - not core software)
-- Fixed changing join direciton in patient index tables not triggering refresh
+- Fixed changing join direction in patient index tables not triggering refresh
 - Fixed Data Load Engine RAW server credentials when running RDMP installer with sql user authentication (RAW server entry would be created with Integrated Security)
 
 ## [4.0.1-rc3] - 2019-11-25
@@ -1396,7 +1486,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added 
 
-- Errors during caching (of cohort builder results) now appear in the results control (previously could generate erro popups)
+- Errors during caching (of cohort builder results) now appear in the results control (previously could generate error popups)
 - Patient Index Tables are no longer allowed to have parameters with the same name (but different values) of tables they are joined against
 - Sql Parameters (e.g. `@test_code`) now work properly cross [DBMS] (e.g. MySql / SqlServer) when using a query cache.
 - Added menu for inspecting the state of a cohort compiler (view SQL executed, build log, results etc)
@@ -1438,7 +1528,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
  
-- Database patching user interface presents clearer information about what version upgrade is occuring and the patches that will be applied.
+- Database patching user interface presents clearer information about what version upgrade is occurring and the patches that will be applied.
 - Updated to latest version of [FAnsiSql] (0.10.7) for task cancellation
 - Data load engine no longer lists dropping columns / anonymising in progress if there are no operations actually being performed (e.g. no ANOTables configured)
 - Delete is now disabled for the top level container (e.g. "UNION - Inclusion criteria") of cohort builder configuration
@@ -1449,7 +1539,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved usability of StartupUI when no repository connection strings are not set (previously would report status as 'Broken')
 - Fixed bug where `DropTableIfLoadFails` of `ExecuteFullExtractionToDatabaseMSSql` would (under fail conditions) drop the destination table even if the table was created by a previous execution of the same pipeline.
 - Fixed bug where adding a [Catalogue] to a cohort set container would create an extra duplicate copy (which would appear under orphans)
-- Improved cross server cohort query building (e.g. combining cohort sets on seperate servers / server types)
+- Improved cross server cohort query building (e.g. combining cohort sets on separate servers / server types)
 - Fixed bug in checks dual reporting some errors when clicking on red angry face icons
 
 ### Removed
@@ -1466,9 +1556,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Right clicking a mispelled word now offers spelling suggestions
+- Right clicking a misspelled word now offers spelling suggestions
 - You can now add new datasets to an extraction configuration directly from the "Core" folder in Execute Extraction window (rather than having to go back to the DataExport tree view)
-- MDFAttacher now checks for existing mdf/ldf files in the RAW server data directory.  Existing files will trigger a warning.  After the warning an attempt is still made to overwrite the file(s) (as occured previously)
+- MDFAttacher now checks for existing mdf/ldf files in the RAW server data directory.  Existing files will trigger a warning.  After the warning an attempt is still made to overwrite the file(s) (as occurred previously)
 - Tab key now also works for autocomplete in SQL editor windows (previously only Enter worked)
 - Orphan cohort sets (do not belong to any Cohort Identification Configuration) now appear under a top level folder in 'Cohort Builder' collection
 - Extraction Category can now be changed directly from a CatalogueItem, [ExtractionInformation] 
@@ -1530,7 +1620,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved layout of message boxes and link highlighting
 - Add (Copy Of) cohort set no longer complains about creating a copy of one already in the cohort builder configuration
 - Extraction destination property CleanExtractionFolderBeforeExtraction now defaults to false (i.e. do not delete the contents of the extraction directory before extracting)
-- Extraction destination property CleanExtractionFolderBeforeExtraction is now implemented in the Checks phase of the component lifecycle rather than on reciept of first batch of records (this prevents accidentally deleting files produced by upstream components)
+- Extraction destination property CleanExtractionFolderBeforeExtraction is now implemented in the Checks phase of the component lifecycle rather than on receipt of first batch of records (this prevents accidentally deleting files produced by upstream components)
 - 
 ### Fixed 
 - Fixed bug in [Catalogue] validation setup window (DQE Validation Rules) which resulted in changes not being saved if it had been refreshed after initially loading
@@ -1540,7 +1630,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed bug where CatalogueItems created when importing Oracle tables had database qualifiers in the name e.g. "CHI" (including the double quotes)
 - Fixed bug where deleting a Filter from a cohort set in a Cohort Identification Query could result in the display order changing to alphabetical (until tab was refreshed).
 - Fixed obscure bug in plugins implementing the `ICustomUI` interface when returning a new object in `GetFinalStateOfUnderlyingObject` that resulted in the UI showing a stale version of the object
-- Connecting to a non existant server in ServerDatabaseTableSelector now shows the Exception in the RAG icon (previously just showed empty database list)
+- Connecting to a non existent server in ServerDatabaseTableSelector now shows the Exception in the RAG icon (previously just showed empty database list)
  
 - Fixed bug where adding/removing a column in Aggregate Editor would would reset the Name/Description if there were unsaved changes (to Name/Description)
 - Fixed bug where example datasets created would have the text value "NULL" instead of db nulls (only affected initial install/setup datasets)

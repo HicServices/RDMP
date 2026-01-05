@@ -14,7 +14,6 @@ using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
-using Rdmp.Core.Setting;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
@@ -70,24 +69,33 @@ public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfig
         if (cic == null)
             return;
 
-        if (BasicActivator.IsInteractive) {
-            var PromptForVersionOnCohortCommit = false;
-            var PromptForVersionOnCohortCommitSetting = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Setting.Setting>().Where(s => s.Key == "PromptForVersionOnCohortCommit").FirstOrDefault();
-            if (PromptForVersionOnCohortCommitSetting is not null) PromptForVersionOnCohortCommit = Convert.ToBoolean(PromptForVersionOnCohortCommitSetting.Value);
-            if (PromptForVersionOnCohortCommit && BasicActivator.YesNo("It is recommended to save your cohort as a new version before committing. Would you like to do this?", "Save cohort as new version before committing?"))
+        if (BasicActivator.IsInteractive)
+        {
+            var promptForVersionOnCohortCommit = false;
+            var promptForVersionOnCohortCommitSetting = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Setting.Setting>().FirstOrDefault(static s => s.Key == "PromptForVersionOnCohortCommit");
+            if (promptForVersionOnCohortCommitSetting is not null) promptForVersionOnCohortCommit = Convert.ToBoolean(promptForVersionOnCohortCommitSetting.Value);
+            if (promptForVersionOnCohortCommit && BasicActivator.YesNo("It is recommended to save your cohort as a new version before committing. Would you like to do this?", "Save cohort as new version before committing?"))
             {
                 var newVersion = new ExecuteCommandCreateVersionOfCohortConfiguration(BasicActivator, cic);
                 newVersion.Execute();
                 var versions = cic.GetVersions();
                 cic = versions.Last();
             }
-
         }
-        if (Project == null && BasicActivator.CoreChildProvider is DataExportChildProvider dx)
+
+
+        IProject currentProj = null;
+        ProjectCohortIdentificationConfigurationAssociation[] projAssociations = Array.Empty<ProjectCohortIdentificationConfigurationAssociation>();
+        if (BasicActivator.CoreChildProvider is DataExportChildProvider dx)
         {
-            var projAssociations = dx.AllProjectAssociatedCics
+            projAssociations = dx.AllProjectAssociatedCics
                 .Where(c => c.CohortIdentificationConfiguration_ID == cic.ID).ToArray();
-            if (projAssociations.Length == 1) Project = projAssociations[0].Project;
+            if (projAssociations.Length > 0)
+            {
+                currentProj = Project != null ? Project : projAssociations.Length == 1 ? projAssociations[0].Project : null;
+                Project = BasicActivator.CohortCommitProjectSelect(currentProj, BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>().ToArray());
+                if (Project is null) return;
+            }
         }
 
         var auditLogBuilder = new ExtractableCohortAuditLogBuilder();
@@ -95,7 +103,10 @@ public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfig
 
         //user choose to cancel the cohort creation request dialogue
         if (request == null)
+        {
+            Project = null;
             return;
+        }
 
         request.CohortIdentificationConfiguration = cic;
 
@@ -103,7 +114,16 @@ public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfig
 
         configureAndExecute.PipelineExecutionFinishedsuccessfully += (s, u) => OnImportCompletedSuccessfully(cic);
 
-        configureAndExecute.Run(BasicActivator.RepositoryLocator, null, null, null);
+        var result = configureAndExecute.Run(BasicActivator.RepositoryLocator, null, null, null);
+        if (result ==0 && currentProj != null && currentProj.ID != Project.ID)
+        {
+            //move cic to new project
+            var oldAssociation = projAssociations.Where(a => a.Project_ID == currentProj.ID).FirstOrDefault();
+            if (oldAssociation != null)
+            {
+                oldAssociation.DeleteInDatabase();
+            }
+        }
     }
 
     private void OnImportCompletedSuccessfully(CohortIdentificationConfiguration cic)

@@ -24,7 +24,7 @@ namespace Rdmp.Core.Curation.Data.Pipelines;
 public interface IDataFlowPipelineEngine : ICheckable
 {
     /// <summary>
-    /// Runs all components from source to destination repeatedly until the source returs null;
+    /// Runs all components from source to destination repeatedly until the source returns null;
     /// </summary>
     /// <param name="cancellationToken"></param>
     void ExecutePipeline(GracefulCancellationToken cancellationToken);

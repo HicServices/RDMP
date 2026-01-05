@@ -13,7 +13,7 @@ using Rdmp.Core.Curation.Data.Cohort;
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-/// A virtual folder that can have subdirectories and stores ojbects of type <typeparamref name="T"/> e.g.
+/// A virtual folder that can have subdirectories and stores objects of type <typeparamref name="T"/> e.g.
 /// Catalogue folders.  <see cref="FolderNode{T}"/> objects are typically created through <see cref="FolderHelper.BuildFolderTree{T}(T[], FolderNode{T})"/>
 /// dynamically based on the current <see cref="IHasFolder.Folder"/> strings.
 /// </summary>

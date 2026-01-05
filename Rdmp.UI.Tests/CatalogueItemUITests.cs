@@ -37,7 +37,7 @@ internal class CatalogueItemUITests : UITests
 
         Assert.Multiple(() =>
         {
-            //the new description shuold be set in my class
+            //the new description should be set in my class
             Assert.That(catalogueItem.Description, Is.EqualTo("what is in the column"));
 
             //and the UI should have shown the Propagate changes dialog
@@ -80,7 +80,7 @@ internal class CatalogueItemUITests : UITests
 
         Assert.That(ui.GetTabName(), Is.EqualTo("MyCataItem (Mycata)"));
 
-        //clear the delgate for the next user
+        //clear the delegate for the next user
         ItemActivator.ShouldReloadFreshCopyDelegate = null;
     }
 }

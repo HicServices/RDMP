@@ -4,10 +4,11 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.Providers;
+using System;
+using System.Linq;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
@@ -35,7 +36,7 @@ public abstract class ExecuteCommandSetColumnSettingBase : BasicCommandExecution
     /// <param name="activator"></param>
     /// <param name="catalogue">The dataset you want to change the setting for</param>
     /// <param name="inConfiguration">Optional - If setting should only be applied to a specific extraction or Null for the Catalogue itself (will affect all future extractions)</param>
-    /// <param name="column">"Optional - The Column name(s) you want to select as the new selection(s).  Comma seperate multiple entries if needed"</param>
+    /// <param name="column">"Optional - The Column name(s) you want to select as the new selection(s).  Comma separate multiple entries if needed"</param>
     /// <param name="commandName">Describe what is being changed from user perspective e.g. "Set IsExtractionIdentifier"</param>
     /// <param name="commandProperty">Name of property being changed by this command e.g "Extraction Identifier"</param>
     public ExecuteCommandSetColumnSettingBase(
@@ -48,6 +49,7 @@ public abstract class ExecuteCommandSetColumnSettingBase : BasicCommandExecution
         _commandName = commandName;
         _catalogue.ClearAllInjections();
         _commandProperty = commandProperty;
+
 
         if (inConfiguration != null)
         {

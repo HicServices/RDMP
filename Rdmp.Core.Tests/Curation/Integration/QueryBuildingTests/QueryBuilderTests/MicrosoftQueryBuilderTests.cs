@@ -45,7 +45,7 @@ FROM
 ));
 
 
-        //editting the topX should invalidate the SQL automatically
+        //editing the topX should invalidate the SQL automatically
         qb.TopX = 50;
         Assert.That(
 CollapseWhitespace(qb.SQL), Is.EqualTo(CollapseWhitespace(

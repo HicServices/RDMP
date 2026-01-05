@@ -84,7 +84,7 @@ public class SupportingDocument : DatabaseEntity, INamed, ISupportingObject
     }
 
     /// <summary>
-    /// If <see cref="Extractable"/>  and <see cref="IsGlobal"/> then the document will be copied to the ouptut directory of all project extractions
+    /// If <see cref="Extractable"/>  and <see cref="IsGlobal"/> then the document will be copied to the output directory of all project extractions
     /// regardless of whether or not the <see cref="Catalogue_ID"/> dataset is included in the extraction
     /// </summary>
     public bool IsGlobal

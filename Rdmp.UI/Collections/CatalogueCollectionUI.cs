@@ -16,6 +16,7 @@ using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers.Nodes;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 using Rdmp.UI.Collections.Providers.Filtering;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
@@ -38,8 +39,6 @@ namespace Rdmp.UI.Collections;
 /// 
 /// <para>Pressing the Del key will prompt you to delete the selected item.</para>
 /// 
-/// <para>By default Deprecated, Internal and ColdStorage Catalogues do not appear, you can turn visibility of these on by selecting the relevant tick boxes.</para>
-/// 
 /// <para>Finally you can launch 'Checking' for every dataset, this will attempt to verify the extraction SQL you
 /// have configured for each dataset and to ensure that it runs and that at least 1 row of data is returned.  Checking all the datasets can take a while so runs asynchronously.</para>
 /// </summary>
@@ -50,6 +49,8 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
     //constructor
 
     private bool bLoading = true;
+
+    private bool _renderingFlatFiew = false;
 
     public CatalogueCollectionUI()
     {
@@ -109,8 +110,19 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
             var newCatalogues = CommonTreeFunctionality.CoreChildProvider.AllCatalogues.Except(_allCatalogues);
             if (newCatalogues.Any())
             {
-                oRefreshFrom = rootFolder; //refresh from the root instead
-                tlvCatalogues.RefreshObject(oRefreshFrom);
+                if (UserSettings.ShowFlatLists)
+                {
+                    oRefreshFrom = null;
+                    tlvCatalogues.AddObjects(newCatalogues.ToList());
+                    tlvCatalogues.RefreshObjects(Activator.CoreChildProvider.AllCatalogues);
+                    _renderingFlatFiew = true;
+                }
+                else
+                {
+                    oRefreshFrom = rootFolder; //refresh from the root instead
+                    tlvCatalogues.RefreshObject(oRefreshFrom);
+                    _renderingFlatFiew = false;
+                }
             }
         }
 
@@ -186,6 +198,21 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
 
         tlvCatalogues.UseFiltering = true;
         tlvCatalogues.ModelFilter = new CatalogueCollectionFilter(Activator.CoreChildProvider);
+        if (UserSettings.ShowFlatLists && !_renderingFlatFiew)
+        {
+            //reset to flat view
+            tlvCatalogues.RemoveObject(Activator.CoreChildProvider.CatalogueRootFolder);
+            tlvCatalogues.AddObjects(Activator.CoreChildProvider.AllCatalogues);
+            _renderingFlatFiew = true;
+        }
+        else if(!UserSettings.ShowFlatLists && _renderingFlatFiew)
+        {
+            //reset to folder view
+            tlvCatalogues.RemoveObjects(Activator.CoreChildProvider.AllCatalogues);
+            tlvCatalogues.AddObject(Activator.CoreChildProvider.CatalogueRootFolder);
+            tlvCatalogues.RefreshObject(Activator.CoreChildProvider.CatalogueRootFolder);
+            _renderingFlatFiew = false;
+        }
     }
 
     public enum HighlightCatalogueType
@@ -261,7 +288,16 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
         Activator.RefreshBus.EstablishLifetimeSubscription(this);
 
         tlvCatalogues.AddObject(activator.CoreChildProvider.AllGovernanceNode);
-        tlvCatalogues.AddObject(activator.CoreChildProvider.CatalogueRootFolder);
+        if (UserSettings.ShowFlatLists)
+        {
+            tlvCatalogues.AddObjects(activator.CoreChildProvider.AllCatalogues);
+            _renderingFlatFiew = true;
+        }
+        else
+        {
+            tlvCatalogues.AddObject(activator.CoreChildProvider.CatalogueRootFolder);
+            _renderingFlatFiew = false;
+        }
         ApplyFilters();
 
         RefreshUIFromDatabase(activator.CoreChildProvider.CatalogueRootFolder);

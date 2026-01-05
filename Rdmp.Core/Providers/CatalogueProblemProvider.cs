@@ -6,17 +6,28 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.ComponentModel;
+using System.Data;
 using System.Globalization;
 using System.Linq;
+using NPOI.SS.Formula.Functions;
+using Org.BouncyCastle.Asn1.X509.Qualified;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Governance;
+using Rdmp.Core.Curation.Data.Pipelines;
+using Rdmp.Core.DataExport.DataExtraction.Commands;
+using Rdmp.Core.DataFlowPipeline;
+using Rdmp.Core.DataFlowPipeline.Requirements;
+using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
+using Rdmp.Core.Providers.Nodes.PipelineNodes;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 using Rdmp.Core.ReusableLibraryCode.Settings;
 using TypeGuesser;
 
@@ -78,8 +89,55 @@ public class CatalogueProblemProvider : ProblemProvider
             AllCataloguesUsedByLoadMetadataNode metadataNode => DescribeProblem(metadataNode),
             ISqlParameter p => DescribeProblem(p),
             CohortAggregateContainer container => DescribeProblem(container),
+            PipelineCompatibleWithUseCaseNode pipelineUseCaseNode => DescribeProblem(pipelineUseCaseNode),
+            PipelineComponent pipelineComponent => DescibeProblem(pipelineComponent),
             _ => null
         };
+    }
+
+    public string DescibeProblem(IPipelineComponent pipelineComponent)
+    {
+        var value = DataFlowPipelineEngineFactory.TryCreateComponent(pipelineComponent, out var exConstruction);
+        if (exConstruction is not null)
+        {
+            return exConstruction.Message;
+        }
+        if (value is null)
+        {
+            return "Unable to construct object";
+        }
+        MandatoryPropertyChecker _mandatoryChecker = new MandatoryPropertyChecker(value);
+        try
+        {
+            _mandatoryChecker.Check(ThrowImmediatelyCheckNotifier.Quiet);
+        }
+        catch (Exception e)
+        {
+            return e.Message;
+        }
+
+        return null;
+    }
+
+    public string DescribeProblem(PipelineCompatibleWithUseCaseNode pipelineUseCaseNode)
+    {
+        var repo = new MemoryRepository();
+        var pipeline = pipelineUseCaseNode.Pipeline;
+        var useCaseNode = new PipelineCompatibleWithUseCaseNode(repo, pipeline, pipelineUseCaseNode.UseCase);
+        var useCase = useCaseNode.UseCase;
+        if(!useCase.IsAllowable(pipeline))
+        {
+            return "Something is wrong with this pipeline";
+        }
+        foreach(var component in pipeline.PipelineComponents)
+        {
+            var componentProblem = DescibeProblem(component);
+            if (componentProblem != null)
+            {
+                return componentProblem;
+            }
+        }
+        return null;
     }
 
     public static string DescribeProblem(AllCataloguesUsedByLoadMetadataNode allCataloguesUsedByLoadMetadataNode) =>
@@ -92,7 +150,7 @@ public class CatalogueProblemProvider : ProblemProvider
         if (AnyTableSqlParameter.HasProhibitedName(parameter))
             return "Parameter name is a reserved name for the RDMP software";
 
-        // if parameter has no value thats a problem
+        // if parameter has no value that's a problem
         if (string.IsNullOrWhiteSpace(parameter.Value) || parameter.Value == AnyTableSqlParameter.DefaultValue)
         {
             // unless it has ExtractionFilterParameterSets defined on it
@@ -174,7 +232,7 @@ public class CatalogueProblemProvider : ProblemProvider
         }
 
         var expiredCatalogues = expiredCatalogueIds.Select(id => _childProvider.AllCataloguesDictionary[id])
-            .Where(c => !c.IsDeprecated /* || c.IsColdStorage || c.IsInternal*/).ToArray();
+            .Where(c => !c.IsDeprecated /* || c.IsInternal*/).ToArray();
 
         if (expiredCatalogues.Any())
             return

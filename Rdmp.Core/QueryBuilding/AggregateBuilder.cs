@@ -166,7 +166,7 @@ public class AggregateBuilder : ISqlQueryBuilder
     }
 
     /// <summary>
-    /// when adding columns you have the option of either including them in groupby (default) or omitting them from groupby.  If ommitted then the columns will be used to decide how to
+    /// when adding columns you have the option of either including them in groupby (default) or omitting them from groupby.  If omitted then the columns will be used to decide how to
     /// build the FROM statement (which tables to join etc) but not included in the SELECT and GROUP BY sections of the query
     /// </summary>
     private readonly List<IColumn> _skipGroupByForThese = new();
@@ -178,7 +178,7 @@ public class AggregateBuilder : ISqlQueryBuilder
     /// <param name="limitationSQL"></param>
     /// <param name="countSQL"></param>
     /// <param name="aggregateConfigurationIfAny"></param>
-    /// <param name="forceJoinsToTheseTables">Tables you definetly want the query to join against in the FROM section (compatible <see cref="JoinInfo"/> must exist if there are multiple)</param>
+    /// <param name="forceJoinsToTheseTables">Tables you definitely want the query to join against in the FROM section (compatible <see cref="JoinInfo"/> must exist if there are multiple)</param>
     public AggregateBuilder(string limitationSQL, string countSQL, AggregateConfiguration aggregateConfigurationIfAny,
         ITableInfo[] forceJoinsToTheseTables)
         : this(limitationSQL, countSQL, aggregateConfigurationIfAny)
@@ -406,7 +406,7 @@ public class AggregateBuilder : ISqlQueryBuilder
                     if (primary ==
                         null) //we don't currently know the primary (i.e. none of the SELECT columns were from primary tables so use this table as primary)
                         primary = t;
-                    else if (primary.ID == t.ID) //we know the primary already but it is the same table so thats fine
+                    else if (primary.ID == t.ID) //we know the primary already but it is the same table so that's fine
                         continue;
                     else
                         //this isn't fine
@@ -506,7 +506,7 @@ public class AggregateBuilder : ISqlQueryBuilder
 
             CompileCustomLinesInStageAndAddToList(QueryComponent.GroupBy, queryLines);
 
-            //order by only if we are not pivotting
+            //order by only if we are not pivoting
             if (!DoNotWriteOutOrderBy)
             {
                 queryLines.Add(new CustomLine("order by ", QueryComponent.OrderBy));
@@ -614,7 +614,7 @@ public class AggregateBuilder : ISqlQueryBuilder
         if (Equals(column, _axisAppliesToDimension))
             line.Role = CustomLineRole.Axis;
 
-        //if it is a count column then flag it as that (cic aggregates take extreme liberties with count columns like hijacking them in a most dispicable way so don't even bother with this flag for them)
+        //if it is a count column then flag it as that (cic aggregates take extreme liberties with count columns like hijacking them in a most despicable way so don't even bother with this flag for them)
         if (column is AggregateCountColumn && !_isCohortIdentificationAggregate)
             line.Role = CustomLineRole.CountFunction;
 
@@ -687,7 +687,7 @@ public class AggregateBuilder : ISqlQueryBuilder
     }
 
     /// <summary>
-    /// Throws <see cref="NotSupportedException"/> since <see cref="Lookup"/> canot be part of an aggregate GROUP BY
+    /// Throws <see cref="NotSupportedException"/> since <see cref="Lookup"/> cannot be part of an aggregate GROUP BY
     /// </summary>
     /// <returns></returns>
     public IEnumerable<Lookup> GetDistinctRequiredLookups() => throw new NotSupportedException();
