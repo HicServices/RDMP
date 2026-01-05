@@ -132,14 +132,6 @@ public partial class PipelineDiagramUI : UserControl
 
         pInitializationObjects.Controls.Clear();
 
-        var factory = new AtomicCommandUIFactory(_activator);
-
-        foreach (var o in _useCase.GetInitializationObjects().Reverse())
-        {
-            var b = factory.CreateButton(new ExecuteCommandDescribe(_activator, o));
-            pInitializationObjects.Controls.Add(b);
-        }
-
         try
         {
             //if there is a pipeline

@@ -45,7 +45,7 @@ public partial class ViewExtractionSqlUI : ViewExtractionSql_Design
     private ToolStripButton rbSupplemental = new("Supplemental") { Checked = true };
     private ToolStripButton rbSpecialApproval = new("Special Approval");
     private ToolStripButton rbInternal = new("Internal");
-    private ToolStripButton btnRun = new("Run", CatalogueIcons.ExecuteArrow.ImageToBitmap());
+    private ToolStripButton btnRun = new("Run", CatalogueIcons.Execute.ImageToBitmap());
 
     private Scintilla QueryPreview;
 
@@ -197,11 +197,9 @@ public partial class ViewExtractionSqlUI : ViewExtractionSql_Design
         RefreshUIFromDatabase();
 
         rbCore.Image = CatalogueIcons.ExtractionInformation.ImageToBitmap();
-        rbSupplemental.Image = CatalogueIcons.ExtractionInformation_Supplemental.ImageToBitmap();
-        rbSpecialApproval.Image = CatalogueIcons.ExtractionInformation_SpecialApproval.ImageToBitmap();
-        rbInternal.Image = activator.CoreIconProvider
-            .GetImage(SixLabors.ImageSharp.Image.Load<Rgba32>(CatalogueIcons.ExtractionInformation_SpecialApproval),
-                OverlayKind.Internal).ImageToBitmap();
+        rbSupplemental.Image = null;
+        rbSpecialApproval.Image = null;
+        rbInternal.Image = null;
 
         CommonFunctionality.Add(rbCore);
         CommonFunctionality.Add(rbSupplemental);

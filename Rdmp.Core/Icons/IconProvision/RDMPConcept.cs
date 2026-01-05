@@ -15,11 +15,11 @@ public enum RDMPConcept
     Database,
     SQL,
     ReOrder,
-
+    Executable,
     DQE,
     TimeCoverageField,
     Clipboard,
-
+    ExternalDatabaseServer_Cache,
     //catalogue database objects
     AllAutomationServerSlotsNode,
     AutomationServiceSlot,
@@ -27,7 +27,6 @@ public enum RDMPConcept
     AutomationServiceException,
     AllRDMPRemotesNode,
     RemoteRDMP,
-    Favourite,
 
     LoadMetadata,
     CacheProgress,

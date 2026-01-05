@@ -40,7 +40,7 @@ public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
 {
     private ToolStripButton btnAddCatalogue = new("Add Catalogue") { Name = "btnAddCatalogue" };
 
-    private ToolStripButton btnRemoveAll = new("Clear", FamFamFamIcons.delete_multi.ImageToBitmap())
+    private ToolStripButton btnRemoveAll = new("Clear", CatalogueIcons.Delete.ImageToBitmap())
     { Name = "btnRemoveAll" };
 
     private ToolStripButton btnAddExtractableDatasetPackage =
@@ -64,9 +64,9 @@ public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
 
         ddShowPeriod.ComboBox.DataSource = Enum.GetValues(typeof(RacewayShowPeriod));
 
-        btnRemoveAll.Image = FamFamFamIcons.delete_multi.ImageToBitmap();
-        _ignoreRowCounts = CatalogueIcons.RowCounts_Ignore.ImageToBitmap();
-        _respectRowCounts = CatalogueIcons.RowCounts_Respect.ImageToBitmap();
+        btnRemoveAll.Image = CatalogueIcons.Delete.ImageToBitmap();
+        _ignoreRowCounts = null;
+        _respectRowCounts = null;
     }
 
     private DashboardControl _dashboardControlDatabaseRecord;

@@ -32,7 +32,7 @@ public partial class RDMPTaskBarUI : UserControl
     {
         InitializeComponent();
 
-        btnHome.Image = FamFamFamIcons.application_home.ImageToBitmap();
+        btnHome.Image = CatalogueIcons.Home.ImageToBitmap();
         btnCatalogues.Image = CatalogueIcons.Catalogue.ImageToBitmap();
         btnCatalogues.BackgroundImage =
             BackColorProvider.GetBackgroundImage(btnCatalogues.Size, RDMPCollection.Catalogue);
@@ -51,14 +51,9 @@ public partial class RDMPTaskBarUI : UserControl
         btnTables.Image = CatalogueIcons.TableInfo.ImageToBitmap();
         btnTables.BackgroundImage = BackColorProvider.GetBackgroundImage(btnTables.Size, RDMPCollection.Tables);
 
-        btnConfiguration.Image = FamFamFamIcons.pencil_go.ImageToBitmap();
-        btnConfiguration.BackgroundImage = BackColorProvider.GetBackgroundImage(btnConfiguration.Size, RDMPCollection.Datasets);
-
         btnLoads.Image = CatalogueIcons.LoadMetadata.ImageToBitmap();
-        btnLoads.BackgroundImage = BackColorProvider.GetBackgroundImage(btnConfiguration.Size, RDMPCollection.DataLoad);
+        btnLoads.BackgroundImage = BackColorProvider.GetBackgroundImage(btnLoads.Size, RDMPCollection.DataLoad);
 
-        btnFavourites.Image = CatalogueIcons.Favourite.ImageToBitmap();
-        btnDeleteLayout.Image = FamFamFamIcons.delete.ImageToBitmap();
 
         cbCommits.Image = CatalogueIcons.Commit.ImageToBitmap();
         cbCommits.Checked = UserSettings.EnableCommits;
@@ -75,7 +70,6 @@ public partial class RDMPTaskBarUI : UserControl
 
         btnDataExport.Enabled = manager.RepositoryLocator.DataExportRepository != null;
 
-        ReCreateDropDowns();
 
         SetupToolTipText();
 
@@ -110,19 +104,12 @@ public partial class RDMPTaskBarUI : UserControl
             btnDataExport.ToolTipText = "Show Projects and Extractable Dataset Packages allowing data extraction";
             btnTables.ToolTipText = "Advanced features e.g. logging, credentials, dashboards etc";
             btnLoads.ToolTipText = "Load configurations for reading data into your databases";
-            btnFavourites.ToolTipText = "Collection of all objects that you have favourited";
-            btnConfiguration.ToolTipText = "All external datasets that have been configured for use in RDMP";
         }
         catch (Exception e)
         {
             _manager.ActivateItems.GlobalErrorCheckNotifier.OnCheckPerformed(
                 new CheckEventArgs("Failed to setup tool tips", CheckResult.Fail, e));
         }
-    }
-
-    private void ReCreateDropDowns()
-    {
-        CreateDropDown<WindowLayout>(cbxLayouts, CreateNewLayout);
     }
 
     private void CreateDropDown<T>(ToolStripComboBox cbx, string createNewDashboard)
@@ -188,43 +175,10 @@ public partial class RDMPTaskBarUI : UserControl
             collectionToToggle = RDMPCollection.DataLoad;
         else if (button == btnSavedCohorts)
             collectionToToggle = RDMPCollection.SavedCohorts;
-        else if (button == btnFavourites)
-            collectionToToggle = RDMPCollection.Favourites;
-        else if (button == btnConfiguration)
-            collectionToToggle = RDMPCollection.Configurations;
         else
             throw new ArgumentOutOfRangeException(nameof(button));
 
         return collectionToToggle;
-    }
-
-
-    private void cbx_DropDownClosed(object sender, EventArgs e)
-    {
-        var cbx = (ToolStripComboBox)sender;
-
-        if (ReferenceEquals(cbx.SelectedItem, CreateNewLayout))
-            AddNewLayout();
-
-        if (cbx.SelectedItem is INamed toOpen)
-        {
-            var cmd = new ExecuteCommandActivate(_manager.ActivateItems, toOpen);
-            cmd.Execute();
-        }
-
-        UpdateButtonEnabledness();
-    }
-
-
-    private void cbx_SelectedIndexChanged(object sender, EventArgs e)
-    {
-        UpdateButtonEnabledness();
-    }
-
-    private void UpdateButtonEnabledness()
-    {
-        btnSaveWindowLayout.Enabled = cbxLayouts.SelectedItem is WindowLayout;
-        btnDeleteLayout.Enabled = cbxLayouts.SelectedItem is WindowLayout;
     }
 
     private void AddNewLayout()
@@ -238,8 +192,6 @@ public partial class RDMPTaskBarUI : UserControl
 
             var cmd = new ExecuteCommandActivate(_manager.ActivateItems, layout);
             cmd.Execute();
-
-            ReCreateDropDowns();
         }
     }
 
@@ -249,31 +201,7 @@ public partial class RDMPTaskBarUI : UserControl
         toolStrip1.Items.Add(button);
     }
 
-    private void btnDelete_Click(object sender, EventArgs e)
-    {
-        ToolStripComboBox cbx;
-        if (sender == btnDeleteLayout)
-            cbx = cbxLayouts;
-        else
-            throw new Exception("Unexpected sender");
 
-        if (cbx.SelectedItem is IDeleteable d)
-        {
-            _manager.ActivateItems.DeleteWithConfirmation(d);
-            ReCreateDropDowns();
-        }
-    }
-
-    private void btnSaveWindowLayout_Click(object sender, EventArgs e)
-    {
-        if (cbxLayouts.SelectedItem is WindowLayout layout)
-        {
-            var xml = _manager.MainForm.GetCurrentLayoutXml();
-
-            layout.LayoutData = xml;
-            layout.SaveToDatabase();
-        }
-    }
 
     private void btnBack_ButtonClick(object sender, EventArgs e)
     {

@@ -51,7 +51,7 @@ public partial class KeyDropLocationUI : UserControl
     public KeyDropLocationUI()
     {
         InitializeComponent();
-        btnClear.Image = FamFamFamIcons.delete.ImageToBitmap();
+        btnClear.Image = CatalogueIcons.Delete.ImageToBitmap();
         btnClear.Enabled = false;
     }
 

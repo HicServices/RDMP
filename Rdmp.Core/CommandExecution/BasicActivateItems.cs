@@ -64,9 +64,6 @@ public abstract class BasicActivateItems : IBasicActivateItems
     /// <inheritdoc/>
     public IServerDefaults ServerDefaults { get; }
 
-    /// <inheritdoc/>
-    public FavouritesProvider FavouritesProvider { get; private set; }
-
     public ICoreIconProvider CoreIconProvider { get; private set; }
 
     public CommentStore CommentStore => RepositoryLocator.CatalogueRepository.CommentStore;
@@ -129,9 +126,6 @@ public abstract class BasicActivateItems : IBasicActivateItems
 
         ServerDefaults = RepositoryLocator.CatalogueRepository;
 
-        //Shouldn't ever change externally to your session so doesn't need constantly refreshed
-        FavouritesProvider = new FavouritesProvider(this);
-
         // This has to happen before we create the child providers
         ConstructPluginChildProviders();
 
@@ -139,7 +133,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
         CoreChildProvider = GetChildProvider();
 
         //handle custom icons from plugin user interfaces in which
-        CoreIconProvider = new DataExportIconProvider(repositoryLocator, PluginUserInterfaces.ToArray());
+        CoreIconProvider = new IconProvider(repositoryLocator);//, PluginUserInterfaces.ToArray());
     }
 
     protected virtual ICoreChildProvider GetChildProvider()

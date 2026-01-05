@@ -235,9 +235,9 @@ public partial class AggregateEditorUI : AggregateEditor_Design, ISaveableUI
         if (_aggregate.IsJoinablePatientIndexTable())
             pictureBox1.Image = CatalogueIcons.BigPatientIndexTable.ImageToBitmap();
         else if (_aggregate.IsCohortIdentificationAggregate)
-            pictureBox1.Image = CatalogueIcons.BigCohort.ImageToBitmap();
+            pictureBox1.Image = CatalogueIcons.CohortIdentificationConfiguration.ImageToBitmap();
         else
-            pictureBox1.Image = CatalogueIcons.BigGraph.ImageToBitmap();
+            pictureBox1.Image = CatalogueIcons.AggregateGraph.ImageToBitmap();
 
         //set the name to the tostring not the .Name so that we ignore the cic prefix
         tbName.Text = _aggregate.ToString();

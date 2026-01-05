@@ -4,9 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Linq;
-using System.Windows.Forms;
+using BrightIdeasSoftware;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
@@ -18,9 +16,17 @@ using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.ReusableLibraryCode.Settings;
 using Rdmp.UI.Collections.Providers.Filtering;
+using Rdmp.UI.Collections.Renderers;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
+using System;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace Rdmp.UI.Collections;
 
@@ -58,7 +64,6 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
 
         olvFilters.AspectGetter += FilterAspectGetter;
         olvOrder.AspectGetter += OrderAspectGetter;
-
         bLoading = false;
 
         catalogueCollectionFilterUI1.FiltersChanged += (s, e) => ApplyFilters();
@@ -70,6 +75,15 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
             return ci.ExtractionInformation?.Order;
 
         return rowobject is ConcreteColumn o ? o.Order : (object)null;
+    }
+
+    private object StatusAspectGetter(object rowobject)
+    {
+        if (rowobject is Catalogue c)
+        {
+            return c;
+        }
+        return null;
     }
 
     protected override void OnEnter(EventArgs e)
@@ -167,7 +181,7 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
             var _refresh = new ToolStripMenuItem
             {
                 Visible = true,
-                Image = FamFamFamIcons.arrow_refresh.ImageToBitmap(),
+                Image = CatalogueIcons.Refresh.ImageToBitmap(),
                 Alignment = ToolStripItemAlignment.Right,
                 ToolTipText = "Refresh Object"
             };
@@ -205,7 +219,7 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
             tlvCatalogues.AddObjects(Activator.CoreChildProvider.AllCatalogues);
             _renderingFlatFiew = true;
         }
-        else if(!UserSettings.ShowFlatLists && _renderingFlatFiew)
+        else if (!UserSettings.ShowFlatLists && _renderingFlatFiew)
         {
             //reset to folder view
             tlvCatalogues.RemoveObjects(Activator.CoreChildProvider.AllCatalogues);
@@ -254,7 +268,7 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
             olvColumn1, //the icon column
                         //we have our own custom filter logic so no need to pass tbFilter
             olvColumn1, //also the renameable column
-            tbFilter
+            tbFilter,true
         );
 
         CommonTreeFunctionality.MaintainRootObjects = new[]

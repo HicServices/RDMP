@@ -12,11 +12,11 @@ using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Databases;
-using Rdmp.Core.Icons.IconOverlays;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.Menus.MenuItems;
@@ -35,21 +35,28 @@ internal class SetDumpServerMenuItem : RDMPToolStripMenuItem
         Image = activator.CoreIconProvider.GetImage(RDMPConcept.ExternalDatabaseServer, OverlayKind.Add)
             .ImageToBitmap();
 
-        var img = SixLabors.ImageSharp.Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_IdentifierDump);
+        //Image<Rgba32> img = null ;
 
         var cataRepo = activator.RepositoryLocator.CatalogueRepository;
 
         _availableServers = cataRepo.GetAllDatabases<IdentifierDumpDatabasePatcher>();
 
+        //var miUseExisting = new ToolStripMenuItem("Use Existing...",
+        //    IconOverlayProvider.GetOverlayNoCache(img, OverlayKind.Link).ImageToBitmap(), UseExisting)
+        //{
+        //    Enabled = _availableServers.Any()
+        //};
         var miUseExisting = new ToolStripMenuItem("Use Existing...",
-            IconOverlayProvider.GetOverlayNoCache(img, OverlayKind.Link).ImageToBitmap(), UseExisting)
+           null, UseExisting)
         {
             Enabled = _availableServers.Any()
         };
 
         DropDownItems.Add(miUseExisting);
-        DropDownItems.Add("Create New...", IconOverlayProvider.GetOverlayNoCache(img, OverlayKind.Add).ImageToBitmap(),
-            CreateNewIdentifierDumpServer);
+        //DropDownItems.Add("Create New...", IconOverlayProvider.GetOverlayNoCache(img, OverlayKind.Add).ImageToBitmap(),
+        //    CreateNewIdentifierDumpServer);
+        DropDownItems.Add("Create New...", null,
+           CreateNewIdentifierDumpServer);
     }
 
     private void UseExisting(object sender, EventArgs e)

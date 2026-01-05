@@ -84,11 +84,12 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
         dataGridView1.CellFormatting += dataGridView1_CellFormatting;
         _processingTimeColIndex = dataGridView1.Columns["Processing Time"].Index;
 
-        _information = ChecksAndProgressIcons.Information.ImageToBitmap();
-        _warning = ChecksAndProgressIcons.Warning.ImageToBitmap();
-        _warningEx = ChecksAndProgressIcons.WarningEx.ImageToBitmap();
-        _fail = ChecksAndProgressIcons.Fail.ImageToBitmap();
-        _failEx = ChecksAndProgressIcons.FailEx.ImageToBitmap();
+        //todo do we want colours here?
+        _information = CatalogueIcons.Info.ImageToBitmap();
+        _warning = CatalogueIcons.Warning.ImageToBitmap();
+        _warningEx = CatalogueIcons.Warning.ImageToBitmap();
+        _fail = CatalogueIcons.Failed.ImageToBitmap();
+        _failEx = CatalogueIcons.Failed.ImageToBitmap();
 
         olvMessage.ImageGetter += ImageGetter;
         olvProgressEvents.ItemActivate += olvProgressEvents_ItemActivate;

@@ -9,7 +9,6 @@ using System.IO;
 using System.Linq;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data.DataLoad;
-using Rdmp.Core.Icons.IconOverlays;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
@@ -130,8 +129,7 @@ public class ExecuteCommandCreateNewFileBasedProcessTask : BasicCommandExecution
         {
             ProcessTaskType.SQLFile => iconProvider.GetImage(RDMPConcept.SQL, OverlayKind.Add),
             ProcessTaskType.SQLBakFile => iconProvider.GetImage(RDMPConcept.SQL, OverlayKind.Add), //todo maybe better
-            ProcessTaskType.Executable => IconOverlayProvider.GetOverlayNoCache(
-                Image.Load<Rgba32>(CatalogueIcons.Exe), OverlayKind.Add),
+            ProcessTaskType.Executable => iconProvider.GetImage(RDMPConcept.Executable, OverlayKind.Add),
             _ => null
         };
     }

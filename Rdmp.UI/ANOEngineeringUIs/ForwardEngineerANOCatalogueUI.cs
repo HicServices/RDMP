@@ -77,8 +77,8 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
 
         AssociatedCollection = RDMPCollection.Catalogue;
 
-        btnLoadPlan.Image = FamFamFamIcons.page_white_get.ImageToBitmap();
-        btnSavePlan.Image = FamFamFamIcons.page_white_put.ImageToBitmap();
+        //btnLoadPlan.Image = FamFamFamIcons.page_white_get.ImageToBitmap();
+        btnSavePlan.Image = CatalogueIcons.Save.ImageToBitmap();
     }
 
     #region Aspect Getters and Setters
@@ -326,7 +326,7 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
         if (!_setup)
         {
             var settings = new RDMPCollectionCommonFunctionalitySettings
-            { AddFavouriteColumn = false, AddCheckColumn = false };
+            { AddCheckColumn = false };
 
             //Set up tree view to show ANO Tables that are usable
             tlvANOTablesCommonFunctionality = new RDMPCollectionCommonFunctionality();

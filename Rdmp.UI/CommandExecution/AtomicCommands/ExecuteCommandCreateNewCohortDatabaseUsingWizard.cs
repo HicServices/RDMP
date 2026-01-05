@@ -38,5 +38,5 @@ public class ExecuteCommandCreateNewCohortDatabaseUsingWizard : BasicUICommandEx
         };
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => Image.Load<Rgba32>(FamFamFamIcons.wand);
+    //public override Image<Rgba32> GetImage(IIconProvider iconProvider) => Image.Load<Rgba32>(FamFamFamIcons.wand);
 }

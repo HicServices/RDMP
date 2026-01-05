@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Windows.Forms;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
@@ -62,7 +63,7 @@ public class RDMPControlCommonFunctionality
     private readonly RAGSmileyToolStrip _ragSmileyToolStrip;
 
     private readonly ToolStripButton _runChecksToolStripButton =
-        new("Run Checks", FamFamFamIcons.arrow_refresh.ImageToBitmap());
+        new("Run Checks", CatalogueIcons.Refresh.ImageToBitmap());
 
     private ICheckable _checkable;
     private IActivateItems _activator;
@@ -134,8 +135,8 @@ public class RDMPControlCommonFunctionality
         if (!string.IsNullOrWhiteSpace(overrideCommandName))
             button.Text = overrideCommandName;
 
-        if (overrideImage != null)
-            button.Image = overrideImage.ImageToBitmap();
+        //if (overrideImage != null)
+        //    button.Image = overrideImage.ImageToBitmap();
 
         Add(button, underMenu);
     }
@@ -170,6 +171,14 @@ public class RDMPControlCommonFunctionality
         {
             ToolStrip.Items.Add(item);
         }
+    }
+
+    public void AddDropdown(string name, Bitmap image, bool includeText = false)
+    {
+        if (!_dropDownButtons.ContainsKey(name))
+            _dropDownButtons.Add(name,
+                new ToolStripDropDownButton { Text = name, Image = image, DisplayStyle = includeText ? ToolStripItemDisplayStyle.ImageAndText : ToolStripItemDisplayStyle.Image });
+        ToolStrip.Items.Add(_dropDownButtons[name]);
     }
 
     /// <summary>
@@ -424,7 +433,7 @@ public class RDMPControlCommonFunctionality
     /// <param name="showIcon">True to add the text icon next to the text</param>
     public void Add(string label, bool showIcon = true)
     {
-        Add(new ToolStripLabel(label, showIcon ? FamFamFamIcons.text_align_left.ImageToBitmap() : null));
+        Add(new ToolStripLabel(label, showIcon ? CatalogueIcons.TextAlignLeft.ImageToBitmap() : null));
     }
 
     /// <summary>

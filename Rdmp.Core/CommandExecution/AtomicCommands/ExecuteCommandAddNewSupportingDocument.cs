@@ -99,6 +99,6 @@ public class ExecuteCommandAddNewSupportingDocument : BasicCommandExecution, IAt
             Activate(doc);
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.SupportingDocument, OverlayKind.Add);
+    //public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+    //    iconProvider.GetImage(RDMPConcept.SupportingDocument, OverlayKind.Add);
 }

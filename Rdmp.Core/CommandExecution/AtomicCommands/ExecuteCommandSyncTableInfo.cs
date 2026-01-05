@@ -41,7 +41,7 @@ public class ExecuteCommandSyncTableInfo : BasicCommandExecution
         _autoYes = autoYes;
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => Image.Load<Rgba32>(CatalogueIcons.Sync);
+    //public override Image<Rgba32> GetImage(IIconProvider iconProvider) => Image.Load<Rgba32>(CatalogueIcons.Sync);
 
     public override string GetCommandName() => _alsoSyncAno ? "Sync TableInfo and ANO Configuration" : "Sync TableInfo";
 

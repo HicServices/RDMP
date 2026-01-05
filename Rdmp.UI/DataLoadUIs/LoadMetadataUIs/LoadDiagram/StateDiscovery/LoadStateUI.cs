@@ -31,9 +31,9 @@ public partial class LoadStateUI : UserControl
     {
         InitializeComponent();
 
-        _unknown = CatalogueIcons.OrangeIssue.ImageToBitmap();
+        _unknown = null;
         _noLoadUnderway = CatalogueIcons.Tick.ImageToBitmap();
-        _executingOrCrashed = CatalogueIcons.ExecuteArrow.ImageToBitmap();
+        _executingOrCrashed = CatalogueIcons.Execute.ImageToBitmap();
 
         BackColor = Color.Wheat;
         SetStatus(LoadState.Unknown);

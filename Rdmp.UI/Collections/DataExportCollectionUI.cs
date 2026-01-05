@@ -88,7 +88,7 @@ public partial class DataExportCollectionUI : RDMPCollectionUI, ILifetimeSubscri
             Activator,
             olvName,
             olvName,
-            tbFilter
+            tbFilter,true
         );
 
         CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = a => GetWhitespaceRightClickMenu();
@@ -138,7 +138,7 @@ public partial class DataExportCollectionUI : RDMPCollectionUI, ILifetimeSubscri
         var _refresh = new ToolStripMenuItem
         {
             Visible = true,
-            Image = FamFamFamIcons.arrow_refresh.ImageToBitmap(),
+            Image = CatalogueIcons.Refresh.ImageToBitmap(),
             Alignment = ToolStripItemAlignment.Right,
             ToolTipText = "Refresh Object"
         };

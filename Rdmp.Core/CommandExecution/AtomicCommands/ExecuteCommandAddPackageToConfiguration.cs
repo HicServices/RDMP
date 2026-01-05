@@ -37,7 +37,7 @@ public sealed class ExecuteCommandAddPackageToConfiguration : BasicCommandExecut
         }
         else
         {
-            SetImpossible("CoreChildProvider is not DataExportIconProvider");
+            SetImpossible("CoreChildProvider is not DataExportChildProvider");
         }
     }
 

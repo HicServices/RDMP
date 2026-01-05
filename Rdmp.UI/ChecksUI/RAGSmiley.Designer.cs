@@ -1,4 +1,8 @@
-﻿namespace Rdmp.UI.ChecksUI
+﻿using Rdmp.Core.Icons.IconProvision;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
+
+namespace Rdmp.UI.ChecksUI
 {
     partial class RAGSmiley
     {
@@ -45,7 +49,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pbGreen.BackColor = System.Drawing.Color.Transparent;
-            this.pbGreen.Image = ((System.Drawing.Image)(resources.GetObject("pbGreen.Image")));
+            this.pbGreen.Image = (System.Drawing.Image)CatalogueIcons.TickLarge.ImageToBitmap();
             this.pbGreen.Location = new System.Drawing.Point(0, 0);
             this.pbGreen.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.pbGreen.Name = "pbGreen";
@@ -61,7 +65,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pbYellow.BackColor = System.Drawing.Color.Transparent;
-            this.pbYellow.Image = ((System.Drawing.Image)(resources.GetObject("pbYellow.Image")));
+            this.pbYellow.Image = (System.Drawing.Image)CatalogueIcons.WarningLarge.ImageToBitmap();
             this.pbYellow.Location = new System.Drawing.Point(0, 0);
             this.pbYellow.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.pbYellow.Name = "pbYellow";
@@ -77,7 +81,8 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pbRed.BackColor = System.Drawing.Color.Transparent;
-            this.pbRed.Image = ((System.Drawing.Image)(resources.GetObject("pbRed.Image")));
+            //this.pbRed.Image = (System.Drawing.Image)(CatalogueIcons.FailedLarge.ImageToBitmap());
+            this.pbRed.Image = (System.Drawing.Image)(CatalogueIcons.Failed.ImageToBitmap());
             this.pbRed.Location = new System.Drawing.Point(0, 0);
             this.pbRed.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.pbRed.Name = "pbRed";

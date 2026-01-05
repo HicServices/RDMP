@@ -31,7 +31,7 @@ public class ExceptionCounterUI : ToolStripButton, ICheckNotifier
 
     public ExceptionCounterUI()
     {
-        Image = Images.exclamation.ImageToBitmap();
+        Image = CatalogueIcons.Failed.ImageToBitmap();//Images.exclamation.ImageToBitmap();
         Enabled = false;
         ToolTipText = "Application Errors";
     }

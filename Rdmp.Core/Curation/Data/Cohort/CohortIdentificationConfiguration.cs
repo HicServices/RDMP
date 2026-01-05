@@ -4,24 +4,27 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Linq;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.FilterImporting;
 using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.Databases;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
+using Rdmp.Core.Providers;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Annotations;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.Ticketing;
+using System;
+using System.Collections.Generic;
+using System.Data.Common;
+using System.Linq;
 
 namespace Rdmp.Core.Curation.Data.Cohort;
 
@@ -278,6 +281,18 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
 
         //save us to database to cement the object
         SaveToDatabase();
+    }
+
+    public bool IsAssociatedToAProject(DataExportChildProvider dx)
+    {
+        var associations = dx.AllProjectAssociatedCics.Where(c => c.CohortIdentificationConfiguration_ID == this.ID);
+        return associations.Any();
+    }
+
+    public List<IProject> GetAssociatedProjects(DataExportChildProvider dx)
+    {
+        var associations = dx.AllProjectAssociatedCics.Where(c => c.CohortIdentificationConfiguration_ID == this.ID);
+        return [.. associations.Select(a => a.Project)];
     }
 
     /// <inheritdoc/>

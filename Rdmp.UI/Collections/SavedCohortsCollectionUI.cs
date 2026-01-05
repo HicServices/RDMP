@@ -73,7 +73,7 @@ public partial class SavedCohortsCollectionUI : RDMPCollectionUI, ILifetimeSubsc
         var _refresh = new ToolStripMenuItem
         {
             Visible = true,
-            Image = FamFamFamIcons.arrow_refresh.ImageToBitmap(),
+            Image = CatalogueIcons.Refresh.ImageToBitmap(),
             Alignment = ToolStripItemAlignment.Right,
             ToolTipText = "Refresh Object"
         };

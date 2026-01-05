@@ -1,4 +1,5 @@
 ﻿using BrightIdeasSoftware;
+using Rdmp.Core.Icons.IconProvision;
 using System.Windows.Forms.DataVisualization.Charting;
 
 namespace Rdmp.UI.Overview
@@ -96,7 +97,7 @@ namespace Rdmp.UI.Overview
             // 
             // btnSettings
             // 
-            btnSettings.Image = (System.Drawing.Image)resources.GetObject("btnSettings.Image");
+            btnSettings.Image = CatalogueIcons.Settings.ImageToBitmap();
             btnSettings.Location = new System.Drawing.Point(230, 3);
             btnSettings.Name = "btnSettings";
             btnSettings.Size = new System.Drawing.Size(26, 23);

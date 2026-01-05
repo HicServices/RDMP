@@ -1,4 +1,5 @@
-﻿using Rdmp.UI.ChecksUI;
+﻿using Rdmp.Core.Icons.IconProvision;
+using Rdmp.UI.ChecksUI;
 using Rdmp.UI.Progress;
 
 namespace Rdmp.UI.SimpleControls
@@ -68,7 +69,7 @@ namespace Rdmp.UI.SimpleControls
             // 
             // btnAbortLoad
             // 
-            this.btnAbortLoad.Image = ((System.Drawing.Image)(resources.GetObject("btnAbortLoad.Image")));
+            this.btnAbortLoad.Image = CatalogueIcons.StopLarge.ImageToBitmap();
             this.btnAbortLoad.Location = new System.Drawing.Point(177, 15);
             this.btnAbortLoad.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnAbortLoad.Name = "btnAbortLoad";
@@ -79,7 +80,7 @@ namespace Rdmp.UI.SimpleControls
             // 
             // btnExecute
             // 
-            this.btnExecute.Image = ((System.Drawing.Image)(resources.GetObject("btnExecute.Image")));
+            this.btnExecute.Image = CatalogueIcons.ExecuteLarge.ImageToBitmap();
             this.btnExecute.Location = new System.Drawing.Point(78, 15);
             this.btnExecute.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnExecute.Name = "btnExecute";
@@ -131,7 +132,7 @@ namespace Rdmp.UI.SimpleControls
             // 
             // btnRunChecks
             // 
-            this.btnRunChecks.Image = ((System.Drawing.Image)(resources.GetObject("btnRunChecks.Image")));
+            this.btnRunChecks.Image = CatalogueIcons.RefreshLarge.ImageToBitmap();
             this.btnRunChecks.Location = new System.Drawing.Point(44, 15);
             this.btnRunChecks.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnRunChecks.Name = "btnRunChecks";

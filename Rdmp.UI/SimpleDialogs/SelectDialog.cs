@@ -21,13 +21,13 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataExport.Data;
-using Rdmp.Core.Icons.IconOverlays;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Providers;
 using Rdmp.Core.ReusableLibraryCode.Settings;
 using Rdmp.UI.Collections;
+using Rdmp.UI.Collections.Renderers;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Theme;
 
@@ -226,6 +226,8 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         olv.UseCellFormatEvents = true;
         olv.FormatCell += Olv_FormatCell;
 
+        olvStatus.Renderer = new StatusRenderer(_activator);
+        olv.AllColumns.Insert(3, olvStatus);
         olvName.ImageGetter = GetImage;
         olv.RowHeight = 19;
 
@@ -253,6 +255,8 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
             new Guid("bb0fe2f0-1e73-4b00-a5b7-4b6ce3510bab"));
         RDMPCollectionCommonFunctionality.SetupColumnTracking(olv, olvHierarchy,
             new Guid("9393c6f0-b2c5-4bf8-8675-3a0117a2c850"));
+        RDMPCollectionCommonFunctionality.SetupColumnTracking(olv, olvStatus,
+           new Guid("898b9149-8c9d-492a-9cfd-004114bb7541"));
 
         btnCancel.KeyPress += BtnKeypress;
         btnSelect.KeyPress += BtnKeypress;
@@ -352,9 +356,12 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
             if (_searchables?.TryGetValue(m, out var searchable) != true) return null;
 
             var parent = searchable?.GetMostDescriptiveParent();
+            //return parent == null
+            //    ? null
+            //    : IconOverlayProvider.GetGreyscale(_activator.CoreIconProvider.GetImage(parent)).ImageToBitmap();
             return parent == null
                 ? null
-                : IconOverlayProvider.GetGreyscale(_activator.CoreIconProvider.GetImage(parent)).ImageToBitmap();
+                : _activator.CoreIconProvider.GetImage(parent).ImageToBitmap();
         }
     }
 

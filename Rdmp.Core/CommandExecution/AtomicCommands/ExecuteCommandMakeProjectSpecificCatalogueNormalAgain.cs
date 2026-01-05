@@ -78,7 +78,4 @@ public class ExecuteCommandMakeProjectSpecificCatalogueNormalAgain : BasicComman
 
         Publish(_catalogue);
     }
-
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        Image.Load<Rgba32>(CatalogueIcons.MakeProjectSpecificCatalogueNormalAgain);
 }

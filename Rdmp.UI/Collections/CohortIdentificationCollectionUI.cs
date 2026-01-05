@@ -37,7 +37,6 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
     public CohortIdentificationCollectionUI()
     {
         InitializeComponent();
-        olvFrozen.AspectGetter = FrozenAspectGetter;
         olvAssociatedProjects.AspectGetter = AssociatedProjectsAspectGetter;
     }
 
@@ -52,7 +51,8 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
             Activator,
             olvName, //column with the icon
             olvName, //column that can be renamed
-            tbFilter
+            tbFilter,
+            true
         );
         CommonTreeFunctionality.AxeChildren = new[]
         {
@@ -117,13 +117,12 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
         {
             CommonTreeFunctionality.SetupColumnTracking(olvName, new Guid("f8a42259-ce5a-4006-8ab8-e0305fce05aa"));
             CommonTreeFunctionality.SetupColumnTracking(olvAssociatedProjects, new Guid("f8a42259-ce5a-4006-8ab8-e0305fce05aa"));
-            CommonTreeFunctionality.SetupColumnTracking(olvFrozen, new Guid("d1e155ef-a28f-41b5-81e4-b763627ddb3c"));
 
             tlvCohortIdentificationConfigurations.Expand(rootFolder);
             var _refresh = new ToolStripMenuItem
             {
                 Visible = true,
-                Image = FamFamFamIcons.arrow_refresh.ImageToBitmap(),
+                Image = CatalogueIcons.Refresh.ImageToBitmap(),
                 Alignment = ToolStripItemAlignment.Right,
                 ToolTipText = "Refresh Object"
             };
@@ -157,8 +156,7 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
         if (cic != null)
         {
             var dx = Activator.CoreChildProvider as DataExportChildProvider;
-            var associations = dx.AllProjectAssociatedCics.Where(c => c.CohortIdentificationConfiguration_ID == cic.ID);
-            return string.Join(", ", associations.Select(a => a.Project.ID));
+            return string.Join(", ", cic.GetAssociatedProjects(dx));
         }
         return "";
     }

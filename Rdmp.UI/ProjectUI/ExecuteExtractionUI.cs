@@ -259,7 +259,6 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
             _commonFunctionality.SetUp(RDMPCollection.None, tlvDatasets, activator, olvName, null,
                 new RDMPCollectionCommonFunctionalitySettings
                 {
-                    AddFavouriteColumn = false,
                     SuppressChildrenAdder = true,
                     SuppressActivate = true,
                     AddCheckColumn = false

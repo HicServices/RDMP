@@ -12,7 +12,7 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.Curation.Data.Referencing;
 
 /// <summary>
-/// Abstract base class for all database objects that reference a single other arbitrary database object e.g. <see cref="Favourite"/>.
+/// Abstract base class for all database objects that reference a single other arbitrary database object.
 /// </summary>
 public abstract class ReferenceOtherObjectDatabaseEntity : DatabaseEntity, IReferenceOtherObjectWithPersist
 {

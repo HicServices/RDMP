@@ -44,16 +44,16 @@ public class ExecuteCommandSetContainerOperation : BasicCommandExecution
         ? OverrideCommandName
         : $"Set operation {_operation}";
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return _operation switch
-        {
-            SetOperation.EXCEPT => iconProvider.GetImage(Image.Load<Rgba32>(CatalogueIcons.EXCEPT)),
-            SetOperation.INTERSECT => iconProvider.GetImage(Image.Load<Rgba32>(CatalogueIcons.INTERSECT)),
-            SetOperation.UNION => iconProvider.GetImage(Image.Load<Rgba32>(CatalogueIcons.UNION)),
-            _ => base.GetImage(iconProvider)
-        };
-    }
+    //public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    //{
+    //    return _operation switch
+    //    {
+    //        SetOperation.EXCEPT => iconProvider.GetImage(Image.Load<Rgba32>(CatalogueIcons.EXCEPT)),
+    //        SetOperation.INTERSECT => iconProvider.GetImage(Image.Load<Rgba32>(CatalogueIcons.INTERSECT)),
+    //        SetOperation.UNION => iconProvider.GetImage(Image.Load<Rgba32>(CatalogueIcons.UNION)),
+    //        _ => base.GetImage(iconProvider)
+    //    };
+    //}
 
     public override void Execute()
     {

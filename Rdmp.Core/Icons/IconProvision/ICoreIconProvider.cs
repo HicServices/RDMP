@@ -13,7 +13,6 @@ namespace Rdmp.Core.Icons.IconProvision;
 
 public interface ICoreIconProvider : IIconProvider
 {
-    Dictionary<string, Image<Rgba32>> GetImageList(bool addFavouritesOverlayKeysToo);
 
     /// <summary>
     /// Returns true if there is a valid icon associated with the object (i.e. not a NoIconAvailable icon).

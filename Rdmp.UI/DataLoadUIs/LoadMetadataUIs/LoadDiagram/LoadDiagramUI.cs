@@ -56,7 +56,7 @@ public partial class LoadDiagramUI : LoadDiagram_Design
     private LoadDiagramServerNode _raw;
     private readonly RDMPCollectionCommonFunctionality _collectionCommonFunctionality = new();
 
-    private readonly ToolStripButton _btnFetchData = new("Fetch State", CatalogueIcons.DatabaseRefresh.ImageToBitmap())
+    private readonly ToolStripButton _btnFetchData = new("Fetch State", CatalogueIcons.Refresh.ImageToBitmap())
     {
         DisplayStyle = ToolStripItemDisplayStyle.ImageAndText
     };
@@ -172,7 +172,7 @@ public partial class LoadDiagramUI : LoadDiagram_Design
                         : Activator.CoreIconProvider.GetImage(loadDiagramServerNode, OverlayKind.Problem)
                             .ImageToBitmap(),
                 LoadDiagramDatabaseNode db => db.GetImage(Activator.CoreIconProvider),
-                LoadDiagramTableNode => Activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo).ImageToBitmap(),
+                LoadDiagramTableNode => CatalogueIcons.TableInfo.ImageToBitmap(),
                 LoadDiagramColumnNode col => col.GetImage(Activator.CoreIconProvider),
                 _ => null
             };
@@ -270,7 +270,6 @@ public partial class LoadDiagramUI : LoadDiagram_Design
             _collectionCommonFunctionality.SetUp(RDMPCollection.None, tlvLoadedTables, activator, null, null,
                 new RDMPCollectionCommonFunctionalitySettings
                 {
-                    AddFavouriteColumn = false,
                     AddIDColumn = false,
                     SuppressChildrenAdder = true,
                     SuppressActivate = true,

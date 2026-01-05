@@ -25,7 +25,7 @@ namespace Rdmp.UI.ItemActivation;
 
 /// <summary>
 /// Central component class for handling all low level RDMP main user interface systems. This includes things like Tree object child provision, Icon provision,
-/// the publish system for notifying out of date objects etc.  Each function is segregated by a component class property e.g. RefreshBus, FavouritesProvider etc
+/// the publish system for notifying out of date objects etc.  Each function is segregated by a component class property e.g. RefreshBus etc
 /// 
 /// <para>Also exposes the location of the Catalogue / Data Export repository databases via RepositoryLocator</para>
 /// </summary>

@@ -92,7 +92,6 @@ public partial class CommitsUI : CommitsUI_Design
                 SuppressChildrenAdder = true,
                 AddCheckColumn = false,
                 AddIDColumn = false,
-                AddFavouriteColumn = false
             });
 
         RDMPCollectionCommonFunctionality.SetupColumnSortTracking(treeListView1,

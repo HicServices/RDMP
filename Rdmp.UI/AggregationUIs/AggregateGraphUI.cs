@@ -80,16 +80,16 @@ public partial class AggregateGraphUI : AggregateGraph_Design
     public event DataTableHandler GraphTableRetrieved;
 
     private AggregateConfiguration _aggregateConfiguration;
-    private readonly ToolStripMenuItem _miSaveImages = new("Save Image", FamFamFamIcons.disk.ImageToBitmap());
+    private readonly ToolStripMenuItem _miSaveImages = new("Save Image", CatalogueIcons.Save.ImageToBitmap());
 
     private readonly ToolStripMenuItem _miCopyToClipboard =
-        new("Copy to Clipboard", CatalogueIcons.Clipboard.ImageToBitmap());
+        new("Copy to Clipboard", null);
 
     private readonly ToolStripMenuItem _miClipboardWord = new("Word Format");
     private readonly ToolStripMenuItem _miClipboardCsv = new("Comma Separated Format");
-    private readonly ToolStripMenuItem _btnCache = new("Cache", FamFamFamIcons.picture_save.ImageToBitmap());
-    private readonly ToolStripButton _btnResendQuery = new("Send Query", FamFamFamIcons.arrow_refresh.ImageToBitmap());
-    private readonly ToolStripButton _btnRefreshData = new("Refresh Data", FamFamFamIcons.arrow_refresh.ImageToBitmap());
+    private readonly ToolStripMenuItem _btnCache = new("Cache", CatalogueIcons.Save.ImageToBitmap());
+    private readonly ToolStripButton _btnResendQuery = new("Send Query",CatalogueIcons.Refresh.ImageToBitmap());
+    private readonly ToolStripButton _btnRefreshData = new("Refresh Data", CatalogueIcons.Refresh.ImageToBitmap());
     private readonly ToolStripTimeout _timeoutControls = new();
 
     public AggregateGraphUI()

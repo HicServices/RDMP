@@ -38,12 +38,12 @@ public partial class CatalogueToDatasetLinkagePieChartUI : RDMPUserControl, IDas
     private readonly ToolStripButton _btnAllCatalogues =
         new("All", CatalogueIcons.AllCataloguesUsedByLoadMetadataNode.ImageToBitmap()) { Name = "btnAllCatalogues" };
 
-    private readonly ToolStripButton _btnRefresh = new("Refresh", FamFamFamIcons.text_list_bullets.ImageToBitmap())
+    private readonly ToolStripButton _btnRefresh = new("Refresh", CatalogueIcons.BulletList.ImageToBitmap())//could this just be a refresh?
     { Name = "btnRefresh" };
 
     private readonly ToolStripLabel _toolStripLabel1 = new("Type:") { Name = "toolStripLabel1" };
 
-    private readonly ToolStripButton _btnShowLabels = new("Labels", FamFamFamIcons.text_align_left.ImageToBitmap())
+    private readonly ToolStripButton _btnShowLabels = new("Labels", CatalogueIcons.TextAlignLeft.ImageToBitmap())
     { Name = "btnShowLabels", CheckOnClick = true };
 
     private readonly List<ToolStripMenuItem> _flagOptions = new();

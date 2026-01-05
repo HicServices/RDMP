@@ -7,7 +7,6 @@
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Databases;
-using Rdmp.Core.Icons.IconOverlays;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.QueryCaching.Aggregation;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
@@ -50,9 +49,7 @@ public sealed class ExecuteCommandClearQueryCache : BasicCommandExecution
         if (GetCacheCount() == 0) SetImpossible($"There are no cache entries for {cic}");
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        IconOverlayProvider.GetOverlayNoCache(Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_Cache),
-            OverlayKind.Delete);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => iconProvider.GetImage(RDMPConcept.ExternalDatabaseServer_Cache, OverlayKind.Delete);
 
     public override void Execute()
     {

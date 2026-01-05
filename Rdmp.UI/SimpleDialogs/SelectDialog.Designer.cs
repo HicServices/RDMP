@@ -38,6 +38,7 @@ namespace Rdmp.UI.SimpleDialogs
             this.olvSelected = new BrightIdeasSoftware.OLVColumn();
             this.olvID = new BrightIdeasSoftware.OLVColumn();
             this.olvName = new BrightIdeasSoftware.OLVColumn();
+            this.olvStatus = new OLVColumn();
             this.olvHierarchy = new BrightIdeasSoftware.OLVColumn();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
@@ -68,6 +69,7 @@ namespace Rdmp.UI.SimpleDialogs
             this.olvSelected,
             this.olvID,
             this.olvName,
+            this.olvStatus,
             this.olvHierarchy});
             this.olv.Dock = System.Windows.Forms.DockStyle.Fill;
             this.olv.FullRowSelect = true;
@@ -100,6 +102,12 @@ namespace Rdmp.UI.SimpleDialogs
             this.olvName.MinimumWidth = 100;
             this.olvName.Text = "Name";
             this.olvName.Width = 100;
+            // 
+            // olvStatus
+            // 
+            this.olvStatus.AspectName = "";
+            this.olvStatus.MinimumWidth = 100;
+            this.olvStatus.Text = "Status";
             // 
             // olvHierarchy
             // 
@@ -262,6 +270,7 @@ namespace Rdmp.UI.SimpleDialogs
         private System.Windows.Forms.TextBox tbFilter;
         private System.Windows.Forms.Label label1;
         private OLVColumn olvName;
+        private OLVColumn olvStatus;
         private OLVColumn olvHierarchy;
         private OLVColumn olvID;
         private OLVColumn olvSelected;

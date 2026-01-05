@@ -418,7 +418,7 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
     private void treeView1_ColumnRightClick(object sender, CellRightClickEventArgs e)
     {
         var RightClickMenu = new ContextMenuStrip();
-
+        RightClickMenu.ShowImageMargin = false;
 
         if (e.Model is LoadEventsTreeView_Category category)
         {

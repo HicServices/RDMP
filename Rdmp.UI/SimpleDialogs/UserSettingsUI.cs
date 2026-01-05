@@ -109,6 +109,7 @@ public partial class UserSettingsFileUI : Form
             nameof(UserSettings.UseAliasInsteadOfTransformInGroupByAggregateGraphs));
         RegisterCheckbox(cbUseLocalFileSystem, nameof(UserSettings.UseLocalFileSystem));
         RegisterCheckbox(cbFlatLogs, nameof(UserSettings.DefaultLogViewFlat));
+        RegisterCheckbox(cbUseShortstatusChips,nameof(UserSettings.UseShortStatusChips));
         AddTooltip(label7, nameof(UserSettings.CreateDatabaseTimeout));
         AddTooltip(tbCreateDatabaseTimeout, nameof(UserSettings.CreateDatabaseTimeout));
         AddTooltip(label13, nameof(UserSettings.ArchiveTriggerTimeout));
@@ -146,15 +147,6 @@ public partial class UserSettingsFileUI : Form
         tbWebhookUsername.Text = UserSettings.ExtractionWebhookUsername;
 
         _bLoaded = true;
-
-        var cmd = new ExecuteCommandClearFavourites(activator);
-        btnClearFavourites.Enabled = !cmd.IsImpossible;
-
-        btnClearFavourites.Click += (s, e) =>
-        {
-            cmd.Execute();
-            btnClearFavourites.Enabled = !cmd.IsImpossible;
-        };
 
         var clearUserSettingsCmd = new ExecuteCommandClearUserSettings(activator);
         btnClearUserSettings.Enabled = true;

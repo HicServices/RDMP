@@ -34,7 +34,6 @@ public class ExecuteCommandRunDetached : AutomationCommandExecution, IAtomicComm
 
     public override string GetCommandHelp() => "Generates the execute command line invocation (including arguments)";
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => Image.Load<Rgba32>(CatalogueIcons.Exe);
 
     public override void Execute()
     {

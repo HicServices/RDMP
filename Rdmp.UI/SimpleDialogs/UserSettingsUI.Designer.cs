@@ -45,7 +45,6 @@
             label6 = new System.Windows.Forms.Label();
             cbWait5Seconds = new System.Windows.Forms.CheckBox();
             cbShowCohortWizard = new System.Windows.Forms.CheckBox();
-            btnClearFavourites = new System.Windows.Forms.Button();
             btnClearUserSettings = new System.Windows.Forms.Button();
             cbDoubleClickToExpand = new System.Windows.Forms.CheckBox();
             cbDebugPerformance = new System.Windows.Forms.CheckBox();
@@ -64,7 +63,6 @@
             groupBox2 = new System.Windows.Forms.GroupBox();
             groupBox3 = new System.Windows.Forms.GroupBox();
             cbAutoRunSqlQueries = new System.Windows.Forms.CheckBox();
-            label8 = new System.Windows.Forms.Label();
             groupBox4 = new System.Windows.Forms.GroupBox();
             cbNewFind = new System.Windows.Forms.CheckBox();
             groupBox5 = new System.Windows.Forms.GroupBox();
@@ -82,6 +80,8 @@
             cbExpandAllInCohortBuilder = new System.Windows.Forms.CheckBox();
             cbStrictValidationForCohortBuilderContainers = new System.Windows.Forms.CheckBox();
             groupBox7 = new System.Windows.Forms.GroupBox();
+            cbUseShortstatusChips = new System.Windows.Forms.CheckBox();
+            cbFlatLogs = new System.Windows.Forms.CheckBox();
             label16 = new System.Windows.Forms.Label();
             tbLogLocation = new System.Windows.Forms.TextBox();
             label15 = new System.Windows.Forms.Label();
@@ -100,7 +100,6 @@
             userSettingsToolTips = new System.Windows.Forms.ToolTip(components);
             tbFind = new System.Windows.Forms.TextBox();
             label14 = new System.Windows.Forms.Label();
-            cbFlatLogs = new System.Windows.Forms.CheckBox();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)olvErrorCodes).BeginInit();
             groupBox2.SuspendLayout();
@@ -283,17 +282,6 @@
             cbShowCohortWizard.Text = "Show Cohort Wizard";
             cbShowCohortWizard.UseVisualStyleBackColor = true;
             // 
-            // btnClearFavourites
-            // 
-            btnClearFavourites.Location = new System.Drawing.Point(71, 73);
-            btnClearFavourites.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            btnClearFavourites.Name = "btnClearFavourites";
-            btnClearFavourites.Size = new System.Drawing.Size(100, 25);
-            btnClearFavourites.TabIndex = 10;
-            btnClearFavourites.Text = "Clear Favourites";
-            userSettingsToolTips.SetToolTip(btnClearFavourites, "Clear all the Favourites (items that have been 'started') from your collection views.");
-            btnClearFavourites.UseVisualStyleBackColor = true;
-            // 
             // btnClearUserSettings
             // 
             btnClearUserSettings.Location = new System.Drawing.Point(821, 40);
@@ -441,10 +429,8 @@
             // groupBox3
             // 
             groupBox3.Controls.Add(cbAutoRunSqlQueries);
-            groupBox3.Controls.Add(label8);
             groupBox3.Controls.Add(cbDoubleClickToExpand);
             groupBox3.Controls.Add(cbEmphasiseOnTabChanged);
-            groupBox3.Controls.Add(btnClearFavourites);
             groupBox3.Location = new System.Drawing.Point(249, 3);
             groupBox3.Name = "groupBox3";
             groupBox3.Size = new System.Drawing.Size(240, 165);
@@ -462,17 +448,6 @@
             cbAutoRunSqlQueries.TabIndex = 20;
             cbAutoRunSqlQueries.Text = "Auto Run Sql Queries";
             cbAutoRunSqlQueries.UseVisualStyleBackColor = true;
-            // 
-            // label8
-            // 
-            label8.AutoSize = true;
-            label8.Location = new System.Drawing.Point(4, 77);
-            label8.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            label8.Name = "label8";
-            label8.Size = new System.Drawing.Size(64, 15);
-            label8.TabIndex = 19;
-            label8.Text = "Favourites:";
-            userSettingsToolTips.SetToolTip(label8, "Clear all the Favourites (items that have been 'started') from your collection views.");
             // 
             // groupBox4
             // 
@@ -661,6 +636,7 @@
             // 
             // groupBox7
             // 
+            groupBox7.Controls.Add(cbUseShortstatusChips);
             groupBox7.Controls.Add(cbFlatLogs);
             groupBox7.Controls.Add(label16);
             groupBox7.Controls.Add(tbLogLocation);
@@ -688,6 +664,27 @@
             groupBox7.TabIndex = 25;
             groupBox7.TabStop = false;
             groupBox7.Text = "Miscellaneous";
+            // 
+            // cbUseShortstatusChips
+            // 
+            cbUseShortstatusChips.AutoSize = true;
+            cbUseShortstatusChips.Location = new System.Drawing.Point(7, 278);
+            cbUseShortstatusChips.Name = "cbUseShortstatusChips";
+            cbUseShortstatusChips.Size = new System.Drawing.Size(144, 19);
+            cbUseShortstatusChips.TabIndex = 30;
+            cbUseShortstatusChips.Text = "Use Short Status Chips";
+            cbUseShortstatusChips.UseVisualStyleBackColor = true;
+            // 
+            // cbFlatLogs
+            // 
+            cbFlatLogs.AutoSize = true;
+            cbFlatLogs.Location = new System.Drawing.Point(7, 257);
+            cbFlatLogs.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            cbFlatLogs.Name = "cbFlatLogs";
+            cbFlatLogs.Size = new System.Drawing.Size(140, 19);
+            cbFlatLogs.TabIndex = 29;
+            cbFlatLogs.Text = "Show Logs as Flat List";
+            cbFlatLogs.UseVisualStyleBackColor = true;
             // 
             // label16
             // 
@@ -853,17 +850,6 @@
             label14.TabIndex = 26;
             label14.Text = "Find Setting:";
             // 
-            // cbFlatLogs
-            // 
-            cbFlatLogs.AutoSize = true;
-            cbFlatLogs.Location = new System.Drawing.Point(7, 257);
-            cbFlatLogs.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            cbFlatLogs.Name = "cbFlatLogs";
-            cbFlatLogs.Size = new System.Drawing.Size(140, 19);
-            cbFlatLogs.TabIndex = 29;
-            cbFlatLogs.Text = "Show Logs as Flat List";
-            cbFlatLogs.UseVisualStyleBackColor = true;
-            // 
             // UserSettingsFileUI
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -922,7 +908,6 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.CheckBox cbWait5Seconds;
         private System.Windows.Forms.CheckBox cbShowCohortWizard;
-        private System.Windows.Forms.Button btnClearFavourites;
         private System.Windows.Forms.Button btnClearUserSettings;
         private System.Windows.Forms.CheckBox cbDoubleClickToExpand;
         private System.Windows.Forms.CheckBox cbDebugPerformance;
@@ -945,7 +930,6 @@
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.GroupBox groupBox6;
         private System.Windows.Forms.GroupBox groupBox7;
-        private System.Windows.Forms.Label label8;
         private System.Windows.Forms.ToolTip userSettingsToolTips;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Label label10;
@@ -978,5 +962,6 @@
         private System.Windows.Forms.Label label18;
         private System.Windows.Forms.TextBox tbWebhookUsername;
         private System.Windows.Forms.CheckBox cbFlatLogs;
+        private System.Windows.Forms.CheckBox cbUseShortstatusChips;
     }
 }

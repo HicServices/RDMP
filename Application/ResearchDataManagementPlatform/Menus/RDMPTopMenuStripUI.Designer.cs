@@ -1,4 +1,7 @@
 ﻿
+using Rdmp.Core.Icons.IconProvision;
+using Rdmp.UI;
+
 namespace ResearchDataManagementPlatform.Menus
 {
     partial class RDMPTopMenuStripUI
@@ -283,7 +286,7 @@ namespace ResearchDataManagementPlatform.Menus
             // 
             // navigateBackwardToolStripMenuItem
             // 
-            navigateBackwardToolStripMenuItem.Image = (System.Drawing.Image)resources.GetObject("navigateBackwardToolStripMenuItem.Image");
+            navigateBackwardToolStripMenuItem.Image = CatalogueIcons.Back.ImageToBitmap();
             navigateBackwardToolStripMenuItem.Name = "navigateBackwardToolStripMenuItem";
             navigateBackwardToolStripMenuItem.ShortcutKeyDisplayString = "Ctrl+-";
             navigateBackwardToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.OemMinus;
@@ -293,7 +296,7 @@ namespace ResearchDataManagementPlatform.Menus
             // 
             // navigateForwardToolStripMenuItem
             // 
-            navigateForwardToolStripMenuItem.Image = (System.Drawing.Image)resources.GetObject("navigateForwardToolStripMenuItem.Image");
+            navigateForwardToolStripMenuItem.Image = CatalogueIcons.Forward.ImageToBitmap();
             navigateForwardToolStripMenuItem.Name = "navigateForwardToolStripMenuItem";
             navigateForwardToolStripMenuItem.ShortcutKeyDisplayString = "Ctrl+Shift+-";
             navigateForwardToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.OemMinus;

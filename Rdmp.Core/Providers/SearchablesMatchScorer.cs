@@ -363,11 +363,9 @@ public class SearchablesMatchScorer
         Dictionary<KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList>, int> scores, int take,
         IBasicActivateItems activator)
     {
-        var favourites = activator.FavouritesProvider.CurrentFavourites;
 
         return scores.Where(score => score.Value > 0)
             .OrderByDescending(score => score.Value)
-            .ThenByDescending(kvp => favourites.Any(f => f.IsReferenceTo(kvp.Key.Key))) // favour favourites
             .ThenBy(kvp => kvp.Key.Key.ToString()) // sort ties alphabetically
             .Take(take)
             .Select(score => score.Key.Key)

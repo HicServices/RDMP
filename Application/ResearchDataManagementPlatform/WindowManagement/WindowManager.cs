@@ -142,18 +142,6 @@ public class WindowManager
                 toReturn = Show(RDMPCollection.SavedCohorts, collection, "Saved Cohorts",
                     Image.Load<Rgba32>(CatalogueIcons.AllCohortsNode));
                 break;
-            case RDMPCollection.Favourites:
-                collection = new FavouritesCollectionUI();
-                toReturn = Show(RDMPCollection.Favourites, collection, "Favourites",
-                    Image.Load<Rgba32>(CatalogueIcons.Favourite));
-                break;
-
-            case RDMPCollection.Configurations:
-                collection = new ConfigurationsCollectionUI();
-                toReturn = Show(RDMPCollection.Configurations, collection, "Configurations",
-                     Image.Load<Rgba32>(FamFamFamIcons.pencil_go));
-                break;
-
             default: throw new ArgumentOutOfRangeException(nameof(collectionToCreate));
         }
 
@@ -269,9 +257,6 @@ public class WindowManager
 
     public RDMPCollection GetCollectionForRootObject(object root)
     {
-        if (FavouritesCollectionUI.IsRootObject(ActivateItems, root))
-            return RDMPCollection.Favourites;
-
         if (CatalogueCollectionUI.IsRootObject(root))
             return RDMPCollection.Catalogue;
 
@@ -300,7 +285,7 @@ public class WindowManager
             _home = new HomeUI(ActivateItems);
 
             _homeContent = _windowFactory.Create(ActivateItems, _home, "Home",
-                Image.Load<Rgba32>(FamFamFamIcons.application_home));
+                Image.Load<Rgba32>(CatalogueIcons.Home));
             _homeContent.Closed += (s, e) => _home = null;
             _homeContent.Show(_mainDockPanel, DockState.Document);
         }

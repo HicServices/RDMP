@@ -1,4 +1,5 @@
-﻿using Rdmp.UI.ChecksUI;
+﻿using Rdmp.Core.Icons.IconProvision;
+using Rdmp.UI.ChecksUI;
 using Rdmp.UI.SimpleControls;
 
 namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs
@@ -218,7 +219,7 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs
             // 
             helpIcon1.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             helpIcon1.BackColor = System.Drawing.Color.Transparent;
-            helpIcon1.BackgroundImage = (System.Drawing.Image)resources.GetObject("helpIcon1.BackgroundImage");
+            helpIcon1.BackgroundImage = CatalogueIcons.Help.ImageToBitmap();
             helpIcon1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             helpIcon1.Location = new System.Drawing.Point(950, 2);
             helpIcon1.Margin = new System.Windows.Forms.Padding(0);

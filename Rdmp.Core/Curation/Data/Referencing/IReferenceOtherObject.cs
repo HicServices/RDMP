@@ -10,7 +10,7 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 namespace Rdmp.Core.Curation.Data.Referencing;
 
 /// <summary>
-/// Interface for all objects which reference a single other object e.g. <see cref="Favourite"/>
+/// Interface for all objects which reference a single other object
 /// </summary>
 public interface IReferenceOtherObject
 {

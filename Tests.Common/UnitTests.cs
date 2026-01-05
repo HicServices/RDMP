@@ -239,9 +239,6 @@ public class UnitTests
         if (typeof(T) == typeof(ExtractionFilterParameterSet))
             return (T)(object)WhenIHaveA<ExtractionFilterParameterSetValue>(repository).ExtractionFilterParameterSet;
 
-        if (typeof(T) == typeof(Favourite))
-            return (T)(object)new Favourite(repository, WhenIHaveA<Catalogue>(repository));
-
         if (typeof(T) == typeof(ObjectExport)) return (T)(object)WhenIHaveA(repository, out ShareManager _);
 
         if (typeof(T) == typeof(ObjectImport))

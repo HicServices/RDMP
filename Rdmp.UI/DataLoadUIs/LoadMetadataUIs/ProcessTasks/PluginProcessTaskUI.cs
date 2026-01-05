@@ -103,7 +103,7 @@ public partial class PluginProcessTaskUI : PluginProcessTaskUI_Design, ISaveable
 
         loadStageIconUI1.Setup(Activator.CoreIconProvider, _processTask.LoadStage);
 
-        CommonFunctionality.Add(new ToolStripButton("Check", FamFamFamIcons.arrow_refresh.ImageToBitmap(),
+        CommonFunctionality.Add(new ToolStripButton("Check", CatalogueIcons.Refresh.ImageToBitmap(),
             (s, e) => CheckComponent()));
     }
 

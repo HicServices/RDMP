@@ -48,10 +48,10 @@ public class RDMPSingleControlTabMenu : ContextMenuStrip
             RDMPContextMenuStrip.RegisterFetchGoToObjecstCallback(gotoMenu);
         }
 
-        Items.Add("Refresh", FamFamFamIcons.arrow_refresh.ImageToBitmap(),
+        Items.Add("Refresh", CatalogueIcons.Refresh.ImageToBitmap(),
             (s, e) => tab1.HandleUserRequestingTabRefresh(activator));
 
-        var help = new ToolStripMenuItem("Help", FamFamFamIcons.help.ImageToBitmap(),
+        var help = new ToolStripMenuItem("Help", CatalogueIcons.Help.ImageToBitmap(),
             (s, e) => tab1.ShowHelp(activator))
         {
             ShortcutKeys = Keys.F1

@@ -43,5 +43,5 @@ public class ExecuteCommandRefreshObject : BasicUICommandExecution, IAtomicComma
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        Image.Load<Rgba32>(FamFamFamIcons.arrow_refresh);
+        Image.Load<Rgba32>(CatalogueIcons.Refresh);
 }

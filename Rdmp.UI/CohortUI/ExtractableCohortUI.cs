@@ -148,7 +148,6 @@ public partial class ExtractableCohortUI : ExtractableCohortUI_Design, ISaveable
                 new RDMPCollectionCommonFunctionalitySettings
                 {
                     AddCheckColumn = false,
-                    AddFavouriteColumn = false,
                     AddIDColumn = true,
                     SuppressActivate = false,
                     SuppressChildrenAdder = true
@@ -160,7 +159,6 @@ public partial class ExtractableCohortUI : ExtractableCohortUI_Design, ISaveable
                 new RDMPCollectionCommonFunctionalitySettings
                 {
                     AddCheckColumn = false,
-                    AddFavouriteColumn = false,
                     AddIDColumn = true,
                     SuppressActivate = false,
                     SuppressChildrenAdder = true

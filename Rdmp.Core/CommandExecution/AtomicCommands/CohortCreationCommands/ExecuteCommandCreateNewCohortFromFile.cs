@@ -58,8 +58,6 @@ public class ExecuteCommandCreateNewCohortFromFile : CohortCreationCommandExecut
     public override string GetCommandHelp() =>
         "Create a cohort containing ALL the patient identifiers in the chosen file";
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => Image.Load<Rgba32>(CatalogueIcons.ImportFile);
-
     public override void Execute()
     {
         base.Execute();
