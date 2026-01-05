@@ -651,7 +651,8 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
             return CoreIconProvider.ImageUnknown.ImageToBitmap();
         }
         var hasProblems = _activator.HasProblem(rowObject);
-
+        if (rowObject is HistoryEntry he) return CoreIconProvider.GetImage(he.Object, hasProblems ? OverlayKind.Problem : OverlayKind.None)
+            .ImageToBitmap();
         return CoreIconProvider.GetImage(rowObject, hasProblems ? OverlayKind.Problem : OverlayKind.None)
             .ImageToBitmap();
 

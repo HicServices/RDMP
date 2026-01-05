@@ -170,7 +170,7 @@ public class IconProvider : ICoreIconProvider
         if (concept is LoadStage) return LoadStageNodeIconProvider.GetIcon(concept);
         if (concept is ExtractableColumn) return Image.Load<Rgba32>(CatalogueIcons.ColumnInfo);
         if (concept is CohortAggregateContainer ) return CohortAggregateContainerIconProvider.GetIcon(concept);
-            var x = concept.GetType();
+        var x = concept.GetType();
         return ImageUnknown;
     }
 
