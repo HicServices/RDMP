@@ -145,7 +145,12 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
 
         if (e.Model is not ArchivalDataLoadInfo dli) return;
 
+        var hasWarning = dli.Progress.Any(p => p.EventType == "OnWarning");
+
+
         if (dli.HasErrors)
+            e.Item.ForeColor = Color.Red;
+        else if (hasWarning)
             e.Item.ForeColor = Color.DarkOrange;
         else if (dli.EndTime == null) //did not end
             e.Item.ForeColor = Color.Purple;

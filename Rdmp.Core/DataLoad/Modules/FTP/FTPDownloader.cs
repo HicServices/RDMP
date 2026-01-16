@@ -135,7 +135,7 @@ public class FTPDownloader : IPluginDataProvider
 
         // if no files were downloaded (and there were none skipped because they were in forLoading) and in that eventuality we have our flag set to return LoadNotRequired then do so
         listener.OnNotify(this,
-            new NotifyEventArgs(ProgressEventType.Information,
+            new NotifyEventArgs(ProgressEventType.Warning,
                 "Could not find any files on the remote server worth downloading, so returning LoadNotRequired"));
         return ExitCodeType.OperationNotRequired;
     }
