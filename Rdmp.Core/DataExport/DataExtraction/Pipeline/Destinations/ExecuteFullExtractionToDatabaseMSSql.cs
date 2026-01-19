@@ -216,6 +216,38 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                     {
                         present = false;
                     }
+                    //check the columns are correct, we might have added some
+                    var existingColumns = existing.DiscoverColumns();
+                    var existingColumnNames = existingColumns.Select(ec => ec.GetRuntimeName());
+                    var toProcessColumnNames = toProcess.Columns.Cast<DataColumn>().Select(col => col.ColumnName);
+                    var newColumns = toProcessColumnNames.Where(c => !existingColumnNames.Contains(c));
+                    if (newColumns.Any())
+                    {
+                        var archiveTable = _destinationDatabase.ExpectTable(tblName+"_Archive");
+                        if (archiveTable.Exists())
+                        {
+                            foreach (var column in newColumns)
+                            {
+                                existing.AddColumn(column, new TypeGuesser.DatabaseTypeRequest(toProcess.Columns[column].DataType), true, 30000);//todo timeout
+                                archiveTable.AddColumn(column, new TypeGuesser.DatabaseTypeRequest(toProcess.Columns[column].DataType), true, 30000);//todo timeout
+                            }
+                            if (present)
+                            {
+                                string triggerProblems = "";
+                                string triggerOK = "";
+                                implementor.DropTrigger(out triggerProblems, out triggerOK);
+                                if(triggerProblems != "")
+                                {
+                                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, triggerProblems));   
+                                }
+
+                                existing = _destinationDatabase.ExpectTable(tblName);
+                                implementor = triggerFactory.Create(existing);
+                                present = false;
+                            }
+                        }
+                    }
+
                     if (!present)
                     {
                         implementor.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
