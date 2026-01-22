@@ -13,7 +13,7 @@
     <PackageVersion Include="LibArchive.Net" Version="0.3.0" />
     <PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="10.0.2" />
     <PackageVersion Include="Microsoft.Net.Sdk.Compilers.Toolset" Version="9.0.300" />
-    <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="10.0.102">
+    <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="8.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageVersion>
@@ -37,7 +37,7 @@
     <PackageVersion Include="NUnit" Version="4.4.0" />
     <PackageVersion Include="ObjectListView.Repack.NET6Plus" Version="2.9.5" />
     <PackageVersion Include="Scintilla.NET" Version="5.3.2.9" />
-    <PackageVersion Include="System.Resources.Extensions" Version="10.0.2" />
+    <PackageVersion Include="System.Resources.Extensions" Version="9.0.12" />
     <PackageVersion Include="VPKSoft.ScintillaLexers.NET" Version="1.1.16" />
     <PackageVersion Include="HIC.System.Windows.Forms.DataVisualization" Version="1.0.1" />
     <PackageVersion Include="NUnit3TestAdapter" Version="6.1.0" />
