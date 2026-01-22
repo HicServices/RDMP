@@ -228,8 +228,8 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                         {
                             foreach (var column in newColumns)
                             {
-                                existing.AddColumn(column, new TypeGuesser.DatabaseTypeRequest(toProcess.Columns[column].DataType), true, 30000);//todo timeout
-                                archiveTable.AddColumn(column, new TypeGuesser.DatabaseTypeRequest(toProcess.Columns[column].DataType), true, 30000);//todo timeout
+                                existing.AddColumn(column, new TypeGuesser.DatabaseTypeRequest(toProcess.Columns[column].DataType), true, 30000);
+                                archiveTable.AddColumn(column, new TypeGuesser.DatabaseTypeRequest(toProcess.Columns[column].DataType), true,30000);
                             }
                             if (present)
                             {
