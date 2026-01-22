@@ -13,7 +13,7 @@
     <PackageVersion Include="LibArchive.Net" Version="0.3.0" />
     <PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="10.0.2" />
     <PackageVersion Include="Microsoft.Net.Sdk.Compilers.Toolset" Version="9.0.300" />
-    <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="8.0.0">
+    <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="10.0.102">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageVersion>
