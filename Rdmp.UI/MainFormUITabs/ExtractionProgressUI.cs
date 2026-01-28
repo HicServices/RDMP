@@ -35,6 +35,13 @@ public partial class ExtractionProgressUI : ExtractionProgressUI_Design, ISaveab
         InitializeComponent();
         var tt = new ToolTip();
         tt.SetToolTip(btnFromDQE, "Populate Start and End dates according to the latest DQE results");
+        deltaExtractionHelpIcon.SetHelpText("Delta Extractions",
+            """
+            Delta Extraction means that only new or changed data since the last extraction will be extracted.
+            This is useful for large datasets where full extraction would be time-consuming.
+            People who are no-longer in the cohort will removed from the existing extracted data.
+            Any new people in the cohort will have all of their data extracted, regardless of the current progress date.
+            """);
         ddRetry.DataSource = Enum.GetValues(typeof(RetryStrategy));
     }
 
@@ -44,6 +51,7 @@ public partial class ExtractionProgressUI : ExtractionProgressUI_Design, ISaveab
 
         Bind(tbID, "Text", "ID", d => d.ID);
         Bind(tbDaysPerBatch, "Text", "NumberOfDaysPerBatch", d => d.NumberOfDaysPerBatch);
+        Bind(cbIsDeltaExtraction, "Checked", "IsDeltaExtraction", d => d.IsDeltaExtraction);
     }
 
     public override void SetDatabaseObject(IActivateItems activator, ExtractionProgress databaseObject)
@@ -143,6 +151,16 @@ public partial class ExtractionProgressUI : ExtractionProgressUI_Design, ISaveab
     {
         if (ExtractionProgress == null) return;
         ExtractionProgress.Retry = (RetryStrategy)ddRetry.SelectedItem;
+    }
+
+    private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)
+    {
+
+    }
+
+    private void cbIsDeltaExtraction_CheckedChanged(object sender, EventArgs e)
+    {
+        ExtractionProgress.IsDeltaExtraction = cbIsDeltaExtraction.Checked;
     }
 }
 

@@ -29,287 +29,328 @@ namespace Rdmp.UI.MainFormUITabs
         /// </summary>
         private void InitializeComponent()
         {
-            this.tbID = new System.Windows.Forms.TextBox();
-            this.lblID = new System.Windows.Forms.Label();
-            this.tbProgress = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.tbStartDate = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.tbEndDate = new System.Windows.Forms.TextBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.tbDaysPerBatch = new System.Windows.Forms.TextBox();
-            this.label4 = new System.Windows.Forms.Label();
-            this.ddColumn = new System.Windows.Forms.ComboBox();
-            this.btnPickColumn = new System.Windows.Forms.Button();
-            this.label5 = new System.Windows.Forms.Label();
-            this.ragSmiley1 = new Rdmp.UI.ChecksUI.RAGSmiley();
-            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.label6 = new System.Windows.Forms.Label();
-            this.ddRetry = new System.Windows.Forms.ComboBox();
-            this.btnFromDQE = new System.Windows.Forms.Button();
-            this.lblEvaluationDate = new System.Windows.Forms.Label();
-            this.btnResetProgress = new System.Windows.Forms.Button();
-            this.tableLayoutPanel1.SuspendLayout();
-            this.panel1.SuspendLayout();
-            this.SuspendLayout();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ExtractionProgressUI));
+            tbID = new System.Windows.Forms.TextBox();
+            lblID = new System.Windows.Forms.Label();
+            tbProgress = new System.Windows.Forms.TextBox();
+            label1 = new System.Windows.Forms.Label();
+            tbStartDate = new System.Windows.Forms.TextBox();
+            label2 = new System.Windows.Forms.Label();
+            tbEndDate = new System.Windows.Forms.TextBox();
+            label3 = new System.Windows.Forms.Label();
+            tbDaysPerBatch = new System.Windows.Forms.TextBox();
+            label4 = new System.Windows.Forms.Label();
+            ddColumn = new System.Windows.Forms.ComboBox();
+            btnPickColumn = new System.Windows.Forms.Button();
+            label5 = new System.Windows.Forms.Label();
+            ragSmiley1 = new Rdmp.UI.ChecksUI.RAGSmiley();
+            tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            panel1 = new System.Windows.Forms.Panel();
+            label6 = new System.Windows.Forms.Label();
+            ddRetry = new System.Windows.Forms.ComboBox();
+            label7 = new System.Windows.Forms.Label();
+            cbIsDeltaExtraction = new System.Windows.Forms.CheckBox();
+            btnFromDQE = new System.Windows.Forms.Button();
+            lblEvaluationDate = new System.Windows.Forms.Label();
+            btnResetProgress = new System.Windows.Forms.Button();
+            deltaExtractionHelpIcon = new Rdmp.UI.SimpleControls.HelpIcon();
+            tableLayoutPanel1.SuspendLayout();
+            panel1.SuspendLayout();
+            SuspendLayout();
             // 
             // tbID
             // 
-            this.tbID.Enabled = false;
-            this.tbID.Location = new System.Drawing.Point(109, 3);
-            this.tbID.Name = "tbID";
-            this.tbID.Size = new System.Drawing.Size(91, 23);
-            this.tbID.TabIndex = 1;
+            tbID.Enabled = false;
+            tbID.Location = new System.Drawing.Point(113, 3);
+            tbID.Name = "tbID";
+            tbID.Size = new System.Drawing.Size(91, 23);
+            tbID.TabIndex = 1;
             // 
             // lblID
             // 
-            this.lblID.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.lblID.AutoSize = true;
-            this.lblID.Location = new System.Drawing.Point(3, 7);
-            this.lblID.MinimumSize = new System.Drawing.Size(100, 0);
-            this.lblID.Name = "lblID";
-            this.lblID.Size = new System.Drawing.Size(100, 15);
-            this.lblID.TabIndex = 0;
-            this.lblID.Text = "ID:";
-            this.lblID.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            lblID.Anchor = System.Windows.Forms.AnchorStyles.None;
+            lblID.AutoSize = true;
+            lblID.Location = new System.Drawing.Point(5, 7);
+            lblID.MinimumSize = new System.Drawing.Size(100, 0);
+            lblID.Name = "lblID";
+            lblID.Size = new System.Drawing.Size(100, 15);
+            lblID.TabIndex = 0;
+            lblID.Text = "ID:";
+            lblID.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // tbProgress
             // 
-            this.tbProgress.Location = new System.Drawing.Point(109, 149);
-            this.tbProgress.Name = "tbProgress";
-            this.tbProgress.ReadOnly = true;
-            this.tbProgress.Size = new System.Drawing.Size(313, 23);
-            this.tbProgress.TabIndex = 2;
-            this.tbProgress.TextChanged += new System.EventHandler(this.tbDate_TextChanged);
+            tbProgress.Location = new System.Drawing.Point(113, 149);
+            tbProgress.Name = "tbProgress";
+            tbProgress.ReadOnly = true;
+            tbProgress.Size = new System.Drawing.Size(313, 23);
+            tbProgress.TabIndex = 2;
+            tbProgress.TextChanged += tbDate_TextChanged;
             // 
             // label1
             // 
-            this.label1.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(3, 153);
-            this.label1.MinimumSize = new System.Drawing.Size(100, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(100, 15);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Progress:";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            label1.Anchor = System.Windows.Forms.AnchorStyles.None;
+            label1.AutoSize = true;
+            label1.Location = new System.Drawing.Point(5, 153);
+            label1.MinimumSize = new System.Drawing.Size(100, 0);
+            label1.Name = "label1";
+            label1.Size = new System.Drawing.Size(100, 15);
+            label1.TabIndex = 0;
+            label1.Text = "Progress:";
+            label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // tbStartDate
             // 
-            this.tbStartDate.Location = new System.Drawing.Point(109, 62);
-            this.tbStartDate.Name = "tbStartDate";
-            this.tbStartDate.Size = new System.Drawing.Size(313, 23);
-            this.tbStartDate.TabIndex = 3;
-            this.tbStartDate.TextChanged += new System.EventHandler(this.tbDate_TextChanged);
+            tbStartDate.Location = new System.Drawing.Point(113, 62);
+            tbStartDate.Name = "tbStartDate";
+            tbStartDate.Size = new System.Drawing.Size(313, 23);
+            tbStartDate.TabIndex = 3;
+            tbStartDate.TextChanged += tbDate_TextChanged;
             // 
             // label2
             // 
-            this.label2.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(3, 66);
-            this.label2.MinimumSize = new System.Drawing.Size(100, 0);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(100, 15);
-            this.label2.TabIndex = 0;
-            this.label2.Text = "Start Date:";
-            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            label2.Anchor = System.Windows.Forms.AnchorStyles.None;
+            label2.AutoSize = true;
+            label2.Location = new System.Drawing.Point(5, 66);
+            label2.MinimumSize = new System.Drawing.Size(100, 0);
+            label2.Name = "label2";
+            label2.Size = new System.Drawing.Size(100, 15);
+            label2.TabIndex = 0;
+            label2.Text = "Start Date:";
+            label2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // tbEndDate
             // 
-            this.tbEndDate.Location = new System.Drawing.Point(109, 91);
-            this.tbEndDate.Name = "tbEndDate";
-            this.tbEndDate.Size = new System.Drawing.Size(313, 23);
-            this.tbEndDate.TabIndex = 4;
-            this.tbEndDate.TextChanged += new System.EventHandler(this.tbDate_TextChanged);
+            tbEndDate.Location = new System.Drawing.Point(113, 91);
+            tbEndDate.Name = "tbEndDate";
+            tbEndDate.Size = new System.Drawing.Size(313, 23);
+            tbEndDate.TabIndex = 4;
+            tbEndDate.TextChanged += tbDate_TextChanged;
             // 
             // label3
             // 
-            this.label3.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(3, 95);
-            this.label3.MinimumSize = new System.Drawing.Size(100, 0);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(100, 15);
-            this.label3.TabIndex = 0;
-            this.label3.Text = "End Date:";
-            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            label3.Anchor = System.Windows.Forms.AnchorStyles.None;
+            label3.AutoSize = true;
+            label3.Location = new System.Drawing.Point(5, 95);
+            label3.MinimumSize = new System.Drawing.Size(100, 0);
+            label3.Name = "label3";
+            label3.Size = new System.Drawing.Size(100, 15);
+            label3.TabIndex = 0;
+            label3.Text = "End Date:";
+            label3.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // tbDaysPerBatch
             // 
-            this.tbDaysPerBatch.Location = new System.Drawing.Point(109, 120);
-            this.tbDaysPerBatch.Name = "tbDaysPerBatch";
-            this.tbDaysPerBatch.Size = new System.Drawing.Size(91, 23);
-            this.tbDaysPerBatch.TabIndex = 5;
+            tbDaysPerBatch.Location = new System.Drawing.Point(113, 120);
+            tbDaysPerBatch.Name = "tbDaysPerBatch";
+            tbDaysPerBatch.Size = new System.Drawing.Size(91, 23);
+            tbDaysPerBatch.TabIndex = 5;
             // 
             // label4
             // 
-            this.label4.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(3, 124);
-            this.label4.MinimumSize = new System.Drawing.Size(100, 0);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(100, 15);
-            this.label4.TabIndex = 0;
-            this.label4.Text = "Days Per Batch:";
-            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            label4.Anchor = System.Windows.Forms.AnchorStyles.None;
+            label4.AutoSize = true;
+            label4.Location = new System.Drawing.Point(5, 124);
+            label4.MinimumSize = new System.Drawing.Size(100, 0);
+            label4.Name = "label4";
+            label4.Size = new System.Drawing.Size(100, 15);
+            label4.TabIndex = 0;
+            label4.Text = "Days Per Batch:";
+            label4.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // ddColumn
             // 
-            this.ddColumn.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.ddColumn.FormattingEnabled = true;
-            this.ddColumn.Location = new System.Drawing.Point(3, 4);
-            this.ddColumn.Name = "ddColumn";
-            this.ddColumn.Size = new System.Drawing.Size(250, 23);
-            this.ddColumn.TabIndex = 6;
-            this.ddColumn.SelectionChangeCommitted += new System.EventHandler(this.ddColumn_SelectionChangeCommitted);
+            ddColumn.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            ddColumn.FormattingEnabled = true;
+            ddColumn.Location = new System.Drawing.Point(3, 4);
+            ddColumn.Name = "ddColumn";
+            ddColumn.Size = new System.Drawing.Size(250, 23);
+            ddColumn.TabIndex = 6;
+            ddColumn.SelectionChangeCommitted += ddColumn_SelectionChangeCommitted;
             // 
             // btnPickColumn
             // 
-            this.btnPickColumn.Location = new System.Drawing.Point(256, 3);
-            this.btnPickColumn.Margin = new System.Windows.Forms.Padding(0, 3, 3, 3);
-            this.btnPickColumn.Name = "btnPickColumn";
-            this.btnPickColumn.Size = new System.Drawing.Size(30, 25);
-            this.btnPickColumn.TabIndex = 7;
-            this.btnPickColumn.Text = "...";
-            this.btnPickColumn.UseVisualStyleBackColor = true;
-            this.btnPickColumn.Click += new System.EventHandler(this.btnPickColumn_Click);
+            btnPickColumn.Location = new System.Drawing.Point(256, 3);
+            btnPickColumn.Margin = new System.Windows.Forms.Padding(0, 3, 3, 3);
+            btnPickColumn.Name = "btnPickColumn";
+            btnPickColumn.Size = new System.Drawing.Size(30, 25);
+            btnPickColumn.TabIndex = 7;
+            btnPickColumn.Text = "...";
+            btnPickColumn.UseVisualStyleBackColor = true;
+            btnPickColumn.Click += btnPickColumn_Click;
             // 
             // label5
             // 
-            this.label5.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(3, 36);
-            this.label5.MinimumSize = new System.Drawing.Size(100, 0);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(100, 15);
-            this.label5.TabIndex = 0;
-            this.label5.Text = "Batch Column:";
-            this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            label5.Anchor = System.Windows.Forms.AnchorStyles.None;
+            label5.AutoSize = true;
+            label5.Location = new System.Drawing.Point(5, 36);
+            label5.MinimumSize = new System.Drawing.Size(100, 0);
+            label5.Name = "label5";
+            label5.Size = new System.Drawing.Size(100, 15);
+            label5.TabIndex = 0;
+            label5.Text = "Batch Column:";
+            label5.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // ragSmiley1
             // 
-            this.ragSmiley1.AlwaysShowHandCursor = false;
-            this.ragSmiley1.BackColor = System.Drawing.Color.Transparent;
-            this.ragSmiley1.Cursor = System.Windows.Forms.Cursors.Arrow;
-            this.ragSmiley1.Location = new System.Drawing.Point(287, 3);
-            this.ragSmiley1.Margin = new System.Windows.Forms.Padding(0, 3, 3, 3);
-            this.ragSmiley1.Name = "ragSmiley1";
-            this.ragSmiley1.Size = new System.Drawing.Size(29, 24);
-            this.ragSmiley1.TabIndex = 1;
+            ragSmiley1.BackColor = System.Drawing.Color.Transparent;
+            ragSmiley1.Location = new System.Drawing.Point(287, 3);
+            ragSmiley1.Margin = new System.Windows.Forms.Padding(0, 3, 3, 3);
+            ragSmiley1.Name = "ragSmiley1";
+            ragSmiley1.Size = new System.Drawing.Size(29, 24);
+            ragSmiley1.TabIndex = 1;
             // 
             // tableLayoutPanel1
             // 
-            this.tableLayoutPanel1.ColumnCount = 2;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel1.Controls.Add(this.lblID, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.panel1, 1, 2);
-            this.tableLayoutPanel1.Controls.Add(this.tbDaysPerBatch, 1, 5);
-            this.tableLayoutPanel1.Controls.Add(this.tbEndDate, 1, 4);
-            this.tableLayoutPanel1.Controls.Add(this.tbStartDate, 1, 3);
-            this.tableLayoutPanel1.Controls.Add(this.tbID, 1, 0);
-            this.tableLayoutPanel1.Controls.Add(this.label3, 0, 4);
-            this.tableLayoutPanel1.Controls.Add(this.label4, 0, 5);
-            this.tableLayoutPanel1.Controls.Add(this.label1, 0, 7);
-            this.tableLayoutPanel1.Controls.Add(this.tbProgress, 1, 7);
-            this.tableLayoutPanel1.Controls.Add(this.label5, 0, 2);
-            this.tableLayoutPanel1.Controls.Add(this.label2, 0, 3);
-            this.tableLayoutPanel1.Controls.Add(this.label6, 0, 8);
-            this.tableLayoutPanel1.Controls.Add(this.ddRetry, 1, 8);
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 21);
-            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 9;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(426, 209);
-            this.tableLayoutPanel1.TabIndex = 8;
+            tableLayoutPanel1.ColumnCount = 2;
+            tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            tableLayoutPanel1.Controls.Add(lblID, 0, 0);
+            tableLayoutPanel1.Controls.Add(panel1, 1, 2);
+            tableLayoutPanel1.Controls.Add(tbDaysPerBatch, 1, 5);
+            tableLayoutPanel1.Controls.Add(tbEndDate, 1, 4);
+            tableLayoutPanel1.Controls.Add(tbStartDate, 1, 3);
+            tableLayoutPanel1.Controls.Add(tbID, 1, 0);
+            tableLayoutPanel1.Controls.Add(label3, 0, 4);
+            tableLayoutPanel1.Controls.Add(label4, 0, 5);
+            tableLayoutPanel1.Controls.Add(label1, 0, 7);
+            tableLayoutPanel1.Controls.Add(tbProgress, 1, 7);
+            tableLayoutPanel1.Controls.Add(label5, 0, 2);
+            tableLayoutPanel1.Controls.Add(label2, 0, 3);
+            tableLayoutPanel1.Controls.Add(label6, 0, 8);
+            tableLayoutPanel1.Controls.Add(ddRetry, 1, 8);
+            tableLayoutPanel1.Controls.Add(label7, 0, 9);
+            tableLayoutPanel1.Controls.Add(cbIsDeltaExtraction, 1, 9);
+            tableLayoutPanel1.Location = new System.Drawing.Point(3, 21);
+            tableLayoutPanel1.Name = "tableLayoutPanel1";
+            tableLayoutPanel1.RowCount = 10;
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 32F));
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 8F));
+            tableLayoutPanel1.Size = new System.Drawing.Size(426, 236);
+            tableLayoutPanel1.TabIndex = 8;
+            tableLayoutPanel1.Paint += tableLayoutPanel1_Paint;
             // 
             // panel1
             // 
-            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel1.Controls.Add(this.ragSmiley1);
-            this.panel1.Controls.Add(this.btnPickColumn);
-            this.panel1.Controls.Add(this.ddColumn);
-            this.panel1.Location = new System.Drawing.Point(106, 29);
-            this.panel1.Margin = new System.Windows.Forms.Padding(0);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(320, 30);
-            this.panel1.TabIndex = 9;
+            panel1.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            panel1.Controls.Add(ragSmiley1);
+            panel1.Controls.Add(btnPickColumn);
+            panel1.Controls.Add(ddColumn);
+            panel1.Location = new System.Drawing.Point(110, 29);
+            panel1.Margin = new System.Windows.Forms.Padding(0);
+            panel1.Name = "panel1";
+            panel1.Size = new System.Drawing.Size(320, 30);
+            panel1.TabIndex = 9;
             // 
             // label6
             // 
-            this.label6.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(3, 184);
-            this.label6.MinimumSize = new System.Drawing.Size(100, 0);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(100, 15);
-            this.label6.TabIndex = 10;
-            this.label6.Text = "Retry:";
-            this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            label6.Anchor = System.Windows.Forms.AnchorStyles.None;
+            label6.AutoSize = true;
+            label6.Location = new System.Drawing.Point(5, 183);
+            label6.MinimumSize = new System.Drawing.Size(100, 0);
+            label6.Name = "label6";
+            label6.Size = new System.Drawing.Size(100, 15);
+            label6.TabIndex = 10;
+            label6.Text = "Retry:";
+            label6.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // ddRetry
             // 
-            this.ddRetry.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.ddRetry.FormattingEnabled = true;
-            this.ddRetry.Location = new System.Drawing.Point(109, 178);
-            this.ddRetry.Name = "ddRetry";
-            this.ddRetry.Size = new System.Drawing.Size(250, 23);
-            this.ddRetry.TabIndex = 11;
-            this.ddRetry.SelectedIndexChanged += new System.EventHandler(this.ddRetry_SelectedIndexChanged);
+            ddRetry.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            ddRetry.FormattingEnabled = true;
+            ddRetry.Location = new System.Drawing.Point(113, 178);
+            ddRetry.Name = "ddRetry";
+            ddRetry.Size = new System.Drawing.Size(250, 23);
+            ddRetry.TabIndex = 11;
+            ddRetry.SelectedIndexChanged += ddRetry_SelectedIndexChanged;
+            // 
+            // label7
+            // 
+            label7.Anchor = System.Windows.Forms.AnchorStyles.None;
+            label7.AutoSize = true;
+            label7.Location = new System.Drawing.Point(3, 214);
+            label7.MinimumSize = new System.Drawing.Size(100, 0);
+            label7.Name = "label7";
+            label7.Size = new System.Drawing.Size(104, 15);
+            label7.TabIndex = 12;
+            label7.Text = "Is Delta Extraction:";
+            label7.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // cbIsDeltaExtraction
+            // 
+            cbIsDeltaExtraction.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            cbIsDeltaExtraction.AutoSize = true;
+            cbIsDeltaExtraction.Location = new System.Drawing.Point(113, 214);
+            cbIsDeltaExtraction.Name = "cbIsDeltaExtraction";
+            cbIsDeltaExtraction.Size = new System.Drawing.Size(15, 14);
+            cbIsDeltaExtraction.TabIndex = 13;
+            cbIsDeltaExtraction.UseVisualStyleBackColor = true;
+            cbIsDeltaExtraction.CheckedChanged += cbIsDeltaExtraction_CheckedChanged;
             // 
             // btnFromDQE
             // 
-            this.btnFromDQE.Location = new System.Drawing.Point(435, 80);
-            this.btnFromDQE.Name = "btnFromDQE";
-            this.btnFromDQE.Size = new System.Drawing.Size(31, 28);
-            this.btnFromDQE.TabIndex = 9;
-            this.btnFromDQE.UseVisualStyleBackColor = true;
-            this.btnFromDQE.Click += new System.EventHandler(this.btnFromDQE_Click);
+            btnFromDQE.Location = new System.Drawing.Point(435, 80);
+            btnFromDQE.Name = "btnFromDQE";
+            btnFromDQE.Size = new System.Drawing.Size(31, 28);
+            btnFromDQE.TabIndex = 9;
+            btnFromDQE.UseVisualStyleBackColor = true;
+            btnFromDQE.Click += btnFromDQE_Click;
             // 
             // lblEvaluationDate
             // 
-            this.lblEvaluationDate.AutoSize = true;
-            this.lblEvaluationDate.Location = new System.Drawing.Point(435, 112);
-            this.lblEvaluationDate.Name = "lblEvaluationDate";
-            this.lblEvaluationDate.Size = new System.Drawing.Size(38, 15);
-            this.lblEvaluationDate.TabIndex = 10;
-            this.lblEvaluationDate.Text = "label6";
+            lblEvaluationDate.AutoSize = true;
+            lblEvaluationDate.Location = new System.Drawing.Point(435, 112);
+            lblEvaluationDate.Name = "lblEvaluationDate";
+            lblEvaluationDate.Size = new System.Drawing.Size(38, 15);
+            lblEvaluationDate.TabIndex = 10;
+            lblEvaluationDate.Text = "label6";
             // 
             // btnResetProgress
             // 
-            this.btnResetProgress.Location = new System.Drawing.Point(432, 170);
-            this.btnResetProgress.Name = "btnResetProgress";
-            this.btnResetProgress.Size = new System.Drawing.Size(44, 23);
-            this.btnResetProgress.TabIndex = 11;
-            this.btnResetProgress.Text = "Reset";
-            this.btnResetProgress.UseVisualStyleBackColor = true;
-            this.btnResetProgress.Click += new System.EventHandler(this.btnResetProgress_Click);
+            btnResetProgress.Location = new System.Drawing.Point(432, 170);
+            btnResetProgress.Name = "btnResetProgress";
+            btnResetProgress.Size = new System.Drawing.Size(44, 23);
+            btnResetProgress.TabIndex = 11;
+            btnResetProgress.Text = "Reset";
+            btnResetProgress.UseVisualStyleBackColor = true;
+            btnResetProgress.Click += btnResetProgress_Click;
+            // 
+            // deltaExtractionHelpIcon
+            // 
+            deltaExtractionHelpIcon.BackColor = System.Drawing.Color.Transparent;
+            deltaExtractionHelpIcon.BackgroundImage = (System.Drawing.Image)resources.GetObject("deltaExtractionHelpIcon.BackgroundImage");
+            deltaExtractionHelpIcon.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            deltaExtractionHelpIcon.Location = new System.Drawing.Point(435, 235);
+            deltaExtractionHelpIcon.Margin = new System.Windows.Forms.Padding(0);
+            deltaExtractionHelpIcon.MinimumSize = new System.Drawing.Size(22, 22);
+            deltaExtractionHelpIcon.Name = "deltaExtractionHelpIcon";
+            deltaExtractionHelpIcon.Size = new System.Drawing.Size(22, 22);
+            deltaExtractionHelpIcon.TabIndex = 12;
             // 
             // ExtractionProgressUI
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.btnResetProgress);
-            this.Controls.Add(this.lblEvaluationDate);
-            this.Controls.Add(this.btnFromDQE);
-            this.Controls.Add(this.tableLayoutPanel1);
-            this.Name = "ExtractionProgressUI";
-            this.Size = new System.Drawing.Size(479, 255);
-            this.tableLayoutPanel1.ResumeLayout(false);
-            this.tableLayoutPanel1.PerformLayout();
-            this.panel1.ResumeLayout(false);
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            Controls.Add(deltaExtractionHelpIcon);
+            Controls.Add(btnResetProgress);
+            Controls.Add(lblEvaluationDate);
+            Controls.Add(btnFromDQE);
+            Controls.Add(tableLayoutPanel1);
+            Name = "ExtractionProgressUI";
+            Size = new System.Drawing.Size(479, 300);
+            tableLayoutPanel1.ResumeLayout(false);
+            tableLayoutPanel1.PerformLayout();
+            panel1.ResumeLayout(false);
+            ResumeLayout(false);
+            PerformLayout();
 
         }
 
@@ -335,5 +376,8 @@ namespace Rdmp.UI.MainFormUITabs
         private System.Windows.Forms.Button btnResetProgress;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.ComboBox ddRetry;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.CheckBox cbIsDeltaExtraction;
+        private SimpleControls.HelpIcon deltaExtractionHelpIcon;
     }
 }
