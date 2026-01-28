@@ -4,8 +4,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [9.1.1] - Unreleased
+## [9.1.2] - Unreleased
+- Automatically fetch user settings from previous versions of RDMP when installing the latest version
+- Allow new columns to be added to archive extractions
+- Simplify use of Extraction Progress
 - Update CHI validation to allow mod10 CIHs
+
+
+## [9.1.1] - 2025-12-02
+- Allow Atlassian service workers to write to Confluence from RDMP
 
 ## [9.1.0] - 2025-11-24
 - Fix bug with duplicate searchables
