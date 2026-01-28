@@ -9,7 +9,7 @@ END
 
 if exists(select 1 from sys.columns where name='ExtractionInformation_ID' and OBJECT_NAME(object_id) = 'ExtractionProgress' and is_nullable=0)
 BEGIN
-alter table [RDMP_DataExport].[dbo].[ExtractionProgress]
+alter table [dbo].[ExtractionProgress]
 alter column ExtractionInformation_ID int null
 END
 
