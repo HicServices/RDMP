@@ -34,7 +34,7 @@ public interface IExtractionProgress : IMapsDirectlyToDatabaseTable, ISaveable, 
     /// The column or transform which provides the date component of the extraction upon which
     /// <see cref="StartDate"/>, <see cref="EndDate"/> etc relate
     /// </summary>
-    int ExtractionInformation_ID { get; set; }
+    int? ExtractionInformation_ID { get; set; }
 
     /// <summary>
     /// When running a batch extraction this is the number of days to fetch/extract at a time

@@ -69,6 +69,9 @@ public class DatasetTimespanCalculator : IDetermineDatasetTimespan
         accurateAsOf = null;
         Evaluation mostRecentEvaluation;
 
+        if (catalogue is null) return Unknown();
+
+
         try
         {
             var repo = new DQERepository(catalogue.CatalogueRepository);

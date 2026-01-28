@@ -24,12 +24,13 @@ public class ExtractionProgress : DatabaseEntity, IExtractionProgress
 
     private int _selectedDataSets_ID;
     private DateTime? _progress;
-    private int _extractionInformation_ID;
+    private int? _extractionInformation_ID;
     private DateTime? _startDate;
     private DateTime? _endDate;
     private int _numberOfDaysPerBatch;
     private string _name;
     private RetryStrategy _retry;
+    private bool _IsDeltaExtraction;
 
     #endregion
 
@@ -69,7 +70,7 @@ public class ExtractionProgress : DatabaseEntity, IExtractionProgress
     }
 
     /// <inheritdoc/>
-    public int ExtractionInformation_ID
+    public int? ExtractionInformation_ID
     {
         get => _extractionInformation_ID;
         set => SetField(ref _extractionInformation_ID, value);
@@ -86,6 +87,12 @@ public class ExtractionProgress : DatabaseEntity, IExtractionProgress
     {
         get => _retry;
         set => SetField(ref _retry, value);
+    }
+
+    public bool IsDeltaExtraction
+    {
+        get => _IsDeltaExtraction;
+        set => SetField(ref _IsDeltaExtraction, value);
     }
 
     #region Relationships
@@ -129,7 +136,7 @@ public class ExtractionProgress : DatabaseEntity, IExtractionProgress
     /// <inheritdoc/>
     [NoMappingToDatabase]
     public ExtractionInformation ExtractionInformation =>
-        DataExportRepository.CatalogueRepository.GetObjectByID<ExtractionInformation>(ExtractionInformation_ID);
+        ExtractionInformation_ID is null ? null : DataExportRepository.CatalogueRepository.GetObjectByID<ExtractionInformation>((int)ExtractionInformation_ID);
 
     #endregion
 
@@ -138,7 +145,7 @@ public class ExtractionProgress : DatabaseEntity, IExtractionProgress
     }
 
     public ExtractionProgress(IDataExportRepository repository, ISelectedDataSets sds, DateTime? startDate,
-        DateTime? endDate, int numberOfDaysPerBatch, string name, int extractionInformation_ID)
+        DateTime? endDate, int numberOfDaysPerBatch, string name, int? extractionInformation_ID)
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
@@ -163,10 +170,6 @@ public class ExtractionProgress : DatabaseEntity, IExtractionProgress
         if (sds.ExtractionProgressIfAny != null)
             throw new Exception($"There is already an ExtractionProgress associated with {sds}");
 
-        if (!coverageColId.HasValue)
-            throw new ArgumentException(
-                $"Cannot create ExtractionProgress because Catalogue {cata} does not have a time coverage column");
-
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
             { "SelectedDataSets_ID", sds.ID },
@@ -186,10 +189,11 @@ public class ExtractionProgress : DatabaseEntity, IExtractionProgress
         ProgressDate = ObjectToNullableDateTime(r["ProgressDate"]);
         StartDate = ObjectToNullableDateTime(r["StartDate"]);
         EndDate = ObjectToNullableDateTime(r["EndDate"]);
-        ExtractionInformation_ID = Convert.ToInt32(r["ExtractionInformation_ID"]);
+        ExtractionInformation_ID = ObjectToNullableInt(r["ExtractionInformation_ID"]);
         NumberOfDaysPerBatch = Convert.ToInt32(r["NumberOfDaysPerBatch"]);
         Name = r["Name"].ToString();
         Retry = (RetryStrategy)Enum.Parse(typeof(RetryStrategy), r["Retry"].ToString());
+        IsDeltaExtraction = Convert.ToBoolean(r["IsDeltaExtraction"]);
     }
 
     public override string ToString() => Name;

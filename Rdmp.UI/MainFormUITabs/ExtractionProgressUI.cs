@@ -52,7 +52,7 @@ public partial class ExtractionProgressUI : ExtractionProgressUI_Design, ISaveab
 
         var result =
             TimespanCalculator.GetMachineReadableTimespanIfKnownOf(
-                databaseObject.ExtractionInformation.CatalogueItem.Catalogue, false, out var date);
+                databaseObject.ExtractionInformation?.CatalogueItem.Catalogue, false, out var date);
 
         btnFromDQE.Image = activator.CoreIconProvider.GetImage(RDMPConcept.DQE, OverlayKind.Import).ImageToBitmap();
 
