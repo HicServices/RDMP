@@ -70,10 +70,16 @@ public class ExtractionRunner : ManyRunner
         switch (_options.Command)
         {
             case CommandLineActivity.run:
+                var eds = ExtractCommands.Keys.Select(k => k.ExtractableDataSet);
+                var status = eds.Select(e => GetState(e)).Where(e => e is not null).Select(e => (ExtractCommandState)Enum.Parse(typeof(ExtractCommandState), e.ToString()));
+                if(!status.Any(s => s != ExtractCommandState.Completed))
+                {
+                    //all worked as expected
+                    _configuration.MostRecentCohortUsed_ID = _configuration.Cohort.ID;
+                    _configuration.SaveToDatabase();
+                }
                 if (UserSettings.ExtractionWebhookUrl is not null)
                 {
-                    var eds = ExtractCommands.Keys.Select(k => k.ExtractableDataSet);
-                    var status = eds.Select(e => GetState(e)).Where(e => e is not null).Select(e => (ExtractCommandState)Enum.Parse(typeof(ExtractCommandState),e.ToString()));
                     var cmd = new ExecuteCommandSendExtractionResolutionTeamsNotification(_activator, _configuration,!status.Any(s => s != ExtractCommandState.Completed));
                     cmd.Execute();
                 }
