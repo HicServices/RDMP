@@ -74,7 +74,7 @@ public class RegexRedaction : DatabaseEntity, IRegexRedaction
 
     public RegexRedaction() { }
 
-    public RegexRedaction(ICatalogueRepository repository, int redactionConfigurationID, int startingIndex, string redactionValue, string replacementValue, int columnInfoID, Dictionary<ColumnInfo,string> pkValues)
+    public RegexRedaction(RdmpDbContext catalogueDbContext, int redactionConfigurationID, int startingIndex, string redactionValue, string replacementValue, int columnInfoID, Dictionary<ColumnInfo,string> pkValues)
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object> {
             {"RedactionConfiguration_ID",redactionConfigurationID},
@@ -90,7 +90,7 @@ public class RegexRedaction : DatabaseEntity, IRegexRedaction
         }
     }
 
-    internal RegexRedaction(ICatalogueRepository repository, DbDataReader r) : base(repository, r)
+    internal RegexRedaction(RdmpDbContext catalogueDbContext, DbDataReader r) : base(repository, r)
     {
         _redactionConfigurationID = Int32.Parse(r["RedactionConfiguration_ID"].ToString());
         _startingIndex = Int32.Parse(r["StartingIndex"].ToString());

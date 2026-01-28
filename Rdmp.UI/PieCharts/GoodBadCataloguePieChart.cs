@@ -256,7 +256,7 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
         if (!Activator.SelectObject(new DialogArgs
         {
             TaskDescription = "Which Catalogue should the graph depict?"
-        }, Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out var selected)) return;
+        }, Activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Catalogue>(), out var selected)) return;
         _collection.SetSingleCatalogueMode(selected);
 
         btnAllCatalogues.Checked = false;

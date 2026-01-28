@@ -65,6 +65,6 @@ internal class TestExecuteCommandNewObject : CommandCliTests
 
         Assert.DoesNotThrow(() => GetInvoker().ExecuteCommand(typeof(ExecuteCommandNewObject), picker));
 
-        Assert.That(RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>().Select(c => c.Name).ToArray(), Does.Contain("lolzeeeyeahyeah"));
+        Assert.That(RepositoryLocator.CatalogueDbContext.GetAllObjects<Catalogue>().Select(c => c.Name).ToArray(), Does.Contain("lolzeeeyeahyeah"));
     }
 }

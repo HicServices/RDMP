@@ -69,7 +69,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
 
     public ICoreIconProvider CoreIconProvider { get; private set; }
 
-    public CommentStore CommentStore => RepositoryLocator.CatalogueRepository.CommentStore;
+    public CommentStore CommentStore => null;// RepositoryLocator.CatalogueDbContext.CommentStore;
 
 
     /// <inheritdoc/>
@@ -127,7 +127,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
         RepositoryLocator = repositoryLocator;
         GlobalErrorCheckNotifier = globalErrorCheckNotifier;
 
-        ServerDefaults = RepositoryLocator.CatalogueRepository;
+        ServerDefaults = null;//RepositoryLocator.CatalogueDbContext;
 
         //Shouldn't ever change externally to your session so doesn't need constantly refreshed
         FavouritesProvider = new FavouritesProvider(this);
@@ -162,7 +162,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
         //there was an error generating a data export repository or there was no repository specified
 
         //so just create a catalogue one
-        temp ??= new CatalogueChildProvider(RepositoryLocator.CatalogueRepository, PluginUserInterfaces.ToArray(),
+        temp ??= new CatalogueChildProvider(RepositoryLocator.CatalogueDbContext, PluginUserInterfaces.ToArray(),
             GlobalErrorCheckNotifier, CoreChildProvider as CatalogueChildProvider);
 
         // first time
@@ -446,7 +446,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
 
         if (databaseObject != null)
         {
-            var exports = RepositoryLocator.CatalogueRepository.GetReferencesTo<ObjectExport>(databaseObject).ToArray();
+            var exports = RepositoryLocator.CatalogueDbContext.GetReferencesTo<ObjectExport>(databaseObject).ToArray();
             if (exports.Any(e => e.Exists()))
                 if (YesNo(
                         "This object has been shared as an ObjectExport.  Deleting it may prevent you loading any saved copies.  Do you want to delete the ObjectExport definition?",
@@ -820,13 +820,13 @@ public abstract class BasicActivateItems : IBasicActivateItems
     /// <inheritdoc/>
     public bool UseCommits()
     {
-        var repo = RepositoryLocator?.CatalogueRepository;
+        //var repo = RepositoryLocator?.CatalogueRepository;
 
-        // system is in a very bad state
-        if (repo == null)
-            return false;
+        //// system is in a very bad state
+        //if (repo == null)
+        //    return false;
 
         // does user want to do commits? and we have a db repo
-        return UserSettings.EnableCommits && repo.SupportsCommits;
+        return UserSettings.EnableCommits;// && repo.SupportsCommits;
     }
 }

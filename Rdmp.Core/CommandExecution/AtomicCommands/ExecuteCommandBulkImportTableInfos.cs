@@ -54,7 +54,7 @@ public sealed class ExecuteCommandBulkImportTableInfos : BasicCommandExecution, 
         var catalogues = new List<ICatalogue>();
 
         //don't do any double importing!
-        var existing = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<TableInfo>();
+        var existing = BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllObjects<TableInfo>();
 
         if (YesNo("Would you also like to import ShareDefinitions (metadata)?", "Import Metadata From File(s)"))
         {
@@ -74,7 +74,7 @@ public sealed class ExecuteCommandBulkImportTableInfos : BasicCommandExecution, 
         var generateCatalogues = false;
 
         if (YesNo("Would you like to try to guess non-matching Catalogues by Name?", "Guess by name"))
-            catalogues.AddRange(BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>());
+            catalogues.AddRange(BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Catalogue>());
         else if (YesNo("Would you like to generate empty Catalogues for non-matching tables instead?",
                      "Generate New Catalogues"))
             generateCatalogues = true;
@@ -92,7 +92,7 @@ public sealed class ExecuteCommandBulkImportTableInfos : BasicCommandExecution, 
 
         foreach (var discoveredTable in selected)
         {
-            var importer = new TableInfoImporter(BasicActivator.RepositoryLocator.CatalogueRepository, discoveredTable);
+            var importer = new TableInfoImporter(BasicActivator.RepositoryLocator.CatalogueDbContext, discoveredTable);
 
             //import the table
             importer.DoImport(out var ti, out var cis);
@@ -126,7 +126,7 @@ public sealed class ExecuteCommandBulkImportTableInfos : BasicCommandExecution, 
                 //is anyone unmarried? i.e. new ColumnInfos that don't have CatalogueItems with the same name
                 foreach (var columnInfo in unmatched)
                 {
-                    var cataItem = new CatalogueItem(BasicActivator.RepositoryLocator.CatalogueRepository,
+                    var cataItem = new CatalogueItem(BasicActivator.RepositoryLocator.CatalogueDbContext,
                         (Catalogue)matchingCatalogues[0], columnInfo.GetRuntimeName())
                     {
                         ColumnInfo_ID = columnInfo.ID
@@ -146,7 +146,7 @@ public sealed class ExecuteCommandBulkImportTableInfos : BasicCommandExecution, 
                 // don't mark it extractable twice
                 if (catalogueItem.ExtractionInformation == null)
                     //yup that's how we roll, the database is main memory!
-                    _ = new ExtractionInformation(BasicActivator.RepositoryLocator.CatalogueRepository, catalogueItem,
+                    _ = new ExtractionInformation(BasicActivator.RepositoryLocator.CatalogueDbContext, catalogueItem,
                         columnInfo, columnInfo.Name);
 
         if (anyNewTable != null)

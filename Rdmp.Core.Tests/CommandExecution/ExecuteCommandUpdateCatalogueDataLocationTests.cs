@@ -73,9 +73,9 @@ public class ExecuteCommandUpdateCatalogueDataLocationTests : DatabaseTests
         var cmd = new ExecuteCommandCreateNewCatalogueByImportingFile(new ThrowImmediatelyActivator(RepositoryLocator),
             info, "Column1", db, pipe, null);
         cmd.Execute();
-        originalTableInfoID = RepositoryLocator.CatalogueRepository.GetAllObjects<CatalogueItem>().First().ColumnInfo
+        originalTableInfoID = RepositoryLocator.CatalogueDbContext.GetAllObjects<CatalogueItem>().First().ColumnInfo
             .TableInfo_ID;
-        var column1 = RepositoryLocator.CatalogueRepository
+        var column1 = RepositoryLocator.CatalogueDbContext
             .GetAllObjects<CatalogueItem>().First(static c => c.Name == "Column1");
         column1.ExtractionInformation.SelectSQL += " as SOME_ALIAS";
         column1.ExtractionInformation.SaveToDatabase();
@@ -122,7 +122,7 @@ public class ExecuteCommandUpdateCatalogueDataLocationTests : DatabaseTests
     public void UpdateLocationCheckBadMapping()
     {
         var cmd = new ExecuteCommandUpdateCatalogueDataLocation(new ThrowImmediatelyActivator(RepositoryLocator),
-            RepositoryLocator.CatalogueRepository.GetAllObjects<CatalogueItem>(), RemoteTable, "badMaping");
+            RepositoryLocator.CatalogueDbContext.GetAllObjects<CatalogueItem>(), RemoteTable, "badMaping");
         Assert.That(cmd.Check(), Is.EqualTo("Column Mapping must contain the string '$column'"));
     }
 
@@ -130,7 +130,7 @@ public class ExecuteCommandUpdateCatalogueDataLocationTests : DatabaseTests
     public void UpdateLocationColumnNotExist()
     {
         var cmd = new ExecuteCommandUpdateCatalogueDataLocation(new ThrowImmediatelyActivator(RepositoryLocator),
-            RepositoryLocator.CatalogueRepository.GetAllObjects<CatalogueItem>().Where(c => c.Name == "Column")
+            RepositoryLocator.CatalogueDbContext.GetAllObjects<CatalogueItem>().Where(c => c.Name == "Column")
                 .ToArray(), RemoteTable, "$column");
         Assert.That(cmd.Check(), Is.EqualTo("Unable to find column '[Column]' in selected table"));
     }
@@ -139,7 +139,7 @@ public class ExecuteCommandUpdateCatalogueDataLocationTests : DatabaseTests
     public void UpdateLocationColumnBadType()
     {
         var cmd = new ExecuteCommandUpdateCatalogueDataLocation(new ThrowImmediatelyActivator(RepositoryLocator),
-            RepositoryLocator.CatalogueRepository.GetAllObjects<CatalogueItem>().Where(c => c.Name == "Column")
+            RepositoryLocator.CatalogueDbContext.GetAllObjects<CatalogueItem>().Where(c => c.Name == "Column")
                 .ToArray(), RemoteTable, "$column2");
         Assert.That(cmd.Check(),
             Is.EqualTo(
@@ -149,10 +149,10 @@ public class ExecuteCommandUpdateCatalogueDataLocationTests : DatabaseTests
     [Test]
     public void UpdateLocationCheckOK()
     {
-        goodCatalogueID = RepositoryLocator.CatalogueRepository
+        goodCatalogueID = RepositoryLocator.CatalogueDbContext
             .GetAllObjects<CatalogueItem>().First(static c => c.Name == "Column2").Catalogue_ID;
         var cmd = new ExecuteCommandUpdateCatalogueDataLocation(new ThrowImmediatelyActivator(RepositoryLocator),
-            RepositoryLocator.CatalogueRepository.GetAllObjects<CatalogueItem>()
+            RepositoryLocator.CatalogueDbContext.GetAllObjects<CatalogueItem>()
                 .Where(c => c.Catalogue_ID == goodCatalogueID).ToArray(), RemoteTable, null);
         Assert.That(cmd.Check(), Is.EqualTo(null));
     }
@@ -161,7 +161,7 @@ public class ExecuteCommandUpdateCatalogueDataLocationTests : DatabaseTests
     public void UpdateLocationExecuteNoCheck_Bad()
     {
         var cmd = new ExecuteCommandUpdateCatalogueDataLocation(new ThrowImmediatelyActivator(RepositoryLocator),
-            RepositoryLocator.CatalogueRepository.GetAllObjects<CatalogueItem>(), RemoteTable, "badMapping");
+            RepositoryLocator.CatalogueDbContext.GetAllObjects<CatalogueItem>(), RemoteTable, "badMapping");
         var ex = Assert.Throws<Exception>(() => cmd.Execute());
         Assert.That(ex.Message,
             Is.EqualTo(
@@ -171,13 +171,13 @@ public class ExecuteCommandUpdateCatalogueDataLocationTests : DatabaseTests
     [Test]
     public void UpdateLocationExecuteNoCheck_OK()
     {
-        goodCatalogueID = RepositoryLocator.CatalogueRepository
+        goodCatalogueID = RepositoryLocator.CatalogueDbContext
             .GetAllObjects<CatalogueItem>().First(static c => c.Name == "Column2").Catalogue_ID;
         var cmd = new ExecuteCommandUpdateCatalogueDataLocation(new ThrowImmediatelyActivator(RepositoryLocator),
-            RepositoryLocator.CatalogueRepository.GetAllObjects<CatalogueItem>()
+            RepositoryLocator.CatalogueDbContext.GetAllObjects<CatalogueItem>()
                 .Where(c => c.Catalogue_ID == goodCatalogueID).ToArray(), RemoteTable, null);
         Assert.DoesNotThrow(() => cmd.Execute());
-        var ci = RepositoryLocator.CatalogueRepository
+        var ci = RepositoryLocator.CatalogueDbContext
             .GetAllObjects<CatalogueItem>().First(c => c.Name == "Column2" && c.Catalogue_ID == goodCatalogueID);
         Assert.Multiple(() =>
         {
@@ -190,16 +190,16 @@ public class ExecuteCommandUpdateCatalogueDataLocationTests : DatabaseTests
     [Test]
     public void UpdateLocationExecuteNoCheck_AliasCheck()
     {
-        goodCatalogueID = RepositoryLocator.CatalogueRepository
+        goodCatalogueID = RepositoryLocator.CatalogueDbContext
             .GetAllObjects<CatalogueItem>().First(static c => c.Name == "Column2").Catalogue_ID;
         var cmd = new ExecuteCommandUpdateCatalogueDataLocation(new ThrowImmediatelyActivator(RepositoryLocator),
-            RepositoryLocator.CatalogueRepository.GetAllObjects<CatalogueItem>()
+            RepositoryLocator.CatalogueDbContext.GetAllObjects<CatalogueItem>()
                 .Where(c => c.Catalogue_ID == goodCatalogueID).ToArray(), RemoteTable, null);
         Assert.DoesNotThrow(() => cmd.Execute());
-        var ci = RepositoryLocator.CatalogueRepository
+        var ci = RepositoryLocator.CatalogueDbContext
             .GetAllObjects<CatalogueItem>().First(c => c.Name == "Column1" && c.Catalogue_ID == goodCatalogueID);
         Assert.That(ci.ColumnInfo.Name, Is.EqualTo(RemoteTable.GetFullyQualifiedName() + ".[Column1]"));
-        var ei = RepositoryLocator.CatalogueRepository
+        var ei = RepositoryLocator.CatalogueDbContext
             .GetAllObjects<ExtractionInformation>().First(e => e.ID == ci.ExtractionInformation.ID);
         Assert.Multiple(() =>
         {
@@ -211,23 +211,23 @@ public class ExecuteCommandUpdateCatalogueDataLocationTests : DatabaseTests
     [Test]
     public void UpdateLocationWithMultipleExtractionIdentifiers()
     {
-        goodCatalogueID = RepositoryLocator.CatalogueRepository
+        goodCatalogueID = RepositoryLocator.CatalogueDbContext
             .GetAllObjects<CatalogueItem>().First(static c => c.Name == "Column2").Catalogue_ID;
-        var ci = RepositoryLocator.CatalogueRepository
+        var ci = RepositoryLocator.CatalogueDbContext
             .GetAllObjects<CatalogueItem>().First(c => c.Name == "Column2" && c.Catalogue_ID == goodCatalogueID);
 
-        var otherci = RepositoryLocator.CatalogueRepository
+        var otherci = RepositoryLocator.CatalogueDbContext
             .GetAllObjects<CatalogueItem>().First(static c => c.Name == "Column");
         var cmd1 = new ExecuteCommandAddNewCatalogueItem(new ThrowImmediatelyActivator(RepositoryLocator), ci.Catalogue,
             new List<ColumnInfo> { otherci.ColumnInfo }.ToArray());
         Assert.DoesNotThrow(() => cmd1.Execute());
 
         var cmd = new ExecuteCommandUpdateCatalogueDataLocation(new ThrowImmediatelyActivator(RepositoryLocator),
-            RepositoryLocator.CatalogueRepository.GetAllObjects<CatalogueItem>()
+            RepositoryLocator.CatalogueDbContext.GetAllObjects<CatalogueItem>()
                 .Where(c => c.Catalogue_ID == goodCatalogueID && c.Name == "Column2").ToArray(), RemoteTable, null);
         Assert.DoesNotThrow(() => cmd.Execute());
         Assert.That(ci.ColumnInfo.Name, Is.EqualTo(RemoteTable.GetFullyQualifiedName() + ".[Column2]"));
-        var ei = RepositoryLocator.CatalogueRepository
+        var ei = RepositoryLocator.CatalogueDbContext
             .GetAllObjects<ExtractionInformation>().First(e => e.ID == ci.ExtractionInformation.ID);
         Assert.Multiple(() =>
         {

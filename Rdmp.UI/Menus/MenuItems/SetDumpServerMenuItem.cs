@@ -37,7 +37,7 @@ internal class SetDumpServerMenuItem : RDMPToolStripMenuItem
 
         var img = SixLabors.ImageSharp.Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_IdentifierDump);
 
-        var cataRepo = activator.RepositoryLocator.CatalogueRepository;
+        var cataRepo = activator.RepositoryLocator.CatalogueDbContext;
 
         _availableServers = cataRepo.GetAllDatabases<IdentifierDumpDatabasePatcher>();
 

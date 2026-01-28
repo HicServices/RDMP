@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Comments;
@@ -50,6 +51,8 @@ public class UserSettingsRepositoryFinder : IRDMPPlatformRepositoryServiceLocato
                 : _linkedRepositoryProvider.DataExportRepository;
         }
     }
+
+    public RDMPDbContext CatalogueDbContext { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
     public IMapsDirectlyToDatabaseTable GetArbitraryDatabaseObject(string repositoryTypeName,
         string databaseObjectTypeName, int objectID) =>

@@ -189,7 +189,7 @@ public class ExecuteCommandCreateHoldoutLookup : BasicCommandExecution
         var db = SelectDatabase(true, "Select a Database to store the new Holdout.");
         if(db == null) return;
 
-        var pipe = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>().OrderByDescending(static p => p.ID)
+        var pipe = _activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Pipeline>().OrderByDescending(static p => p.ID)
         .FirstOrDefault(static p => p.Name.Contains("BULK INSERT: CSV Import File (automated column-type detection)"));
 
         var importCommand = new ExecuteCommandCreateNewCatalogueByImportingFile(_activator, fi, extractionIdentifier, db, pipe, null,holdoutRequest.Description);

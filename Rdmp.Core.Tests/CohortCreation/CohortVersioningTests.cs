@@ -92,7 +92,7 @@ public class CohortVersioningTests : CohortQueryBuilderWithCacheTests
         { DisallowInput = true };
         var cic = GenerateCIC();
         cic.SaveToDatabase();
-        var agg = new CohortAggregateContainer(RepositoryLocator.CatalogueRepository, SetOperation.UNION);
+        var agg = new CohortAggregateContainer(RepositoryLocator.CatalogueDbContext, SetOperation.UNION);
         agg.SaveToDatabase();
         cic.RootCohortAggregateContainer_ID = agg.ID;
         cic.SaveToDatabase();
@@ -122,7 +122,7 @@ public class CohortVersioningTests : CohortQueryBuilderWithCacheTests
         { DisallowInput = true };
         var cic = GenerateCIC();
         cic.SaveToDatabase();
-        var agg = new CohortAggregateContainer(RepositoryLocator.CatalogueRepository, SetOperation.UNION);
+        var agg = new CohortAggregateContainer(RepositoryLocator.CatalogueDbContext, SetOperation.UNION);
         agg.SaveToDatabase();
         cic.RootCohortAggregateContainer_ID = agg.ID;
         cic.SaveToDatabase();

@@ -49,7 +49,7 @@ public class TableValuedFunctionImporter : ITableInfoImporter
     /// <param name="repository"></param>
     /// <param name="tableValuedFunction"></param>
     /// <param name="usageContext"></param>
-    public TableValuedFunctionImporter(ICatalogueRepository repository,
+    public TableValuedFunctionImporter(RdmpDbContext catalogueDbContext,
         DiscoveredTableValuedFunction tableValuedFunction, DataAccessContext usageContext = DataAccessContext.Any)
     {
         _repository = repository;

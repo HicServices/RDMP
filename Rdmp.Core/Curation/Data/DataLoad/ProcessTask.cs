@@ -154,7 +154,7 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
     /// <param name="repository"></param>
     /// <param name="parent"></param>
     /// <param name="stage"></param>
-    public ProcessTask(ICatalogueRepository repository, ILoadMetadata parent, LoadStage stage)
+    public ProcessTask(RdmpDbContext catalogueDbContext, ILoadMetadata parent, LoadStage stage)
     {
         var order =
             repository.GetAllObjectsWithParent<ProcessTask>(parent).Select(t => t.Order).DefaultIfEmpty().Max() + 1;
@@ -176,7 +176,7 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
     /// <param name="parent"></param>
     /// <param name="stage"></param>
     /// <param name="serialisableConfiguration"></param>
-    public ProcessTask(ICatalogueRepository repository, ILoadMetadata parent, LoadStage stage, string serialisableConfiguration = null)
+    public ProcessTask(RdmpDbContext catalogueDbContext, ILoadMetadata parent, LoadStage stage, string serialisableConfiguration = null)
     {
         var order =
             repository.GetAllObjectsWithParent<ProcessTask>(parent).Select(t => t.Order).DefaultIfEmpty().Max() + 1;
@@ -192,7 +192,7 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
         });
     }
 
-    internal ProcessTask(ICatalogueRepository repository, DbDataReader r)
+    internal ProcessTask(RdmpDbContext catalogueDbContext, DbDataReader r)
         : base(repository, r)
     {
         LoadMetadata_ID = int.Parse(r["LoadMetaData_ID"].ToString());

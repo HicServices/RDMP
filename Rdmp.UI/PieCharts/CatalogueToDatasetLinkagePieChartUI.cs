@@ -255,7 +255,7 @@ public partial class CatalogueToDatasetLinkagePieChartUI : RDMPUserControl, IDas
         if (!Activator.SelectObject(new DialogArgs
         {
             TaskDescription = "Which Catalogue should the graph depict?"
-        }, Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out var selected)) return;
+        }, Activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Catalogue>(), out var selected)) return;
         _collection.SetSingleCatalogueMode(selected);
 
         _btnAllCatalogues.Checked = false;

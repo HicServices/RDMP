@@ -461,7 +461,7 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
 
     private void CreateAttacher(ITableInfo t, QueryBuilder qb, LoadMetadata lmd, LoadProgress loadProgressIfAny)
     {
-        var pt = new ProcessTask(Activator.RepositoryLocator.CatalogueRepository, lmd, LoadStage.Mounting)
+        var pt = new ProcessTask(Activator.RepositoryLocator.CatalogueDbContext, lmd, LoadStage.Mounting)
         {
             ProcessTaskType = ProcessTaskType.Attacher,
             Name = $"Read from {t}",
@@ -496,7 +496,7 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
     private void CreateDilutionMutilation(KeyValuePair<PreLoadDiscardedColumn, IDilutionOperation> dilutionOp,
         LoadMetadata lmd)
     {
-        var pt = new ProcessTask(Activator.RepositoryLocator.CatalogueRepository, lmd, LoadStage.AdjustStaging);
+        var pt = new ProcessTask(Activator.RepositoryLocator.CatalogueDbContext, lmd, LoadStage.AdjustStaging);
         pt.CreateArgumentsForClassIfNotExists<Dilution>();
         pt.ProcessTaskType = ProcessTaskType.MutilateDataTable;
         pt.Name = $"Dilute {dilutionOp.Key.GetRuntimeName()}";
@@ -560,7 +560,7 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
             var fi = new FileInfo(sfd.FileName);
 
             var cmdAnoTablesToo = new ExecuteCommandExportObjectsToFile(Activator,
-                Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<ANOTable>().ToArray(), fi.Directory)
+                Activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<ANOTable>().ToArray(), fi.Directory)
             {
                 ShowInExplorer = false
             };

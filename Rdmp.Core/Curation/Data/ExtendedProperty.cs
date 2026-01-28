@@ -107,7 +107,7 @@ public class ExtendedProperty : Argument, IReferenceOtherObjectWithPersist, IInj
         ClearAllInjections();
     }
 
-    public ExtendedProperty(ICatalogueRepository repository, IMapsDirectlyToDatabaseTable setOn, string name,
+    public ExtendedProperty(RdmpDbContext catalogueDbContext, IMapsDirectlyToDatabaseTable setOn, string name,
         object value)
     {
         ArgumentNullException.ThrowIfNull(repository);
@@ -129,7 +129,7 @@ public class ExtendedProperty : Argument, IReferenceOtherObjectWithPersist, IInj
     }
 
     /// <inheritdoc/>
-    public ExtendedProperty(ICatalogueRepository repository, DbDataReader r) : base(repository, r)
+    public ExtendedProperty(RdmpDbContext catalogueDbContext, DbDataReader r) : base(repository, r)
     {
         ReferencedObjectType = r["ReferencedObjectType"].ToString();
         ReferencedObjectID = Convert.ToInt32(r["ReferencedObjectID"]);
@@ -203,7 +203,7 @@ public class ExtendedProperty : Argument, IReferenceOtherObjectWithPersist, IInj
     /// <param name="repository"></param>
     /// <param name="forObject"></param>
     /// <returns></returns>
-    internal static IEnumerable<ExtendedProperty> GetProperties(ICatalogueRepository repository,
+    internal static IEnumerable<ExtendedProperty> GetProperties(RdmpDbContext catalogueDbContext,
         IMapsDirectlyToDatabaseTable forObject)
     {
         return repository.GetAllObjectsWhere<ExtendedProperty>(
@@ -219,7 +219,7 @@ public class ExtendedProperty : Argument, IReferenceOtherObjectWithPersist, IInj
     /// <param name="repository"></param>
     /// <param name="named"></param>
     /// <param name="forObject"></param>
-    internal static ExtendedProperty GetProperty(ICatalogueRepository repository, string named,
+    internal static ExtendedProperty GetProperty(RdmpDbContext catalogueDbContext, string named,
         IMapsDirectlyToDatabaseTable forObject)
     {
         return GetProperties(repository, forObject).SingleOrDefault(e => e.Name.Equals(named));

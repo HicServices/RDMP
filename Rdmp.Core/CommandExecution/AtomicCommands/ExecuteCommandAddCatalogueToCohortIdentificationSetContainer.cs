@@ -125,7 +125,7 @@ public class ExecuteCommandAddCatalogueToCohortIdentificationSetContainer : Basi
                 WindowTitle = "Add Catalogue(s) to Container",
                 TaskDescription =
                         $"Choose which Catalogues to add to the cohort container '{_targetCohortAggregateContainer.Name}'.  Catalogues must have at least one IsExtractionIdentifier column."
-            }, BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>().Where(c => !c.IsInternalDataset &&(!c.IsProjectSpecific(BasicActivator.RepositoryLocator.DataExportRepository) || associatedProjectCataloguesIDs.Contains(c.ID))).ToArray(), out var selected))
+            }, BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Catalogue>().Where(c => !c.IsInternalDataset &&(!c.IsProjectSpecific(BasicActivator.RepositoryLocator.DataExportRepository) || associatedProjectCataloguesIDs.Contains(c.ID))).ToArray(), out var selected))
                 // user didn't pick one
                 return;
 

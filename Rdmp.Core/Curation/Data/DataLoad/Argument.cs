@@ -119,7 +119,7 @@ public abstract class Argument : DatabaseEntity, IArgument
     }
 
     /// <inheritdoc/>
-    protected Argument(ICatalogueRepository repository, DbDataReader dataReader)
+    protected Argument(RdmpDbContext catalogueDbContext, DbDataReader dataReader)
         : base(repository, dataReader)
     {
     }

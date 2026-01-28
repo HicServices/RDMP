@@ -53,7 +53,7 @@ public partial class ChooseLoggingTaskUI : RDMPUserControl, ICheckNotifier
         if (_catalogue == null)
             return;
 
-        var servers = Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>()
+        var servers = Activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<ExternalDatabaseServer>()
             .Where(s => string.Equals(expectedDatabaseTypeString, s.CreatedByAssembly)).ToArray();
 
         ddLoggingServer.Items.Clear();
@@ -252,7 +252,7 @@ public partial class ChooseLoggingTaskUI : RDMPUserControl, ICheckNotifier
 
     private void btnCreateNewLoggingServer_Click(object sender, EventArgs e)
     {
-        CreatePlatformDatabase.CreateNewExternalServer(Activator.RepositoryLocator.CatalogueRepository,
+        CreatePlatformDatabase.CreateNewExternalServer(Activator.RepositoryLocator.CatalogueDbContext,
             PermissableDefaults.LiveLoggingServer_ID, new LoggingDatabasePatcher());
         RefreshUIFromDatabase();
     }

@@ -28,7 +28,7 @@ public class MsSqlGlobalsReleasePotential : GlobalReleasePotential
     {
         var externalServerId = int.Parse(globalResult.DestinationDescription.Split('|')[0]);
         var externalServer =
-            RepositoryLocator.CatalogueRepository.GetObjectByID<ExternalDatabaseServer>(externalServerId);
+            RepositoryLocator.CatalogueDbContext.GetObjectByID<ExternalDatabaseServer>(externalServerId);
         var dbName = globalResult.DestinationDescription.Split('|')[1];
         var tblName = globalResult.DestinationDescription.Split('|')[2];
         var server = DataAccessPortal.ExpectServer(externalServer, DataAccessContext.DataExport, false);

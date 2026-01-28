@@ -45,7 +45,7 @@ public class ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable
 
         if (_catalogue == null)
         {
-            if (!SelectOne(BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(),
+            if (!SelectOne(BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Catalogue>(),
                     out var cata))
                 return;
 

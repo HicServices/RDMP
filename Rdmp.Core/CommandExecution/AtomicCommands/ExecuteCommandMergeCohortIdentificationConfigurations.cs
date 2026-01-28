@@ -27,7 +27,7 @@ public class ExecuteCommandMergeCohortIdentificationConfigurations : BasicComman
 
         if (toMerge is not { Length: > 1 } &&
             !SelectMany(
-                BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<CohortIdentificationConfiguration>(),
+                BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllObjects<CohortIdentificationConfiguration>(),
                 out toMerge)) return;
 
         if (toMerge is not { Length: > 1 })
@@ -38,7 +38,7 @@ public class ExecuteCommandMergeCohortIdentificationConfigurations : BasicComman
 
         var merger =
             new CohortIdentificationConfigurationMerger(
-                (CatalogueRepository)BasicActivator.RepositoryLocator.CatalogueRepository);
+                (CatalogueRepository)BasicActivator.RepositoryLocator.CatalogueDbContext);
         var result = merger.Merge(toMerge, SetOperation.UNION);
 
         if (result == null) return;

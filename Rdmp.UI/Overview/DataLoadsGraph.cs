@@ -68,7 +68,7 @@ public partial class DataLoadsGraph : RDMPUserControl, IDashboardableControl
         {
             var loadSummary = (DataLoadsGraphResult)e.Model;
             var metadata =
-                Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<LoadMetadata>()
+                Activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<LoadMetadata>()
                     .SingleOrDefault(m => m.ID == loadSummary.ID);
 
             if (metadata != null)
@@ -81,7 +81,7 @@ public partial class DataLoadsGraph : RDMPUserControl, IDashboardableControl
             if (loadSummary != null)
             {
                 var metadata =
-                    Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<LoadMetadata>()
+                    Activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<LoadMetadata>()
                         .SingleOrDefault(m => m.ID == loadSummary.ID);
 
                 if (metadata != null)
@@ -122,7 +122,7 @@ public partial class DataLoadsGraph : RDMPUserControl, IDashboardableControl
                 var countManualLoadsuccessful = 0;
                 var countManualLoadFailure = 0;
 
-                foreach (var metadata in Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<LoadMetadata>())
+                foreach (var metadata in Activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<LoadMetadata>())
                     try
                     {
                         LogManager logManager;

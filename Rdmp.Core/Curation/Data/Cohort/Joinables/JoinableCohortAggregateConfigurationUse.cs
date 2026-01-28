@@ -74,7 +74,7 @@ public class JoinableCohortAggregateConfigurationUse : DatabaseEntity
     {
     }
 
-    internal JoinableCohortAggregateConfigurationUse(ICatalogueRepository repository, DbDataReader r)
+    internal JoinableCohortAggregateConfigurationUse(RdmpDbContext catalogueDbContext, DbDataReader r)
         : base(repository, r)
     {
         if (Enum.TryParse(r["JoinType"].ToString(), true, out ExtractionJoinType joinType))
@@ -84,7 +84,7 @@ public class JoinableCohortAggregateConfigurationUse : DatabaseEntity
         AggregateConfiguration_ID = Convert.ToInt32(r["AggregateConfiguration_ID"]);
     }
 
-    internal JoinableCohortAggregateConfigurationUse(ICatalogueRepository repository, AggregateConfiguration user,
+    internal JoinableCohortAggregateConfigurationUse(RdmpDbContext catalogueDbContext, AggregateConfiguration user,
         JoinableCohortAggregateConfiguration joinable)
     {
         if (repository.GetAllObjectsWhere<JoinableCohortAggregateConfiguration>("AggregateConfiguration_ID", user.ID)

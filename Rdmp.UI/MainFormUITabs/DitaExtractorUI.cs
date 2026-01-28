@@ -49,7 +49,7 @@ public partial class DitaExtractorUI : RDMPUserControl
                 foreach (var file in outputPath.GetFiles("*.dita*"))
                     file.Delete();
 
-            var extractor = new DitaCatalogueExtractor(Activator.RepositoryLocator.CatalogueRepository, outputPath);
+            var extractor = new DitaCatalogueExtractor(Activator.RepositoryLocator.CatalogueDbContext, outputPath);
             extractor.Extract(progressBarsUI1);
         }
         catch (Exception ex)
@@ -71,7 +71,7 @@ public partial class DitaExtractorUI : RDMPUserControl
     {
         var popup = new PopupChecksUI("Checking Dita extraction", false);
 
-        var extractor = new DitaCatalogueExtractor(Activator.RepositoryLocator.CatalogueRepository, null);
+        var extractor = new DitaCatalogueExtractor(Activator.RepositoryLocator.CatalogueDbContext, null);
         popup.StartChecking(extractor);
     }
 }

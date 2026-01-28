@@ -22,7 +22,7 @@ public class AggregateFilterFactory : IFilterFactory
     /// Sets class up to create <see cref="AggregateFilter"/> objects in the provided <paramref name="repository"/>
     /// </summary>
     /// <param name="repository"></param>
-    public AggregateFilterFactory(ICatalogueRepository repository)
+    public AggregateFilterFactory(RdmpDbContext catalogueDbContext)
     {
         _repository = repository;
     }

@@ -54,7 +54,7 @@ public class ExecuteCommandPublishFilter : BasicUICommandExecution, IAtomicComma
     {
         base.Execute();
 
-        _catalogue ??= SelectOne<Catalogue>(Activator.RepositoryLocator.CatalogueRepository);
+        _catalogue ??= SelectOne<Catalogue>(Activator.RepositoryLocator.CatalogueDbContext);
 
         var toAddTo = SelectOne(new DialogArgs
         {

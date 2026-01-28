@@ -202,7 +202,7 @@ public partial class DataReleaseUI : DataReleaseUI_Design
         {
             var context = ReleaseUseCase.DesignTime();
             _pipelineSelectionUI1 =
-                new PipelineSelectionUIFactory(Activator.RepositoryLocator.CatalogueRepository, null, context).Create(
+                new PipelineSelectionUIFactory(Activator.RepositoryLocator.CatalogueDbContext, null, context).Create(
                     Activator, "Release", DockStyle.Fill);
             _pipelineSelectionUI1.CollapseToSingleLineMode();
             _pipelineSelectionUI1.Pipeline = null;

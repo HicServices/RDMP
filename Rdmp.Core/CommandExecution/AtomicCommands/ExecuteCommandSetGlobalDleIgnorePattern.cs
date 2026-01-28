@@ -36,11 +36,11 @@ public sealed class ExecuteCommandSetGlobalDleIgnorePattern : BasicCommandExecut
         base.Execute();
 
         var existing =
-            HICDatabaseConfiguration.GetGlobalIgnorePatternIfAny(BasicActivator.RepositoryLocator.CatalogueRepository);
+            HICDatabaseConfiguration.GetGlobalIgnorePatternIfAny(BasicActivator.RepositoryLocator.CatalogueDbContext);
 
         if (existing == null)
         {
-            existing = new StandardRegex(BasicActivator.RepositoryLocator.CatalogueRepository)
+            existing = new StandardRegex(BasicActivator.RepositoryLocator.CatalogueDbContext)
             {
                 ConceptName = StandardRegex.DataLoadEngineGlobalIgnorePattern,
                 Description = "Regex that will be applied as an ignore when running the data load engine",

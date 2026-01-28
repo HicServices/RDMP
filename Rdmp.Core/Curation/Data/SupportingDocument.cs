@@ -114,7 +114,7 @@ public class SupportingDocument : DatabaseEntity, INamed, ISupportingObject
     /// <param name="repository"></param>
     /// <param name="parent"></param>
     /// <param name="name"></param>
-    public SupportingDocument(ICatalogueRepository repository, ICatalogue parent, string name)
+    public SupportingDocument(RdmpDbContext catalogueDbContext, ICatalogue parent, string name)
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
@@ -123,7 +123,7 @@ public class SupportingDocument : DatabaseEntity, INamed, ISupportingObject
         });
     }
 
-    internal SupportingDocument(ICatalogueRepository repository, DbDataReader r)
+    internal SupportingDocument(RdmpDbContext catalogueDbContext, DbDataReader r)
         : base(repository, r)
     {
         Catalogue_ID =

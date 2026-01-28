@@ -183,7 +183,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
     private void governanceReportToolStripMenuItem_Click(object sender, EventArgs e)
     {
         var generator = new GovernanceReport(new DatasetTimespanCalculator(),
-            Activator.RepositoryLocator.CatalogueRepository);
+            Activator.RepositoryLocator.CatalogueDbContext);
         generator.GenerateReport();
     }
 
@@ -252,10 +252,10 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
     private void generateClassTableSummaryToolStripMenuItem_Click(object sender, EventArgs e)
     {
         var report = new DocumentationReportDatabaseEntities();
-        report.GenerateReport(Activator.RepositoryLocator.CatalogueRepository.CommentStore,
-            new PopupChecksUI("Generating class summaries", false),
-            Activator.CoreIconProvider,
-            true);
+        //report.GenerateReport(Activator.RepositoryLocator.CatalogueDbContext.CommentStore,
+        //    new PopupChecksUI("Generating class summaries", false),
+        //    Activator.CoreIconProvider,
+        //    true);
     }
 
     private void showHelpToolStripMenuItem_Click(object sender, EventArgs e)

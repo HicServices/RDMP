@@ -99,7 +99,7 @@ public class ExecuteCommandCreateNewCatalogueByImportingFile : CatalogueCreation
 
         if (_pipeline == null)
         {
-            var pipelines = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>();
+            var pipelines = BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Pipeline>();
 
             var compatible = UploadFileUseCase.DesignTime().FilterCompatiblePipelines(pipelines).ToArray();
 
@@ -154,7 +154,7 @@ public class ExecuteCommandCreateNewCatalogueByImportingFile : CatalogueCreation
             throw new Exception(
                 $"Destination of engine claimed to have created {tbl.GetFullyQualifiedName()} but it did not exist");
 
-        var importer = new TableInfoImporter(BasicActivator.RepositoryLocator.CatalogueRepository, tbl);
+        var importer = new TableInfoImporter(BasicActivator.RepositoryLocator.CatalogueDbContext, tbl);
         importer.DoImport(out var ti, out _);
         var extractionIdentifiers = _extractionIdentifier is null ? null : ti.ColumnInfos.Where(t => t.Name == _extractionIdentifier).ToArray();
         var cata = BasicActivator.CreateAndConfigureCatalogue(ti, extractionIdentifiers,

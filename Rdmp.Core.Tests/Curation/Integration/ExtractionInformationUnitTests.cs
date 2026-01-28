@@ -31,8 +31,8 @@ public class ExtractionInformationUnitTests : UnitTests
 
         // Newly created ones should have the right Order to not collide
         var cata = ei.CatalogueItem.Catalogue;
-        var cataItem = new CatalogueItem(RepositoryLocator.CatalogueRepository, cata, "ci");
-        var ei2 = new ExtractionInformation(RepositoryLocator.CatalogueRepository, cataItem, ei.ColumnInfo, "fff");
+        var cataItem = new CatalogueItem(RepositoryLocator.CatalogueDbContext, cata, "ci");
+        var ei2 = new ExtractionInformation(RepositoryLocator.CatalogueDbContext, cataItem, ei.ColumnInfo, "fff");
 
         Assert.That(ei2.Order, Is.EqualTo((explicitOrder ?? 1) + 1));
     }
@@ -45,18 +45,18 @@ public class ExtractionInformationUnitTests : UnitTests
 
         // Newly created ones should have the right Order to not collide
         var cata = ei1.CatalogueItem.Catalogue;
-        var cataItem2 = new CatalogueItem(RepositoryLocator.CatalogueRepository, cata, "ci");
-        var ei2 = new ExtractionInformation(RepositoryLocator.CatalogueRepository, cataItem2, ei1.ColumnInfo, "fff");
+        var cataItem2 = new CatalogueItem(RepositoryLocator.CatalogueDbContext, cata, "ci");
+        var ei2 = new ExtractionInformation(RepositoryLocator.CatalogueDbContext, cataItem2, ei1.ColumnInfo, "fff");
 
         Assert.That(ei2.Order, Is.EqualTo(2));
 
-        var cataItem3 = new CatalogueItem(RepositoryLocator.CatalogueRepository, cata, "ci");
-        var ei3 = new ExtractionInformation(RepositoryLocator.CatalogueRepository, cataItem3, ei1.ColumnInfo, "fff");
+        var cataItem3 = new CatalogueItem(RepositoryLocator.CatalogueDbContext, cata, "ci");
+        var ei3 = new ExtractionInformation(RepositoryLocator.CatalogueDbContext, cataItem3, ei1.ColumnInfo, "fff");
 
         Assert.That(ei3.Order, Is.EqualTo(3));
 
-        var cataItem4 = new CatalogueItem(RepositoryLocator.CatalogueRepository, cata, "ci");
-        var ei4 = new ExtractionInformation(RepositoryLocator.CatalogueRepository, cataItem4, ei1.ColumnInfo, "fff");
+        var cataItem4 = new CatalogueItem(RepositoryLocator.CatalogueDbContext, cata, "ci");
+        var ei4 = new ExtractionInformation(RepositoryLocator.CatalogueDbContext, cataItem4, ei1.ColumnInfo, "fff");
 
         Assert.That(ei4.Order, Is.EqualTo(4));
     }

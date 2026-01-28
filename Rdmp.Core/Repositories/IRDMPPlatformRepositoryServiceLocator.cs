@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using Rdmp.Core.DataQualityEngine.Data;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 namespace Rdmp.Core.Repositories;
@@ -56,4 +57,5 @@ public interface IRDMPPlatformRepositoryServiceLocator : ICatalogueRepositorySer
     /// </summary>
     /// <returns></returns>
     IEnumerable<IRepository> GetAllRepositories();
+
 }

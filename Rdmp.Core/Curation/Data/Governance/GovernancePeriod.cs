@@ -116,7 +116,7 @@ public class GovernancePeriod : DatabaseEntity, ICheckable, INamed
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="name"></param>
-    public GovernancePeriod(ICatalogueRepository repository, string name = null)
+    public GovernancePeriod(RdmpDbContext catalogueDbContext, string name = null)
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
@@ -127,7 +127,7 @@ public class GovernancePeriod : DatabaseEntity, ICheckable, INamed
         _manager = CatalogueRepository.GovernanceManager;
     }
 
-    internal GovernancePeriod(ICatalogueRepository repository, DbDataReader r)
+    internal GovernancePeriod(RdmpDbContext catalogueDbContext, DbDataReader r)
         : base(repository, r)
     {
         //cannot be null

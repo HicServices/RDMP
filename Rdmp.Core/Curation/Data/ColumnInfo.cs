@@ -281,7 +281,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     /// <param name="name"></param>
     /// <param name="type"></param>
     /// <param name="parent"></param>
-    public ColumnInfo(ICatalogueRepository repository, string name, string type, ITableInfo parent)
+    public ColumnInfo(RdmpDbContext catalogueDbContext, string name, string type, ITableInfo parent)
     {
         //defaults
         DuplicateRecordResolutionIsAscending = true;
@@ -309,7 +309,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     }
 
 
-    internal ColumnInfo(ICatalogueRepository repository, DbDataReader r)
+    internal ColumnInfo(RdmpDbContext catalogueDbContext, DbDataReader r)
         : base(repository, r)
     {
         TableInfo_ID = int.Parse(r["TableInfo_ID"].ToString());

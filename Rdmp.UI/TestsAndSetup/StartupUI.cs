@@ -118,8 +118,8 @@ public partial class StartupUI : Form, ICheckNotifier
             return;
         }
 
-        if (_startup is { RepositoryLocator.CatalogueRepository: not null })
-            WideMessageBox.CommentStore = _startup.RepositoryLocator.CatalogueRepository.CommentStore;
+        if (_startup is { RepositoryLocator.CatalogueDbContext: not null })
+            WideMessageBox.CommentStore = _startup.RepositoryLocator.CatalogueDbContext.CommentStore;
 
         //when things go badly leave the form
         if (ragSmiley1.IsFatal() || CouldNotReachTier1Database)
@@ -181,7 +181,7 @@ public partial class StartupUI : Form, ICheckNotifier
                 lblProgress.Text = "Constructing UserSettingsRepositoryFinder Failed";
                 ragSmiley1.Fatal(ex);
             }
-            if (!forceClearRepositorySettings && (_startup.RepositoryLocator is null || _startup.RepositoryLocator.CatalogueRepository == null))
+            if (!forceClearRepositorySettings && (_startup.RepositoryLocator is null || _startup.RepositoryLocator.CatalogueDbContext == null))
             {
                 CopyExistingConfigurationToNewApplication();
                 var finder = new UserSettingsRepositoryFinder();

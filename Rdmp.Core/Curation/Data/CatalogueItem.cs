@@ -219,7 +219,7 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     /// <para><remarks>You should next choose which <see cref="ColumnInfo"/> powers it and optionally create an <see cref="ExtractionInformation"/> to
     /// make the column extractable</remarks></para>
     /// </summary>
-    public CatalogueItem(ICatalogueRepository repository, ICatalogue parent, string name)
+    public CatalogueItem(RdmpDbContext catalogueDbContext, ICatalogue parent, string name)
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
@@ -231,7 +231,7 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
         parent.ClearAllInjections();
     }
 
-    internal CatalogueItem(ICatalogueRepository repository, DbDataReader r)
+    internal CatalogueItem(RdmpDbContext catalogueDbContext, DbDataReader r)
         : base(repository, r)
     {
         Catalogue_ID =

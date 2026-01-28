@@ -311,7 +311,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
 
     public string GetDocumentation(Type type)
     {
-        return RepositoryLocator.CatalogueRepository.CommentStore.GetTypeDocumentationIfExists(type);
+        return RepositoryLocator.CatalogueDbContext.CommentStore.GetTypeDocumentationIfExists(type);
     }
 
     public string CurrentDirectory => Environment.CurrentDirectory;

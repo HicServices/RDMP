@@ -25,7 +25,7 @@ public sealed class ExecuteCommandUseCredentialsToAccessTableInfoData : BasicCom
 
         if (_credentials == null)
         {
-            _available = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<DataAccessCredentials>();
+            _available = BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllObjects<DataAccessCredentials>();
 
             if (_available.Length == 0)
                 SetImpossible("There are no credentials configured");
@@ -48,7 +48,7 @@ public sealed class ExecuteCommandUseCredentialsToAccessTableInfoData : BasicCom
         if (creds == null)
             return;
 
-        BasicActivator.RepositoryLocator.CatalogueRepository.TableInfoCredentialsManager.CreateLinkBetween(creds,
+        BasicActivator.RepositoryLocator.CatalogueDbContext.TableInfoCredentialsManager.CreateLinkBetween(creds,
             _tableInfo, DataAccessContext.Any);
         Publish(_tableInfo);
     }

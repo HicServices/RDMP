@@ -50,9 +50,9 @@ public partial class ServerDefaultsUI : RDMPForm
     {
         try
         {
-            defaults = Activator.RepositoryLocator.CatalogueRepository;
+            defaults = Activator.RepositoryLocator.CatalogueDbContext;
 
-            var allServers = Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>()
+            var allServers = Activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<ExternalDatabaseServer>()
                 .ToArray();
 
             InitializeServerDropdown(ddDefaultLoggingServer, PermissableDefaults.LiveLoggingServer_ID, allServers);
@@ -94,7 +94,7 @@ public partial class ServerDefaultsUI : RDMPForm
 
         if (patcher != null) //we expect an explicit type e.g. a HIC.Logging.Database
         {
-            var compatibles = Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>()
+            var compatibles = Activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<ExternalDatabaseServer>()
                 .Where(s => s.WasCreatedBy(patcher)).ToArray();
 
             if (currentDefault == null ||
@@ -190,7 +190,7 @@ public partial class ServerDefaultsUI : RDMPForm
 
     private void CreateNewExternalServer(PermissableDefaults defaultToSet, IPatcher patcher)
     {
-        if (CreatePlatformDatabase.CreateNewExternalServer(Activator.RepositoryLocator.CatalogueRepository,
+        if (CreatePlatformDatabase.CreateNewExternalServer(Activator.RepositoryLocator.CatalogueDbContext,
                 defaultToSet, patcher) != null)
             RefreshUIFromDatabase();
     }

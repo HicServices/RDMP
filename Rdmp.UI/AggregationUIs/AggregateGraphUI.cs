@@ -659,7 +659,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
 
         //set publish enabledness to the enabledness of
         _btnCache.Enabled =
-            Activator.RepositoryLocator.CatalogueRepository.GetDefaultFor(PermissableDefaults
+            Activator.RepositoryLocator.CatalogueDbContext.GetDefaultFor(PermissableDefaults
                 .WebServiceQueryCachingServer_ID) != null;
         btnClearFromCache.Enabled = false;
 
@@ -785,7 +785,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
 
     private CachedAggregateConfigurationResultsManager GetCacheManager() =>
         new(
-            Activator.RepositoryLocator.CatalogueRepository.GetDefaultFor(PermissableDefaults
+            Activator.RepositoryLocator.CatalogueDbContext.GetDefaultFor(PermissableDefaults
                 .WebServiceQueryCachingServer_ID)
         );
 

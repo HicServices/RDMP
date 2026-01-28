@@ -295,7 +295,7 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
             //create a new selection UI (pick an extraction pipeliene UI)
             var useCase = ExtractionPipelineUseCase.DesignTime();
             var factory =
-                new PipelineSelectionUIFactory(Activator.RepositoryLocator.CatalogueRepository, null, useCase,_extractionConfiguration);
+                new PipelineSelectionUIFactory(Activator.RepositoryLocator.CatalogueDbContext, null, useCase,_extractionConfiguration);
 
             _pipelineSelectionUI1 = factory.Create(activator, "Extraction Pipeline", DockStyle.Fill);
             _pipelineSelectionUI1.CollapseToSingleLineMode();

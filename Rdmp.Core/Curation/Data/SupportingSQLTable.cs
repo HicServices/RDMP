@@ -148,7 +148,7 @@ public class SupportingSQLTable : DatabaseEntity, INamed, ISupportingObject
     /// <param name="repository"></param>
     /// <param name="parent"></param>
     /// <param name="name"></param>
-    public SupportingSQLTable(ICatalogueRepository repository, ICatalogue parent, string name)
+    public SupportingSQLTable(RdmpDbContext catalogueDbContext, ICatalogue parent, string name)
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
@@ -157,7 +157,7 @@ public class SupportingSQLTable : DatabaseEntity, INamed, ISupportingObject
         });
     }
 
-    internal SupportingSQLTable(ICatalogueRepository repository, DbDataReader r)
+    internal SupportingSQLTable(RdmpDbContext catalogueDbContext, DbDataReader r)
         : base(repository, r)
     {
         Catalogue_ID = int.Parse(r["Catalogue_ID"].ToString());

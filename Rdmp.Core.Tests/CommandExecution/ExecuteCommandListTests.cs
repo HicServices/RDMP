@@ -18,10 +18,10 @@ internal class TestsExecuteCommandList : CommandCliTests
     [Test]
     public void Test_ExecuteCommandList_NoCataloguesParsing()
     {
-        foreach (var cat in RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>())
+        foreach (var cat in RepositoryLocator.CatalogueDbContext.GetAllObjects<Catalogue>())
             cat.DeleteInDatabase();
 
-        Assert.That(RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), Is.Empty,
+        Assert.That(RepositoryLocator.CatalogueDbContext.GetAllObjects<Catalogue>(), Is.Empty,
             "Failed to clear CatalogueRepository");
 
         GetInvoker().ExecuteCommand(typeof(ExecuteCommandList),

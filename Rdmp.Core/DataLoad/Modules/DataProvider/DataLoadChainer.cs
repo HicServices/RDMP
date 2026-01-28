@@ -57,7 +57,7 @@ public class DataLoadChainer : IDataProvider, IInteractiveCheckable
             return;
         }
 
-        var catalogueString = (_activator.RepositoryLocator.CatalogueRepository as TableRepository).ConnectionString;
+        var catalogueString = (_activator.RepositoryLocator.CatalogueDbContext as TableRepository).ConnectionString;
 
         var dataExportManagerConnectionString = (_activator.RepositoryLocator.DataExportRepository as TableRepository).ConnectionString;
 

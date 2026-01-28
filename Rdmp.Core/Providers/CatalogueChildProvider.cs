@@ -23,6 +23,7 @@ using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.Curation.Data.Remoting;
 using Rdmp.Core.Curation.DataHelper.RegexRedaction;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Providers.Nodes.CohortNodes;
@@ -185,7 +186,7 @@ public class CatalogueChildProvider : ICoreChildProvider
     public ConcurrentDictionary<object, HashSet<IMasqueradeAs>> AllMasqueraders { get; private set; }
 
     private IChildProvider[] _pluginChildProviders;
-    private readonly ICatalogueRepository _catalogueRepository;
+    private readonly RDMPDbContext _catalogueDbContext;
     private readonly ICheckNotifier _errorsCheckNotifier;
     private readonly List<IChildProvider> _blockedPlugins = new();
 
@@ -224,16 +225,16 @@ public class CatalogueChildProvider : ICoreChildProvider
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="pluginChildProviders"></param>
     /// <param name="errorsCheckNotifier">Where to report errors building the hierarchy e.g. when <paramref name="pluginChildProviders"/> crash.  Set to null for <see cref="IgnoreAllErrorsCheckNotifier"/></param>
     /// <param name="previousStateIfKnown">Previous child provider state if you know it otherwise null</param>
-    public CatalogueChildProvider(ICatalogueRepository repository, IChildProvider[] pluginChildProviders,
+    public CatalogueChildProvider(RDMPDbContext catalogueDbContext, IChildProvider[] pluginChildProviders,
         ICheckNotifier errorsCheckNotifier, CatalogueChildProvider previousStateIfKnown)
     {
-        _commentStore = repository.CommentStore;
-        _catalogueRepository = repository;
-        _catalogueRepository?.EncryptionManager?.ClearAllInjections();
+        _commentStore = null;// repository.CommentStore;
+        _catalogueDbContext = catalogueDbContext;
+        //_catalogueRepository?.EncryptionManager?.ClearAllInjections();
 
         _errorsCheckNotifier = errorsCheckNotifier ?? IgnoreAllErrorsCheckNotifier.Instance;
 
@@ -246,356 +247,356 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         _pluginChildProviders = pluginChildProviders ?? Array.Empty<IChildProvider>();
 
-        ReportProgress("Before object fetches");
+        //ReportProgress("Before object fetches");
 
-        AllAnyTableParameters = GetAllObjects<AnyTableSqlParameter>(repository);
+        //AllAnyTableParameters = GetAllObjects<AnyTableSqlParameter>(repository);
 
-        AllANOTables = GetAllObjects<ANOTable>(repository);
-        AllANOTablesNode = new AllANOTablesNode();
-        AddChildren(AllANOTablesNode);
+        //AllANOTables = GetAllObjects<ANOTable>(repository);
+        //AllANOTablesNode = new AllANOTablesNode();
+        //AddChildren(AllANOTablesNode);
 
-        AllCatalogues = GetAllObjects<Catalogue>(repository);
-        AllCataloguesDictionary = AllCatalogues.ToDictionaryEx(i => i.ID, o => o);
+        //AllCatalogues = GetAllObjects<Catalogue>(repository);
+        //AllCataloguesDictionary = AllCatalogues.ToDictionaryEx(i => i.ID, o => o);
 
-        AllDatasets = GetAllObjects<Curation.Data.Dataset>(repository);
+        //AllDatasets = GetAllObjects<Curation.Data.Dataset>(repository);
 
-        AllLoadMetadatas = GetAllObjects<LoadMetadata>(repository);
-        AllLoadMetadataCatalogueLinkages = GetAllObjects<LoadMetadataCatalogueLinkage>(repository);
-        AllLoadMetadataLinkage = GetAllObjects<LoadMetadataCatalogueLinkage>(repository);
-        AllProcessTasks = GetAllObjects<ProcessTask>(repository);
-        AllProcessTasksArguments = GetAllObjects<ProcessTaskArgument>(repository);
-        AllLoadProgresses = GetAllObjects<LoadProgress>(repository);
-        AllCacheProgresses = GetAllObjects<CacheProgress>(repository);
+        //AllLoadMetadatas = GetAllObjects<LoadMetadata>(repository);
+        //AllLoadMetadataCatalogueLinkages = GetAllObjects<LoadMetadataCatalogueLinkage>(repository);
+        //AllLoadMetadataLinkage = GetAllObjects<LoadMetadataCatalogueLinkage>(repository);
+        //AllProcessTasks = GetAllObjects<ProcessTask>(repository);
+        //AllProcessTasksArguments = GetAllObjects<ProcessTaskArgument>(repository);
+        //AllLoadProgresses = GetAllObjects<LoadProgress>(repository);
+        //AllCacheProgresses = GetAllObjects<CacheProgress>(repository);
 
-        AllPermissionWindows = GetAllObjects<PermissionWindow>(repository);
-        AllPermissionWindowsNode = new AllPermissionWindowsNode();
-        AddChildren(AllPermissionWindowsNode);
+        //AllPermissionWindows = GetAllObjects<PermissionWindow>(repository);
+        //AllPermissionWindowsNode = new AllPermissionWindowsNode();
+        //AddChildren(AllPermissionWindowsNode);
 
-        AllRemoteRDMPs = GetAllObjects<RemoteRDMP>(repository);
+        //AllRemoteRDMPs = GetAllObjects<RemoteRDMP>(repository);
 
-        AllExternalServers = GetAllObjects<ExternalDatabaseServer>(repository);
+        //AllExternalServers = GetAllObjects<ExternalDatabaseServer>(repository);
 
-        AllTableInfos = GetAllObjects<TableInfo>(repository);
-        AllDataAccessCredentials = GetAllObjects<DataAccessCredentials>(repository);
-        AllDataAccessCredentialsNode = new AllDataAccessCredentialsNode();
-        AddChildren(AllDataAccessCredentialsNode);
+        //AllTableInfos = GetAllObjects<TableInfo>(repository);
+        //AllDataAccessCredentials = GetAllObjects<DataAccessCredentials>(repository);
+        //AllDataAccessCredentialsNode = new AllDataAccessCredentialsNode();
+        //AddChildren(AllDataAccessCredentialsNode);
 
-        AllConnectionStringKeywordsNode = new AllConnectionStringKeywordsNode();
-        AllConnectionStringKeywords = GetAllObjects<ConnectionStringKeyword>(repository).ToArray();
-        AddToDictionaries(new HashSet<object>(AllConnectionStringKeywords),
-            new DescendancyList(AllConnectionStringKeywordsNode));
+        //AllConnectionStringKeywordsNode = new AllConnectionStringKeywordsNode();
+        //AllConnectionStringKeywords = GetAllObjects<ConnectionStringKeyword>(repository).ToArray();
+        //AddToDictionaries(new HashSet<object>(AllConnectionStringKeywords),
+        //    new DescendancyList(AllConnectionStringKeywordsNode));
 
-        ReportProgress("after basic object fetches");
+        //ReportProgress("after basic object fetches");
 
-        Task.WaitAll(
-            //which TableInfos use which Credentials under which DataAccessContexts
-            Task.Factory.StartNew(() =>
-            {
-                AllDataAccessCredentialUsages =
-                    repository.TableInfoCredentialsManager.GetAllCredentialUsagesBy(AllDataAccessCredentials,
-                        AllTableInfos);
-            }),
-            Task.Factory.StartNew(() => { AllColumnInfos = GetAllObjects<ColumnInfo>(repository); })
-        );
+        //Task.WaitAll(
+        //    //which TableInfos use which Credentials under which DataAccessContexts
+        //    Task.Factory.StartNew(() =>
+        //    {
+        //        AllDataAccessCredentialUsages =
+        //            repository.TableInfoCredentialsManager.GetAllCredentialUsagesBy(AllDataAccessCredentials,
+        //                AllTableInfos);
+        //    }),
+        //    Task.Factory.StartNew(() => { AllColumnInfos = GetAllObjects<ColumnInfo>(repository); })
+        //);
 
-        ReportProgress("After credentials");
+        //ReportProgress("After credentials");
 
-        TableInfosToColumnInfos = AllColumnInfos.GroupBy(c => c.TableInfo_ID)
-            .ToDictionaryEx(gdc => gdc.Key, gdc => gdc.ToList());
+        //TableInfosToColumnInfos = AllColumnInfos.GroupBy(c => c.TableInfo_ID)
+        //    .ToDictionaryEx(gdc => gdc.Key, gdc => gdc.ToList());
 
-        ReportProgress("After TableInfo to ColumnInfo mapping");
+        //ReportProgress("After TableInfo to ColumnInfo mapping");
 
-        AllPreLoadDiscardedColumns = GetAllObjects<PreLoadDiscardedColumn>(repository);
+        //AllPreLoadDiscardedColumns = GetAllObjects<PreLoadDiscardedColumn>(repository);
 
-        AllSupportingDocuments = GetAllObjects<SupportingDocument>(repository);
-        AllSupportingSQL = GetAllObjects<SupportingSQLTable>(repository);
+        //AllSupportingDocuments = GetAllObjects<SupportingDocument>(repository);
+        //AllSupportingSQL = GetAllObjects<SupportingSQLTable>(repository);
 
-        AllCohortIdentificationConfigurations = GetAllObjects<CohortIdentificationConfiguration>(repository).Where(cic => !cic.IsTemplate).ToArray();
-        AllTemplateCohortIdentificationConfigurations = GetAllObjects<CohortIdentificationConfiguration>(repository).Where(cic => cic.IsTemplate).ToArray();
+        //AllCohortIdentificationConfigurations = GetAllObjects<CohortIdentificationConfiguration>(repository).Where(cic => !cic.IsTemplate).ToArray();
+        //AllTemplateCohortIdentificationConfigurations = GetAllObjects<CohortIdentificationConfiguration>(repository).Where(cic => cic.IsTemplate).ToArray();
 
-        FetchCatalogueItems();
+        //FetchCatalogueItems();
 
-        ReportProgress("After CatalogueItem injection");
+        //ReportProgress("After CatalogueItem injection");
 
-        FetchExtractionInformations();
+        //FetchExtractionInformations();
 
-        ReportProgress("After ExtractionInformation injection");
+        //ReportProgress("After ExtractionInformation injection");
 
-        BuildAggregateConfigurations();
+        //BuildAggregateConfigurations();
 
-        BuildCohortCohortAggregateContainers();
+        //BuildCohortCohortAggregateContainers();
 
-        AllJoinables = GetAllObjects<JoinableCohortAggregateConfiguration>(repository);
-        AllJoinUses = GetAllObjects<JoinableCohortAggregateConfigurationUse>(repository);
+        //AllJoinables = GetAllObjects<JoinableCohortAggregateConfiguration>(repository);
+        //AllJoinUses = GetAllObjects<JoinableCohortAggregateConfigurationUse>(repository);
 
-        AllCatalogueFilters = GetAllObjects<ExtractionFilter>(repository);
-        AllCatalogueParameters = GetAllObjects<ExtractionFilterParameter>(repository);
-        AllCatalogueValueSets = GetAllObjects<ExtractionFilterParameterSet>(repository);
-        AllCatalogueValueSetValues = GetAllObjects<ExtractionFilterParameterSetValue>(repository);
+        //AllCatalogueFilters = GetAllObjects<ExtractionFilter>(repository);
+        //AllCatalogueParameters = GetAllObjects<ExtractionFilterParameter>(repository);
+        //AllCatalogueValueSets = GetAllObjects<ExtractionFilterParameterSet>(repository);
+        //AllCatalogueValueSetValues = GetAllObjects<ExtractionFilterParameterSetValue>(repository);
 
-        ReportProgress("After Filter and Joinable fetching");
+        //ReportProgress("After Filter and Joinable fetching");
 
 
-        AllLookups = GetAllObjects<Lookup>(repository);
+        //AllLookups = GetAllObjects<Lookup>(repository);
 
-        foreach (var l in AllLookups)
-            l.SetKnownColumns(_allColumnInfos[l.PrimaryKey_ID], _allColumnInfos[l.ForeignKey_ID],
-                _allColumnInfos[l.Description_ID]);
+        //foreach (var l in AllLookups)
+        //    l.SetKnownColumns(_allColumnInfos[l.PrimaryKey_ID], _allColumnInfos[l.ForeignKey_ID],
+        //        _allColumnInfos[l.Description_ID]);
 
-        AllJoinInfos = repository.GetAllObjects<JoinInfo>();
+        //AllJoinInfos = repository.GetAllObjects<JoinInfo>();
 
-        foreach (var j in AllJoinInfos)
-            j.SetKnownColumns(_allColumnInfos[j.PrimaryKey_ID], _allColumnInfos[j.ForeignKey_ID]);
+        //foreach (var j in AllJoinInfos)
+        //    j.SetKnownColumns(_allColumnInfos[j.PrimaryKey_ID], _allColumnInfos[j.ForeignKey_ID]);
 
-        ReportProgress("After SetKnownColumns");
+        //ReportProgress("After SetKnownColumns");
 
-        AllExternalServersNode = new AllExternalServersNode();
-        AddChildren(AllExternalServersNode);
+        //AllExternalServersNode = new AllExternalServersNode();
+        //AddChildren(AllExternalServersNode);
 
-        AllRDMPRemotesNode = new AllRDMPRemotesNode();
-        AddChildren(AllRDMPRemotesNode);
+        //AllRDMPRemotesNode = new AllRDMPRemotesNode();
+        //AddChildren(AllRDMPRemotesNode);
 
-        AllDashboardsNode = new AllDashboardsNode();
-        AllDashboards = GetAllObjects<DashboardLayout>(repository);
-        AddChildren(AllDashboardsNode);
+        //AllDashboardsNode = new AllDashboardsNode();
+        //AllDashboards = GetAllObjects<DashboardLayout>(repository);
+        //AddChildren(AllDashboardsNode);
 
-        AllObjectSharingNode = new AllObjectSharingNode();
-        AllExports = GetAllObjects<ObjectExport>(repository);
-        AllImports = GetAllObjects<ObjectImport>(repository);
+        //AllObjectSharingNode = new AllObjectSharingNode();
+        //AllExports = GetAllObjects<ObjectExport>(repository);
+        //AllImports = GetAllObjects<ObjectImport>(repository);
 
-        AddChildren(AllObjectSharingNode);
+        //AddChildren(AllObjectSharingNode);
 
-        ReportProgress("After Object Sharing discovery");
+        //ReportProgress("After Object Sharing discovery");
 
-        //Pipelines setup (see also DataExportChildProvider for calls to AddPipelineUseCases)
-        //Root node for all pipelines
-        AllPipelinesNode = new AllPipelinesNode();
+        ////Pipelines setup (see also DataExportChildProvider for calls to AddPipelineUseCases)
+        ////Root node for all pipelines
+        //AllPipelinesNode = new AllPipelinesNode();
 
-        //Pipelines not found to be part of any use case after AddPipelineUseCases
-        OtherPipelinesNode = new OtherPipelinesNode();
-        AllPipelines = GetAllObjects<Pipeline>(repository);
-        AllPipelineComponents = GetAllObjects<PipelineComponent>(repository);
-        AllPipelineComponentsArguments = GetAllObjects<PipelineComponentArgument>(repository);
+        ////Pipelines not found to be part of any use case after AddPipelineUseCases
+        //OtherPipelinesNode = new OtherPipelinesNode();
+        //AllPipelines = GetAllObjects<Pipeline>(repository);
+        //AllPipelineComponents = GetAllObjects<PipelineComponent>(repository);
+        //AllPipelineComponentsArguments = GetAllObjects<PipelineComponentArgument>(repository);
 
-        foreach (var p in AllPipelines)
-            p.InjectKnown(AllPipelineComponents.Where(pc => pc.Pipeline_ID == p.ID).ToArray());
+        //foreach (var p in AllPipelines)
+        //    p.InjectKnown(AllPipelineComponents.Where(pc => pc.Pipeline_ID == p.ID).ToArray());
 
-        AllStandardRegexesNode = new AllStandardRegexesNode();
-        AllStandardRegexes = GetAllObjects<StandardRegex>(repository);
-        AddToDictionaries(new HashSet<object>(AllStandardRegexes), new DescendancyList(AllStandardRegexesNode));
+        //AllStandardRegexesNode = new AllStandardRegexesNode();
+        //AllStandardRegexes = GetAllObjects<StandardRegex>(repository);
+        //AddToDictionaries(new HashSet<object>(AllStandardRegexes), new DescendancyList(AllStandardRegexesNode));
 
-        ReportProgress("After Pipelines setup");
+        //ReportProgress("After Pipelines setup");
 
-        //All the things for TableInfoCollectionUI
-        BuildServerNodes();
+        ////All the things for TableInfoCollectionUI
+        //BuildServerNodes();
 
-        ReportProgress("BuildServerNodes");
+        //ReportProgress("BuildServerNodes");
 
-        //add a new CatalogueItemNodes
-        InjectCatalogueItems();
+        ////add a new CatalogueItemNodes
+        //InjectCatalogueItems();
 
-        CatalogueRootFolder = FolderHelper.BuildFolderTree(AllCatalogues);
-        AddChildren(CatalogueRootFolder, new DescendancyList(CatalogueRootFolder));
+        //CatalogueRootFolder = FolderHelper.BuildFolderTree(AllCatalogues);
+        //AddChildren(CatalogueRootFolder, new DescendancyList(CatalogueRootFolder));
 
 
-        DatasetRootFolder = FolderHelper.BuildFolderTree(AllDatasets);
-        AddChildren(DatasetRootFolder, new DescendancyList(DatasetRootFolder));
+        //DatasetRootFolder = FolderHelper.BuildFolderTree(AllDatasets);
+        //AddChildren(DatasetRootFolder, new DescendancyList(DatasetRootFolder));
 
-        ReportProgress("Build Catalogue Folder Root");
+        //ReportProgress("Build Catalogue Folder Root");
 
-        LoadMetadataRootFolder = FolderHelper.BuildFolderTree(AllLoadMetadatas.Where(lmd => lmd.RootLoadMetadata_ID is null).ToArray());
-        AddChildren(LoadMetadataRootFolder, new DescendancyList(LoadMetadataRootFolder));
+        //LoadMetadataRootFolder = FolderHelper.BuildFolderTree(AllLoadMetadatas.Where(lmd => lmd.RootLoadMetadata_ID is null).ToArray());
+        //AddChildren(LoadMetadataRootFolder, new DescendancyList(LoadMetadataRootFolder));
 
-        CohortIdentificationConfigurationRootFolder =
-            FolderHelper.BuildFolderTree(AllCohortIdentificationConfigurations);
-        AddChildren(CohortIdentificationConfigurationRootFolder,
-            new DescendancyList(CohortIdentificationConfigurationRootFolder));
+        //CohortIdentificationConfigurationRootFolder =
+        //    FolderHelper.BuildFolderTree(AllCohortIdentificationConfigurations);
+        //AddChildren(CohortIdentificationConfigurationRootFolder,
+        //    new DescendancyList(CohortIdentificationConfigurationRootFolder));
 
-        CohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations = FolderHelper.BuildFolderTree(AllCohortIdentificationConfigurations.Where(cic => cic.Version is null).ToArray());
-        AddChildren(CohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations,
-           new DescendancyList(CohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations));
+        //CohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations = FolderHelper.BuildFolderTree(AllCohortIdentificationConfigurations.Where(cic => cic.Version is null).ToArray());
+        //AddChildren(CohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations,
+        //   new DescendancyList(CohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations));
 
-        var templateAggregateConfigurationIds =
-            new HashSet<int>(
-                repository.GetExtendedProperties(ExtendedProperty.IsTemplate)
-                    .Where(p => p.ReferencedObjectType.Equals(nameof(AggregateConfiguration)))
-                    .Select(r => r.ReferencedObjectID));
+        //var templateAggregateConfigurationIds =
+        //    new HashSet<int>(
+        //        repository.GetExtendedProperties(ExtendedProperty.IsTemplate)
+        //            .Where(p => p.ReferencedObjectType.Equals(nameof(AggregateConfiguration)))
+        //            .Select(r => r.ReferencedObjectID));
 
-        AllTemplateCohortIdentificationConfigurationsNode = new AllTemplateCohortIdentificationConfigurationsNode();
-        var templateCICTree = FolderHelper.BuildFolderTree(AllTemplateCohortIdentificationConfigurations);
-        AddChildren(templateCICTree, new DescendancyList(AllTemplateCohortIdentificationConfigurationsNode));
+        //AllTemplateCohortIdentificationConfigurationsNode = new AllTemplateCohortIdentificationConfigurationsNode();
+        //var templateCICTree = FolderHelper.BuildFolderTree(AllTemplateCohortIdentificationConfigurations);
+        //AddChildren(templateCICTree, new DescendancyList(AllTemplateCohortIdentificationConfigurationsNode));
 
-        TemplateAggregateConfigurations = AllAggregateConfigurations
-            .Where(ac => templateAggregateConfigurationIds.Contains(ac.ID)).ToArray();
+        //TemplateAggregateConfigurations = AllAggregateConfigurations
+        //    .Where(ac => templateAggregateConfigurationIds.Contains(ac.ID)).ToArray();
 
-        //add the orphans under the orphan folder
-        AddToDictionaries(new HashSet<object>(OrphanAggregateConfigurations),
-            new DescendancyList(OrphanAggregateConfigurationsNode));
+        ////add the orphans under the orphan folder
+        //AddToDictionaries(new HashSet<object>(OrphanAggregateConfigurations),
+        //    new DescendancyList(OrphanAggregateConfigurationsNode));
 
-        var dec = new DescendancyList(TemplateAggregateConfigurationsNode);
-        dec.SetBetterRouteExists();
-        AddToDictionaries(new HashSet<object>(TemplateAggregateConfigurations), dec);
+        //var dec = new DescendancyList(TemplateAggregateConfigurationsNode);
+        //dec.SetBetterRouteExists();
+        //AddToDictionaries(new HashSet<object>(TemplateAggregateConfigurations), dec);
 
-        //Some AggregateConfigurations are 'Patient Index Tables', this happens when there is an existing JoinableCohortAggregateConfiguration declared where
-        //the AggregateConfiguration_ID is the AggregateConfiguration.ID.  We can inject this knowledge now so to avoid database lookups later (e.g. at icon provision time)
-        var joinableDictionaryByAggregateConfigurationId =
-            AllJoinables.ToDictionaryEx(j => j.AggregateConfiguration_ID, v => v);
+        ////Some AggregateConfigurations are 'Patient Index Tables', this happens when there is an existing JoinableCohortAggregateConfiguration declared where
+        ////the AggregateConfiguration_ID is the AggregateConfiguration.ID.  We can inject this knowledge now so to avoid database lookups later (e.g. at icon provision time)
+        //var joinableDictionaryByAggregateConfigurationId =
+        //    AllJoinables.ToDictionaryEx(j => j.AggregateConfiguration_ID, v => v);
 
-        foreach (var ac in AllAggregateConfigurations) //if there's a joinable
-            ac.InjectKnown( //inject that we know the joinable (and what it is)
-                joinableDictionaryByAggregateConfigurationId.GetValueOrDefault(ac.ID)); //otherwise inject that it is not a joinable (suppresses database checking later)
+        //foreach (var ac in AllAggregateConfigurations) //if there's a joinable
+        //    ac.InjectKnown( //inject that we know the joinable (and what it is)
+        //        joinableDictionaryByAggregateConfigurationId.GetValueOrDefault(ac.ID)); //otherwise inject that it is not a joinable (suppresses database checking later)
 
-        ReportProgress("After AggregateConfiguration injection");
+        //ReportProgress("After AggregateConfiguration injection");
 
-        AllGovernanceNode = new AllGovernanceNode();
-        AllGovernancePeriods = GetAllObjects<GovernancePeriod>(repository);
-        AllGovernanceDocuments = GetAllObjects<GovernanceDocument>(repository);
-        GovernanceCoverage = repository.GovernanceManager.GetAllGovernedCataloguesForAllGovernancePeriods();
+        //AllGovernanceNode = new AllGovernanceNode();
+        //AllGovernancePeriods = GetAllObjects<GovernancePeriod>(repository);
+        //AllGovernanceDocuments = GetAllObjects<GovernanceDocument>(repository);
+        //GovernanceCoverage = repository.GovernanceManager.GetAllGovernedCataloguesForAllGovernancePeriods();
 
-        AddChildren(AllGovernanceNode);
+        //AddChildren(AllGovernanceNode);
 
-        ReportProgress("After Governance");
+        //ReportProgress("After Governance");
 
-        AllPluginsNode = new AllPluginsNode();
-        AddChildren(AllPluginsNode);
+        //AllPluginsNode = new AllPluginsNode();
+        //AddChildren(AllPluginsNode);
 
-        ReportProgress("After Plugins");
+        //ReportProgress("After Plugins");
 
-        AllRegexRedactionConfigurations = GetAllObjects<RegexRedactionConfiguration>(repository);
-        AllRegexRedactionConfigurationsNode = new AllRegexRedactionConfigurationsNode();
-        AddChildren(AllRegexRedactionConfigurationsNode);
+        //AllRegexRedactionConfigurations = GetAllObjects<RegexRedactionConfiguration>(repository);
+        //AllRegexRedactionConfigurationsNode = new AllRegexRedactionConfigurationsNode();
+        //AddChildren(AllRegexRedactionConfigurationsNode);
 
 
-        AllDatasets = GetAllObjects<Curation.Data.Dataset>(repository);
-        AllDatasetsNode = new AllDatasetsNode();
-        AddChildren(AllDatasetsNode);
+        //AllDatasets = GetAllObjects<Curation.Data.Dataset>(repository);
+        //AllDatasetsNode = new AllDatasetsNode();
+        //AddChildren(AllDatasetsNode);
 
-        ReportProgress("After Configurations");
+        //ReportProgress("After Configurations");
 
-        var searchables = new Dictionary<int, HashSet<IMapsDirectlyToDatabaseTable>>();
+        //var searchables = new Dictionary<int, HashSet<IMapsDirectlyToDatabaseTable>>();
 
-        foreach (var o in _descendancyDictionary.Keys.OfType<IMapsDirectlyToDatabaseTable>())
-        {
-            if (!searchables.ContainsKey(o.ID))
-                searchables.Add(o.ID, new HashSet<IMapsDirectlyToDatabaseTable>());
+        //foreach (var o in _descendancyDictionary.Keys.OfType<IMapsDirectlyToDatabaseTable>())
+        //{
+        //    if (!searchables.ContainsKey(o.ID))
+        //        searchables.Add(o.ID, new HashSet<IMapsDirectlyToDatabaseTable>());
 
-            searchables[o.ID].Add(o);
-        }
+        //    searchables[o.ID].Add(o);
+        //}
 
-        ReportProgress("After building Searchables");
+        //ReportProgress("After building Searchables");
 
-        foreach (var e in AllExports)
-        {
-            if (!searchables.TryGetValue(e.ReferencedObjectID, out var searchable))
-                continue;
+        //foreach (var e in AllExports)
+        //{
+        //    if (!searchables.TryGetValue(e.ReferencedObjectID, out var searchable))
+        //        continue;
 
-            var known = searchable
-                .FirstOrDefault(s => e.ReferencedObjectType == s.GetType().FullName);
+        //    var known = searchable
+        //        .FirstOrDefault(s => e.ReferencedObjectType == s.GetType().FullName);
 
-            if (known != null)
-                e.InjectKnown(known);
-        }
+        //    if (known != null)
+        //        e.InjectKnown(known);
+        //}
 
-        ReportProgress("After building exports");
+        //ReportProgress("After building exports");
     }
 
 
     private void FetchCatalogueItems()
     {
-        AllCatalogueItemsDictionary =
-            GetAllObjects<CatalogueItem>(_catalogueRepository).ToDictionaryEx(i => i.ID, o => o);
+        //AllCatalogueItemsDictionary =
+        //    GetAllObjects<CatalogueItem>(_catalogueRepository).ToDictionaryEx(i => i.ID, o => o);
 
-        ReportProgress("After CatalogueItem getting");
+        //ReportProgress("After CatalogueItem getting");
 
-        _catalogueToCatalogueItems = AllCatalogueItems.GroupBy(c => c.Catalogue_ID)
-            .ToDictionaryEx(gdc => gdc.Key, gdc => gdc.ToList());
-        _allColumnInfos = AllColumnInfos.ToDictionaryEx(i => i.ID, o => o);
+        //_catalogueToCatalogueItems = AllCatalogueItems.GroupBy(c => c.Catalogue_ID)
+        //    .ToDictionaryEx(gdc => gdc.Key, gdc => gdc.ToList());
+        //_allColumnInfos = AllColumnInfos.ToDictionaryEx(i => i.ID, o => o);
 
-        ReportProgress("After CatalogueItem Dictionary building");
+        //ReportProgress("After CatalogueItem Dictionary building");
 
-        //Inject known ColumnInfos into CatalogueItems
-        Parallel.ForEach(AllCatalogueItems, ci =>
-        {
-            if (ci.ColumnInfo_ID != null && _allColumnInfos.TryGetValue(ci.ColumnInfo_ID.Value, out var col))
-                ci.InjectKnown(col);
-            else
-                ci.InjectKnown((ColumnInfo)null);
-        });
+        ////Inject known ColumnInfos into CatalogueItems
+        //Parallel.ForEach(AllCatalogueItems, ci =>
+        //{
+        //    if (ci.ColumnInfo_ID != null && _allColumnInfos.TryGetValue(ci.ColumnInfo_ID.Value, out var col))
+        //        ci.InjectKnown(col);
+        //    else
+        //        ci.InjectKnown((ColumnInfo)null);
+        //});
     }
 
     private void FetchExtractionInformations()
     {
-        AllExtractionInformationsDictionary = GetAllObjects<ExtractionInformation>(_catalogueRepository)
-            .ToDictionaryEx(i => i.ID, o => o);
-        _extractionInformationsByCatalogueItem =
-            AllExtractionInformationsDictionary.Values.ToDictionaryEx(k => k.CatalogueItem_ID, v => v);
+        //AllExtractionInformationsDictionary = GetAllObjects<ExtractionInformation>(_catalogueRepository)
+        //    .ToDictionaryEx(i => i.ID, o => o);
+        //_extractionInformationsByCatalogueItem =
+        //    AllExtractionInformationsDictionary.Values.ToDictionaryEx(k => k.CatalogueItem_ID, v => v);
 
-        //Inject known CatalogueItems into ExtractionInformations
-        foreach (var ei in AllExtractionInformationsDictionary.Values)
-            if (AllCatalogueItemsDictionary.TryGetValue(ei.CatalogueItem_ID, out var ci))
-            {
-                ei.InjectKnown(ci.ColumnInfo);
-                ei.InjectKnown(ci);
-            }
+        ////Inject known CatalogueItems into ExtractionInformations
+        //foreach (var ei in AllExtractionInformationsDictionary.Values)
+        //    if (AllCatalogueItemsDictionary.TryGetValue(ei.CatalogueItem_ID, out var ci))
+        //    {
+        //        ei.InjectKnown(ci.ColumnInfo);
+        //        ei.InjectKnown(ci);
+        //    }
     }
 
     private void BuildCohortCohortAggregateContainers()
     {
-        AllCohortAggregateContainers = GetAllObjects<CohortAggregateContainer>(_catalogueRepository);
+        //AllCohortAggregateContainers = GetAllObjects<CohortAggregateContainer>(_catalogueRepository);
 
 
-        //if we have a database repository then we should get answers from the caching version CohortContainerManagerFromChildProvider otherwise
-        //just use the one that is configured on the repository.
+        ////if we have a database repository then we should get answers from the caching version CohortContainerManagerFromChildProvider otherwise
+        ////just use the one that is configured on the repository.
 
-        _cohortContainerManager = _catalogueRepository is CatalogueRepository cataRepo
-            ? new CohortContainerManagerFromChildProvider(cataRepo, this)
-            : _catalogueRepository.CohortContainerManager;
+        //_cohortContainerManager = _catalogueRepository is CatalogueRepository cataRepo
+        //    ? new CohortContainerManagerFromChildProvider(cataRepo, this)
+        //    : _catalogueRepository.CohortContainerManager;
     }
 
     private void BuildAggregateConfigurations()
     {
-        AllJoinableCohortAggregateConfigurationUse =
-            GetAllObjects<JoinableCohortAggregateConfigurationUse>(_catalogueRepository);
-        AllAggregateConfigurations = GetAllObjects<AggregateConfiguration>(_catalogueRepository);
+        //AllJoinableCohortAggregateConfigurationUse =
+        //    GetAllObjects<JoinableCohortAggregateConfigurationUse>(_catalogueRepository);
+        //AllAggregateConfigurations = GetAllObjects<AggregateConfiguration>(_catalogueRepository);
 
-        BuildAggregateDimensions();
+        //BuildAggregateDimensions();
 
-        //to start with all aggregates are orphans (we prune this as we determine descendency in AddChildren methods
-        OrphanAggregateConfigurations =
-            new HashSet<AggregateConfiguration>(
-                AllAggregateConfigurations.Where(ac => ac.IsCohortIdentificationAggregate));
+        ////to start with all aggregates are orphans (we prune this as we determine descendency in AddChildren methods
+        //OrphanAggregateConfigurations =
+        //    new HashSet<AggregateConfiguration>(
+        //        AllAggregateConfigurations.Where(ac => ac.IsCohortIdentificationAggregate));
 
-        foreach (var configuration in AllAggregateConfigurations)
-        {
-            configuration.InjectKnown(AllCataloguesDictionary[configuration.Catalogue_ID]);
-            configuration.InjectKnown(AllAggregateDimensions.Where(d => d.AggregateConfiguration_ID == configuration.ID)
-                .ToArray());
-        }
+        //foreach (var configuration in AllAggregateConfigurations)
+        //{
+        //    configuration.InjectKnown(AllCataloguesDictionary[configuration.Catalogue_ID]);
+        //    configuration.InjectKnown(AllAggregateDimensions.Where(d => d.AggregateConfiguration_ID == configuration.ID)
+        //        .ToArray());
+        //}
 
-        foreach (var d in AllAggregateDimensions)
-            d.InjectKnown(AllExtractionInformationsDictionary[d.ExtractionInformation_ID]);
+        //foreach (var d in AllAggregateDimensions)
+        //    d.InjectKnown(AllExtractionInformationsDictionary[d.ExtractionInformation_ID]);
 
-        ReportProgress("AggregateDimension injections");
+        //ReportProgress("AggregateDimension injections");
 
-        BuildAggregateFilterContainers();
+        //BuildAggregateFilterContainers();
     }
 
     private void BuildAggregateDimensions()
     {
-        AllAggregateDimensions = GetAllObjects<AggregateDimension>(_catalogueRepository);
-        AllAggregateContinuousDateAxis = GetAllObjects<AggregateContinuousDateAxis>(_catalogueRepository);
+        //AllAggregateDimensions = GetAllObjects<AggregateDimension>(_catalogueRepository);
+        //AllAggregateContinuousDateAxis = GetAllObjects<AggregateContinuousDateAxis>(_catalogueRepository);
     }
 
     private void BuildAggregateFilterContainers()
     {
-        AllAggregateContainersDictionary = GetAllObjects<AggregateFilterContainer>(_catalogueRepository)
-            .ToDictionaryEx(o => o.ID, o2 => o2);
-        AllAggregateFilters = GetAllObjects<AggregateFilter>(_catalogueRepository);
-        AllAggregateFilterParameters = GetAllObjects<AggregateFilterParameter>(_catalogueRepository);
+        //AllAggregateContainersDictionary = GetAllObjects<AggregateFilterContainer>(_catalogueRepository)
+        //    .ToDictionaryEx(o => o.ID, o2 => o2);
+        //AllAggregateFilters = GetAllObjects<AggregateFilter>(_catalogueRepository);
+        //AllAggregateFilterParameters = GetAllObjects<AggregateFilterParameter>(_catalogueRepository);
 
-        _aggregateFilterManager = _catalogueRepository is CatalogueRepository cataRepo
-            ? new FilterManagerFromChildProvider(cataRepo, this)
-            : _catalogueRepository.FilterManager;
+        //_aggregateFilterManager = _catalogueRepository is CatalogueRepository cataRepo
+        //    ? new FilterManagerFromChildProvider(cataRepo, this)
+        //    : _catalogueRepository.FilterManager;
     }
 
 
@@ -824,19 +825,19 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     private void AddChildren(AllDataAccessCredentialsNode allDataAccessCredentialsNode)
     {
-        var children = new HashSet<object>();
+        //var children = new HashSet<object>();
 
-        var isKeyMissing = false;
-        if (_catalogueRepository.EncryptionManager is PasswordEncryptionKeyLocation keyLocation)
-            isKeyMissing = string.IsNullOrWhiteSpace(keyLocation.GetKeyFileLocation());
+        //var isKeyMissing = false;
+        //if (_catalogueRepository.EncryptionManager is PasswordEncryptionKeyLocation keyLocation)
+        //    isKeyMissing = string.IsNullOrWhiteSpace(keyLocation.GetKeyFileLocation());
 
-        children.Add(new DecryptionPrivateKeyNode(isKeyMissing));
+        //children.Add(new DecryptionPrivateKeyNode(isKeyMissing));
 
-        foreach (var creds in AllDataAccessCredentials)
-            children.Add(creds);
+        //foreach (var creds in AllDataAccessCredentials)
+        //    children.Add(creds);
 
 
-        AddToDictionaries(children, new DescendancyList(allDataAccessCredentialsNode));
+        //AddToDictionaries(children, new DescendancyList(allDataAccessCredentialsNode));
     }
 
     private void AddChildren(AllANOTablesNode anoTablesNode)

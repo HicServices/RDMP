@@ -37,7 +37,7 @@ public class TestCohortRefreshing : TestsRequiringAnExtractionConfiguration
 
 
         _configuration.CohortIdentificationConfiguration_ID =
-            new CohortIdentificationConfiguration(RepositoryLocator.CatalogueRepository, "RefreshCohort.cs").ID;
+            new CohortIdentificationConfiguration(RepositoryLocator.CatalogueDbContext, "RefreshCohort.cs").ID;
         _configuration.CohortRefreshPipeline_ID = pipe.ID;
         _configuration.SaveToDatabase();
 
@@ -110,7 +110,7 @@ public class TestCohortRefreshing : TestsRequiringAnExtractionConfiguration
         queryCacheServer.SetProperties(cachedb);
 
         //Create a Cohort Identification configuration (query) that will identify the cohort
-        var cic = new CohortIdentificationConfiguration(RepositoryLocator.CatalogueRepository, "RefreshCohort.cs");
+        var cic = new CohortIdentificationConfiguration(RepositoryLocator.CatalogueDbContext, "RefreshCohort.cs");
 
         try
         {

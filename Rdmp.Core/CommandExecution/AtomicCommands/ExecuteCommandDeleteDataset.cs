@@ -15,7 +15,7 @@ public ExecuteCommandDeleteDataset(IBasicActivateItems activator, [DemandsInitia
     public override void Execute()
     {
         base.Execute();
-        var columnItemsLinkedToDataset = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<ColumnInfo>().Where(cif => cif.Dataset_ID == _dataset.ID);
+        var columnItemsLinkedToDataset = _activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<ColumnInfo>().Where(cif => cif.Dataset_ID == _dataset.ID);
         foreach (var col in columnItemsLinkedToDataset)
         {
             col.Dataset_ID = null;

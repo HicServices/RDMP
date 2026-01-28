@@ -35,7 +35,7 @@ public class ExecuteCommandMakeCatalogueItemExtractable : BasicCommandExecution,
         base.Execute();
 
         //Create a new ExtractionInformation (contains the transform sql / column name)
-        var newExtractionInformation = new ExtractionInformation(BasicActivator.RepositoryLocator.CatalogueRepository,
+        var newExtractionInformation = new ExtractionInformation(BasicActivator.RepositoryLocator.CatalogueDbContext,
             _catalogueItem, _catalogueItem.ColumnInfo, _catalogueItem.ColumnInfo.Name);
 
         //it will be Core but if the Catalogue is ProjectSpecific then instead we should make our new ExtractionInformation ExtractionCategory.ProjectSpecific

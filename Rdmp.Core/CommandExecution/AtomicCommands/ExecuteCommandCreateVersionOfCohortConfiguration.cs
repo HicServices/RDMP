@@ -32,7 +32,7 @@ public class ExecuteCommandCreateVersionOfCohortConfiguration : BasicCommandExec
         base.Execute();
         int? version = 1;
 
-        var previousClones = _activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<CohortIdentificationConfiguration>("ClonedFrom_ID", _cic.ID).Where(cic => cic.Version != null);
+        var previousClones = _activator.RepositoryLocator.CatalogueDbContext.GetAllObjectsWhere<CohortIdentificationConfiguration>("ClonedFrom_ID", _cic.ID).Where(cic => cic.Version != null);
         if (previousClones.Any())
         {
             version = previousClones.Select(pc => pc.Version).Where(v => v != null).Max() + 1;
@@ -41,7 +41,7 @@ public class ExecuteCommandCreateVersionOfCohortConfiguration : BasicCommandExec
         cmd.Execute();
         if (_description is not null)
         {
-            var createdItem = _activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<CohortIdentificationConfiguration>("ClonedFrom_ID", _cic.ID).Where(cic => cic.Name == _name);
+            var createdItem = _activator.RepositoryLocator.CatalogueDbContext.GetAllObjectsWhere<CohortIdentificationConfiguration>("ClonedFrom_ID", _cic.ID).Where(cic => cic.Name == _name);
             if (createdItem.Any())
             {
                 createdItem.First().Description = _description;

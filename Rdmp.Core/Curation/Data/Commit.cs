@@ -69,7 +69,7 @@ public class Commit : DatabaseEntity
         Description = r["Description"].ToString();
     }
 
-    public Commit(ICatalogueRepository repository, Guid transaction, string description)
+    public Commit(RdmpDbContext catalogueDbContext, Guid transaction, string description)
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {

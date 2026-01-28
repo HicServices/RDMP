@@ -54,7 +54,7 @@ public partial class SecondaryConstraintUI : UserControl
 
     private bool loadingComplete;
 
-    public SecondaryConstraintUI(ICatalogueRepository repository, SecondaryConstraint secondaryConstriant,
+    public SecondaryConstraintUI(RdmpDbContext catalogueDbContext, SecondaryConstraint secondaryConstriant,
         string[] otherColumns)
     {
         const int rowHeight = 30;

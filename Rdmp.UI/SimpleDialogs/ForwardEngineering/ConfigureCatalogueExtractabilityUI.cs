@@ -499,7 +499,7 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
                 return;
         }
 
-        var existingJoins = Activator.RepositoryLocator.CatalogueRepository.JoinManager
+        var existingJoins = Activator.RepositoryLocator.CatalogueDbContext.JoinManager
             .GetAllJoinInfosBetweenColumnInfoSets(joinFrom.ColumnInfos,
                 TableInfoCreated.ColumnInfos);
 

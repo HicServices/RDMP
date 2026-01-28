@@ -29,7 +29,7 @@ internal class ExecuteCommandEditPipelineWithUseCase : BasicUICommandExecution, 
 
         //create pipeline UI with NO explicit destination/source (both must be configured within the extraction context by the user)
         var dialog = new ConfigurePipelineUI(Activator, _pipeline, _useCase,
-            Activator.RepositoryLocator.CatalogueRepository);
+            Activator.RepositoryLocator.CatalogueDbContext);
         dialog.ShowDialog();
 
         Publish(_pipeline);

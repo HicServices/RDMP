@@ -77,7 +77,7 @@ public class ExecuteCommandPasteClipboardAsNewCatalogueItems : BasicCommandExecu
         if (toImport.Any())
         {
             foreach (var name in toImport)
-                _ = new CatalogueItem(BasicActivator.RepositoryLocator.CatalogueRepository, _catalogue, name);
+                _ = new CatalogueItem(BasicActivator.RepositoryLocator.CatalogueDbContext, _catalogue, name);
 
             Publish(_catalogue);
         }

@@ -34,13 +34,13 @@ internal class CustomMetadataReportTests : UnitTests
         c1.Description = "A cool dataset with interesting stuff";
         c1.SaveToDatabase();
 
-        var c1ci1 = new CatalogueItem(RepositoryLocator.CatalogueRepository, c1, "Col1")
+        var c1ci1 = new CatalogueItem(RepositoryLocator.CatalogueDbContext, c1, "Col1")
         {
             Description = "some info about column 1"
         };
         c1ci1.SaveToDatabase();
 
-        var c1ci2 = new CatalogueItem(RepositoryLocator.CatalogueRepository, c1, "Col2")
+        var c1ci2 = new CatalogueItem(RepositoryLocator.CatalogueDbContext, c1, "Col2")
         {
             Description = "some info about column 2"
         };
@@ -51,17 +51,17 @@ internal class CustomMetadataReportTests : UnitTests
         c2.Description = "This is expensive dataset: $30 to use";
         c2.SaveToDatabase();
 
-        var c2ci1 = new CatalogueItem(RepositoryLocator.CatalogueRepository, c2, "Name")
+        var c2ci1 = new CatalogueItem(RepositoryLocator.CatalogueDbContext, c2, "Name")
         {
             Description = "Name of the patient"
         };
         c2ci1.SaveToDatabase();
-        var c2ci2 = new CatalogueItem(RepositoryLocator.CatalogueRepository, c2, "Address")
+        var c2ci2 = new CatalogueItem(RepositoryLocator.CatalogueDbContext, c2, "Address")
         {
             Description = "Where they live"
         };
         c2ci2.SaveToDatabase();
-        var c2ci3 = new CatalogueItem(RepositoryLocator.CatalogueRepository, c2, "Postcode")
+        var c2ci3 = new CatalogueItem(RepositoryLocator.CatalogueDbContext, c2, "Postcode")
         {
             Description = "Patients postcode"
         };
@@ -276,13 +276,13 @@ resultText2.Trim(), Is.EqualTo(@"<DataSet>
         cata.Description = "A cool dataset with interesting stuff";
         cata.SaveToDatabase();
 
-        var cataItem1 = new CatalogueItem(RepositoryLocator.CatalogueRepository, cata, "Col1")
+        var cataItem1 = new CatalogueItem(RepositoryLocator.CatalogueDbContext, cata, "Col1")
         {
             Description = "some info about column 1"
         };
         cataItem1.SaveToDatabase();
 
-        var cataItem2 = new CatalogueItem(RepositoryLocator.CatalogueRepository, cata, "Col2")
+        var cataItem2 = new CatalogueItem(RepositoryLocator.CatalogueDbContext, cata, "Col2")
         {
             Description = "some info about column 2"
         };
@@ -473,13 +473,13 @@ $end");
 dataset with interesting stuff";
         cata.SaveToDatabase();
 
-        var cataItem1 = new CatalogueItem(RepositoryLocator.CatalogueRepository, cata, "Col1")
+        var cataItem1 = new CatalogueItem(RepositoryLocator.CatalogueDbContext, cata, "Col1")
         {
             Description = "some info about column 1"
         };
         cataItem1.SaveToDatabase();
 
-        var cataItem2 = new CatalogueItem(RepositoryLocator.CatalogueRepository, cata, "Col2")
+        var cataItem2 = new CatalogueItem(RepositoryLocator.CatalogueDbContext, cata, "Col2")
         {
             Description = @"some info
 about column 2"

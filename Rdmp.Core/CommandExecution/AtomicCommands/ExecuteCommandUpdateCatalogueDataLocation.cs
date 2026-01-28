@@ -108,7 +108,7 @@ public class ExecuteCommandUpdateCatalogueDataLocation : BasicCommandExecution, 
 
     private TableInfo TableIsAlreadyKnown()
     {
-        return _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<TableInfo>().Where(ti =>
+        return _activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<TableInfo>().Where(ti =>
         {
             return ti.Name == _table.GetFullyQualifiedName() &&
                    ti.Server == _table.Database.Server.Name &&
@@ -136,7 +136,7 @@ public class ExecuteCommandUpdateCatalogueDataLocation : BasicCommandExecution, 
             }
             else
             {
-                var tblInfo = new TableInfo(_activator.RepositoryLocator.CatalogueRepository,
+                var tblInfo = new TableInfo(_activator.RepositoryLocator.CatalogueDbContext,
                     _table.GetFullyQualifiedName());
                 tblInfo.Server = _table.Database.Server.Name;
                 tblInfo.Database = _table.Database.GetRuntimeName();

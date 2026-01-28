@@ -65,7 +65,7 @@ public class AtomicCommandMenuItem : ToolStripMenuItem
 
                 if (match.Success)
                 {
-                    var helpDict = _activator.RepositoryLocator.CatalogueRepository.CommentStore;
+                    var helpDict = _activator.RepositoryLocator.CatalogueDbContext.CommentStore;
 
                     if (helpDict != null && helpDict.ContainsKey(match.Value))
                     {

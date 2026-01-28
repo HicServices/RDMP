@@ -52,7 +52,7 @@ public class TableInfoImporter : ITableInfoImporter
     /// <param name="usageContext"></param>
     /// <param name="importFromSchema"></param>
     /// <param name="importTableType"></param>
-    public TableInfoImporter(ICatalogueRepository repository, string importFromServer, string importDatabaseName,
+    public TableInfoImporter(RdmpDbContext catalogueDbContext, string importFromServer, string importDatabaseName,
         string importTableName, DatabaseType type, string username = null, string password = null,
         DataAccessContext usageContext = DataAccessContext.Any, string importFromSchema = null,
         TableType importTableType = TableType.Table)

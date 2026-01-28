@@ -53,7 +53,7 @@ public class GoToCommandFactory : CommandFactoryBase
                 yield return new ExecuteCommandShow(_activator, export, 0, true)
                 { OverrideCommandName = "Show Export Definition" };
 
-            var import = _activator.RepositoryLocator.CatalogueRepository.GetReferencesTo<ObjectImport>(mt)
+            var import = _activator.RepositoryLocator.CatalogueDbContext.GetReferencesTo<ObjectImport>(mt)
                 .FirstOrDefault();
             if (import != null)
                 yield return new ExecuteCommandShow(_activator, import, 0)
@@ -207,7 +207,7 @@ public class GoToCommandFactory : CommandFactoryBase
 
             try
             {
-                parent = _activator.RepositoryLocator.CatalogueRepository.GetObjectByID<ExtractionFilter>(
+                parent = _activator.RepositoryLocator.CatalogueDbContext.GetObjectByID<ExtractionFilter>(
                     filter.ClonedFromExtractionFilter_ID.Value);
             }
             catch (KeyNotFoundException)
@@ -411,7 +411,7 @@ public class GoToCommandFactory : CommandFactoryBase
 
     private IEnumerable<IMapsDirectlyToDatabaseTable> GetReplacementIfAny(IMapsDirectlyToDatabaseTable mt)
     {
-        var replacement = _activator.RepositoryLocator.CatalogueRepository
+        var replacement = _activator.RepositoryLocator.CatalogueDbContext
             .GetAllObjectsWhere<ExtendedProperty>("Name", ExtendedProperty.ReplacedBy)
             .FirstOrDefault(r => r.IsReferenceTo(mt));
 

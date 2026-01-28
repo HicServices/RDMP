@@ -40,7 +40,7 @@ public class Setting : DatabaseEntity, ISetting
     #endregion
 
     public Setting() { }
-    public Setting(ICatalogueRepository repository, string key, string value)
+    public Setting(RdmpDbContext catalogueDbContext, string key, string value)
     {
         Key = key;
         Value = value;
@@ -52,7 +52,7 @@ public class Setting : DatabaseEntity, ISetting
         });
     }
 
-    public Setting(ICatalogueRepository repository, DbDataReader r): base(repository,r)
+    public Setting(RdmpDbContext catalogueDbContext, DbDataReader r): base(repository,r)
     {
         Key = r["Key"].ToString();
         Value = r["Value"].ToString();

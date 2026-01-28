@@ -40,7 +40,7 @@ public class ExecuteCommandCreateNewGovernancePeriod : BasicCommandExecution, IA
                 // user cancelled typing a name
                 return;
 
-        var period = new GovernancePeriod(BasicActivator.RepositoryLocator.CatalogueRepository, name);
+        var period = new GovernancePeriod(BasicActivator.RepositoryLocator.CatalogueDbContext, name);
         Publish(period);
         Emphasise(period);
         Activate(period);

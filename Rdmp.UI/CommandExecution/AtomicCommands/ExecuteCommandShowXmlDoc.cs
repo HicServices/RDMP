@@ -27,7 +27,7 @@ public class ExecuteCommandShowXmlDoc : BasicUICommandExecution, IAtomicCommand
     public ExecuteCommandShowXmlDoc(IActivateItems activator, string classOrProperty, string title) : base(activator)
     {
         _title = title;
-        _help = activator.RepositoryLocator.CatalogueRepository.CommentStore.GetDocumentationIfExists(classOrProperty,
+        _help = activator.RepositoryLocator.CatalogueDbContext.CommentStore.GetDocumentationIfExists(classOrProperty,
             true, true);
 
         if (string.IsNullOrWhiteSpace(_help))

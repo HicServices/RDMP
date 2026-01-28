@@ -65,7 +65,7 @@ public class ExecuteCommandImportCatalogueDescriptionsFromShare : ExecuteCommand
             var shareName = (string)sd.Properties["Name"];
 
             var existingMatch = liveCatalogueItems.FirstOrDefault(ci => ci.Name.Equals(shareName)) ??
-                                new CatalogueItem(BasicActivator.RepositoryLocator.CatalogueRepository,
+                                new CatalogueItem(BasicActivator.RepositoryLocator.CatalogueDbContext,
                                     _targetCatalogue, shareName);
             ShareManager.ImportPropertiesOnly(existingMatch, sd);
             existingMatch.SaveToDatabase();

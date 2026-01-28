@@ -38,7 +38,7 @@ internal class RunReleaseWindow : RunEngineWindow<ReleaseOptions>
         var useCase = new ReleaseUseCase();
 
         var compatible = useCase
-            .FilterCompatiblePipelines(BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>())
+            .FilterCompatiblePipelines(BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Pipeline>())
             .ToArray();
 
         if (!compatible.Any()) throw new Exception("No compatible pipelines");

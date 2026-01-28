@@ -65,9 +65,9 @@ public class ExecuteCommandImportShareDefinitionList : BasicCommandExecution, IA
 
         var requiredType = relationshipAttribute.Cref;
 
-        if (BasicActivator.RepositoryLocator.CatalogueRepository.SupportsObjectType(requiredType))
+        if (BasicActivator.RepositoryLocator.CatalogueDbContext.SupportsObjectType(requiredType))
         {
-            var selected = SelectOne(BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects(requiredType)
+            var selected = SelectOne(BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllObjects(requiredType)
                 .Cast<DatabaseEntity>().ToArray());
             if (selected != null)
                 return selected.ID;

@@ -41,7 +41,7 @@ public class ExecuteCommandConfigureCatalogueValidationRules : BasicUICommandExe
     {
         base.Execute();
 
-        _catalogue ??= SelectOne<Catalogue>(Activator.RepositoryLocator.CatalogueRepository);
+        _catalogue ??= SelectOne<Catalogue>(Activator.RepositoryLocator.CatalogueDbContext);
 
         if (_catalogue == null)
             return;

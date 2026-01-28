@@ -26,7 +26,7 @@ public class FavouritesProvider
     public FavouritesProvider(IBasicActivateItems activator)
     {
         _activator = activator;
-        _catalogueRepository = _activator.RepositoryLocator.CatalogueRepository;
+        _catalogueRepository = _activator.RepositoryLocator.CatalogueDbContext;
         CurrentFavourites = _catalogueRepository.GetAllObjectsWhere<Favourite>("Username", Environment.UserName)
             .ToList();
     }

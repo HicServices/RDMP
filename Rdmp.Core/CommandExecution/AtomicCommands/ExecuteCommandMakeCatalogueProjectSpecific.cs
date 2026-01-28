@@ -51,7 +51,7 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
     {
         if (_catalogue == null)
         {
-            var catalogues = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>().ToList();
+            var catalogues = BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Catalogue>().ToList();
             if (!catalogues.Any())
             {
                 Show($"No valid catalogues found to make project specific.");

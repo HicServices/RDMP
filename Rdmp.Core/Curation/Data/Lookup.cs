@@ -127,7 +127,7 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
     /// <param name="primaryKey">The lookup table column that contains the code e.g. z_DrugLookup.Code</param>
     /// <param name="type"></param>
     /// <param name="collation"></param>
-    public Lookup(ICatalogueRepository repository, ColumnInfo description, ColumnInfo foreignKey, ColumnInfo primaryKey,
+    public Lookup(RdmpDbContext catalogueDbContext, ColumnInfo description, ColumnInfo foreignKey, ColumnInfo primaryKey,
         ExtractionJoinType type, string collation)
     {
         //do checks before it hits the database.
@@ -154,7 +154,7 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
         });
     }
 
-    internal Lookup(ICatalogueRepository repository, DbDataReader r)
+    internal Lookup(RdmpDbContext catalogueDbContext, DbDataReader r)
         : base(repository, r)
     {
         Description_ID = int.Parse(r["Description_ID"].ToString());

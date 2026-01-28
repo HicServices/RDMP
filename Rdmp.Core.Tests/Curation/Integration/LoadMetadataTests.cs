@@ -65,7 +65,7 @@ public class LoadMetadataTests : DatabaseTests
             loadMetadata.IgnoreTrigger = true;
             Assert.That(loadMetadata.IgnoreTrigger);
             loadMetadata.SaveToDatabase();
-            var lmd2 = RepositoryLocator.CatalogueRepository.GetObjectByID<LoadMetadata>(loadMetadata.ID);
+            var lmd2 = RepositoryLocator.CatalogueDbContext.GetObjectByID<LoadMetadata>(loadMetadata.ID);
             Assert.That(lmd2.IgnoreTrigger);
         }
         finally

@@ -40,7 +40,7 @@ public class ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration
         base.Execute();
 
         _aggregateConfiguration ??=
-            SelectOne<AggregateConfiguration>(BasicActivator.RepositoryLocator.CatalogueRepository);
+            SelectOne<AggregateConfiguration>(BasicActivator.RepositoryLocator.CatalogueDbContext);
 
         if (_aggregateConfiguration == null)
             return;
@@ -95,7 +95,7 @@ public class ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration
         if (!_table.Exists())
             throw new Exception($"Pipeline execute successfully but the expected table '{_table}' did not exist");
 
-        var importer = new TableInfoImporter(BasicActivator.RepositoryLocator.CatalogueRepository, _table);
+        var importer = new TableInfoImporter(BasicActivator.RepositoryLocator.CatalogueDbContext, _table);
         importer.DoImport(out var ti, out _);
 
         BasicActivator.CreateAndConfigureCatalogue(ti, null,

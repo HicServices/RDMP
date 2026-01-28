@@ -128,8 +128,8 @@ public class PipelineTests : DatabaseTests
         p.DestinationPipelineComponent_ID = destination.ID;
         p.SaveToDatabase();
 
-        var componentsBefore = RepositoryLocator.CatalogueRepository.GetAllObjects<PipelineComponent>().Length;
-        var argumentsBefore = RepositoryLocator.CatalogueRepository.GetAllObjects<PipelineComponentArgument>().Length;
+        var componentsBefore = RepositoryLocator.CatalogueDbContext.GetAllObjects<PipelineComponent>().Length;
+        var argumentsBefore = RepositoryLocator.CatalogueDbContext.GetAllObjects<PipelineComponentArgument>().Length;
 
         var arg = p.PipelineComponents.Single(c => c.Class == typeof(ColumnRenamer).ToString())
             .PipelineComponentArguments.Single(a => a.Name == "ColumnNameToFind");
@@ -146,8 +146,8 @@ public class PipelineTests : DatabaseTests
 
             Assert.That($"{p.Name} (Clone)", Is.EqualTo(p2.Name));
 
-            Assert.That(RepositoryLocator.CatalogueRepository.GetAllObjects<PipelineComponent>(), Has.Length.EqualTo(componentsBefore * 2));
-            Assert.That(RepositoryLocator.CatalogueRepository.GetAllObjects<PipelineComponentArgument>(), Has.Length.EqualTo(argumentsBefore * 2));
+            Assert.That(RepositoryLocator.CatalogueDbContext.GetAllObjects<PipelineComponent>(), Has.Length.EqualTo(componentsBefore * 2));
+            Assert.That(RepositoryLocator.CatalogueDbContext.GetAllObjects<PipelineComponentArgument>(), Has.Length.EqualTo(argumentsBefore * 2));
 
             //p the original should have a pipeline component that has the value we set earlier
             Assert.That(

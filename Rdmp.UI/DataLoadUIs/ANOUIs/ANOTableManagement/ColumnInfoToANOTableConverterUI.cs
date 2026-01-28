@@ -153,7 +153,7 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
 
         ddExternalDatabaseServer.Items.Clear();
 
-        ddExternalDatabaseServer.Items.AddRange(Activator.RepositoryLocator.CatalogueRepository
+        ddExternalDatabaseServer.Items.AddRange(Activator.RepositoryLocator.CatalogueDbContext
             .GetAllDatabases<ANOStorePatcher>());
 
         var defaultServer = Activator.ServerDefaults.GetDefaultFor(PermissableDefaults.ANOStore);
@@ -164,7 +164,7 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
             lblNoDefaultANOStore.Visible = true;
 
         ddANOTables.Items.Clear();
-        ddANOTables.Items.AddRange(Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<ANOTable>().ToArray());
+        ddANOTables.Items.AddRange(Activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<ANOTable>().ToArray());
     }
 
     private void numericUpDown1_ValueChanged(object sender, EventArgs e)
@@ -272,7 +272,7 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
         {
             var server = ddExternalDatabaseServer.SelectedItem as ExternalDatabaseServer;
 
-            var a = new ANOTable(Activator.RepositoryLocator.CatalogueRepository, server, tbANOTableName.Text,
+            var a = new ANOTable(Activator.RepositoryLocator.CatalogueDbContext, server, tbANOTableName.Text,
                 tbSuffix.Text);
 
             //if we know the type is e.g. varchar(5)

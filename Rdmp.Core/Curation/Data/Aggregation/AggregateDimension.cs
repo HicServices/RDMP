@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
@@ -133,7 +134,7 @@ public class AggregateDimension : DatabaseEntity, ISaveable, IDeleteable, IColum
     /// <seealso cref="Aggregation.AggregateContinuousDateAxis.AggregateDimension_ID"/>
     [NoMappingToDatabase]
     public AggregateContinuousDateAxis AggregateContinuousDateAxis =>
-        Repository.GetAllObjectsWithParent<AggregateContinuousDateAxis>(this).SingleOrDefault();
+        CatalogueDbContext.GetAllObjectsWithParent<AggregateContinuousDateAxis>(this).SingleOrDefault();
 
     /// <inheritdoc cref="ExtractionInformation_ID"/>
     [NoMappingToDatabase]
@@ -154,29 +155,29 @@ public class AggregateDimension : DatabaseEntity, ISaveable, IDeleteable, IColum
     /// Declares a new column in an <see cref="AggregateConfiguration"/> (GROUP BY query).  The new column will be based on the master Catalogue column
     /// (<see cref="ExtractionInformation"/>).
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="basedOnColumn"></param>
     /// <param name="configuration"></param>
-    public AggregateDimension(ICatalogueRepository repository, ExtractionInformation basedOnColumn,
+    public AggregateDimension(RDMPDbContext catalogueDbContext, ExtractionInformation basedOnColumn,
         AggregateConfiguration configuration)
     {
         object alias = DBNull.Value;
         if (basedOnColumn.Alias != null) alias = basedOnColumn.Alias;
 
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "AggregateConfiguration_ID", configuration.ID },
-            { "ExtractionInformation_ID", basedOnColumn.ID },
-            { "SelectSQL", basedOnColumn.SelectSQL },
-            { "Alias", alias },
-            { "Order", basedOnColumn.Order },
-            {"GroupBy",true }
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "AggregateConfiguration_ID", configuration.ID },
+        //    { "ExtractionInformation_ID", basedOnColumn.ID },
+        //    { "SelectSQL", basedOnColumn.SelectSQL },
+        //    { "Alias", alias },
+        //    { "Order", basedOnColumn.Order },
+        //    {"GroupBy",true }
+        //});
 
         ClearAllInjections();
     }
 
-    internal AggregateDimension(ICatalogueRepository repository, DbDataReader r) : base(repository, r)
+    internal AggregateDimension(RDMPDbContext catalogueDbContext, DbDataReader r) : base(catalogueDbContext, r)
     {
         AggregateConfiguration_ID = int.Parse(r["AggregateConfiguration_ID"].ToString());
         ExtractionInformation_ID = int.Parse(r["ExtractionInformation_ID"].ToString());
@@ -221,9 +222,9 @@ public class AggregateDimension : DatabaseEntity, ISaveable, IDeleteable, IColum
     public void ClearAllInjections()
     {
         _knownExtractionInformation = new Lazy<ExtractionInformation>(() =>
-            Repository.GetObjectByID<ExtractionInformation>(ExtractionInformation_ID));
+            CatalogueDbContext.GetObjectByID<ExtractionInformation>(ExtractionInformation_ID));
         _knownAggregateConfiguration = new Lazy<AggregateConfiguration>(() =>
-            Repository.GetObjectByID<AggregateConfiguration>(AggregateConfiguration_ID));
+            CatalogueDbContext.GetObjectByID<AggregateConfiguration>(AggregateConfiguration_ID));
     }
 
     /// <inheritdoc/>

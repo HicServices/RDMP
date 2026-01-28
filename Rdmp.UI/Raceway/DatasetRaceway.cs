@@ -90,7 +90,7 @@ public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
 
         try
         {
-            dqeRepository = new DQERepository(_activator.RepositoryLocator.CatalogueRepository);
+            dqeRepository = new DQERepository(_activator.RepositoryLocator.CatalogueDbContext);
         }
         catch (NotSupportedException e)
         {
@@ -229,7 +229,7 @@ public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
         {
             TaskDescription = "Choose which new Catalogues should be represented in the diagram."
         },
-                _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>()
+                _activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Catalogue>()
                     .Except(_collection.GetCatalogues())
                     .ToArray(),
                 out var selected))

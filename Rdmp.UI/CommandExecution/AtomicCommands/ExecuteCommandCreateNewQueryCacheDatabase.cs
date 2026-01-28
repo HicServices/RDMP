@@ -43,7 +43,7 @@ public class ExecuteCommandCreateNewQueryCacheDatabase : BasicUICommandExecution
         if (db != null)
         {
             var newServer =
-                new ExternalDatabaseServer(Activator.RepositoryLocator.CatalogueRepository, "Caching Database", p);
+                new ExternalDatabaseServer(Activator.RepositoryLocator.CatalogueDbContext, "Caching Database", p);
             newServer.SetProperties(db);
 
             _cic.QueryCachingServer_ID = newServer.ID;

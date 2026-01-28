@@ -74,7 +74,7 @@ public class CustomDateCachingTests : DatabaseTests
         cacheProgress.LoadProgress.Returns(loadProgress);
         cacheProgress.CacheFillProgress.Returns(new DateTime(2020, 1, 1));
 
-        var caching = new CustomDateCaching(cacheProgress, RepositoryLocator.CatalogueRepository);
+        var caching = new CustomDateCaching(cacheProgress, RepositoryLocator.CatalogueDbContext);
         var startDate = new DateTime(2016, 1, 1);
         var endDate = singleDay ? new DateTime(2016, 1, 1) : new DateTime(2016, 1, 3);
 

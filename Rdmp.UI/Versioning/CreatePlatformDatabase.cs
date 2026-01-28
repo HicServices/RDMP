@@ -135,7 +135,7 @@ public partial class CreatePlatformDatabase : Form
                     e.Cancel = true;
     }
 
-    public static ExternalDatabaseServer CreateNewExternalServer(ICatalogueRepository repository,
+    public static ExternalDatabaseServer CreateNewExternalServer(RdmpDbContext catalogueDbContext,
         PermissableDefaults defaultToSet, IPatcher patcher)
     {
         var createPlatform = new CreatePlatformDatabase(patcher);

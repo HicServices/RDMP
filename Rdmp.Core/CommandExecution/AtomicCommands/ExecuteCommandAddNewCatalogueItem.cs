@@ -69,7 +69,7 @@ public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution, IAtomicC
         var c = _catalogue;
         var existingColumnInfos = _existingColumnInfos;
 
-        var repo = BasicActivator.RepositoryLocator.CatalogueRepository;
+        var repo = BasicActivator.RepositoryLocator.CatalogueDbContext;
 
         if (c == null)
         {
@@ -77,7 +77,7 @@ public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution, IAtomicC
             {
                 WindowTitle = "Add CatalogueItem",
                 TaskDescription = "Select which Catalogue you want to add the CatalogueItem to."
-            }, BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out var selected))
+            }, BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Catalogue>(), out var selected))
                 // user cancelled selecting a Catalogue
                 return;
 
@@ -102,7 +102,7 @@ public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution, IAtomicC
             if (!TypeText("Name", "Type a name for the new CatalogueItem", 500, columnInfo?.GetRuntimeName(),
                     out var text)) return;
 
-            var ci = new CatalogueItem(BasicActivator.RepositoryLocator.CatalogueRepository, c,
+            var ci = new CatalogueItem(BasicActivator.RepositoryLocator.CatalogueDbContext, c,
                 $"New CatalogueItem {Guid.NewGuid()}")
             {
                 Name = text

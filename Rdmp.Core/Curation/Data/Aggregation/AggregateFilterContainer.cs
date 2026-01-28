@@ -47,14 +47,14 @@ public class AggregateFilterContainer : ConcreteContainer, IDisableable
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="operation"></param>
-    public AggregateFilterContainer(ICatalogueRepository repository, FilterContainerOperation operation) : base(
+    public AggregateFilterContainer(RdmpDbContext catalogueDbContext, FilterContainerOperation operation) : base(
         repository.FilterManager)
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object> { { "Operation", operation.ToString() } });
     }
 
 
-    internal AggregateFilterContainer(ICatalogueRepository repository, DbDataReader r) : base(repository.FilterManager,
+    internal AggregateFilterContainer(RdmpDbContext catalogueDbContext, DbDataReader r) : base(repository.FilterManager,
         repository, r)
     {
         IsDisabled = Convert.ToBoolean(r["IsDisabled"]);

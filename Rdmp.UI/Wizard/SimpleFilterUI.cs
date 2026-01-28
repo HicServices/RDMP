@@ -107,7 +107,7 @@ public partial class SimpleFilterUI : UserControl
 
     private void SetupKnownGoodValues()
     {
-        var knownGoodValues = _activator.RepositoryLocator.CatalogueRepository
+        var knownGoodValues = _activator.RepositoryLocator.CatalogueDbContext
             .GetAllObjectsWithParent<ExtractionFilterParameterSet>(_filter);
 
         if (knownGoodValues.Any())

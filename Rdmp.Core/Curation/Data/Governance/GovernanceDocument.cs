@@ -79,7 +79,7 @@ public class GovernanceDocument : DatabaseEntity, INamed
     /// <param name="repository"></param>
     /// <param name="parent"></param>
     /// <param name="file"></param>
-    public GovernanceDocument(ICatalogueRepository repository, GovernancePeriod parent, FileInfo file)
+    public GovernanceDocument(RdmpDbContext catalogueDbContext, GovernancePeriod parent, FileInfo file)
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
@@ -89,7 +89,7 @@ public class GovernanceDocument : DatabaseEntity, INamed
         });
     }
 
-    internal GovernanceDocument(ICatalogueRepository repository, DbDataReader r)
+    internal GovernanceDocument(RdmpDbContext catalogueDbContext, DbDataReader r)
         : base(repository, r)
     {
         //cannot be null

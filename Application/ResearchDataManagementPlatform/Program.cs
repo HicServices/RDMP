@@ -4,9 +4,9 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Runtime.InteropServices;
 using CommandLine;
+using Microsoft.EntityFrameworkCore;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Settings;
@@ -14,6 +14,9 @@ using Rdmp.Core.Startup;
 using Rdmp.UI;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup;
+using System;
+using System.Runtime.InteropServices;
+using static ScintillaNET.Style;
 
 namespace ResearchDataManagementPlatform;
 
@@ -55,21 +58,34 @@ internal static partial class Program
             ExceptionViewer.Show(ex);
             return -500;
         }
-        if(UserSettings.UseLocalFileSystem && !string.IsNullOrWhiteSpace(UserSettings.LocalFileSystemLocation))
+        if (UserSettings.UseLocalFileSystem && !string.IsNullOrWhiteSpace(UserSettings.LocalFileSystemLocation))
         {
             arg.Dir = UserSettings.LocalFileSystemLocation;
         }
 
-
+        var optionsBuilder = new DbContextOptionsBuilder<RDMPDbContext>();
+        optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=RDMP_AIO_Catalogue;Integrated Security=True;Trust Server Certificate=True; MultipleActiveResultSets=true");
+        var catalogueDbContext = new RDMPDbContext(optionsBuilder.Options);
         var bootStrapper =
             new RDMPBootStrapper(arg, locator =>
             {
                 var form = new RDMPMainForm();
+                locator.CatalogueDbContext = catalogueDbContext;
                 form.SetRepositoryLocator(locator);
                 return form;
             });
 
         bootStrapper.Show();
         return 0;
+        //var bootStrapper =
+        //    new RDMPBootStrapper(arg, locator =>
+        //    {
+        //        var form = new RDMPMainForm();
+        //        form.SetRepositoryLocator(locator);
+        //        return form;
+        //    });
+
+        //bootStrapper.Show();
+        //return 0;
     }
 }

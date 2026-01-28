@@ -35,7 +35,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         {
             base.Execute();
             var memoryRepo = new MemoryCatalogueRepository();
-            var columnInfo = _activator.RepositoryLocator.CatalogueRepository.GetObjectByID<ColumnInfo>(_redaction.ColumnInfo_ID);
+            var columnInfo = _activator.RepositoryLocator.CatalogueDbContext.GetObjectByID<ColumnInfo>(_redaction.ColumnInfo_ID);
             var catalogue = columnInfo.CatalogueItems.FirstOrDefault().Catalogue;
             var server = catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.InternalDataProcessing, false);
             DiscoveredTable discoveredTable = columnInfo.TableInfo.Discover(DataAccessContext.InternalDataProcessing);
@@ -43,7 +43,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             qb.AddColumn(new ColumnInfoToIColumn(memoryRepo, columnInfo));
             foreach (var rk in _redaction.RedactionKeys)
             {
-                var pkColumnInfo = _activator.RepositoryLocator.CatalogueRepository.GetObjectByID<ColumnInfo>(rk.ColumnInfo_ID);
+                var pkColumnInfo = _activator.RepositoryLocator.CatalogueDbContext.GetObjectByID<ColumnInfo>(rk.ColumnInfo_ID);
                 var matchValue = RegexRedactionHelper.ConvertPotentialDateTimeObject(rk.Value, pkColumnInfo.Data_type);
                 qb.AddCustomLine($"{pkColumnInfo.Name} = {matchValue}", QueryComponent.WHERE);
             }
@@ -71,7 +71,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 };
                 foreach (var rk in _redaction.RedactionKeys)
                 {
-                    var pkColumnInfo = _activator.RepositoryLocator.CatalogueRepository.GetObjectByID<ColumnInfo>(rk.ColumnInfo_ID);
+                    var pkColumnInfo = _activator.RepositoryLocator.CatalogueDbContext.GetObjectByID<ColumnInfo>(rk.ColumnInfo_ID);
                     var matchValue = RegexRedactionHelper.ConvertPotentialDateTimeObject(rk.Value, pkColumnInfo.Data_type);
                     sqlLines.Add(new CustomLine($"t1.{pkColumnInfo.GetRuntimeName()} = {matchValue}", QueryComponent.WHERE));
                     sqlLines.Add(new CustomLine($"t1.{columnInfo.GetRuntimeName()} = '{dt.Rows[0][0]}'", QueryComponent.WHERE));

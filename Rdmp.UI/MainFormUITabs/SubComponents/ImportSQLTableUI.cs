@@ -70,7 +70,7 @@ public partial class ImportSQLTableUI : RDMPForm
 
     private void AdjustImporter()
     {
-        var cataRepo = Activator.RepositoryLocator.CatalogueRepository;
+        var cataRepo = Activator.RepositoryLocator.CatalogueDbContext;
         try
         {
             var tbl = serverDatabaseTableSelector1.GetDiscoveredTable();

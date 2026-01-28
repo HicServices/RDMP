@@ -76,7 +76,7 @@ public class ExtractionFilterParameterSet : DatabaseEntity, ICollectSqlParameter
     {
     }
 
-    internal ExtractionFilterParameterSet(ICatalogueRepository repository, DbDataReader r)
+    internal ExtractionFilterParameterSet(RdmpDbContext catalogueDbContext, DbDataReader r)
         : base(repository, r)
     {
         Name = r["Name"].ToString();
@@ -91,7 +91,7 @@ public class ExtractionFilterParameterSet : DatabaseEntity, ICollectSqlParameter
     /// <param name="repository"></param>
     /// <param name="filter"></param>
     /// <param name="name"></param>
-    public ExtractionFilterParameterSet(ICatalogueRepository repository, ExtractionFilter filter, string name = null)
+    public ExtractionFilterParameterSet(RdmpDbContext catalogueDbContext, ExtractionFilter filter, string name = null)
     {
         name ??= $"New ExtractionFilterParameterSet {Guid.NewGuid()}";
 

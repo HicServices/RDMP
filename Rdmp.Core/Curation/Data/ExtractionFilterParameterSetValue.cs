@@ -111,7 +111,7 @@ public class ExtractionFilterParameterSetValue : DatabaseEntity, ISqlParameter, 
         ClearAllInjections();
     }
 
-    internal ExtractionFilterParameterSetValue(ICatalogueRepository repository, DbDataReader r)
+    internal ExtractionFilterParameterSetValue(RdmpDbContext catalogueDbContext, DbDataReader r)
         : base(repository, r)
     {
         ExtractionFilterParameterSet_ID = Convert.ToInt32(r["ExtractionFilterParameterSet_ID"]);
@@ -132,7 +132,7 @@ public class ExtractionFilterParameterSetValue : DatabaseEntity, ISqlParameter, 
     /// <param name="repository"></param>
     /// <param name="parent"></param>
     /// <param name="valueIsForParameter"></param>
-    public ExtractionFilterParameterSetValue(ICatalogueRepository repository, ExtractionFilterParameterSet parent,
+    public ExtractionFilterParameterSetValue(RdmpDbContext catalogueDbContext, ExtractionFilterParameterSet parent,
         ExtractionFilterParameter valueIsForParameter)
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>

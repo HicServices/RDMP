@@ -18,7 +18,7 @@ namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
 /// </summary>
 public class RuntimeTaskFactory
 {
-    public RuntimeTaskFactory(ICatalogueRepository repository)
+    public RuntimeTaskFactory(RdmpDbContext catalogueDbContext)
     {
     }
 

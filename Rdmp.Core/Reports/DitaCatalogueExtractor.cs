@@ -40,7 +40,7 @@ public class DitaCatalogueExtractor : ICheckable
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="folderToCreateIn"></param>
-    public DitaCatalogueExtractor(ICatalogueRepository repository, DirectoryInfo folderToCreateIn)
+    public DitaCatalogueExtractor(RdmpDbContext catalogueDbContext, DirectoryInfo folderToCreateIn)
     {
         _repository = repository;
         _folderToCreateIn = folderToCreateIn;

@@ -32,7 +32,7 @@ public class IdentifierDumpFunctionalityTests : TestsRequiringFullAnonymisationS
         base.OneTimeSetUp();
 
         Console.WriteLine("Setting SetUp bulk test data");
-        _bulkData = new BulkTestsData(RepositoryLocator.CatalogueRepository,
+        _bulkData = new BulkTestsData(RepositoryLocator.CatalogueDbContext,
             GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer));
         _bulkData.SetupTestData();
 

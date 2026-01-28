@@ -96,7 +96,7 @@ INSERT INTO Employee(EmployeeID,Name,Position,Department,Address,AnnualSalary) V
 
         if (ignoreWithGlobalPattern)
         {
-            var regex = new StandardRegex(RepositoryLocator.CatalogueRepository)
+            var regex = new StandardRegex(RepositoryLocator.CatalogueDbContext)
             {
                 ConceptName = StandardRegex.DataLoadEngineGlobalIgnorePattern,
                 Regex = "^Valid((From)|(To))$"
@@ -148,7 +148,7 @@ INSERT INTO Employee(EmployeeID,Name,Position,Department,Address,AnnualSalary) V
         });
 
         //post test cleanup
-        foreach (var regex in RepositoryLocator.CatalogueRepository.GetAllObjects<StandardRegex>())
+        foreach (var regex in RepositoryLocator.CatalogueDbContext.GetAllObjects<StandardRegex>())
             regex.DeleteInDatabase();
     }
 }

@@ -23,7 +23,7 @@ internal class ProposeExecutionWhenTargetIsPipelineComponent : RDMPCommandExecut
     {
         var ui = new ArgumentCollectionUI();
         ui.Setup(ItemActivator, target, target.GetClassAsSystemType(),
-            ItemActivator.RepositoryLocator.CatalogueRepository);
+            ItemActivator.RepositoryLocator.CatalogueDbContext);
         ItemActivator.ShowWindow(ui, true);
     }
 

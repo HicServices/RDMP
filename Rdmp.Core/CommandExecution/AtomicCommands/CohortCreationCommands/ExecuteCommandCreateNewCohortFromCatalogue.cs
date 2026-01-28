@@ -131,7 +131,7 @@ public class ExecuteCommandCreateNewCohortFromCatalogue : CohortCreationCommandE
         if (_extractionIdentifierColumn == null)
         {
             var cata = (ICatalogue)BasicActivator.SelectOne("Select Catalogue to create cohort from",
-                BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>());
+                BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Catalogue>());
 
             if (cata == null)
                 return;

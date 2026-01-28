@@ -48,7 +48,7 @@ public class CachingHost
     /// Creates a new <see cref="CachingHost"/> connected to the RDMP <paramref name="repository"/>.
     /// </summary>
     /// <param name="repository"></param>
-    public CachingHost(ICatalogueRepository repository)
+    public CachingHost(RdmpDbContext catalogueDbContext)
     {
         _repository = repository;
         RetryMode = false;

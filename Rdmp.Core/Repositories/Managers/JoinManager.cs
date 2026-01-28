@@ -19,7 +19,7 @@ public class JoinManager : IJoinManager
 {
     private readonly ICatalogueRepository _repository;
 
-    public JoinManager(ICatalogueRepository repository)
+    public JoinManager(RdmpDbContext catalogueDbContext)
     {
         _repository = repository;
     }

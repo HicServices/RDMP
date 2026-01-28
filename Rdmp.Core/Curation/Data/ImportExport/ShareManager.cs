@@ -60,7 +60,7 @@ public class ShareManager
     private int? DefaultLocalReferenceGetter(PropertyInfo property, RelationshipAttribute relationshipattribute,
         ShareDefinition sharedefinition)
     {
-        var defaults = RepositoryLocator.CatalogueRepository;
+        var defaults = RepositoryLocator.CatalogueDbContext;
 
 
         if (property.Name is "LiveLoggingServer_ID" or "TestLoggingServer_ID")
@@ -437,8 +437,8 @@ public class ShareManager
     {
         IRepository repo;
 
-        if (RepositoryLocator.CatalogueRepository.SupportsObjectType(typeof(T)))
-            repo = RepositoryLocator.CatalogueRepository;
+        if (RepositoryLocator.CatalogueDbContext.SupportsObjectType(typeof(T)))
+            repo = RepositoryLocator.CatalogueDbContext;
         else if (RepositoryLocator.DataExportRepository.SupportsObjectType(typeof(T)))
             repo = RepositoryLocator.DataExportRepository;
         else

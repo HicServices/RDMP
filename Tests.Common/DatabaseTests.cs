@@ -62,7 +62,7 @@ public partial class DatabaseTests
     protected static TestDatabasesSettings TestDatabaseSettings;
     private static bool HaveTriedCreatingTestDatabases;
 
-    public ICatalogueRepository CatalogueRepository => RepositoryLocator.CatalogueRepository;
+    public ICatalogueRepository CatalogueRepository => RepositoryLocator.CatalogueDbContext;
 
     /// <summary>
     /// Gets an <see cref="ICatalogueRepository"/> that points to a
@@ -72,7 +72,7 @@ public partial class DatabaseTests
     {
         get
         {
-            if (RepositoryLocator.CatalogueRepository is CatalogueRepository tableRepository)
+            if (RepositoryLocator.CatalogueDbContext is CatalogueRepository tableRepository)
                 return tableRepository;
 
             Assert.Inconclusive("CatalogueRepository is not a TableRepository");
@@ -326,7 +326,7 @@ public partial class DatabaseTests
             return;
 
         using var con = cataTblRepo.GetConnection();
-        var catalogueDatabaseName = ((TableRepository)RepositoryLocator.CatalogueRepository).DiscoveredServer
+        var catalogueDatabaseName = ((TableRepository)RepositoryLocator.CatalogueDbContext).DiscoveredServer
             .GetCurrentDatabase().GetRuntimeName();
         var dataExportDatabaseName = ((TableRepository)RepositoryLocator.DataExportRepository).DiscoveredServer
             .GetCurrentDatabase().GetRuntimeName();

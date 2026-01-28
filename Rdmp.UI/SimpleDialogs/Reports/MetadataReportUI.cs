@@ -86,7 +86,7 @@ public partial class MetadataReportUI : RDMPForm
             MaxLookupRows = (int)nMaxLookupRows.Value
         };
 
-        _report = new MetadataReport(Activator.RepositoryLocator.CatalogueRepository, args);
+        _report = new MetadataReport(Activator.RepositoryLocator.CatalogueDbContext, args);
 
         _report.RequestCatalogueImages += report_RequestCatalogueImages;
         _report.GenerateWordFileAsync(progressBarsUI1, true);

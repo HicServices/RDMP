@@ -109,7 +109,7 @@ public class TicketingSystemConfiguration : DatabaseEntity, INamed
     }
 
     /// <inheritdoc/>
-    public TicketingSystemConfiguration(ICatalogueRepository repository, string name) : base()
+    public TicketingSystemConfiguration(RdmpDbContext catalogueDbContext, string name) : base()
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
@@ -127,7 +127,7 @@ public class TicketingSystemConfiguration : DatabaseEntity, INamed
     }
 
     /// <inheritdoc/>
-    internal TicketingSystemConfiguration(ICatalogueRepository repository, DbDataReader r) : base(repository, r)
+    internal TicketingSystemConfiguration(RdmpDbContext catalogueDbContext, DbDataReader r) : base(repository, r)
     {
         IsActive = (bool)r["IsActive"];
         Url = r["Url"] as string;

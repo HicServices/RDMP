@@ -24,7 +24,7 @@ internal class RdmpScriptTests : UnitTests
     [TestCase("NewObject Catalogue '\"trog dor\"'", "\"trog dor\"")]
     public void RdmpScript_NewObject_Catalogue(string command, string expectedName)
     {
-        foreach (var c in RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>())
+        foreach (var c in RepositoryLocator.CatalogueDbContext.GetAllObjects<Catalogue>())
             c.DeleteInDatabase();
 
         var runner = new ExecuteCommandRunner(new ExecuteCommandOptions
@@ -41,10 +41,10 @@ internal class RdmpScriptTests : UnitTests
         Assert.Multiple(() =>
         {
             Assert.That(exitCode, Is.EqualTo(0));
-            Assert.That(RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), Has.Length.EqualTo(1));
+            Assert.That(RepositoryLocator.CatalogueDbContext.GetAllObjects<Catalogue>(), Has.Length.EqualTo(1));
         });
 
-        Assert.That(RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>().Single().Name, Is.EqualTo(expectedName));
+        Assert.That(RepositoryLocator.CatalogueDbContext.GetAllObjects<Catalogue>().Single().Name, Is.EqualTo(expectedName));
     }
 
     [TestCase("NewObject Catalogue 'fffff'", "NewObject CatalogueItem Catalogue:*fff* 'bbbb'", "bbbb")]
@@ -55,7 +55,7 @@ internal class RdmpScriptTests : UnitTests
     public void RdmpScript_NewObject_CatalogueItem(string cataCommand, string cataItemCommand,
         string expectedCataItemName)
     {
-        foreach (var c in RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>())
+        foreach (var c in RepositoryLocator.CatalogueDbContext.GetAllObjects<Catalogue>())
             c.DeleteInDatabase();
 
         var runner = new ExecuteCommandRunner(new ExecuteCommandOptions
@@ -76,9 +76,9 @@ internal class RdmpScriptTests : UnitTests
         Assert.Multiple(() =>
         {
             Assert.That(exitCode, Is.EqualTo(0));
-            Assert.That(RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), Has.Length.EqualTo(1));
+            Assert.That(RepositoryLocator.CatalogueDbContext.GetAllObjects<Catalogue>(), Has.Length.EqualTo(1));
         });
-        var ci = RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>().Single().CatalogueItems.Single();
+        var ci = RepositoryLocator.CatalogueDbContext.GetAllObjects<Catalogue>().Single().CatalogueItems.Single();
 
         Assert.That(ci.Name, Is.EqualTo(expectedCataItemName));
     }

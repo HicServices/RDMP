@@ -20,7 +20,7 @@ public class ExecuteCommandCreateNewStandardRegex : BasicCommandExecution, IAtom
 
     public override void Execute()
     {
-        var regex = new StandardRegex(BasicActivator.RepositoryLocator.CatalogueRepository);
+        var regex = new StandardRegex(BasicActivator.RepositoryLocator.CatalogueDbContext);
 
         Publish(regex);
         Emphasise(regex);

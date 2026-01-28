@@ -23,7 +23,7 @@ public class JsonSerializationTests : DatabaseTests
         if (CatalogueRepository is not TableRepository)
             Assert.Inconclusive("This test does not apply for non db repos");
 
-        var c = new Catalogue(RepositoryLocator.CatalogueRepository, "Fish");
+        var c = new Catalogue(RepositoryLocator.CatalogueDbContext, "Fish");
 
         var mySerializeable = new MySerializeableTestClass(new ShareManager(RepositoryLocator))
         {

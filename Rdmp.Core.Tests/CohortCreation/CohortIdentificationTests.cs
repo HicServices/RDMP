@@ -35,7 +35,7 @@ public class CohortIdentificationTests : FromToDatabaseTests
     }
 
 
-    protected void SetupTestData(ICatalogueRepository repository)
+    protected void SetupTestData(RdmpDbContext catalogueDbContext)
     {
         BlitzMainDataTables();
 

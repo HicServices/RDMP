@@ -256,7 +256,7 @@ public partial class SimpleCohortSetUI : UserControl
         }
         else if (_filterUIs.Count > 0)
         {
-            filterContainer = new AggregateFilterContainer(_activator.RepositoryLocator.CatalogueRepository, filterOp);
+            filterContainer = new AggregateFilterContainer(_activator.RepositoryLocator.CatalogueDbContext, filterOp);
             aggregate.RevertToDatabaseState();
             aggregate.RootFilterContainer_ID = filterContainer.ID;
             aggregate.SaveToDatabase();
@@ -264,7 +264,7 @@ public partial class SimpleCohortSetUI : UserControl
             var filtersAddedSoFar = new List<IFilter>();
             foreach (var ui in _filterUIs)
             {
-                var f = ui.CreateFilter(new AggregateFilterFactory(_activator.RepositoryLocator.CatalogueRepository),
+                var f = ui.CreateFilter(new AggregateFilterFactory(_activator.RepositoryLocator.CatalogueDbContext),
                     filterContainer, filtersAddedSoFar.ToArray());
                 filtersAddedSoFar.Add(f);
             }

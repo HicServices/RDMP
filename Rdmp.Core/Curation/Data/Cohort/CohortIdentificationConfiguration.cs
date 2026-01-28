@@ -217,7 +217,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="name"></param>
-    public CohortIdentificationConfiguration(ICatalogueRepository repository, string name)
+    public CohortIdentificationConfiguration(RdmpDbContext catalogueDbContext, string name)
     {
         var queryCache = repository.GetDefaultFor(PermissableDefaults.CohortIdentificationQueryCachingServer_ID);
 
@@ -229,7 +229,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
         });
     }
 
-    internal CohortIdentificationConfiguration(ICatalogueRepository repository, DbDataReader r)
+    internal CohortIdentificationConfiguration(RdmpDbContext catalogueDbContext, DbDataReader r)
         : base(repository, r)
     {
         Name = r["Name"].ToString();

@@ -141,7 +141,7 @@ public class RegexRedactionMutilator : MatchingTablesMutilatorWithDataLoadJob
                 var t2 = table.Database.CreateTable(nameof(RegexRedactionHelper.Constants.redactionsToSaveTable_Temp), redactionsToSaveTable);
                 job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Saving Redactions"));
                 var server = relatedCatalogues.First().GetDistinctLiveDatabaseServer(DataAccessContext.InternalDataProcessing, false);
-                RegexRedactionHelper.SaveRedactions(job.RepositoryLocator.CatalogueRepository, t1, t2, server, Timeout * 1000);
+                RegexRedactionHelper.SaveRedactions(job.RepositoryLocator.CatalogueDbContext, t1, t2, server, Timeout * 1000);
                 t1.Drop();
                 t2.Drop();
                 job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Performing join update"));

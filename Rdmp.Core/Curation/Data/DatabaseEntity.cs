@@ -16,6 +16,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using FAnsi;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
@@ -52,19 +53,22 @@ public abstract class DatabaseEntity : IRevertable, ICanBeSummarised
     private bool _readonly;
 
     /// <inheritdoc/>
-    [NoMappingToDatabase]
-    public IRepository Repository { get; set; }
+    //[NoMappingToDatabase]
+    //public IRepository Repository { get; set; }
+
+
+    public RDMPDbContext CatalogueDbContext { get; set; }
 
     /// <inheritdoc/>
-    [NoMappingToDatabase]
-    public ICatalogueRepository CatalogueRepository => Repository as ICatalogueRepository;
+    //[NoMappingToDatabase]
+    //public ICatalogueRepository CatalogueRepository => Repository as ICatalogueRepository;
 
 
-    /// <summary>
-    /// Returns <see cref="Repository"/> as <see cref="IDataExportRepository"/> or null if the object does not exist in a data export repository.
-    /// </summary>
-    [NoMappingToDatabase]
-    public IDataExportRepository DataExportRepository => Repository as IDataExportRepository;
+    ///// <summary>
+    ///// Returns <see cref="Repository"/> as <see cref="IDataExportRepository"/> or null if the object does not exist in a data export repository.
+    ///// </summary>
+    //[NoMappingToDatabase]
+    //public IDataExportRepository DataExportRepository => Repository as IDataExportRepository;
 
     /// <summary>
     /// Constructs a new instance.  You should only use this when your object does not yet exist in the database
@@ -77,11 +81,11 @@ public abstract class DatabaseEntity : IRevertable, ICanBeSummarised
     /// <summary>
     /// Creates a new instance and hydrates it from the current values of <paramref name="r"/>
     /// </summary>
-    /// <param name="repository">The database which the record/object was read from</param>
+    /// <param name="catalogueDbContext">The database which the record/object was read from</param>
     /// <param name="r">Data reader with values for hydrating this object</param>
-    protected DatabaseEntity(IRepository repository, DbDataReader r)
+    protected DatabaseEntity(RDMPDbContext catalogueDbContext, DbDataReader r)
     {
-        Repository = repository;
+        CatalogueDbContext = catalogueDbContext;
 
         if (!HasColumn(r, "ID"))
             throw new InvalidOperationException(

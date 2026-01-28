@@ -244,7 +244,7 @@ public partial class ExampleDatasetsCreation
     {
         if (isEnabled && !alreadyDeclared.Any(k => k.Name.Equals(name)))
         {
-            var keyword = new ConnectionStringKeyword(_activator.RepositoryLocator.CatalogueRepository,
+            var keyword = new ConnectionStringKeyword(_activator.RepositoryLocator.CatalogueDbContext,
                 DatabaseType.MicrosoftSQLServer, name, "true");
 
             //pass it into the system wide static keyword collection for use with all databases of this type all the time

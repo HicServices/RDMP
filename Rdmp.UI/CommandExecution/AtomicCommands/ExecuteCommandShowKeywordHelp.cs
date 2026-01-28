@@ -48,7 +48,7 @@ public class ExecuteCommandShowKeywordHelp : BasicUICommandExecution, IAtomicCom
         if (_args.Masquerader != null)
         {
             title = GetTypeName(_args.Masquerader.GetType());
-            docs = Activator.RepositoryLocator.CatalogueRepository.CommentStore.GetTypeDocumentationIfExists(
+            docs = Activator.RepositoryLocator.CatalogueDbContext.CommentStore.GetTypeDocumentationIfExists(
                 _args.Masquerader.GetType());
         }
 
@@ -61,7 +61,7 @@ public class ExecuteCommandShowKeywordHelp : BasicUICommandExecution, IAtomicCom
             if (_args.Model is IKnowWhatIAm knows)
                 docs = knows.WhatIsThis(); //yes
             else
-                docs = Activator.RepositoryLocator.CatalogueRepository.CommentStore.GetTypeDocumentationIfExists(
+                docs = Activator.RepositoryLocator.CatalogueDbContext.CommentStore.GetTypeDocumentationIfExists(
                     _args.Model.GetType());
         }
 

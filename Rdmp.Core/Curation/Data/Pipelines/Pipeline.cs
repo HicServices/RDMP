@@ -101,7 +101,7 @@ public class Pipeline : DatabaseEntity, IPipeline, IHasDependencies
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="name"></param>
-    public Pipeline(ICatalogueRepository repository, string name = null)
+    public Pipeline(RdmpDbContext catalogueDbContext, string name = null)
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
@@ -111,7 +111,7 @@ public class Pipeline : DatabaseEntity, IPipeline, IHasDependencies
         ClearAllInjections();
     }
 
-    internal Pipeline(ICatalogueRepository repository, DbDataReader r)
+    internal Pipeline(RdmpDbContext catalogueDbContext, DbDataReader r)
         : base(repository, r)
     {
         Name = r["Name"].ToString();

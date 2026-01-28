@@ -126,7 +126,7 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
 
         ddPipelines.DrawMode = DrawMode.OwnerDrawFixed;
         ddPipelines.DrawItem += cmb_Type_DrawItem;
-        var showButtonsSetting = activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Setting>()
+        var showButtonsSetting = activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Setting>()
             .FirstOrDefault(static s => s.Key == "ExtractionPipelineQuickEdit");
         var showbuttons = showButtonsSetting != null && Convert.ToBoolean(showButtonsSetting.Value);
         btnClonePipeline.Visible = showbuttons;

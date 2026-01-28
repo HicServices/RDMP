@@ -91,7 +91,7 @@ public partial class PluginProcessTaskUI : PluginProcessTaskUI_Design, ISaveable
             }
 
             _argumentCollection.Setup(Activator, databaseObject, _underlyingType,
-                Activator.RepositoryLocator.CatalogueRepository);
+                Activator.RepositoryLocator.CatalogueDbContext);
 
             _argumentCollection.Dock = DockStyle.Fill;
             pArguments.Controls.Add(_argumentCollection);
@@ -119,7 +119,7 @@ public partial class PluginProcessTaskUI : PluginProcessTaskUI_Design, ISaveable
     {
         try
         {
-            var factory = new RuntimeTaskFactory(Activator.RepositoryLocator.CatalogueRepository);
+            var factory = new RuntimeTaskFactory(Activator.RepositoryLocator.CatalogueDbContext);
 
             var lmd = _processTask.LoadMetadata;
             var argsDictionary = new LoadArgsDictionary(lmd, new HICDatabaseConfiguration(lmd).DeployInfo);

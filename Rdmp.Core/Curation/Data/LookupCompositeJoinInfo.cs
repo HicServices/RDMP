@@ -76,7 +76,7 @@ public class LookupCompositeJoinInfo : DatabaseEntity, ISupplementalJoin
     }
 
     /// <inheritdoc cref="LookupCompositeJoinInfo"/>
-    public LookupCompositeJoinInfo(ICatalogueRepository repository, Lookup parent, ColumnInfo foreignKey,
+    public LookupCompositeJoinInfo(RdmpDbContext catalogueDbContext, Lookup parent, ColumnInfo foreignKey,
         ColumnInfo primaryKey, string collation = null)
     {
         if (foreignKey.ID == primaryKey.ID)
@@ -94,7 +94,7 @@ public class LookupCompositeJoinInfo : DatabaseEntity, ISupplementalJoin
         });
     }
 
-    internal LookupCompositeJoinInfo(ICatalogueRepository repository, DbDataReader r)
+    internal LookupCompositeJoinInfo(RdmpDbContext catalogueDbContext, DbDataReader r)
         : base(repository, r)
     {
         Collation = r["Collation"] as string;

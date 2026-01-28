@@ -42,7 +42,7 @@ public sealed class ExecuteCommandAddNewGovernanceDocument : BasicCommandExecuti
             {
                 WindowTitle = "Add Governance Document",
                 TaskDescription = "Select which GovernancePeriod you want to attach the document to."
-            }, BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<GovernancePeriod>(),
+            }, BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllObjects<GovernancePeriod>(),
                     out p))
                 // user cancelled selecting a Catalogue
                 return;
@@ -51,7 +51,7 @@ public sealed class ExecuteCommandAddNewGovernanceDocument : BasicCommandExecuti
         if (f == null)
             return;
 
-        var doc = new GovernanceDocument(BasicActivator.RepositoryLocator.CatalogueRepository, p, f);
+        var doc = new GovernanceDocument(BasicActivator.RepositoryLocator.CatalogueDbContext, p, f);
         Publish(_period);
         Emphasise(doc);
         Activate(doc);

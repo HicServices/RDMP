@@ -71,7 +71,7 @@ public class Memento : ReferenceOtherObjectDatabaseEntity
         Type = (MementoType)Enum.Parse<MementoType>(r["Type"].ToString());
     }
 
-    public Memento(ICatalogueRepository repository, Commit commit, MementoType type,
+    public Memento(RdmpDbContext catalogueDbContext, Commit commit, MementoType type,
         IMapsDirectlyToDatabaseTable entity, string beforeYaml, string afterYaml)
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>

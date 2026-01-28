@@ -60,7 +60,7 @@ public partial class TicketingSystemConfigurationUI : RDMPUserControl
     {
         _bLoading = true;
 
-        var ticketing = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<TicketingSystemConfiguration>()
+        var ticketing = _activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<TicketingSystemConfiguration>()
             .ToArray();
 
         if (ticketing.Length > 1)
@@ -74,7 +74,7 @@ public partial class TicketingSystemConfigurationUI : RDMPUserControl
 
         ddCredentials.Items.Clear();
         ddCredentials.Items.Add(NoneText);
-        ddCredentials.Items.AddRange(_activator.RepositoryLocator.CatalogueRepository
+        ddCredentials.Items.AddRange(_activator.RepositoryLocator.CatalogueDbContext
             .GetAllObjects<DataAccessCredentials>().ToArray());
 
 
@@ -117,11 +117,11 @@ public partial class TicketingSystemConfigurationUI : RDMPUserControl
         _ticketingSystemConfiguration.SaveToDatabase();
 
         var releases = tbReleases.Text.Split(',');
-        var existingReleases = _activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<TicketingSystemReleaseStatus>("TicketingSystemConfigurationID", _ticketingSystemConfiguration.ID);
+        var existingReleases = _activator.RepositoryLocator.CatalogueDbContext.GetAllObjectsWhere<TicketingSystemReleaseStatus>("TicketingSystemConfigurationID", _ticketingSystemConfiguration.ID);
         var toDelete = existingReleases.Where(s => !releases.Contains(s.Status)).ToList();
         foreach (var release in releases.Where(rs => rs != "" && !existingReleases.Select(er => er.Status).Contains(rs)))
         {
-            var rs = new TicketingSystemReleaseStatus(_activator.RepositoryLocator.CatalogueRepository, release.Trim(), null, _ticketingSystemConfiguration);
+            var rs = new TicketingSystemReleaseStatus(_activator.RepositoryLocator.CatalogueDbContext, release.Trim(), null, _ticketingSystemConfiguration);
             rs.SaveToDatabase();
         }
         toDelete.ForEach(rs => rs.DeleteInDatabase());
@@ -131,7 +131,7 @@ public partial class TicketingSystemConfigurationUI : RDMPUserControl
 
     private void btnCreate_Click(object sender, EventArgs e)
     {
-        new TicketingSystemConfiguration(_activator.RepositoryLocator.CatalogueRepository, "New Ticketing System");
+        new TicketingSystemConfiguration(_activator.RepositoryLocator.CatalogueDbContext, "New Ticketing System");
         RefreshUIFromDatabase();
     }
 
@@ -154,7 +154,7 @@ public partial class TicketingSystemConfigurationUI : RDMPUserControl
         ITicketingSystem instance;
         try
         {
-            var factory = new TicketingSystemFactory(_activator.RepositoryLocator.CatalogueRepository);
+            var factory = new TicketingSystemFactory(_activator.RepositoryLocator.CatalogueDbContext);
             instance = factory.CreateIfExists(_ticketingSystemConfiguration);
 
             if (instance != null)
@@ -192,7 +192,7 @@ public partial class TicketingSystemConfigurationUI : RDMPUserControl
 
     private void btnAddCredentials_Click(object sender, EventArgs e)
     {
-        new DataAccessCredentials(_activator.RepositoryLocator.CatalogueRepository, "New Data Access Credentials");
+        new DataAccessCredentials(_activator.RepositoryLocator.CatalogueDbContext, "New Data Access Credentials");
         RefreshUIFromDatabase();
     }
 

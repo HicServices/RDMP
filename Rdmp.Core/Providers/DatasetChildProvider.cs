@@ -11,7 +11,7 @@ namespace Rdmp.Core.Providers;
 /// <inheritdoc cref="CatalogueChildProvider"/>
 public class DatasetChildProvider : CatalogueChildProvider
 {
-    public DatasetChildProvider(ICatalogueRepository repository, IChildProvider[] pluginChildProviders, ICheckNotifier errorsCheckNotifier, CatalogueChildProvider previousStateIfKnown) : base(repository, pluginChildProviders, errorsCheckNotifier, previousStateIfKnown)
+    public DatasetChildProvider(RdmpDbContext catalogueDbContext, IChildProvider[] pluginChildProviders, ICheckNotifier errorsCheckNotifier, CatalogueChildProvider previousStateIfKnown) : base(repository, pluginChildProviders, errorsCheckNotifier, previousStateIfKnown)
     {
     }
 }

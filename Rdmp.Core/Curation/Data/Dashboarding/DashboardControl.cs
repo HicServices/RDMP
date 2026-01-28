@@ -116,7 +116,7 @@ public class DashboardControl : DatabaseEntity
     {
     }
 
-    internal DashboardControl(ICatalogueRepository repository, DbDataReader r)
+    internal DashboardControl(RdmpDbContext catalogueDbContext, DbDataReader r)
         : base(repository, r)
     {
         DashboardLayout_ID = Convert.ToInt32(r["DashboardLayout_ID"]);
@@ -140,7 +140,7 @@ public class DashboardControl : DatabaseEntity
     /// <param name="w"></param>
     /// <param name="h"></param>
     /// <param name="persistenceString"></param>
-    public DashboardControl(ICatalogueRepository repository, DashboardLayout parent, Type controlType, int x, int y,
+    public DashboardControl(RdmpDbContext catalogueDbContext, DashboardLayout parent, Type controlType, int x, int y,
         int w, int h, string persistenceString)
     {
         Repository = repository;

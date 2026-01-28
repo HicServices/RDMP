@@ -104,7 +104,7 @@ public class AnyTableSqlParameter : ReferenceOtherObjectDatabaseEntity, ISqlPara
     /// <param name="repository"></param>
     /// <param name="parent"></param>
     /// <param name="parameterSQL"></param>
-    public AnyTableSqlParameter(ICatalogueRepository repository, IMapsDirectlyToDatabaseTable parent,
+    public AnyTableSqlParameter(RdmpDbContext catalogueDbContext, IMapsDirectlyToDatabaseTable parent,
         string parameterSQL)
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
@@ -116,7 +116,7 @@ public class AnyTableSqlParameter : ReferenceOtherObjectDatabaseEntity, ISqlPara
         });
     }
 
-    internal AnyTableSqlParameter(ICatalogueRepository repository, DbDataReader r)
+    internal AnyTableSqlParameter(RdmpDbContext catalogueDbContext, DbDataReader r)
         : base(repository, r)
     {
         Value = r["Value"] as string;

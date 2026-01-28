@@ -925,7 +925,7 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="name"></param>
-    public Catalogue(ICatalogueRepository repository, string name)
+    public Catalogue(RdmpDbContext catalogueDbContext, string name)
     {
         var loggingServer = repository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
 
@@ -956,7 +956,7 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="r"></param>
-    internal Catalogue(ICatalogueRepository repository, DbDataReader r)
+    internal Catalogue(RdmpDbContext catalogueDbContext, DbDataReader r)
         : base(repository, r)
     {
 

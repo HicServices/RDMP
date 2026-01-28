@@ -48,7 +48,7 @@ public partial class PasswordEncryptionKeyLocationUI : RDMPUserControl
             return;
 
         _location = new PasswordEncryptionKeyLocation(
-            (CatalogueRepository)Activator.RepositoryLocator.CatalogueRepository);
+            (CatalogueRepository)Activator.RepositoryLocator.CatalogueDbContext);
 
         SetEnabledness();
     }

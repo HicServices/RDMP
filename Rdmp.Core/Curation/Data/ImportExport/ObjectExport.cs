@@ -52,7 +52,7 @@ public class ObjectExport : ReferenceOtherObjectDatabaseEntity, IInjectKnown<IMa
     /// <param name="repository"></param>
     /// <param name="objectForSharing"></param>
     /// <param name="guid"></param>
-    internal ObjectExport(ICatalogueRepository repository, IMapsDirectlyToDatabaseTable objectForSharing, Guid guid)
+    internal ObjectExport(RdmpDbContext catalogueDbContext, IMapsDirectlyToDatabaseTable objectForSharing, Guid guid)
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
@@ -69,7 +69,7 @@ public class ObjectExport : ReferenceOtherObjectDatabaseEntity, IInjectKnown<IMa
     }
 
     /// <inheritdoc/>
-    public ObjectExport(ICatalogueRepository repository, DbDataReader r)
+    public ObjectExport(RdmpDbContext catalogueDbContext, DbDataReader r)
         : base(repository, r)
     {
         SharingUID = r["SharingUID"].ToString();

@@ -20,7 +20,7 @@ public class TicketingSystemFactory
 {
     private readonly ICatalogueRepository _repository;
 
-    public TicketingSystemFactory(ICatalogueRepository repository)
+    public TicketingSystemFactory(RdmpDbContext catalogueDbContext)
     {
         _repository = repository;
     }

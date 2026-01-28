@@ -260,7 +260,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             base.Execute();
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", _apiKey);
 
-            var catalogues = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>()
+            var catalogues = _activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Catalogue>()
                 .Where(c => !c.IsDeprecated && !c.IsInternalDataset && !c.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository))
                 .ToList();
             var builder = new ConfluencePageBuilder(catalogues, _owner, _description, _subdomain);

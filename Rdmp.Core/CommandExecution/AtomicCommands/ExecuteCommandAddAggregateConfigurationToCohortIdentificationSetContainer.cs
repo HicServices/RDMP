@@ -86,7 +86,7 @@ public class ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetCon
         }
         else
         {
-            _available = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<AggregateConfiguration>()
+            _available = BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllObjects<AggregateConfiguration>()
                 .Where(c => !c.IsCohortIdentificationAggregate).ToArray();
 
             if (_available.Length == 0)
@@ -127,7 +127,7 @@ public class ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetCon
             if (available == null || !available.Any()) throw new Exception("There are no available objects to add");
 
             // Are there templates that we can use instead of showing all?
-            var cataRepo = BasicActivator.RepositoryLocator.CatalogueRepository;
+            var cataRepo = BasicActivator.RepositoryLocator.CatalogueDbContext;
             var templates = cataRepo.GetExtendedProperties(ExtendedProperty.IsTemplate)
                 .Select(p => p.GetReferencedObject(BasicActivator.RepositoryLocator))
                 .OfType<AggregateConfiguration>()

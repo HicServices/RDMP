@@ -154,7 +154,7 @@ public class JoinInfo : DatabaseEntity, IJoin, IHasDependencies
     }
 
 
-    public JoinInfo(ICatalogueRepository repository, ColumnInfo foreignKey, ColumnInfo primaryKey,
+    public JoinInfo(RdmpDbContext catalogueDbContext, ColumnInfo foreignKey, ColumnInfo primaryKey,
         ExtractionJoinType type, string collation)
     {
         if (foreignKey.ID == primaryKey.ID)

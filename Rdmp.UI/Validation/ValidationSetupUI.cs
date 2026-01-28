@@ -276,7 +276,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
     {
         tableLayoutPanel1.RowCount++;
 
-        var toAdd = new SecondaryConstraintUI(Activator.RepositoryLocator.CatalogueRepository, secondaryConstriant,
+        var toAdd = new SecondaryConstraintUI(Activator.RepositoryLocator.CatalogueDbContext, secondaryConstriant,
             olvColumns.Objects.Cast<ExtractionInformation>().Select(c => c.GetRuntimeName()).ToArray())
         {
             Width = splitContainer1.Panel2.Width,

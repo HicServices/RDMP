@@ -30,7 +30,7 @@ public class ExecuteCommandCloneExtractionConfiguration : BasicCommandExecution
                 "There are Deprecated catalogues in this Extraction Configuration. Would you like to replace them with their replacement (where available)?",
                 "Replace Deprecated Catalogues")) return;
 
-        var repo = _activeItems.RepositoryLocator.CatalogueRepository;
+        var repo = _activeItems.RepositoryLocator.CatalogueDbContext;
         var deprecatedDatasets = _extractionConfiguration.SelectedDataSets.Where(static sd => sd.GetCatalogue().IsDeprecated).ToList();
         var replacedBy = repo.GetExtendedProperties(ExtendedProperty.ReplacedBy).ToArray();
         foreach (var ds in deprecatedDatasets)

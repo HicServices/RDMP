@@ -349,7 +349,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     /// <param name="repository"></param>
     /// <param name="catalogue"></param>
     /// <param name="name"></param>
-    public AggregateConfiguration(ICatalogueRepository repository, ICatalogue catalogue, string name)
+    public AggregateConfiguration(RdmpDbContext catalogueDbContext, ICatalogue catalogue, string name)
     {
         //default values
         CountSQL = "count(*)";
@@ -364,7 +364,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
         ClearAllInjections();
     }
 
-    internal AggregateConfiguration(ICatalogueRepository repository, DbDataReader r) : base(repository, r)
+    internal AggregateConfiguration(RdmpDbContext catalogueDbContext, DbDataReader r) : base(repository, r)
     {
         Name = r["Name"] as string;
         Description = r["Description"] as string;

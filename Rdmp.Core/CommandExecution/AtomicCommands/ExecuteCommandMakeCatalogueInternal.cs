@@ -33,7 +33,7 @@ public class ExecuteCommandMakeCatalogueInternal : BasicCommandExecution, IAtomi
     public override void Execute()
     {
         if (_catalogue == null)
-            SetCatalogue(SelectOne<Catalogue>(BasicActivator.RepositoryLocator.CatalogueRepository));
+            SetCatalogue(SelectOne<Catalogue>(BasicActivator.RepositoryLocator.CatalogueDbContext));
 
         if (_catalogue == null)
             return;

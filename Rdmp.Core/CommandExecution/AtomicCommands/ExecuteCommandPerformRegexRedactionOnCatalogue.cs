@@ -123,7 +123,7 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
                 }
                 var t2 = _discoveredTable.Database.CreateTable(nameof(RegexRedactionHelper.Constants.redactionsToSaveTable_Temp), redactionsToSaveTable);
 
-                RegexRedactionHelper.SaveRedactions(_activator.RepositoryLocator.CatalogueRepository, t1, t2, _server);
+                RegexRedactionHelper.SaveRedactions(_activator.RepositoryLocator.CatalogueDbContext, t1, t2, _server);
                 t1.Drop();
                 t2.Drop();
                 if (dt.Rows.Count > 0)

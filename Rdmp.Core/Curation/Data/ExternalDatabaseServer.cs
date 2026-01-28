@@ -157,7 +157,7 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
     /// <param name="repository"></param>
     /// <param name="name"></param>
     /// <param name="creatorIfAny">If the database referenced was created according to a specific SQL schema, this is the schema provider</param>
-    public ExternalDatabaseServer(ICatalogueRepository repository, string name, IPatcher creatorIfAny)
+    public ExternalDatabaseServer(RdmpDbContext catalogueDbContext, string name, IPatcher creatorIfAny)
     {
         var parameters = new Dictionary<string, object>
         {
@@ -176,7 +176,7 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
 
     internal ExternalDatabaseServer(ShareManager shareManager, ShareDefinition shareDefinition)
     {
-        var repo = shareManager.RepositoryLocator.CatalogueRepository;
+        var repo = shareManager.RepositoryLocator.CatalogueDbContext;
         Repository = repo;
         _selfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint(CatalogueRepository,
             DatabaseType.MicrosoftSQLServer /*will get changed by UpsertAndHydrate*/);
@@ -184,7 +184,7 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
         shareManager.UpsertAndHydrate(this, shareDefinition);
     }
 
-    internal ExternalDatabaseServer(ICatalogueRepository repository, DbDataReader r) : base(repository, r)
+    internal ExternalDatabaseServer(RdmpDbContext catalogueDbContext, DbDataReader r) : base(repository, r)
     {
         Name = r["Name"] as string;
         CreatedByAssembly = r["CreatedByAssembly"] as string;
@@ -291,7 +291,7 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
          }
     }
 
-    public void SetRepository(ICatalogueRepository repository)
+    public void SetRepository(RdmpDbContext catalogueDbContext)
     {
         _selfCertifyingDataAccessPoint.SetRepository(repository);
     }

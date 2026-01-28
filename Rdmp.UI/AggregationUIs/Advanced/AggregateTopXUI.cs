@@ -121,7 +121,7 @@ public partial class AggregateTopXUI : RDMPUserControl
         //there isn't one yet
         if (_topX == null)
         {
-            _topX = new AggregateTopX(Activator.RepositoryLocator.CatalogueRepository, _aggregate, i);
+            _topX = new AggregateTopX(Activator.RepositoryLocator.CatalogueDbContext, _aggregate, i);
         }
         else
         {

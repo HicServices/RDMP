@@ -18,23 +18,23 @@ public class SettingValidationTest : DatabaseTests
     public void SettingManagement()
     {
         //create new setting
-        var setting = new Core.Setting.Setting(RepositoryLocator.CatalogueRepository, "Key", "Value");
+        var setting = new Core.Setting.Setting(RepositoryLocator.CatalogueDbContext, "Key", "Value");
         Assert.DoesNotThrow(()=>setting.SaveToDatabase());
-        var knownSettings = RepositoryLocator.CatalogueRepository.GetAllObjects<Core.Setting.Setting>().ToList();
+        var knownSettings = RepositoryLocator.CatalogueDbContext.GetAllObjects<Core.Setting.Setting>().ToList();
         Assert.That(knownSettings.Count, Is.EqualTo(1));
         Assert.That(knownSettings[0].Key, Is.EqualTo("Key"));
         Assert.That(knownSettings[0].Value, Is.EqualTo("Value"));
         //update value
         setting.Value = "OtherValue";
         Assert.DoesNotThrow(() => setting.SaveToDatabase());
-        knownSettings = RepositoryLocator.CatalogueRepository.GetAllObjects<Core.Setting.Setting>().ToList();
+        knownSettings = RepositoryLocator.CatalogueDbContext.GetAllObjects<Core.Setting.Setting>().ToList();
         Assert.That(knownSettings.Count, Is.EqualTo(1));
         Assert.That(knownSettings[0].Key, Is.EqualTo("Key"));
         Assert.That(knownSettings[0].Value, Is.EqualTo("OtherValue"));
         //add a second setting
-        setting = new Core.Setting.Setting(RepositoryLocator.CatalogueRepository, "SecondKey", "SecondValue");
+        setting = new Core.Setting.Setting(RepositoryLocator.CatalogueDbContext, "SecondKey", "SecondValue");
         Assert.DoesNotThrow(() => setting.SaveToDatabase());
-        knownSettings = RepositoryLocator.CatalogueRepository.GetAllObjects<Core.Setting.Setting>().ToList();
+        knownSettings = RepositoryLocator.CatalogueDbContext.GetAllObjects<Core.Setting.Setting>().ToList();
         Assert.That(knownSettings.Count, Is.EqualTo(2));
         Assert.That(knownSettings[0].Key, Is.EqualTo("Key"));
         Assert.That(knownSettings[0].Value, Is.EqualTo("OtherValue"));
@@ -42,7 +42,7 @@ public class SettingValidationTest : DatabaseTests
         Assert.That(knownSettings[1].Value, Is.EqualTo("SecondValue"));
         //create a key that already exists
         Assert.Throws<SqlException>(() => {
-            setting = new Core.Setting.Setting(RepositoryLocator.CatalogueRepository, "Key", "Value");
+            setting = new Core.Setting.Setting(RepositoryLocator.CatalogueDbContext, "Key", "Value");
         });
         Assert.That(knownSettings.Count, Is.EqualTo(2));
         Assert.That(knownSettings[0].Key, Is.EqualTo("Key"));

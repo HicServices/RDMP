@@ -63,7 +63,7 @@ public class CatalogueConstraintReport : DataQualityReport
         _catalogue = catalogue;
     }
 
-    private void SetupLogging(ICatalogueRepository repository)
+    private void SetupLogging(RdmpDbContext catalogueDbContext)
     {
         //if we have already setup logging successfully then don't worry about doing it again
         if (_loggingServer != null && _logManager != null && _loggingTask != null)

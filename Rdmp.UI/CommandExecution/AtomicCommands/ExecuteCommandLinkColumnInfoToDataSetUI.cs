@@ -35,7 +35,7 @@ public sealed class ExecuteCommandLinkColumnInfoToDataSetUI : BasicUICommandExec
     public override void Execute()
     {
         base.Execute();
-        var datasets = _activateItems.RepositoryLocator.CatalogueRepository.GetAllObjects<Dataset>();
+        var datasets = _activateItems.RepositoryLocator.CatalogueDbContext.GetAllObjects<Dataset>();
         DialogArgs da =  new()
         {
             WindowTitle = "Link a dataset with this column",

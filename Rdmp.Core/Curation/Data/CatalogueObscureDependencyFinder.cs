@@ -26,7 +26,7 @@ public class CatalogueObscureDependencyFinder : IObscureDependencyFinder
     /// Sets the target upon which to apply delete/cascade obscure dependency rules
     /// </summary>
     /// <param name="repository"></param>
-    public CatalogueObscureDependencyFinder(ICatalogueRepository repository)
+    public CatalogueObscureDependencyFinder(RdmpDbContext catalogueDbContext)
     {
         _repository = repository;
     }

@@ -12,6 +12,7 @@ using CsvHelper;
 using CsvHelper.Configuration;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Governance;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.Reports;
@@ -23,17 +24,17 @@ namespace Rdmp.Core.Reports;
 public class GovernanceReport : DocXHelper
 {
     private readonly IDetermineDatasetTimespan _timespanCalculator;
-    private readonly ICatalogueRepository _repository;
+    private readonly RDMPDbContext _catalogueDbContext;
 
     private readonly CsvConfiguration _csvConfig = new(CultureInfo.CurrentCulture)
     {
         Delimiter = ","
     };
 
-    public GovernanceReport(IDetermineDatasetTimespan timespanCalculator, ICatalogueRepository repository)
+    public GovernanceReport(IDetermineDatasetTimespan timespanCalculator, RDMPDbContext catalogueDbContext)
     {
         _timespanCalculator = timespanCalculator;
-        _repository = repository;
+        _catalogueDbContext = catalogueDbContext;
     }
 
     public void GenerateReport()
@@ -54,10 +55,10 @@ public class GovernanceReport : DocXHelper
             writer.NextRecord();
 
 
-            var govs = _repository.GetAllObjects<GovernancePeriod>()
+            var govs = _catalogueDbContext.GetAllObjects<GovernancePeriod>()
                 .ToDictionary(period => period, period => period.GovernedCatalogues.ToArray());
 
-            foreach (var catalogue in _repository.GetAllObjects<Catalogue>()
+            foreach (var catalogue in _catalogueDbContext.GetAllObjects<Catalogue>()
                          .Where(c => c.CatalogueItems.Any(ci => ci.ExtractionInformation != null))
                          .OrderBy(c => c.Name))
             {

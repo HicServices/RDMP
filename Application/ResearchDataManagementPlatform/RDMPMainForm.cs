@@ -115,18 +115,18 @@ public partial class RDMPMainForm : RDMPForm
         _version = StartupUI.GetVersion();
 
         //put the current platform database into the window title too
-        if (Activator?.RepositoryLocator?.CatalogueRepository is TableRepository connectedTo)
-        {
-            var database = connectedTo.DiscoveredServer?.GetCurrentDatabase();
-            var instanceDescription = "";
+        //if (Activator?.RepositoryLocator?.CatalogueRepository is TableRepository connectedTo)
+        //{
+        //    var database = connectedTo.DiscoveredServer?.GetCurrentDatabase();
+        //    var instanceDescription = "";
 
-            var connectionStringsFileLoaded = RDMPBootStrapper.ApplicationArguments?.ConnectionStringsFileLoaded;
-            if (connectionStringsFileLoaded != null)
-                instanceDescription =
-                    $" - {connectionStringsFileLoaded.Name ?? connectionStringsFileLoaded.FileLoaded.Name}";
-            if (database != null)
-                _connectedTo = $"({database.GetRuntimeName()} on {database.Server.Name}){instanceDescription}";
-        }
+        //    var connectionStringsFileLoaded = RDMPBootStrapper.ApplicationArguments?.ConnectionStringsFileLoaded;
+        //    if (connectionStringsFileLoaded != null)
+        //        instanceDescription =
+        //            $" - {connectionStringsFileLoaded.Name ?? connectionStringsFileLoaded.FileLoaded.Name}";
+        //    if (database != null)
+        //        _connectedTo = $"({database.GetRuntimeName()} on {database.Server.Name}){instanceDescription}";
+        //}
 
         Text = "Research Data Management Platform";
 

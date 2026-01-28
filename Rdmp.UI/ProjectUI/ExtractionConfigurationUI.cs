@@ -154,7 +154,7 @@ public partial class ExtractionConfigurationUI : ExtractionConfigurationUI_Desig
 
             //create the UI for this situation
             var factory =
-                new PipelineSelectionUIFactory(Activator.RepositoryLocator.CatalogueRepository, user, useCase);
+                new PipelineSelectionUIFactory(Activator.RepositoryLocator.CatalogueDbContext, user, useCase);
             _cohortRefreshingPipelineSelectionUI = factory.Create(Activator, "Cohort Refresh Pipeline", DockStyle.Fill,
                 pChooseCohortRefreshPipeline);
             _cohortRefreshingPipelineSelectionUI.Pipeline = _extractionConfiguration.CohortRefreshPipeline;
@@ -193,10 +193,10 @@ public partial class ExtractionConfigurationUI : ExtractionConfigurationUI_Desig
 
         //the user is DefaultPipeline_ID field of ExtractionConfiguration
         var user = new PipelineUser(typeof(ExtractionConfiguration).GetProperty("DefaultPipeline_ID"),
-            _extractionConfiguration,Activator.RepositoryLocator.CatalogueRepository);
+            _extractionConfiguration,Activator.RepositoryLocator.CatalogueDbContext);
 
         //create the UI for this situation
-        var factory = new PipelineSelectionUIFactory(Activator.RepositoryLocator.CatalogueRepository, user, useCase);
+        var factory = new PipelineSelectionUIFactory(Activator.RepositoryLocator.CatalogueDbContext, user, useCase);
         _extractionPipelineSelectionUI =
             factory.Create(Activator, "Extraction Pipeline", DockStyle.Fill, pChooseExtractionPipeline);
         _extractionPipelineSelectionUI.CollapseToSingleLineMode();

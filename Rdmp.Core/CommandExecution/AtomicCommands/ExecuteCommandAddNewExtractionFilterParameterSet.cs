@@ -35,7 +35,7 @@ public class ExecuteCommandAddNewExtractionFilterParameterSet : BasicCommandExec
         base.Execute();
 
         var parameterSet =
-            new ExtractionFilterParameterSet(BasicActivator.RepositoryLocator.CatalogueRepository, _filter);
+            new ExtractionFilterParameterSet(BasicActivator.RepositoryLocator.CatalogueDbContext, _filter);
         parameterSet.CreateNewValueEntries();
         Publish(_filter);
         Activate(parameterSet);

@@ -79,7 +79,7 @@ public class Startup
 
         try
         {
-            foundCatalogue = Find(RepositoryLocator.CatalogueRepository, cataloguePatcher, notifier);
+            foundCatalogue = Find(RepositoryLocator.CatalogueDbContext, cataloguePatcher, notifier);
         }
         catch (Exception e)
         {
@@ -91,7 +91,7 @@ public class Startup
             try
             {
                 //setup connection string keywords
-                foreach (var keyword in RepositoryLocator.CatalogueRepository.GetAllObjects<ConnectionStringKeyword>())
+                foreach (var keyword in RepositoryLocator.CatalogueDbContext.GetAllObjects<ConnectionStringKeyword>())
                 {
                     var tomem = new ToMemoryCheckNotifier(notifier);
                     keyword.Check(tomem);
@@ -115,7 +115,7 @@ public class Startup
         //only load data export manager if catalogue worked
         if (!foundCatalogue) return;
 
-        LoadMEF(RepositoryLocator.CatalogueRepository, notifier);
+        LoadMEF(RepositoryLocator.CatalogueDbContext, notifier);
 
         //find tier 2 databases
         foreach (var patcher in _patcherManager.Tier2Patchers)
@@ -210,7 +210,7 @@ public class Startup
 
     private void FindWithPatcher(IPatcher patcher, ICheckNotifier notifier)
     {
-        var dbs = RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>()
+        var dbs = RepositoryLocator.CatalogueDbContext.GetAllObjects<ExternalDatabaseServer>()
             .Where(eds => eds.WasCreatedBy(patcher));
 
         foreach (IExternalDatabaseServer server in dbs)

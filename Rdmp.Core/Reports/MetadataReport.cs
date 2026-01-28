@@ -45,7 +45,7 @@ public class MetadataReport : DocXHelper
     private const int TextFontSize = 7;
 
 
-    public MetadataReport(ICatalogueRepository repository, MetadataReportArgs args)
+    public MetadataReport(RdmpDbContext catalogueDbContext, MetadataReportArgs args)
     {
         _repository = repository;
         _args = args;

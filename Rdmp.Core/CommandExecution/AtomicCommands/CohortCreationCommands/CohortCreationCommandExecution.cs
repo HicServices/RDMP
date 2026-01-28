@@ -147,7 +147,7 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
     protected IPipelineRunner GetConfigureAndExecuteControl(ICohortCreationRequest request, string description,
         object cohortIsBeingCreatedFrom)
     {
-        var catalogueRepository = BasicActivator.RepositoryLocator.CatalogueRepository;
+        var catalogueRepository = BasicActivator.RepositoryLocator.CatalogueDbContext;
 
         var pipelineRunner = BasicActivator.GetPipelineRunner(new DialogArgs
         {

@@ -112,7 +112,7 @@ public class ExecuteCommandAddPipelineComponent : BasicCommandExecution
                 return;
         }
 
-        var newComponent = new PipelineComponent(BasicActivator.RepositoryLocator.CatalogueRepository, _pipeline,
+        var newComponent = new PipelineComponent(BasicActivator.RepositoryLocator.CatalogueDbContext, _pipeline,
             add, (int)order);
         newComponent.CreateArgumentsForClassIfNotExists(add);
 

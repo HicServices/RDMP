@@ -61,7 +61,7 @@ public sealed class ExecuteCommandAssociateCohortIdentificationConfigurationWith
         {
             //cic is not known (but project is thanks to above block)
             var valid =
-                BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<CohortIdentificationConfiguration>();
+                BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllObjects<CohortIdentificationConfiguration>();
 
             //allow them to select any cic where it does not already belong to the project
             valid =

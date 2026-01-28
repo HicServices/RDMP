@@ -55,7 +55,7 @@ public class ExecuteCommandConvertAggregateConfigurationToPatientIndexTable : Ba
         parent?.RemoveChild(sourceAggregate);
 
         //create a new patient index table usage allowance for this aggregate
-        new JoinableCohortAggregateConfiguration(BasicActivator.RepositoryLocator.CatalogueRepository,
+        new JoinableCohortAggregateConfiguration(BasicActivator.RepositoryLocator.CatalogueDbContext,
             _cohortIdentificationConfiguration, sourceAggregate);
 
         Publish(_cohortIdentificationConfiguration);

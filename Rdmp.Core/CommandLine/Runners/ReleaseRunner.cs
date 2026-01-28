@@ -242,7 +242,7 @@ public class ReleaseRunner : ManyRunner
 
         try
         {
-            return new ReleaseUseCase(_project, data, RepositoryLocator.CatalogueRepository);
+            return new ReleaseUseCase(_project, data, RepositoryLocator.CatalogueDbContext);
         }
         catch (Exception ex)
         {

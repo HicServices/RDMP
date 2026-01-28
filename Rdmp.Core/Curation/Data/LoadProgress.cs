@@ -104,7 +104,7 @@ public class LoadProgress : DatabaseEntity, ILoadProgress, ICheckable
     }
 
     /// <inheritdoc cref="ILoadProgress"/>
-    public LoadProgress(ICatalogueRepository repository, LoadMetadata parent)
+    public LoadProgress(RdmpDbContext catalogueDbContext, LoadMetadata parent)
     {
         repository.InsertAndHydrate(this,
             new Dictionary<string, object>
@@ -114,7 +114,7 @@ public class LoadProgress : DatabaseEntity, ILoadProgress, ICheckable
             });
     }
 
-    internal LoadProgress(ICatalogueRepository repository, DbDataReader r)
+    internal LoadProgress(RdmpDbContext catalogueDbContext, DbDataReader r)
         : base(repository, r)
     {
         Name = r["Name"] as string;

@@ -32,7 +32,7 @@ namespace Rdmp.UI.SimpleDialogs.RegexRedactionConfigurationForm
         }
         private void Create(object sender, EventArgs e)
         {
-            var config = new RegexRedactionConfiguration(_activator.RepositoryLocator.CatalogueRepository, tbName.Text, new Regex(tbRegexPattern.Text), tbRedactionString.Text, tbDescription.Text);
+            var config = new RegexRedactionConfiguration(_activator.RepositoryLocator.CatalogueDbContext, tbName.Text, new Regex(tbRegexPattern.Text), tbRedactionString.Text, tbDescription.Text);
             config.SaveToDatabase();
             _activator.Publish(config);
             Close();

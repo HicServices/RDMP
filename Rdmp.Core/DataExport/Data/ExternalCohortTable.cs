@@ -13,6 +13,7 @@ using FAnsi.Connections;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Repositories;
@@ -140,46 +141,46 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
     /// <summary>
     /// Creates a new blank pointer to a cohort database.
     /// </summary>
-    /// <param name="repository">Metadata repository in which to create the object</param>
+    /// <param name="dataExportDbContext">Metadata repository in which to create the object</param>
     /// <param name="name"></param>
     /// <param name="databaseType"></param>
-    public ExternalCohortTable(IDataExportRepository repository, string name, DatabaseType databaseType)
+    public ExternalCohortTable(RDMPDbContext dataExportDbContext, string name, DatabaseType databaseType)
     {
-        Repository = repository;
-        SelfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint(repository.CatalogueRepository, databaseType);
-        Repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "Name", name ?? $"NewExternalSource{Guid.NewGuid()}" },
-            { "DatabaseType", databaseType.ToString() }
-        });
+        //Repository = repository;
+        //SelfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint(repository.CatalogueRepository, databaseType);
+        //Repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "Name", name ?? $"NewExternalSource{Guid.NewGuid()}" },
+        //    { "DatabaseType", databaseType.ToString() }
+        //});
     }
 
     /// <summary>
     /// Reads an existing cohort database reference out of the metadata repository database
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="dataExportDbContext"></param>
     /// <param name="r"></param>
-    internal ExternalCohortTable(IDataExportRepository repository, DbDataReader r)
-        : base(repository, r)
+    internal ExternalCohortTable(RDMPDbContext dataExportDbContext, DbDataReader r)
+        : base(dataExportDbContext, r)
     {
-        Name = r["Name"] as string;
-        var databaseType = (DatabaseType)Enum.Parse(typeof(DatabaseType), r["DatabaseType"].ToString());
+        //Name = r["Name"] as string;
+        //var databaseType = (DatabaseType)Enum.Parse(typeof(DatabaseType), r["DatabaseType"].ToString());
 
-        SelfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint(repository.CatalogueRepository, databaseType);
+        //SelfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint(repository.CatalogueRepository, databaseType);
 
-        Server = r["Server"] as string;
-        Username = r["Username"] as string;
-        Password = r["Password"] as string;
-        Database = r["Database"] as string ?? string.Empty;
+        //Server = r["Server"] as string;
+        //Username = r["Username"] as string;
+        //Password = r["Password"] as string;
+        //Database = r["Database"] as string ?? string.Empty;
 
-        TableName = Qualify(Database, r["TableName"] as string ?? string.Empty);
-        DefinitionTableForeignKeyField = Qualify(Database, TableName,
-            r["DefinitionTableForeignKeyField"] as string ?? string.Empty);
+        //TableName = Qualify(Database, r["TableName"] as string ?? string.Empty);
+        //DefinitionTableForeignKeyField = Qualify(Database, TableName,
+        //    r["DefinitionTableForeignKeyField"] as string ?? string.Empty);
 
-        DefinitionTableName = Qualify(Database, r["DefinitionTableName"] as string ?? string.Empty);
+        //DefinitionTableName = Qualify(Database, r["DefinitionTableName"] as string ?? string.Empty);
 
-        PrivateIdentifierField = Qualify(Database, TableName, r["PrivateIdentifierField"] as string ?? string.Empty);
-        ReleaseIdentifierField = Qualify(Database, TableName, r["ReleaseIdentifierField"] as string ?? string.Empty);
+        //PrivateIdentifierField = Qualify(Database, TableName, r["PrivateIdentifierField"] as string ?? string.Empty);
+        //ReleaseIdentifierField = Qualify(Database, TableName, r["ReleaseIdentifierField"] as string ?? string.Empty);
     }
 
     /// <inheritdoc/>
@@ -492,7 +493,7 @@ description as {syntax.EnsureWrapped("Description")},
     /// <returns></returns>
     public IHasDependencies[] GetObjectsDependingOnThis()
     {
-        return (IHasDependencies[])Repository.GetAllObjects<ExtractableCohort>()
+        return (IHasDependencies[])CatalogueDbContext.GetAllObjects<ExtractableCohort>()//todo may need to be datat export
             .Where(c => c.ExternalCohortTable_ID == ID);
     }
 
@@ -511,8 +512,8 @@ description as {syntax.EnsureWrapped("Description")},
     public bool DiscoverExistence(DataAccessContext context, out string reason) =>
         SelfCertifyingDataAccessPoint.DiscoverExistence(context, out reason);
 
-    public void SetRepository(ICatalogueRepository repository)
+    public void SetRepository(RDMPDbContext catalogueDbContext)
     {
-        SelfCertifyingDataAccessPoint.SetRepository(repository);
+        //SelfCertifyingDataAccessPoint.SetRepository(repository);
     }
 }

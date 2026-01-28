@@ -36,7 +36,7 @@ public class ExecuteCommandAddNewRegexRedactionConfiguration : BasicCommandExecu
     public override void Execute()
     {
         base.Execute();
-        var config = new RegexRedactionConfiguration(_activator.RepositoryLocator.CatalogueRepository, _name, new Regex(_redactionPattern), _redactionString, _description);
+        var config = new RegexRedactionConfiguration(_activator.RepositoryLocator.CatalogueDbContext, _name, new Regex(_redactionPattern), _redactionString, _description);
         config.SaveToDatabase();
         _activator.Publish(config);
     }

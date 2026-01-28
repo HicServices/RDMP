@@ -83,7 +83,7 @@ public class ExecuteCommandCloneCohortIdentificationConfiguration : BasicCommand
     {
         base.Execute();
 
-        _cic ??= SelectOne<CohortIdentificationConfiguration>(BasicActivator.RepositoryLocator.CatalogueRepository);
+        _cic ??= SelectOne<CohortIdentificationConfiguration>(BasicActivator.RepositoryLocator.CatalogueDbContext);
 
         if (_cic == null)
             return;

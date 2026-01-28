@@ -51,7 +51,7 @@ public class ExecuteCommandDeprecate : BasicCommandExecution
             o.SaveToDatabase();
             if (!_desiredState && o is Catalogue catalogue) //false is not-deprecated
             {
-                var replacedBy = _activeItems.RepositoryLocator.CatalogueRepository.GetExtendedProperties(ExtendedProperty.ReplacedBy);
+                var replacedBy = _activeItems.RepositoryLocator.CatalogueDbContext.GetExtendedProperties(ExtendedProperty.ReplacedBy);
                 var replacement = replacedBy.FirstOrDefault(rb => rb.ReferencedObjectID == catalogue.ID);
                 replacement?.DeleteInDatabase();
             }

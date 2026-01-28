@@ -121,7 +121,7 @@ public partial class CreateNewCohortIdentificationConfigurationUI : RDMPForm
 
     private CohortIdentificationConfiguration CreateCohortIdentificationConfiguration()
     {
-        var cic = new CohortIdentificationConfiguration(Activator.RepositoryLocator.CatalogueRepository, tbName.Text);
+        var cic = new CohortIdentificationConfiguration(Activator.RepositoryLocator.CatalogueDbContext, tbName.Text);
 
         cic.CreateRootContainerIfNotExists();
         var root = cic.RootCohortAggregateContainer;

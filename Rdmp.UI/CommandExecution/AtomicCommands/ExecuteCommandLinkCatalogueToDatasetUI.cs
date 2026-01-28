@@ -34,7 +34,7 @@ public sealed class ExecuteCommandLinkCatalogueToDatasetUI : BasicUICommandExecu
     public override void Execute()
     {
         base.Execute();
-        var datasets = _activateItems.RepositoryLocator.CatalogueRepository.GetAllObjects<Dataset>();
+        var datasets = _activateItems.RepositoryLocator.CatalogueDbContext.GetAllObjects<Dataset>();
         DialogArgs da = new()
         {
             WindowTitle = "Link a dataset with this catalogue",

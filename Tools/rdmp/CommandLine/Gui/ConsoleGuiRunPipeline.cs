@@ -66,7 +66,7 @@ public partial class ConsoleGuiRunPipeline : Window, IPipelineRunner, IDataLoadE
 
         ColorScheme = ConsoleMainWindow.ColorScheme;
         var compatiblePipelines = useCase
-            .FilterCompatiblePipelines(activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>())
+            .FilterCompatiblePipelines(activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Pipeline>())
             .ToArray();
 
         Width = Dim.Fill();

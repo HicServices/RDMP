@@ -61,7 +61,7 @@ public class ExecuteCommandReplacedBy : BasicCommandExecution, IAtomicCommand
                 // user cancelled
                 return;
 
-        var cataRepo = BasicActivator.RepositoryLocator.CatalogueRepository;
+        var cataRepo = BasicActivator.RepositoryLocator.CatalogueDbContext;
         foreach (var existing in
                  cataRepo.GetExtendedProperties(ExtendedProperty.ReplacedBy, Deprecated))
             // delete any old references to who we are replaced by

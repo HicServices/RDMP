@@ -24,7 +24,7 @@ public class ExecuteCommandRestoreLoadMetadataVersion : BasicCommandExecution
         {
             throw new Exception("Must Use a versioned LoadMetadata to create Version");
         }
-        LoadMetadata lmd = (LoadMetadata)_activator.RepositoryLocator.CatalogueRepository.GetObjectByID(typeof(LoadMetadata), (int)_loadMetadata.RootLoadMetadata_ID) ?? throw new Exception("Could not find root load metadata");
+        LoadMetadata lmd = (LoadMetadata)_activator.RepositoryLocator.CatalogueDbContext.GetObjectByID(typeof(LoadMetadata), (int)_loadMetadata.RootLoadMetadata_ID) ?? throw new Exception("Could not find root load metadata");
         foreach (ProcessTask task in lmd.ProcessTasks.Cast<ProcessTask>())
         {
             task.DeleteInDatabase();

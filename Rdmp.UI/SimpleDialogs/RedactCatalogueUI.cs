@@ -59,7 +59,7 @@ public partial class RedactCatalogueUI : RedactCatalogueUI_Design
     public void RefreshTable()
     {
         var columnIds = _catalogue.CatalogueItems.Select(c => c.ColumnInfo_ID).ToList();
-        _redactions = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<RegexRedaction>().Where(r => columnIds.Contains(r.ColumnInfo_ID)).ToList();
+        _redactions = _activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<RegexRedaction>().Where(r => columnIds.Contains(r.ColumnInfo_ID)).ToList();
         folv.ClearObjects();
         folv.AddObjects(_redactions);
         btnRestoreAll.Enabled = _redactions.Count != 0;
@@ -89,7 +89,7 @@ public partial class RedactCatalogueUI : RedactCatalogueUI_Design
 
         _activator = activator;
         _catalogue = databaseObject;
-        var regexConfigurations = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<RegexRedactionConfiguration>().ToArray();
+        var regexConfigurations = _activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<RegexRedactionConfiguration>().ToArray();
         comboBox1.Items.Clear();
         comboBox1.Items.AddRange(regexConfigurations);
         comboBox1.DisplayMember = "Name";

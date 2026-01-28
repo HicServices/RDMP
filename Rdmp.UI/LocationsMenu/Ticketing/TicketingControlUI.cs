@@ -67,9 +67,9 @@ public partial class TicketingControlUI : RDMPUserControl
             if (Activator == null)
                 throw new Exception("Activator has not been set, call SetItemActivator");
 
-            var factory = new TicketingSystemFactory(Activator.RepositoryLocator.CatalogueRepository);
+            var factory = new TicketingSystemFactory(Activator.RepositoryLocator.CatalogueDbContext);
 
-            var configuration = Activator.RepositoryLocator.CatalogueRepository.GetTicketingSystem();
+            var configuration = Activator.RepositoryLocator.CatalogueDbContext.GetTicketingSystem();
             _ticketingSystemConfiguration = factory.CreateIfExists(configuration);
 
             gbTicketing.Enabled = _ticketingSystemConfiguration != null;

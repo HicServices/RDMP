@@ -95,7 +95,7 @@ public class RemoteRDMP : DatabaseEntity, INamed, IEncryptedPasswordHost
     }
 
     /// <inheritdoc/>
-    public RemoteRDMP(ICatalogueRepository repository) : base()
+    public RemoteRDMP(RdmpDbContext catalogueDbContext) : base()
     {
         // need a new copy of the catalogue repository so a new DB connection can be made to use with the encrypted host.
         _encryptedPasswordHost = new EncryptedPasswordHost(repository);
@@ -111,7 +111,7 @@ public class RemoteRDMP : DatabaseEntity, INamed, IEncryptedPasswordHost
     }
 
     /// <inheritdoc/>
-    public RemoteRDMP(ICatalogueRepository repository, DbDataReader r) : base(repository, r)
+    public RemoteRDMP(RdmpDbContext catalogueDbContext, DbDataReader r) : base(repository, r)
     {
         // need a new copy of the catalogue repository so a new DB connection can be made to use with the encrypted host.
         _encryptedPasswordHost = new EncryptedPasswordHost((ICatalogueRepository)repository);
@@ -170,7 +170,7 @@ public class RemoteRDMP : DatabaseEntity, INamed, IEncryptedPasswordHost
     }
 
 
-    public void SetRepository(ICatalogueRepository repository)
+    public void SetRepository(RdmpDbContext catalogueDbContext)
     {
         _encryptedPasswordHost = new EncryptedPasswordHost(repository)
         {

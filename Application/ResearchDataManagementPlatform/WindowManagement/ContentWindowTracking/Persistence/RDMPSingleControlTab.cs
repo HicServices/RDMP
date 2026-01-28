@@ -71,7 +71,7 @@ public class RDMPSingleControlTab : DockContent, IRefreshBusSubscriber
 
     public void ShowHelp(IActivateItems activator)
     {
-        var typeDocs = activator.RepositoryLocator.CatalogueRepository.CommentStore;
+        var typeDocs = activator.RepositoryLocator.CatalogueDbContext.CommentStore;
 
         var sb = new StringBuilder();
 

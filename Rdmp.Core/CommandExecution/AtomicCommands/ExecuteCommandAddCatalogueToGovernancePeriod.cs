@@ -36,7 +36,7 @@ public sealed class ExecuteCommandAddCatalogueToGovernancePeriod : BasicCommandE
         base.Execute();
 
         foreach (var catalogue in _catalogues)
-            BasicActivator.RepositoryLocator.CatalogueRepository.GovernanceManager.Link(_governancePeriod, catalogue);
+            BasicActivator.RepositoryLocator.CatalogueDbContext.GovernanceManager.Link(_governancePeriod, catalogue);
 
         Publish(_governancePeriod);
     }

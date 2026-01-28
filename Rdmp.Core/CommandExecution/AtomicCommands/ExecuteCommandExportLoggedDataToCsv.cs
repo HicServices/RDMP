@@ -30,7 +30,7 @@ public class ExecuteCommandExportLoggedDataToCsv : BasicCommandExecution
     {
         _filter = filter ?? new LogViewerFilter(LoggingTables.DataLoadTask);
         _loggingServers =
-            BasicActivator.RepositoryLocator.CatalogueRepository.GetAllDatabases<LoggingDatabasePatcher>();
+            BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllDatabases<LoggingDatabasePatcher>();
 
         if (!_loggingServers.Any())
             SetImpossible("There are no logging servers");

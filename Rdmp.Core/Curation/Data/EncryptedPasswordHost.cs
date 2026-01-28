@@ -48,7 +48,7 @@ public class EncryptedPasswordHost : IEncryptedPasswordHost
     /// Prepares the object for decrypting/encrypting passwords based on the <see cref="Repositories.Managers.PasswordEncryptionKeyLocation"/>
     /// </summary>
     /// <param name="repository"></param>
-    public EncryptedPasswordHost(ICatalogueRepository repository)
+    public EncryptedPasswordHost(RdmpDbContext catalogueDbContext)
     {
         _encryptedString = new EncryptedString(repository);
     }
@@ -58,7 +58,7 @@ public class EncryptedPasswordHost : IEncryptedPasswordHost
     /// after deserialization and only if the blank constructor was used.
     /// </summary>
     /// <param name="repository"></param>
-    public void SetRepository(ICatalogueRepository repository)
+    public void SetRepository(RdmpDbContext catalogueDbContext)
     {
         if (_encryptedString is FakeEncryptedString f)
             _encryptedString = new EncryptedString(repository)

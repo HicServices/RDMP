@@ -66,7 +66,7 @@ public sealed class Dataset : DatabaseEntity, IDataset, IHasFolder
     }
 
     public Dataset() { }
-    internal Dataset(ICatalogueRepository repository, DbDataReader r)
+    internal Dataset(RdmpDbContext catalogueDbContext, DbDataReader r)
        : base(repository, r)
     {
         Name = r["Name"].ToString();

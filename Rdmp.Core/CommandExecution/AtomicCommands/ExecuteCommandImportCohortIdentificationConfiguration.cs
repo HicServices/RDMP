@@ -59,7 +59,7 @@ public class ExecuteCommandImportCohortIdentificationConfiguration : BasicComman
                 TaskDescription =
                             $"Choose which CohortIdentificationConfiguration(s) to add to the cohort container '{IntoContainer.Name}'.  For each one selected, the entire query tree will be imported."
             },
-                    BasicActivator.RepositoryLocator.CatalogueRepository
+                    BasicActivator.RepositoryLocator.CatalogueDbContext
                         .GetAllObjects<CohortIdentificationConfiguration>(),
                     out import))
                 return;
@@ -70,7 +70,7 @@ public class ExecuteCommandImportCohortIdentificationConfiguration : BasicComman
 
         var merger =
             new CohortIdentificationConfigurationMerger(
-                (CatalogueRepository)BasicActivator.RepositoryLocator.CatalogueRepository);
+                (CatalogueRepository)BasicActivator.RepositoryLocator.CatalogueDbContext);
         merger.Import(import, IntoContainer);
 
         Publish(IntoContainer);

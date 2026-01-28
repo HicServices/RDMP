@@ -31,7 +31,7 @@ public class SelfCertifyingDataAccessPoint : EncryptedPasswordHost, IDataAccessC
     }
 
     /// <inheritdoc cref="SelfCertifyingDataAccessPoint"/>
-    public SelfCertifyingDataAccessPoint(ICatalogueRepository repository, DatabaseType databaseType) : base(repository)
+    public SelfCertifyingDataAccessPoint(RdmpDbContext catalogueDbContext, DatabaseType databaseType) : base(repository)
     {
         DatabaseType = databaseType;
     }

@@ -86,7 +86,7 @@ public class BulkTestsData
     /// <param name="repository"></param>
     /// <param name="targetDatabase"></param>
     /// <param name="numberOfRows"></param>
-    public BulkTestsData(ICatalogueRepository repository, DiscoveredDatabase targetDatabase, int numberOfRows = 10000)
+    public BulkTestsData(RdmpDbContext catalogueDbContext, DiscoveredDatabase targetDatabase, int numberOfRows = 10000)
     {
         _repository = repository;
         BulkDataDatabase = targetDatabase;

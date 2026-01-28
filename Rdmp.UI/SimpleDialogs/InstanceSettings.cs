@@ -23,7 +23,7 @@ namespace Rdmp.UI.SimpleDialogs
         {
             InitializeComponent();
             _activator = activator;
-            _settings = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Setting>();
+            _settings = _activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Setting>();
 
             RegisterCheckbox(cbAutoSuggestProjectNumbers, "AutoSuggestProjectNumbers");
             RegisterCheckbox(cbCohortVersioningOnCommit, "PromptForVersionOnCohortCommit");
@@ -62,7 +62,7 @@ namespace Rdmp.UI.SimpleDialogs
             var prop = _settings.FirstOrDefault(s => s.Key == propertyName);
             if (prop is null)
             {
-                prop = new Setting(_activator.RepositoryLocator.CatalogueRepository, propertyName, Convert.ToString(false));
+                prop = new Setting(_activator.RepositoryLocator.CatalogueDbContext, propertyName, Convert.ToString(false));
                 prop.SaveToDatabase();
             }
 

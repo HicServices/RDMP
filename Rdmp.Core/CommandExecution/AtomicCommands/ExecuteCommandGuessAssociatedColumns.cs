@@ -39,7 +39,7 @@ public class ExecuteCommandGuessAssociatedColumns : BasicCommandExecution
         var failCount = 0;
 
         var selectedTableInfo = _tableInfo ?? (ITableInfo)BasicActivator.SelectOne("Map to table",
-            BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<TableInfo>());
+            BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllObjects<TableInfo>());
 
         if (selectedTableInfo == null)
             return;

@@ -45,7 +45,7 @@ public class DQEPostLoadRunner : IMutilateDataTables
 
     public ExitCodeType Mutilate(IDataLoadJob job)
     {
-        var dqeServer = job.RepositoryLocator.CatalogueRepository.GetDefaultFor(PermissableDefaults.DQE);
+        var dqeServer = job.RepositoryLocator.CatalogueDbContext.GetDefaultFor(PermissableDefaults.DQE);
         if (dqeServer == null)
         {
             job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
@@ -53,10 +53,10 @@ public class DQEPostLoadRunner : IMutilateDataTables
             return ExitCodeType.Success;
         }
         var lmdID = job.LoadMetadata.ID;
-        var linkage = job.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<LoadMetadataCatalogueLinkage>("LoadMetadataID", lmdID);
+        var linkage = job.RepositoryLocator.CatalogueDbContext.GetAllObjectsWhere<LoadMetadataCatalogueLinkage>("LoadMetadataID", lmdID);
         foreach (var link in linkage)
         {
-            var catalogue = job.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<Catalogue>("ID", link.CatalogueID).FirstOrDefault();
+            var catalogue = job.RepositoryLocator.CatalogueDbContext.GetAllObjectsWhere<Catalogue>("ID", link.CatalogueID).FirstOrDefault();
             if (catalogue is null) continue;
             if (catalogue.TimeCoverage_ExtractionInformation_ID == null)
             {

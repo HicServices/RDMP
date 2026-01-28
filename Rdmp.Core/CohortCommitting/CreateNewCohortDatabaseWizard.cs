@@ -12,6 +12,7 @@ using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.CohortCommitting.Pipeline.Destinations.IdentifierAllocation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using TypeGuesser;
@@ -32,27 +33,26 @@ namespace Rdmp.Core.CohortCommitting;
 public class CreateNewCohortDatabaseWizard
 {
     private bool AllowNullReleaseIdentifiers { get; }
-    private readonly ICatalogueRepository _catalogueRepository;
-    private readonly IDataExportRepository _dataExportRepository;
+    private readonly RDMPDbContext _catalogueDbContext;
+    private readonly RDMPDbContext _dataExportDbcontext;
     private readonly DiscoveredDatabase _targetDatabase;
 
     private const string ReleaseIdentifierFieldName = "ReleaseId";
     private const string DefinitionTableForeignKeyField = "cohortDefinition_id";
 
 
-    public CreateNewCohortDatabaseWizard(DiscoveredDatabase targetDatabase, ICatalogueRepository catalogueRepository,
-        IDataExportRepository dataExportRepository, bool allowNullReleaseIdentifiers)
+    public CreateNewCohortDatabaseWizard(DiscoveredDatabase targetDatabase, RDMPDbContext catalogueDbContext,RDMPDbContext dataExportDbContext bool allowNullReleaseIdentifiers)
     {
         AllowNullReleaseIdentifiers = allowNullReleaseIdentifiers;
-        _catalogueRepository = catalogueRepository;
-        _dataExportRepository = dataExportRepository;
+        _catalogueDbContext = catalogueDbContext;
+        _dataExportDbcontext = dataExportDbContext;
         _targetDatabase = targetDatabase;
     }
 
     public PrivateIdentifierPrototype[] GetPrivateIdentifierCandidates()
     {
         //get the extraction identifiers
-        var extractionInformations = _catalogueRepository.GetAllObjects<ExtractionInformation>()
+        var extractionInformations = _catalogueDbContext.GetAllObjects<ExtractionInformation>()
             .Where(ei => ei.IsExtractionIdentifier);
 
         //name + datatype, ideally we want to find 30 fields called 'PatientIndex' in 30 datasets all as char(10) fields but more likely we will get a slew of different spellings and dodgy datatypes (varchar(max) etc)
@@ -141,7 +141,7 @@ public class CreateNewCohortDatabaseWizard
 
 
             notifier.OnCheckPerformed(new CheckEventArgs("About to create pointer to the source", CheckResult.Success));
-            var pointer = new ExternalCohortTable(_dataExportRepository, "TestExternalCohort",
+            var pointer = new ExternalCohortTable(_dataExportDbcontext, "TestExternalCohort",
                 _targetDatabase.Server.DatabaseType)
             {
                 DatabaseType = _targetDatabase.Server.DatabaseType,

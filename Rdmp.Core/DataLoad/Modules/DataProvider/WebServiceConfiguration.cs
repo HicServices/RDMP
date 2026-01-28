@@ -30,7 +30,7 @@ public class WebServiceConfiguration : EncryptedPasswordHost, ICustomUIDrivenCla
     {
     }
 
-    public WebServiceConfiguration(ICatalogueRepository repository) : base(repository)
+    public WebServiceConfiguration(RdmpDbContext catalogueDbContext) : base(repository)
     {
         _repository = repository;
     }

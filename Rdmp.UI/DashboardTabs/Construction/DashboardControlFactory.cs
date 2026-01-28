@@ -65,7 +65,7 @@ public class DashboardControlFactory
         var w = instance.Width;
         var h = instance.Height;
 
-        var dbRecord = new DashboardControl(_activator.RepositoryLocator.CatalogueRepository, forLayout, t,
+        var dbRecord = new DashboardControl(_activator.RepositoryLocator.CatalogueDbContext, forLayout, t,
             _startLocationForNewControls.X, _startLocationForNewControls.Y, w, h, "");
         theControlCreated = Hydrate((IDashboardableControl)instance, dbRecord);
 

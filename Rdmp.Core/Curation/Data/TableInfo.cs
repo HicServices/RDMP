@@ -186,7 +186,7 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="name"></param>
-    public TableInfo(ICatalogueRepository repository, string name)
+    public TableInfo(RdmpDbContext catalogueDbContext, string name)
     {
         var dumpServer = repository.GetDefaultFor(PermissableDefaults.IdentifierDumpServer_ID);
 
@@ -199,7 +199,7 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
         ClearAllInjections();
     }
 
-    internal TableInfo(ICatalogueRepository repository, DbDataReader r)
+    internal TableInfo(RdmpDbContext catalogueDbContext, DbDataReader r)
         : base(repository, r)
     {
         Name = r["Name"].ToString();

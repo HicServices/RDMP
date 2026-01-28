@@ -257,7 +257,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
             _context.MustHaveSource = typeof(DelimitedFlatFileDataFlowSource);
         else if (_selectedFile.Extension.StartsWith(".xls")) _context.MustHaveSource = typeof(ExcelDataFlowSource);
 
-        var compatiblePipelines = Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>()
+        var compatiblePipelines = Activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Pipeline>()
             .Where(_context.IsAllowable).ToArray();
 
         if (compatiblePipelines.Length == 0)
@@ -433,7 +433,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
     private void ForwardEngineer(DiscoveredTable targetTableName)
     {
         var extractionPicker = new ConfigureCatalogueExtractabilityUI(Activator,
-            new TableInfoImporter(Activator.RepositoryLocator.CatalogueRepository, targetTableName),
+            new TableInfoImporter(Activator.RepositoryLocator.CatalogueDbContext, targetTableName),
             $"File '{_selectedFile.FullName}'", _projectSpecific)
         {
             TargetFolder = TargetFolder,

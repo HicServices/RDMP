@@ -39,7 +39,7 @@ internal class DQEMenuItem : RDMPToolStripMenuItem
     protected override void OnClick(EventArgs e)
     {
         base.OnClick(e);
-        _dqeServer = _activator.RepositoryLocator.CatalogueRepository.GetDefaultFor(PermissableDefaults.DQE);
+        _dqeServer = _activator.RepositoryLocator.CatalogueDbContext.GetDefaultFor(PermissableDefaults.DQE);
         if (_dqeServer == null)
         {
             var cmdCreateDb = new ExecuteCommandCreateNewExternalDatabaseServer(_activator,

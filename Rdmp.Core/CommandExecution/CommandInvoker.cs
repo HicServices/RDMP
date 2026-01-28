@@ -189,7 +189,7 @@ public class CommandInvoker
             : throw new OperationCanceledException();
 
     private IPipeline SelectPipeline(RequiredArgument arg) => (IPipeline)_basicActivator.SelectOne(GetPromptFor(arg),
-        _basicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>().ToArray());
+        _basicActivator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Pipeline>().ToArray());
 
     private static string GetPromptFor(RequiredArgument p) => $"Value needed for {p.Name} ({p.Type.Name})";
 

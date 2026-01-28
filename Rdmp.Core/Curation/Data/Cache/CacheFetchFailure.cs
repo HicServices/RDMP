@@ -84,7 +84,7 @@ public class CacheFetchFailure : DatabaseEntity, ICacheFetchFailure
     /// <param name="start"></param>
     /// <param name="end"></param>
     /// <param name="e"></param>
-    public CacheFetchFailure(ICatalogueRepository repository, ICacheProgress cacheProgress, DateTime start,
+    public CacheFetchFailure(RdmpDbContext catalogueDbContext, ICacheProgress cacheProgress, DateTime start,
         DateTime end, Exception e)
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
@@ -98,7 +98,7 @@ public class CacheFetchFailure : DatabaseEntity, ICacheFetchFailure
         });
     }
 
-    internal CacheFetchFailure(ICatalogueRepository repository, DbDataReader r)
+    internal CacheFetchFailure(RdmpDbContext catalogueDbContext, DbDataReader r)
         : base(repository, r)
     {
         CacheProgress_ID = int.Parse(r["CacheProgress_ID"].ToString());

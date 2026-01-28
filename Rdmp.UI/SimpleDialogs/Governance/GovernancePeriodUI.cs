@@ -128,7 +128,7 @@ public partial class GovernancePeriodUI : GovernancePeriodUI_Design, ISaveableUI
     private void btnAddCatalogue_Click(object sender, EventArgs e)
     {
         var alreadyMappedCatalogues = olvCatalogues.Objects.Cast<Catalogue>();
-        var allCatalogues = Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>();
+        var allCatalogues = Activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Catalogue>();
 
         var availableToSelect =
             allCatalogues.Where(c => !alreadyMappedCatalogues.Contains(c)).ToArray();
@@ -173,7 +173,7 @@ public partial class GovernancePeriodUI : GovernancePeriodUI_Design, ISaveableUI
 
     private void btnImportCatalogues_Click(object sender, EventArgs e)
     {
-        var toImportFrom = Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<GovernancePeriod>()
+        var toImportFrom = Activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<GovernancePeriod>()
             .Where(gov => gov.ID != _governancePeriod.ID)
             .ToArray();
 

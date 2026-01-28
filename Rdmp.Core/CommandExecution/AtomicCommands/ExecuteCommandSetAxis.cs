@@ -119,7 +119,7 @@ public class ExecuteCommandSetAxis : BasicCommandExecution
                 throw new Exception(
                     $"Current state of Aggregate {aggregate} does not support having an axis Dimension");
 
-            var axis = new AggregateContinuousDateAxis(BasicActivator.RepositoryLocator.CatalogueRepository, match);
+            var axis = new AggregateContinuousDateAxis(BasicActivator.RepositoryLocator.CatalogueDbContext, match);
             axis.SaveToDatabase();
         }
 

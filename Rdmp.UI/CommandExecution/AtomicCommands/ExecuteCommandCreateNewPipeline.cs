@@ -30,7 +30,7 @@ public class ExecuteCommandCreateNewPipeline : BasicUICommandExecution, IAtomicC
     {
         base.Execute();
 
-        var newPipe = new Pipeline(Activator.RepositoryLocator.CatalogueRepository);
+        var newPipe = new Pipeline(Activator.RepositoryLocator.CatalogueDbContext);
         var edit = new ExecuteCommandEditPipelineWithUseCase(Activator, newPipe, _useCase);
         edit.Execute();
     }

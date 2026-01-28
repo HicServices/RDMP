@@ -122,10 +122,10 @@ internal class CommandLineObjectPickerTests : UnitTests
     [Test]
     public void TestPicker_TypeYieldsEmptyArrayOfObjects()
     {
-        foreach (var cat in RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>())
+        foreach (var cat in RepositoryLocator.CatalogueDbContext.GetAllObjects<Catalogue>())
             cat.DeleteInDatabase();
 
-        Assert.That(RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), Is.Empty);
+        Assert.That(RepositoryLocator.CatalogueDbContext.GetAllObjects<Catalogue>(), Is.Empty);
 
         //when interpreting the string "Catalogue" for a command
         var picker = new CommandLineObjectPicker(new[] { "Catalogue" }, GetActivator());

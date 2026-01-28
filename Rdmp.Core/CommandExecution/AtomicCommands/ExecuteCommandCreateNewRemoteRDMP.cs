@@ -21,7 +21,7 @@ public class ExecuteCommandCreateNewRemoteRDMP : BasicCommandExecution, IAtomicC
     public override void Execute()
     {
         base.Execute();
-        var remote = new RemoteRDMP(BasicActivator.RepositoryLocator.CatalogueRepository);
+        var remote = new RemoteRDMP(BasicActivator.RepositoryLocator.CatalogueDbContext);
         Publish(remote);
         Emphasise(remote);
         Activate(remote);

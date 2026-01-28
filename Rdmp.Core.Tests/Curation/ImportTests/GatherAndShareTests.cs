@@ -136,7 +136,7 @@ public class GatherAndShareTests : DatabaseTests
         anoTableAfter.DeleteInDatabase();
         anoserverAfter.DeleteInDatabase();
 
-        foreach (var o in RepositoryLocator.CatalogueRepository.GetAllObjects<ObjectImport>())
+        foreach (var o in RepositoryLocator.CatalogueDbContext.GetAllObjects<ObjectImport>())
             o.DeleteInDatabase();
     }
 

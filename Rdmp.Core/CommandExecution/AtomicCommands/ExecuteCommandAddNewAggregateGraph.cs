@@ -45,7 +45,7 @@ public class ExecuteCommandAddNewAggregateGraph : BasicCommandExecution, IAtomic
             {
                 WindowTitle = "Add Aggregate Graph",
                 TaskDescription = "Select which Catalogue you want to add the graph to."
-            }, BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out var selected))
+            }, BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Catalogue>(), out var selected))
                 c = selected;
             else
                 // user cancelled selecting a Catalogue
@@ -61,7 +61,7 @@ public class ExecuteCommandAddNewAggregateGraph : BasicCommandExecution, IAtomic
                 // user cancelled typing a name for the graph
                 return;
 
-        var newAggregate = new AggregateConfiguration(BasicActivator.RepositoryLocator.CatalogueRepository, c, name ??
+        var newAggregate = new AggregateConfiguration(BasicActivator.RepositoryLocator.CatalogueDbContext, c, name ??
             $"New Aggregate {Guid.NewGuid()}");
         Publish(_catalogue);
         Activate(newAggregate);

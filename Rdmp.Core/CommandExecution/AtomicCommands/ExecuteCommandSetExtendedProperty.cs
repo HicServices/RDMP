@@ -63,7 +63,7 @@ public sealed class ExecuteCommandSetExtendedProperty : BasicCommandExecution, I
     {
         base.Execute();
 
-        var catRepo = BasicActivator.RepositoryLocator.CatalogueRepository;
+        var catRepo = BasicActivator.RepositoryLocator.CatalogueDbContext;
         var newValue = _value;
 
         foreach (var o in _setOn)

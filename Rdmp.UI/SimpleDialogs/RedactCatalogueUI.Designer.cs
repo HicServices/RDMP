@@ -133,7 +133,7 @@ partial class RedactCatalogueUI
         folvConfiguration.AspectGetter = delegate (object rowObject)
         {
             var redaction = (RegexRedaction)rowObject;
-            return _activator.RepositoryLocator.CatalogueRepository.GetObjectByID<RegexRedactionConfiguration>(redaction.RedactionConfiguration_ID).Name;
+            return _activator.RepositoryLocator.CatalogueDbContext.GetObjectByID<RegexRedactionConfiguration>(redaction.RedactionConfiguration_ID).Name;
         };
         folvConfiguration.ButtonSizing = OLVColumn.ButtonSizingMode.CellBounds;
         folvConfiguration.FillsFreeSpace = true;
@@ -146,7 +146,7 @@ partial class RedactCatalogueUI
         folvColumn.AspectGetter = delegate (object rowObject)
         {
             var redaction = (RegexRedaction)rowObject;
-            return _activator.RepositoryLocator.CatalogueRepository.GetObjectByID<ColumnInfo>(redaction.ColumnInfo_ID).GetRuntimeName();
+            return _activator.RepositoryLocator.CatalogueDbContext.GetObjectByID<ColumnInfo>(redaction.ColumnInfo_ID).GetRuntimeName();
         };
         folvColumn.ButtonSizing = OLVColumn.ButtonSizingMode.CellBounds;
         folvColumn.FillsFreeSpace = true;

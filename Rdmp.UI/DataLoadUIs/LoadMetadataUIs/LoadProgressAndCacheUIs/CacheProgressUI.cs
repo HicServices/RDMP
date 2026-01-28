@@ -119,7 +119,7 @@ public partial class CacheProgressUI : CacheProgressUI_Design, ISaveableUI
             var useCase = CachingPipelineUseCase.DesignTime();
 
             var selectionFactory =
-                new PipelineSelectionUIFactory(Activator.RepositoryLocator.CatalogueRepository, user, useCase);
+                new PipelineSelectionUIFactory(Activator.RepositoryLocator.CatalogueDbContext, user, useCase);
             _pipelineSelectionUI =
                 (Control)selectionFactory.Create(Activator, "Cache Pipeline", DockStyle.Fill, pPipeline);
         }

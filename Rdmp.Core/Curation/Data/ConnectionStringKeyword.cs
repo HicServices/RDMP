@@ -72,7 +72,7 @@ public class ConnectionStringKeyword : DatabaseEntity, INamed, ICheckable
     /// <param name="databaseType"></param>
     /// <param name="keyword"></param>
     /// <param name="value"></param>
-    public ConnectionStringKeyword(ICatalogueRepository repository, DatabaseType databaseType, string keyword,
+    public ConnectionStringKeyword(RdmpDbContext catalogueDbContext, DatabaseType databaseType, string keyword,
         string value)
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
@@ -86,7 +86,7 @@ public class ConnectionStringKeyword : DatabaseEntity, INamed, ICheckable
             throw new ArgumentException("Repository failed to properly hydrate this class");
     }
 
-    internal ConnectionStringKeyword(ICatalogueRepository repository, DbDataReader r)
+    internal ConnectionStringKeyword(RdmpDbContext catalogueDbContext, DbDataReader r)
         : base(repository, r)
     {
         DatabaseType = (DatabaseType)Enum.Parse(typeof(DatabaseType), r["DatabaseType"].ToString());

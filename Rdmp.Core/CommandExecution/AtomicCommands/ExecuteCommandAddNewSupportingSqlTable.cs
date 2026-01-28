@@ -43,7 +43,7 @@ public class ExecuteCommandAddNewSupportingSqlTable : BasicCommandExecution, IAt
             {
                 WindowTitle = "Add Supporting SQL Table",
                 TaskDescription = "Select which Catalogue you want to add the Supporting SQL Table to."
-            }, BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out var selected))
+            }, BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Catalogue>(), out var selected))
                 c = selected;
             else
                 // user cancelled selecting a Catalogue

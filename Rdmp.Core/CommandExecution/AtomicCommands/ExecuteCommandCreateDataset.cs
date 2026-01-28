@@ -24,7 +24,7 @@ public class ExecuteCommandCreateDataset : BasicCommandExecution
     public override void Execute()
     {
         base.Execute();
-        var dataset = new Curation.Data.Dataset(BasicActivator.RepositoryLocator.CatalogueRepository, _name) { DigitalObjectIdentifier = _doi, Source = _source };
+        var dataset = new Curation.Data.Dataset(BasicActivator.RepositoryLocator.CatalogueDbContext, _name) { DigitalObjectIdentifier = _doi, Source = _source };
         dataset.SaveToDatabase();
         _activator.Publish(dataset);
     }

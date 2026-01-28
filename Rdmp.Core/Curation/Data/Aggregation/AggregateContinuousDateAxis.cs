@@ -87,7 +87,7 @@ public class AggregateContinuousDateAxis : DatabaseEntity, IQueryAxis
     /// <remarks>To use this you will first have to create an AggregateConfiguration and setup the count(*)/sum(*) etc stuff and then add a new AggregateDimension <see cref="AggregateConfiguration.AddDimension"/> </remarks>
     /// <param name="repository"></param>
     /// <param name="dimension"></param>
-    public AggregateContinuousDateAxis(ICatalogueRepository repository, AggregateDimension dimension)
+    public AggregateContinuousDateAxis(RdmpDbContext catalogueDbContext, AggregateDimension dimension)
     {
         var todaysDateFunction = dimension.AggregateConfiguration.GetQuerySyntaxHelper()
             .GetScalarFunctionSql(MandatoryScalarFunctions.GetTodaysDate);
@@ -101,7 +101,7 @@ public class AggregateContinuousDateAxis : DatabaseEntity, IQueryAxis
     }
 
     /// <inheritdoc/>
-    internal AggregateContinuousDateAxis(ICatalogueRepository repository, DbDataReader r) : base(repository, r)
+    internal AggregateContinuousDateAxis(RdmpDbContext catalogueDbContext, DbDataReader r) : base(repository, r)
     {
         AggregateDimension_ID = int.Parse(r["AggregateDimension_ID"].ToString());
         StartDate = r["StartDate"].ToString();

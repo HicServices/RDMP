@@ -70,7 +70,7 @@ public class StandardRegex : DatabaseEntity, ICheckable
     /// rather than having replication between components/pipelines)
     /// </summary>
     /// <param name="repository"></param>
-    public StandardRegex(ICatalogueRepository repository)
+    public StandardRegex(RdmpDbContext catalogueDbContext)
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
@@ -79,7 +79,7 @@ public class StandardRegex : DatabaseEntity, ICheckable
         });
     }
 
-    internal StandardRegex(ICatalogueRepository repository, DbDataReader r)
+    internal StandardRegex(RdmpDbContext catalogueDbContext, DbDataReader r)
         : base(repository, r)
     {
         ConceptName = r["ConceptName"].ToString();

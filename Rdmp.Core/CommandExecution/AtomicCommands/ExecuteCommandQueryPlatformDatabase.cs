@@ -64,14 +64,14 @@ public class ExecuteCommandQueryPlatformDatabase : ExecuteCommandViewDataBase
 
         if (patcherType == typeof(CataloguePatcher))
         {
-            db = GetDatabase(BasicActivator.RepositoryLocator.CatalogueRepository);
+            db = GetDatabase(BasicActivator.RepositoryLocator.CatalogueDbContext);
 
             _query ??= "Select * from Catalogue";
             _table = db?.ExpectTable("Catalogue");
             return;
         }
 
-        var eds = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>();
+        var eds = BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllObjects<ExternalDatabaseServer>();
 
         var patcher = (IPatcher)Activator.CreateInstance(patcherType);
         db = GetDatabase(eds.Where(e => e.WasCreatedBy(patcher)).ToArray());

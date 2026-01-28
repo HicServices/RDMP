@@ -72,7 +72,7 @@ public class ExecuteCommandCreateNewClassBasedProcessTask : BasicCommandExecutio
             else
                 return;
         }
-        var newTask = new ProcessTask(BasicActivator.RepositoryLocator.CatalogueRepository, _loadMetadata, _loadStage)
+        var newTask = new ProcessTask(BasicActivator.RepositoryLocator.CatalogueDbContext, _loadMetadata, _loadStage)
         {
             Path = _type.FullName,
             ProcessTaskType = _processTaskType,

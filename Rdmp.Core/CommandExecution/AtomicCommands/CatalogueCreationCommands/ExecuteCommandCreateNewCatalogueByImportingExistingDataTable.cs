@@ -51,7 +51,7 @@ public class ExecuteCommandCreateNewCatalogueByImportingExistingDataTable : Cata
         if (tbl == null)
             return;
 
-        var importer = new TableInfoImporter(BasicActivator.RepositoryLocator.CatalogueRepository, tbl);
+        var importer = new TableInfoImporter(BasicActivator.RepositoryLocator.CatalogueDbContext, tbl);
         importer.DoImport(out var ti, out _);
 
         var c = BasicActivator.CreateAndConfigureCatalogue(ti, null, "Existing table", ProjectSpecific, TargetFolder);

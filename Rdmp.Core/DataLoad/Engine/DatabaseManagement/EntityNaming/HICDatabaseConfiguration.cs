@@ -63,7 +63,7 @@ public class HICDatabaseConfiguration
             IgnoreColumns = new Regex(globalIgnorePattern.Regex);
     }
 
-    public static StandardRegex GetGlobalIgnorePatternIfAny(ICatalogueRepository repository)
+    public static StandardRegex GetGlobalIgnorePatternIfAny(RdmpDbContext catalogueDbContext)
     {
         return repository.GetAllObjects<StandardRegex>().OrderBy(r => r.ID)
             .FirstOrDefault(r => r.ConceptName == StandardRegex.DataLoadEngineGlobalIgnorePattern);

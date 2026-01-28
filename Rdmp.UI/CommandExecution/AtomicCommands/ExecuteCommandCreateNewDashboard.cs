@@ -29,7 +29,7 @@ internal class ExecuteCommandCreateNewDashboard : BasicUICommandExecution, IAtom
 
         if (TypeText("Dashboard Name", "Name", out var name))
         {
-            var l = new DashboardLayout(Activator.RepositoryLocator.CatalogueRepository, name);
+            var l = new DashboardLayout(Activator.RepositoryLocator.CatalogueDbContext, name);
             Publish(l);
             Emphasise(l);
         }

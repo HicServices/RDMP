@@ -311,7 +311,7 @@ public partial class ConsoleGuiServerDatabaseTableSelector
     {
         if (_activator == null) return;
 
-        var creds = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<DataAccessCredentials>();
+        var creds = _activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<DataAccessCredentials>();
 
         if (!creds.Any())
         {

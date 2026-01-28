@@ -21,7 +21,7 @@ public class CohortIdentificationConfigurationMerger
 {
     private readonly ICatalogueRepository _repository;
 
-    public CohortIdentificationConfigurationMerger(ICatalogueRepository repository)
+    public CohortIdentificationConfigurationMerger(RdmpDbContext catalogueDbContext)
     {
         _repository = repository;
     }

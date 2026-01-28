@@ -47,7 +47,7 @@ public partial class CommitsUI : CommitsUI_Design
 
         SetupCommonCollectionFunctionality();
 
-        var commits = activator.RepositoryLocator.CatalogueRepository
+        var commits = activator.RepositoryLocator.CatalogueDbContext
             .GetAllObjects<Commit>()
             .ToList();
 
@@ -65,14 +65,14 @@ public partial class CommitsUI : CommitsUI_Design
         SetupCommonCollectionFunctionality();
 
         // TODO: move this to a helper class
-        var commitsInvolvingObject = activator.RepositoryLocator.CatalogueRepository
+        var commitsInvolvingObject = activator.RepositoryLocator.CatalogueDbContext
             .GetAllObjectsWhere<Memento>(nameof(Memento.ReferencedObjectID), o.ID)
             .Where(m => m.IsReferenceTo(o))
             .Select(m => m.Commit_ID)
             .Distinct()
             .ToList();
 
-        var commits = activator.RepositoryLocator.CatalogueRepository
+        var commits = activator.RepositoryLocator.CatalogueDbContext
             .GetAllObjectsInIDList<Commit>(commitsInvolvingObject)
             .ToList();
 

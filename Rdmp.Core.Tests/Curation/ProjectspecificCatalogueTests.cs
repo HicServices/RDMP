@@ -164,7 +164,7 @@ namespace Rdmp.Core.Tests.Curation
         {
             SetupTests(2, 2, 0);
             MakeNotProjectSpecific(_catalogue, _eds1, _project1);
-            Assert.That(_activator.RepositoryLocator.CatalogueRepository.GetObjectByID<Catalogue>(_catalogue.ID).IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository), Is.True);
+            Assert.That(_activator.RepositoryLocator.CatalogueDbContext.GetObjectByID<Catalogue>(_catalogue.ID).IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository), Is.True);
             Assert.That(_activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", _catalogue.ID).Where(eds => eds.Projects.Any()).Count, Is.EqualTo(1));
         }
 
@@ -173,7 +173,7 @@ namespace Rdmp.Core.Tests.Curation
         {
             SetupTests(2, 2, 1);
             MakeNotProjectSpecific(_catalogue, _activator.RepositoryLocator.DataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(_catalogue).FirstOrDefault(eds => eds.Projects.Contains(_project2)),_project1);
-            Assert.That(_activator.RepositoryLocator.CatalogueRepository.GetObjectByID<Catalogue>(_catalogue.ID).IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository), Is.True);
+            Assert.That(_activator.RepositoryLocator.CatalogueDbContext.GetObjectByID<Catalogue>(_catalogue.ID).IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository), Is.True);
             Assert.That(_activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", _catalogue.ID).Where(eds => eds.Projects.Any()).Count, Is.EqualTo(1));
         }
 
@@ -184,7 +184,7 @@ namespace Rdmp.Core.Tests.Curation
         {
             SetupTests(2, 2, 1);
             MakeNotProjectSpecific(_catalogue, _eds1, _project1,true);
-            Assert.That(_activator.RepositoryLocator.CatalogueRepository.GetObjectByID<Catalogue>(_catalogue.ID).IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository), Is.True);
+            Assert.That(_activator.RepositoryLocator.CatalogueDbContext.GetObjectByID<Catalogue>(_catalogue.ID).IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository), Is.True);
             Assert.That(_activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", _catalogue.ID).First().Projects.Count, Is.EqualTo(2));
         }
 
@@ -195,7 +195,7 @@ namespace Rdmp.Core.Tests.Curation
             Assert.That(_activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", _catalogue.ID).Count, Is.EqualTo(1));
             Assert.That(_activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", _catalogue.ID).First().Projects.Any(), Is.False);
             MakeProjectSpecific(_catalogue, _project2, null, true);
-            Assert.That(_activator.RepositoryLocator.CatalogueRepository.GetObjectByID<Catalogue>(_catalogue.ID).IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository), Is.False);
+            Assert.That(_activator.RepositoryLocator.CatalogueDbContext.GetObjectByID<Catalogue>(_catalogue.ID).IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository), Is.False);
             Assert.That(_activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", _catalogue.ID).Count, Is.EqualTo(1));
             Assert.That(_activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", _catalogue.ID).First().Projects.Any(), Is.False);
         }
@@ -206,7 +206,7 @@ namespace Rdmp.Core.Tests.Curation
             SetupTests(2, 0, 1);
             MakeProjectSpecific(_catalogue, _project1, new List<int>() { _project1.ID });
             MakeProjectSpecific(_catalogue, _project2, new List<int>() { _project1.ID });
-            Assert.That(_activator.RepositoryLocator.CatalogueRepository.GetObjectByID<Catalogue>(_catalogue.ID).IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository), Is.True);
+            Assert.That(_activator.RepositoryLocator.CatalogueDbContext.GetObjectByID<Catalogue>(_catalogue.ID).IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository), Is.True);
             Assert.That(_activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", _catalogue.ID).First().Projects.Count, Is.EqualTo(2));
         }
 
@@ -215,7 +215,7 @@ namespace Rdmp.Core.Tests.Curation
         {
             SetupTests(2, 0, 2);
             MakeProjectSpecific(_catalogue, _project2, null, true);
-            Assert.That(_activator.RepositoryLocator.CatalogueRepository.GetObjectByID<Catalogue>(_catalogue.ID).IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository), Is.False);
+            Assert.That(_activator.RepositoryLocator.CatalogueDbContext.GetObjectByID<Catalogue>(_catalogue.ID).IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository), Is.False);
             Assert.That(_activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", _catalogue.ID).Count, Is.EqualTo(1));
             Assert.That(_activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", _catalogue.ID).First().Projects.Any(), Is.False);
         }
@@ -226,7 +226,7 @@ namespace Rdmp.Core.Tests.Curation
             SetupTests(2, 0, 2);
             MakeProjectSpecific(_catalogue, _project2, new List<int>() { _project1.ID },false,true);
             MakeProjectSpecific(_catalogue, _project1, new List<int>() { _project1.ID },false,true);
-            Assert.That(_activator.RepositoryLocator.CatalogueRepository.GetObjectByID<Catalogue>(_catalogue.ID).IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository), Is.True);
+            Assert.That(_activator.RepositoryLocator.CatalogueDbContext.GetObjectByID<Catalogue>(_catalogue.ID).IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository), Is.True);
             Assert.That(_activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", _catalogue.ID).First().Projects.Count, Is.EqualTo(2));
         }
     }

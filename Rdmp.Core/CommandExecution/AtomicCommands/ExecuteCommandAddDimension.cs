@@ -96,7 +96,7 @@ public sealed class ExecuteCommandAddDimension : BasicCommandExecution
                     $"Could not find ExtractionInformation {_column} in as an addable column to {_aggregate}");
         }
 
-        var dim = new AggregateDimension(BasicActivator.RepositoryLocator.CatalogueRepository, match, _aggregate);
+        var dim = new AggregateDimension(BasicActivator.RepositoryLocator.CatalogueDbContext, match, _aggregate);
         dim.SaveToDatabase();
 
         Publish(_aggregate);

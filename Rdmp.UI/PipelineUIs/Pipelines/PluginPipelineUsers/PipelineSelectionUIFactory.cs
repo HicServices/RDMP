@@ -27,7 +27,7 @@ public class PipelineSelectionUIFactory
 
     private IPipelineSelectionUI _pipelineSelectionUIInstance;
 
-    public PipelineSelectionUIFactory(ICatalogueRepository repository, IPipelineUser user, IPipelineUseCase useCase, IExtractionConfiguration extractionConfiguration = null)
+    public PipelineSelectionUIFactory(RdmpDbContext catalogueDbContext, IPipelineUser user, IPipelineUseCase useCase, IExtractionConfiguration extractionConfiguration = null)
     {
         _repository = repository;
         _user = user;
@@ -35,7 +35,7 @@ public class PipelineSelectionUIFactory
         _extractionCurationConfiguration = extractionConfiguration;
     }
 
-    public PipelineSelectionUIFactory(ICatalogueRepository repository, RequiredPropertyInfo requirement,
+    public PipelineSelectionUIFactory(RdmpDbContext catalogueDbContext, RequiredPropertyInfo requirement,
         ArgumentValueUIArgs args, object demanderInstance)
     {
         _repository = repository;

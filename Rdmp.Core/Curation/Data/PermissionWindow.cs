@@ -116,7 +116,7 @@ public class PermissionWindow : DatabaseEntity, IPermissionWindow
     /// Create a new time window in which you can restrict things (caching, loading etc) from happening outside
     /// </summary>
     /// <param name="repository"></param>
-    public PermissionWindow(ICatalogueRepository repository)
+    public PermissionWindow(RdmpDbContext catalogueDbContext)
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
@@ -125,7 +125,7 @@ public class PermissionWindow : DatabaseEntity, IPermissionWindow
         });
     }
 
-    internal PermissionWindow(ICatalogueRepository repository, DbDataReader r)
+    internal PermissionWindow(RdmpDbContext catalogueDbContext, DbDataReader r)
         : base(repository, r)
     {
         Name = r["Name"].ToString();

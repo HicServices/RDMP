@@ -78,7 +78,7 @@ public partial class ExecuteLoadMetadataUI : DatasetLoadControl_Design
         if (activator.IsInteractive)
         {
             var showYestoAllNotoAlldataloadcheck = false;
-            var showYestoAllNotoAlldataloadcheckSetting = activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Setting>().FirstOrDefault(static s => s.Key == "ToggleYestoAllNotoAlldataloadcheck");
+            var showYestoAllNotoAlldataloadcheckSetting = activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Setting>().FirstOrDefault(static s => s.Key == "ToggleYestoAllNotoAlldataloadcheck");
             if (showYestoAllNotoAlldataloadcheckSetting is not null) showYestoAllNotoAlldataloadcheck = Convert.ToBoolean(showYestoAllNotoAlldataloadcheckSetting.Value);
             checkAndExecuteUI1.AllowsYesNoToAll = showYestoAllNotoAlldataloadcheck;
         }
@@ -168,7 +168,7 @@ public partial class ExecuteLoadMetadataUI : DatasetLoadControl_Design
         var scheduleItem = (KeyValuePair<int, string>)ddLoadProgress.SelectedItem;
         return scheduleItem.Key == 0
             ? null
-            : Activator.RepositoryLocator.CatalogueRepository.GetObjectByID<LoadProgress>(scheduleItem.Key);
+            : Activator.RepositoryLocator.CatalogueDbContext.GetObjectByID<LoadProgress>(scheduleItem.Key);
     }
 
 

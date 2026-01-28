@@ -15,7 +15,7 @@ internal class ExecuteCommandDeleteTestsCli : CommandCliTests
     [Test]
     public void TestDeletingACatalogue_NoneInDbIsFine()
     {
-        var prev = RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>();
+        var prev = RepositoryLocator.CatalogueDbContext.GetAllObjects<Catalogue>();
         Assert.Multiple(() =>
         {
             Assert.That(prev, Is.Empty);
@@ -23,7 +23,7 @@ internal class ExecuteCommandDeleteTestsCli : CommandCliTests
             Assert.That(Run("delete", "Catalogue:bob"), Is.EqualTo(0));
         });
 
-        var now = RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>();
+        var now = RepositoryLocator.CatalogueDbContext.GetAllObjects<Catalogue>();
         Assert.That(now, Is.Empty);
     }
 

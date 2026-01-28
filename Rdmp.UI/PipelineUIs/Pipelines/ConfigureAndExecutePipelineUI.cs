@@ -98,7 +98,7 @@ public partial class ConfigureAndExecutePipelineUI : RDMPUserControl, IPipelineR
             _initializationObjects.Add(o);
         }
 
-        SetPipelineOptions(activator.RepositoryLocator.CatalogueRepository);
+        SetPipelineOptions(activator.RepositoryLocator.CatalogueDbContext);
     }
 
     private bool _pipelineOptionsSet;
@@ -107,7 +107,7 @@ public partial class ConfigureAndExecutePipelineUI : RDMPUserControl, IPipelineR
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public DataFlowPipelineEngineFactory PipelineFactory { get; private set; }
 
-    private void SetPipelineOptions(ICatalogueRepository repository)
+    private void SetPipelineOptions(RdmpDbContext catalogueDbContext)
     {
         if (_pipelineOptionsSet)
             throw new Exception(

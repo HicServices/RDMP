@@ -113,7 +113,7 @@ public class ExtractionFilter : ConcreteFilter, IHasDependencies, IInjectKnown<E
     /// <param name="repository"></param>
     /// <param name="name"></param>
     /// <param name="parent"></param>
-    public ExtractionFilter(ICatalogueRepository repository, string name, ExtractionInformation parent)
+    public ExtractionFilter(RdmpDbContext catalogueDbContext, string name, ExtractionInformation parent)
     {
         name ??= $"New Filter {Guid.NewGuid()}";
 
@@ -126,7 +126,7 @@ public class ExtractionFilter : ConcreteFilter, IHasDependencies, IInjectKnown<E
         ClearAllInjections();
     }
 
-    internal ExtractionFilter(ICatalogueRepository repository, DbDataReader r)
+    internal ExtractionFilter(RdmpDbContext catalogueDbContext, DbDataReader r)
         : base(repository, r)
     {
         ExtractionInformation_ID = int.Parse(r["ExtractionInformation_ID"].ToString());

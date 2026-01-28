@@ -55,7 +55,7 @@ public class ObjectImport : ReferenceOtherObjectDatabaseEntity
     /// <param name="repository"></param>
     /// <param name="sharingUID"></param>
     /// <param name="localObject"></param>
-    internal ObjectImport(ICatalogueRepository repository, string sharingUID, IMapsDirectlyToDatabaseTable localObject)
+    internal ObjectImport(RdmpDbContext catalogueDbContext, string sharingUID, IMapsDirectlyToDatabaseTable localObject)
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
@@ -70,7 +70,7 @@ public class ObjectImport : ReferenceOtherObjectDatabaseEntity
     }
 
     /// <inheritdoc/>
-    public ObjectImport(ICatalogueRepository repository, DbDataReader r)
+    public ObjectImport(RdmpDbContext catalogueDbContext, DbDataReader r)
         : base(repository, r)
     {
         SharingUID = r["SharingUID"].ToString();

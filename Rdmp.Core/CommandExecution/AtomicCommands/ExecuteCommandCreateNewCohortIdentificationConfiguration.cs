@@ -145,7 +145,7 @@ public class ExecuteCommandCreateNewCohortIdentificationConfiguration : BasicCom
             }, 255, null, out name, false))
                 return null;
 
-        var cic = new CohortIdentificationConfiguration(BasicActivator.RepositoryLocator.CatalogueRepository, name);
+        var cic = new CohortIdentificationConfiguration(BasicActivator.RepositoryLocator.CatalogueDbContext, name);
         cic.CreateRootContainerIfNotExists();
         var root = cic.RootCohortAggregateContainer;
         root.Name = RootContainerName;
@@ -153,7 +153,7 @@ public class ExecuteCommandCreateNewCohortIdentificationConfiguration : BasicCom
         root.SaveToDatabase();
 
         var inclusion =
-            new CohortAggregateContainer(BasicActivator.RepositoryLocator.CatalogueRepository, SetOperation.UNION)
+            new CohortAggregateContainer(BasicActivator.RepositoryLocator.CatalogueDbContext, SetOperation.UNION)
             {
                 Name = InclusionCriteriaName,
                 Order = 0
@@ -161,7 +161,7 @@ public class ExecuteCommandCreateNewCohortIdentificationConfiguration : BasicCom
         inclusion.SaveToDatabase();
 
         var exclusion =
-            new CohortAggregateContainer(BasicActivator.RepositoryLocator.CatalogueRepository, SetOperation.UNION)
+            new CohortAggregateContainer(BasicActivator.RepositoryLocator.CatalogueDbContext, SetOperation.UNION)
             {
                 Name = ExclusionCriteriaName,
                 Order = 1

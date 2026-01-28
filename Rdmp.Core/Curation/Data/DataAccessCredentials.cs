@@ -73,7 +73,7 @@ public class DataAccessCredentials : DatabaseEntity, IDataAccessCredentials, INa
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="name"></param>
-    public DataAccessCredentials(ICatalogueRepository repository, string name = null)
+    public DataAccessCredentials(RdmpDbContext catalogueDbContext, string name = null)
     {
         name ??= $"New Credentials {Guid.NewGuid()}";
 
@@ -85,7 +85,7 @@ public class DataAccessCredentials : DatabaseEntity, IDataAccessCredentials, INa
         });
     }
 
-    internal DataAccessCredentials(ICatalogueRepository repository, DbDataReader r)
+    internal DataAccessCredentials(RdmpDbContext catalogueDbContext, DbDataReader r)
         : base(repository, r)
     {
         _encryptedPasswordHost = new EncryptedPasswordHost(repository);
@@ -154,7 +154,7 @@ public class DataAccessCredentials : DatabaseEntity, IDataAccessCredentials, INa
         return string.IsNullOrWhiteSpace(p) ? string.IsNullOrWhiteSpace(password) : p.Equals(password);
     }
 
-    internal void SetRepository(ICatalogueRepository repository)
+    internal void SetRepository(RdmpDbContext catalogueDbContext)
     {
         _encryptedPasswordHost.SetRepository(repository);
     }

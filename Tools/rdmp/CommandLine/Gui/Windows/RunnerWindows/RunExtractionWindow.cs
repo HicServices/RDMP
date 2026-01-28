@@ -36,7 +36,7 @@ internal class RunExtractionWindow : RunEngineWindow<ExtractionOptions>
         var useCase = ExtractionPipelineUseCase.DesignTime();
 
         var compatible = useCase
-            .FilterCompatiblePipelines(BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>())
+            .FilterCompatiblePipelines(BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Pipeline>())
             .ToArray();
 
         if (!compatible.Any()) throw new Exception("No compatible pipelines");

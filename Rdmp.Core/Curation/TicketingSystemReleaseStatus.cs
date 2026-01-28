@@ -28,7 +28,7 @@ namespace Rdmp.Core.Curation
 
         public TicketingSystemReleaseStatus() { }
 
-        public TicketingSystemReleaseStatus(ICatalogueRepository repository, string status, int? statusID, TicketingSystemConfiguration config) : base()
+        public TicketingSystemReleaseStatus(RdmpDbContext catalogueDbContext, string status, int? statusID, TicketingSystemConfiguration config) : base()
         {
             repository.InsertAndHydrate(this, new Dictionary<string, object>
             {
@@ -37,7 +37,7 @@ namespace Rdmp.Core.Curation
             });
         }
 
-        public TicketingSystemReleaseStatus(ICatalogueRepository repository, DbDataReader r) : base(repository, r)
+        public TicketingSystemReleaseStatus(RdmpDbContext catalogueDbContext, DbDataReader r) : base(repository, r)
         {
             Status = r["Status"] as string;
             TicketingSystemConfigurationID = int.Parse(r["TicketingSystemConfigurationID"].ToString());

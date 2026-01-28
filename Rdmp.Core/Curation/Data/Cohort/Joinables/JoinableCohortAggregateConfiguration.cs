@@ -71,7 +71,7 @@ public class JoinableCohortAggregateConfiguration : DatabaseEntity
     {
     }
 
-    internal JoinableCohortAggregateConfiguration(ICatalogueRepository repository, DbDataReader r)
+    internal JoinableCohortAggregateConfiguration(RdmpDbContext catalogueDbContext, DbDataReader r)
         : base(repository, r)
     {
         CohortIdentificationConfiguration_ID = Convert.ToInt32(r["CohortIdentificationConfiguration_ID"]);
@@ -85,7 +85,7 @@ public class JoinableCohortAggregateConfiguration : DatabaseEntity
     /// <param name="repository"></param>
     /// <param name="cic"></param>
     /// <param name="aggregate"></param>
-    public JoinableCohortAggregateConfiguration(ICatalogueRepository repository, CohortIdentificationConfiguration cic,
+    public JoinableCohortAggregateConfiguration(RdmpDbContext catalogueDbContext, CohortIdentificationConfiguration cic,
         AggregateConfiguration aggregate)
     {
         var extractionIdentifiers = aggregate.AggregateDimensions.Count(d => d.IsExtractionIdentifier);

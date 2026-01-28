@@ -82,11 +82,11 @@ public partial class RDMPTaskBarUI : UserControl
         _manager.ActivateItems.Theme.ApplyTo(toolStrip1);
 
         // if we don't support commit system then disable the task bar button for it
-        if (!_manager.ActivateItems.RepositoryLocator.CatalogueRepository.SupportsCommits)
-        {
-            cbCommits.Enabled = false;
-            cbCommits.Text = "Repository does not support commits";
-        }
+        //if (!_manager.ActivateItems.RepositoryLocator.CatalogueDbContext.SupportsCommits)
+        //{
+        //    cbCommits.Enabled = false;
+        //    cbCommits.Text = "Repository does not support commits";
+        //}
     }
 
     /// <summary>
@@ -135,7 +135,7 @@ public partial class RDMPTaskBarUI : UserControl
 
         cbx.ComboBox.Items.Clear();
 
-        var objects = _manager.RepositoryLocator.CatalogueRepository.GetAllObjects<T>();
+        var objects = _manager.RepositoryLocator.CatalogueDbContext.GetAllObjects<T>();
 
         cbx.ComboBox.Items.Add("");
 
@@ -234,7 +234,7 @@ public partial class RDMPTaskBarUI : UserControl
         var dialog = new TypeTextOrCancelDialog("Layout Name", "Name", 100, null, false);
         if (dialog.ShowDialog() == DialogResult.OK)
         {
-            var layout = new WindowLayout(_manager.RepositoryLocator.CatalogueRepository, dialog.ResultText, xml);
+            var layout = new WindowLayout(_manager.RepositoryLocator.CatalogueDbContext, dialog.ResultText, xml);
 
             var cmd = new ExecuteCommandActivate(_manager.ActivateItems, layout);
             cmd.Execute();

@@ -92,7 +92,7 @@ public class AggregateFilterParameter : DatabaseEntity, ISqlParameter
     /// <param name="repository"></param>
     /// <param name="parameterSQL"></param>
     /// <param name="parent"></param>
-    internal AggregateFilterParameter(ICatalogueRepository repository, string parameterSQL, AggregateFilter parent)
+    internal AggregateFilterParameter(RdmpDbContext catalogueDbContext, string parameterSQL, AggregateFilter parent)
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
@@ -102,7 +102,7 @@ public class AggregateFilterParameter : DatabaseEntity, ISqlParameter
     }
 
 
-    internal AggregateFilterParameter(ICatalogueRepository repository, DbDataReader r) : base(repository, r)
+    internal AggregateFilterParameter(RdmpDbContext catalogueDbContext, DbDataReader r) : base(repository, r)
     {
         AggregateFilter_ID = int.Parse(r["AggregateFilter_ID"].ToString());
         ParameterSQL = r["ParameterSQL"] as string;

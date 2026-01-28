@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
@@ -89,10 +90,10 @@ public class AggregateTopX : DatabaseEntity, IAggregateTopX
     /// <summary>
     /// Creates an instance by reading it out of the database for the provided reader
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="r"></param>
-    internal AggregateTopX(ICatalogueRepository repository, DbDataReader r)
-        : base(repository, r)
+    internal AggregateTopX(RDMPDbContext catalogueDbContext, DbDataReader r)
+        : base(catalogueDbContext, r)
     {
         AggregateConfiguration_ID = (int)r["AggregateConfiguration_ID"];
         TopX = (int)r["TopX"];
@@ -108,7 +109,7 @@ public class AggregateTopX : DatabaseEntity, IAggregateTopX
     /// <param name="repository"></param>
     /// <param name="forConfiguration"></param>
     /// <param name="topX"></param>
-    public AggregateTopX(ICatalogueRepository repository, AggregateConfiguration forConfiguration, int topX)
+    public AggregateTopX(RdmpDbContext catalogueDbContext, AggregateConfiguration forConfiguration, int topX)
     {
         if (forConfiguration.GetTopXIfAny() != null)
             throw new Exception($"AggregateConfiguration {forConfiguration} already has a TopX");

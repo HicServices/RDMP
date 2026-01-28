@@ -236,7 +236,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     /// <param name="repository"></param>
     /// <param name="name"></param>
     /// <param name="rootLoadMetadata"></param>
-    public LoadMetadata(ICatalogueRepository repository, string name = null, LoadMetadata rootLoadMetadata = null)
+    public LoadMetadata(RdmpDbContext catalogueDbContext, string name = null, LoadMetadata rootLoadMetadata = null)
     {
         name ??= $"NewLoadMetadata{Guid.NewGuid()}";
         repository.InsertAndHydrate(this, new Dictionary<string, object>
@@ -249,7 +249,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         });
     }
 
-    internal LoadMetadata(ICatalogueRepository repository, DbDataReader r)
+    internal LoadMetadata(RdmpDbContext catalogueDbContext, DbDataReader r)
         : base(repository, r)
     {
         LocationOfForLoadingDirectory = r["LocationOfForLoadingDirectory"].ToString();

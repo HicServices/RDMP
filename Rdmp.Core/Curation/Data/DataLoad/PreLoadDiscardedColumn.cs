@@ -129,7 +129,7 @@ public class PreLoadDiscardedColumn : DatabaseEntity, IPreLoadDiscardedColumn, I
     /// <param name="repository"></param>
     /// <param name="parent"></param>
     /// <param name="name"></param>
-    public PreLoadDiscardedColumn(ICatalogueRepository repository, ITableInfo parent, string name = null)
+    public PreLoadDiscardedColumn(RdmpDbContext catalogueDbContext, ITableInfo parent, string name = null)
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
@@ -141,7 +141,7 @@ public class PreLoadDiscardedColumn : DatabaseEntity, IPreLoadDiscardedColumn, I
         ClearAllInjections();
     }
 
-    internal PreLoadDiscardedColumn(ICatalogueRepository repository, DbDataReader r)
+    internal PreLoadDiscardedColumn(RdmpDbContext catalogueDbContext, DbDataReader r)
         : base(repository, r)
     {
         TableInfo_ID = int.Parse(r["TableInfo_ID"].ToString());

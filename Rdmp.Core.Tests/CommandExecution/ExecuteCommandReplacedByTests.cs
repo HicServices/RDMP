@@ -60,7 +60,7 @@ internal class ExecuteCommandReplacedByTests : CommandCliTests
 
                 cmd.Execute();
 
-                var replacement = RepositoryLocator.CatalogueRepository
+                var replacement = RepositoryLocator.CatalogueDbContext
                     .GetAllObjectsWhere<ExtendedProperty>("Name", ExtendedProperty.ReplacedBy)
                     .Single(r => r.IsReferenceTo(c1));
 
@@ -76,14 +76,14 @@ internal class ExecuteCommandReplacedByTests : CommandCliTests
                 cmd.Execute();
                 cmd.Execute();
 
-        Assert.That(RepositoryLocator.CatalogueRepository
+        Assert.That(RepositoryLocator.CatalogueDbContext
                     .GetAllObjectsWhere<ExtendedProperty>("Name", ExtendedProperty.ReplacedBy)
                     .Count(r => r.IsReferenceTo(c1)), Is.EqualTo(1));
 
                 cmd = new ExecuteCommandReplacedBy(GetMockActivator(), c1, null);
                 cmd.Execute();
 
-        Assert.That(RepositoryLocator.CatalogueRepository
+        Assert.That(RepositoryLocator.CatalogueDbContext
                     .GetAllObjectsWhere<ExtendedProperty>("Name", ExtendedProperty.ReplacedBy)
                     .Where(r => r.IsReferenceTo(c1)), Is.Empty);
         }

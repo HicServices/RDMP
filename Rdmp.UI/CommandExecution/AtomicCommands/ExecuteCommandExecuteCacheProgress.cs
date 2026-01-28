@@ -48,7 +48,7 @@ public class ExecuteCommandExecuteCacheProgress : BasicUICommandExecution, IAtom
     {
         base.Execute();
 
-        _cp ??= SelectOne<CacheProgress>(Activator.RepositoryLocator.CatalogueRepository);
+        _cp ??= SelectOne<CacheProgress>(Activator.RepositoryLocator.CatalogueDbContext);
 
         if (_cp == null)
             return;

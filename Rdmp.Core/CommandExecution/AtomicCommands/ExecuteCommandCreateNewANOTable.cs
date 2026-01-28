@@ -44,7 +44,7 @@ internal sealed class ExecuteCommandCreateNewANOTable : BasicCommandExecution, I
             name = $"ANO{name}";
         suffix = suffix.Trim('_');
 
-        var anoTable = new ANOTable(BasicActivator.RepositoryLocator.CatalogueRepository,
+        var anoTable = new ANOTable(BasicActivator.RepositoryLocator.CatalogueDbContext,
             (ExternalDatabaseServer)_anoStoreServer, name, suffix);
         Publish(anoTable);
         Activate(anoTable);

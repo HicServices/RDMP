@@ -70,7 +70,7 @@ public class DashboardLayout : DatabaseEntity, INamed
     {
     }
 
-    internal DashboardLayout(ICatalogueRepository repository, DbDataReader r)
+    internal DashboardLayout(RdmpDbContext catalogueDbContext, DbDataReader r)
         : base(repository, r)
     {
         Name = r["Name"].ToString();
@@ -83,7 +83,7 @@ public class DashboardLayout : DatabaseEntity, INamed
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="name"></param>
-    public DashboardLayout(ICatalogueRepository repository, string name)
+    public DashboardLayout(RdmpDbContext catalogueDbContext, string name)
     {
         Repository = repository;
 

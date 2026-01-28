@@ -202,7 +202,7 @@ public class TestsRequiringAnExtractionConfiguration : TestsRequiringACohort
 
     protected virtual Pipeline SetupPipeline()
     {
-        var repository = RepositoryLocator.CatalogueRepository;
+        var repository = RepositoryLocator.CatalogueDbContext;
         var pipeline = new Pipeline(repository, "Empty extraction pipeline");
 
         var component = new PipelineComponent(repository, pipeline, typeof(ExecuteDatasetExtractionFlatFileDestination),

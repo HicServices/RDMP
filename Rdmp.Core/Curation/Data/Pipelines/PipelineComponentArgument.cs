@@ -54,7 +54,7 @@ public class PipelineComponentArgument : Argument, IPipelineComponentArgument
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="parent"></param>
-    public PipelineComponentArgument(ICatalogueRepository repository, PipelineComponent parent)
+    public PipelineComponentArgument(RdmpDbContext catalogueDbContext, PipelineComponent parent)
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
@@ -64,7 +64,7 @@ public class PipelineComponentArgument : Argument, IPipelineComponentArgument
         });
     }
 
-    internal PipelineComponentArgument(ICatalogueRepository repository, DbDataReader r)
+    internal PipelineComponentArgument(RdmpDbContext catalogueDbContext, DbDataReader r)
         : base(repository, r)
     {
         PipelineComponent_ID = int.Parse(r["PipelineComponent_ID"].ToString());

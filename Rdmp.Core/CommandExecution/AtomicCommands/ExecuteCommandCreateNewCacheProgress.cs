@@ -34,7 +34,7 @@ public class ExecuteCommandCreateNewCacheProgress : BasicCommandExecution, IAtom
         base.Execute();
 
         // If the LoadProgress doesn't have a corresponding CacheProgress, create it
-        var cp = new CacheProgress(BasicActivator.RepositoryLocator.CatalogueRepository, _loadProgress);
+        var cp = new CacheProgress(BasicActivator.RepositoryLocator.CatalogueDbContext, _loadProgress);
 
         Publish(_loadProgress);
         Emphasise(cp);

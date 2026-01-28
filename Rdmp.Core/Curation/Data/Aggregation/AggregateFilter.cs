@@ -105,7 +105,7 @@ public class AggregateFilter : ConcreteFilter, IDisableable
     /// <param name="repository"></param>
     /// <param name="name"></param>
     /// <param name="container"></param>
-    public AggregateFilter(ICatalogueRepository repository, string name = null,
+    public AggregateFilter(RdmpDbContext catalogueDbContext, string name = null,
         AggregateFilterContainer container = null)
     {
         name ??= $"New AggregateFilter{Guid.NewGuid()}";
@@ -117,7 +117,7 @@ public class AggregateFilter : ConcreteFilter, IDisableable
         });
     }
 
-    internal AggregateFilter(ICatalogueRepository repository, DbDataReader r) : base(repository, r)
+    internal AggregateFilter(RdmpDbContext catalogueDbContext, DbDataReader r) : base(repository, r)
     {
         WhereSQL = r["WhereSQL"] as string;
         Description = r["Description"] as string;

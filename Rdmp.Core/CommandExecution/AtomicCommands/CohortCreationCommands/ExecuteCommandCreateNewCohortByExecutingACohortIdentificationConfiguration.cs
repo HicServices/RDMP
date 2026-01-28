@@ -72,7 +72,7 @@ public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfig
         if (BasicActivator.IsInteractive)
         {
             var promptForVersionOnCohortCommit = false;
-            var promptForVersionOnCohortCommitSetting = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Setting.Setting>().FirstOrDefault(static s => s.Key == "PromptForVersionOnCohortCommit");
+            var promptForVersionOnCohortCommitSetting = BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Setting.Setting>().FirstOrDefault(static s => s.Key == "PromptForVersionOnCohortCommit");
             if (promptForVersionOnCohortCommitSetting is not null) promptForVersionOnCohortCommit = Convert.ToBoolean(promptForVersionOnCohortCommitSetting.Value);
             if (promptForVersionOnCohortCommit && BasicActivator.YesNo("It is recommended to save your cohort as a new version before committing. Would you like to do this?", "Save cohort as new version before committing?"))
             {

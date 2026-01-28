@@ -27,7 +27,7 @@ internal class MaxLengthRule<T> : BinderRule<T> where T : IMapsDirectlyToDatabas
     {
         _problemDescription = "Value is too long";
 
-        _maxLength = TryGetMaxLengthFrom(activator.RepositoryLocator.CatalogueRepository, toTest) ??
+        _maxLength = TryGetMaxLengthFrom(activator.RepositoryLocator.CatalogueDbContext, toTest) ??
                      TryGetMaxLengthFrom(activator.RepositoryLocator.DataExportRepository, toTest);
     }
 

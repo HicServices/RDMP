@@ -129,7 +129,7 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable, ICheckable, IRev
     /// <param name="externalDatabaseServer"></param>
     /// <param name="tableName"></param>
     /// <param name="suffix"></param>
-    public ANOTable(ICatalogueRepository repository, ExternalDatabaseServer externalDatabaseServer, string tableName,
+    public ANOTable(RdmpDbContext catalogueDbContext, ExternalDatabaseServer externalDatabaseServer, string tableName,
         string suffix)
     {
         if (string.IsNullOrWhiteSpace(tableName))
@@ -150,7 +150,7 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable, ICheckable, IRev
         });
     }
 
-    internal ANOTable(ICatalogueRepository repository, DbDataReader r)
+    internal ANOTable(RdmpDbContext catalogueDbContext, DbDataReader r)
         : base(repository, r)
     {
         Server_ID = Convert.ToInt32(r["Server_ID"]);

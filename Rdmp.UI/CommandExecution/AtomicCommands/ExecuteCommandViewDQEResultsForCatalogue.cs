@@ -77,5 +77,5 @@ public class ExecuteCommandViewDQEResultsForCatalogue : BasicUICommandExecution,
     }
 
     private bool ServerHasAtLeastOneEvaluation(Catalogue c) =>
-        new DQERepository(Activator.RepositoryLocator.CatalogueRepository).HasEvaluations(c);
+        new DQERepository(Activator.RepositoryLocator.CatalogueDbContext).HasEvaluations(c);
 }

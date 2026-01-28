@@ -44,7 +44,7 @@ public abstract class BasicUICommandExecution : BasicCommandExecution
     internal void SetDefaultIfNotExists(ExternalDatabaseServer newServer, PermissableDefaults permissableDefault,
         bool askYesNo)
     {
-        var defaults = Activator.RepositoryLocator.CatalogueRepository;
+        var defaults = Activator.RepositoryLocator.CatalogueDbContext;
 
         var current = defaults.GetDefaultFor(permissableDefault);
 

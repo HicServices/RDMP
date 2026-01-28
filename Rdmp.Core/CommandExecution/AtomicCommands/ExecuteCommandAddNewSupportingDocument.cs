@@ -66,7 +66,7 @@ public class ExecuteCommandAddNewSupportingDocument : BasicCommandExecution, IAt
             {
                 WindowTitle = "Add SupportingDocument",
                 TaskDescription = "Select which Catalogue you want to add the SupportingDocument to."
-            }, BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out var selected))
+            }, BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Catalogue>(), out var selected))
                 c = selected;
             else
                 // user cancelled selecting a Catalogue

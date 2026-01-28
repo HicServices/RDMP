@@ -84,7 +84,7 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable, INamed, IDis
     {
     }
 
-    internal CohortAggregateContainer(ICatalogueRepository repository, DbDataReader r)
+    internal CohortAggregateContainer(RdmpDbContext catalogueDbContext, DbDataReader r)
         : base(repository, r)
     {
         Order = int.Parse(r["Order"].ToString());
@@ -101,7 +101,7 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable, INamed, IDis
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="operation"></param>
-    public CohortAggregateContainer(ICatalogueRepository repository, SetOperation operation)
+    public CohortAggregateContainer(RdmpDbContext catalogueDbContext, SetOperation operation)
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {

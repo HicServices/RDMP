@@ -156,7 +156,7 @@ public partial class SelectColumnUI : RDMPUserControl
                 //regular column added
                 if (importableColumn != null)
                 {
-                    var dimension = new AggregateDimension(Activator.RepositoryLocator.CatalogueRepository,
+                    var dimension = new AggregateDimension(Activator.RepositoryLocator.CatalogueDbContext,
                         importableColumn, _aggregate);
 
                     _availableColumns.Remove(importableColumn);

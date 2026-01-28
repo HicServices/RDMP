@@ -68,7 +68,7 @@ public partial class SimpleSetOperation : UserControl
         if (rootContainer.Operation != SetOperation.EXCEPT)
             throw new ArgumentException("rootContainer");
 
-        var container = new CohortAggregateContainer(_activator.RepositoryLocator.CatalogueRepository, operation);
+        var container = new CohortAggregateContainer(_activator.RepositoryLocator.CatalogueDbContext, operation);
 
         if (_isInclusionCriteria)
         {

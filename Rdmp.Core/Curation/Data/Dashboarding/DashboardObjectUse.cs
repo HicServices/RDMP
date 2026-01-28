@@ -39,7 +39,7 @@ public class DashboardObjectUse : ReferenceOtherObjectDatabaseEntity
     {
     }
 
-    internal DashboardObjectUse(ICatalogueRepository repository, DbDataReader r) : base(repository, r)
+    internal DashboardObjectUse(RdmpDbContext catalogueDbContext, DbDataReader r) : base(repository, r)
     {
         DashboardControl_ID = Convert.ToInt32(r["DashboardControl_ID"]);
     }
@@ -50,7 +50,7 @@ public class DashboardObjectUse : ReferenceOtherObjectDatabaseEntity
     /// <param name="repository"></param>
     /// <param name="parentControl"></param>
     /// <param name="objectToSave"></param>
-    public DashboardObjectUse(ICatalogueRepository repository, DashboardControl parentControl,
+    public DashboardObjectUse(RdmpDbContext catalogueDbContext, DashboardControl parentControl,
         IMapsDirectlyToDatabaseTable objectToSave)
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>

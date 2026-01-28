@@ -124,7 +124,7 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
     /// <param name="catalogueItem">The virtual column to make extractable (could be a transform e.g. YearOfBirth)</param>
     /// <param name="column">The column underlying the virtual column (e.g. `MyTable`.`DateOfBirth`)</param>
     /// <param name="selectSQL">The fully specified column name or transform SQL to execute as a line of SELECT Sql </param>
-    public ExtractionInformation(ICatalogueRepository repository, CatalogueItem catalogueItem, ColumnInfo column,
+    public ExtractionInformation(RdmpDbContext catalogueDbContext, CatalogueItem catalogueItem, ColumnInfo column,
         string selectSQL)
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
@@ -167,7 +167,7 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
         }
     }
 
-    internal ExtractionInformation(ICatalogueRepository repository, DbDataReader r) : base(repository, r)
+    internal ExtractionInformation(RdmpDbContext catalogueDbContext, DbDataReader r) : base(repository, r)
     {
         SelectSQL = r["SelectSQL"].ToString();
 

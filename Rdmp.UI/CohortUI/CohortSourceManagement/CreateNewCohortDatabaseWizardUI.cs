@@ -50,8 +50,8 @@ internal partial class CreateNewCohortDatabaseWizardUI : RDMPUserControl
         base.OnLoad(e);
 
         serverDatabaseTableSelector1.HideTableComponents();
-        Wizard = new CreateNewCohortDatabaseWizard(null, Activator.RepositoryLocator.CatalogueRepository,
-            Activator.RepositoryLocator.DataExportRepository, false);
+        Wizard = new CreateNewCohortDatabaseWizard(null, Activator.RepositoryLocator.CatalogueDbContext,
+            Activator.RepositoryLocator.DataExportDbContext, false);
     }
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -88,7 +88,7 @@ internal partial class CreateNewCohortDatabaseWizardUI : RDMPUserControl
             return;
         }
 
-        Wizard = new CreateNewCohortDatabaseWizard(db, Activator.RepositoryLocator.CatalogueRepository,
+        Wizard = new CreateNewCohortDatabaseWizard(db, Activator.RepositoryLocator.CatalogueDbContext,
             Activator.RepositoryLocator.DataExportRepository, cbAllowNullReleaseIdentifiers.Checked);
 
         var popup = new PopupChecksUI("Creating Cohort Table", false);

@@ -49,7 +49,7 @@ public class Favourite : ReferenceOtherObjectDatabaseEntity
     {
     }
 
-    internal Favourite(ICatalogueRepository repository, DbDataReader r) : base(repository, r)
+    internal Favourite(RdmpDbContext catalogueDbContext, DbDataReader r) : base(repository, r)
     {
         Username = r["Username"].ToString();
         FavouritedDate = Convert.ToDateTime(r["FavouritedDate"]);
@@ -61,7 +61,7 @@ public class Favourite : ReferenceOtherObjectDatabaseEntity
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="objectToFavourite"></param>
-    public Favourite(ICatalogueRepository repository, IMapsDirectlyToDatabaseTable objectToFavourite)
+    public Favourite(RdmpDbContext catalogueDbContext, IMapsDirectlyToDatabaseTable objectToFavourite)
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {

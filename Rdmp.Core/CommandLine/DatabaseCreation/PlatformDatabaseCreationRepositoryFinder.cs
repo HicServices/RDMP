@@ -6,6 +6,8 @@
 
 using System;
 using System.Collections.Generic;
+using NPOI.OpenXmlFormats.Dml.Chart;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Startup;
@@ -24,6 +26,8 @@ public class PlatformDatabaseCreationRepositoryFinder : IRDMPPlatformRepositoryS
     public ICatalogueRepository CatalogueRepository => _linkedRepositoryProvider.CatalogueRepository;
 
     public IDataExportRepository DataExportRepository => _linkedRepositoryProvider.DataExportRepository;
+
+    public RDMPDbContext CatalogueDbContext { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
     public IMapsDirectlyToDatabaseTable GetArbitraryDatabaseObject(string repositoryTypeName,
         string databaseObjectTypeName, int objectID) =>

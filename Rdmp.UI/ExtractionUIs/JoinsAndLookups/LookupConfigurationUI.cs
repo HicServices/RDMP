@@ -319,7 +319,7 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
                _allExtractionInformationFromCatalogue.SingleOrDefault(e =>
                    e.ColumnInfo != null && e.ColumnInfo.Equals((ColumnInfo)FKRelations[0].SelectedItem)) ??
                throw new Exception("Foreign key column(s) must come from the Catalogue ExtractionInformation columns");
-            var cmd = new ExecuteCommandCreateLookup(Activator.RepositoryLocator.CatalogueRepository,
+            var cmd = new ExecuteCommandCreateLookup(Activator.RepositoryLocator.CatalogueDbContext,
                    foreignKeyExtractionInformation, descs,
                    keyPairs, tbCollation.Text, alsoCreateExtractionInformation);
 

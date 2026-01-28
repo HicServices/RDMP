@@ -85,7 +85,7 @@ public class PipelineComponent : DatabaseEntity, IPipelineComponent
     /// <param name="componentType"></param>
     /// <param name="order"></param>
     /// <param name="name"></param>
-    public PipelineComponent(ICatalogueRepository repository, IPipeline parent, Type componentType, int order,
+    public PipelineComponent(RdmpDbContext catalogueDbContext, IPipeline parent, Type componentType, int order,
         string name = null)
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
@@ -97,7 +97,7 @@ public class PipelineComponent : DatabaseEntity, IPipelineComponent
         });
     }
 
-    internal PipelineComponent(ICatalogueRepository repository, DbDataReader r)
+    internal PipelineComponent(RdmpDbContext catalogueDbContext, DbDataReader r)
         : base(repository, r)
     {
         Order = int.Parse(r["Order"].ToString());

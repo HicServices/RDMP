@@ -231,7 +231,7 @@ public class OverviewModel
         if (_dataLoads.Rows.Count == 0) return null;
 
         var maxDataLoadId = _dataLoads.AsEnumerable().Select(static r => int.Parse(r[0].ToString())).Max();
-        var loggingServers = _activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<ExternalDatabaseServer>("CreatedByAssembly", "Rdmp.Core/Databases.LoggingDatabase");
+        var loggingServers = _activator.RepositoryLocator.CatalogueDbContext.GetAllObjectsWhere<ExternalDatabaseServer>("CreatedByAssembly", "Rdmp.Core/Databases.LoggingDatabase");
         var columnInfo = _catalogue.CatalogueItems.Where(c => c.Name == SpecialFieldNames.DataLoadRunID).Select(c => c.ColumnInfo).First();
         var server = columnInfo.Discover(DataAccessContext.InternalDataProcessing).Table.Database.Server;
 

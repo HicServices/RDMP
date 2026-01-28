@@ -51,7 +51,7 @@ public partial class CreateNewLoadMetadataUI : RDMPForm
             return;
         }
 
-        LoadMetadataCreatedIfAny = new LoadMetadata(Activator.RepositoryLocator.CatalogueRepository,
+        LoadMetadataCreatedIfAny = new LoadMetadata(Activator.RepositoryLocator.CatalogueDbContext,
             tbLoadMetadataNameToCreate.Text);
 
         DialogResult = DialogResult.OK;

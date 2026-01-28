@@ -62,7 +62,7 @@ public class RegexRedactionConfiguration : DatabaseEntity, IRegexRedactionConfig
 
     public RegexRedactionConfiguration() { }
 
-    public RegexRedactionConfiguration(ICatalogueRepository repository, string name, Regex regexPattern, string redactionString, string description = null,string folder="\\")
+    public RegexRedactionConfiguration(RdmpDbContext catalogueDbContext, string name, Regex regexPattern, string redactionString, string description = null,string folder="\\")
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
@@ -73,7 +73,7 @@ public class RegexRedactionConfiguration : DatabaseEntity, IRegexRedactionConfig
         });
     }
 
-    internal RegexRedactionConfiguration(ICatalogueRepository repository, DbDataReader r) : base(repository, r)
+    internal RegexRedactionConfiguration(RdmpDbContext catalogueDbContext, DbDataReader r) : base(repository, r)
     {
         Name = r["Name"].ToString();
         Description = r["Description"].ToString();

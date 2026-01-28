@@ -43,7 +43,7 @@ public class LoadMetadataCatalogueLinkage : DatabaseEntity, ILoadMetadataCatalog
     /// <param name="repository"></param>
     /// <param name="loadMetadata"></param>
     /// <param name="catalogue"></param>
-    public LoadMetadataCatalogueLinkage(ICatalogueRepository repository, ILoadMetadata loadMetadata, ICatalogue catalogue)
+    public LoadMetadataCatalogueLinkage(RdmpDbContext catalogueDbContext, ILoadMetadata loadMetadata, ICatalogue catalogue)
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
@@ -52,7 +52,7 @@ public class LoadMetadataCatalogueLinkage : DatabaseEntity, ILoadMetadataCatalog
         });
     }
 
-    internal LoadMetadataCatalogueLinkage(ICatalogueRepository repository, DbDataReader r)
+    internal LoadMetadataCatalogueLinkage(RdmpDbContext catalogueDbContext, DbDataReader r)
    : base(repository, r)
     {
         LoadMetadataID = int.Parse(r["LoadMetadataID"].ToString());

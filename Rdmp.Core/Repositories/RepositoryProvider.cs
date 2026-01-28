@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 namespace Rdmp.Core.Repositories;
@@ -17,6 +18,7 @@ public class RepositoryProvider : IRDMPPlatformRepositoryServiceLocator
 {
     public ICatalogueRepository CatalogueRepository { get; protected init; }
     public IDataExportRepository DataExportRepository { get; protected init; }
+    public RDMPDbContext CatalogueDbContext { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
     /// <summary>
     /// Use when you have an already initialized set of repositories.  Sets up the class to fetch objects from the Catalogue/Data export databases only.

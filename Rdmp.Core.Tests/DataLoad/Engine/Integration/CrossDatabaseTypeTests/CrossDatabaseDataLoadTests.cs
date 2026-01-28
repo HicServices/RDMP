@@ -296,13 +296,13 @@ MrMurder,2001-01-01,Yella");
             Directory.Delete(lmd.LocationOfExecutablesDirectory, true);
             Directory.Delete(lmd.LocationOfCacheDirectory, true);
 
-            foreach (var c in RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>())
+            foreach (var c in RepositoryLocator.CatalogueDbContext.GetAllObjects<Catalogue>())
                 c.DeleteInDatabase();
 
-            foreach (var t in RepositoryLocator.CatalogueRepository.GetAllObjects<TableInfo>())
+            foreach (var t in RepositoryLocator.CatalogueDbContext.GetAllObjects<TableInfo>())
                 t.DeleteInDatabase();
 
-            foreach (var l in RepositoryLocator.CatalogueRepository.GetAllObjects<LoadMetadata>())
+            foreach (var l in RepositoryLocator.CatalogueDbContext.GetAllObjects<LoadMetadata>())
                 l.DeleteInDatabase();
         }
 
@@ -468,13 +468,13 @@ MrMurder,2001-01-01,Yella");
             Directory.Delete(lmd.LocationOfExecutablesDirectory, true);
             Directory.Delete(lmd.LocationOfCacheDirectory, true);
 
-            foreach (var c in RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>())
+            foreach (var c in RepositoryLocator.CatalogueDbContext.GetAllObjects<Catalogue>())
                 c.DeleteInDatabase();
 
-            foreach (var t in RepositoryLocator.CatalogueRepository.GetAllObjects<TableInfo>())
+            foreach (var t in RepositoryLocator.CatalogueDbContext.GetAllObjects<TableInfo>())
                 t.DeleteInDatabase();
 
-            foreach (var l in RepositoryLocator.CatalogueRepository.GetAllObjects<LoadMetadata>())
+            foreach (var l in RepositoryLocator.CatalogueDbContext.GetAllObjects<LoadMetadata>())
                 l.DeleteInDatabase();
         }
     }

@@ -60,7 +60,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
     private void GetNextProjectNumber(IActivateItems activator)
     {
         var autoSuggestProjectNumbers = false;
-        var autoSuggestProjectNumbersSetting = activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Setting>().FirstOrDefault(static s => s.Key == "AutoSuggestProjectNumbers");
+        var autoSuggestProjectNumbersSetting = activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Setting>().FirstOrDefault(static s => s.Key == "AutoSuggestProjectNumbers");
         if (autoSuggestProjectNumbersSetting is not null) autoSuggestProjectNumbers = Convert.ToBoolean(autoSuggestProjectNumbersSetting.Value);
         _existingProjects = activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>();
 
@@ -90,7 +90,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
         btnPackage.Enabled =
             activator.RepositoryLocator.DataExportRepository.GetAllObjects<ExtractableDataSetPackage>().Any();
 
-        cbxCohort.DataSource = activator.RepositoryLocator.CatalogueRepository
+        cbxCohort.DataSource = activator.RepositoryLocator.CatalogueDbContext
             .GetAllObjects<CohortIdentificationConfiguration>();
         cbxCohort.PropertySelector = collection =>
             collection.Cast<CohortIdentificationConfiguration>().Select(c => c.ToString());
@@ -128,7 +128,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
 
     private void IdentifyCompatiblePipelines()
     {
-        var p = Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>();
+        var p = Activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Pipeline>();
 
         foreach (var pipeline in p)
         {

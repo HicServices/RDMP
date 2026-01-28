@@ -17,8 +17,8 @@ internal class TestExecuteCommandAssociateCatalogueWithLoadMetadata : CommandCli
     [Test]
     public void TestExecuteCommandAssociateCatalogueWithLoadMetadata_Simple()
     {
-        var cata1 = new Catalogue(RepositoryLocator.CatalogueRepository, "fff");
-        var cata2 = new Catalogue(RepositoryLocator.CatalogueRepository, "bbb");
+        var cata1 = new Catalogue(RepositoryLocator.CatalogueDbContext, "fff");
+        var cata2 = new Catalogue(RepositoryLocator.CatalogueDbContext, "bbb");
 
         Assert.Multiple(() =>
         {
@@ -26,7 +26,7 @@ internal class TestExecuteCommandAssociateCatalogueWithLoadMetadata : CommandCli
             Assert.That(cata2.LoadMetadatas(), Is.Empty);
         });
 
-        var lmd = new LoadMetadata(RepositoryLocator.CatalogueRepository, "mylmd");
+        var lmd = new LoadMetadata(RepositoryLocator.CatalogueDbContext, "mylmd");
 
         GetInvoker().ExecuteCommand(typeof(ExecuteCommandAssociateCatalogueWithLoadMetadata),
             new CommandLineObjectPicker(new[] { $"LoadMetadata:{lmd.ID}", "Catalogue:fff" }, GetActivator()));

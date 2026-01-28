@@ -152,7 +152,7 @@ public class CacheProgress : DatabaseEntity, ICacheProgress
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="loadProgress"></param>
-    public CacheProgress(ICatalogueRepository repository, ILoadProgress loadProgress)
+    public CacheProgress(RdmpDbContext catalogueDbContext, ILoadProgress loadProgress)
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
@@ -161,7 +161,7 @@ public class CacheProgress : DatabaseEntity, ICacheProgress
         });
     }
 
-    internal CacheProgress(ICatalogueRepository repository, DbDataReader r)
+    internal CacheProgress(RdmpDbContext catalogueDbContext, DbDataReader r)
         : base(repository, r)
     {
         LoadProgress_ID = int.Parse(r["LoadProgress_ID"].ToString());

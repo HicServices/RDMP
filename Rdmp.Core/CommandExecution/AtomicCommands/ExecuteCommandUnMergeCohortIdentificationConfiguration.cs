@@ -63,7 +63,7 @@ public sealed class ExecuteCommandUnMergeCohortIdentificationConfiguration : Bas
 
         var merger =
             new CohortIdentificationConfigurationMerger(
-                (CatalogueRepository)BasicActivator.RepositoryLocator.CatalogueRepository);
+                (CatalogueRepository)BasicActivator.RepositoryLocator.CatalogueDbContext);
         var results = merger.UnMerge(_target);
 
         if (results?.Any() == true)

@@ -12,6 +12,8 @@
     <PackageVersion Include="HIC.FAnsiSql" Version="3.2.7" />
     <PackageVersion Include="LibArchive.Net" Version="0.3.0" />
     <PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="10.0.2" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="9.0.12" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.12" />
     <PackageVersion Include="Microsoft.Net.Sdk.Compilers.Toolset" Version="9.0.300" />
     <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="8.0.0">
       <PrivateAssets>all</PrivateAssets>

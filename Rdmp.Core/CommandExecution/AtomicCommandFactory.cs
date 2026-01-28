@@ -289,7 +289,7 @@ public class AtomicCommandFactory : CommandFactoryBase
             {
                 yield return new ExecuteCommandSetAggregateDimension(_activator, ac);
 
-                yield return _activator.RepositoryLocator.CatalogueRepository
+                yield return _activator.RepositoryLocator.CatalogueDbContext
                     .GetExtendedProperties(ExtendedProperty.IsTemplate, ac)
                     .Any(v => v.Value.Equals("true"))
                     ? new ExecuteCommandSetExtendedProperty(_activator, new[] { ac }, ExtendedProperty.IsTemplate, null)
@@ -369,7 +369,7 @@ public class AtomicCommandFactory : CommandFactoryBase
 
         if (Is(o, out AllDataAccessCredentialsNode _))
             yield return new ExecuteCommandNewObject(_activator,
-                () => new DataAccessCredentials(_activator.RepositoryLocator.CatalogueRepository,
+                () => new DataAccessCredentials(_activator.RepositoryLocator.CatalogueDbContext,
                     $"New Blank Credentials {Guid.NewGuid()}"))
             {
                 OverrideCommandName = "Add New Credentials"
@@ -378,7 +378,7 @@ public class AtomicCommandFactory : CommandFactoryBase
         if (Is(o, out DataAccessCredentialUsageNode usage))
         {
             var existingUsages =
-                _activator.RepositoryLocator.CatalogueRepository.TableInfoCredentialsManager.GetCredentialsIfExistsFor(
+                _activator.RepositoryLocator.CatalogueDbContext.TableInfoCredentialsManager.GetCredentialsIfExistsFor(
                     usage.TableInfo);
 
             foreach (DataAccessContext context in Enum.GetValues(typeof(DataAccessContext)))
@@ -391,7 +391,7 @@ public class AtomicCommandFactory : CommandFactoryBase
 
         if (Is(o, out AllConnectionStringKeywordsNode _))
             yield return new ExecuteCommandNewObject(_activator,
-                () => new ConnectionStringKeyword(_activator.RepositoryLocator.CatalogueRepository,
+                () => new ConnectionStringKeyword(_activator.RepositoryLocator.CatalogueDbContext,
                     DatabaseType.MicrosoftSQLServer, "NewKeyword", "v"))
             {
                 OverrideCommandName = "Add New Connection String Keyword"
@@ -677,7 +677,7 @@ public class AtomicCommandFactory : CommandFactoryBase
             yield return new ExecuteCommandSyncTableInfo(_activator, ti, false, false);
             yield return new ExecuteCommandSyncTableInfo(_activator, ti, true, false);
             yield return new ExecuteCommandNewObject(_activator,
-                () => new ColumnInfo(_activator.RepositoryLocator.CatalogueRepository, Guid.NewGuid().ToString(),
+                () => new ColumnInfo(_activator.RepositoryLocator.CatalogueDbContext, Guid.NewGuid().ToString(),
                     "fish", ti))
             { OverrideCommandName = "Add New ColumnInfo" };
         }

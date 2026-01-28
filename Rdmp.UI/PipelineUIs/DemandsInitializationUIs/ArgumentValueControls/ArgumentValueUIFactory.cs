@@ -145,7 +145,7 @@ public class ArgumentValueUIFactory
         return new ArgumentValueComboBoxUI(_activator, array);
     }
 
-    private static IEnumerable<TableInfo> GetTableInfosInScope(ICatalogueRepository repository, IArgumentHost parent)
+    private static IEnumerable<TableInfo> GetTableInfosInScope(RdmpDbContext catalogueDbContext, IArgumentHost parent)
     {
         if (parent is ProcessTask pt)
             return pt.GetTableInfos();
@@ -156,7 +156,7 @@ public class ArgumentValueUIFactory
     }
 
 
-    private static IEnumerable<ColumnInfo> GetColumnInfosInScope(ICatalogueRepository repository, IArgumentHost parent)
+    private static IEnumerable<ColumnInfo> GetColumnInfosInScope(RdmpDbContext catalogueDbContext, IArgumentHost parent)
     {
         return parent is ProcessTask || parent is LoadMetadata
             ? GetTableInfosInScope(repository, parent).SelectMany(ti => ti.ColumnInfos)

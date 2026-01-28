@@ -59,7 +59,7 @@ public sealed class ProcessTaskArgument : Argument
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="parent"></param>
-    public ProcessTaskArgument(ICatalogueRepository repository, ProcessTask parent)
+    public ProcessTaskArgument(RdmpDbContext catalogueDbContext, ProcessTask parent)
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
@@ -69,7 +69,7 @@ public sealed class ProcessTaskArgument : Argument
         });
     }
 
-    internal ProcessTaskArgument(ICatalogueRepository repository, DbDataReader r)
+    internal ProcessTaskArgument(RdmpDbContext catalogueDbContext, DbDataReader r)
         : base(repository, r)
     {
         ProcessTask_ID = int.Parse(r["ProcessTask_ID"].ToString());

@@ -91,7 +91,7 @@ public class ExtractionFilterParameter : DatabaseEntity, IDeleteable, ISqlParame
     /// <param name="repository"></param>
     /// <param name="parameterSQL"></param>
     /// <param name="parent"></param>
-    public ExtractionFilterParameter(ICatalogueRepository repository, string parameterSQL, ExtractionFilter parent)
+    public ExtractionFilterParameter(RdmpDbContext catalogueDbContext, string parameterSQL, ExtractionFilter parent)
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
@@ -101,7 +101,7 @@ public class ExtractionFilterParameter : DatabaseEntity, IDeleteable, ISqlParame
     }
 
 
-    internal ExtractionFilterParameter(ICatalogueRepository repository, DbDataReader r)
+    internal ExtractionFilterParameter(RdmpDbContext catalogueDbContext, DbDataReader r)
         : base(repository, r)
     {
         ExtractionFilter_ID = int.Parse(r["ExtractionFilter_ID"].ToString());

@@ -89,7 +89,7 @@ public class MetadataLoggingConfigurationChecksTests : UnitTests
         cata2.LoggingDataTask = "OMG YEAGH";
         cata2.LiveLoggingServer_ID = null;
 
-        var defaults = RepositoryLocator.CatalogueRepository;
+        var defaults = RepositoryLocator.CatalogueDbContext;
         defaults.SetDefault(PermissableDefaults.LiveLoggingServer_ID, eds);
 
         Assert.That(lmd.GetAllCatalogues().Count(), Is.EqualTo(2));

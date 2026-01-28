@@ -57,7 +57,7 @@ public class EncryptedString : IEncryptedString
     /// Creates a new encrypted string using <see cref="SimpleStringValueEncryption"/>
     /// </summary>
     /// <param name="repository"></param>
-    public EncryptedString(ICatalogueRepository repository)
+    public EncryptedString(RdmpDbContext catalogueDbContext)
     {
         _encrypter = repository.EncryptionManager.GetEncrypter();
     }

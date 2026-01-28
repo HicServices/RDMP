@@ -27,7 +27,7 @@ public class RegexRedactionKey : DatabaseEntity, IRegexRedactionKey
 
     public RegexRedactionKey() { }
 
-    public RegexRedactionKey(ICatalogueRepository repository, RegexRedaction redaction, ColumnInfo pkColumn, string value)
+    public RegexRedactionKey(RdmpDbContext catalogueDbContext, RegexRedaction redaction, ColumnInfo pkColumn, string value)
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
@@ -37,7 +37,7 @@ public class RegexRedactionKey : DatabaseEntity, IRegexRedactionKey
         });
     }
 
-    internal RegexRedactionKey(ICatalogueRepository repository, DbDataReader r) : base(repository, r)
+    internal RegexRedactionKey(RdmpDbContext catalogueDbContext, DbDataReader r) : base(repository, r)
     {
         _redaction = Int32.Parse(r["RegexRedaction_ID"].ToString());
         _columnInfo = Int32.Parse(r["ColumnInfo_ID"].ToString());
