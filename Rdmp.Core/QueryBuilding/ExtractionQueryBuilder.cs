@@ -38,7 +38,7 @@ public class ExtractionQueryBuilder
     /// QueryBuilder and then it adds some custom lines for linking to the cohort</para>
     /// </summary>
     /// <returns></returns>
-    public QueryBuilder GetSQLCommandForFullExtractionSet(ExtractDatasetCommand request,
+    public QueryBuilder GetSQLCommandForFullExtractionSet(ExtractDatasetCommand request, List<string> ignoreBatchingForTheseIdentifiers,
         out List<ReleaseIdentifierSubstitution> substitutions)
     {
         if (request.QueryBuilder != null)
@@ -135,14 +135,14 @@ public class ExtractionQueryBuilder
             queryBuilder.AddCustomLine(request.ExtractableCohort.WhereSQL(), QueryComponent.WHERE);
         }
 
-        HandleBatching(request, queryBuilder, syntaxHelper);
+        HandleBatching(request, queryBuilder, syntaxHelper, ignoreBatchingForTheseIdentifiers);
 
         request.QueryBuilder = queryBuilder;
         return queryBuilder;
     }
 
     private void HandleBatching(ExtractDatasetCommand request, QueryBuilder queryBuilder,
-        IQuerySyntaxHelper syntaxHelper)
+        IQuerySyntaxHelper syntaxHelper, List<string> ignoreBatchingForTheseIdentifiers)
     {
         var batch = request.SelectedDataSets.ExtractionProgressIfAny;
         if (batch == null)
@@ -171,9 +171,9 @@ public class ExtractionQueryBuilder
         request.BatchEnd = end;
 
         var line =
-            // if it is a first batch, also pull the null dates
+            // if it is a first batch, also pull the null dates and historical records
             !request.IsBatchResume
-                ? $"(({ei.SelectSQL} >= @batchStart AND {ei.SelectSQL} < @batchEnd) OR {ei.SelectSQL} is null)"
+                ? $"(({ei.SelectSQL} >= @batchStart AND {ei.SelectSQL} < @batchEnd) OR {ei.SelectSQL} is null OR [RDMP_ExampleData].[dbo].[Biochemistry].[chi] in ({string.Join(',',ignoreBatchingForTheseIdentifiers)}))"
                 :
                 // it is a subsequent batch
                 $"({ei.SelectSQL} >= @batchStart AND {ei.SelectSQL} < @batchEnd)";

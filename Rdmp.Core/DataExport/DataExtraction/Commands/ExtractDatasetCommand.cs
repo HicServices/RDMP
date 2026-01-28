@@ -29,7 +29,7 @@ public class ExtractDatasetCommand : ExtractCommand, IExtractDatasetCommand
 
     private IExtractableDatasetBundle _datasetBundle;
     private List<IColumn> _origColumnsToExtract;
-
+    public List<string > IdentifiersToIgnoreDuringBatching { get; set; } = new();
     public IExtractableCohort ExtractableCohort { get; set; }
 
     public IExtractableDatasetBundle DatasetBundle
@@ -146,7 +146,7 @@ public class ExtractDatasetCommand : ExtractCommand, IExtractDatasetCommand
     public void GenerateQueryBuilder()
     {
         var host = new ExtractionQueryBuilder(DataExportRepository);
-        QueryBuilder = host.GetSQLCommandForFullExtractionSet(this, out var substitutions);
+        QueryBuilder = host.GetSQLCommandForFullExtractionSet(this, IdentifiersToIgnoreDuringBatching, out var substitutions);
         ReleaseIdentifierSubstitutions = substitutions;
     }
 

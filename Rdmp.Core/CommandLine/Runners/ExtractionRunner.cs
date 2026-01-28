@@ -47,6 +47,8 @@ public class ExtractionRunner : ManyRunner
     private bool _isDeltaExtraction = false;
     private IExtractableCohort _deltaExtractionCohortToCompareTo = null;
     private object _oLock = new();
+
+    private List<string> _peopleToIngoreDuringBatching = new();
     public Dictionary<ISelectedDataSets, ExtractCommand> ExtractCommands { get; private set; }
 
     public ExtractionRunner(IBasicActivateItems activator, ExtractionOptions extractionOpts) : base(extractionOpts)
@@ -67,7 +69,7 @@ public class ExtractionRunner : ManyRunner
         if (HasConfigurationPreviouslyBeenReleased())
             throw new Exception("Extraction Configuration has already been released");
 
-        if (_configuration.SelectedDataSets.Any(sds => sds.ExtractionProgressIfAny != null && sds.ExtractionProgressIfAny.IsDeltaExtraction))
+        if (_configuration.SelectedDataSets.Any(sds => sds.ExtractionProgressIfAny != null && sds.ExtractionProgressIfAny.IsDeltaExtraction))//todo only do this on runs, not checks
         {
             //is delta extraction
             _isDeltaExtraction = true;
@@ -121,6 +123,7 @@ public class ExtractionRunner : ManyRunner
                 var newChi = newCohort.Rows.OfType<DataRow>().Select(r => r["chi"].ToString()).ToHashSet();
                 var peopleToRemoveChi = oldChi.Except(newChi);
                 var newPeopleChi = newChi.Except(oldChi);
+                _peopleToIngoreDuringBatching = newPeopleChi.ToList();
                 //find new people and get ALL of their data
             }
         }
@@ -172,6 +175,7 @@ public class ExtractionRunner : ManyRunner
         foreach (var sds in GetSelectedDataSets())
         {
             var extractDatasetCommand = ExtractCommandCollectionFactory.Create(RepositoryLocator, sds);
+            extractDatasetCommand.IdentifiersToIgnoreDuringBatching = _peopleToIngoreDuringBatching;
             commands.Add(extractDatasetCommand);
 
             lock (_oLock)
