@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Automatically fetch user settings from previous versions of RDMP when installing the latest version
 - Allow new columns to be added to archive extractions
 - Simplify use of Extraction Progress
+- Harded Confluence export functionality
 
 ## [9.1.1] - 2025-12-02
 - Allow Atlassian service workers to write to Confluence from RDMP
