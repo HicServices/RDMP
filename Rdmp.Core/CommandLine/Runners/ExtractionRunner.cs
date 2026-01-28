@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using Rdmp.Core.CommandExecution;
@@ -43,6 +44,8 @@ public class ExtractionRunner : ManyRunner
     private ExtractGlobalsCommand _globalsCommand;
     private Pipeline _pipeline;
     private LogManager _logManager;
+    private bool _isDeltaExtraction = false;
+    private IExtractableCohort _deltaExtractionCohortToCompareTo = null;
     private object _oLock = new();
     public Dictionary<ISelectedDataSets, ExtractCommand> ExtractCommands { get; private set; }
 
@@ -63,6 +66,64 @@ public class ExtractionRunner : ManyRunner
 
         if (HasConfigurationPreviouslyBeenReleased())
             throw new Exception("Extraction Configuration has already been released");
+
+        if (_configuration.SelectedDataSets.Any(sds => sds.ExtractionProgressIfAny != null && sds.ExtractionProgressIfAny.IsDeltaExtraction))
+        {
+            //is delta extraction
+            _isDeltaExtraction = true;
+
+            //find cohorts to compare against
+            var currentCohort = _configuration.Cohort;
+            var currentCohortData = currentCohort.GetExternalData();
+            var externalCohortDatabase = currentCohort.ExternalCohortTable.Discover();
+            var cohortDefinitionTable = externalCohortDatabase.ExpectTable("CohortDefinition");
+            List<IExtractableCohort> historicalCohorts = new();
+            if (cohortDefinitionTable.Exists())
+            {
+
+                var sql = $"SELECT id, projectNumber, version, description, dtCreated FROM {cohortDefinitionTable.GetFullyQualifiedName()} WHERE projectNumber = {_project.ProjectNumber}";
+                using (var cmd = externalCohortDatabase.Server.GetCommand(sql, externalCohortDatabase.Server.GetConnection()))
+                {
+                    var existingCohorts = new DataTable();
+
+                    using var da = externalCohortDatabase.Server.GetDataAdapter(cmd);
+                    da.Fill(existingCohorts);
+                    foreach (var row in existingCohorts.AsEnumerable())
+                    {
+                        var matchingCohort = _activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableCohort>("OriginID", int.Parse((row["id"].ToString()))).FirstOrDefault();
+                        if (matchingCohort is not null && matchingCohort.ID != _configuration.Cohort.ID)//don't suggest current cohort
+                        {
+                            historicalCohorts.Add(matchingCohort);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                throw new Exception("Some sort of error - cohort table can't be found");
+            }
+            if (_activator.IsInteractive && _isDeltaExtraction && _deltaExtractionCohortToCompareTo is null)//todo should be able to pass this in via cli, and do something when it is not passed via cli
+            {
+                if (_configuration.MostRecentCohortUsed_ID != null && historicalCohorts.Any())
+                {
+                    var suggestedcohort = historicalCohorts.FirstOrDefault(c => c.ID == _configuration.MostRecentCohortUsed_ID);
+                    _deltaExtractionCohortToCompareTo = (IExtractableCohort)_activator.SelectOne(new DialogArgs() { }, historicalCohorts.ToArray());//todo actually suggest 
+
+                }
+            }
+            if(_deltaExtractionCohortToCompareTo is not null)//todo this should be in the runner maybe...
+            {
+                //find people to delete
+                var oldCohort = _deltaExtractionCohortToCompareTo.FetchEntireCohort();
+                var newCohort = _configuration.Cohort.FetchEntireCohort();
+
+                var oldChi = oldCohort.Rows.OfType<DataRow>().Select(r => r["chi"].ToString()).ToHashSet();
+                var newChi = newCohort.Rows.OfType<DataRow>().Select(r => r["chi"].ToString()).ToHashSet();
+                var peopleToRemoveChi = oldChi.Except(newChi);
+                var newPeopleChi = newChi.Except(oldChi);
+                //find new people and get ALL of their data
+            }
+        }
     }
 
     protected override void AfterRun()
@@ -72,7 +133,7 @@ public class ExtractionRunner : ManyRunner
             case CommandLineActivity.run:
                 var eds = ExtractCommands.Keys.Select(k => k.ExtractableDataSet);
                 var status = eds.Select(e => GetState(e)).Where(e => e is not null).Select(e => (ExtractCommandState)Enum.Parse(typeof(ExtractCommandState), e.ToString()));
-                if(!status.Any(s => s != ExtractCommandState.Completed))
+                if (!status.Any(s => s != ExtractCommandState.Completed))
                 {
                     //all worked as expected
                     _configuration.MostRecentCohortUsed_ID = _configuration.Cohort.ID;
@@ -80,7 +141,7 @@ public class ExtractionRunner : ManyRunner
                 }
                 if (UserSettings.ExtractionWebhookUrl is not null)
                 {
-                    var cmd = new ExecuteCommandSendExtractionResolutionTeamsNotification(_activator, _configuration,!status.Any(s => s != ExtractCommandState.Completed));
+                    var cmd = new ExecuteCommandSendExtractionResolutionTeamsNotification(_activator, _configuration, !status.Any(s => s != ExtractCommandState.Completed));
                     cmd.Execute();
                 }
                 break;

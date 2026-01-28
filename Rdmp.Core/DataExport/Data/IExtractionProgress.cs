@@ -52,6 +52,11 @@ public interface IExtractionProgress : IMapsDirectlyToDatabaseTable, ISaveable, 
     /// </summary>
     int SelectedDataSets_ID { get; set; }
 
+    /// <summary>
+    /// The dataset is part of a delta extraction where only data since the last extraction, and new historical data, is extracted
+    /// </summary>
+    bool IsDeltaExtraction { get; set; }
+
     /// <inheritdoc cref="SelectedDataSets_ID"/>
     ISelectedDataSets SelectedDataSets { get; }
 
