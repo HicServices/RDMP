@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Allow new columns to be added to archive extractions
 - Simplify use of Extraction Progress
 - Update CHI validation to allow mod10 CHIs
-
+- Hardened Confluence export functionality
 
 ## [9.1.1] - 2025-12-02
 - Allow Atlassian service workers to write to Confluence from RDMP
