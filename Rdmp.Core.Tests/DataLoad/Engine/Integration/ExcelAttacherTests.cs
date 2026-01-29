@@ -16,6 +16,7 @@ using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Modules.Attachers;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Tests.Common;
@@ -58,7 +59,7 @@ public class ExcelAttacherTests : DatabaseTests
     }
 
     [TearDown]
-    public void Cleanup(List<string> identifiersToRemove)
+    public void Cleanup()
     {
         _workbook.Dispose();
         File.Delete(_filename);

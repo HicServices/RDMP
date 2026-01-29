@@ -188,4 +188,8 @@ public class TestCacheDestination : IPluginDataFlowComponent<ICacheChunk>, IData
     }
 
     public ICacheLayout CreateCacheLayout() => new BasicCacheLayout(project.Cache);
+
+    public void Cleanup(List<string> identifiersToRemove)
+    {
+    }
 }
