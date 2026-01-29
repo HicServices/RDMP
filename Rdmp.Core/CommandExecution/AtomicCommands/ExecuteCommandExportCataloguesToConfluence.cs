@@ -195,7 +195,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                     }
                     else
                     {
-                        throw new Exception($"Unable to find existing page in space {_spaceId} with name {request.title}");
+                        throw new Exception($"Unable to find existing page in space {_spaceId} with name {request.title}. {response.Content.ToString()}");
                     }
                 }
                 else
@@ -264,7 +264,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                     }
                     else
                     {
-                        throw new Exception($"Unable to find existing page in space {_spaceId} with name {request.title}");
+                        throw new Exception($"Unable to find existing page in space {_spaceId} with name {request.title}. {response.Content.ToString()}");
                     }
                 }
             }
