@@ -169,11 +169,13 @@ public class ExtractionQueryBuilder
 
         request.BatchStart = start;
         request.BatchEnd = end;
+        var memoryRepo = new MemoryCatalogueRepository();
+        var identifier = request.Catalogue.CatalogueItems.FirstOrDefault(ci => ci.ExtractionInformation != null ?ci.ExtractionInformation.IsExtractionIdentifier:false);
 
         var line =
             // if it is a first batch, also pull the null dates and historical records
             !request.IsBatchResume
-                ? $"(({ei.SelectSQL} >= @batchStart AND {ei.SelectSQL} < @batchEnd) OR {ei.SelectSQL} is null {(ignoreBatchingForTheseIdentifiers is null ? "":$"OR [RDMP_ExampleData].[dbo].[Biochemistry].[chi] in ({ string.Join(',', ignoreBatchingForTheseIdentifiers.Select(i => $"'{i}'"))})")})"
+                ? $"(({ei.SelectSQL} >= @batchStart AND {ei.SelectSQL} < @batchEnd) OR {ei.SelectSQL} is null {((ignoreBatchingForTheseIdentifiers is null || identifier == null) ? "" : $"OR {identifier.ColumnInfo.GetFullyQualifiedName()} in ({string.Join(',', ignoreBatchingForTheseIdentifiers.Select(i => $"'{i}'"))})")})"
                 :
                 // it is a subsequent batch
                 $"({ei.SelectSQL} >= @batchStart AND {ei.SelectSQL} < @batchEnd)";
