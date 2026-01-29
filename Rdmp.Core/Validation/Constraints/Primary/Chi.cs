@@ -84,11 +84,16 @@ public partial class Chi : PrimaryConstraint
         int c = '0';
         for (var i = 0; i < lsCHI - 1; i++)
             sum += ((int)sCHI.Substring(i, 1)[0] - c) * (lsCHI - i);
-        sum %= 11;
+        var mod11Sum = sum % 11;
 
-        c = 11 - sum;
+        c = 11 - mod11Sum;
         if (c == 11) c = 0;
-
+        if (c != int.Parse(sCHI.Substring(9, 1)))
+        {
+            var mod10Sum = sum % 10;
+            c = 10 - mod10Sum;
+            if (c == 10) c = 0;
+        }
         return (char)(c + '0');
     }
 
