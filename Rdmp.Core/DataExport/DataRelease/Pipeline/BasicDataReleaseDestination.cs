@@ -75,6 +75,10 @@ public class BasicDataReleaseDestination : IPluginDataFlowComponent<ReleaseAudit
         return null;
     }
 
+
+    public void Cleanup(List<string> identifiersToRemove)
+    {
+    }
     public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
     {
         if (pipelineFailureExceptionIfAny != null && _releaseData != null)

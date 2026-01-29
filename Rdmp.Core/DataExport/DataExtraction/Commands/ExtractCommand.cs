@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.Collections.Generic;
 using System.IO;
 using Rdmp.Core.DataExport.Data;
 
@@ -30,6 +31,8 @@ public abstract class ExtractCommand : IExtractCommand
 
     public abstract string DescribeExtractionImplementation();
     public ExtractCommandState State { get; private set; }
+    public List<string> IdentifiersToIgnoreDuringBatching { get; set; }
+    public List<string> IdentifiersToRemoveAtCleanup { get; set; }
 
     public void ElevateState(ExtractCommandState newState)
     {

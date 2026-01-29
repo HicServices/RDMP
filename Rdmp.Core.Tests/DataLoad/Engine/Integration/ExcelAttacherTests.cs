@@ -58,7 +58,7 @@ public class ExcelAttacherTests : DatabaseTests
     }
 
     [TearDown]
-    public void CleanUp()
+    public void Cleanup(List<string> identifiersToRemove)
     {
         _workbook.Dispose();
         File.Delete(_filename);

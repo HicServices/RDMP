@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Rdmp.Core.Caching.Layouts;
 using Rdmp.Core.Caching.Requests;
@@ -104,5 +105,9 @@ public abstract class CacheFilesystemDestination : ICacheFileSystemDestination, 
                 "The CacheLayout object in CacheFilesystemDestination is not being constructed correctly",
                 CheckResult.Fail)
             : new CheckEventArgs("CacheLayout object in CacheFilesystemDestination is OK", CheckResult.Success));
+    }
+
+    public void Cleanup(List<string> identifiersToRemove)
+    {
     }
 }

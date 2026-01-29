@@ -203,7 +203,9 @@ public class KVPAttacher : FlatFileAttacher, IDemandToUseAPipeline, IDataFlowDes
             notifier.OnCheckPerformed(new CheckEventArgs(
                 "TargetDataTableKeyColumnName cannot be the same as TargetDataTableValueColumnName", CheckResult.Fail));
     }
-
+    public void Cleanup(List<string> identifiersToRemove)
+    {
+    }
     public IPipelineUseCase GetDesignTimePipelineUseCase(RequiredPropertyInfo property) =>
         new KVPAttacherPipelineUseCase(this, new FlatFileToLoad(null));
 }

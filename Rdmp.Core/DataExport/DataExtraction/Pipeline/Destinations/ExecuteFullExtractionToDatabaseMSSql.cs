@@ -24,6 +24,7 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
@@ -532,7 +533,21 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
     {
     }
 
-
+    public override void Cleanup(List<string> identifiersToRemove)
+    {
+        if (_request is ExtractGlobalsCommand || identifiersToRemove == null || !identifiersToRemove.Any()) return;
+        var tbl = _destinationDatabase.ExpectTable(_toProcess.TableName);
+        using (var conn = _destinationDatabase.Server.GetConnection())
+        {
+            conn.Open();
+            var sql = $"""DELETE FROM {tbl.GetFullyQualifiedName()} where [ReleaseId] in ({string.Join(',', identifiersToRemove.Select(i => $"'{i}'"))})""";
+            using (var cmd = _destinationDatabase.Server.GetCommand(sql, conn))
+            {
+                cmd.ExecuteNonQuery();
+            }
+            conn.Close();
+        }
+    }
     public override string GetDestinationDescription() => GetDestinationDescription("");
 
     private string GetDestinationDescription(string suffix = "")

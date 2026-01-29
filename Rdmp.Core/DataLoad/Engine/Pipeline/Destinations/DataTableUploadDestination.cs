@@ -146,7 +146,9 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
         if (indexes.Length == 0) return itemArray;
         return itemArray.Where((source, idx) => !indexes.Contains(idx)).ToArray();
     }
-
+    public void Cleanup(List<string> identifiersToRemove)
+    {
+    }
     public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,
         GracefulCancellationToken cancellationToken)
     {

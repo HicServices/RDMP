@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
@@ -247,6 +248,10 @@ e.g. /$i/$a")]
                     "ExtractionSubdirectoryPattern must contain a Dataset element ($d, $a or $n)",
                     CheckResult.Fail));
         }
+    }
+
+    public virtual void Cleanup(List<string> identifiersToRemove)
+    {
     }
 
     #endregion

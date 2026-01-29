@@ -59,6 +59,8 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
     /// <inheritdoc cref="Source"/>
     public object SourceObject => Source;
 
+    public List<string> IdentifiersToRemove { get; set; }
+
     /// <summary>
     /// Creates a new pipeline engine ready to run under the <paramref name="context"/> recording events that occur to <paramref name="listener"/>.
     /// </summary>
@@ -184,6 +186,10 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
                         new NotifyEventArgs(ProgressEventType.Error, "Error Disposing Component", e));
                 }
             }
+            _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Trace, $"About to Run the cleanup step for {Destination}"));
+
+            Destination.Cleanup(IdentifiersToRemove);
+
 
             _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Trace, $"About to Dispose {Destination}"));
             try
@@ -234,34 +240,35 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
             return false;
         }
 
-        try {
-          foreach (var component in Components)
-          {
-              if (cancellationToken.IsAbortRequested) break;
+        try
+        {
+            foreach (var component in Components)
+            {
+                if (cancellationToken.IsAbortRequested) break;
 
-              currentChunk = component.ProcessPipelineData(currentChunk, _listener, cancellationToken);
-              if (completionUIAlerts is not null && currentChunk is DataTable dt)
-              {
-                  var uiAlert = (Tuple<string, IBasicActivateItems>)dt.ExtendedProperties["AlertUIAtEndOfProcess"];
-                  completionUIAlerts.Add(uiAlert);
-              }
-          }
+                currentChunk = component.ProcessPipelineData(currentChunk, _listener, cancellationToken);
+                if (completionUIAlerts is not null && currentChunk is DataTable dt)
+                {
+                    var uiAlert = (Tuple<string, IBasicActivateItems>)dt.ExtendedProperties["AlertUIAtEndOfProcess"];
+                    completionUIAlerts.Add(uiAlert);
+                }
+            }
 
-          if (cancellationToken.IsAbortRequested) return true;
+            if (cancellationToken.IsAbortRequested) return true;
 
-          Destination.ProcessPipelineData(currentChunk, _listener, cancellationToken);
-
-          if (cancellationToken.IsAbortRequested) return true;
+            Destination.ProcessPipelineData(currentChunk, _listener, cancellationToken);
+            if (cancellationToken.IsAbortRequested) return true;
         }
-        finally {
-          //if it is a DataTable call .Clear() because Dispose doesn't actually free up any memory
-          if (currentChunk is DataTable dt2)
-              dt2.Clear();
+        finally
+        {
+            //if it is a DataTable call .Clear() because Dispose doesn't actually free up any memory
+            if (currentChunk is DataTable dt2)
+                dt2.Clear();
 
-          //if the chunk is something that can be disposed, dispose it (e.g. DataTable - to free up memory)
-          if (currentChunk is IDisposable junk)
-  #pragma warning disable
-              junk.Dispose();
+            //if the chunk is something that can be disposed, dispose it (e.g. DataTable - to free up memory)
+            if (currentChunk is IDisposable junk)
+#pragma warning disable
+                junk.Dispose();
         }
 
         return true;

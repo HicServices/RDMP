@@ -169,7 +169,9 @@ IPipelineRequirement<Project>, IPipelineRequirement<ReleaseData>, IInteractiveCh
             return;
         }
     }
-
+    public void Cleanup(List<string> identifiersToRemove)
+    {
+    }
     public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
     {
         if (pipelineFailureExceptionIfAny != null && _releaseData != null)

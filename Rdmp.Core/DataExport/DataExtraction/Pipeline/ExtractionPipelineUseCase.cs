@@ -198,7 +198,7 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
                     $"Running Extraction {ExtractCommand} with Pipeline {_pipeline.Name} (ID={_pipeline.ID})"));
 
             var engine = GetEngine(_pipeline, listener);
-
+            engine.IdentifiersToRemove = ExtractCommand.IdentifiersToRemoveAtCleanup;
             try
             {
                 engine.ExecutePipeline(Token ?? new GracefulCancellationToken());

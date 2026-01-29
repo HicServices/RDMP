@@ -264,4 +264,7 @@ public class BasicCohortDestination : IPluginCohortDestination
 
         Request.Check(notifier);
     }
+    public void Cleanup(List<string> identifiersToRemove)
+    {
+    }
 }

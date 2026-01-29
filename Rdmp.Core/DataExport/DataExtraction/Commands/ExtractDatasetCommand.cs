@@ -29,7 +29,7 @@ public class ExtractDatasetCommand : ExtractCommand, IExtractDatasetCommand
 
     private IExtractableDatasetBundle _datasetBundle;
     private List<IColumn> _origColumnsToExtract;
-    public List<string > IdentifiersToIgnoreDuringBatching { get; set; } //= new();
+
     public IExtractableCohort ExtractableCohort { get; set; }
 
     public IExtractableDatasetBundle DatasetBundle

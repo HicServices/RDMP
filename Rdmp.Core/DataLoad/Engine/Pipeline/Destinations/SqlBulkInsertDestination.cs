@@ -69,6 +69,9 @@ public class SqlBulkInsertDestination : IDataFlowDestination<DataTable>, IPipeli
         RaiseEvents(chunk, job);
     }
 
+    public void Cleanup(List<string> identifiersToRemove)
+    {
+    }
     protected void AssessMissingAndIgnoredColumns(DataTable chunk, IDataLoadEventListener job)
     {
         var listColumns = _dbInfo.ExpectTable(Table).DiscoverColumns();

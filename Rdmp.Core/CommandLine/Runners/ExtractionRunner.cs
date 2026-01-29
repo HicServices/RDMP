@@ -49,6 +49,7 @@ public class ExtractionRunner : ManyRunner
     private object _oLock = new();
 
     private List<string> _peopleToIngoreDuringBatching = new();
+    private List<string> _peopleToRemoveAtCleanup = new();
     public Dictionary<ISelectedDataSets, ExtractCommand> ExtractCommands { get; private set; }
 
     public ExtractionRunner(IBasicActivateItems activator, ExtractionOptions extractionOpts) : base(extractionOpts)
@@ -122,9 +123,11 @@ public class ExtractionRunner : ManyRunner
                 var oldChi = oldCohort.Rows.OfType<DataRow>().Select(r => r["chi"].ToString()).ToHashSet();
                 var newChi = newCohort.Rows.OfType<DataRow>().Select(r => r["chi"].ToString()).ToHashSet();
                 var peopleToRemoveChi = oldChi.Except(newChi);
+                var releaseIdsToRemove = oldCohort.Rows.OfType<DataRow>().Where(r => peopleToRemoveChi.Contains(r["chi"].ToString())).Select(r => r["releaseId"].ToString()).ToHashSet();
                 var newPeopleChi = newChi.Except(oldChi);
                 //for new people - get ALL of their data
                 _peopleToIngoreDuringBatching = newPeopleChi.ToList();
+                _peopleToRemoveAtCleanup = releaseIdsToRemove.ToList();
             }
         }
     }
@@ -174,8 +177,10 @@ public class ExtractionRunner : ManyRunner
 
         foreach (var sds in GetSelectedDataSets())
         {
+            //todo validate that these lists are correct
             var extractDatasetCommand = ExtractCommandCollectionFactory.Create(RepositoryLocator, sds);
             extractDatasetCommand.IdentifiersToIgnoreDuringBatching = _peopleToIngoreDuringBatching;
+            extractDatasetCommand.IdentifiersToRemoveAtCleanup = _peopleToRemoveAtCleanup;
             commands.Add(extractDatasetCommand);
 
             lock (_oLock)
