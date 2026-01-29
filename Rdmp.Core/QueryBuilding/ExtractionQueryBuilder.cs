@@ -173,7 +173,7 @@ public class ExtractionQueryBuilder
         var line =
             // if it is a first batch, also pull the null dates and historical records
             !request.IsBatchResume
-                ? $"(({ei.SelectSQL} >= @batchStart AND {ei.SelectSQL} < @batchEnd) OR {ei.SelectSQL} is null OR [RDMP_ExampleData].[dbo].[Biochemistry].[chi] in ({string.Join(',',ignoreBatchingForTheseIdentifiers)}))"
+                ? $"(({ei.SelectSQL} >= @batchStart AND {ei.SelectSQL} < @batchEnd) OR {ei.SelectSQL} is null {(ignoreBatchingForTheseIdentifiers is null ? "":$"OR [RDMP_ExampleData].[dbo].[Biochemistry].[chi] in ({ string.Join(',', ignoreBatchingForTheseIdentifiers.Select(i => $"'{i}'"))})")})"
                 :
                 // it is a subsequent batch
                 $"({ei.SelectSQL} >= @batchStart AND {ei.SelectSQL} < @batchEnd)";
