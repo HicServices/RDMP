@@ -69,7 +69,7 @@ public class ExtractionRunner : ManyRunner
         if (HasConfigurationPreviouslyBeenReleased())
             throw new Exception("Extraction Configuration has already been released");
 
-        if (_configuration.SelectedDataSets.Any(sds => sds.ExtractionProgressIfAny != null && sds.ExtractionProgressIfAny.IsDeltaExtraction))//todo only do this on runs, not checks
+        if (_options.Command is CommandLineActivity.run && _configuration.SelectedDataSets.Any(sds => sds.ExtractionProgressIfAny != null && sds.ExtractionProgressIfAny.IsDeltaExtraction))
         {
             //is delta extraction
             _isDeltaExtraction = true;
@@ -113,7 +113,7 @@ public class ExtractionRunner : ManyRunner
 
                 }
             }
-            if(_deltaExtractionCohortToCompareTo is not null)//todo this should be in the runner maybe...
+            if(_deltaExtractionCohortToCompareTo is not null)
             {
                 //find people to delete
                 var oldCohort = _deltaExtractionCohortToCompareTo.FetchEntireCohort();
@@ -123,8 +123,8 @@ public class ExtractionRunner : ManyRunner
                 var newChi = newCohort.Rows.OfType<DataRow>().Select(r => r["chi"].ToString()).ToHashSet();
                 var peopleToRemoveChi = oldChi.Except(newChi);
                 var newPeopleChi = newChi.Except(oldChi);
+                //for new people - get ALL of their data
                 _peopleToIngoreDuringBatching = newPeopleChi.ToList();
-                //find new people and get ALL of their data
             }
         }
     }
