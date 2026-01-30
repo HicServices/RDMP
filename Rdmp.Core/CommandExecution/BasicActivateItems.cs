@@ -125,6 +125,8 @@ public abstract class BasicActivateItems : IBasicActivateItems
     public BasicActivateItems(RDMPDbContext catalogueDbContext,
         ICheckNotifier globalErrorCheckNotifier)
     {
+        this.RepositoryLocator =
+            new RepositoryProvider(catalogueDbContext);
         //RepositoryLocator = catalogueDbContext;
         GlobalErrorCheckNotifier = globalErrorCheckNotifier;
 
@@ -166,13 +168,15 @@ public abstract class BasicActivateItems : IBasicActivateItems
         temp ??= new CatalogueChildProvider(RepositoryLocator.CatalogueDbContext, PluginUserInterfaces.ToArray(),
             GlobalErrorCheckNotifier, CoreChildProvider as CatalogueChildProvider);
 
-        // first time
-        if (CoreChildProvider == null)
-            CoreChildProvider = temp;
-        else
-            CoreChildProvider.UpdateTo(temp);
+        //// first time
+        //if (CoreChildProvider == null)
+        //    CoreChildProvider = temp;
+        //else
+        //    CoreChildProvider.UpdateTo(temp);
 
+        CoreChildProvider = temp;
         return CoreChildProvider;
+        
     }
 
     private void ConstructPluginChildProviders()

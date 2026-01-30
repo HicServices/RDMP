@@ -276,11 +276,12 @@ public partial class StartupUI : Form, ICheckNotifier
                         ? "RDMP Platform Databases are not set"
                         : $"Could not reach {eventArgs.Patcher.Name}";
 
-                    CouldNotReachTier1Database = true;
+                    CouldNotReachTier1Database = false;// true;
+                    return;
 
-                    ragSmiley1.Fatal(new Exception(
-                        $"Core Platform Database was {eventArgs.Status} ({eventArgs.Patcher.Name})",
-                        eventArgs.Exception));
+                    //ragSmiley1.Fatal(new Exception(
+                    //    $"Core Platform Database was {eventArgs.Status} ({eventArgs.Patcher.Name})",
+                    //    eventArgs.Exception));
                 }
                 else
                 {

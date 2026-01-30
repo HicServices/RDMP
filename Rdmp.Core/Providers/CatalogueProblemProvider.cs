@@ -40,7 +40,7 @@ public class CatalogueProblemProvider : ProblemProvider
 {
     private ICoreChildProvider _childProvider;
     private HashSet<int> _orphanCatalogueItems = new();
-    private HashSet<int> _usedJoinables;
+    //private HashSet<int> _usedJoinables;
     private JoinInfo[] _joinsWithMismatchedCollations = Array.Empty<JoinInfo>();
 
     /// <summary>
@@ -54,23 +54,23 @@ public class CatalogueProblemProvider : ProblemProvider
     {
         _childProvider = childProvider;
 
-        //Take all the catalogue items which DON'T have an associated ColumnInfo (should hopefully be quite rare)
-        var catalogueIDs = _childProvider.AllCatalogueItems.Where(ci => ci.ColumnInfo_ID == null).Select(i => i.ID).ToList();
-        var extractionInfoIDs = _childProvider.AllExtractionInformations.Select(ei => ei.CatalogueItem_ID).ToList();
-        var orphans = catalogueIDs.Intersect(extractionInfoIDs);
-        _orphanCatalogueItems = orphans.ToHashSet<int>();
-        _usedJoinables = new HashSet<int>(
-       childProvider.AllJoinableCohortAggregateConfigurationUse.Select(
-           ju => ju.JoinableCohortAggregateConfiguration_ID));
+       // //Take all the catalogue items which DON'T have an associated ColumnInfo (should hopefully be quite rare)
+       // var catalogueIDs = _childProvider.AllCatalogueItems.Where(ci => ci.ColumnInfo_ID == null).Select(i => i.ID).ToList();
+       // var extractionInfoIDs = _childProvider.AllExtractionInformations.Select(ei => ei.CatalogueItem_ID).ToList();
+       // var orphans = catalogueIDs.Intersect(extractionInfoIDs);
+       // _orphanCatalogueItems = orphans.ToHashSet<int>();
+       // _usedJoinables = new HashSet<int>(
+       //childProvider.AllJoinableCohortAggregateConfigurationUse.Select(
+       //    ju => ju.JoinableCohortAggregateConfiguration_ID));
 
-        _joinsWithMismatchedCollations = childProvider.AllJoinInfos.Where(j =>
-            !string.IsNullOrWhiteSpace(j.PrimaryKey.Collation) &&
-            !string.IsNullOrWhiteSpace(j.ForeignKey.Collation) &&
+       // _joinsWithMismatchedCollations = childProvider.AllJoinInfos.Where(j =>
+       //     !string.IsNullOrWhiteSpace(j.PrimaryKey.Collation) &&
+       //     !string.IsNullOrWhiteSpace(j.ForeignKey.Collation) &&
 
-            // does not have an explicit join collation specified
-            string.IsNullOrWhiteSpace(j.Collation) &&
-            !string.Equals(j.PrimaryKey.Collation, j.ForeignKey.Collation)
-        ).ToArray();
+       //     // does not have an explicit join collation specified
+       //     string.IsNullOrWhiteSpace(j.Collation) &&
+       //     !string.Equals(j.PrimaryKey.Collation, j.ForeignKey.Collation)
+       // ).ToArray();
     }
 
     /// <inheritdoc/>
@@ -187,9 +187,9 @@ public class CatalogueProblemProvider : ProblemProvider
 
     public string DescribeProblem(AggregateConfiguration aggregateConfiguration)
     {
-        if (aggregateConfiguration.IsJoinablePatientIndexTable())
-            if (!_usedJoinables.Contains(aggregateConfiguration.JoinableCohortAggregateConfiguration.ID))
-                return "Patient Index Table is not joined to any cohort sets";
+        //if (aggregateConfiguration.IsJoinablePatientIndexTable())
+        //    if (!_usedJoinables.Contains(aggregateConfiguration.JoinableCohortAggregateConfiguration.ID))
+        //        return "Patient Index Table is not joined to any cohort sets";
 
         return !aggregateConfiguration.Catalogue.IsApiCall() && !aggregateConfiguration.AggregateDimensions.Any()
             ? "Aggregate has no dimensions.  Set an AggregateDimension to specify which column is fetched by the query."

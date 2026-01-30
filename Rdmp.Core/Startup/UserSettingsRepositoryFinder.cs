@@ -24,19 +24,28 @@ public class UserSettingsRepositoryFinder : IRDMPPlatformRepositoryServiceLocato
 {
     private LinkedRepositoryProvider _linkedRepositoryProvider;
 
-    //public RDMPDbContext CatalogueDbContext
-    //{
-    //    get
-    //    {
-    //        if (_linkedRepositoryProvider == null)
-    //            RefreshRepositoriesFromUserSettings();
+    public RDMPDbContext CatalogueDbContext
+    {
+        get
+        {
+            if (_linkedRepositoryProvider == null)
+                RefreshRepositoriesFromUserSettings();
 
-    //        return _linkedRepositoryProvider == null
-    //            ? throw new Exception(
-    //                "RefreshRepositoriesFromUserSettings failed to populate_linkedRepositoryProvider as expected ")
-    //            : _linkedRepositoryProvider.CatalogueDbContext;
-    //    }
-    //}
+            return _linkedRepositoryProvider == null
+                ? throw new Exception(
+                    "RefreshRepositoriesFromUserSettings failed to populate_linkedRepositoryProvider as expected ")
+                : _linkedRepositoryProvider.CatalogueDbContext;
+        }
+        set
+        {
+            if (_linkedRepositoryProvider == null)
+                RefreshRepositoriesFromUserSettings();
+            if (_linkedRepositoryProvider == null)
+                throw new Exception(
+                    "RefreshRepositoriesFromUserSettings failed to populate_linkedRepositoryProvider as expected ");
+            _linkedRepositoryProvider.CatalogueDbContext = value;
+        }
+    }
 
     public IDataExportRepository DataExportRepository
     {
@@ -52,9 +61,9 @@ public class UserSettingsRepositoryFinder : IRDMPPlatformRepositoryServiceLocato
         }
     }
 
-    public RDMPDbContext CatalogueDbContext { get ; set; }
+    //public RDMPDbContext CatalogueDbContext { get ; set; }
     public RDMPDbContext DataExportDbContext { get ; set ; }
-    RDMPDbContext RDMPDbContextServiceLocator.DataExportRepository { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    RDMPDbContext RDMPDbContextServiceLocator.DataExportRepository { get ; set; }
 
     public IMapsDirectlyToDatabaseTable GetArbitraryDatabaseObject(string repositoryTypeName,
         string databaseObjectTypeName, int objectID) =>
@@ -72,10 +81,10 @@ public class UserSettingsRepositoryFinder : IRDMPPlatformRepositoryServiceLocato
         //    commentStore = _linkedRepositoryProvider.CatalogueDbContext.CommentStore;
 
         //user must have a Catalogue
-        var catalogueString = UserSettings.CatalogueConnectionString;
+        var catalogueString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=RDMP_Catalogue;Integrated Security=True;Trust Server Certificate=True; MultipleActiveResultSets=true";// UserSettings.CatalogueConnectionString;
 
         //user may have a DataExportManager
-        var dataExportManagerConnectionString = UserSettings.DataExportConnectionString;
+        var dataExportManagerConnectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=RDMP_DataExport;Integrated Security=True;Trust Server Certificate=True; MultipleActiveResultSets=true";// UserSettings.DataExportConnectionString;
 
         LinkedRepositoryProvider newrepo;
 

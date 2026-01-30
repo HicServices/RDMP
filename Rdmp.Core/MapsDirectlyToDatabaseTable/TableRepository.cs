@@ -4,6 +4,17 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using FAnsi;
+using FAnsi.Connections;
+using FAnsi.Discovery;
+using FAnsi.Implementation;
+using FAnsi.Implementations.MicrosoftSQL;
+using NLog;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
+using Rdmp.Core.ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -14,15 +25,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading;
-using FAnsi;
-using FAnsi.Connections;
-using FAnsi.Discovery;
-using NLog;
-using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
-using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
-using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
-using Rdmp.Core.ReusableLibraryCode;
-using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.MapsDirectlyToDatabaseTable;
 

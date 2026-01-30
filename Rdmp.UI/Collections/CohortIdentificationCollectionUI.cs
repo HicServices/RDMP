@@ -66,7 +66,7 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
             typeof(AllOrphanAggregateConfigurationsNode),
             typeof(AllTemplateAggregateConfigurationsNode)
         };
-        var rootFolder = Activator.CoreChildProvider.CohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations;
+        var rootFolder = new FolderNode<CohortIdentificationConfiguration>("yall");// Activator.CoreChildProvider.CohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations;
         rootFolder.ChildFolders = new List<FolderNode<CohortIdentificationConfiguration>>();
         rootFolder.ChildObjects = new List<CohortIdentificationConfiguration>();
 

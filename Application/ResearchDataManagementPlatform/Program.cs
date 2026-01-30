@@ -64,7 +64,7 @@ internal static partial class Program
         }
 
         var optionsBuilder = new DbContextOptionsBuilder<RDMPDbContext>();
-        optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=RDMP_AIO_Catalogue;Integrated Security=True;Trust Server Certificate=True; MultipleActiveResultSets=true");
+        optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=RDMP_Catalogue;Integrated Security=True;Trust Server Certificate=True; MultipleActiveResultSets=true");
         var catalogueDbContext = new RDMPDbContext(optionsBuilder.Options);
         var bootStrapper =
             new RDMPBootStrapper(arg, locator =>

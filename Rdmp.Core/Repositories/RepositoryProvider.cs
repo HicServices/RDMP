@@ -4,11 +4,13 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using Microsoft.Data.SqlClient;
 using NPOI.SS.Formula.Functions;
 using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 
 namespace Rdmp.Core.Repositories;
 
@@ -18,9 +20,9 @@ namespace Rdmp.Core.Repositories;
 public class RepositoryProvider : IRDMPPlatformRepositoryServiceLocator
 {
     public IDataExportRepository DataExportRepository { get; protected init; }
-    public RDMPDbContext CatalogueDbContext { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-    public RDMPDbContext DataExportDbContext { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-    RDMPDbContext RDMPDbContextServiceLocator.DataExportRepository { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public RDMPDbContext CatalogueDbContext { get; set; }
+    public RDMPDbContext DataExportDbContext { get; set; }
+    RDMPDbContext RDMPDbContextServiceLocator.DataExportRepository { get; set; }
 
     /// <summary>
     /// Use when you have an already initialized set of repositories.  Sets up the class to fetch objects from the Catalogue/Data export databases only.
@@ -28,11 +30,15 @@ public class RepositoryProvider : IRDMPPlatformRepositoryServiceLocator
     /// <para>If possible consider using LinkedRepositoryProvider or Startup (these support plugin repositories, DQE repository etc)</para>
     /// 
     /// </summary>
-    /// <param name="dataExportRepository"></param>
-    public RepositoryProvider(RDMPDbContext dataExportRepository)
+    /// <param name="catalogueDbContext"></param>
+    public RepositoryProvider(RDMPDbContext catalogueDbContext)
     {
-        //RDMPDbContext = dataExportCatalogueDbContext.RDMPDbContext;
-        //DataExportRepository = dataExportRepository;
+        CatalogueDbContext = catalogueDbContext;
+        DataExportDbContext = catalogueDbContext;//dataExportRepository;
+        var b = new SqlConnectionStringBuilder();
+        b.ConnectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=RDMP_DataExport;Integrated Security=True;Trust Server Certificate=True; MultipleActiveResultSets=true";
+        DataExportRepository = new DataExportRepository(b,catalogueDbContext);
+        Console.WriteLine("Initialized RepositoryProvider with CatalogueDbContext and DataExportRepository");
     }
 
     protected RepositoryProvider()

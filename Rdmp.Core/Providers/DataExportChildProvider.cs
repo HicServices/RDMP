@@ -107,119 +107,123 @@ public class DataExportChildProvider : CatalogueChildProvider
         DataExportChildProvider previousStateIfKnown) : base(repositoryLocator.CatalogueDbContext,
         pluginChildProviders, errorsCheckNotifier, previousStateIfKnown)
     {
-        ForbidListedSources = previousStateIfKnown?.ForbidListedSources ?? new List<ExternalCohortTable>();
+        //ForbidListedSources = previousStateIfKnown?.ForbidListedSources ?? new List<ExternalCohortTable>();
         _errorsCheckNotifier = errorsCheckNotifier;
-        dataExportRepository = repositoryLocator.DataExportRepository;
+        //dataExportRepository = repositoryLocator.CatalogueDbContext;
 
-        AllProjectAssociatedCics =
-            GetAllObjects<ProjectCohortIdentificationConfigurationAssociation>(dataExportRepository);
-
-        _cicAssociations =
-            new HashSet<int>(AllProjectAssociatedCics.Select(a => a.CohortIdentificationConfiguration_ID));
-
-        CohortSources = GetAllObjects<ExternalCohortTable>(dataExportRepository);
-        ExtractableDataSets = GetAllObjects<ExtractableDataSet>(dataExportRepository);
-        ExtractableDataSetProjects = GetAllObjects<ExtractableDataSetProject>(dataExportRepository);
-        //This means that the ToString method in ExtractableDataSet doesn't need to go lookup catalogue info
-        var catalogueIdDict = AllCatalogues.ToDictionaryEx(c => c.ID, c2 => c2);
-        foreach (var ds in ExtractableDataSets)
-            if (catalogueIdDict.TryGetValue(ds.Catalogue_ID, out var cata))
-                ds.InjectKnown(cata);
-
-        ReportProgress("Injecting ExtractableDataSet");
-
-        AllPackages = GetAllObjects<ExtractableDataSetPackage>(dataExportRepository);
-
-        Projects = GetAllObjects<Project>(dataExportRepository);
-        ExtractionConfigurations = GetAllObjects<ExtractionConfiguration>(dataExportRepository);
-
-        ReportProgress("Get Projects and Configurations");
-
-        ExtractionConfigurationsByProject = ExtractionConfigurations.GroupBy(k => k.Project_ID)
-            .ToDictionaryEx(gdc => gdc.Key, gdc => gdc.ToList());
-
-        ReportProgress("Grouping Extractions by Project");
-
-        BuildSelectedDatasets();
-
-        AllGlobalExtractionFilterParameters = GetAllObjects<GlobalExtractionFilterParameter>(dataExportRepository);
-
-        BuildExtractionFilters();
-
-        ReportProgress("Building FilterManager");
-
-        Cohorts = GetAllObjects<ExtractableCohort>(dataExportRepository);
-        _cohortsByOriginId = new Dictionary<int, HashSet<ExtractableCohort>>();
-
-        foreach (var c in Cohorts)
-        {
-            if (!_cohortsByOriginId.ContainsKey(c.OriginID))
-                _cohortsByOriginId.Add(c.OriginID, new HashSet<ExtractableCohort>());
-
-            _cohortsByOriginId[c.OriginID].Add(c);
-        }
+        //AllProjectAssociatedCics =
+        //    GetAllObjects<ProjectCohortIdentificationConfigurationAssociation>(dataExportRepository);
 
 
-        ReportProgress("Fetching Cohorts");
+        //if (AllProjectAssociatedCics.Any())
+        //{
+        //    _cicAssociations =
+        //        new HashSet<int>(AllProjectAssociatedCics.Select(a => a.CohortIdentificationConfiguration_ID));
+        //}
 
-        GetCohortAvailability();
+        //CohortSources = GetAllObjects<ExternalCohortTable>(dataExportRepository);
+        //ExtractableDataSets = GetAllObjects<ExtractableDataSet>(dataExportRepository);
+        //ExtractableDataSetProjects = GetAllObjects<ExtractableDataSetProject>(dataExportRepository);
+        ////This means that the ToString method in ExtractableDataSet doesn't need to go lookup catalogue info
+        //var catalogueIdDict = AllCatalogues.ToDictionaryEx(c => c.ID, c2 => c2);
+        //foreach (var ds in ExtractableDataSets)
+        //    if (catalogueIdDict.TryGetValue(ds.Catalogue_ID, out var cata))
+        //        ds.InjectKnown(cata);
 
-        ReportProgress("GetCohortAvailability");
+        //ReportProgress("Injecting ExtractableDataSet");
+
+        //AllPackages = GetAllObjects<ExtractableDataSetPackage>(dataExportRepository);
+
+        //Projects = GetAllObjects<Project>(dataExportRepository);
+        //ExtractionConfigurations = GetAllObjects<ExtractionConfiguration>(dataExportRepository);
+
+        //ReportProgress("Get Projects and Configurations");
+
+        //ExtractionConfigurationsByProject = ExtractionConfigurations.GroupBy(k => k.Project_ID)
+        //    .ToDictionaryEx(gdc => gdc.Key, gdc => gdc.ToList());
+
+        //ReportProgress("Grouping Extractions by Project");
+
+        //BuildSelectedDatasets();
+
+        //AllGlobalExtractionFilterParameters = GetAllObjects<GlobalExtractionFilterParameter>(dataExportRepository);
+
+        //BuildExtractionFilters();
+
+        //ReportProgress("Building FilterManager");
+
+        //Cohorts = GetAllObjects<ExtractableCohort>(dataExportRepository);
+        //_cohortsByOriginId = new Dictionary<int, HashSet<ExtractableCohort>>();
+
+        //foreach (var c in Cohorts)
+        //{
+        //    if (!_cohortsByOriginId.ContainsKey(c.OriginID))
+        //        _cohortsByOriginId.Add(c.OriginID, new HashSet<ExtractableCohort>());
+
+        //    _cohortsByOriginId[c.OriginID].Add(c);
+        //}
 
 
-        ReportProgress("Mapping configurations to datasets");
+        //ReportProgress("Fetching Cohorts");
 
-        RootCohortsNode = new AllCohortsNode();
-        AddChildren(RootCohortsNode, new DescendancyList(RootCohortsNode));
+        //GetCohortAvailability();
 
-        foreach (var package in AllPackages)
-            AddChildren(package, new DescendancyList(package));
+        //ReportProgress("GetCohortAvailability");
 
-        ReportProgress("Packages and Cohorts");
 
-        ProjectRootFolder = FolderHelper.BuildFolderTree(Projects);
-        AddChildren(ProjectRootFolder, new DescendancyList(ProjectRootFolder));
+        //ReportProgress("Mapping configurations to datasets");
 
-        ReportProgress("Projects");
-        //inject extractability into Catalogues
-        foreach (var catalogue in AllCatalogues)
-        {
-            var eds = ExtractableDataSets.Where(e => e.Catalogue_ID == catalogue.ID).ToList();
-            if (!eds.Any())
-            {
-                catalogue.InjectKnown(new CatalogueExtractabilityStatus(false, false));
-            }
-            else
-            {
-                catalogue.InjectKnown(new CatalogueExtractabilityStatus(true, eds.First().Projects.Any()));
-            }
-        }
-        ReportProgress("Catalogue extractability injection");
+        //RootCohortsNode = new AllCohortsNode();
+        //AddChildren(RootCohortsNode, new DescendancyList(RootCohortsNode));
 
-        try
-        {
-            AddPipelineUseCases(new Dictionary<string, PipelineUseCase>
-            {
-                { "File Import", UploadFileUseCase.DesignTime() },
-                { "Extraction", ExtractionPipelineUseCase.DesignTime() },
-                { "Release", ReleaseUseCase.DesignTime() },
-                { "Cohort Creation", CohortCreationRequest.DesignTime() },
-                { "Caching", CachingPipelineUseCase.DesignTime() },
-                {
-                    "Aggregate Committing",
-                    CreateTableFromAggregateUseCase.DesignTime(repositoryLocator.CatalogueDbContext)
-                }
-            });
-        }
-        catch (Exception ex)
-        {
-            _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs("Failed to build DesignTime PipelineUseCases",
-                CheckResult.Fail, ex));
-        }
+        //foreach (var package in AllPackages)
+        //    AddChildren(package, new DescendancyList(package));
 
-        ReportProgress("Pipeline adding");
+        //ReportProgress("Packages and Cohorts");
 
-        GetPluginChildren();
+        //ProjectRootFolder = FolderHelper.BuildFolderTree(Projects);
+        //AddChildren(ProjectRootFolder, new DescendancyList(ProjectRootFolder));
+
+        //ReportProgress("Projects");
+        ////inject extractability into Catalogues
+        //foreach (var catalogue in AllCatalogues)
+        //{
+        //    var eds = ExtractableDataSets.Where(e => e.Catalogue_ID == catalogue.ID).ToList();
+        //    if (!eds.Any())
+        //    {
+        //        catalogue.InjectKnown(new CatalogueExtractabilityStatus(false, false));
+        //    }
+        //    else
+        //    {
+        //        catalogue.InjectKnown(new CatalogueExtractabilityStatus(true, eds.First().Projects.Any()));
+        //    }
+        //}
+        //ReportProgress("Catalogue extractability injection");
+
+        //try
+        //{
+        //    AddPipelineUseCases(new Dictionary<string, PipelineUseCase>
+        //    {
+        //        { "File Import", UploadFileUseCase.DesignTime() },
+        //        { "Extraction", ExtractionPipelineUseCase.DesignTime() },
+        //        { "Release", ReleaseUseCase.DesignTime() },
+        //        { "Cohort Creation", CohortCreationRequest.DesignTime() },
+        //        { "Caching", CachingPipelineUseCase.DesignTime() },
+        //        {
+        //            "Aggregate Committing",
+        //            CreateTableFromAggregateUseCase.DesignTime(repositoryLocator.CatalogueDbContext)
+        //        }
+        //    });
+        //}
+        //catch (Exception ex)
+        //{
+        //    _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs("Failed to build DesignTime PipelineUseCases",
+        //        CheckResult.Fail, ex));
+        //}
+
+        //ReportProgress("Pipeline adding");
+
+        //GetPluginChildren();
     }
 
 

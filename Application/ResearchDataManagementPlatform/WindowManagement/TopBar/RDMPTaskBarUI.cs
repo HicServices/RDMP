@@ -122,7 +122,7 @@ public partial class RDMPTaskBarUI : UserControl
 
     private void ReCreateDropDowns()
     {
-        CreateDropDown<WindowLayout>(cbxLayouts, CreateNewLayout);
+        //CreateDropDown<WindowLayout>(cbxLayouts, CreateNewLayout);
     }
 
     private void CreateDropDown<T>(ToolStripComboBox cbx, string createNewDashboard)

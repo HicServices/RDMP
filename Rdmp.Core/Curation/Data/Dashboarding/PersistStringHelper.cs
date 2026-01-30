@@ -163,7 +163,6 @@ public static class PersistStringHelper
             if (objectTokens.Length != 3)
                 throw new PersistenceException(
                     $"Could not figure out what database object to fetch because the list contained an item with an invalid number of tokens ({objectTokens.Length} tokens).  The current object string is:{Environment.NewLine}{objectString}");
-
             var dbObj = repositoryLocator.GetArbitraryDatabaseObject(objectTokens[0], objectTokens[1],
                 int.Parse(objectTokens[2]));
 
