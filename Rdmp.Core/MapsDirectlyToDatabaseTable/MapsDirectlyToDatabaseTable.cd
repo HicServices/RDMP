@@ -32,7 +32,7 @@
     </Compartments>
     <TypeIdentifier>
       <HashCode>IAWQAkCGkiCAAACI4AMYEERoEBkBBoJAMCIIBBAEiCA=</HashCode>
-      <FileName>TableRepository.cs</FileName>
+      <FileName>TableCatalogueDbContext.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="ObscureDependencyFinder" />
@@ -78,7 +78,7 @@
     <Position X="5.25" Y="2.25" Width="2.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAEkACAAAAAAAIQEEAoAAAABAAAMCAABBAAAAA=</HashCode>
-      <FileName>ITableRepository.cs</FileName>
+      <FileName>ITableCatalogueDbContext.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="MapsDirectlyToDatabaseTable.Revertable.IRevertable" Collapsed="true">
@@ -92,7 +92,7 @@
     <Position X="5.75" Y="1.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>IASAAEAAECCAAACI4AAIAARAAAEAAIJAAAAIAAAAAAA=</HashCode>
-      <FileName>IRepository.cs</FileName>
+      <FileName>ICatalogueDbContext.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="MapsDirectlyToDatabaseTable.IObscureDependencyFinder" Collapsed="true">

@@ -105,7 +105,7 @@ WHERE
         var ect = (ExternalCohortTable)_request.ExtractableCohort.ExternalCohortTable;
         ect.Server = "bob";
 
-        var e = DataExportRepository.GetObjectByID<ExternalCohortTable>(_request.ExtractableCohort
+        var e = DataExportCatalogueDbContext.GetObjectByID<ExternalCohortTable>(_request.ExtractableCohort
             .ExternalCohortTable_ID);
         var origValue = e.Database;
 

@@ -182,7 +182,7 @@ public class TestDataAccess : DatabaseTests
     {
         try
         {
-            var repository = new CatalogueRepository(CatalogueTableRepository.ConnectionStringBuilder);
+            var repository = new CatalogueRepository(CatalogueTableCatalogueDbContext.ConnectionStringBuilder);
             var cata = new Catalogue(repository, "bob")
             {
                 Name = "Fuss"
@@ -203,11 +203,11 @@ public class TestDataAccess : DatabaseTests
     [Test]
     public void TestGettingConnectionStrings()
     {
-        foreach (var tbl in CatalogueRepository.GetAllObjects<TableInfo>()
+        foreach (var tbl in CatalogueDbContext.GetAllObjects<TableInfo>()
                      .Where(table => table.Name.ToLower().Equals("bob")))
             tbl.DeleteInDatabase();
 
-        foreach (var c in CatalogueRepository.GetAllObjects<DataAccessCredentials>()
+        foreach (var c in CatalogueDbContext.GetAllObjects<DataAccessCredentials>()
                      .Where(cred => cred.Name.ToLower().Equals("bob")))
             c.DeleteInDatabase();
 

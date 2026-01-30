@@ -101,7 +101,7 @@ public class BackfillTests : FromToDatabaseTests
     {
         var mutilator = new StagingBackfillMutilator
         {
-            TimePeriodicityField = CatalogueRepository.GetAllObjects<ColumnInfo>()
+            TimePeriodicityField = CatalogueDbContext.GetAllObjects<ColumnInfo>()
                 .Single(c => c.Name.Equals(timeColumnName)),
             TestContext = true,
             TableNamingScheme = new IdentityTableNamingScheme()
@@ -1019,7 +1019,7 @@ public class BackfillTests : FromToDatabaseTests
         // databases are now represent state after push to From and before migration
         var mutilator = new StagingBackfillMutilator
         {
-            TimePeriodicityField = CatalogueRepository.GetAllObjects<ColumnInfo>().Single(ci => ci.Name ==
+            TimePeriodicityField = CatalogueDbContext.GetAllObjects<ColumnInfo>().Single(ci => ci.Name ==
                 $"[{DatabaseName}]..[Samples].[SampleDate]"),
             TestContext = true,
             TableNamingScheme = new IdentityTableNamingScheme()

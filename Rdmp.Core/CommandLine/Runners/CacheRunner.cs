@@ -36,7 +36,7 @@ public class CacheRunner : Runner
         var cp = GetObjectFromCommandLineString<CacheProgress>(repositoryLocator, _options.CacheProgress);
         var dataLoadTask = cp.GetDistinctLoggingTask();
 
-        var defaults = repositoryLocator.CatalogueRepository;
+        var defaults = repositoryLocator.CatalogueDbContext;
         var loggingServer = defaults.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID) ??
                             throw new NotSupportedException(
                                 "No default logging server specified, you must specify one in ");
@@ -54,7 +54,7 @@ public class CacheRunner : Runner
                 var forkListener = new ForkDataLoadEventListener(toLog, listener);
                 try
                 {
-                    var cachingHost = new CachingHost(repositoryLocator.CatalogueRepository)
+                    var cachingHost = new CachingHost(repositoryLocator.CatalogueDbContext)
                     {
                         RetryMode = _options.RetryMode,
                         CacheProgress = cp, //run the cp

@@ -12,6 +12,7 @@ using Rdmp.Core.Caching.Pipeline;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.DataFlowPipeline;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Progress;
@@ -33,7 +34,7 @@ public class CachingHost
     /// </summary>
     public bool RetryMode { get; set; }
 
-    private readonly ICatalogueRepository _repository;
+    private readonly RDMPDbContext _catalogueDbContext;
 
     // this is more because we can't retrieve CacheWindows from LoadProgress (yet)
     private List<PermissionWindowCacheDownloader> _downloaders;
@@ -45,12 +46,12 @@ public class CachingHost
     public bool TerminateIfOutsidePermissionWindow { get; set; }
 
     /// <summary>
-    /// Creates a new <see cref="CachingHost"/> connected to the RDMP <paramref name="repository"/>.
+    /// Creates a new <see cref="CachingHost"/> connected to the RDMP <paramref  name="catalogueDbContext"/>.
     /// </summary>
-    /// <param name="repository"></param>
-    public CachingHost(RdmpDbContext catalogueDbContext)
+    /// <param  name="catalogueDbContext"></param>
+    public CachingHost(RDMPDbContext catalogueDbContext)
     {
-        _repository = repository;
+        _catalogueDbContext = catalogueDbContext;
         RetryMode = false;
     }
 

@@ -5,11 +5,12 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework;
 
 namespace Rdmp.Core.Repositories.Managers;
 
 /// <summary>
-/// Subcomponent of <see cref="ICatalogueRepository"/> which manages persisting / editing which
+/// Subcomponent of <see cref="RDMPDbContext"/> which manages persisting / editing which
 /// <see cref="IFilter"/> belong in which <see cref="IContainer"/> etc.
 /// </summary>
 public interface IFilterManager

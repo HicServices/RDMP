@@ -20,9 +20,9 @@ public abstract class AutomationCommandExecution : BasicCommandExecution
     public static readonly string AutomationServiceExecutable =
         Environment.OSVersion.Platform == PlatformID.Win32NT ? "rdmp.exe" : "rdmp";
 
-    private readonly TableRepository _cataTableRepo;
-    private readonly TableRepository _dataExportTableRepo;
-    private readonly YamlRepository _yamlRepository;
+    //private readonly TableRepository _cataTableRepo;
+    //private readonly TableRepository _dataExportTableRepo;
+    //private readonly YamlRepository _yamlRepository;
 
 
     protected AutomationCommandExecution(IBasicActivateItems activator, Func<RDMPCommandLineOptions> commandGetter) :
@@ -32,12 +32,12 @@ public abstract class AutomationCommandExecution : BasicCommandExecution
 
         // repository locator must be one of these types for us to properly assemble
         // CLI args
-        _cataTableRepo = activator.RepositoryLocator.CatalogueDbContext as TableRepository;
-        _yamlRepository = activator.RepositoryLocator.CatalogueDbContext as YamlRepository;
-        _dataExportTableRepo = activator.RepositoryLocator.DataExportRepository as TableRepository;
+        //_cataTableRepo = activator.RepositoryLocator.CatalogueDbContext as TableRepository;
+        //_yamlRepository = activator.RepositoryLocator.CatalogueDbContext as YamlRepository;
+        //_dataExportTableRepo = activator.RepositoryLocator.CatalogueDbContext as TableRepository;
 
-        if (_yamlRepository == null && (_cataTableRepo == null || _dataExportTableRepo == null))
-            SetImpossible("Current repository is not not TableRepository/YamlRepository");
+        //if (_yamlRepository == null && (_cataTableRepo == null || _dataExportTableRepo == null))
+        //    SetImpossible("Current repository is not not TableRepository/YamlRepository");
     }
 
     /// <summary>
@@ -63,19 +63,19 @@ public abstract class AutomationCommandExecution : BasicCommandExecution
             return;
 
         // if backing database uses a directory
-        if (_yamlRepository != null)
-        {
-            // assemble CLI args that also say to use a directory
-            options.Dir = _yamlRepository.Directory.FullName;
-            return;
-        }
+        //if (_yamlRepository != null)
+        //{
+        //    // assemble CLI args that also say to use a directory
+        //    //options.Dir = _yamlCatalogueDbContext.Directory.FullName;
+        //    return;
+        //}
 
         // if backing database uses a specific connection string
         // then use the same connection string for CLI args
-        if (string.IsNullOrWhiteSpace(options.CatalogueConnectionString))
-            options.CatalogueConnectionString = _cataTableRepo.ConnectionStringBuilder.ConnectionString;
+        //if (string.IsNullOrWhiteSpace(options.CatalogueConnectionString))
+        //    options.CatalogueConnectionString = _cataTableRepo.ConnectionStringBuilder.ConnectionString;
 
-        if (string.IsNullOrWhiteSpace(options.DataExportConnectionString))
-            options.DataExportConnectionString = _dataExportTableRepo.ConnectionStringBuilder.ConnectionString;
+        //if (string.IsNullOrWhiteSpace(options.DataExportConnectionString))
+        //    options.DataExportConnectionString = _dataExportTableRepo.ConnectionStringBuilder.ConnectionString;
     }
 }

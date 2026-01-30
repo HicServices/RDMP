@@ -137,7 +137,7 @@ public class ValidationXMLObscureDependencyFinderTests : DatabaseTests
 
         //there should be all the obscure dependencies we need done with only the first call to this function
         var numberAfterFirstRun =
-            ((CatalogueObscureDependencyFinder)CatalogueRepository.ObscureDependencyFinder)
+            ((CatalogueObscureDependencyFinder)CatalogueDbContext.ObscureDependencyFinder)
             .OtherDependencyFinders.Count;
 
         startup.DoStartup(IgnoreAllErrorsCheckNotifier.Instance);
@@ -145,7 +145,7 @@ public class ValidationXMLObscureDependencyFinderTests : DatabaseTests
         startup.DoStartup(IgnoreAllErrorsCheckNotifier.Instance);
 
         //there should not be any replication! and doubling SetUp!
-        Assert.That(((CatalogueObscureDependencyFinder)CatalogueRepository.ObscureDependencyFinder)
+        Assert.That(((CatalogueObscureDependencyFinder)CatalogueDbContext.ObscureDependencyFinder)
             .OtherDependencyFinders, Has.Count.EqualTo(numberAfterFirstRun));
     }
 

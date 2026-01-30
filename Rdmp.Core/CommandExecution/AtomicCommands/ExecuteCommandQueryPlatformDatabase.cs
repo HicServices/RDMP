@@ -11,6 +11,7 @@ using FAnsi.Discovery;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Databases;
 using Rdmp.Core.DataViewing;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.Repositories;
@@ -55,7 +56,7 @@ public class ExecuteCommandQueryPlatformDatabase : ExecuteCommandViewDataBase
 
         if (patcherType == typeof(DataExportPatcher))
         {
-            db = GetDatabase(BasicActivator.RepositoryLocator.DataExportRepository);
+            db = GetDatabase(BasicActivator.RepositoryLocator.CatalogueDbContext);
 
             _query ??= "Select * from Project";
             _table = db?.ExpectTable("Project");
@@ -100,9 +101,9 @@ public class ExecuteCommandQueryPlatformDatabase : ExecuteCommandViewDataBase
     }
 
 
-    private DiscoveredDatabase GetDatabase(IRepository repository)
+    private DiscoveredDatabase GetDatabase(RDMPDbContext catalogueDbContext)
     {
-        if (repository is TableRepository tableRepo) return tableRepo.DiscoveredServer?.GetCurrentDatabase();
+        //if (repository is TableRepository tableRepo) return tableRepo.DiscoveredServer?.GetCurrentDatabase();
 
         SetImpossible("Repository was not a database repo");
         return null;

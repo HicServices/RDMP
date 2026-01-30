@@ -59,7 +59,7 @@ public class RemoteDatabaseAttacherTests : DatabaseTests
         attacher.LoadRawColumnsOnly = scenario is Scenario.AllRawColumns or Scenario.MissingPreLoadDiscardedColumn;
         attacher.RemoteSource = externalServer;
 
-        var lm = new LogManager(CatalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID));
+        var lm = new LogManager(CatalogueDbContext.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID));
         lm.CreateNewLoggingTaskIfNotExists("amagad");
         var dli = lm.CreateDataLoadInfo("amagad", "p", "a", "", true);
 
@@ -223,7 +223,7 @@ public class RemoteDatabaseAttacherTests : DatabaseTests
         }
 
 
-        var lm = new LogManager(CatalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID));
+        var lm = new LogManager(CatalogueDbContext.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID));
         lm.CreateNewLoggingTaskIfNotExists("amagad");
         var dli = lm.CreateDataLoadInfo("amagad", "p", "a", "", true);
 

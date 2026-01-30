@@ -37,8 +37,8 @@ public class ExtractableCohortCombineable : ICombineToMakeCommand
             return;
         }
 
-        CompatibleProjects =
-            extractableCohort.Repository.GetAllObjectsWhere<Project>("ProjectNumber", ExternalProjectNumber);
+        //CompatibleProjects =
+        //    extractableCohort.CatalogueDbContext.GetAllObjectsWhere<Project>("ProjectNumber", ExternalProjectNumber);
         CompatibleExtractionConfigurations = CompatibleProjects.SelectMany(p => p.ExtractionConfigurations).ToArray();
     }
 

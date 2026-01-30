@@ -15,6 +15,7 @@ using Rdmp.Core.DataExport;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
@@ -27,7 +28,6 @@ namespace Rdmp.Core.CohortCommitting.Pipeline;
 /// </summary>
 public sealed class CohortCreationRequest : PipelineUseCase, ICohortCreationRequest, ICanBeSummarised
 {
-    private readonly IDataExportRepository _repository;
 
     //for pipeline editing initialization when no known cohort is available
 
@@ -94,10 +94,12 @@ public sealed class CohortCreationRequest : PipelineUseCase, ICohortCreationRequ
 
     public string DescriptionForAuditLog { get; set; }
 
+    public RDMPDbContext CatalogueDbContext { get; set; }
+
     public CohortCreationRequest(IProject project, ICohortDefinition newCohortDefinition,
-        IDataExportRepository repository, string descriptionForAuditLog)
+        RDMPDbContext catalogueDbContext, string descriptionForAuditLog)
     {
-        _repository = repository;
+        CatalogueDbContext = catalogueDbContext;
         Project = project;
         NewCohortDefinition = newCohortDefinition;
 
@@ -115,7 +117,7 @@ public sealed class CohortCreationRequest : PipelineUseCase, ICohortCreationRequ
     /// <param name="configuration"></param>
     public CohortCreationRequest(ExtractionConfiguration configuration)
     {
-        _repository = (IDataExportRepository)configuration.Repository;
+        CatalogueDbContext = configuration.CatalogueDbContext;
 
         if (configuration.CohortIdentificationConfiguration_ID == null)
             throw new NotSupportedException(
@@ -206,7 +208,7 @@ public sealed class CohortCreationRequest : PipelineUseCase, ICohortCreationRequ
             throw new NotSupportedException(
                 "CohortCreationRequest cannot be imported because its ID is null, it is likely that it has not been pushed to the server yet");
 
-        var cohort = new ExtractableCohort(_repository, (ExternalCohortTable)NewCohortDefinition.LocationOfCohort,
+        var cohort = new ExtractableCohort(CatalogueDbContext, (ExternalCohortTable)NewCohortDefinition.LocationOfCohort,
             (int)NewCohortDefinition.ID);
         cohort.AppendToAuditLog(DescriptionForAuditLog);
 
@@ -224,7 +226,7 @@ public sealed class CohortCreationRequest : PipelineUseCase, ICohortCreationRequ
             var newId = cohort.ID;
 
             // ExtractionConfigurations that use the old (replaced) cohort
-            var liveUsers = _repository.GetAllObjects<ExtractionConfiguration>()
+            var liveUsers = CatalogueDbContext.GetAllObjects<ExtractionConfiguration>()
                 .Where(ec => ec.Cohort_ID == oldId && ec.IsReleased == false);
 
             foreach (var ec in liveUsers)

@@ -11,6 +11,7 @@ using Rdmp.Core.Caching.Requests;
 using Rdmp.Core.Caching.Requests.FetchRequestProvider;
 using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.DataFlowPipeline;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 
@@ -25,19 +26,19 @@ namespace Rdmp.Core.Caching;
 public class CustomDateCaching
 {
     private readonly ICacheProgress _cacheProgress;
-    private readonly ICatalogueRepository _catalogueRepository;
+    private readonly RDMPDbContext _catalogueDbContext;
 
-    public CustomDateCaching(ICacheProgress cacheProgress, ICatalogueRepository catalogueRepository)
+    public CustomDateCaching(ICacheProgress cacheProgress, RDMPDbContext catalogueDbContext)
     {
         _cacheProgress = cacheProgress;
-        _catalogueRepository = catalogueRepository;
+        _catalogueDbContext = catalogueDbContext;
     }
 
     public Task Fetch(DateTime startDate, DateTime endDate, GracefulCancellationToken token,
         IDataLoadEventListener listener, bool ignorePermissionWindow = false)
     {
         var dateToRetrieve = new DateTime(startDate.Year, startDate.Month, startDate.Day);
-        var initialFetchRequest = new BackfillCacheFetchRequest(_catalogueRepository, dateToRetrieve)
+        var initialFetchRequest = new BackfillCacheFetchRequest(_catalogueDbContext, dateToRetrieve)
         {
             CacheProgress = _cacheProgress,
             ChunkPeriod = _cacheProgress.ChunkPeriod

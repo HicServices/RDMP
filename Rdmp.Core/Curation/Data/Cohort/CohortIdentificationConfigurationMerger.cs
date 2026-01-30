@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 
@@ -19,11 +20,11 @@ namespace Rdmp.Core.Curation.Data.Cohort;
 /// </summary>
 public class CohortIdentificationConfigurationMerger
 {
-    private readonly ICatalogueRepository _repository;
+    private readonly RDMPDbContext _catalogueDbContext;
 
-    public CohortIdentificationConfigurationMerger(RdmpDbContext catalogueDbContext)
+    public CohortIdentificationConfigurationMerger(RDMPDbContext catalogueDbContext)
     {
-        _repository = repository;
+        _catalogueDbContext = catalogueDbContext;
     }
 
     /// <summary>
@@ -49,43 +50,43 @@ public class CohortIdentificationConfigurationMerger
             throw new Exception("Error during pre merge cloning stage, no merge will be attempted", ex);
         }
 
-        using (_repository.BeginNewTransaction())
-        {
-            // Create a new master configuration
-            var cicMaster = new CohortIdentificationConfiguration(_repository,
-                $"Merged cics (IDs {string.Join(",", cics.Select(c => c.ID))})");
+        //using (_catalogueDbContext.BeginNewTransaction())
+        //{
+        //    // Create a new master configuration
+        var cicMaster = new CohortIdentificationConfiguration(_catalogueDbContext,
+            $"Merged cics (IDs {string.Join(",", cics.Select(c => c.ID))})");
 
-            // With a single top level container with the provided operation
-            cicMaster.CreateRootContainerIfNotExists();
-            var rootContainer = cicMaster.RootCohortAggregateContainer;
-            rootContainer.Operation = operation;
-            rootContainer.SaveToDatabase();
+        //    // With a single top level container with the provided operation
+        //    cicMaster.CreateRootContainerIfNotExists();
+        //    var rootContainer = cicMaster.RootCohortAggregateContainer;
+        //    rootContainer.Operation = operation;
+        //    rootContainer.SaveToDatabase();
 
-            //Grab the root container of each of the input cics
-            foreach (var cic in cicClones)
-            {
-                var container = cic.RootCohortAggregateContainer;
+        //    //Grab the root container of each of the input cics
+        //    foreach (var cic in cicClones)
+        //    {
+        //        var container = cic.RootCohortAggregateContainer;
 
-                //clear them to avoid dual parentage
-                cic.RootCohortAggregateContainer_ID = null;
-                cic.SaveToDatabase();
+        //        //clear them to avoid dual parentage
+        //        cic.RootCohortAggregateContainer_ID = null;
+        //        cic.SaveToDatabase();
 
-                //add to the new master cic root container
-                rootContainer.AddChild(container);
+        //        //add to the new master cic root container
+        //        rootContainer.AddChild(container);
 
-                // Make the new name of all the AggregateConfigurations match the new master cic
-                foreach (var child in container.GetAllAggregateConfigurationsRecursively())
-                    EnsureNamingConvention(cicMaster, child);
+        //        // Make the new name of all the AggregateConfigurations match the new master cic
+        //        foreach (var child in container.GetAllAggregateConfigurationsRecursively())
+        //            EnsureNamingConvention(cicMaster, child);
 
-                // Delete the old now empty clones
-                cic.DeleteInDatabase();
-            }
+        //        // Delete the old now empty clones
+        //        cic.DeleteInDatabase();
+        //    }
 
-            //finish transaction
-            _repository.EndTransaction(true);
+        //    //finish transaction
+        //    _catalogueDbContext.EndTransaction(true);
 
-            return cicMaster;
-        }
+        return cicMaster;
+        //}
     }
 
     /// <summary>
@@ -111,31 +112,31 @@ public class CohortIdentificationConfigurationMerger
         }
 
 
-        using (_repository.BeginNewTransaction())
-        {
-            //Grab the root container of each of the input cics
-            foreach (var cic in cicClones)
-            {
-                var container = cic.RootCohortAggregateContainer;
+        //using (_catalogueDbContext.BeginNewTransaction())
+        //{
+        //    //Grab the root container of each of the input cics
+        //    foreach (var cic in cicClones)
+        //    {
+        //        var container = cic.RootCohortAggregateContainer;
 
-                //clear them to avoid dual parentage
-                cic.RootCohortAggregateContainer_ID = null;
-                cic.SaveToDatabase();
+        //        //clear them to avoid dual parentage
+        //        cic.RootCohortAggregateContainer_ID = null;
+        //        cic.SaveToDatabase();
 
-                //add them into the target SET operation container you are importing into
-                into.AddChild(container);
+        //        //add them into the target SET operation container you are importing into
+        //        into.AddChild(container);
 
-                // Make the new name of all the AggregateConfigurations match the owner of import into container
-                foreach (var child in container.GetAllAggregateConfigurationsRecursively())
-                    EnsureNamingConvention(cicInto, child);
+        //        // Make the new name of all the AggregateConfigurations match the owner of import into container
+        //        foreach (var child in container.GetAllAggregateConfigurationsRecursively())
+        //            EnsureNamingConvention(cicInto, child);
 
-                // Delete the old now empty clones
-                cic.DeleteInDatabase();
-            }
+        //        // Delete the old now empty clones
+        //        cic.DeleteInDatabase();
+        //    }
 
-            //finish transaction
-            _repository.EndTransaction(true);
-        }
+        //    //finish transaction
+        //    _catalogueDbContext.EndTransaction(true);
+        //}
     }
 
 
@@ -183,35 +184,35 @@ public class CohortIdentificationConfigurationMerger
             throw new Exception("Error during pre merge cloning stage, no UnMerge will be attempted", ex);
         }
 
-        using (_repository.BeginNewTransaction())
-        {
-            // For each of these
-            foreach (var subContainer in rootContainer.GetSubContainers().OrderBy(c => c.Order))
-            {
-                // create a new config
-                var newCic = new CohortIdentificationConfiguration(_repository,
-                    $"Un Merged {subContainer.Name} ({subContainer.ID}) ");
+        //using (_catalogueDbContext.BeginNewTransaction())
+        //{
+        //    // For each of these
+        //    foreach (var subContainer in rootContainer.GetSubContainers().OrderBy(c => c.Order))
+        //    {
+        //        // create a new config
+        //        var newCic = new CohortIdentificationConfiguration(_repository,
+        //            $"Un Merged {subContainer.Name} ({subContainer.ID}) ");
 
-                //take the container we are splitting out
-                subContainer.MakeIntoAnOrphan();
+        //        //take the container we are splitting out
+        //        subContainer.MakeIntoAnOrphan();
 
-                //make it the root container of the new cic
-                newCic.RootCohortAggregateContainer_ID = subContainer.ID;
-                newCic.SaveToDatabase();
+        //        //make it the root container of the new cic
+        //        newCic.RootCohortAggregateContainer_ID = subContainer.ID;
+        //        newCic.SaveToDatabase();
 
-                // Make the new name of all the AggregateConfigurations match the new cic
-                foreach (var child in subContainer.GetAllAggregateConfigurationsRecursively())
-                    EnsureNamingConvention(newCic, child);
+        //        // Make the new name of all the AggregateConfigurations match the new cic
+        //        foreach (var child in subContainer.GetAllAggregateConfigurationsRecursively())
+        //            EnsureNamingConvention(newCic, child);
 
-                toReturn.Add(newCic);
-            }
+        //        toReturn.Add(newCic);
+        //    }
 
-            //Now delete the original clone that we unmerged the containers out of
-            cic.DeleteInDatabase();
+        //    //Now delete the original clone that we unmerged the containers out of
+        //    cic.DeleteInDatabase();
 
-            //finish transaction
-            _repository.EndTransaction(true);
-        }
+        //    //finish transaction
+        //    _catalogueDbContext.EndTransaction(true);
+        //}
 
         return toReturn.ToArray();
     }

@@ -25,7 +25,7 @@ public static class RdmpEnumerableExtensions
             {
                 if (element is IMapsDirectlyToDatabaseTable m)
                     throw new Exception(
-                        $"Failed to add {element} ({m.GetType().Name}, ID={m.ID}) to Dictionary.  Repository was {m.Repository}",
+                        $"Failed to add {element} ({m.GetType().Name}, ID={m.ID}) to Dictionary.  Repository was {m.CatalogueDbContext}",
                         ex);
 
                 throw new Exception($"Failed to add {element} to Dictionary", ex);

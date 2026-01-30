@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode;
@@ -60,7 +61,7 @@ public enum ExtractionJoinType
 
 /// <summary>
 /// Persistent reference in the Catalogue database that records how to join two TableInfos.  You can create instances of this class via JoinHelper (which is available as
-/// a property on ICatalogueRepository).  JoinInfos are processed by during query building in the following way:
+/// a property on RDMPDbContext).  JoinInfos are processed by during query building in the following way:
 /// 
 /// <para>1. Query builder identifies all the TablesUsedInQuery (from the columns selected, forced table inclusions etc)
 /// 2. Query builder identifies all available JoinInfos between the TablesUsedInQuery (See SqlQueryBuilderHelper.FindRequiredJoins)
@@ -120,11 +121,11 @@ public class JoinInfo : DatabaseEntity, IJoin, IHasDependencies
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public ColumnInfo ForeignKey => _foreignKey ??= Repository.GetObjectByID<ColumnInfo>(ForeignKey_ID);
+    public ColumnInfo ForeignKey => _foreignKey ??= CatalogueDbContext.GetObjectByID<ColumnInfo>(ForeignKey_ID);
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public ColumnInfo PrimaryKey => _primaryKey ??= Repository.GetObjectByID<ColumnInfo>(PrimaryKey_ID);
+    public ColumnInfo PrimaryKey => _primaryKey ??= CatalogueDbContext.GetObjectByID<ColumnInfo>(PrimaryKey_ID);
 
     #endregion
 
@@ -135,9 +136,9 @@ public class JoinInfo : DatabaseEntity, IJoin, IHasDependencies
     /// <summary>
     /// Constructor to be used to create already existing JoinInfos out of the database only.
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="r"></param>
-    internal JoinInfo(IRepository repository, DbDataReader r) : base(repository, r)
+    internal JoinInfo(RDMPDbContext catalogueDbContext, DbDataReader r) :base(catalogueDbContext, r)
     {
         ForeignKey_ID = Convert.ToInt32(r["ForeignKey_ID"]);
         PrimaryKey_ID = Convert.ToInt32(r["PrimaryKey_ID"]);
@@ -154,7 +155,7 @@ public class JoinInfo : DatabaseEntity, IJoin, IHasDependencies
     }
 
 
-    public JoinInfo(RdmpDbContext catalogueDbContext, ColumnInfo foreignKey, ColumnInfo primaryKey,
+    public JoinInfo(RDMPDbContext catalogueDbContext, ColumnInfo foreignKey, ColumnInfo primaryKey,
         ExtractionJoinType type, string collation)
     {
         if (foreignKey.ID == primaryKey.ID)
@@ -163,13 +164,13 @@ public class JoinInfo : DatabaseEntity, IJoin, IHasDependencies
         if (foreignKey.TableInfo_ID == primaryKey.TableInfo_ID)
             throw new ArgumentException("Join Key 1 and Join Key 2 cannot be from the same table");
 
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "ForeignKey_ID", foreignKey.ID },
-            { "PrimaryKey_ID", primaryKey.ID },
-            { "ExtractionJoinType", type.ToString() },
-            { "Collation", collation }
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "ForeignKey_ID", foreignKey.ID },
+        //    { "PrimaryKey_ID", primaryKey.ID },
+        //    { "ExtractionJoinType", type.ToString() },
+        //    { "Collation", collation }
+        //});
     }
 
     /// <inheritdoc/>
@@ -250,6 +251,6 @@ public class JoinInfo : DatabaseEntity, IJoin, IHasDependencies
     public IHasDependencies[] GetObjectsDependingOnThis() => Array.Empty<IHasDependencies>();
 
     /// <inheritdoc/>
-    public string GetCustomJoinSql() => CatalogueRepository.GetExtendedProperties(ExtendedProperty.CustomJoinSql, this)
-        .FirstOrDefault()?.Value;
+    public string GetCustomJoinSql() => "";// CatalogueDbContext.GetExtendedProperties(ExtendedProperty.CustomJoinSql, this)
+        //.FirstOrDefault()?.Value;
 }

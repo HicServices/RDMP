@@ -9,6 +9,7 @@ using System.Data.Common;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.QueryBuilding.SyntaxChecking;
@@ -74,7 +75,7 @@ public class DeployedExtractionFilterParameter : DatabaseEntity, ISqlParameter
     /// <inheritdoc cref="ExtractionFilter_ID"/>
     [NoMappingToDatabase]
     public DeployedExtractionFilter ExtractionFilter =>
-        Repository.GetObjectByID<DeployedExtractionFilter>(ExtractionFilter_ID);
+        CatalogueDbContext.GetObjectByID<DeployedExtractionFilter>(ExtractionFilter_ID);
 
     #endregion
 
@@ -85,26 +86,26 @@ public class DeployedExtractionFilterParameter : DatabaseEntity, ISqlParameter
     /// <summary>
     /// Creates a new parameter in the metadata database.
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="parameterSQL">Declaration SQL for the parameter e.g. "DECLARE @bob as varchar(10)"</param>
     /// <param name="parent"></param>
-    public DeployedExtractionFilterParameter(IDataExportRepository repository, string parameterSQL, IFilter parent)
+    public DeployedExtractionFilterParameter(RDMPDbContext catalogueDbContext, string parameterSQL, IFilter parent)
     {
-        Repository = repository;
+       CatalogueDbContext = catalogueDbContext;
 
-        Repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "ParameterSQL", parameterSQL },
-            { "ExtractionFilter_ID", parent.ID }
-        });
+        //CatalogueDbContext.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "ParameterSQL", parameterSQL },
+        //    { "ExtractionFilter_ID", parent.ID }
+        //});
     }
 
     /// <summary>
     /// Reads an existing parameter out of the database
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="r"></param>
-    internal DeployedExtractionFilterParameter(IDataExportRepository repository, DbDataReader r) : base(repository, r)
+    internal DeployedExtractionFilterParameter(RDMPDbContext catalogueDbContext, DbDataReader r) :base(catalogueDbContext, r)
     {
         ExtractionFilter_ID = int.Parse(r["ExtractionFilter_ID"].ToString());
         ParameterSQL = r["ParameterSQL"] as string;
@@ -133,11 +134,11 @@ public class DeployedExtractionFilterParameter : DatabaseEntity, ISqlParameter
 
     /// <inheritdoc/>
     public IMapsDirectlyToDatabaseTable GetOwnerIfAny() =>
-        Repository.GetObjectByID<DeployedExtractionFilter>(ExtractionFilter_ID);
+        CatalogueDbContext.GetObjectByID<DeployedExtractionFilter>(ExtractionFilter_ID);
 
     public DeployedExtractionFilterParameter ShallowClone(DeployedExtractionFilter into)
     {
-        var clone = new DeployedExtractionFilterParameter(DataExportRepository, ParameterSQL, into);
+        var clone = new DeployedExtractionFilterParameter(CatalogueDbContext, ParameterSQL, into);
         CopyShallowValuesTo(clone);
         return clone;
     }

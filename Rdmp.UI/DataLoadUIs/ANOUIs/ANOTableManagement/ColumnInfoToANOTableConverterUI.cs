@@ -153,8 +153,8 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
 
         ddExternalDatabaseServer.Items.Clear();
 
-        ddExternalDatabaseServer.Items.AddRange(Activator.RepositoryLocator.CatalogueDbContext
-            .GetAllDatabases<ANOStorePatcher>());
+        //ddExternalDatabaseServer.Items.AddRange(Activator.RepositoryLocator.CatalogueDbContext
+        //    .GetAllDatabases<ANOStorePatcher>());
 
         var defaultServer = Activator.ServerDefaults.GetDefaultFor(PermissableDefaults.ANOStore);
 

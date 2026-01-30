@@ -10,6 +10,7 @@ using System.Data.Common;
 using System.Threading.Tasks;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
@@ -93,7 +94,7 @@ public class ExtractionProgress : DatabaseEntity, IExtractionProgress
     /// <inheritdoc/>
     [NoMappingToDatabase]
     public ISelectedDataSets SelectedDataSets =>
-        DataExportRepository.GetObjectByID<SelectedDataSets>(SelectedDataSets_ID);
+        CatalogueDbContext.GetObjectByID<SelectedDataSets>(SelectedDataSets_ID);
 
     public static void ValidateSelectedColumn(ICheckNotifier notifier, ExtractionInformation ei)
     {
@@ -129,7 +130,7 @@ public class ExtractionProgress : DatabaseEntity, IExtractionProgress
     /// <inheritdoc/>
     [NoMappingToDatabase]
     public ExtractionInformation ExtractionInformation =>
-        DataExportRepository.CatalogueRepository.GetObjectByID<ExtractionInformation>(ExtractionInformation_ID);
+        CatalogueDbContext.GetObjectByID<ExtractionInformation>(ExtractionInformation_ID);
 
     #endregion
 
@@ -137,25 +138,25 @@ public class ExtractionProgress : DatabaseEntity, IExtractionProgress
     {
     }
 
-    public ExtractionProgress(IDataExportRepository repository, ISelectedDataSets sds, DateTime? startDate,
+    public ExtractionProgress(RDMPDbContext catalogueDbContext, ISelectedDataSets sds, DateTime? startDate,
         DateTime? endDate, int numberOfDaysPerBatch, string name, int extractionInformation_ID)
     {
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "SelectedDataSets_ID", sds.ID },
-            { "ExtractionInformation_ID", extractionInformation_ID },
-            { "NumberOfDaysPerBatch", numberOfDaysPerBatch },
-            { "StartDate", startDate },
-            { "EndDate", endDate },
-            { "Name", name },
-            { "Retry", RetryStrategy.NoRetry }
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "SelectedDataSets_ID", sds.ID },
+        //    { "ExtractionInformation_ID", extractionInformation_ID },
+        //    { "NumberOfDaysPerBatch", numberOfDaysPerBatch },
+        //    { "StartDate", startDate },
+        //    { "EndDate", endDate },
+        //    { "Name", name },
+        //    { "Retry", RetryStrategy.NoRetry }
+        //});
 
-        if (ID == 0 || Repository != repository)
+        if (ID == 0 || CatalogueDbContext != catalogueDbContext)
             throw new ArgumentException("Repository failed to properly hydrate this class");
     }
 
-    public ExtractionProgress(IDataExportRepository repository, ISelectedDataSets sds)
+    public ExtractionProgress(RDMPDbContext catalogueDbContext, ISelectedDataSets sds)
     {
         var cata = sds.GetCatalogue();
         var coverageColId = cata?.TimeCoverage_ExtractionInformation_ID;
@@ -167,20 +168,20 @@ public class ExtractionProgress : DatabaseEntity, IExtractionProgress
             throw new ArgumentException(
                 $"Cannot create ExtractionProgress because Catalogue {cata} does not have a time coverage column");
 
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "SelectedDataSets_ID", sds.ID },
-            { "ExtractionInformation_ID", coverageColId },
-            { "NumberOfDaysPerBatch", 365 },
-            { "Name", $"ExtractionProgress{Guid.NewGuid()}" },
-            { "Retry", RetryStrategy.NoRetry }
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "SelectedDataSets_ID", sds.ID },
+        //    { "ExtractionInformation_ID", coverageColId },
+        //    { "NumberOfDaysPerBatch", 365 },
+        //    { "Name", $"ExtractionProgress{Guid.NewGuid()}" },
+        //    { "Retry", RetryStrategy.NoRetry }
+        //});
 
-        if (ID == 0 || Repository != repository)
-            throw new ArgumentException("Repository failed to properly hydrate this class");
+        //if (ID == 0 || Repository != repository)
+        //    throw new ArgumentException("Repository failed to properly hydrate this class");
     }
 
-    public ExtractionProgress(IDataExportRepository repository, DbDataReader r) : base(repository, r)
+    public ExtractionProgress(RDMPDbContext catalogueDbContext, DbDataReader r) :base(catalogueDbContext, r)
     {
         SelectedDataSets_ID = Convert.ToInt32(r["SelectedDataSets_ID"]);
         ProgressDate = ObjectToNullableDateTime(r["ProgressDate"]);

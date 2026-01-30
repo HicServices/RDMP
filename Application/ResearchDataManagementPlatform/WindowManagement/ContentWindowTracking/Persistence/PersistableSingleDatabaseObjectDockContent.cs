@@ -57,7 +57,7 @@ public class PersistableSingleDatabaseObjectDockContent : RDMPSingleControlTab
     protected override string GetPersistString()
     {
         const char s = PersistStringHelper.Separator;
-        return Prefix + s + Control.GetType().FullName + s + DatabaseObject.Repository.GetType().FullName + s +
+        return Prefix + s + Control.GetType().FullName + s + DatabaseObject.CatalogueDbContext.GetType().FullName + s +
                DatabaseObject.GetType().FullName + s + DatabaseObject.ID;
     }
 

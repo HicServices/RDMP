@@ -83,7 +83,7 @@ public class ExecuteCommandAddNewSupportingDocument : BasicCommandExecution, IAt
         var created = new List<SupportingDocument>();
         foreach (var f in files)
         {
-            var doc = new SupportingDocument((ICatalogueRepository)c.Repository, c, f.Name)
+            var doc = new SupportingDocument(c.CatalogueDbContext, c, f.Name)
             {
                 URL = new Uri(f.FullName)
             };

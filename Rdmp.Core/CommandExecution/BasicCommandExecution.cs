@@ -14,6 +14,7 @@ using FAnsi.Discovery;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Interactive.Picking;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.ReusableLibraryCode;
@@ -292,17 +293,17 @@ public abstract class BasicCommandExecution : IAtomicCommand
     /// Prompts user to select 1 object of type T from all the ones stored in the repository provided
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="initialSearchText"></param>
-    /// <param name="allowAutoSelect">True to silently auto select the object if there are only 1 compatible object in the <paramref name="repository"/></param>
+    /// <param name="allowAutoSelect">True to silently auto select the object if there are only 1 compatible object in the <paramref name="catalogueDbContext"/></param>
     /// <returns></returns>
-    protected T SelectOne<T>(IRepository repository, string initialSearchText = null, bool allowAutoSelect = false)
+    protected T SelectOne<T>(RDMPDbContext catalogueDbContext, string initialSearchText = null, bool allowAutoSelect = false)
         where T : DatabaseEntity =>
         SelectOne(new DialogArgs
         {
             InitialSearchText = initialSearchText,
             AllowAutoSelect = allowAutoSelect
-        }, repository.GetAllObjects<T>().ToList(), out var answer)
+        }, catalogueDbContext.GetAllObjects<T>().ToList(), out var answer)
             ? answer
             : null;
 
@@ -310,18 +311,18 @@ public abstract class BasicCommandExecution : IAtomicCommand
     /// Prompts user to select 1 of the objects of type T from all the ones stored in the repository provided, returns true if they made a non null selection
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="selected"></param>
     /// <param name="initialSearchText"></param>
-    /// <param name="allowAutoSelect">True to silently auto select the object if there are only 1 compatible object in the <paramref name="repository"/></param>
+    /// <param name="allowAutoSelect">True to silently auto select the object if there are only 1 compatible object in the <paramref name="catalogueDbContext"/></param>
     /// <returns></returns>
-    protected bool SelectOne<T>(IRepository repository, out T selected, string initialSearchText = null,
+    protected bool SelectOne<T>(RDMPDbContext catalogueDbContext, out T selected, string initialSearchText = null,
         bool allowAutoSelect = false) where T : DatabaseEntity =>
         SelectOne(new DialogArgs
         {
             InitialSearchText = initialSearchText,
             AllowAutoSelect = allowAutoSelect
-        }, repository.GetAllObjects<T>().ToList(), out selected);
+        }, catalogueDbContext.GetAllObjects<T>().ToList(), out selected);
 
     /// <summary>
     /// Prompts user to select 1 of the objects of type T in the list you provide, returns true if they made a non null selection
@@ -355,16 +356,16 @@ public abstract class BasicCommandExecution : IAtomicCommand
     }
 
     /// <summary>
-    /// Prompts user to select 1 of the objects of type T from the objects existing in <paramref name="repository"/>, returns true if they made a non null selection
+    /// Prompts user to select 1 of the objects of type T from the objects existing in <paramref name="catalogueDbContext"/>, returns true if they made a non null selection
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="args"></param>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="selected"></param>
     /// <returns></returns>
-    protected bool SelectOne<T>(DialogArgs args, IRepository repository, out T selected) where T : DatabaseEntity
+    protected bool SelectOne<T>(DialogArgs args, RDMPDbContext catalogueDbContext, out T selected) where T : DatabaseEntity
     {
-        selected = (T)BasicActivator.SelectOne(args, repository.GetAllObjects<T>().ToArray());
+        selected = (T)BasicActivator.SelectOne(args, catalogueDbContext.GetAllObjects<T>().ToArray());
         return selected != null;
     }
 

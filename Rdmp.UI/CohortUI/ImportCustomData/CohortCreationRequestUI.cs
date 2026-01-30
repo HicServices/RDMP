@@ -35,7 +35,7 @@ namespace Rdmp.UI.CohortUI.ImportCustomData;
 public partial class CohortCreationRequestUI : RDMPForm
 {
     private readonly IExternalCohortTable _target;
-    private IDataExportRepository _repository;
+    //private IDataExportRepository _repository;
 
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -50,24 +50,24 @@ public partial class CohortCreationRequestUI : RDMPForm
     {
         _target = target;
 
-        InitializeComponent();
+        //InitializeComponent();
 
-        if (_target == null)
-            return;
+        //if (_target == null)
+        //    return;
 
-        _repository = (IDataExportRepository)_target.Repository;
+        //_repository = (IDataExportRepository)_target.Repository;
 
-        lblExternalCohortTable.Text = _target.ToString();
+        //lblExternalCohortTable.Text = _target.ToString();
 
-        SetProject(project);
+        //SetProject(project);
 
-        pbProject.Image = CatalogueIcons.Project.ImageToBitmap();
-        pbCohortSource.Image = CatalogueIcons.ExternalCohortTable.ImageToBitmap();
-        taskDescriptionLabel1.SetupFor(new DialogArgs
-        {
-            TaskDescription =
-                "Describe the cohort you are trying to create.  Which Project it will be extracted with and which ExternalCohortTable it should be stored in."
-        });
+        //pbProject.Image = CatalogueIcons.Project.ImageToBitmap();
+        //pbCohortSource.Image = CatalogueIcons.ExternalCohortTable.ImageToBitmap();
+        //taskDescriptionLabel1.SetupFor(new DialogArgs
+        //{
+        //    TaskDescription =
+        //        "Describe the cohort you are trying to create.  Which Project it will be extracted with and which ExternalCohortTable it should be stored in."
+        //});
     }
 
 
@@ -123,37 +123,37 @@ public partial class CohortCreationRequestUI : RDMPForm
         }
 
 
-        //construct the result
-        Result = new CohortCreationRequest(Project,
-            new CohortDefinition(null, name, version, (int)Project.ProjectNumber, _target),
-            (IDataExportRepository)Project.Repository, tbDescription.Text)
-        {
-            NewCohortDefinition =
-            {
-                CohortReplacedIfAny = ddExistingCohort.SelectedItem as ExtractableCohort
-            }
-        };
+//        //construct the result
+//        Result = new CohortCreationRequest(Project,
+//            new CohortDefinition(null, name, version, (int)Project.ProjectNumber, _target),
+//            (IDataExportRepository)Project.Repository, tbDescription.Text)
+//        {
+//            NewCohortDefinition =
+//            {
+//                CohortReplacedIfAny = ddExistingCohort.SelectedItem as ExtractableCohort
+//            }
+//        };
 
-        //see if it is passing checks
-        var notifier = new ToMemoryCheckNotifier();
-        Result.Check(notifier);
-        if (notifier.GetWorst() <= CheckResult.Warning)
-        {
-            DialogResult = DialogResult.OK;
-            Close();
-        }
-        else
-        {
-            var bads = notifier.Messages.Where(c => c.Result == CheckResult.Fail);
+//        //see if it is passing checks
+//        var notifier = new ToMemoryCheckNotifier();
+//        Result.Check(notifier);
+//        if (notifier.GetWorst() <= CheckResult.Warning)
+//        {
+//            DialogResult = DialogResult.OK;
+//            Close();
+//        }
+//        else
+//        {
+//            var bads = notifier.Messages.Where(c => c.Result == CheckResult.Fail);
 
-            WideMessageBox.Show("Checks Failed",
-                $@"Checks must pass before continuing:
-- {string.Join($"{Environment.NewLine}- ", bads.Select(b => b.Message))}");
+//            WideMessageBox.Show("Checks Failed",
+//                $@"Checks must pass before continuing:
+//- {string.Join($"{Environment.NewLine}- ", bads.Select(b => b.Message))}");
 
-            //if it is not passing checks display the results of the failing checking
-            ragSmiley1.Reset();
-            Result.Check(ragSmiley1);
-        }
+//            //if it is not passing checks display the results of the failing checking
+//            ragSmiley1.Reset();
+//            Result.Check(ragSmiley1);
+//        }
     }
 
     private void btnCancel_Click(object sender, EventArgs e)
@@ -271,20 +271,20 @@ public partial class CohortCreationRequestUI : RDMPForm
             ok.Anchor = AnchorStyles.Bottom;
             cancel.Anchor = AnchorStyles.Bottom;
 
-            var project = new Project(_repository, "New Project");
-            p.SetDatabaseObject(Activator, project);
-            var result = dialog.ShowDialog();
+            //var project = new Project(_repository, "New Project");
+            //p.SetDatabaseObject(Activator, project);
+            //var result = dialog.ShowDialog();
 
-            if (result == DialogResult.OK)
-            {
-                project.SaveToDatabase();
-                SetProject(project);
-                Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(project));
-            }
-            else
-            {
-                project.DeleteInDatabase();
-            }
+            //if (result == DialogResult.OK)
+            //{
+            //    project.SaveToDatabase();
+            //    SetProject(project);
+            //    Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(project));
+            //}
+            //else
+            //{
+            //    project.DeleteInDatabase();
+            //}
         }
         catch (Exception exception)
         {
@@ -325,12 +325,12 @@ public partial class CohortCreationRequestUI : RDMPForm
 
     private void btnExisting_Click(object sender, EventArgs e)
     {
-        if (Activator.SelectObject(new DialogArgs
-        {
-            TaskDescription =
-                    "Choose a Project which this cohort will be associated with.  This will set the cohorts ProjectNumber.  A cohort can only be extracted from a Project whose ProjectNumber matches the cohort (multiple Projects are allowed to have the same ProjectNumber)"
-        }, Activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>(), out var proj))
-            SetProject(proj);
+        //if (Activator.SelectObject(new DialogArgs
+        //{
+        //    TaskDescription =
+        //            "Choose a Project which this cohort will be associated with.  This will set the cohorts ProjectNumber.  A cohort can only be extracted from a Project whose ProjectNumber matches the cohort (multiple Projects are allowed to have the same ProjectNumber)"
+        //}, Activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Project>(), out var proj))
+        //    SetProject(proj);
     }
 
     private void tbSetProjectNumber_TextChanged(object sender, EventArgs e)

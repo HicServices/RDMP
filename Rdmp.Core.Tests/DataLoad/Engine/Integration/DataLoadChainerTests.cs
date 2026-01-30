@@ -95,7 +95,7 @@ if not exists (select * from sysobjects where name='DLCTest' and xtype='U')
             lmd.LocationOfExecutablesDirectory = Path.GetTempPath();
             lmd.LocationOfCacheDirectory = Path.GetTempPath();
             lmd.SaveToDatabase();
-            var loggingServer = CatalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
+            var loggingServer = CatalogueDbContext.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
             var logManager = new LogManager(loggingServer);
             logManager.CreateNewLoggingTaskIfNotExists(lmd.Name);
             cata.LoggingDataTask = lmd.Name;

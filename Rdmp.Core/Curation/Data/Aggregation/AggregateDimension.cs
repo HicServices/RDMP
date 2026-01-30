@@ -155,7 +155,7 @@ public class AggregateDimension : DatabaseEntity, ISaveable, IDeleteable, IColum
     /// Declares a new column in an <see cref="AggregateConfiguration"/> (GROUP BY query).  The new column will be based on the master Catalogue column
     /// (<see cref="ExtractionInformation"/>).
     /// </summary>
-    /// <param name="catalogueDbContext"></param>
+    /// <param  name="catalogueDbContext"></param>
     /// <param name="basedOnColumn"></param>
     /// <param name="configuration"></param>
     public AggregateDimension(RDMPDbContext catalogueDbContext, ExtractionInformation basedOnColumn,

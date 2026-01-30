@@ -12,6 +12,7 @@ using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 
@@ -54,7 +55,7 @@ public sealed class CreateTableFromAggregateUseCase : PipelineUseCase
         }
 
         AddInitializationObject(aggregateConfiguration);
-        AddInitializationObject(aggregateConfiguration.Repository);
+        AddInitializationObject(aggregateConfiguration.CatalogueDbContext);
         AddInitializationObject(table.Database);
 
         GenerateContext();
@@ -78,13 +79,13 @@ public sealed class CreateTableFromAggregateUseCase : PipelineUseCase
             typeof(AggregateConfiguration),
             typeof(ExtractableCohort),
             typeof(DiscoveredDatabase),
-            typeof(ICatalogueRepository)
+            typeof(RDMPDbContext),
         })
     {
         ExplicitSource = new AggregateConfigurationTableSource();
         GenerateContext();
     }
 
-    public static PipelineUseCase DesignTime(ICatalogueRepository catalogueRepository) =>
+    public static PipelineUseCase DesignTime(RDMPDbContext catalogueDbContext) =>
         new CreateTableFromAggregateUseCase();
 }

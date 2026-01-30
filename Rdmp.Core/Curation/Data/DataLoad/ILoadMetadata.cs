@@ -20,7 +20,6 @@ namespace Rdmp.Core.Curation.Data.DataLoad;
 /// </summary>
 public interface ILoadMetadata : INamed, ILoggedActivityRootObject
 {
-    ICatalogueRepository CatalogueRepository { get; }
 
     /// <summary>
     /// Data loads can be either one offs (e.g. load all csv files in ForLoading) or iterative (load all data from the cache between 2001-01-01 and 2002-01-01).

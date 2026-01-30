@@ -167,7 +167,7 @@ public class ColumnInfoANOPlan : ICheckable
         //if there is a single recommended anotable id amongst all columns with matching name featuring ano tables
         if (agreedAnoTableID.Length == 1)
         {
-            ANOTable = ColumnInfo.Repository.GetObjectByID<ANOTable>(agreedAnoTableID.Single().Value);
+            ANOTable = ColumnInfo.CatalogueDbContext.GetObjectByID<ANOTable>(agreedAnoTableID.Single().Value);
             Plan = Plan.ANO;
         }
     }

@@ -14,6 +14,7 @@ using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.Curation.FilterImporting.Construction;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
 using Rdmp.Core.QueryBuilding;
@@ -205,14 +206,14 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
         {
             //if there is an override
             if (OverrideFiltersByUsingParentAggregateConfigurationInstead_ID != null)
-                return Repository.GetObjectByID<AggregateConfiguration>(
+                return CatalogueDbContext.GetObjectByID<AggregateConfiguration>(
                     (int)OverrideFiltersByUsingParentAggregateConfigurationInstead_ID).RootFilterContainer;
             //return the overriding one
 
             //else return the actual root filter container or null if there isn't one
             return RootFilterContainer_ID == null
                 ? null
-                : Repository.GetObjectByID<AggregateFilterContainer>((int)RootFilterContainer_ID);
+                : CatalogueDbContext.GetObjectByID<AggregateFilterContainer>((int)RootFilterContainer_ID);
         }
     }
 
@@ -244,7 +245,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     /// Gets all parameters (e.g. @studyStartDate ) associated with this AggregateConfiguration (there might not be any).
     /// </summary>
     [NoMappingToDatabase]
-    public IEnumerable<AnyTableSqlParameter> Parameters => CatalogueRepository.GetAllParametersForParentTable(this);
+    public IEnumerable<AnyTableSqlParameter> Parameters => null;// CatalogueDbContext.GetAllParametersForParentTable(this);
 
     /// <inheritdoc cref="Parameters"/>
     public ISqlParameter[] GetAllParameters() => Parameters.ToArray();
@@ -255,7 +256,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     /// or there are other tables you want joined in addition the user can specify them in this property Populated via <see cref="AggregateForcedJoin"/>
     /// </summary>
     [NoMappingToDatabase]
-    public ITableInfo[] ForcedJoins => CatalogueRepository.AggregateForcedJoinManager.GetAllForcedJoinsFor(this);
+    public ITableInfo[] ForcedJoins => null;// CatalogueDbContext.AggregateForcedJoinManager.GetAllForcedJoinsFor(this);
 
     /// <summary>
     /// When an AggregateConfiguration is used in a cohort identification capacity it can have one or more 'patient index tables' defined e.g.
@@ -266,7 +267,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     /// for building its join.</para>
     /// </summary>
     [NoMappingToDatabase]
-    public JoinableCohortAggregateConfigurationUse[] PatientIndexJoinablesUsed => Repository
+    public JoinableCohortAggregateConfigurationUse[] PatientIndexJoinablesUsed => CatalogueDbContext
         .GetAllObjectsWithParent<JoinableCohortAggregateConfigurationUse>(this).ToArray();
 
     /// <summary>
@@ -289,7 +290,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     public AggregateDimension PivotDimension =>
         PivotOnDimensionID == null
             ? null
-            : Repository.GetObjectByID<AggregateDimension>((int)PivotOnDimensionID);
+            : CatalogueDbContext.GetObjectByID<AggregateDimension>((int)PivotOnDimensionID);
 
     public AggregateConfiguration()
     {
@@ -301,7 +302,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     public AggregateConfiguration OverrideFiltersByUsingParentAggregateConfigurationInstead =>
         _overrideFiltersByUsingParentAggregateConfigurationInsteadID == null
             ? null
-            : Repository.GetObjectByID<AggregateConfiguration>(
+            : CatalogueDbContext.GetObjectByID<AggregateConfiguration>(
                 (int)_overrideFiltersByUsingParentAggregateConfigurationInsteadID);
 
     #endregion
@@ -330,7 +331,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
 
         set
         {
-            CatalogueRepository.CohortContainerManager.SetOrder(this, value);
+            //CatalogueDbContext.CohortContainerManager.SetOrder(this, value);//todo
             _orderWithinKnownContainer = value;
         }
     }
@@ -343,28 +344,28 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     public bool IsCohortIdentificationAggregate => Name.StartsWith(CohortIdentificationConfiguration.CICPrefix);
 
     /// <summary>
-    /// Creates a new AggregateConfiguration (graph, cohort set or patient index table) in the ICatalogueRepository
+    /// Creates a new AggregateConfiguration (graph, cohort set or patient index table) in the RDMPDbContext
     /// . database associated with the provided Catalogue (dataset).
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param  name="catalogueDbContext"></param>
     /// <param name="catalogue"></param>
     /// <param name="name"></param>
-    public AggregateConfiguration(RdmpDbContext catalogueDbContext, ICatalogue catalogue, string name)
+    public AggregateConfiguration(RDMPDbContext catalogueDbContext, ICatalogue catalogue, string name)
     {
         //default values
         CountSQL = "count(*)";
         dtCreated = DateTime.Now;
 
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "Name", name },
-            { "Catalogue_ID", catalogue.ID }
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "Name", name },
+        //    { "Catalogue_ID", catalogue.ID }
+        //});
 
         ClearAllInjections();
     }
 
-    internal AggregateConfiguration(RdmpDbContext catalogueDbContext, DbDataReader r) : base(repository, r)
+    internal AggregateConfiguration(RDMPDbContext catalogueDbContext, DbDataReader r) : base(catalogueDbContext, r)
     {
         Name = r["Name"] as string;
         Description = r["Description"] as string;
@@ -401,7 +402,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     /// </summary>
     public void ReFetchOrder()
     {
-        _orderWithinKnownContainer = CatalogueRepository.CohortContainerManager.GetOrderIfExistsFor(this);
+        //_orderWithinKnownContainer = CatalogueDbContext.CohortContainerManager.GetOrderIfExistsFor(this);
     }
 
     private Lazy<JoinableCohortAggregateConfiguration> _knownJoinableCohortAggregateConfiguration;
@@ -422,11 +423,11 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     public void ClearAllInjections()
     {
         _knownJoinableCohortAggregateConfiguration = new Lazy<JoinableCohortAggregateConfiguration>(() =>
-            Repository.GetAllObjectsWithParent<JoinableCohortAggregateConfiguration>(this).SingleOrDefault());
+            CatalogueDbContext.GetAllObjectsWithParent<JoinableCohortAggregateConfiguration>(this).SingleOrDefault());
         _knownAggregateDimensions =
             new Lazy<AggregateDimension[]>(() =>
-                Repository.GetAllObjectsWithParent<AggregateDimension>(this).ToArray());
-        _knownCatalogue = new Lazy<Catalogue>(() => Repository.GetObjectByID<Catalogue>(Catalogue_ID));
+                CatalogueDbContext.GetAllObjectsWithParent<AggregateDimension>(this).ToArray());
+        _knownCatalogue = new Lazy<Catalogue>(() => CatalogueDbContext.GetObjectByID<Catalogue>(Catalogue_ID));
     }
 
     public void InjectKnown(AggregateDimension[] instance)
@@ -475,7 +476,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     public AggregateDimension AddDimension(ExtractionInformation basedOnColumn)
     {
         ClearAllInjections();
-        return new AggregateDimension((ICatalogueRepository)basedOnColumn.Repository, basedOnColumn, this);
+        return new AggregateDimension(CatalogueDbContext, basedOnColumn, this);
     }
 
     /// <summary>
@@ -533,7 +534,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     /// on non cohort identification AggregateConfigurations
     /// </summary>
     /// <returns></returns>
-    public AggregateTopX GetTopXIfAny() => Repository.GetAllObjectsWithParent<AggregateTopX>(this).SingleOrDefault();
+    public AggregateTopX GetTopXIfAny() => CatalogueDbContext.GetAllObjectsWithParent<AggregateTopX>(this).SingleOrDefault();
 
     /// <summary>
     /// Determines whether the AggregateConfiguration could be used in a <see cref="CohortIdentificationConfiguration"/> to identify a list of patients.  This will be true
@@ -606,7 +607,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     /// </summary>
     /// <returns></returns>
     public CohortAggregateContainer GetCohortAggregateContainerIfAny() =>
-        CatalogueRepository.CohortContainerManager.GetParent(this);
+        CatalogueDbContext.GetParent(this);
 
     /// <summary>
     /// All AggregateConfigurations have the potential a'Joinable Patient Index Table' (see AggregateConfiguration class documentation).  This method returns
@@ -631,7 +632,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
             return container.GetCohortIdentificationConfiguration();
 
         //it is not part of a container, maybe it is a joinable?
-        var joinable = Repository.GetAllObjectsWithParent<JoinableCohortAggregateConfiguration>(this).SingleOrDefault();
+        var joinable = CatalogueDbContext.GetAllObjectsWithParent<JoinableCohortAggregateConfiguration>(this).SingleOrDefault();
 
         //it is a joinable (Patient Index Table) so return it
         return joinable?.CohortIdentificationConfiguration;
@@ -644,7 +645,6 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     /// <returns></returns>
     public AggregateConfiguration CreateClone()
     {
-        var cataRepo = CatalogueRepository;
         var clone = ShallowClone();
 
         if (clone.PivotOnDimensionID != null)
@@ -652,7 +652,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
 
         foreach (var aggregateDimension in AggregateDimensions)
         {
-            var cloneDimension = new AggregateDimension((ICatalogueRepository)Repository,
+            var cloneDimension = new AggregateDimension(CatalogueDbContext,
                 aggregateDimension.ExtractionInformation, clone)
             {
                 Alias = aggregateDimension.Alias,
@@ -666,24 +666,24 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
         }
 
         //now clone its AggregateForcedJoins
-        foreach (var t in cataRepo.AggregateForcedJoinManager.GetAllForcedJoinsFor(this))
-            cataRepo.AggregateForcedJoinManager.CreateLinkBetween(clone, t);
+        //foreach (var t in CatalogueDbContext.AggregateForcedJoinManager.GetAllForcedJoinsFor(this))
+        //    cataRepo.AggregateForcedJoinManager.CreateLinkBetween(clone, t);
 
-        if (RootFilterContainer_ID != null)
-        {
-            var clonedContainerSet = RootFilterContainer.DeepCloneEntireTreeRecursivelyIncludingFilters();
-            clone.RootFilterContainer_ID = clonedContainerSet.ID;
-        }
+        //if (RootFilterContainer_ID != null)
+        //{
+        //    var clonedContainerSet = RootFilterContainer.DeepCloneEntireTreeRecursivelyIncludingFilters();
+        //    clone.RootFilterContainer_ID = clonedContainerSet.ID;
+        //}
 
-        foreach (var p in GetAllParameters())
-        {
-            var cloneP = new AnyTableSqlParameter(cataRepo, clone, p.ParameterSQL)
-            {
-                Comment = p.Comment,
-                Value = p.Value
-            };
-            cloneP.SaveToDatabase();
-        }
+        //foreach (var p in GetAllParameters())
+        //{
+        //    var cloneP = new AnyTableSqlParameter(CatalogueDbContext, clone, p.ParameterSQL)
+        //    {
+        //        Comment = p.Comment,
+        //        Value = p.Value
+        //    };
+        //    cloneP.SaveToDatabase();
+        //}
 
 
         clone.SaveToDatabase();
@@ -713,7 +713,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
 
         container?.RemoveChild(this);
 
-        var isAJoinable = Repository.GetAllObjectsWithParent<JoinableCohortAggregateConfiguration>(this)
+        var isAJoinable = CatalogueDbContext.GetAllObjectsWithParent<JoinableCohortAggregateConfiguration>(this)
             .SingleOrDefault();
         if (isAJoinable != null)
             if (isAJoinable.Users.Any())
@@ -767,7 +767,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
 
     public AggregateConfiguration ShallowClone()
     {
-        var clone = new AggregateConfiguration(CatalogueRepository, Catalogue, Name);
+        var clone = new AggregateConfiguration(CatalogueDbContext, Catalogue, Name);
         CopyShallowValuesTo(clone);
         return clone;
     }
@@ -776,7 +776,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     {
         if (RootFilterContainer_ID == null)
         {
-            var container = new AggregateFilterContainer(CatalogueRepository, FilterContainerOperation.AND);
+            var container = new AggregateFilterContainer(CatalogueDbContext, FilterContainerOperation.AND);
             RootFilterContainer_ID = container.ID;
             SaveToDatabase();
         }
@@ -784,5 +784,5 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
 
     public ICatalogue GetCatalogue() => Catalogue;
 
-    public IFilterFactory GetFilterFactory() => new AggregateFilterFactory(CatalogueRepository);
+    public IFilterFactory GetFilterFactory() => new AggregateFilterFactory(CatalogueDbContext);
 }

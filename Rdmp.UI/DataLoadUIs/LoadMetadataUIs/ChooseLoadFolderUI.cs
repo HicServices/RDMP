@@ -47,10 +47,10 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
 
         SetItemActivator(activator);
 
-        var help = loadMetadata.CatalogueRepository.CommentStore.GetDocumentationIfExists(
-            "ILoadMetadata.LocationOfFlatFiles", false, true);
+        //var help = loadMetadata.CatalogueDbContext.CommentStore.GetDocumentationIfExists(
+        //    "ILoadMetadata.LocationOfFlatFiles", false, true);
 
-        helpIcon1.SetHelpText("Location Of Flat Files", help);
+        //helpIcon1.SetHelpText("Location Of Flat Files", help);
         //if all the same root
         var rootDirectory = ((LoadMetadata)loadMetadata).GetRootDirectory();
         if (rootDirectory != null)

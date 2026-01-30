@@ -80,7 +80,7 @@ internal class ExtractionProgressTests : TestsRequiringAnExtractionConfiguration
         progress.RevertToDatabaseState();
         Assert.That(progress.Retry, Is.EqualTo(RetryStrategy.IterativeBackoff1Hour));
 
-        var freshCopy = progress.Repository.GetObjectByID<ExtractionProgress>(progress.ID);
+        var freshCopy = progress.CatalogueDbContext.GetObjectByID<ExtractionProgress>(progress.ID);
         Assert.That(freshCopy.Retry, Is.EqualTo(RetryStrategy.IterativeBackoff1Hour));
 
         progress.DeleteInDatabase();

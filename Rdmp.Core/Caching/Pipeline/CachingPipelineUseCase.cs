@@ -15,6 +15,7 @@ using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.Curation.Data.Spontaneous;
 using Rdmp.Core.DataFlowPipeline.Requirements;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 
@@ -62,7 +63,7 @@ public sealed class CachingPipelineUseCase : PipelineUseCase
         if (_pipeline == null && throwIfNoPipeline)
             throw new Exception($"CacheProgress {_cacheProgress} does not have a Pipeline configured on it");
 
-        AddInitializationObject(_cacheProgress.Repository);
+        AddInitializationObject(_cacheProgress.CatalogueDbContext);
 
         // Get the LoadDirectory for the engine initialization
         var lmd = _cacheProgress.LoadProgress.LoadMetadata;
@@ -119,7 +120,7 @@ public sealed class CachingPipelineUseCase : PipelineUseCase
         typeof(ICacheFetchRequestProvider),
         typeof(IPermissionWindow),
         typeof(LoadDirectory),
-        typeof(ICatalogueRepository)
+                typeof(RDMPDbContext)
     })
     {
         GenerateContext();

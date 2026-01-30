@@ -33,7 +33,7 @@ namespace Rdmp.Core.Repositories;
 /// Memory only implementation of <see cref="ICatalogueRepository"/> in which all objects are created in
 /// dictionaries and arrays in memory instead of the database.
 /// </summary>
-public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository, ITableInfoCredentialsManager,
+public class MemoryRDMPDbContext : MemoryRepository, ICatalogueRepository, ITableInfoCredentialsManager,
     IAggregateForcedJoinManager, ICohortContainerManager, IFilterManager, IGovernanceManager
 {
     public IAggregateForcedJoinManager AggregateForcedJoinManager => this;
@@ -56,10 +56,10 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
         set
         {
             _odf = value;
-            if (_odf is CatalogueObscureDependencyFinder catFinder &&
-                this is IDataExportRepository dataExportRepository)
-                catFinder.AddOtherDependencyFinderIfNotExists<ValidationXMLObscureDependencyFinder>(
-                    new RepositoryProvider(dataExportRepository));
+            //if (_odf is CatalogueObscureDependencyFinder catFinder &&
+            //    this is IDataExportRepository dataExportRepository)
+            //    catFinder.AddOtherDependencyFinderIfNotExists<ValidationXMLObscureDependencyFinder>(
+            //        new RepositoryProvider(dataExportRepository));
         }
     }
 
@@ -70,11 +70,11 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
 
     protected virtual Dictionary<PermissableDefaults, IExternalDatabaseServer> Defaults { get; set; } = new();
 
-    public MemoryCatalogueRepository(IServerDefaults currentDefaults = null)
+    public MemoryRDMPDbContext(IServerDefaults currentDefaults = null)
     {
-        JoinManager = new JoinManager(this);
-        CommentStore = new CommentStoreWithKeywords();
-        EncryptionManager = new PasswordEncryptionKeyLocation(this);
+        //JoinManager = new JoinManager(this);
+        //CommentStore = new CommentStoreWithKeywords();
+        //EncryptionManager = new PasswordEncryptionKeyLocation(this);
 
         //we need to know what the default servers for stuff are
         foreach (PermissableDefaults value in Enum.GetValues(typeof(PermissableDefaults)))
@@ -99,17 +99,17 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
             NextObjectId = Objects.Keys.Max(o => o.ID);
 
 
-        var dependencyFinder = new CatalogueObscureDependencyFinder(this);
+        //var dependencyFinder = new CatalogueObscureDependencyFinder(this);
 
-        if (this is IDataExportRepository dxm)
-        {
-            dependencyFinder.AddOtherDependencyFinderIfNotExists<ObjectSharingObscureDependencyFinder>(
-                new RepositoryProvider(dxm));
-            dependencyFinder.AddOtherDependencyFinderIfNotExists<BetweenCatalogueAndDataExportObscureDependencyFinder>(
-                new RepositoryProvider(dxm));
-        }
+        //if (this is IDataExportRepository dxm)
+        //{
+        //    dependencyFinder.AddOtherDependencyFinderIfNotExists<ObjectSharingObscureDependencyFinder>(
+        //        new RepositoryProvider(dxm));
+        //    dependencyFinder.AddOtherDependencyFinderIfNotExists<BetweenCatalogueAndDataExportObscureDependencyFinder>(
+        //        new RepositoryProvider(dxm));
+        //}
 
-        ObscureDependencyFinder = dependencyFinder;
+        //ObscureDependencyFinder = dependencyFinder;
     }
 
 

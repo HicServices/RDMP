@@ -76,7 +76,7 @@ public class ExecuteCommandSetExtractionConfigurationCohortTests : TestsRequirin
         { DisallowInput = true };
         var cmd = new ExecuteCommandSetExtractionConfigurationCohort(activator, ec1, cohort999);
         Assert.DoesNotThrow(() => cmd.Execute());
-        var updatedExt = DataExportRepository.GetAllObjects<ExtractionConfiguration>().Where(ei => ei.ID == ec1.ID).ToList();
+        var updatedExt = DataExportCatalogueDbContext.GetAllObjects<ExtractionConfiguration>().Where(ei => ei.ID == ec1.ID).ToList();
         Assert.That(updatedExt.Count, Is.EqualTo(1));
         Assert.That(updatedExt.First().Cohort_ID, Is.EqualTo(cohort999.ID));
     }

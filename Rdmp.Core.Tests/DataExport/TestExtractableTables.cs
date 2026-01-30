@@ -61,7 +61,7 @@ public class TestExtractableTables : TestsRequiringACohort
             table.SaveToDatabase();
 
             //get fresh copy from database and ensure that all fields are the same
-            var tableAfter = DataExportRepository.GetObjectByID<Project>(table.ID);
+            var tableAfter = DataExportCatalogueDbContext.GetObjectByID<Project>(table.ID);
             PropertyValuesAreEquals(table, tableAfter);
         }
         finally

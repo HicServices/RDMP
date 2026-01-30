@@ -147,8 +147,8 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
     public ExternalCohortTable(RDMPDbContext dataExportDbContext, string name, DatabaseType databaseType)
     {
         //Repository = repository;
-        //SelfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint(repository.CatalogueRepository, databaseType);
-        //Repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //SelfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint(repository.RDMPDbContext, databaseType);
+        //CatalogueDbContext.InsertAndHydrate(this, new Dictionary<string, object>
         //{
         //    { "Name", name ?? $"NewExternalSource{Guid.NewGuid()}" },
         //    { "DatabaseType", databaseType.ToString() }
@@ -166,7 +166,7 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
         //Name = r["Name"] as string;
         //var databaseType = (DatabaseType)Enum.Parse(typeof(DatabaseType), r["DatabaseType"].ToString());
 
-        //SelfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint(repository.CatalogueRepository, databaseType);
+        //SelfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint(repository.RDMPDbContext, databaseType);
 
         //Server = r["Server"] as string;
         //Username = r["Username"] as string;

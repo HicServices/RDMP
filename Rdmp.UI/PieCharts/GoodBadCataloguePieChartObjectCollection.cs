@@ -48,19 +48,19 @@ public class GoodBadCataloguePieChartObjectCollection : PersistableObjectCollect
     {
         var returnValue = true;
 
-        var status = c.GetExtractabilityStatus(repo);
+        //var status = c.GetExtractabilityStatus(repo);
 
-        if (!status.IsExtractable)
-            returnValue &= IncludeNonExtractableCatalogues;
+        //if (!status.IsExtractable)
+        //    returnValue &= IncludeNonExtractableCatalogues;
 
-        if (status.IsProjectSpecific)
-            returnValue &= IncludeProjectSpecificCatalogues;
+        //if (status.IsProjectSpecific)
+        //    returnValue &= IncludeProjectSpecificCatalogues;
 
-        if (c.IsDeprecated)
-            returnValue &= IncludeDeprecatedCatalogues;
+        //if (c.IsDeprecated)
+        //    returnValue &= IncludeDeprecatedCatalogues;
 
-        if (c.IsInternalDataset)
-            returnValue &= IncludeInternalCatalogueItems;
+        //if (c.IsInternalDataset)
+        //    returnValue &= IncludeInternalCatalogueItems;
 
 
         return returnValue;

@@ -88,7 +88,7 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
         : anoPlan;
 
     public IExternalDatabaseServer GetIdentifierDumpServer() =>
-        Catalogue.CatalogueRepository.GetDefaultFor(PermissableDefaults.IdentifierDumpServer_ID);
+        Catalogue.CatalogueDbContext.GetDefaultFor(PermissableDefaults.IdentifierDumpServer_ID);
 
 
     public void Check(ICheckNotifier notifier)
@@ -210,7 +210,7 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
 
             if (existingImportReference != null)
             {
-                var existingImportInstance = m.Repository.GetObjectByID<T>(existingImportReference.ReferencedObjectID);
+                var existingImportInstance = m.CatalogueDbContext.GetObjectByID<T>(existingImportReference.ReferencedObjectID);
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     $"{typeof(T)} '{m}' is already locally shared as '{existingImportInstance}'", CheckResult.Fail));
             }
@@ -243,7 +243,7 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
     {
         _allExtractionInformations = Catalogue.GetAllExtractionInformation(ExtractionCategory.Any);
         _allCatalogueItems = Catalogue.CatalogueItems.Where(ci => ci.ColumnInfo_ID != null).ToArray();
-        var allColumnInfosSystemWide = Catalogue.Repository.GetAllObjects<ColumnInfo>();
+        var allColumnInfosSystemWide = Catalogue.CatalogueDbContext.GetAllObjects<ColumnInfo>();
         var joins = GetJoinInfosRequiredCatalogue();
         var lookups = GetLookupsRequiredCatalogue();
 

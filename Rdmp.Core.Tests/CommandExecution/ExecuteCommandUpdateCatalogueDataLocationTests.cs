@@ -65,10 +65,10 @@ public class ExecuteCommandUpdateCatalogueDataLocationTests : DatabaseTests
 
         var creator = new CataloguePipelinesAndReferencesCreation(
             RepositoryLocator, UnitTestLoggingConnectionString, DataQualityEngineConnectionString);
-        if (CatalogueRepository.GetAllObjects<Pipeline>().Length == 0)
+        if (CatalogueDbContext.GetAllObjects<Pipeline>().Length == 0)
             creator.CreatePipelines(new PlatformDatabaseCreationOptions());
 
-        var pipe = CatalogueRepository.GetAllObjects<Pipeline>().OrderByDescending(static p => p.ID)
+        var pipe = CatalogueDbContext.GetAllObjects<Pipeline>().OrderByDescending(static p => p.ID)
             .FirstOrDefault(static p => p.Name.Contains("BULK INSERT: CSV Import File (automated column-type detection)"));
         var cmd = new ExecuteCommandCreateNewCatalogueByImportingFile(new ThrowImmediatelyActivator(RepositoryLocator),
             info, "Column1", db, pipe, null);
@@ -93,7 +93,7 @@ public class ExecuteCommandUpdateCatalogueDataLocationTests : DatabaseTests
         var info = new FileInfo(fileName);
 
         // find the excel loading pipeline
-        var pipe = CatalogueRepository.GetAllObjects<Pipeline>().OrderByDescending(p => p.ID)
+        var pipe = CatalogueDbContext.GetAllObjects<Pipeline>().OrderByDescending(p => p.ID)
             .FirstOrDefault(p => p.Name.Contains("BULK INSERT: CSV Import File (automated column-type detection)"));
         var cmd = new ExecuteCommandCreateNewCatalogueByImportingFile(new ThrowImmediatelyActivator(RepositoryLocator),
             info, "Other", db, pipe, null);

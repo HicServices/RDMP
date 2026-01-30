@@ -23,7 +23,7 @@ internal class CommandLineObjectPickerTests : UnitTests
     {
         base.SetUp();
 
-        foreach (var c in Repository.GetAllObjects<Catalogue>()) c.DeleteInDatabase();
+        foreach (var c in CatalogueDbContext.GetAllObjects<Catalogue>()) c.DeleteInDatabase();
     }
 
 

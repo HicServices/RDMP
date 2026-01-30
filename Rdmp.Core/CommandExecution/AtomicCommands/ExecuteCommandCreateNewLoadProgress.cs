@@ -31,7 +31,7 @@ internal class ExecuteCommandCreateNewLoadProgress : BasicCommandExecution, IAto
     {
         base.Execute();
 
-        var lp = new LoadProgress((ICatalogueRepository)_loadMetadata.Repository, _loadMetadata);
+        var lp = new LoadProgress(_loadMetadata.CatalogueDbContext, _loadMetadata);
         Publish(_loadMetadata);
         Emphasise(lp);
     }

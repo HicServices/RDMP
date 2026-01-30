@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
 using Rdmp.Core.Repositories;
@@ -51,8 +52,8 @@ public class ExtractableDataSet : DatabaseEntity, IExtractableDataSet, IInjectKn
         get
         {
             if (_projects != null) return _projects;
-            var ids = Repository.GetAllObjectsWhere<ExtractableDataSetProject>("ExtractableDataSet_ID", this.ID).Select(edsp => edsp.Project_ID);
-            Projects = Repository.GetAllObjectsInIDList<Project>(ids).Cast<IProject>().ToList();
+            var ids = CatalogueDbContext.GetAllObjectsWhere<ExtractableDataSetProject>("ExtractableDataSet_ID", this.ID).Select(edsp => edsp.Project_ID);
+            //Projects = CatalogueDbContext.GetAllObjectsInIDList<Project>(ids).Cast<IProject>().ToList();
             return _projects;
 
         }
@@ -72,7 +73,7 @@ public class ExtractableDataSet : DatabaseEntity, IExtractableDataSet, IInjectKn
         get
         {
             return
-                Repository.GetAllObjectsWithParent<SelectedDataSets>(this)
+                CatalogueDbContext.GetAllObjectsWithParent<SelectedDataSets>(this)
                     .Select(sds => sds.ExtractionConfiguration)
                     .ToArray();
         }
@@ -94,21 +95,21 @@ public class ExtractableDataSet : DatabaseEntity, IExtractableDataSet, IInjectKn
     /// Defines that the given Catalogue is extractable to researchers as a data set, this is stored in the DataExport database
     /// </summary>
     /// <returns></returns>
-    public ExtractableDataSet(IDataExportRepository repository, ICatalogue catalogue, bool disableExtraction = false)
+    public ExtractableDataSet(RDMPDbContext catalogueDbcontext, ICatalogue catalogue, bool disableExtraction = false)
     {
-        Repository = repository;
-        Repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "DisableExtraction", disableExtraction },
-            { "Catalogue_ID", catalogue.ID }
-        });
+       //CatalogueDbContext = catalogueDbContext;
+       // CatalogueDbContext.InsertAndHydrate(this, new Dictionary<string, object>
+       // {
+       //     { "DisableExtraction", disableExtraction },
+       //     { "Catalogue_ID", catalogue.ID }
+       // });
 
         ClearAllInjections();
         InjectKnown(catalogue);
     }
 
-    internal ExtractableDataSet(IDataExportRepository repository, DbDataReader r)
-        : base(repository, r)
+    internal ExtractableDataSet(RDMPDbContext catalogueDbContext, DbDataReader r)
+        :base(catalogueDbContext, r)
     {
         Catalogue_ID = Convert.ToInt32(r["Catalogue_ID"]);
         DisableExtraction = (bool)r["DisableExtraction"];
@@ -141,18 +142,18 @@ public class ExtractableDataSet : DatabaseEntity, IExtractableDataSet, IInjectKn
     /// </summary>
     public override void DeleteInDatabase()
     {
-        try
-        {
-            Repository.DeleteFromDatabase(this);
-        }
-        catch (Exception e)
-        {
-            if (e.Message.Contains("FK_SelectedDataSets_ExtractableDataSet"))
-                throw new Exception(
-                    $"Cannot delete {this} because it is in use by the following configurations :{Environment.NewLine}{string.Join(Environment.NewLine, ExtractionConfigurations.Select(c => $"{c.Name}({c.Project})"))}",
-                    e);
-            throw;
-        }
+        //try
+        //{
+        //    CatalogueDbContext.DeleteFromDatabase(this);
+        //}
+        //catch (Exception e)
+        //{
+        //    if (e.Message.Contains("FK_SelectedDataSets_ExtractableDataSet"))
+        //        throw new Exception(
+        //            $"Cannot delete {this} because it is in use by the following configurations :{Environment.NewLine}{string.Join(Environment.NewLine, ExtractionConfigurations.Select(c => $"{c.Name}({c.Project})"))}",
+        //            e);
+        //    throw;
+        //}
     }
 
     #endregion
@@ -184,7 +185,7 @@ public class ExtractableDataSet : DatabaseEntity, IExtractableDataSet, IInjectKn
     {
         try
         {
-            var cata = ((IDataExportRepository)Repository).CatalogueRepository.GetObjectByID<Catalogue>(Catalogue_ID);
+            var cata = CatalogueDbContext.GetObjectByID<Catalogue>(Catalogue_ID);
             cata.InjectKnown(GetCatalogueExtractabilityStatus());
             return cata;
         }

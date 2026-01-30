@@ -23,11 +23,12 @@ public class PlatformDatabaseCreationRepositoryFinder : IRDMPPlatformRepositoryS
 {
     private readonly LinkedRepositoryProvider _linkedRepositoryProvider;
 
-    public ICatalogueRepository CatalogueRepository => _linkedRepositoryProvider.CatalogueRepository;
 
     public IDataExportRepository DataExportRepository => _linkedRepositoryProvider.DataExportRepository;
 
     public RDMPDbContext CatalogueDbContext { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public RDMPDbContext DataExportDbContext { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    RDMPDbContext RDMPDbContextServiceLocator.DataExportRepository { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
     public IMapsDirectlyToDatabaseTable GetArbitraryDatabaseObject(string repositoryTypeName,
         string databaseObjectTypeName, int objectID) =>

@@ -6,6 +6,7 @@
 
 using System;
 using System.Data.Common;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 
@@ -47,7 +48,7 @@ public abstract class ReferenceOtherObjectDatabaseEntity : DatabaseEntity, IRefe
     }
 
     /// <inheritdoc/>
-    protected ReferenceOtherObjectDatabaseEntity(IRepository repository, DbDataReader r) : base(repository, r)
+    protected ReferenceOtherObjectDatabaseEntity(RDMPDbContext catalogueDbContext, DbDataReader r) : base(catalogueDbContext, r)
     {
         ReferencedObjectType = r["ReferencedObjectType"].ToString();
         ReferencedObjectID = Convert.ToInt32(r["ReferencedObjectID"]);
@@ -71,7 +72,7 @@ public abstract class ReferenceOtherObjectDatabaseEntity : DatabaseEntity, IRefe
         &&
         AreProbablySameType(ReferencedObjectType, o.GetType())
         &&
-        AreProbablySameType(ReferencedObjectRepositoryType, o.Repository.GetType());
+        AreProbablySameType(ReferencedObjectRepositoryType, o.CatalogueDbContext.GetType());
 
     private static bool AreProbablySameType(string storedTypeName, Type candidate) =>
         storedTypeName.Equals(candidate.Name, StringComparison.CurrentCultureIgnoreCase) ||

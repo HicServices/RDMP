@@ -82,9 +82,9 @@ public class PasswordEncryptionKeyLocationTests : DatabaseTests
         keyLocation.CreateNewKeyFile(Path.Combine(TestContext.CurrentContext.TestDirectory, "my.key"));
         var p = keyLocation.OpenKeyFile();
 
-        CatalogueRepository.EncryptionManager.ClearAllInjections();
+        CatalogueDbContext.EncryptionManager.ClearAllInjections();
 
-        var s = CatalogueRepository.EncryptionManager.GetEncrypter();
+        var s = CatalogueDbContext.EncryptionManager.GetEncrypter();
         var exception = Assert.Throws<CryptographicException>(() => s.Decrypt(encrypter.Value));
 
         var encrypted = s.Encrypt(value);

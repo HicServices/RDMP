@@ -97,10 +97,10 @@ public class ExecuteCommandCloneExtractionConfiguration : BasicCommandExecution
         foreach (var c in _toAdd)
         {
             //check if the eds already exis
-            var eds = _activeItems.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", c.ID).FirstOrDefault();
+            var eds = _activeItems.RepositoryLocator.CatalogueDbContext.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", c.ID).FirstOrDefault();
             if (eds is null)
             {
-                eds = new ExtractableDataSet(_activeItems.RepositoryLocator.DataExportRepository, c);
+                eds = new ExtractableDataSet(_activeItems.RepositoryLocator.CatalogueDbContext, c);
                 eds.SaveToDatabase();
             }
 

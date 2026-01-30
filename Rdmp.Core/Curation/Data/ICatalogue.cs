@@ -11,6 +11,7 @@ using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Logging;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
@@ -35,10 +36,10 @@ namespace Rdmp.Core.Curation.Data;
 public interface ICatalogue : IHasDependencies, IHasQuerySyntaxHelper, INamed, IMightBeDeprecated, IInjectKnown,
     ICheckable, IHasFolder
 {
-    /// <summary>
-    /// Returns where the object exists (e.g. database) as <see cref="ICatalogueRepository"/> or null if the object does not exist in a catalogue repository.
-    /// </summary>
-    ICatalogueRepository CatalogueRepository { get; }
+    ///// <summary>
+    ///// Returns where the object exists (e.g. database) as <see cref="RDMPDbContext"/> or null if the object does not exist in a catalogue repository.
+    ///// </summary>
+    //RDMPDbContextRDMPDbContext { get; }
 
     /// <summary>
     /// Name of a task in the logging database which should be used for documenting the loading of this Catalogue.
@@ -239,9 +240,9 @@ public interface ICatalogue : IHasDependencies, IHasQuerySyntaxHelper, INamed, I
     /// Returns the extractability of the Catalogue if it is known.  If it is not known then the repository will be used to find out (and the result will be cached)
     /// <para>If a null dataExportRepository is passed then you will get the cached answer or null</para>
     /// </summary>
-    /// <param name="dataExportRepository">Pass null to fetch only the cached value (or null if that is not known)</param>
+    /// <param name="catalogueDbContext">Pass null to fetch only the cached value (or null if that is not known)</param>
     /// <returns></returns>
-    CatalogueExtractabilityStatus GetExtractabilityStatus(IDataExportRepository dataExportRepository);
+    CatalogueExtractabilityStatus GetExtractabilityStatus(RDMPDbContext catalogueDbContext);
 
 
     /// <summary>
@@ -272,7 +273,7 @@ public interface ICatalogue : IHasDependencies, IHasQuerySyntaxHelper, INamed, I
     /// Returns true if the Catalogue is extractable but only with a specific Project.  You can pass null if you are addressing a Catalogue for whom you know
     /// IInjectKnown&lt;CatalogueExtractabilityStatus&gt; has been called already.
     /// </summary>
-    /// <param name="dataExportRepository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <returns></returns>
-    bool IsProjectSpecific(IDataExportRepository dataExportRepository);
+    bool IsProjectSpecific(RDMPDbContext catalogueDbContext);
 }

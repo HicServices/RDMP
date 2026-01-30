@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 
@@ -20,15 +21,15 @@ namespace Rdmp.Core.Providers;
 public class FavouritesProvider
 {
     private readonly IBasicActivateItems _activator;
-    private readonly ICatalogueRepository _catalogueRepository;
+    private readonly RDMPDbContext _catalogueDbContext;
     public List<Favourite> CurrentFavourites { get; set; }
 
     public FavouritesProvider(IBasicActivateItems activator)
     {
         _activator = activator;
-        _catalogueRepository = _activator.RepositoryLocator.CatalogueDbContext;
-        CurrentFavourites = _catalogueRepository.GetAllObjectsWhere<Favourite>("Username", Environment.UserName)
-            .ToList();
+        _catalogueDbContext = _activator.RepositoryLocator.CatalogueDbContext;
+        //CurrentFavourites = _catalogueDbContext.GetAllObjectsWhere<Favourite>("Username", Environment.UserName)
+        //    .ToList();
     }
 
     public void AddFavourite(object sender, IMapsDirectlyToDatabaseTable o)
@@ -37,7 +38,7 @@ public class FavouritesProvider
         if (IsFavourite(o))
             return;
 
-        var newFavourite = new Favourite(_catalogueRepository, o);
+        var newFavourite = new Favourite(_catalogueDbContext, o);
         CurrentFavourites.Add(newFavourite);
         _activator.Publish(newFavourite);
     }

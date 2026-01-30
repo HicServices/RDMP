@@ -10,6 +10,7 @@ using System.Data.Common;
 using System.Linq;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.FilterImporting.Construction;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
@@ -91,12 +92,12 @@ public class ExtractionFilter : ConcreteFilter, IHasDependencies, IInjectKnown<E
     /// <inheritdoc cref="ExtractionInformation_ID"/>
     [NoMappingToDatabase]
     public ExtractionInformation ExtractionInformation =>
-        Repository.GetObjectByID<ExtractionInformation>(ExtractionInformation_ID);
+        CatalogueDbContext.GetObjectByID<ExtractionInformation>(ExtractionInformation_ID);
 
     /// <inheritdoc cref="ConcreteFilter.GetAllParameters"/>
     [NoMappingToDatabase]
     public IEnumerable<ExtractionFilterParameter> ExtractionFilterParameters =>
-        Repository.GetAllObjectsWithParent<ExtractionFilterParameter>(this);
+        CatalogueDbContext.GetAllObjectsWithParent<ExtractionFilterParameter>(this);
 
     #endregion
 
@@ -110,24 +111,24 @@ public class ExtractionFilter : ConcreteFilter, IHasDependencies, IInjectKnown<E
     /// copied out in <see cref="CohortIdentificationConfiguration"/>, ExtractionConfiguration etc.  This ensures a single curated block of
     /// logic that everyone shares.
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="name"></param>
     /// <param name="parent"></param>
-    public ExtractionFilter(RdmpDbContext catalogueDbContext, string name, ExtractionInformation parent)
+    public ExtractionFilter(RDMPDbContext catalogueDbContext, string name, ExtractionInformation parent)
     {
         name ??= $"New Filter {Guid.NewGuid()}";
 
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "Name", name },
-            { "ExtractionInformation_ID", parent.ID }
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "Name", name },
+        //    { "ExtractionInformation_ID", parent.ID }
+        //});
 
         ClearAllInjections();
     }
 
-    internal ExtractionFilter(RdmpDbContext catalogueDbContext, DbDataReader r)
-        : base(repository, r)
+    internal ExtractionFilter(RDMPDbContext catalogueDbContext, DbDataReader r)
+        :base(catalogueDbContext, r)
     {
         ExtractionInformation_ID = int.Parse(r["ExtractionInformation_ID"].ToString());
         WhereSQL = r["WhereSQL"] as string;
@@ -176,7 +177,7 @@ public class ExtractionFilter : ConcreteFilter, IHasDependencies, IInjectKnown<E
     public void ClearAllInjections()
     {
         _knownExtractionFilterParameterSets = new Lazy<ExtractionFilterParameterSet[]>(() =>
-            CatalogueRepository.GetAllObjectsWithParent<ExtractionFilterParameterSet>(this));
+            CatalogueDbContext.GetAllObjectsWithParent<ExtractionFilterParameterSet>(this));
     }
 
     public override void DeleteInDatabase()

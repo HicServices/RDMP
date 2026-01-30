@@ -1157,7 +1157,7 @@ public void TestBasicDataTableAnonymiser5(LoggerTestCase testCase)
             case LoggerTestCase.ToDatabase:
             
                 //get the default logging server
-                var logManager = CatalogueRepository.GetDefaultLogManager();
+                var logManager = CatalogueDbContext.GetDefaultLogManager();
 
                 //create a new super task Anonymising Data Tables
                 logManager.CreateNewLoggingTaskIfNotExists("Anonymising Data Tables");

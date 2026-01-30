@@ -17,6 +17,7 @@ using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Events;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
@@ -107,7 +108,7 @@ public partial class ConfigureAndExecutePipelineUI : RDMPUserControl, IPipelineR
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public DataFlowPipelineEngineFactory PipelineFactory { get; private set; }
 
-    private void SetPipelineOptions(RdmpDbContext catalogueDbContext)
+    private void SetPipelineOptions(RDMPDbContext catalogueDbContext)
     {
         if (_pipelineOptionsSet)
             throw new Exception(
@@ -116,7 +117,7 @@ public partial class ConfigureAndExecutePipelineUI : RDMPUserControl, IPipelineR
 
         _pipelineOptionsSet = true;
 
-        _pipelineSelectionUI = new PipelineSelectionUI(Activator, _useCase, repository)
+        _pipelineSelectionUI = new PipelineSelectionUI(Activator, _useCase, catalogueDbContext)
         {
             Dock = DockStyle.Fill
         };

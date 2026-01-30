@@ -18,7 +18,6 @@ namespace Rdmp.Core.Repositories;
 /// </summary>
 public interface IDataExportRepository : IRepository, IExtractableDataSetPackageManager
 {
-    ICatalogueRepository CatalogueRepository { get; }
     CatalogueExtractabilityStatus GetExtractabilityStatus(ICatalogue c);
 
     ISelectedDataSets[] GetSelectedDatasetsWithNoExtractionIdentifiers();

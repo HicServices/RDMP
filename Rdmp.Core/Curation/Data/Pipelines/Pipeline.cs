@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Repositories;
@@ -99,20 +100,20 @@ public class Pipeline : DatabaseEntity, IPipeline, IHasDependencies
     /// Creates a new empty <see cref="Pipeline"/> in the database, this is a sequence of <see cref="PipelineComponent"/> which when combined
     /// with an <see cref="IPipelineUseCase"/> achieve a specific goal (e.g. loading records into the database from a flat file).
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="name"></param>
-    public Pipeline(RdmpDbContext catalogueDbContext, string name = null)
+    public Pipeline(RDMPDbContext catalogueDbContext, string name = null)
     {
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "Name", name ?? $"NewPipeline {Guid.NewGuid()}" }
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "Name", name ?? $"NewPipeline {Guid.NewGuid()}" }
+        //});
 
         ClearAllInjections();
     }
 
-    internal Pipeline(RdmpDbContext catalogueDbContext, DbDataReader r)
-        : base(repository, r)
+    internal Pipeline(RDMPDbContext catalogueDbContext, DbDataReader r)
+        :base(catalogueDbContext, r)
     {
         Name = r["Name"].ToString();
 
@@ -145,7 +146,7 @@ public class Pipeline : DatabaseEntity, IPipeline, IHasDependencies
     {
         var name = GetUniqueCloneName();
 
-        var clonePipe = new Pipeline((ICatalogueRepository)Repository, name)
+        var clonePipe = new Pipeline(CatalogueDbContext, name)
         {
             Description = Description
         };
@@ -181,7 +182,7 @@ public class Pipeline : DatabaseEntity, IPipeline, IHasDependencies
 
     private string GetUniqueCloneName()
     {
-        var otherPipelines = CatalogueRepository.GetAllObjects<Pipeline>();
+        var otherPipelines = CatalogueDbContext.GetAllObjects<Pipeline>();
 
         var proposedName = $"{Name} (Clone)";
         var suffix = 1;
@@ -217,7 +218,7 @@ public class Pipeline : DatabaseEntity, IPipeline, IHasDependencies
 
     private IList<IPipelineComponent> FetchPipelineComponents()
     {
-        return Repository.GetAllObjectsWithParent<PipelineComponent>(this)
+        return CatalogueDbContext.GetAllObjectsWithParent<PipelineComponent>(this)
             .Cast<IPipelineComponent>()
             .OrderBy(p => p.Order)
             .ToList();

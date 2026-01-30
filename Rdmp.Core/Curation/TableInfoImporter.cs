@@ -11,18 +11,19 @@ using FAnsi.Discovery;
 using FAnsi.Implementation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.DataHelper;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.Curation;
 
 /// <summary>
-/// Generates TableInfo entries in the ICatalogueRepository based the table/view specified on the live database server.  Can also be used to import new ColumnInfos into existing
+/// Generates TableInfo entries in the RDMPDbContextbased the table/view specified on the live database server.  Can also be used to import new ColumnInfos into existing
 /// TableInfos (See TableInfoSynchronizer).
 /// </summary>
 public class TableInfoImporter : ITableInfoImporter
 {
-    private readonly ICatalogueRepository _repository;
+    private readonly RDMPDbContext _catalogueDbContext;
     private readonly string _importFromServer;
     private readonly string _importDatabaseName;
     private readonly string _importTableName;
@@ -42,7 +43,7 @@ public class TableInfoImporter : ITableInfoImporter
     /// <summary>
     /// Prepares to import the named table as a <see cref="TableInfo"/>
     /// </summary>
-    /// <param name="repository">Repository to create the <see cref="TableInfo"/>/<see cref="ColumnInfo"/> in</param>
+    /// <param name="catalogueDbContext">Repository to create the <see cref="TableInfo"/>/<see cref="ColumnInfo"/> in</param>
     /// <param name="importFromServer"></param>
     /// <param name="importDatabaseName"></param>
     /// <param name="importTableName"></param>
@@ -52,14 +53,14 @@ public class TableInfoImporter : ITableInfoImporter
     /// <param name="usageContext"></param>
     /// <param name="importFromSchema"></param>
     /// <param name="importTableType"></param>
-    public TableInfoImporter(RdmpDbContext catalogueDbContext, string importFromServer, string importDatabaseName,
+    public TableInfoImporter(RDMPDbContext catalogueDbContext, string importFromServer, string importDatabaseName,
         string importTableName, DatabaseType type, string username = null, string password = null,
         DataAccessContext usageContext = DataAccessContext.Any, string importFromSchema = null,
         TableType importTableType = TableType.Table)
     {
         var syntax = ImplementationManager.GetImplementation(type).GetQuerySyntaxHelper();
 
-        _repository = repository;
+        _catalogueDbContext = catalogueDbContext;
         _importFromServer = importFromServer;
         _importDatabaseName = importDatabaseName;
         _importTableName = importTableName;
@@ -75,14 +76,14 @@ public class TableInfoImporter : ITableInfoImporter
     }
 
     /// <summary>
-    /// Prepares to import a reference to the <paramref name="table"/> as <see cref="TableInfo"/> and <see cref="ColumnInfo"/> in the RDMP <paramref name="catalogueRepository"/>
+    /// Prepares to import a reference to the <paramref name="table"/> as <see cref="TableInfo"/> and <see cref="ColumnInfo"/> in the RDMP <paramref name="catalogueDbContext"/>
     /// </summary>
-    /// <param name="catalogueRepository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="table"></param>
     /// <param name="usageContext"></param>
-    public TableInfoImporter(ICatalogueRepository catalogueRepository, DiscoveredTable table,
+    public TableInfoImporter(RDMPDbContext catalogueDbContext, DiscoveredTable table,
         DataAccessContext usageContext = DataAccessContext.Any)
-        : this(catalogueRepository,
+        : this(catalogueDbContext,
             table.Database.Server.Name,
             table.Database.GetRuntimeName(),
             table.GetRuntimeName(),
@@ -138,7 +139,7 @@ public class TableInfoImporter : ITableInfoImporter
             .ExpectTable(_importTableName, _importFromSchema, _importTableType)
             .DiscoverColumns();
 
-        var parent = new TableInfo(_repository, tableName)
+        var parent = new TableInfo(_catalogueDbContext, tableName)
         {
             DatabaseType = _type,
             Database = databaseName,
@@ -155,13 +156,13 @@ public class TableInfoImporter : ITableInfoImporter
 
         //if there is a username then we need to associate it with the TableInfo we just created
         if (!string.IsNullOrWhiteSpace(_username))
-            new DataAccessCredentialsFactory(_repository).Create(tableInfoCreated, _username, _password, _usageContext);
+            new DataAccessCredentialsFactory(_catalogueDbContext).Create(tableInfoCreated, _username, _password, _usageContext);
     }
 
     /// <inheritdoc/>
     public ColumnInfo CreateNewColumnInfo(ITableInfo parent, DiscoveredColumn discoveredColumn)
     {
-        var col = new ColumnInfo((ICatalogueRepository)parent.Repository, discoveredColumn.GetFullyQualifiedName(),
+        var col = new ColumnInfo(parent.CatalogueDbContext, discoveredColumn.GetFullyQualifiedName(),
             discoveredColumn.DataType.SQLType, parent)
         {
             //if it has an explicitly specified format (Collation)

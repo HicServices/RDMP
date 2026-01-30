@@ -150,32 +150,32 @@ public class YamlRepository : MemoryDataExportRepository
 
 
     /// <summary>
-    /// Sets <see cref="IMapsDirectlyToDatabaseTable.Repository"/> on <paramref name="obj"/>.
+    /// Sets <see cref="IMapsDirectlyToDatabaseTable.CatalogueDbContext"/> on <paramref name="obj"/>.
     /// Override to also set other destination repo specific fields
     /// </summary>
     /// <param name="obj"></param>
     protected virtual void SetRepositoryOnObject(IMapsDirectlyToDatabaseTable obj)
     {
-        obj.Repository = this;
+        //obj.CatalogueDbContext = this;
 
-        switch (obj)
-        {
-            case DataAccessCredentials creds:
-                creds.SetRepository(this);
-                break;
-            case ExternalDatabaseServer eds:
-                eds.SetRepository(this);
-                break;
-            case ExternalCohortTable ect:
-                ect.SetRepository(this);
-                break;
-            case RemoteRDMP remote:
-                remote.SetRepository(this);
-                break;
-            case ConcreteContainer container:
-                container.SetManager(this);
-                break;
-        }
+        //switch (obj)
+        //{
+        //    case DataAccessCredentials creds:
+        //        creds.SetRepository(this);
+        //        break;
+        //    case ExternalDatabaseServer eds:
+        //        eds.SetRepository(this);
+        //        break;
+        //    case ExternalCohortTable ect:
+        //        ect.SetRepository(this);
+        //        break;
+        //    case RemoteRDMP remote:
+        //        remote.SetRepository(this);
+        //        break;
+        //    case ConcreteContainer container:
+        //        container.SetManager(this);
+        //        break;
+        //}
     }
 
     public override void InsertAndHydrate<T>(T toCreate, Dictionary<string, object> constructorParameters)

@@ -7,11 +7,12 @@
 using System.Collections.Generic;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Governance;
+using Rdmp.Core.EntityFramework;
 
 namespace Rdmp.Core.Repositories.Managers;
 
 /// <summary>
-/// Subcomponent of <see cref="ICatalogueRepository"/> which manages persisting / editing which
+/// Subcomponent of <see cref="RDMPDbContext"/> which manages persisting / editing which
 /// <see cref="ICatalogue"/> datasets are governed by which <see cref="GovernancePeriod"/> (many to many relationship)
 /// </summary>
 public interface IGovernanceManager

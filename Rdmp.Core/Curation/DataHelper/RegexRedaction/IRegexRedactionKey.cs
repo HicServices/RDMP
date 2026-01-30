@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 
@@ -14,7 +15,6 @@ namespace Rdmp.Core.Curation.DataHelper.RegexRedaction;
 /// </summary>
 public interface IRegexRedactionKey: IMapsDirectlyToDatabaseTable
 {
-    ICatalogueRepository CatalogueRepository { get; }
     int RegexRedaction_ID { get; protected set; }
     int ColumnInfo_ID { get; protected set; }
     string Value { get; protected set; }

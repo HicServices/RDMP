@@ -15,6 +15,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Web;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode;
@@ -32,17 +33,17 @@ public class DitaCatalogueExtractor : ICheckable
     //use http://sourceforge.net/projects/dita-ot/files/DITA-OT%20Stable%20Release/DITA%20Open%20Toolkit%201.8/DITA-OT1.8.M2_full_easy_install_bin.zip/download
     //to convert .dita files into html
 
-    private readonly ICatalogueRepository _repository;
+    private readonly RDMPDbContext _catalogueDbContext;
     private readonly DirectoryInfo _folderToCreateIn;
 
     /// <summary>
-    /// Prepares class to convert all <see cref="Catalogue"/> stored in the <paramref name="repository"/> into .dita files containing dataset/column descriptions.
+    /// Prepares class to convert all <see cref="Catalogue"/> stored in the <paramref name="catalogueDbContext"/> into .dita files containing dataset/column descriptions.
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="folderToCreateIn"></param>
-    public DitaCatalogueExtractor(RdmpDbContext catalogueDbContext, DirectoryInfo folderToCreateIn)
+    public DitaCatalogueExtractor(RDMPDbContext catalogueDbContext, DirectoryInfo folderToCreateIn)
     {
-        _repository = repository;
+        _catalogueDbContext = catalogueDbContext;
         _folderToCreateIn = folderToCreateIn;
     }
 
@@ -71,7 +72,7 @@ public class DitaCatalogueExtractor : ICheckable
         GenerateDataSetFile("dataset.dita");
 
         //get all the catalogues then sort them alphabetically
-        var catas = new List<Catalogue>(_repository.GetAllObjects<Catalogue>()
+        var catas = new List<Catalogue>(_catalogueDbContext.GetAllObjects<Catalogue>()
             .Where(c => !(c.IsDeprecated || c.IsInternalDataset)));
         catas.Sort();
 
@@ -270,7 +271,7 @@ public class DitaCatalogueExtractor : ICheckable
     /// <param name="notifier"></param>
     public void Check(ICheckNotifier notifier)
     {
-        var catas = _repository.GetAllObjects<Catalogue>().Where(c => !c.IsInternalDataset)
+        var catas = _catalogueDbContext.GetAllObjects<Catalogue>().Where(c => !c.IsInternalDataset)
             .ToArray();
 
         //Catalogues with no acronyms

@@ -60,19 +60,19 @@ namespace Rdmp.Core.Reports.ExtractionTime
             if (catalogueItem is null || catalogueItem.ExtractionInformation is null) return;
             bool isNull = !catalogueItem.ExtractionInformation.IsPrimaryKey;
             bool isIdentifier = catalogueItem.ExtractionInformation.IsExtractionIdentifier;
-            var lookups = _catalogue.CatalogueRepository.GetAllObjectsWhere<Lookup>("ForeignKey_ID",column.ColumnInfo.ID);
+            var lookups = _catalogue.CatalogueDbContext.GetAllObjectsWhere<Lookup>("ForeignKey_ID",column.ColumnInfo.ID);
             var lookupString = "";
-            if (lookups.Length != 0) lookupString = string.Join(';', lookups.Select(l => LookupStringGenerator(l)));
-            sb.AppendLine($"\"{column.GetRuntimeName()}\",\"{column.ColumnInfo.Data_type}\",{isNull},\"{catalogueItem.Description}\",{isIdentifier},{lookups.Length != 0},{lookupString}");
+            if (lookups.Any()) lookupString = string.Join(';', lookups.Select(l => LookupStringGenerator(l)));
+            sb.AppendLine($"\"{column.GetRuntimeName()}\",\"{column.ColumnInfo.Data_type}\",{isNull},\"{catalogueItem.Description}\",{isIdentifier},{lookups.Any()},{lookupString}");
         }
 
         private void WriteReleaseSubs(ReleaseIdentifierSubstitution releaseIdentifierSubstitution,StringBuilder sb)
         {
             var column = releaseIdentifierSubstitution.ColumnInfo;
             var catalogueItem = _catalogue.CatalogueItems.Where(c => c.ColumnInfo_ID == column.ID).First();
-            var lookups = _catalogue.CatalogueRepository.GetAllObjectsWhere<Lookup>("ForeignKey_ID", column.ID);
+            var lookups = _catalogue.CatalogueDbContext.GetAllObjectsWhere<Lookup>("ForeignKey_ID", column.ID);
             var lookupString = "";
-            if (lookups.Length != 0) lookupString = string.Join(';', lookups.Select(l => LookupStringGenerator(l)));
+           // if (lookups.Length != 0) lookupString = string.Join(';', lookups.Select(l => LookupStringGenerator(l)));
             sb.AppendLine($"\"{releaseIdentifierSubstitution.Alias}\",\"{column.Data_type}\",{false},\"{catalogueItem.Description}\",{releaseIdentifierSubstitution.IsExtractionIdentifier},{lookups.Any()},{lookupString}");
 
         }

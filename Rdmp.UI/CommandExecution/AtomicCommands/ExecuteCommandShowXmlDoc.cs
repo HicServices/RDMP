@@ -16,7 +16,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands;
 public class ExecuteCommandShowXmlDoc : BasicUICommandExecution, IAtomicCommand
 {
     private readonly string _title;
-    private string _help;
+    private string _help="todo";
 
     /// <summary>
     /// sets up the command to show xmldoc for the supplied <paramref name="classOrProperty"/>
@@ -27,8 +27,8 @@ public class ExecuteCommandShowXmlDoc : BasicUICommandExecution, IAtomicCommand
     public ExecuteCommandShowXmlDoc(IActivateItems activator, string classOrProperty, string title) : base(activator)
     {
         _title = title;
-        _help = activator.RepositoryLocator.CatalogueDbContext.CommentStore.GetDocumentationIfExists(classOrProperty,
-            true, true);
+        //_help = activator.RepositoryLocator.CatalogueDbContext.CommentStore.GetDocumentationIfExists(classOrProperty,
+        //    true, true);
 
         if (string.IsNullOrWhiteSpace(_help))
             SetImpossible($"No help available for keyword '{classOrProperty}'");

@@ -1,6 +1,7 @@
 ﻿using NPOI.OpenXmlFormats.Spreadsheet;
 using Org.BouncyCastle.Crypto.Signers;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Repositories;
 using Spectre.Console;
 using System;
@@ -15,7 +16,7 @@ namespace Rdmp.Core.DataExport.Data
     static class ProjectSpecificCatalogueManager
     {
 
-        public static bool CanMakeCatalogueProjectSpecific(IDataExportRepository dqeRepo, ICatalogue catalogue, IProject project, List<int> projectIdsToIgnore)
+        public static bool CanMakeCatalogueProjectSpecific(RDMPDbContext dqeRepo, ICatalogue catalogue, IProject project, List<int> projectIdsToIgnore)
         {
             var status = catalogue.GetExtractabilityStatus(dqeRepo);
 
@@ -43,7 +44,7 @@ namespace Rdmp.Core.DataExport.Data
             return true;
         }
 
-        public static ExtractableDataSet MakeCatalogueProjectSpecific(IDataExportRepository dqeRepo, ICatalogue catalogue, IProject project)
+        public static ExtractableDataSet MakeCatalogueProjectSpecific(RDMPDbContext dqeRepo, ICatalogue catalogue, IProject project)
         {
             var eds = dqeRepo.GetAllObjectsWithParent<ExtractableDataSet>(catalogue).SingleOrDefault();
             if (eds is null)
@@ -62,7 +63,7 @@ namespace Rdmp.Core.DataExport.Data
             return eds;
         }
 
-        public static bool CanMakeCatalogueNonProjectSpecific(IDataExportRepository dqeRepo, ICatalogue catalogue, ExtractableDataSet extractableDataSet, IProject project)
+        public static bool CanMakeCatalogueNonProjectSpecific(RDMPDbContext dqeRepo, ICatalogue catalogue, ExtractableDataSet extractableDataSet, IProject project)
         {
             bool usedInExtraction = project.ExtractionConfigurations.Where(ec => ec.SelectedDataSets.Select(sds => sds.ExtractableDataSet).Contains(extractableDataSet)).Any();
             if (!usedInExtraction) return true;
@@ -70,7 +71,7 @@ namespace Rdmp.Core.DataExport.Data
             return false;
         }
 
-        public static void MakeCatalogueNonProjectSpecific(IDataExportRepository dqeRepo, ICatalogue catalogue, ExtractableDataSet extractableDataSet, Project project)
+        public static void MakeCatalogueNonProjectSpecific(RDMPDbContext dqeRepo, ICatalogue catalogue, ExtractableDataSet extractableDataSet, Project project)
         {
             if (project is null) return;
             if (extractableDataSet is null) return;

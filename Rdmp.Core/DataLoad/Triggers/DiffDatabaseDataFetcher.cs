@@ -123,7 +123,7 @@ public class DiffDatabaseDataFetcher
 
     private void GetInsertData(DiscoveredServer server, DiscoveredDatabase database, ICheckNotifier checkNotifier)
     {
-        var memoryRepository = new MemoryCatalogueRepository();
+        var memoryRepository = new MemoryRDMPDbContext();
 
         var syntaxHelper = server.GetQuerySyntaxHelper();
         var tableName = _tableInfo.Name;

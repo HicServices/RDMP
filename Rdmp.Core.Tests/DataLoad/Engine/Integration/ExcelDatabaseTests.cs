@@ -32,7 +32,7 @@ public class ExcelDatabaseTests : DatabaseTests
         creator.CreatePipelines(new PlatformDatabaseCreationOptions());
 
         // find the excel loading pipeline
-        var pipe = CatalogueRepository.GetAllObjects<Pipeline>().OrderByDescending(p => p.ID)
+        var pipe = CatalogueDbContext.GetAllObjects<Pipeline>().OrderByDescending(p => p.ID)
             .FirstOrDefault(p => p.Name.Contains("BULK INSERT: Excel File"));
 
         // run an import of the file using the pipeline

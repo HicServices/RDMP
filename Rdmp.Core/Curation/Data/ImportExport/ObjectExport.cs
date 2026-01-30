@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using Rdmp.Core.Curation.Data.Referencing;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
 using Rdmp.Core.Repositories;
@@ -49,28 +50,28 @@ public class ObjectExport : ReferenceOtherObjectDatabaseEntity, IInjectKnown<IMa
     /// <summary>
     /// use <see cref="ShareManager.GetNewOrExistingExportFor"/> for easier access to this constructor
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="objectForSharing"></param>
     /// <param name="guid"></param>
-    internal ObjectExport(RdmpDbContext catalogueDbContext, IMapsDirectlyToDatabaseTable objectForSharing, Guid guid)
+    internal ObjectExport(RDMPDbContext catalogueDbContext, IMapsDirectlyToDatabaseTable objectForSharing, Guid guid)
     {
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "ReferencedObjectID", objectForSharing.ID },
-            { "ReferencedObjectType", objectForSharing.GetType().Name },
-            { "ReferencedObjectRepositoryType", objectForSharing.Repository.GetType().Name },
-            { "SharingUID", guid.ToString() }
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "ReferencedObjectID", objectForSharing.ID },
+        //    { "ReferencedObjectType", objectForSharing.GetType().Name },
+        //    { "ReferencedObjectRepositoryType", objectForSharing.CatalogueDbContext.GetType().Name },
+        //    { "SharingUID", guid.ToString() }
+        //});
 
-        if (ID == 0 || Repository != repository)
+        if (ID == 0 || CatalogueDbContext != catalogueDbContext)
             throw new ArgumentException("Repository failed to properly hydrate this class");
 
         ClearAllInjections();
     }
 
     /// <inheritdoc/>
-    public ObjectExport(RdmpDbContext catalogueDbContext, DbDataReader r)
-        : base(repository, r)
+    public ObjectExport(RDMPDbContext catalogueDbContext, DbDataReader r)
+        :base(catalogueDbContext, r)
     {
         SharingUID = r["SharingUID"].ToString();
     }

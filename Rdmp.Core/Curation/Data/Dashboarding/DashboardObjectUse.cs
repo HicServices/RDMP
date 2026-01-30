@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using Rdmp.Core.Curation.Data.Referencing;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 
@@ -39,7 +40,7 @@ public class DashboardObjectUse : ReferenceOtherObjectDatabaseEntity
     {
     }
 
-    internal DashboardObjectUse(RdmpDbContext catalogueDbContext, DbDataReader r) : base(repository, r)
+    internal DashboardObjectUse(RDMPDbContext catalogueDbContext, DbDataReader r) :base(catalogueDbContext, r)
     {
         DashboardControl_ID = Convert.ToInt32(r["DashboardControl_ID"]);
     }
@@ -47,18 +48,18 @@ public class DashboardObjectUse : ReferenceOtherObjectDatabaseEntity
     /// <summary>
     /// Records the fact that the given <see cref="DashboardControl"/> targets the given object (and hopefully displays information about it)
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="parentControl"></param>
     /// <param name="objectToSave"></param>
-    public DashboardObjectUse(RdmpDbContext catalogueDbContext, DashboardControl parentControl,
+    public DashboardObjectUse(RDMPDbContext catalogueDbContext, DashboardControl parentControl,
         IMapsDirectlyToDatabaseTable objectToSave)
     {
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "ReferencedObjectID", objectToSave.ID },
-            { "ReferencedObjectType", objectToSave.GetType().Name },
-            { "ReferencedObjectRepositoryType", objectToSave.Repository.GetType().Name },
-            { "DashboardControl_ID", parentControl.ID }
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "ReferencedObjectID", objectToSave.ID },
+        //    { "ReferencedObjectType", objectToSave.GetType().Name },
+        //    { "ReferencedObjectRepositoryType", objectToSave.CatalogueDbContext.GetType().Name },
+        //    { "DashboardControl_ID", parentControl.ID }
+        //});
     }
 }

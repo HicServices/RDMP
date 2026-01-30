@@ -136,10 +136,6 @@ public interface ITableInfo : IComparable, IHasRuntimeName, IDataAccessPoint, IH
     /// </summary>
     bool IsView { get; set; }
 
-    /// <summary>
-    /// The repository this object is stored in
-    /// </summary>
-    ICatalogueRepository CatalogueRepository { get; }
 
     /// <summary>
     /// Returns all Catalogues which have any CatalogueItems which are associated with any of the ColumnInfos of this TableInfo.  If this is a lookup table then expect to get back

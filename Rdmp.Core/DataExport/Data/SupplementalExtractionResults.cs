@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Referencing;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 
@@ -106,28 +107,28 @@ public class SupplementalExtractionResults : ReferenceOtherObjectDatabaseEntity,
     /// Starts a new audit in the database of a supplemental artifact (<paramref name="extractedObject"/>).  This is a GLOBAL artifact that is not associated
     /// with any one dataset but with the extraction as a whole.
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="configuration">The configuration being extracted</param>
     /// <param name="sql">The SQL executed to generate the artifact or null if not appropriate (e.g. if it is a <see cref="SupportingDocument"/>)</param>
     /// <param name="extractedObject">The owner of the artifact being extracted (e.g. a <see cref="SupportingDocument"/> or <see cref="SupportingSQLTable"/>)</param>
-    public SupplementalExtractionResults(IDataExportRepository repository, IExtractionConfiguration configuration,
+    public SupplementalExtractionResults(RDMPDbContext catalogueDbContext, IExtractionConfiguration configuration,
         string sql, IMapsDirectlyToDatabaseTable extractedObject)
     {
-        Repository = repository;
+       CatalogueDbContext = catalogueDbContext;
         var name = extractedObject.GetType().FullName;
 
         if (extractedObject is INamed named)
             name = named.Name;
 
-        Repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "ReferencedObjectID", extractedObject.ID },
-            { "ReferencedObjectType", extractedObject.GetType().Name },
-            { "ReferencedObjectRepositoryType", extractedObject.Repository.GetType().Name },
-            { "ExtractionConfiguration_ID", configuration.ID },
-            { "SQLExecuted", sql },
-            { "ExtractedName", name }
-        });
+        //CatalogueDbContext.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "ReferencedObjectID", extractedObject.ID },
+        //    { "ReferencedObjectType", extractedObject.GetType().Name },
+        //    { "ReferencedObjectRepositoryType", extractedObject.CatalogueDbContext.GetType().Name },
+        //    { "ExtractionConfiguration_ID", configuration.ID },
+        //    { "SQLExecuted", sql },
+        //    { "ExtractedName", name }
+        //});
 
         IsGlobal = true;
     }
@@ -136,29 +137,29 @@ public class SupplementalExtractionResults : ReferenceOtherObjectDatabaseEntity,
     /// Starts a new audit in the database of a supplemental artifact (<paramref name="extractedObject"/>).  This is a NON GLOBAL artifact that is associated only
     /// with the dataset being extracted.
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="mainAudit">The dataset extraction audit for the dataset to which this supplemental artifact belongs</param>
     /// <param name="sql">The SQL executed to generate the artifact or null if not appropriate (e.g. if it is a <see cref="SupportingDocument"/>)</param>
     /// <param name="extractedObject">The owner of the artifact being extracted (e.g. a <see cref="SupportingDocument"/> or <see cref="SupportingSQLTable"/>)</param>
-    public SupplementalExtractionResults(IDataExportRepository repository, ICumulativeExtractionResults mainAudit,
+    public SupplementalExtractionResults(RDMPDbContext catalogueDbContext, ICumulativeExtractionResults mainAudit,
         string sql, IMapsDirectlyToDatabaseTable extractedObject)
     {
-        Repository = repository;
+       CatalogueDbContext = catalogueDbContext;
 
         var name = extractedObject.GetType().FullName;
 
         if (extractedObject is INamed named)
             name = named.Name;
 
-        Repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "ReferencedObjectID", extractedObject.ID },
-            { "ReferencedObjectType", extractedObject.GetType().Name },
-            { "ReferencedObjectRepositoryType", extractedObject.Repository.GetType().Name },
-            { "CumulativeExtractionResults_ID", mainAudit.ID },
-            { "SQLExecuted", sql },
-            { "ExtractedName", name }
-        });
+        //CatalogueDbContext.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "ReferencedObjectID", extractedObject.ID },
+        //    { "ReferencedObjectType", extractedObject.GetType().Name },
+        //    { "ReferencedObjectRepositoryType", extractedObject.CatalogueDbContext.GetType().Name },
+        //    { "CumulativeExtractionResults_ID", mainAudit.ID },
+        //    { "SQLExecuted", sql },
+        //    { "ExtractedName", name }
+        //});
 
         IsGlobal = false;
     }
@@ -166,10 +167,10 @@ public class SupplementalExtractionResults : ReferenceOtherObjectDatabaseEntity,
     /// <summary>
     /// Reads an existing audit record out of the data export database
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="r"></param>
-    internal SupplementalExtractionResults(IRepository repository, DbDataReader r)
-        : base(repository, r)
+    internal SupplementalExtractionResults(RDMPDbContext catalogueDbContext, DbDataReader r)
+        :base(catalogueDbContext, r)
     {
         CumulativeExtractionResults_ID = ObjectToNullableInt(r["CumulativeExtractionResults_ID"]);
         ExtractionConfiguration_ID = ObjectToNullableInt(r["ExtractionConfiguration_ID"]);

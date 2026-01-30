@@ -48,7 +48,7 @@ public class Validator
     /// Validation rules can reference objects e.g. StandardRegex.  This static property indicates where to get the available instances available
     /// for selection (the Catalogue database).
     /// </summary>
-    public static ICatalogueRepositoryServiceLocator LocatorForXMLDeserialization;
+    public static RDMPDbContextServiceLocator LocatorForXMLDeserialization;
 
     public List<ItemValidator> ItemValidators { get; set; }
 

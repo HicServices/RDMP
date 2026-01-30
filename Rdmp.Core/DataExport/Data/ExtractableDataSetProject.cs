@@ -1,4 +1,5 @@
 ﻿using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using System;
@@ -33,25 +34,25 @@ namespace Rdmp.Core.DataExport.Data
         #endregion
         #region Relationships
         [NoMappingToDatabase]
-        public IProject Project => Repository.GetObjectByID<Project>(_projectID);
+        public IProject Project => CatalogueDbContext.GetObjectByID<Project>(_projectID);
 
         [NoMappingToDatabase]
-        public ExtractableDataSet DataSet=> Repository.GetObjectByID<ExtractableDataSet>(_extractableDataSetID);
+        public ExtractableDataSet DataSet => CatalogueDbContext.GetObjectByID<ExtractableDataSet>(_extractableDataSetID);
         #endregion
 
         public ExtractableDataSetProject() { }
 
-        public ExtractableDataSetProject(IDataExportRepository repository, ExtractableDataSet eds, IProject project)
+        public ExtractableDataSetProject(RDMPDbContext catalogueDbContext, ExtractableDataSet eds, IProject project)
         {
-            Repository = repository;
-            Repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "Project_ID", project.ID},
-            { "ExtractableDataSet_ID", eds.ID }
-        });
+            CatalogueDbContext = catalogueDbContext;
+            //    CatalogueDbContext.InsertAndHydrate(this, new Dictionary<string, object>
+            //{
+            //    { "Project_ID", project.ID},
+            //    { "ExtractableDataSet_ID", eds.ID }
+            //});
         }
 
-        internal ExtractableDataSetProject(IDataExportRepository repository, DbDataReader r) : base(repository, r)
+        internal ExtractableDataSetProject(RDMPDbContext catalogueDbContext, DbDataReader r) : base(catalogueDbContext, r)
         {
             Project_ID = int.Parse(r["Project_ID"].ToString());
             ExtractableDataSet_ID = int.Parse(r["ExtractableDataSet_ID"].ToString());

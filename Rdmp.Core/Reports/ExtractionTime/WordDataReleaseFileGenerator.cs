@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using NPOI.XWPF.UserModel;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Managers;
 using Rdmp.Core.ReusableLibraryCode.Annotations;
@@ -23,7 +24,7 @@ namespace Rdmp.Core.Reports.ExtractionTime;
 /// </summary>
 public class WordDataReleaseFileGenerator : DocXHelper
 {
-    private readonly IDataExportRepository _repository;
+    private readonly RDMPDbContext _catalogueDbContext;
     public IExtractionConfiguration Configuration { get; set; }
     protected ICumulativeExtractionResults[] ExtractionResults { get; set; }
     protected IExtractableCohort Cohort { get; set; }
@@ -31,21 +32,21 @@ public class WordDataReleaseFileGenerator : DocXHelper
 
     private const int CohortCountTimeoutInSeconds = 600; // 10 minutes
 
-    public WordDataReleaseFileGenerator(IExtractionConfiguration configuration, IDataExportRepository repository)
+    public WordDataReleaseFileGenerator(IExtractionConfiguration configuration, RDMPDbContext catalogueDbContext)
     {
-        _repository = repository;
+        _catalogueDbContext = catalogueDbContext;
         Configuration = configuration;
         Project = configuration.Project;
 
         if (Configuration.Cohort_ID == null)
             throw new NullReferenceException("Configuration has no Cohort");
 
-        Cohort = _repository.GetObjectByID<ExtractableCohort>((int)Configuration.Cohort_ID);
+        Cohort = _catalogueDbContext.GetObjectByID<ExtractableCohort>((int)Configuration.Cohort_ID);
 
         ExtractionResults =
             Configuration.CumulativeExtractionResults
                 .OrderBy(
-                    c => _repository.GetObjectByID<ExtractableDataSet>(c.ExtractableDataSet_ID).ToString()
+                    c => _catalogueDbContext.GetObjectByID<ExtractableDataSet>(c.ExtractableDataSet_ID).ToString()
                 ).ToArray();
     }
 
@@ -63,10 +64,10 @@ public class WordDataReleaseFileGenerator : DocXHelper
         InsertHeader(document, $"Project:{Project.Name}", 1);
         InsertHeader(document, Configuration.Name, 2);
 
-        var disclaimer = _repository.DataExportPropertyManager.GetValue(DataExportProperty.ReleaseDocumentDisclaimer);
+        //var disclaimer = _catalogueDbContext.DataExportPropertyManager.GetValue(DataExportProperty.ReleaseDocumentDisclaimer);
 
-        if (disclaimer != null)
-            InsertParagraph(document, disclaimer);
+        //if (disclaimer != null)
+        //    InsertParagraph(document, disclaimer);
 
         CreateTopTable1(document);
 
@@ -184,11 +185,11 @@ public class WordDataReleaseFileGenerator : DocXHelper
         foreach (var result in ExtractionResults)
         {
             var filename = GetFileName(result);
-            var extractableDataset = _repository.GetObjectByID<ExtractableDataSet>(result.ExtractableDataSet_ID);
+            var extractableDataset = _catalogueDbContext.GetObjectByID<ExtractableDataSet>(result.ExtractableDataSet_ID);
             SetTableCell(table, tableLine, 0,
               extractableDataset.ToString());
             var linkedDatasets = extractableDataset.Catalogue.CatalogueItems.Select(static c => c.ColumnInfo).Where(ci => ci.Dataset_ID != null).Distinct().Select(ci => ci.Dataset_ID);
-            var datasets = _repository.CatalogueRepository.GetAllObjects<Curation.Data.Dataset>().Where(d => linkedDatasets.Contains(d.ID)).ToList();
+            var datasets = _catalogueDbContext.GetAllObjects<Curation.Data.Dataset>().Where(d => linkedDatasets.Contains(d.ID)).ToList();
             var datasetString = string.Join("",datasets.Select(ds=> $"{ds.Name} {getDOI(ds)}, {Environment.NewLine}"));
             SetTableCell(table, tableLine, 1, result.FiltersUsed);
             SetTableCell(table, tableLine, 2, filename);

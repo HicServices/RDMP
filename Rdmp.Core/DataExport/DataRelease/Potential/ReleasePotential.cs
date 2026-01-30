@@ -13,6 +13,7 @@ using Rdmp.Core.DataExport.Checks;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.Commands;
 using Rdmp.Core.DataExport.DataExtraction.UserPicks;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.QueryBuilding;
@@ -29,7 +30,7 @@ namespace Rdmp.Core.DataExport.DataRelease.Potential;
 public abstract class ReleasePotential : ICheckable
 {
     protected readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
-    private readonly IRepository _repository;
+    private readonly RDMPDbContext _repository;
     private List<IColumn> _columnsToExtract;
 
     public ISelectedDataSets SelectedDataSet { get; private set; }
@@ -72,7 +73,7 @@ public abstract class ReleasePotential : ICheckable
         ISelectedDataSets selectedDataSet)
     {
         _repositoryLocator = repositoryLocator;
-        _repository = selectedDataSet.Repository;
+        _repository = selectedDataSet.CatalogueDbContext;
         SelectedDataSet = selectedDataSet;
         Configuration = selectedDataSet.ExtractionConfiguration;
         DataSet = selectedDataSet.ExtractableDataSet;

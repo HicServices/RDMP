@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Text;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Serialization;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
@@ -219,20 +220,20 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     /// <para><remarks>You should next choose which <see cref="ColumnInfo"/> powers it and optionally create an <see cref="ExtractionInformation"/> to
     /// make the column extractable</remarks></para>
     /// </summary>
-    public CatalogueItem(RdmpDbContext catalogueDbContext, ICatalogue parent, string name)
+    public CatalogueItem(RDMPDbContext catalogueDbContext, ICatalogue parent, string name)
     {
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "Name", name },
-            { "Catalogue_ID", parent.ID }
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "Name", name },
+        //    { "Catalogue_ID", parent.ID }
+        //});
 
         ClearAllInjections();
         parent.ClearAllInjections();
     }
 
-    internal CatalogueItem(RdmpDbContext catalogueDbContext, DbDataReader r)
-        : base(repository, r)
+    internal CatalogueItem(RDMPDbContext catalogueDbContext, DbDataReader r)
+        : base(catalogueDbContext, r)
     {
         Catalogue_ID =
             int.Parse(r["Catalogue_ID"]
@@ -281,13 +282,13 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
         _knownCatalogue = new Lazy<Catalogue>(FetchCatalogue);
     }
 
-    private Catalogue FetchCatalogue() => Repository.GetObjectByID<Catalogue>(Catalogue_ID);
+    private Catalogue FetchCatalogue() => CatalogueDbContext.GetObjectByID<Catalogue>(Catalogue_ID);
 
     private ExtractionInformation FetchExtractionInformationIfAny() =>
-        Repository.GetAllObjectsWithParent<ExtractionInformation>(this).SingleOrDefault();
+        CatalogueDbContext.GetAllObjectsWithParent<ExtractionInformation>(this).SingleOrDefault();
 
     private ColumnInfo FetchColumnInfoIfAny() =>
-        !ColumnInfo_ID.HasValue ? null : Repository.GetObjectByID<ColumnInfo>(ColumnInfo_ID.Value);
+        !ColumnInfo_ID.HasValue ? null : CatalogueDbContext.GetObjectByID<ColumnInfo>(ColumnInfo_ID.Value);
 
     /// <inheritdoc/>
     public void InjectKnown(ExtractionInformation instance)
@@ -329,7 +330,7 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
             throw new ArgumentException(
                 "Cannot clone a CatalogueItem into its own parent, specify a different catalogue to clone into");
 
-        var clone = new CatalogueItem((ICatalogueRepository)cataToImportTo.Repository, cataToImportTo, Name);
+        var clone = new CatalogueItem(cataToImportTo.CatalogueDbContext, cataToImportTo, Name);
 
         //Get all the properties
         var propertyInfo =
@@ -419,7 +420,7 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
 
     public CatalogueItem ShallowClone(ICatalogue into)
     {
-        var clone = new CatalogueItem(CatalogueRepository, into, Name);
+        var clone = new CatalogueItem(CatalogueDbContext, into, Name);
         CopyShallowValuesTo(clone);
         return clone;
     }

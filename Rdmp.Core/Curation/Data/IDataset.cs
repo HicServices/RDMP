@@ -15,10 +15,6 @@ namespace Rdmp.Core.Curation.Data;
 /// </summary>
 public interface IDataset: IMapsDirectlyToDatabaseTable
 {
-    /// <summary>
-    /// Returns where the object exists (e.g. database) as <see cref="ICatalogueRepository"/> or null if the object does not exist in a catalogue repository.
-    /// </summary>
-    ICatalogueRepository CatalogueRepository { get; }
 
     string Name { get; }
     string DigitalObjectIdentifier { get; }

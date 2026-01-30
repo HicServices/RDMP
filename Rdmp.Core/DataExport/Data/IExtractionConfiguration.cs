@@ -31,7 +31,6 @@ namespace Rdmp.Core.DataExport.Data;
 /// </summary>
 public interface IExtractionConfiguration : INamed, IHasDependencies, IMightBeReadOnly, ILoggedActivityRootObject
 {
-    IDataExportRepository DataExportRepository { get; }
 
     /// <summary>
     /// When the configuration was created

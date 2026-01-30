@@ -71,7 +71,7 @@ public class DatasetTimespanCalculator : IDetermineDatasetTimespan
 
         try
         {
-            var repo = new DQERepository(catalogue.CatalogueRepository);
+            var repo = new DQERepository(catalogue.CatalogueDbContext);
             mostRecentEvaluation = repo.GetMostRecentEvaluationFor(catalogue);
         }
         catch (Exception)

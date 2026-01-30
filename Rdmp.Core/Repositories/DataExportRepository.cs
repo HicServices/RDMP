@@ -11,6 +11,7 @@ using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataRelease.Audit;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.Repositories.Managers;
@@ -26,17 +27,17 @@ namespace Rdmp.Core.Repositories;
 /// <para>This class allows you to fetch objects and should be passed into constructors of classes you want to construct in the Data Export database.  This includes extraction
 /// Projects, ExtractionConfigurations, ExtractableCohorts etc.</para>
 /// 
-/// <para>Data Export databases are only valid when you have a CatalogueRepository database too and are always paired to a specific CatalogueRepository database (i.e. there are
-/// IDs in the data export database that specifically map to objects in the Catalogue database).  You can use the CatalogueRepository property to fetch/create objects
+/// <para>Data Export databases are only valid when you have a RDMPDbContext database too and are always paired to a specific RDMPDbContext database (i.e. there are
+/// IDs in the data export database that specifically map to objects in the Catalogue database).  You can use the RDMPDbContext property to fetch/create objects
 /// in the paired Catalogue database.</para>
 /// </summary>
 public class DataExportRepository : TableRepository, IDataExportRepository
 {
     /// <summary>
     /// The paired Catalogue database which contains non extract metadata (i.e. datasets, aggregates, data loads etc).  Some objects in this database
-    /// contain references to objects in the CatalogueRepository.
+    /// contain references to objects in the CatalogueDbContext.
     /// </summary>
-    public ICatalogueRepository CatalogueRepository { get; private set; }
+    public RDMPDbContext CatalogueDbContext{ get; private set; }
 
     public IFilterManager FilterManager { get; private set; }
 
@@ -44,10 +45,10 @@ public class DataExportRepository : TableRepository, IDataExportRepository
 
     private Lazy<Dictionary<int, List<int>>> _packageContentsDictionary;
 
-    public DataExportRepository(DbConnectionStringBuilder connectionString, ICatalogueRepository catalogueRepository) :
+    public DataExportRepository(DbConnectionStringBuilder connectionString, RDMPDbContext catalogueDbContext) :
         base(null, connectionString)
     {
-        CatalogueRepository = catalogueRepository;
+        CatalogueDbContext = catalogueDbContext;
 
         FilterManager = new DataExportFilterManager(this);
 
@@ -55,33 +56,33 @@ public class DataExportRepository : TableRepository, IDataExportRepository
 
         DataExportPropertyManager = new DataExportPropertyManager(false, this);
 
-        Constructors.Add(typeof(SupplementalExtractionResults),
-            (rep, r) => new SupplementalExtractionResults((IDataExportRepository)rep, r));
-        Constructors.Add(typeof(CumulativeExtractionResults),
-            (rep, r) => new CumulativeExtractionResults((IDataExportRepository)rep, r));
-        Constructors.Add(typeof(DeployedExtractionFilter),
-            (rep, r) => new DeployedExtractionFilter((IDataExportRepository)rep, r));
-        Constructors.Add(typeof(DeployedExtractionFilterParameter),
-            (rep, r) => new DeployedExtractionFilterParameter((IDataExportRepository)rep, r));
-        Constructors.Add(typeof(ExternalCohortTable),
-            (rep, r) => new ExternalCohortTable((IDataExportRepository)rep, r));
-        Constructors.Add(typeof(ExtractableCohort), (rep, r) => new ExtractableCohort((IDataExportRepository)rep, r));
-        Constructors.Add(typeof(ExtractableColumn), (rep, r) => new ExtractableColumn((IDataExportRepository)rep, r));
-        Constructors.Add(typeof(ExtractableDataSetProject), (rep, r) => new ExtractableDataSetProject((IDataExportRepository)rep, r));
-        Constructors.Add(typeof(ExtractableDataSet), (rep, r) => new ExtractableDataSet((IDataExportRepository)rep, r));
-        Constructors.Add(typeof(ExtractionConfiguration),
-            (rep, r) => new ExtractionConfiguration((IDataExportRepository)rep, r));
-        Constructors.Add(typeof(FilterContainer), (rep, r) => new FilterContainer((IDataExportRepository)rep, r));
-        Constructors.Add(typeof(GlobalExtractionFilterParameter),
-            (rep, r) => new GlobalExtractionFilterParameter((IDataExportRepository)rep, r));
-        Constructors.Add(typeof(Project), (rep, r) => new Project((IDataExportRepository)rep, r));
-        Constructors.Add(typeof(SelectedDataSets), (rep, r) => new SelectedDataSets((IDataExportRepository)rep, r));
-        Constructors.Add(typeof(ExtractableDataSetPackage),
-            (rep, r) => new ExtractableDataSetPackage((IDataExportRepository)rep, r));
-        Constructors.Add(typeof(ProjectCohortIdentificationConfigurationAssociation),
-            (rep, r) => new ProjectCohortIdentificationConfigurationAssociation((IDataExportRepository)rep, r));
-        Constructors.Add(typeof(SelectedDataSetsForcedJoin),
-            (rep, r) => new SelectedDataSetsForcedJoin((IDataExportRepository)rep, r));
+        //Constructors.Add(typeof(SupplementalExtractionResults),
+        //    (rep, r) => new SupplementalExtractionResults(rep, r));
+        //Constructors.Add(typeof(CumulativeExtractionResults),
+        //    (rep, r) => new CumulativeExtractionResults(rep, r));
+        //Constructors.Add(typeof(DeployedExtractionFilter),
+        //    (rep, r) => new DeployedExtractionFilter(rep, r));
+        //Constructors.Add(typeof(DeployedExtractionFilterParameter),
+        //    (rep, r) => new DeployedExtractionFilterParameter(rep, r));
+        //Constructors.Add(typeof(ExternalCohortTable),
+        //    (rep, r) => new ExternalCohortTable(rep, r));
+        //Constructors.Add(typeof(ExtractableCohort), (rep, r) => new ExtractableCohort(rep, r));
+        //Constructors.Add(typeof(ExtractableColumn), (rep, r) => new ExtractableColumn(rep, r));
+        //Constructors.Add(typeof(ExtractableDataSetProject), (rep, r) => new ExtractableDataSetProject(rep, r));
+        //Constructors.Add(typeof(ExtractableDataSet), (rep, r) => new ExtractableDataSet(rep, r));
+        //Constructors.Add(typeof(ExtractionConfiguration),
+        //    (rep, r) => new ExtractionConfiguration(rep, r));
+        //Constructors.Add(typeof(FilterContainer), (rep, r) => new FilterContainer(rep, r));
+        //Constructors.Add(typeof(GlobalExtractionFilterParameter),
+        //    (rep, r) => new GlobalExtractionFilterParameter(rep, r));
+        //Constructors.Add(typeof(Project), (rep, r) => new Project(rep, r));
+        //Constructors.Add(typeof(SelectedDataSets), (rep, r) => new SelectedDataSets(rep, r));
+        //Constructors.Add(typeof(ExtractableDataSetPackage),
+        //    (rep, r) => new ExtractableDataSetPackage(rep, r));
+        //Constructors.Add(typeof(ProjectCohortIdentificationConfigurationAssociation),
+        //    (rep, r) => new ProjectCohortIdentificationConfigurationAssociation(rep, r));
+        //Constructors.Add(typeof(SelectedDataSetsForcedJoin),
+        //    (rep, r) => new SelectedDataSetsForcedJoin(rep, r));
     }
 
     public IEnumerable<ICumulativeExtractionResults> GetAllCumulativeExtractionResultsFor(
@@ -120,8 +121,8 @@ ec.ExtractionConfiguration_ID = sds.ExtractionConfiguration_ID
 
     public override T[] GetAllObjects<T>()
     {
-        if (!_caches.ContainsKey(typeof(T)))
-            _caches.Add(typeof(T), new RowVerCache<T>(this));
+        //if (!_caches.ContainsKey(typeof(T)))
+        //    _caches.Add(typeof(T), new RowVerCache<T>(this));
 
         return _caches[typeof(T)].GetAllObjects<T>();
     }
@@ -237,6 +238,6 @@ ec.ExtractionConfiguration_ID = sds.ExtractionConfiguration_ID
                                     CumulativeExtractionResults_ID = {cumulativeExtractionResults.ID}", con.Connection,
                 con.Transaction);
         using var r = cmdselect.ExecuteReader();
-        return r.Read() ? new ReleaseLog(this, r) : null;
+        return null;// r.Read() ? new ReleaseLog(this, r) : null;
     }
 }

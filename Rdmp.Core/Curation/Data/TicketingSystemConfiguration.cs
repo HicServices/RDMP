@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Repositories;
@@ -44,7 +45,6 @@ public class TicketingSystemConfiguration : DatabaseEntity, INamed
     /// True if the ticketing system should be used/consulted.  Set to false if you want to temporarily disable the ticketing system link to RDMP
     /// without actually deleting the object.
     /// 
-    /// <para>See:</para><see cref="CatalogueRepository.GetTicketingSystem"/>
     /// </summary>
     public bool IsActive
     {
@@ -100,7 +100,7 @@ public class TicketingSystemConfiguration : DatabaseEntity, INamed
     public DataAccessCredentials DataAccessCredentials =>
         DataAccessCredentials_ID == null
             ? null
-            : Repository.GetObjectByID<DataAccessCredentials>((int)DataAccessCredentials_ID);
+            : CatalogueDbContext.GetObjectByID<DataAccessCredentials>((int)DataAccessCredentials_ID);
 
     #endregion
 
@@ -109,13 +109,13 @@ public class TicketingSystemConfiguration : DatabaseEntity, INamed
     }
 
     /// <inheritdoc/>
-    public TicketingSystemConfiguration(RdmpDbContext catalogueDbContext, string name) : base()
+    public TicketingSystemConfiguration(RDMPDbContext catalogueDbContext, string name) : base()
     {
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "Name", name != null ? (object)name : DBNull.Value },
-            { "IsActive", true }
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "Name", name != null ? (object)name : DBNull.Value },
+        //    { "IsActive", true }
+        //});
     }
 
     /// <summary>
@@ -123,11 +123,11 @@ public class TicketingSystemConfiguration : DatabaseEntity, INamed
     /// </summary>
     public List<TicketingSystemReleaseStatus> GetReleaseStatuses()
     {
-        return [.. Repository.GetAllObjectsWhere<TicketingSystemReleaseStatus>("TicketingSystemConfigurationID", ID)];
+        return [.. CatalogueDbContext.GetAllObjectsWhere<TicketingSystemReleaseStatus>("TicketingSystemConfigurationID", ID)];
     }
 
     /// <inheritdoc/>
-    internal TicketingSystemConfiguration(RdmpDbContext catalogueDbContext, DbDataReader r) : base(repository, r)
+    internal TicketingSystemConfiguration(RDMPDbContext catalogueDbContext, DbDataReader r) :base(catalogueDbContext, r)
     {
         IsActive = (bool)r["IsActive"];
         Url = r["Url"] as string;

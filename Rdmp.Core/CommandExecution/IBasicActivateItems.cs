@@ -22,6 +22,7 @@ using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataViewing;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Logging;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
@@ -503,12 +504,12 @@ public interface IBasicActivateItems
     /// <summary>
     /// Prompts user or directly creates a new satellite database (e.g. logging / dqe etc) and returns a persistent reference to it
     /// </summary>
-    /// <param name="catalogueRepository">The main catalogue database</param>
+    /// <param name="catalogueDbContext">The main catalogue database</param>
     /// <param name="defaultToSet">If the created database is to become the new default database of its type provide this</param>
     /// <param name="db">The server in which the database should be created or null if the user is expected to pick themselves as part of the method e.g. through a UI</param>
     /// <param name="patcher">The schema and patches to run to create the database</param>
     /// <returns></returns>
-    ExternalDatabaseServer CreateNewPlatformDatabase(ICatalogueRepository catalogueRepository,
+    ExternalDatabaseServer CreateNewPlatformDatabase(RDMPDbContext catalogueDbContext,
         PermissableDefaults defaultToSet, IPatcher patcher, DiscoveredDatabase db);
 
     /// <summary>

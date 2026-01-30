@@ -33,21 +33,21 @@ internal class ExtractableDataSetPackageMenu : RDMPContextMenuStrip
     private void AddExtractableDatasetToPackage(object sender, EventArgs e)
     {
         var packageManager = _activator.RepositoryLocator.DataExportRepository;
-        var notInPackage =
-            _childProvider.ExtractableDataSets.Except(packageManager.GetAllDataSets(_package,
-                _childProvider.ExtractableDataSets));
+        //var notInPackage =
+        //    _childProvider.ExtractableDataSets.Except(packageManager.GetAllDataSets(_package,
+        //        _childProvider.ExtractableDataSets));
 
-        if (_activator.SelectObjects(new DialogArgs
-        {
-            TaskDescription =
-                    "Which datasets should become part of the package.  When adding a package to an ExtractionConfiguration all datasets will be added at once."
-        }, notInPackage.ToArray(), out var selected))
-        {
-            foreach (ExtractableDataSet ds in selected)
-                packageManager.AddDataSetToPackage(_package, ds);
+        //if (_activator.SelectObjects(new DialogArgs
+        //{
+        //    TaskDescription =
+        //            "Which datasets should become part of the package.  When adding a package to an ExtractionConfiguration all datasets will be added at once."
+        //}, notInPackage.ToArray(), out var selected))
+        //{
+        //    foreach (ExtractableDataSet ds in selected)
+        //        packageManager.AddDataSetToPackage(_package, ds);
 
-            //package contents changed
-            Publish(_package);
-        }
+        //    //package contents changed
+        //    Publish(_package);
+        //}
     }
 }

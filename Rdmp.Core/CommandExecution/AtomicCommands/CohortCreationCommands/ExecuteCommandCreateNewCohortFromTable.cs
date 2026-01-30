@@ -65,27 +65,27 @@ public class ExecuteCommandCreateNewCohortFromTable : CohortCreationCommandExecu
         if (request == null)
             return;
 
-        var m = new MemoryCatalogueRepository();
-        var fakeCatalogue = new Catalogue(m, tbl.GetFullyQualifiedName());
-        var fakeCatalogueItem = new CatalogueItem(m, fakeCatalogue, col.GetRuntimeName());
-        var fakeTableInfo = new TableInfo(m, tbl.GetFullyQualifiedName())
-        {
-            DatabaseType = tbl.Database.Server.DatabaseType,
-            Database = tbl.Database.GetRuntimeName(),
-            Server = tbl.Database.Server.Name
-        };
-        var fakeColumnInfo = new ColumnInfo(m, col.GetFullyQualifiedName(), col.DataType.ToString(), fakeTableInfo);
-        var fakeExtractionInformation = new ExtractionInformation(m, fakeCatalogueItem, fakeColumnInfo,
-            col.GetFullyQualifiedName())
-        {
-            IsExtractionIdentifier = true
-        };
+        //var m = new MemoryRDMPDbContext();
+        //var fakeCatalogue = new Catalogue(m, tbl.GetFullyQualifiedName());
+        //var fakeCatalogueItem = new CatalogueItem(m, fakeCatalogue, col.GetRuntimeName());
+        //var fakeTableInfo = new TableInfo(m, tbl.GetFullyQualifiedName())
+        //{
+        //    DatabaseType = tbl.Database.Server.DatabaseType,
+        //    Database = tbl.Database.GetRuntimeName(),
+        //    Server = tbl.Database.Server.Name
+        //};
+        //var fakeColumnInfo = new ColumnInfo(m, col.GetFullyQualifiedName(), col.DataType.ToString(), fakeTableInfo);
+        //var fakeExtractionInformation = new ExtractionInformation(m, fakeCatalogueItem, fakeColumnInfo,
+        //    col.GetFullyQualifiedName())
+        //{
+        //    IsExtractionIdentifier = true
+        //};
 
-        request.ExtractionIdentifierColumn = fakeExtractionInformation;
-        var configureAndExecute = GetConfigureAndExecuteControl(request,
-            $"Import column {col.GetFullyQualifiedName()} as cohort and commit results", fakeExtractionInformation);
+        //request.ExtractionIdentifierColumn = fakeExtractionInformation;
+        //var configureAndExecute = GetConfigureAndExecuteControl(request,
+        //    $"Import column {col.GetFullyQualifiedName()} as cohort and commit results", fakeExtractionInformation);
 
-        configureAndExecute.Run(BasicActivator.RepositoryLocator, null, null, null);
+        //configureAndExecute.Run(BasicActivator.RepositoryLocator, null, null, null);
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>

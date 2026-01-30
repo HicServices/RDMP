@@ -7,6 +7,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
@@ -20,15 +21,15 @@ namespace Rdmp.Core.Curation.Data;
 /// </summary>
 public class CatalogueObscureDependencyFinder : IObscureDependencyFinder
 {
-    private readonly ICatalogueRepository _repository;
+    private readonly RDMPDbContext _catalogueDbContext;
 
     /// <summary>
     /// Sets the target upon which to apply delete/cascade obscure dependency rules
     /// </summary>
-    /// <param name="repository"></param>
-    public CatalogueObscureDependencyFinder(RdmpDbContext catalogueDbContext)
+    /// <param name="catalogueDbContext"></param>
+    public CatalogueObscureDependencyFinder(RDMPDbContext catalogueDbContext)
     {
-        _repository = repository;
+        _catalogueDbContext = catalogueDbContext;
     }
 
     /// <summary>
@@ -56,7 +57,7 @@ public class CatalogueObscureDependencyFinder : IObscureDependencyFinder
 
         //Delete any SQLFilterParameters associated with the parent object (which has just been deleted!)
         if (AnyTableSqlParameter.IsSupportedType(oTableWrapperObject.GetType()))
-            foreach (var p in _repository.GetAllParametersForParentTable(oTableWrapperObject))
+            foreach (var p in _catalogueDbContext.GetAllParametersForParentTable(oTableWrapperObject))
                 p.DeleteInDatabase();
     }
 

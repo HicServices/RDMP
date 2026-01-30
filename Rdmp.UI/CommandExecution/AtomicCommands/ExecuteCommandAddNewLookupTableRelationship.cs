@@ -45,26 +45,26 @@ public class ExecuteCommandAddNewLookupTableRelationship : BasicUICommandExecuti
         base.Execute();
 
         var cata = _catalogueIfKnown;
-        if (cata == null)
-            try
-            {
-                //make sure they really wanted to do this?
-                if (YesNo(GetLookupConfirmationText(), "Create Lookup"))
-                {
-                    //get them to pick a Catalogue the table provides descriptions for
-                    if (!SelectOne(_lookupTableInfoIfKnown.Repository, out cata))
-                        return;
-                }
-                else
-                {
-                    return;
-                }
-            }
-            catch (Exception exception)
-            {
-                ExceptionViewer.Show("Error creating Lookup", exception);
-                return;
-            }
+        //if (cata == null)
+        //    try
+        //    {
+        //        //make sure they really wanted to do this?
+        //        if (YesNo(GetLookupConfirmationText(), "Create Lookup"))
+        //        {
+        //            //get them to pick a Catalogue the table provides descriptions for
+        //            if (!SelectOne(_lookupTableInfoIfKnown.Repository, out cata))
+        //                return;
+        //        }
+        //        else
+        //        {
+        //            return;
+        //        }
+        //    }
+        //    catch (Exception exception)
+        //    {
+        //        ExceptionViewer.Show("Error creating Lookup", exception);
+        //        return;
+        //    }
 
         //they now deifnetly have a Catalogue!
         var t = Activator.Activate<LookupConfigurationUI, Catalogue>(cata);

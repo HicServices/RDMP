@@ -36,7 +36,7 @@ public class ValidationXMLObscureDependencyFinder : IObscureDependencyFinder
     public List<Catalogue> CataloguesWithBrokenValidationXml = new();
 
 
-    public ValidationXMLObscureDependencyFinder(ICatalogueRepositoryServiceLocator catalogueRepositoryServiceLocator)
+    public ValidationXMLObscureDependencyFinder(RDMPDbContextServiceLocator catalogueRepositoryServiceLocator)
     {
         Validator.LocatorForXMLDeserialization ??= catalogueRepositoryServiceLocator;
     }
@@ -96,7 +96,7 @@ public class ValidationXMLObscureDependencyFinder : IObscureDependencyFinder
         if (oTableWrapperObject == null)
             return;
 
-        var repository = oTableWrapperObject.Repository;
+        var repository = oTableWrapperObject.CatalogueDbContext;
 
         if (depth >= 5) //it's fine
             return;

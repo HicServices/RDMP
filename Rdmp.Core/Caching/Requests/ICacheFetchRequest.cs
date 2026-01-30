@@ -7,6 +7,7 @@
 using System;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cache;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 namespace Rdmp.Core.Caching.Requests;
@@ -18,7 +19,7 @@ namespace Rdmp.Core.Caching.Requests;
 /// </summary>
 public interface ICacheFetchRequest
 {
-    IRepository Repository { get; set; }
+    RDMPDbContext CatalogueDbContext{ get; set; }
 
     void SaveCacheFillProgress(DateTime cacheFillProgress);
 

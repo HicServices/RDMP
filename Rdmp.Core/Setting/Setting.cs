@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.using Amazon.Auth.AccessControlPolicy;
 
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Annotations;
@@ -40,19 +41,19 @@ public class Setting : DatabaseEntity, ISetting
     #endregion
 
     public Setting() { }
-    public Setting(RdmpDbContext catalogueDbContext, string key, string value)
+    public Setting(RDMPDbContext catalogueDbContext, string key, string value)
     {
         Key = key;
         Value = value;
-        Repository = repository;
-        Repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { nameof(Key), key },
-            { nameof(Value), value },
-        });
+        CatalogueDbContext = catalogueDbContext;
+        //CatalogueDbContext.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { nameof(Key), key },
+        //    { nameof(Value), value },
+        //});
     }
 
-    public Setting(RdmpDbContext catalogueDbContext, DbDataReader r): base(repository,r)
+    public Setting(RDMPDbContext catalogueDbContext, DbDataReader r) : base(catalogueDbContext, r)
     {
         Key = r["Key"].ToString();
         Value = r["Value"].ToString();

@@ -33,7 +33,7 @@ internal class ColumnInfoTests : DatabaseTests
 
             child.SaveToDatabase();
 
-            var childAfter = CatalogueRepository.GetObjectByID<ColumnInfo>(child.ID);
+            var childAfter = CatalogueDbContext.GetObjectByID<ColumnInfo>(child.ID);
 
             Assert.Multiple(() =>
             {
@@ -62,7 +62,7 @@ internal class ColumnInfoTests : DatabaseTests
 
             try
             {
-                Assert.That(CatalogueRepository.GetAllObjectsWithParent<ColumnInfo>(parent), Has.Length.EqualTo(1));
+                Assert.That(CatalogueDbContext.GetAllObjectsWithParent<ColumnInfo>(parent), Has.Length.EqualTo(1));
             }
             finally
             {
@@ -86,7 +86,7 @@ internal class ColumnInfoTests : DatabaseTests
         columnInfo.DeleteInDatabase();
 
         var ex = Assert.Throws<KeyNotFoundException>(() =>
-            CatalogueRepository.GetObjectByID<ColumnInfo>(columnInfo.ID));
+            CatalogueDbContext.GetObjectByID<ColumnInfo>(columnInfo.ID));
         Assert.That(ex.Message, Does.StartWith($"Could not find ColumnInfo with ID {columnInfo.ID}"), ex.Message);
 
         parent.DeleteInDatabase();
@@ -107,7 +107,7 @@ internal class ColumnInfoTests : DatabaseTests
 
         column.SaveToDatabase();
 
-        var columnAfter = CatalogueRepository.GetObjectByID<ColumnInfo>(column.ID);
+        var columnAfter = CatalogueDbContext.GetObjectByID<ColumnInfo>(column.ID);
 
         Assert.Multiple(() =>
         {

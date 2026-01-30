@@ -114,14 +114,14 @@ MrMurder,2001-01-01,Yella");
           job,
             new GracefulCancellationToken());
 
-        var redactions = CatalogueRepository.GetAllObjects<RegexRedaction>();
+        var redactions = CatalogueCatalogueDbContext.GetAllObjects<RegexRedaction>();
         Assert.That(redactions.Count(), Is.EqualTo(1));
         Assert.That(redactions[0].RedactionConfiguration_ID, Is.EqualTo(regex.ID));
         Assert.That(redactions[0].StartingIndex, Is.EqualTo(0));
         Assert.That(redactions[0].RedactedValue, Is.EqualTo("Yella"));
         Assert.That(redactions[0].ReplacementValue, Is.EqualTo("<FFF>"));
 
-        var redactionKeys = CatalogueRepository.GetAllObjects<RegexRedactionKey>();
+        var redactionKeys = CatalogueCatalogueDbContext.GetAllObjects<RegexRedactionKey>();
         Assert.That(redactionKeys.Length, Is.EqualTo(2));
         foreach (var r in redactions)
         {
@@ -221,14 +221,14 @@ MrMurder,2001-01-01,Yella");
           job,
             new GracefulCancellationToken());
 
-        var redactions = CatalogueRepository.GetAllObjects<RegexRedaction>();
+        var redactions = CatalogueCatalogueDbContext.GetAllObjects<RegexRedaction>();
         Assert.That(redactions.Count(), Is.EqualTo(1));
         Assert.That(redactions[0].RedactionConfiguration_ID, Is.EqualTo(regex.ID));
         Assert.That(redactions[0].StartingIndex, Is.EqualTo(0));
         Assert.That(redactions[0].RedactedValue, Is.EqualTo("Yell"));
         Assert.That(redactions[0].ReplacementValue, Is.EqualTo("FFF>"));
 
-        var redactionKeys = CatalogueRepository.GetAllObjects<RegexRedactionKey>();
+        var redactionKeys = CatalogueCatalogueDbContext.GetAllObjects<RegexRedactionKey>();
         Assert.That(redactionKeys.Length, Is.EqualTo(2));
         foreach (var r in redactions)
         {
@@ -328,10 +328,10 @@ MrMurder,2001-01-01,Yella");
           job,
             new GracefulCancellationToken());
 
-        var redactions = CatalogueRepository.GetAllObjects<RegexRedaction>();
+        var redactions = CatalogueCatalogueDbContext.GetAllObjects<RegexRedaction>();
         Assert.That(redactions.Count(), Is.EqualTo(0));
 
-        var redactionKeys = CatalogueRepository.GetAllObjects<RegexRedactionKey>();
+        var redactionKeys = CatalogueCatalogueDbContext.GetAllObjects<RegexRedactionKey>();
         Assert.That(redactionKeys.Length, Is.EqualTo(0));
     }
 
@@ -423,10 +423,10 @@ MrMurder,2001-01-01,Yella");
           job,
             new GracefulCancellationToken());
 
-        var redactions = CatalogueRepository.GetAllObjects<RegexRedaction>();
+        var redactions = CatalogueCatalogueDbContext.GetAllObjects<RegexRedaction>();
         Assert.That(redactions.Count(), Is.EqualTo(0));
 
-        var redactionKeys = CatalogueRepository.GetAllObjects<RegexRedactionKey>();
+        var redactionKeys = CatalogueCatalogueDbContext.GetAllObjects<RegexRedactionKey>();
         Assert.That(redactionKeys.Length, Is.EqualTo(0));
     }
 
@@ -518,10 +518,10 @@ MrMurder,2001-01-01,Yella");
           job,
             new GracefulCancellationToken());
 
-        var redactions = CatalogueRepository.GetAllObjects<RegexRedaction>();
+        var redactions = CatalogueCatalogueDbContext.GetAllObjects<RegexRedaction>();
         Assert.That(redactions.Count(), Is.EqualTo(0));
 
-        var redactionKeys = CatalogueRepository.GetAllObjects<RegexRedactionKey>();
+        var redactionKeys = CatalogueCatalogueDbContext.GetAllObjects<RegexRedactionKey>();
         Assert.That(redactionKeys.Length, Is.EqualTo(0));
     }
 
@@ -613,7 +613,7 @@ MrMurder,2001-01-01,YellaUUUYella");
           job,
             new GracefulCancellationToken());
 
-        var redactions = CatalogueRepository.GetAllObjects<RegexRedaction>();
+        var redactions = CatalogueCatalogueDbContext.GetAllObjects<RegexRedaction>();
         Assert.That(redactions.Count(), Is.EqualTo(2));
         Assert.That(redactions[0].RedactionConfiguration_ID, Is.EqualTo(regex.ID));
         Assert.That(redactions[0].StartingIndex, Is.EqualTo(0));
@@ -624,7 +624,7 @@ MrMurder,2001-01-01,YellaUUUYella");
         Assert.That(redactions[1].RedactedValue, Is.EqualTo("Yella"));
         Assert.That(redactions[1].ReplacementValue, Is.EqualTo("<FFF>"));
 
-        var redactionKeys = CatalogueRepository.GetAllObjects<RegexRedactionKey>();
+        var redactionKeys = CatalogueCatalogueDbContext.GetAllObjects<RegexRedactionKey>();
         Assert.That(redactionKeys.Length, Is.EqualTo(4));
         foreach (var r in redactions)
         {

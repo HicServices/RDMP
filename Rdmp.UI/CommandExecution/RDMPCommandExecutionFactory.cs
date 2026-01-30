@@ -167,7 +167,7 @@ public class RDMPCommandExecutionFactory : ICommandExecutionFactory
                 var dx = (DataExportChildProvider)_activator.CoreChildProvider;
                 var acic = targetJoinableCollectionNode.Configuration;
                 var cicProjAssociations = dx.AllProjectAssociatedCics.Where(c => c.CohortIdentificationConfiguration_ID == acic.ID).ToArray().Select(a => a.Project);
-                var extractableDatasets = _activator.RepositoryLocator.DataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(sourceAggregateConfigurationCombineable.Aggregate.Catalogue).ToList();
+                var extractableDatasets = _activator.RepositoryLocator.CatalogueDbContext.GetAllObjectsWithParent<ExtractableDataSet>(sourceAggregateConfigurationCombineable.Aggregate.Catalogue).ToList();
                 var catalogueProjects = extractableDatasets.SelectMany(e => e.Projects);
                 if (!catalogueProjects.Any(c => cicProjAssociations.Contains(c)))
                 {
@@ -186,7 +186,7 @@ public class RDMPCommandExecutionFactory : ICommandExecutionFactory
                 var dx = (DataExportChildProvider)_activator.CoreChildProvider;
                 var cic = targetJoinableCollectionNode.Configuration;
                 var cicProjAssociations = dx.AllProjectAssociatedCics.Where(c => c.CohortIdentificationConfiguration_ID == cic.ID).ToArray().Select(a => a.Project);
-                var extractableDatasets = _activator.RepositoryLocator.DataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(sourceCatalogueCombineable.Catalogue).ToList();
+                var extractableDatasets = _activator.RepositoryLocator.CatalogueDbContext.GetAllObjectsWithParent<ExtractableDataSet>(sourceCatalogueCombineable.Catalogue).ToList();
                 var catalogueProjects = extractableDatasets.SelectMany(e => e.Projects);
                 if (!catalogueProjects.Any(c => cicProjAssociations.Contains(c)))
                 {

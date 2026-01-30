@@ -24,7 +24,7 @@ namespace Rdmp.UI.LocationsMenu.Ticketing;
 /// </summary>
 public partial class TicketingControlUI : RDMPUserControl
 {
-    private ITicketingSystem _ticketingSystemConfiguration;
+    //private ITicketingSystem _ticketingSystemConfiguration;
     public event EventHandler TicketTextChanged;
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -69,10 +69,10 @@ public partial class TicketingControlUI : RDMPUserControl
 
             var factory = new TicketingSystemFactory(Activator.RepositoryLocator.CatalogueDbContext);
 
-            var configuration = Activator.RepositoryLocator.CatalogueDbContext.GetTicketingSystem();
-            _ticketingSystemConfiguration = factory.CreateIfExists(configuration);
+            //var configuration = Activator.RepositoryLocator.CatalogueDbContext.GetTicketingSystem();
+            //_ticketingSystemConfiguration = factory.CreateIfExists(configuration);
 
-            gbTicketing.Enabled = _ticketingSystemConfiguration != null;
+            //gbTicketing.Enabled = _ticketingSystemConfiguration != null;
         }
         catch (Exception exception)
         {
@@ -84,11 +84,11 @@ public partial class TicketingControlUI : RDMPUserControl
 
     private void tbTicket_TextChanged(object sender, EventArgs e)
     {
-        if (_ticketingSystemConfiguration != null)
-        {
-            IsValidTicketName = _ticketingSystemConfiguration.IsValidTicketName(tbTicket.Text);
-            tbTicket.ForeColor = IsValidTicketName ? Color.Black : Color.Red;
-        }
+        //if (_ticketingSystemConfiguration != null)
+        //{
+        //    IsValidTicketName = _ticketingSystemConfiguration.IsValidTicketName(tbTicket.Text);
+        //    tbTicket.ForeColor = IsValidTicketName ? Color.Black : Color.Red;
+        //}
 
         var h = TicketTextChanged;
         h?.Invoke(sender, e);
@@ -96,14 +96,14 @@ public partial class TicketingControlUI : RDMPUserControl
 
     private void btnShowTicket_Click(object sender, EventArgs e)
     {
-        try
-        {
-            if (!string.IsNullOrWhiteSpace(tbTicket.Text) && IsValidTicketName)
-                _ticketingSystemConfiguration.NavigateToTicket(tbTicket.Text);
-        }
-        catch (Exception exception)
-        {
-            ExceptionViewer.Show(exception);
-        }
+        //try
+        //{
+        //    if (!string.IsNullOrWhiteSpace(tbTicket.Text) && IsValidTicketName)
+        //        _ticketingSystemConfiguration.NavigateToTicket(tbTicket.Text);
+        //}
+        //catch (Exception exception)
+        //{
+        //    ExceptionViewer.Show(exception);
+        //}
     }
 }

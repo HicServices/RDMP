@@ -9,6 +9,7 @@ using System.ComponentModel;
 using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Validation.UIAttributes;
 
@@ -21,7 +22,7 @@ namespace Rdmp.Core.Validation.Constraints.Secondary;
 /// </summary>
 public class StandardRegexConstraint : SecondaryConstraint
 {
-    private readonly IRepository _repository;
+    private readonly RDMPDbContext _catalogueDbContext;
     private Regex _regex;
     private StandardRegex _standardRegex;
     private int _standardRegexID;
@@ -31,12 +32,12 @@ public class StandardRegexConstraint : SecondaryConstraint
     /// </summary>
     public StandardRegexConstraint()
     {
-        _repository = Validator.LocatorForXMLDeserialization.CatalogueRepository;
+        //_repository = Validator.LocatorForXMLDeserialization.RDMPDbContext;
     }
 
-    public StandardRegexConstraint(IRepository repository)
+    public StandardRegexConstraint(RDMPDbContext catalogueDbContext)
     {
-        _repository = repository;
+        _catalogueDbContext = catalogueDbContext;
     }
 
     //this is the only value that actually needs to be serialized!
@@ -48,7 +49,7 @@ public class StandardRegexConstraint : SecondaryConstraint
         {
             _standardRegexID = value;
 
-            CatalogueStandardRegex = value == 0 ? null : _repository.GetObjectByID<StandardRegex>(value);
+            CatalogueStandardRegex = value == 0 ? null : _catalogueDbContext.GetObjectByID<StandardRegex>(value);
         }
     }
 

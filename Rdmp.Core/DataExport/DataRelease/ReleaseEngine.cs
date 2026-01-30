@@ -13,6 +13,7 @@ using Rdmp.Core.DataExport.DataExtraction;
 using Rdmp.Core.DataExport.DataRelease.Audit;
 using Rdmp.Core.DataExport.DataRelease.Pipeline;
 using Rdmp.Core.DataExport.DataRelease.Potential;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Reports.ExtractionTime;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode;
@@ -31,7 +32,7 @@ namespace Rdmp.Core.DataExport.DataRelease;
 public class ReleaseEngine
 {
     protected readonly IDataLoadEventListener _listener;
-    protected readonly IDataExportRepository _repository;
+    protected readonly RDMPDbContext _repository;
     public Project Project { get; private set; }
     public bool ReleaseSuccessful { get; protected set; }
     public List<IExtractionConfiguration> ConfigurationsReleased { get; private set; }
@@ -44,7 +45,7 @@ public class ReleaseEngine
     public ReleaseEngine(Project project, ReleaseEngineSettings settings, IDataLoadEventListener listener,
         ReleaseAudit releaseAudit)
     {
-        _repository = project.DataExportRepository;
+        _repository = project.CatalogueDbContext;
         Project = project;
         ReleaseSuccessful = false;
         ConfigurationsReleased = new List<IExtractionConfiguration>();

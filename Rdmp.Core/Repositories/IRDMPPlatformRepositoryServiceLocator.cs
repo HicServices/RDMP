@@ -16,12 +16,12 @@ namespace Rdmp.Core.Repositories;
 /// A class which can find the location (connection strings) of the of Catalogue and Data Export databases.  This might come from a user settings file or from a
 /// config file or whatever (depending on how you implement this interface).
 /// </summary>
-public interface IRDMPPlatformRepositoryServiceLocator : ICatalogueRepositoryServiceLocator,
+public interface IRDMPPlatformRepositoryServiceLocator : RDMPDbContextServiceLocator,
     IDataExportRepositoryServiceLocator
 {
     /// <summary>
     /// Cross repository method equivalent to GetObjectByID mostly used in persistence recovery (when you startup RDMP after closing it down before).  It is better
-    /// to use the specific repository methods on the CatalogueRepository / DataExportRepository.
+    /// to use the specific repository methods on the RDMPDbContext / CatalogueDbContext.
     /// </summary>
     /// <param name="repositoryTypeName"></param>
     /// <param name="databaseObjectTypeName"></param>
@@ -34,17 +34,17 @@ public interface IRDMPPlatformRepositoryServiceLocator : ICatalogueRepositorySer
 
     /// <summary>
     ///  Cross repository method equivalent to GetObjectByID.  Only works if <typeparamref name="T"/> is a Type supported by either
-    ///  CatalogueRepository / DataExportRepository (i.e. you can't fetch something like an <see cref="Evaluation"/> - which is a DQE object)
+    ///  RDMPDbContext / DataExportRepository (i.e. you can't fetch something like an <see cref="Evaluation"/> - which is a DQE object)
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="value"></param>
     /// <returns></returns>
     IMapsDirectlyToDatabaseTable GetObjectByID<T>(int value) where T : IMapsDirectlyToDatabaseTable;
 
-
+    //RDMPDbContext CatalogueDbContext { get; set; }
     /// <summary>
     ///  Cross repository method equivalent to GetObjectByID.  Only works if <paramref name="t"/> is a Type supported by either
-    ///  CatalogueRepository / DataExportRepository (i.e. you can't fetch something like an <see cref="Evaluation"/> - which is a DQE object)
+    ///  RDMPDbContext / DataExportRepository (i.e. you can't fetch something like an <see cref="Evaluation"/> - which is a DQE object)
     /// </summary>
     /// <param name="t"></param>
     /// <param name="value"></param>

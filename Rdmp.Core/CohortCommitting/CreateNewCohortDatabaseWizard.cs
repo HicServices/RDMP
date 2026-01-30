@@ -41,7 +41,7 @@ public class CreateNewCohortDatabaseWizard
     private const string DefinitionTableForeignKeyField = "cohortDefinition_id";
 
 
-    public CreateNewCohortDatabaseWizard(DiscoveredDatabase targetDatabase, RDMPDbContext catalogueDbContext,RDMPDbContext dataExportDbContext bool allowNullReleaseIdentifiers)
+    public CreateNewCohortDatabaseWizard(DiscoveredDatabase targetDatabase, RDMPDbContext catalogueDbContext,RDMPDbContext dataExportDbContext, bool allowNullReleaseIdentifiers)
     {
         AllowNullReleaseIdentifiers = allowNullReleaseIdentifiers;
         _catalogueDbContext = catalogueDbContext;

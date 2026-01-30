@@ -8,22 +8,23 @@ using System.Collections.Generic;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Governance;
+using Rdmp.Core.EntityFramework;
 
 namespace Rdmp.Core.Repositories.Managers;
 
 internal class GovernanceManager : IGovernanceManager
 {
-    private readonly CatalogueRepository _catalogueRepository;
+    private readonly RDMPDbContext _catalogueDbContext;
 
-    public GovernanceManager(CatalogueRepository catalogueRepository)
+    public GovernanceManager(RDMPDbContext catalogueDbContext)
     {
-        _catalogueRepository = catalogueRepository;
+        _catalogueDbContext = catalogueDbContext;
     }
 
     public void Unlink(GovernancePeriod governancePeriod, ICatalogue catalogue)
     {
-        _catalogueRepository.Delete(
-            $@"DELETE FROM GovernancePeriod_Catalogue WHERE Catalogue_ID={catalogue.ID} AND GovernancePeriod_ID={governancePeriod.ID}");
+        //_catalogueCatalogueDbContext.Delete(
+        //    $@"DELETE FROM GovernancePeriod_Catalogue WHERE Catalogue_ID={catalogue.ID} AND GovernancePeriod_ID={governancePeriod.ID}");
     }
 
     public void Link(GovernancePeriod governancePeriod, ICatalogue catalogue)
@@ -32,9 +33,9 @@ internal class GovernanceManager : IGovernanceManager
         if (governancePeriod.GovernedCatalogues.Contains(catalogue))
             return;
 
-        _catalogueRepository.Insert(
-            $@"INSERT INTO GovernancePeriod_Catalogue (Catalogue_ID,GovernancePeriod_ID) VALUES ({catalogue.ID},{governancePeriod.ID})",
-            null);
+        //_catalogueCatalogueDbContext.Insert(
+        //    $@"INSERT INTO GovernancePeriod_Catalogue (Catalogue_ID,GovernancePeriod_ID) VALUES ({catalogue.ID},{governancePeriod.ID})",
+        //    null);
     }
 
     /// <inheritdoc/>
@@ -42,28 +43,28 @@ internal class GovernanceManager : IGovernanceManager
     {
         var toReturn = new Dictionary<int, HashSet<int>>();
 
-        var server = _catalogueRepository.DiscoveredServer;
-        using var con = server.GetConnection();
-        con.Open();
-        using var cmd =
-            server.GetCommand(@"SELECT GovernancePeriod_ID,Catalogue_ID FROM GovernancePeriod_Catalogue", con);
-        using var r = cmd.ExecuteReader();
-        while (r.Read())
-        {
-            var gp = (int)r["GovernancePeriod_ID"];
-            var cata = (int)r["Catalogue_ID"];
+        //var server = _catalogueCatalogueDbContext.DiscoveredServer;
+        //using var con = server.GetConnection();
+        //con.Open();
+        //using var cmd =
+        //    server.GetCommand(@"SELECT GovernancePeriod_ID,Catalogue_ID FROM GovernancePeriod_Catalogue", con);
+        //using var r = cmd.ExecuteReader();
+        //while (r.Read())
+        //{
+        //    var gp = (int)r["GovernancePeriod_ID"];
+        //    var cata = (int)r["Catalogue_ID"];
 
-            if (!toReturn.ContainsKey(gp))
-                toReturn.Add(gp, new HashSet<int>());
+        //    if (!toReturn.ContainsKey(gp))
+        //        toReturn.Add(gp, new HashSet<int>());
 
-            toReturn[gp].Add(cata);
-        }
+        //    toReturn[gp].Add(cata);
+        //}
 
         return toReturn;
     }
 
-    public IEnumerable<ICatalogue> GetAllGovernedCatalogues(GovernancePeriod governancePeriod) =>
-        _catalogueRepository.SelectAll<Catalogue>(
-            $@"SELECT Catalogue_ID FROM GovernancePeriod_Catalogue where GovernancePeriod_ID={governancePeriod.ID}",
-            "Catalogue_ID");
+    public IEnumerable<ICatalogue> GetAllGovernedCatalogues(GovernancePeriod governancePeriod) => null;
+        //_catalogueCatalogueDbContext.SelectAll<Catalogue>(
+        //    $@"SELECT Catalogue_ID FROM GovernancePeriod_Catalogue where GovernancePeriod_ID={governancePeriod.ID}",
+        //    "Catalogue_ID");
 }

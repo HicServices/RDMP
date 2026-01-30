@@ -105,7 +105,7 @@ internal class MetadataLoggingConfigurationChecks : ICheckable
             }
             else
             {
-                var defaults = _loadMetadata.CatalogueRepository;
+                var defaults = _loadMetadata.CatalogueDbContext;
                 var defaultLoggingServer = defaults.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
 
                 if (defaultLoggingServer != null)
@@ -177,7 +177,7 @@ internal class MetadataLoggingConfigurationChecks : ICheckable
 
     private void CreateNewLoggingTaskFor(ICheckNotifier notifier, ICatalogue[] catalogues, string proposedName)
     {
-        var catarepo = _loadMetadata.CatalogueRepository;
+        var catarepo = _loadMetadata.CatalogueDbContext;
 
         var serverIds = catalogues.Select(c => c.LiveLoggingServer_ID).Where(i => i.HasValue).Distinct().ToArray();
 

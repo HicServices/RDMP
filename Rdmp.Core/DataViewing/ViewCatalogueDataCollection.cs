@@ -67,7 +67,7 @@ public class ViewCatalogueDataCollection : PersistableObjectCollection, IViewSQL
 
         builder.AddColumnRange(cols);
 
-        builder.RootFilterContainer = new SpontaneouslyInventedFilterContainer(new MemoryCatalogueRepository(), null,
+        builder.RootFilterContainer = new SpontaneouslyInventedFilterContainer(new MemoryRDMPDbContext(), null,
             Filters, FilterContainerOperation.AND);
         builder.RegenerateSQL();
     }

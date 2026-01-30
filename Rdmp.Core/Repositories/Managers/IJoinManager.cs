@@ -5,11 +5,12 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework;
 
 namespace Rdmp.Core.Repositories.Managers;
 
 /// <summary>
-/// Subcomponent of <see cref="ICatalogueRepository"/> which manages the objects which describe how to
+/// Subcomponent of <see cref="RDMPDbContext"/> which manages the objects which describe how to
 /// link two <see cref="ITableInfo"/> using joins on column sets between the two tables.
 /// </summary>
 public interface IJoinManager

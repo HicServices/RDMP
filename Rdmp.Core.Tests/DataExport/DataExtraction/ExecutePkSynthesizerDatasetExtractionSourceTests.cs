@@ -34,7 +34,7 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
     {
         base.SetUp();
 
-        DataExportRepository.DataExportPropertyManager.SetValue(DataExportProperty.HashingAlgorithmPattern,
+        DataExportCatalogueDbContext.DataExportPropertyManager.SetValue(DataExportProperty.HashingAlgorithmPattern,
             "CONCAT('HASHED: ',{0})");
     }
 

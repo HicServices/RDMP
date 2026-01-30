@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Annotations;
@@ -61,14 +62,14 @@ public class ExtractionFilterParameterSet : DatabaseEntity, ICollectSqlParameter
 
     /// <inheritdoc cref ="ExtractionFilter_ID"/>
     [NoMappingToDatabase]
-    public ExtractionFilter ExtractionFilter => Repository.GetObjectByID<ExtractionFilter>(ExtractionFilter_ID);
+    public ExtractionFilter ExtractionFilter => CatalogueDbContext.GetObjectByID<ExtractionFilter>(ExtractionFilter_ID);
 
     /// <summary>
     /// Gets all the individual parameter values required for populating the filter to achieve this concept (e.g. 'Diabetes Drugs' might have 2 parameter values @DrugList='123.122.1,1.2... etc' and @DrugCodeFormat='bnf')
     /// </summary>
     [NoMappingToDatabase]
     public IEnumerable<ExtractionFilterParameterSetValue> Values =>
-        Repository.GetAllObjectsWithParent<ExtractionFilterParameterSetValue>(this);
+        CatalogueDbContext.GetAllObjectsWithParent<ExtractionFilterParameterSetValue>(this);
 
     #endregion
 
@@ -76,8 +77,8 @@ public class ExtractionFilterParameterSet : DatabaseEntity, ICollectSqlParameter
     {
     }
 
-    internal ExtractionFilterParameterSet(RdmpDbContext catalogueDbContext, DbDataReader r)
-        : base(repository, r)
+    internal ExtractionFilterParameterSet(RDMPDbContext catalogueDbContext, DbDataReader r)
+        :base(catalogueDbContext, r)
     {
         Name = r["Name"].ToString();
         Description = r["Description"] as string;
@@ -88,18 +89,18 @@ public class ExtractionFilterParameterSet : DatabaseEntity, ICollectSqlParameter
     /// Defines a new set of known parameter values to achieve a given goal (e.g. identify 'diabetic drugs' in dataset prescriptions) in combination with a parent <see cref="IFilter"/>.
     /// <para>A single <see cref="ExtractionFilter"/> (e.g. 'Drug Prescriptions of X' with parameter @DrugList) could have many <see cref="ExtractionFilterParameterSet"/></para>
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="filter"></param>
     /// <param name="name"></param>
-    public ExtractionFilterParameterSet(RdmpDbContext catalogueDbContext, ExtractionFilter filter, string name = null)
+    public ExtractionFilterParameterSet(RDMPDbContext catalogueDbContext, ExtractionFilter filter, string name = null)
     {
         name ??= $"New ExtractionFilterParameterSet {Guid.NewGuid()}";
 
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "Name", name },
-            { "ExtractionFilter_ID", filter.ID }
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "Name", name },
+        //    { "ExtractionFilter_ID", filter.ID }
+        //});
     }
 
 
@@ -135,7 +136,7 @@ public class ExtractionFilterParameterSet : DatabaseEntity, ICollectSqlParameter
 
         foreach (var catalogueParameter in GetMissingEntries())
             //we have a master that does not have any child values yet
-            toReturn.Add(new ExtractionFilterParameterSetValue((ICatalogueRepository)Repository, this,
+            toReturn.Add(new ExtractionFilterParameterSetValue(CatalogueDbContext, this,
                 catalogueParameter));
 
         return toReturn.ToArray();

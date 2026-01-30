@@ -126,7 +126,7 @@ public class ViewColumnExtractCollection : PersistableObjectCollection, IViewSQL
             throw new Exception("Cannot generate SQL with both filter and container");
 
         if (filter != null && !string.IsNullOrWhiteSpace(filter.WhereSQL))
-            qb.RootFilterContainer = new SpontaneouslyInventedFilterContainer(new MemoryCatalogueRepository(), null,
+            qb.RootFilterContainer = new SpontaneouslyInventedFilterContainer(new MemoryRDMPDbContext(), null,
                 new[] { filter }, FilterContainerOperation.AND);
         else if (container != null) qb.RootFilterContainer = container;
 

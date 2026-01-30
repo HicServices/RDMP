@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.IO;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Repositories;
@@ -111,20 +112,20 @@ public class SupportingDocument : DatabaseEntity, INamed, ISupportingObject
     /// <summary>
     /// Creates a new supporting document for helping understand the dataset <paramref name="parent"/>
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="parent"></param>
     /// <param name="name"></param>
-    public SupportingDocument(RdmpDbContext catalogueDbContext, ICatalogue parent, string name)
+    public SupportingDocument(RDMPDbContext catalogueDbContext, ICatalogue parent, string name)
     {
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "Name", name },
-            { "Catalogue_ID", parent.ID }
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "Name", name },
+        //    { "Catalogue_ID", parent.ID }
+        //});
     }
 
-    internal SupportingDocument(RdmpDbContext catalogueDbContext, DbDataReader r)
-        : base(repository, r)
+    internal SupportingDocument(RDMPDbContext catalogueDbContext, DbDataReader r)
+        :base(catalogueDbContext, r)
     {
         Catalogue_ID =
             int.Parse(r["Catalogue_ID"]

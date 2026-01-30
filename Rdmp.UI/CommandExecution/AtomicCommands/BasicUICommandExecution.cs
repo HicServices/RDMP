@@ -48,8 +48,8 @@ public abstract class BasicUICommandExecution : BasicCommandExecution
 
         var current = defaults.GetDefaultFor(permissableDefault);
 
-        if (current == null)
-            if (!askYesNo || YesNo($"Set as the default {permissableDefault} server?", "Set as default"))
-                defaults.SetDefault(permissableDefault, newServer);
+        //if (current == null)
+        //    if (!askYesNo || YesNo($"Set as the default {permissableDefault} server?", "Set as default"))
+        //        defaults.SetDefault(permissableDefault, newServer);
     }
 }

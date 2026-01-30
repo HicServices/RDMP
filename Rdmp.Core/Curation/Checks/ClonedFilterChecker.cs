@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Exceptions;
@@ -19,20 +20,20 @@ public class ClonedFilterChecker : ICheckable
 {
     private readonly IFilter _child;
     private int? _allegedParent;
-    private readonly IRepository _catalogueDatabaseRepository;
+    private readonly RDMPDbContext _catalogueDbContext;
 
     /// <summary>
     /// Prepares to check the supplied IFilter which must be of a lower filter type to its parent ExtractionFilter
     /// </summary>
     /// <param name="child"></param>
     /// <param name="allegedParentExtractionFilterID">ExtractionFilter from which the IFilter was derived</param>
-    /// <param name="catalogueDatabaseRepository"></param>
+    /// <param  name="catalogueDbContext"></param>
     public ClonedFilterChecker(IFilter child, int? allegedParentExtractionFilterID,
-        IRepository catalogueDatabaseRepository)
+        RDMPDbContext catalogueDbContext)
     {
         _child = child;
         _allegedParent = allegedParentExtractionFilterID;
-        _catalogueDatabaseRepository = catalogueDatabaseRepository;
+        _catalogueDbContext = catalogueDbContext;
     }
 
     /// <summary>
@@ -53,7 +54,7 @@ public class ClonedFilterChecker : ICheckable
         }
 
         //we were cloned from a filter in the Catalogue
-        var exist = _catalogueDatabaseRepository.StillExists<ExtractionFilter>((int)_allegedParent);
+        var exist = _catalogueDbContext.StillExists<ExtractionFilter>((int)_allegedParent);
 
         //tell them if it has been nuked
         notifier.OnCheckPerformed(
@@ -65,7 +66,7 @@ public class ClonedFilterChecker : ICheckable
         if (exist)
         {
             //get it
-            var parent = _catalogueDatabaseRepository.GetObjectByID<ExtractionFilter>((int)_allegedParent);
+            var parent = _catalogueDbContext.GetObjectByID<ExtractionFilter>((int)_allegedParent);
 
             if (string.IsNullOrWhiteSpace(parent.WhereSQL) || string.IsNullOrWhiteSpace(_child.WhereSQL))
                 return;

@@ -48,7 +48,7 @@ internal class
                         var dx = (DataExportChildProvider)ItemActivator.CoreChildProvider;
                         var cic = targetCohortAggregateContainer.GetCohortIdentificationConfiguration();
                         var cicProjAssociations = dx.AllProjectAssociatedCics.Where(c => c.CohortIdentificationConfiguration_ID == cic.ID).ToArray().Select(a => a.Project);
-                        var extractableDatasets = ItemActivator.RepositoryLocator.DataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(sourceCatalogueCombineable.Catalogue).ToList();
+                        var extractableDatasets = ItemActivator.RepositoryLocator.CatalogueDbContext.GetAllObjectsWithParent<ExtractableDataSet>(sourceCatalogueCombineable.Catalogue).ToList();
                         var catalogueProjects = extractableDatasets.SelectMany(e => e.Projects);
                         if (!catalogueProjects.Any(c => cicProjAssociations.Contains(c)))
                         {
@@ -72,7 +72,7 @@ internal class
                         var dx = (DataExportChildProvider)ItemActivator.CoreChildProvider;
                         var acic = targetCohortAggregateContainer.GetCohortIdentificationConfiguration();
                         var cicProjAssociations = dx.AllProjectAssociatedCics.Where(c => c.CohortIdentificationConfiguration_ID == acic.ID).ToArray().Select(a => a.Project);
-                        var extractableDatasets = ItemActivator.RepositoryLocator.DataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(sourceAggregateCommand.Aggregate.Catalogue).ToList();
+                        var extractableDatasets = ItemActivator.RepositoryLocator.CatalogueDbContext.GetAllObjectsWithParent<ExtractableDataSet>(sourceAggregateCommand.Aggregate.Catalogue).ToList();
                         var catalogueProjects = extractableDatasets.SelectMany(e => e.Projects);
                         if (!catalogueProjects.Any(c => cicProjAssociations.Contains(c)))
                         {

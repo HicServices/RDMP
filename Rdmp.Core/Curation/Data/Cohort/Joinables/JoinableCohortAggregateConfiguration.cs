@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 
@@ -53,17 +54,17 @@ public class JoinableCohortAggregateConfiguration : DatabaseEntity
     /// </summary>
     [NoMappingToDatabase]
     public JoinableCohortAggregateConfigurationUse[] Users =>
-        Repository.GetAllObjectsWithParent<JoinableCohortAggregateConfigurationUse>(this).ToArray();
+        CatalogueDbContext.GetAllObjectsWithParent<JoinableCohortAggregateConfigurationUse>(this).ToArray();
 
     /// <inheritdoc cref="CohortIdentificationConfiguration_ID"/>
     [NoMappingToDatabase]
     public CohortIdentificationConfiguration CohortIdentificationConfiguration =>
-        Repository.GetObjectByID<CohortIdentificationConfiguration>(CohortIdentificationConfiguration_ID);
+        CatalogueDbContext.GetObjectByID<CohortIdentificationConfiguration>(CohortIdentificationConfiguration_ID);
 
     /// <inheritdoc cref="AggregateConfiguration_ID"/>
     [NoMappingToDatabase]
     public AggregateConfiguration AggregateConfiguration =>
-        Repository.GetObjectByID<AggregateConfiguration>(AggregateConfiguration_ID);
+        CatalogueDbContext.GetObjectByID<AggregateConfiguration>(AggregateConfiguration_ID);
 
     #endregion
 
@@ -71,8 +72,8 @@ public class JoinableCohortAggregateConfiguration : DatabaseEntity
     {
     }
 
-    internal JoinableCohortAggregateConfiguration(RdmpDbContext catalogueDbContext, DbDataReader r)
-        : base(repository, r)
+    internal JoinableCohortAggregateConfiguration(RDMPDbContext catalogueDbContext, DbDataReader r)
+        : base(catalogueDbContext, r)
     {
         CohortIdentificationConfiguration_ID = Convert.ToInt32(r["CohortIdentificationConfiguration_ID"]);
         AggregateConfiguration_ID = Convert.ToInt32(r["AggregateConfiguration_ID"]);
@@ -82,10 +83,10 @@ public class JoinableCohortAggregateConfiguration : DatabaseEntity
     /// Declares that the passed <see cref="AggregateConfiguration"/> should act as a patient index table and be joinable with other <see cref="AggregateConfiguration"/>s in
     /// the <see cref="CohortIdentificationConfiguration"/>.
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="cic"></param>
     /// <param name="aggregate"></param>
-    public JoinableCohortAggregateConfiguration(RdmpDbContext catalogueDbContext, CohortIdentificationConfiguration cic,
+    public JoinableCohortAggregateConfiguration(RDMPDbContext catalogueDbContext, CohortIdentificationConfiguration cic,
         AggregateConfiguration aggregate)
     {
         var extractionIdentifiers = aggregate.AggregateDimensions.Count(d => d.IsExtractionIdentifier);
@@ -98,11 +99,11 @@ public class JoinableCohortAggregateConfiguration : DatabaseEntity
             throw new NotSupportedException(
                 $"Cannot make aggregate {aggregate} into a Joinable aggregate because it is already in a CohortAggregateContainer");
 
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "CohortIdentificationConfiguration_ID", cic.ID },
-            { "AggregateConfiguration_ID", aggregate.ID }
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "CohortIdentificationConfiguration_ID", cic.ID },
+        //    { "AggregateConfiguration_ID", aggregate.ID }
+        //});
     }
 
     /// <summary>
@@ -117,7 +118,7 @@ public class JoinableCohortAggregateConfiguration : DatabaseEntity
             throw new NotSupportedException(
                 $"Cannot configure AggregateConfiguration {user} as a Join user to itself!");
 
-        var existing = Repository.GetAllObjects<JoinableCohortAggregateConfigurationUse>()
+        var existing = CatalogueDbContext.GetAllObjects<JoinableCohortAggregateConfigurationUse>()
             .FirstOrDefault(u => u.AggregateConfiguration_ID == user.ID);
 
         // they are trying to use us but you are already using us
@@ -130,7 +131,7 @@ public class JoinableCohortAggregateConfiguration : DatabaseEntity
 
         user.ClearAllInjections();
 
-        return new JoinableCohortAggregateConfigurationUse((ICatalogueRepository)Repository, user, this);
+        return new JoinableCohortAggregateConfigurationUse(CatalogueDbContext, user, this);
     }
 
 

@@ -29,7 +29,7 @@ namespace Rdmp.UI.LocationsMenu;
 /// </summary>
 public partial class ServerDefaultsUI : RDMPForm
 {
-    private IServerDefaults defaults;
+    //private IServerDefaults defaults;
 
     public ServerDefaultsUI(IActivateItems activator) : base(activator)
     {
@@ -50,7 +50,7 @@ public partial class ServerDefaultsUI : RDMPForm
     {
         try
         {
-            defaults = Activator.RepositoryLocator.CatalogueDbContext;
+            //defaults = Activator.RepositoryLocator.CatalogueDbContext;
 
             var allServers = Activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<ExternalDatabaseServer>()
                 .ToArray();
@@ -87,7 +87,7 @@ public partial class ServerDefaultsUI : RDMPForm
     {
         comboBox.Items.Clear();
 
-        var currentDefault = defaults.GetDefaultFor(permissableDefault);
+        //var currentDefault = defaults.GetDefaultFor(permissableDefault);
         var patcher = permissableDefault.ToTier2DatabaseType();
 
         var toAdd = allServers;
@@ -97,10 +97,10 @@ public partial class ServerDefaultsUI : RDMPForm
             var compatibles = Activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<ExternalDatabaseServer>()
                 .Where(s => s.WasCreatedBy(patcher)).ToArray();
 
-            if (currentDefault == null ||
-                compatibles.Contains(
-                    currentDefault)) //if there is not yet a default or the existing default is of the correct type
-                toAdd = compatibles; //then we can go ahead and use the restricted type
+            //if (currentDefault == null ||
+            //    compatibles.Contains(
+            //        currentDefault)) //if there is not yet a default or the existing default is of the correct type
+            //    toAdd = compatibles; //then we can go ahead and use the restricted type
 
             //otherwise what we have is a default of the wrong server type! eep.
         }
@@ -108,83 +108,83 @@ public partial class ServerDefaultsUI : RDMPForm
         comboBox.Items.AddRange(toAdd);
 
         //select the server
-        if (currentDefault != null)
-            comboBox.SelectedItem =
-                comboBox.Items.Cast<ExternalDatabaseServer>().Single(s => s.ID == currentDefault.ID);
+        //if (currentDefault != null)
+        //    comboBox.SelectedItem =
+        //        comboBox.Items.Cast<ExternalDatabaseServer>().Single(s => s.ID == currentDefault.ID);
     }
 
 
     private void ddDefault_SelectedIndexChanged(object sender, EventArgs e)
     {
-        PermissableDefaults toChange;
+    //    PermissableDefaults toChange;
 
-        if (sender == ddDefaultIdentifierDump)
-            toChange = PermissableDefaults.IdentifierDumpServer_ID;
-        else if (sender == ddDefaultLoggingServer)
-            toChange = PermissableDefaults.LiveLoggingServer_ID;
-        else if (sender == ddOverrideRawServer)
-            toChange = PermissableDefaults.RAWDataLoadServer;
-        else if (sender == ddDefaultANOStore)
-            toChange = PermissableDefaults.ANOStore;
-        else if (sender == ddWebServiceQueryCacheServer)
-            toChange = PermissableDefaults.WebServiceQueryCachingServer_ID;
-        else if (sender == ddCohortIdentificationQueryCacheServer)
-            toChange = PermissableDefaults.CohortIdentificationQueryCachingServer_ID;
-        else
-            throw new Exception($"Did not recognise sender:{sender}");
+    //    if (sender == ddDefaultIdentifierDump)
+    //        toChange = PermissableDefaults.IdentifierDumpServer_ID;
+    //    else if (sender == ddDefaultLoggingServer)
+    //        toChange = PermissableDefaults.LiveLoggingServer_ID;
+    //    else if (sender == ddOverrideRawServer)
+    //        toChange = PermissableDefaults.RAWDataLoadServer;
+    //    else if (sender == ddDefaultANOStore)
+    //        toChange = PermissableDefaults.ANOStore;
+    //    else if (sender == ddWebServiceQueryCacheServer)
+    //        toChange = PermissableDefaults.WebServiceQueryCachingServer_ID;
+    //    else if (sender == ddCohortIdentificationQueryCacheServer)
+    //        toChange = PermissableDefaults.CohortIdentificationQueryCachingServer_ID;
+    //    else
+    //        throw new Exception($"Did not recognise sender:{sender}");
 
         //user selected nothing
-        if (((ComboBox)sender).SelectedItem is not ExternalDatabaseServer selectedItem)
-            return;
+        //if (((ComboBox)sender).SelectedItem is not ExternalDatabaseServer selectedItem)
+        //    return;
 
-        defaults.SetDefault(toChange, selectedItem);
+        //defaults.SetDefault(toChange, selectedItem);
     }
 
     private void btnClearServer_Click(object sender, EventArgs e)
     {
-        PermissableDefaults toClear;
+        //PermissableDefaults toClear;
 
-        if (sender == btnClearLoggingServer)
-        {
-            toClear = PermissableDefaults.LiveLoggingServer_ID;
-            ddDefaultLoggingServer.SelectedItem = null;
-        }
-        else if (sender == btnClearIdentifierDump)
-        {
-            toClear = PermissableDefaults.IdentifierDumpServer_ID;
-            ddDefaultIdentifierDump.SelectedItem = null;
-        }
-        else if (sender == btnClearDQEServer)
-        {
-            toClear = PermissableDefaults.DQE;
-            ddDQEServer.SelectedItem = null;
-        }
-        else if (sender == btnClearRAWServer)
-        {
-            toClear = PermissableDefaults.RAWDataLoadServer;
-            ddOverrideRawServer.SelectedItem = null;
-        }
-        else if (sender == btnClearANOStore)
-        {
-            toClear = PermissableDefaults.ANOStore;
-            ddDefaultANOStore.SelectedItem = null;
-        }
-        else if (sender == btnClearWebServiceQueryCache)
-        {
-            toClear = PermissableDefaults.WebServiceQueryCachingServer_ID;
-            ddWebServiceQueryCacheServer.SelectedItem = null;
-        }
-        else if (sender == btnClearCohortIdentificationQueryCache)
-        {
-            toClear = PermissableDefaults.CohortIdentificationQueryCachingServer_ID;
-            ddCohortIdentificationQueryCacheServer.SelectedItem = null;
-        }
-        else
-        {
-            throw new Exception($"Did not recognise sender:{sender}");
-        }
+        //if (sender == btnClearLoggingServer)
+        //{
+        //    toClear = PermissableDefaults.LiveLoggingServer_ID;
+        //    ddDefaultLoggingServer.SelectedItem = null;
+        //}
+        //else if (sender == btnClearIdentifierDump)
+        //{
+        //    toClear = PermissableDefaults.IdentifierDumpServer_ID;
+        //    ddDefaultIdentifierDump.SelectedItem = null;
+        //}
+        //else if (sender == btnClearDQEServer)
+        //{
+        //    toClear = PermissableDefaults.DQE;
+        //    ddDQEServer.SelectedItem = null;
+        //}
+        //else if (sender == btnClearRAWServer)
+        //{
+        //    toClear = PermissableDefaults.RAWDataLoadServer;
+        //    ddOverrideRawServer.SelectedItem = null;
+        //}
+        //else if (sender == btnClearANOStore)
+        //{
+        //    toClear = PermissableDefaults.ANOStore;
+        //    ddDefaultANOStore.SelectedItem = null;
+        //}
+        //else if (sender == btnClearWebServiceQueryCache)
+        //{
+        //    toClear = PermissableDefaults.WebServiceQueryCachingServer_ID;
+        //    ddWebServiceQueryCacheServer.SelectedItem = null;
+        //}
+        //else if (sender == btnClearCohortIdentificationQueryCache)
+        //{
+        //    toClear = PermissableDefaults.CohortIdentificationQueryCachingServer_ID;
+        //    ddCohortIdentificationQueryCacheServer.SelectedItem = null;
+        //}
+        //else
+        //{
+        //    throw new Exception($"Did not recognise sender:{sender}");
+        //}
 
-        defaults.ClearDefault(toClear);
+        //defaults.ClearDefault(toClear);
         RefreshUIFromDatabase();
     }
 
@@ -198,8 +198,8 @@ public partial class ServerDefaultsUI : RDMPForm
 
     private void ddDQEServer_SelectedIndexChanged(object sender, EventArgs e)
     {
-        if (ddDQEServer.SelectedItem != null)
-            defaults.SetDefault(PermissableDefaults.DQE, (ExternalDatabaseServer)ddDQEServer.SelectedItem);
+        //if (ddDQEServer.SelectedItem != null)
+        //    defaults.SetDefault(PermissableDefaults.DQE, (ExternalDatabaseServer)ddDQEServer.SelectedItem);
     }
 
     private void btnCreateNewDQEServer_Click(object sender, EventArgs e)

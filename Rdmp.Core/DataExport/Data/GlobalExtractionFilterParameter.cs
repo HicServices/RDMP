@@ -10,6 +10,7 @@ using System.Data.Common;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
@@ -78,7 +79,7 @@ public class GlobalExtractionFilterParameter : DatabaseEntity, ISqlParameter, II
     /// <inheritdoc cref="ExtractionConfiguration_ID"/>
     [NoMappingToDatabase]
     public ExtractionConfiguration ExtractionConfiguration =>
-        Repository.GetObjectByID<ExtractionConfiguration>(ExtractionConfiguration_ID);
+        CatalogueDbContext.GetObjectByID<ExtractionConfiguration>(ExtractionConfiguration_ID);
 
     #endregion
 
@@ -88,31 +89,31 @@ public class GlobalExtractionFilterParameter : DatabaseEntity, ISqlParameter, II
     }
 
     /// <summary>
-    /// Creates a new parameter into the <paramref name="repository"/> database acting as a global parameter for all <see cref="ISelectedDataSets"/> in the <paramref name="configuration"/>
+    /// Creates a new parameter into the <paramref name="catalogueDbContext"/> database acting as a global parameter for all <see cref="ISelectedDataSets"/> in the <paramref name="configuration"/>
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="configuration"></param>
     /// <param name="parameterSQL"></param>
-    public GlobalExtractionFilterParameter(IDataExportRepository repository, ExtractionConfiguration configuration,
+    public GlobalExtractionFilterParameter(RDMPDbContext catalogueDbContext, ExtractionConfiguration configuration,
         string parameterSQL)
     {
-        Repository = repository;
+       CatalogueDbContext = catalogueDbContext;
 
-        Repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "ParameterSQL", parameterSQL },
-            { "ExtractionConfiguration_ID", configuration.ID }
-        });
+        //CatalogueDbContext.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "ParameterSQL", parameterSQL },
+        //    { "ExtractionConfiguration_ID", configuration.ID }
+        //});
     }
 
 
     /// <summary>
     /// Reads an existing instance out of the database
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="r"></param>
-    internal GlobalExtractionFilterParameter(IDataExportRepository repository, DbDataReader r)
-        : base(repository, r)
+    internal GlobalExtractionFilterParameter(RDMPDbContext catalogueDbContext, DbDataReader r)
+        :base(catalogueDbContext, r)
     {
         Value = r["Value"] as string;
         ExtractionConfiguration_ID = (int)r["ExtractionConfiguration_ID"];

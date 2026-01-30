@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Annotations;
 using System.Collections.Generic;
@@ -28,16 +29,16 @@ namespace Rdmp.Core.Curation
 
         public TicketingSystemReleaseStatus() { }
 
-        public TicketingSystemReleaseStatus(RdmpDbContext catalogueDbContext, string status, int? statusID, TicketingSystemConfiguration config) : base()
+        public TicketingSystemReleaseStatus(RDMPDbContext catalogueDbContext, string status, int? statusID, TicketingSystemConfiguration config) : base()
         {
-            repository.InsertAndHydrate(this, new Dictionary<string, object>
-            {
-                {"Status", status},
-                {"TicketingSystemConfigurationID", config.ID }
-            });
+            //repository.InsertAndHydrate(this, new Dictionary<string, object>
+            //{
+            //    {"Status", status},
+            //    {"TicketingSystemConfigurationID", config.ID }
+            //});
         }
 
-        public TicketingSystemReleaseStatus(RdmpDbContext catalogueDbContext, DbDataReader r) : base(repository, r)
+        public TicketingSystemReleaseStatus(RDMPDbContext catalogueDbContext, DbDataReader r) :base(catalogueDbContext, r)
         {
             Status = r["Status"] as string;
             TicketingSystemConfigurationID = int.Parse(r["TicketingSystemConfigurationID"].ToString());

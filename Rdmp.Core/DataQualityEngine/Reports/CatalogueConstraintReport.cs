@@ -15,6 +15,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.DataQualityEngine.Data;
 using Rdmp.Core.DataQualityEngine.Reports.PeriodicityHelpers;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Logging.Listeners;
 using Rdmp.Core.QueryBuilding;
@@ -63,13 +64,13 @@ public class CatalogueConstraintReport : DataQualityReport
         _catalogue = catalogue;
     }
 
-    private void SetupLogging(RdmpDbContext catalogueDbContext)
+    private void SetupLogging(RDMPDbContext catalogueDbContext)
     {
         //if we have already setup logging successfully then don't worry about doing it again
         if (_loggingServer != null && _logManager != null && _loggingTask != null)
             return;
 
-        _loggingServer = repository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
+        _loggingServer = catalogueDbContext.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
 
         if (_loggingServer != null)
         {
@@ -94,7 +95,7 @@ public class CatalogueConstraintReport : DataQualityReport
     public override void GenerateReport(ICatalogue c, IDataLoadEventListener listener,
         CancellationToken cancellationToken)
     {
-        SetupLogging(c.CatalogueRepository);
+        SetupLogging(c.CatalogueDbContext);
 
         var toDatabaseLogger = new ToLoggingDatabaseDataLoadEventListener(this, _logManager, _loggingTask,
             $"DQE evaluation of {c}");
@@ -104,7 +105,7 @@ public class CatalogueConstraintReport : DataQualityReport
         try
         {
             _catalogue = c;
-            var dqeRepository = ExplicitDQERepository ?? new DQERepository(c.CatalogueRepository);
+            var dqeRepository = ExplicitDQERepository ?? new DQERepository(c.CatalogueDbContext);
 
             byPivotCategoryCubesOverTime.Add("ALL", new PeriodicityCubesOverTime("ALL"));
             byPivotRowStatesOverDataLoadRunId.Add("ALL", new DQEStateOverDataLoadRunId("ALL"));
@@ -216,7 +217,7 @@ periodicityCubesOverTime, byPivotRowStatesOverDataLoadRunId[pivotValue]);
                 try
                 {
                     //mark down that we are beginning an evaluation on this the day of our lord etc...
-                    var evaluation = new Evaluation(dqeRepository, _catalogue);
+                    var evaluation = new Evaluation(_catalogue.CatalogueDbContext, _catalogue);
 
                     foreach (var state in byPivotRowStatesOverDataLoadRunId.Values)
                         state.CommitToDatabase(evaluation, _catalogue, con.Connection, con.Transaction);
@@ -288,7 +289,7 @@ periodicityCubesOverTime, byPivotRowStatesOverDataLoadRunId[pivotValue]);
 
         try
         {
-            var dqeRepository = ExplicitDQERepository ?? new DQERepository(_catalogue.CatalogueRepository);
+            var dqeRepository = ExplicitDQERepository ?? new DQERepository(_catalogue.CatalogueDbContext);
             notifier.OnCheckPerformed(new CheckEventArgs(
                 $"Found DQE reporting server {dqeRepository.DiscoveredServer.Name}", CheckResult.Success));
         }
@@ -302,7 +303,7 @@ periodicityCubesOverTime, byPivotRowStatesOverDataLoadRunId[pivotValue]);
 
         try
         {
-            SetupLogging(_catalogue.CatalogueRepository);
+            SetupLogging(_catalogue.CatalogueDbContext);
         }
         catch (Exception e)
         {

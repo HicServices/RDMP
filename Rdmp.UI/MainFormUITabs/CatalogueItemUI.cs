@@ -69,7 +69,7 @@ public partial class CatalogueItemUI : CatalogueItemUI_Design, ISaveableUI
             {
                 lbDatasetValue.Visible = true;
                 lbDataset.Visible = true;
-                var dataset = _catalogueItem.CatalogueRepository.GetAllObjects<Dataset>()
+                var dataset = _catalogueItem.CatalogueDbContext.GetAllObjects<Dataset>()
                     .FirstOrDefault(ds => ds.ID == columnInfoDatasetValue);
                 if (dataset != null)
                 {

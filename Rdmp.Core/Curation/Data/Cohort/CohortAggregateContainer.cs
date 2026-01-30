@@ -10,6 +10,7 @@ using System.Data.Common;
 using System.Linq;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
@@ -84,8 +85,8 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable, INamed, IDis
     {
     }
 
-    internal CohortAggregateContainer(RdmpDbContext catalogueDbContext, DbDataReader r)
-        : base(repository, r)
+    internal CohortAggregateContainer(RDMPDbContext catalogueDbContext, DbDataReader r)
+        : base(catalogueDbContext, r)
     {
         Order = int.Parse(r["Order"].ToString());
         Enum.TryParse(r["Operation"].ToString(), out SetOperation op);
@@ -99,16 +100,16 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable, INamed, IDis
     ///  <see cref="CohortIdentificationConfiguration.RootCohortAggregateContainer_ID"/> to this.<see cref="IMapsDirectlyToDatabaseTable.ID"/> to make this container the root container
     /// or use <see cref="AddChild(CohortAggregateContainer)"/>  on another container to make this a subcontainer of it.
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="operation"></param>
-    public CohortAggregateContainer(RdmpDbContext catalogueDbContext, SetOperation operation)
+    public CohortAggregateContainer(RDMPDbContext catalogueDbContext, SetOperation operation)
     {
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "Operation", operation.ToString() },
-            { "Order", 0 },
-            { "Name", operation.ToString() }
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "Operation", operation.ToString() },
+        //    { "Order", 0 },
+        //    { "Name", operation.ToString() }
+        //});
     }
 
 
@@ -117,15 +118,15 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable, INamed, IDis
     /// <para>You might want to instead use <seealso cref="GetOrderedContents"/></para>
     /// </summary>
     /// <returns></returns>
-    public CohortAggregateContainer[] GetSubContainers() => CatalogueRepository.CohortContainerManager.GetChildren(this)
-        .OfType<CohortAggregateContainer>().ToArray();
+    public CohortAggregateContainer[] GetSubContainers() => null;//CatalogueDbContext.CohortContainerManager.GetChildren(this)
+                                                                 //.OfType<CohortAggregateContainer>().ToArray();
 
     /// <summary>
     /// Gets the parent container of the current container (if it is not a root / orphan container)
     /// </summary>
     /// <returns></returns>
-    public CohortAggregateContainer GetParentContainerIfAny() =>
-        CatalogueRepository.CohortContainerManager.GetParent(this);
+    public CohortAggregateContainer GetParentContainerIfAny() => null;
+        //CatalogueDbContext.CohortContainerManager.GetParent(this);
 
     /// <summary>
     /// Returns all the cohort identifier set queries (See <see cref="AggregateConfiguration"/>) declared as immediate children of the container.  These exist in
@@ -133,8 +134,8 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable, INamed, IDis
     /// <para>You might want to instead use <seealso cref="GetOrderedContents"/></para>
     /// </summary>
     /// <returns></returns>
-    public AggregateConfiguration[] GetAggregateConfigurations() => CatalogueRepository.CohortContainerManager
-        .GetChildren(this).OfType<AggregateConfiguration>().ToArray();
+    public AggregateConfiguration[] GetAggregateConfigurations() => null;// CatalogueDbContext.CohortContainerManager
+        //.GetChildren(this).OfType<AggregateConfiguration>().ToArray();
 
     /// <summary>
     /// Makes the configuration a member of this container.
@@ -144,7 +145,7 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable, INamed, IDis
     public void AddChild(AggregateConfiguration configuration, int order)
     {
         CreateInsertionPointAtOrder(configuration, configuration.Order, true);
-        CatalogueRepository.CohortContainerManager.Add(this, configuration, order);
+        //CatalogueDbContext.CohortContainerManager.Add(this, configuration, order);
         configuration.ReFetchOrder();
     }
 
@@ -156,7 +157,7 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable, INamed, IDis
     /// <param name="configuration"></param>
     public void RemoveChild(AggregateConfiguration configuration)
     {
-        CatalogueRepository.CohortContainerManager.Remove(this, configuration);
+        //CatalogueDbContext.CohortContainerManager.Remove(this, configuration);
     }
 
 
@@ -166,8 +167,8 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable, INamed, IDis
     public void MakeIntoAnOrphan()
     {
         var parent = GetParentContainerIfAny();
-        if (parent != null)
-            CatalogueRepository.CohortContainerManager.Remove(parent, this);
+        //if (parent != null)
+        //    CatalogueDbContext.CohortContainerManager.Remove(parent, this);
     }
 
 
@@ -181,7 +182,7 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable, INamed, IDis
             throw new InvalidOperationException("Root containers cannot be added as subcontainers");
 
         CreateInsertionPointAtOrder(child, child.Order, true);
-        CatalogueRepository.CohortContainerManager.Add(this, child);
+        //CatalogueDbContext.CohortContainerManager.Add(this, child);
     }
 
     /// <inheritdoc/>
@@ -262,7 +263,8 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable, INamed, IDis
     /// <returns></returns>
     public IOrderedEnumerable<IOrderable> GetOrderedContents()
     {
-        return CatalogueRepository.CohortContainerManager.GetChildren(this).OrderBy(o => o.Order);
+        return null;
+        //return CatalogueDbContext.CohortContainerManager.GetChildren(this).OrderBy(o => o.Order);
     }
 
     /// <summary>
@@ -300,7 +302,7 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable, INamed, IDis
         var contents = GetOrderedContents();
 
         //clone us with same order (in parents)
-        var cloneContainer = new CohortAggregateContainer((ICatalogueRepository)Repository, Operation)
+        var cloneContainer = new CohortAggregateContainer(CatalogueDbContext, Operation)
         {
             Name = Name,
             Order = Order
@@ -380,7 +382,7 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable, INamed, IDis
     /// <returns></returns>
     public CohortIdentificationConfiguration GetCohortIdentificationConfiguration()
     {
-        var candidates = Repository.GetAllObjects<CohortIdentificationConfiguration>().ToArray();
+        var candidates = CatalogueDbContext.GetAllObjects<CohortIdentificationConfiguration>().ToArray();
         var container = this;
 
         //while there is a container

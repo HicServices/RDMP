@@ -36,14 +36,14 @@ public class BetweenCatalogueAndDataExportObscureDependencyFinder : IObscureDepe
     public void ThrowIfDeleteDisallowed(IMapsDirectlyToDatabaseTable oTableWrapperObject)
     {
         //if there isn't a data export database then we don't care, delete away
-        if (_serviceLocator.DataExportRepository == null)
+        if (_serviceLocator.DataExportDbContext == null)
             return;
 
         //they are trying to delete a catalogue
         if (oTableWrapperObject is Catalogue cata)
         {
             //they are deleting a catalogue! see if it has an ExtractableDataSet associated with it
-            var dependencies = _serviceLocator.DataExportRepository
+            var dependencies = _serviceLocator.DataExportDbContext
                 .GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", cata.ID).ToArray();
 
             //we have any dependent catalogues?
@@ -60,13 +60,13 @@ public class BetweenCatalogueAndDataExportObscureDependencyFinder : IObscureDepe
         if (oTableWrapperObject is CohortIdentificationConfiguration cic)
         {
             //data export functionality is not available?
-            if (_serviceLocator.DataExportRepository == null)
+            if (_serviceLocator.DataExportDbContext == null)
                 return;
 
             //delete all associations where the cic ID matches
             foreach (
                 var association in
-                _serviceLocator.DataExportRepository
+                _serviceLocator.DataExportDbContext
                     .GetAllObjects<ProjectCohortIdentificationConfigurationAssociation>()
                     .Where(assoc => assoc.CohortIdentificationConfiguration_ID == cic.ID))
                 association.DeleteInDatabase();

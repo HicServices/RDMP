@@ -21,7 +21,7 @@ public class CatalogueTests : UnitTests
     public void Test_GetObjects_Catalogue()
     {
         Catalogue catalogueWithId = new Catalogue(Repository, "bob");
-        Catalogue[] catas = Repository.GetAllObjects<Catalogue>();
+        Catalogue[] catas = CatalogueDbContext.GetAllObjects<Catalogue>();
 
         Assert.IsTrue(catas.Length > 0);
 

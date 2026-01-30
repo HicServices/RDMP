@@ -70,10 +70,10 @@ public class FilterImportWizard
         var importer = containerToImportOneInto switch
         {
             AggregateFilterContainer => new FilterImporter(
-                new AggregateFilterFactory((ICatalogueRepository)containerToImportOneInto.Repository),
+                new AggregateFilterFactory(containerToImportOneInto.CatalogueDbContext),
                 globalParameters),
             FilterContainer => new FilterImporter(
-                new DeployedExtractionFilterFactory((IDataExportRepository)containerToImportOneInto.Repository),
+                new DeployedExtractionFilterFactory(containerToImportOneInto.CatalogueDbContext),
                 globalParameters),
             _ => throw new ArgumentException(
                 $"Cannot import into IContainer of type {containerToImportOneInto.GetType().Name}",
@@ -158,7 +158,7 @@ public class FilterImportWizard
             return null;
 
         var parameterSets =
-            extractionFilterOrNull.Repository.GetAllObjectsWithParent<ExtractionFilterParameterSet>(
+            extractionFilterOrNull.CatalogueDbContext.GetAllObjectsWithParent<ExtractionFilterParameterSet>(
                 extractionFilterOrNull);
 
 

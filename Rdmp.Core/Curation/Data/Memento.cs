@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using Rdmp.Core.Curation.Data.Referencing;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 
@@ -55,7 +56,7 @@ public class Memento : ReferenceOtherObjectDatabaseEntity
 
     #region Relationships
 
-    [NoMappingToDatabase] public Commit Commit => Repository.GetObjectByID<Commit>(Commit_ID);
+    [NoMappingToDatabase] public Commit Commit => CatalogueDbContext.GetObjectByID<Commit>(Commit_ID);
 
     #endregion
 
@@ -63,7 +64,7 @@ public class Memento : ReferenceOtherObjectDatabaseEntity
     {
     }
 
-    public Memento(ICatalogueRepository repo, DbDataReader r) : base(repo, r)
+    public Memento(RDMPDbContext repo, DbDataReader r) : base(repo, r)
     {
         BeforeYaml = r["BeforeYaml"].ToString();
         AfterYaml = r["AfterYaml"].ToString();
@@ -71,19 +72,19 @@ public class Memento : ReferenceOtherObjectDatabaseEntity
         Type = (MementoType)Enum.Parse<MementoType>(r["Type"].ToString());
     }
 
-    public Memento(RdmpDbContext catalogueDbContext, Commit commit, MementoType type,
+    public Memento(RDMPDbContext catalogueDbContext, Commit commit, MementoType type,
         IMapsDirectlyToDatabaseTable entity, string beforeYaml, string afterYaml)
     {
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "ReferencedObjectID", entity.ID },
-            { "ReferencedObjectType", entity.GetType().Name },
-            { "ReferencedObjectRepositoryType", entity.Repository.GetType().Name },
-            { "Commit_ID", commit.ID },
-            { "BeforeYaml", beforeYaml },
-            { "AfterYaml", afterYaml },
-            { "Type", type }
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "ReferencedObjectID", entity.ID },
+        //    { "ReferencedObjectType", entity.GetType().Name },
+        //    { "ReferencedObjectRepositoryType", entity.CatalogueDbContext.GetType().Name },
+        //    { "Commit_ID", commit.ID },
+        //    { "BeforeYaml", beforeYaml },
+        //    { "AfterYaml", afterYaml },
+        //    { "Type", type }
+        //});
     }
 
     public override string ToString() => $"{ReferencedObjectType}:{ReferencedObjectID}";

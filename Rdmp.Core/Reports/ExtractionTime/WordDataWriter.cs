@@ -163,7 +163,7 @@ public class WordDataWriter : DocXHelper
 
             if (foundDatasets.Count > 0)
             {
-                var datasets = Executer.Source.Request.Catalogue.Repository.GetAllObjects<Curation.Data.Dataset>().ToList();
+                var datasets = Executer.Source.Request.Catalogue.CatalogueDbContext.GetAllObjects<Curation.Data.Dataset>().ToList();
 
                 var datasetString = string.Join(", ",
                     foundDatasets

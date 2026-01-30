@@ -80,17 +80,17 @@ public class ExecuteCommandRelease : BasicUICommandExecution, IAtomicCommandWith
     {
         base.Execute();
 
-        var p = _project ?? SelectOne(Activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>());
-        if (p == null)
-            // user cancelled picking a Project
-            return;
+        //var p = _project ?? SelectOne(Activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Project>());
+        //if (p == null)
+        //    // user cancelled picking a Project
+        //    return;
 
-        var releaseUI = Activator.Activate<DataReleaseUI, Project>(p);
+        //var releaseUI = Activator.Activate<DataReleaseUI, Project>(p);
 
-        if (_configuration != null)
-            if (_selectedDataSet == null)
-                releaseUI.TickAllFor(_configuration);
-            else
-                releaseUI.Tick(_selectedDataSet);
+        //if (_configuration != null)
+        //    if (_selectedDataSet == null)
+        //        releaseUI.TickAllFor(_configuration);
+        //    else
+        //        releaseUI.Tick(_selectedDataSet);
     }
 }

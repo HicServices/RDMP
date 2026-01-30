@@ -11,6 +11,7 @@ using System.Linq;
 using System.Reflection;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Referencing;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
 using Rdmp.Core.Repositories;
@@ -107,29 +108,29 @@ public class ExtendedProperty : Argument, IReferenceOtherObjectWithPersist, IInj
         ClearAllInjections();
     }
 
-    public ExtendedProperty(RdmpDbContext catalogueDbContext, IMapsDirectlyToDatabaseTable setOn, string name,
+    public ExtendedProperty(RDMPDbContext catalogueDbContext, IMapsDirectlyToDatabaseTable setOn, string name,
         object value)
     {
-        ArgumentNullException.ThrowIfNull(repository);
+        ArgumentNullException.ThrowIfNull(catalogueDbContext);
         ArgumentNullException.ThrowIfNull(value);
         ArgumentNullException.ThrowIfNull(setOn);
         ArgumentNullException.ThrowIfNull(name);
 
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "ReferencedObjectID", setOn.ID },
-            { "ReferencedObjectType", setOn.GetType().Name },
-            { "ReferencedObjectRepositoryType", setOn.Repository.GetType().Name },
-            { "Name", name },
-            { "Type", value.GetType().ToString() }
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "ReferencedObjectID", setOn.ID },
+        //    { "ReferencedObjectType", setOn.GetType().Name },
+        //    { "ReferencedObjectRepositoryType", setOn.CatalogueDbContext.GetType().Name },
+        //    { "Name", name },
+        //    { "Type", value.GetType().ToString() }
+        //});
 
         SetValue(value);
         SaveToDatabase();
     }
 
     /// <inheritdoc/>
-    public ExtendedProperty(RdmpDbContext catalogueDbContext, DbDataReader r) : base(repository, r)
+    public ExtendedProperty(RDMPDbContext catalogueDbContext, DbDataReader r) :base(catalogueDbContext, r)
     {
         ReferencedObjectType = r["ReferencedObjectType"].ToString();
         ReferencedObjectID = Convert.ToInt32(r["ReferencedObjectID"]);
@@ -157,7 +158,7 @@ public class ExtendedProperty : Argument, IReferenceOtherObjectWithPersist, IInj
         &&
         AreProbablySameType(ReferencedObjectType, o.GetType())
         &&
-        AreProbablySameType(ReferencedObjectRepositoryType, o.Repository.GetType());
+        AreProbablySameType(ReferencedObjectRepositoryType, o.CatalogueDbContext.GetType());
 
     private static bool AreProbablySameType(string storedTypeName, Type candidate) =>
         storedTypeName.Equals(candidate.Name, StringComparison.CurrentCultureIgnoreCase) ||
@@ -198,30 +199,31 @@ public class ExtendedProperty : Argument, IReferenceOtherObjectWithPersist, IInj
     }
 
     /// <summary>
-    /// Returns all <see cref="ExtendedProperty"/> defined <paramref name="forObject"/> in the <paramref name="repository"/>
+    /// Returns all <see cref="ExtendedProperty"/> defined <paramref name="forObject"/> in the <paramref name="catalogueDbContext"/>
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="forObject"></param>
     /// <returns></returns>
-    internal static IEnumerable<ExtendedProperty> GetProperties(RdmpDbContext catalogueDbContext,
+    internal static IEnumerable<ExtendedProperty> GetProperties(RDMPDbContext catalogueDbContext,
         IMapsDirectlyToDatabaseTable forObject)
     {
-        return repository.GetAllObjectsWhere<ExtendedProperty>(
-                "ReferencedObjectID", forObject.ID,
-                System.Linq.Expressions.ExpressionType.And,
-                "ReferencedObjectType", forObject.GetType().Name)
-            .Where(p => p.IsReferenceTo(forObject));
+        //return repository.GetAllObjectsWhere<ExtendedProperty>(
+        //        "ReferencedObjectID", forObject.ID,
+        //        System.Linq.Expressions.ExpressionType.And,
+        //        "ReferencedObjectType", forObject.GetType().Name)
+        //    .Where(p => p.IsReferenceTo(forObject));
+        return null;
     }
 
     /// <summary>
     /// Returns the <see cref="ExtendedProperty"/> <paramref name="named"/> or null if not defined <paramref name="forObject"/>
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="named"></param>
     /// <param name="forObject"></param>
-    internal static ExtendedProperty GetProperty(RdmpDbContext catalogueDbContext, string named,
+    internal static ExtendedProperty GetProperty(RDMPDbContext catalogueDbContext, string named,
         IMapsDirectlyToDatabaseTable forObject)
     {
-        return GetProperties(repository, forObject).SingleOrDefault(e => e.Name.Equals(named));
+        return GetProperties(catalogueDbContext, forObject).SingleOrDefault(e => e.Name.Equals(named));
     }
 }

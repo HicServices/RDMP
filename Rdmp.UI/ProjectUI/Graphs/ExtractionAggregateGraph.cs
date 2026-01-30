@@ -46,27 +46,27 @@ public sealed class ExtractionAggregateGraphUI : AggregateGraphUI, IObjectCollec
         if (Request == null)
             throw new Exception("Request has not been initialized yet, has SetCollection not yet been called?");
 
-        var repo = new MemoryCatalogueRepository();
+        //var repo = new MemoryCatalogueRepository();
 
         //we are hijacking the query builder creation for this graph
         var toReturn = base.GetQueryBuilder(aggregateConfiguration);
 
         //instead of only filtering on the filters of the Aggregate, also filter on the configurations data extraction filters AND on the cohort ID
-        var spontedContainer = new SpontaneouslyInventedFilterContainer(repo, null, null, FilterContainerOperation.AND);
+        //var spontedContainer = new SpontaneouslyInventedFilterContainer(repo, null, null, FilterContainerOperation.AND);
 
-        //the aggregate has filters (it probably does)
-        if (toReturn.RootFilterContainer != null)
-            spontedContainer.AddChild(toReturn.RootFilterContainer); //add it
+        ////the aggregate has filters (it probably does)
+        //if (toReturn.RootFilterContainer != null)
+        //    spontedContainer.AddChild(toReturn.RootFilterContainer); //add it
 
-        //the cohort extraction request has filters?
-        if (Request.QueryBuilder.RootFilterContainer != null)
-            spontedContainer.AddChild(Request.QueryBuilder.RootFilterContainer); //add those too
+        ////the cohort extraction request has filters?
+        //if (Request.QueryBuilder.RootFilterContainer != null)
+        //    spontedContainer.AddChild(Request.QueryBuilder.RootFilterContainer); //add those too
 
-        //now also add the cohort where statement
-        var cohortWhereSql = Request.ExtractableCohort.WhereSQL();
+        ////now also add the cohort where statement
+        //var cohortWhereSql = Request.ExtractableCohort.WhereSQL();
 
-        var spontedFilter = new SpontaneouslyInventedFilter(repo, spontedContainer, cohortWhereSql, "Cohort ID Filter",
-            $"Cohort ID Filter ({Request.ExtractableCohort})", null);
+        //var spontedFilter = new SpontaneouslyInventedFilter(repo, spontedContainer, cohortWhereSql, "Cohort ID Filter",
+        //    $"Cohort ID Filter ({Request.ExtractableCohort})", null);
 
         //now we need to figure out what impromptu joins are going on in the main query extraction
         //Normally we have an impromptu join e.g. Inner Join MyCohortTable on CHI = MyCohortTable.CHI
@@ -91,10 +91,10 @@ public sealed class ExtractionAggregateGraphUI : AggregateGraphUI, IObjectCollec
         foreach (var line in customLines)
             toReturn.AddCustomLine(line.Text, QueryComponent.JoinInfoJoin);
 
-        spontedContainer.AddChild(spontedFilter);
+        //spontedContainer.AddChild(spontedFilter);
 
-        //now set the original aggregate that we are hijacking to have the new sponted container (which includes the original filters + the extraction ones + the cohort ID one)
-        toReturn.RootFilterContainer = spontedContainer;
+        ////now set the original aggregate that we are hijacking to have the new sponted container (which includes the original filters + the extraction ones + the cohort ID one)
+        //toReturn.RootFilterContainer = spontedContainer;
 
         return toReturn;
     }

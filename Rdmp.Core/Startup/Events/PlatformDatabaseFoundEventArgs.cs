@@ -30,12 +30,12 @@ public class PlatformDatabaseFoundEventArgs
     public PlatformDatabaseFoundEventArgs(ITableRepository repository, IPatcher patcher,
         RDMPPlatformDatabaseStatus status, Exception exception = null)
     {
-        Repository = repository;
+       Repository = repository;
         Patcher = patcher;
         Status = status;
         Exception = exception;
     }
 
-    public string SummariseAsString() =>
-        $"RDMPPlatformDatabaseStatus is {Status} for tier {Patcher.Tier} database of type {Patcher.Name} with connection string {(Repository == null ? "Unknown" : Repository.ConnectionString)}{Environment.NewLine}{(Exception == null ? "No exception" : ExceptionHelper.ExceptionToListOfInnerMessages(Exception))}";
+    public string SummariseAsString() => "";
+        //$"RDMPPlatformDatabaseStatus is {Status} for tier {Patcher.Tier} database of type {Patcher.Name} with connection string {(Repository == null ? "Unknown" : CatalogueDbContext.ConnectionString)}{Environment.NewLine}{(Exception == null ? "No exception" : ExceptionHelper.ExceptionToListOfInnerMessages(Exception))}";
 }

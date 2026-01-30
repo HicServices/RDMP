@@ -79,7 +79,7 @@ internal class ExecuteCommandSetFilterTreeShortcut : BasicCommandExecution
 
         if (_promptChoice && pointTo == null)
         {
-            var available = _setOn.Repository.GetAllObjects<AggregateConfiguration>().Where(a =>
+            var available = _setOn.CatalogueDbContext.GetAllObjects<AggregateConfiguration>().Where(a =>
                     //which are not themselves already shortcuts!
                     a.OverrideFiltersByUsingParentAggregateConfigurationInstead_ID == null
                     &&

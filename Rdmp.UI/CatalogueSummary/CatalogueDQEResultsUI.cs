@@ -68,37 +68,37 @@ public partial class CatalogueDQEResultsUI : CatalogueSummaryScreen_Design
 
     public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
     {
-        base.SetDatabaseObject(activator, databaseObject);
-        timePeriodicityChart1.SetItemActivator(activator);
+        //base.SetDatabaseObject(activator, databaseObject);
+        //timePeriodicityChart1.SetItemActivator(activator);
 
-        //clear old DQE graphs
-        ClearDQEGraphs();
+        ////clear old DQE graphs
+        //ClearDQEGraphs();
 
-        DQERepository dqeRepository = null;
-        try
-        {
-            //try to get the dqe server
-            dqeRepository = new DQERepository(databaseObject.CatalogueRepository);
-        }
-        catch (Exception)
-        {
-            //there is no dqe server, ah well nevermind
-        }
+        //DQERepository dqeRepository = null;
+        //try
+        //{
+        //    //try to get the dqe server
+        //    dqeRepository = new DQERepository(databaseObject.CatalogueRepository);
+        //}
+        //catch (Exception)
+        //{
+        //    //there is no dqe server, ah well nevermind
+        //}
 
-        //dqe server did exist!
-        if (dqeRepository != null)
-        {
-            //get evaluations for the catalogue
-            var evaluations = dqeRepository.GetAllEvaluationsFor(databaseObject).ToArray();
+        ////dqe server did exist!
+        //if (dqeRepository != null)
+        //{
+        //    //get evaluations for the catalogue
+        //    var evaluations = dqeCatalogueDbContext.GetAllEvaluationsFor(databaseObject).ToArray();
 
-            //there have been some evaluations
-            evaluationTrackBar1.Evaluations = evaluations;
-        }
+        //    //there have been some evaluations
+        //    evaluationTrackBar1.Evaluations = evaluations;
+        //}
 
-        CommonFunctionality.Add(
-            new ExecuteCommandConfigureCatalogueValidationRules(activator).SetTarget(databaseObject));
-        CommonFunctionality.Add(new ExecuteCommandRunDQEOnCatalogue(activator, databaseObject),
-            "Run Data Quality Engine...");
+        //CommonFunctionality.Add(
+        //    new ExecuteCommandConfigureCatalogueValidationRules(activator).SetTarget(databaseObject));
+        //CommonFunctionality.Add(new ExecuteCommandRunDQEOnCatalogue(activator, databaseObject),
+        //    "Run Data Quality Engine...");
     }
 
     public override string GetTabName() => $"DQE:{base.GetTabName()}";

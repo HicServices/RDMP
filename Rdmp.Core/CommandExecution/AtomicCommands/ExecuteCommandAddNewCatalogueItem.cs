@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
@@ -136,12 +137,12 @@ public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution, IAtomicC
         }
     }
 
-    private void CreateExtractionInformation(ICatalogueRepository repo, CatalogueItem ci, ColumnInfo columnInfo)
+    private void CreateExtractionInformation(RDMPDbContext catalogueDbcontext, CatalogueItem ci, ColumnInfo columnInfo)
     {
         // also make extractable
         if (Category == null) return;
 
-        var ei = new ExtractionInformation(repo, ci, columnInfo, columnInfo.GetFullyQualifiedName());
+        var ei = new ExtractionInformation(catalogueDbcontext, ci, columnInfo, columnInfo.GetFullyQualifiedName());
         if (ei.ExtractionCategory == Category) return;
 
         ei.ExtractionCategory = Category.Value;

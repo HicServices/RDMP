@@ -118,13 +118,13 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         var engine = new ForwardEngineerANOCatalogueEngine(RepositoryLocator, planManager);
         engine.Execute();
 
-        var anoCatalogue = CatalogueRepository.GetAllObjects<Catalogue>().Single(c => c.Folder.StartsWith("\\ano"));
+        var anoCatalogue = CatalogueDbContext.GetAllObjects<Catalogue>().Single(c => c.Folder.StartsWith("\\ano"));
         Assert.That(anoCatalogue.Exists());
 
         db.Drop();
 
-        var exports = CatalogueRepository.GetAllObjects<ObjectExport>().Length;
-        var imports = CatalogueRepository.GetAllObjects<ObjectImport>().Length;
+        var exports = CatalogueDbContext.GetAllObjects<ObjectExport>().Length;
+        var imports = CatalogueDbContext.GetAllObjects<ObjectImport>().Length;
 
         Assert.Multiple(() =>
         {
@@ -168,7 +168,7 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         var engine = new ForwardEngineerANOCatalogueEngine(RepositoryLocator, planManager);
         engine.Execute();
 
-        var anoCatalogue = CatalogueRepository.GetAllObjects<Catalogue>().Single(c => c.Folder.StartsWith("\\ano"));
+        var anoCatalogue = CatalogueDbContext.GetAllObjects<Catalogue>().Single(c => c.Folder.StartsWith("\\ano"));
         Assert.Multiple(() =>
         {
             Assert.That(anoCatalogue.Exists());
@@ -181,8 +181,8 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
 
         db.Drop();
 
-        var exports = CatalogueRepository.GetAllObjects<ObjectExport>().Length;
-        var imports = CatalogueRepository.GetAllObjects<ObjectImport>().Length;
+        var exports = CatalogueDbContext.GetAllObjects<ObjectExport>().Length;
+        var imports = CatalogueDbContext.GetAllObjects<ObjectImport>().Length;
 
         Assert.Multiple(() =>
         {
@@ -298,7 +298,7 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
 
         engine.Execute();
 
-        var newCata = CatalogueRepository.GetAllObjects<Catalogue>().Single(c => c.Name.Equals("ANOHeads"));
+        var newCata = CatalogueDbContext.GetAllObjects<Catalogue>().Single(c => c.Name.Equals("ANOHeads"));
         Assert.That(newCata.Exists());
 
         var newCataItems = newCata.CatalogueItems;
@@ -453,7 +453,7 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         engine.Execute();
         //////////////////////////////////////////////////////////////////////////////////////End The Actual Bit Being Tested////////////////////////////////////////////////////
 
-        var anoCatalogue = CatalogueRepository.GetAllObjects<Catalogue>().Single(c => c.Folder.StartsWith("\\ano"));
+        var anoCatalogue = CatalogueDbContext.GetAllObjects<Catalogue>().Single(c => c.Folder.StartsWith("\\ano"));
         Assert.That(anoCatalogue.Exists());
 
         //The new Catalogue should have the same number of ExtractionInformations
@@ -528,8 +528,8 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
 
         db.Drop();
 
-        var exports = CatalogueRepository.GetAllObjects<ObjectExport>().Length;
-        var imports = CatalogueRepository.GetAllObjects<ObjectImport>().Length;
+        var exports = CatalogueDbContext.GetAllObjects<ObjectExport>().Length;
+        var imports = CatalogueDbContext.GetAllObjects<ObjectImport>().Length;
 
         Assert.Multiple(() =>
         {

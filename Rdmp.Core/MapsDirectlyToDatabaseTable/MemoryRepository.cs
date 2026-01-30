@@ -60,7 +60,7 @@ public class MemoryRepository : IRepository
             SetValue(toCreate, prop, strVal, val);
         }
 
-        toCreate.Repository = this;
+        //toCreate.CatalogueDbContext = this;
 
         Objects.TryAdd(toCreate, 0);
 

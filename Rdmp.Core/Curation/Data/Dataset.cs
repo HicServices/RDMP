@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using System.Diagnostics.CodeAnalysis;
+using Rdmp.Core.EntityFramework;
 
 namespace Rdmp.Core.Curation.Data;
 
@@ -56,18 +57,18 @@ public sealed class Dataset : DatabaseEntity, IDataset, IHasFolder
     public override string ToString() => Name;
 
 
-    public Dataset(ICatalogueRepository catalogueRepository, string name)
+    public Dataset(RDMPDbContext catalogueDbContext, string name)
     {
-        catalogueRepository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            {"Name", name },
-            {"Folder", _folder }
-        });
+        //catalogueCatalogueDbContext.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    {"Name", name },
+        //    {"Folder", _folder }
+        //});
     }
 
     public Dataset() { }
-    internal Dataset(RdmpDbContext catalogueDbContext, DbDataReader r)
-       : base(repository, r)
+    internal Dataset(RDMPDbContext catalogueDbContext, DbDataReader r)
+       :base(catalogueDbContext, r)
     {
         Name = r["Name"].ToString();
         Folder = r["Folder"].ToString();

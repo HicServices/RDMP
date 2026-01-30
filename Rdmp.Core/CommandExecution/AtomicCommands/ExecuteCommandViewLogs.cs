@@ -88,10 +88,10 @@ int? Optional, if <root> is logging server this can be a specific audit id to sh
     public ExecuteCommandViewLogs(IBasicActivateItems activator, LogViewerFilter filter) : base(activator)
     {
         _filter = filter ?? new LogViewerFilter(LoggingTables.DataLoadTask);
-        _loggingServers =
-            BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllDatabases<LoggingDatabasePatcher>();
+        //_loggingServers =
+        //    BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllDatabases<LoggingDatabasePatcher>();
 
-        if (!_loggingServers.Any())
+        //if (!_loggingServers.Any())
             SetImpossible("There are no logging servers");
     }
 

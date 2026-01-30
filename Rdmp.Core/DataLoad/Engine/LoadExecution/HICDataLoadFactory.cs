@@ -14,6 +14,7 @@ using Rdmp.Core.DataLoad.Engine.LoadExecution.Components;
 using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments;
 using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Standard;
 using Rdmp.Core.DataLoad.Engine.LoadProcess;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Progress;
@@ -27,18 +28,18 @@ public class HICDataLoadFactory
 {
     private readonly HICDatabaseConfiguration _databaseConfiguration;
     private readonly HICLoadConfigurationFlags _loadConfigurationFlags;
-    private readonly ICatalogueRepository _repository;
+    private readonly RDMPDbContext _catalogueDbContext;
     private readonly ILogManager _logManager;
     private readonly IList<ICatalogue> _cataloguesToLoad;
 
     public ILoadMetadata LoadMetadata { get; private set; }
 
     public HICDataLoadFactory(ILoadMetadata loadMetadata, HICDatabaseConfiguration databaseConfiguration,
-        HICLoadConfigurationFlags loadConfigurationFlags, ICatalogueRepository repository, ILogManager logManager)
+        HICLoadConfigurationFlags loadConfigurationFlags, RDMPDbContext catalogueDbContext, ILogManager logManager)
     {
         _databaseConfiguration = databaseConfiguration;
         _loadConfigurationFlags = loadConfigurationFlags;
-        _repository = repository;
+        _catalogueDbContext = catalogueDbContext;
         _logManager = logManager;
         LoadMetadata = loadMetadata;
 
@@ -62,7 +63,7 @@ public class HICDataLoadFactory
 
         //Get all the runtime tasks which are not disabled
         var factory = new RuntimeTaskPackager(processTasks.Where(p => !p.IsDisabled), loadArgsDictionary.LoadArgs,
-            _cataloguesToLoad, _repository);
+            _cataloguesToLoad, _catalogueDbContext);
 
         var getFiles = new LoadFiles(factory.GetRuntimeTasksForStage(LoadStage.GetFiles));
 

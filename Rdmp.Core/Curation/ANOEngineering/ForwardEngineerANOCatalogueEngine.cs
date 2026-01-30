@@ -13,6 +13,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Spontaneous;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
@@ -30,7 +31,7 @@ namespace Rdmp.Core.Curation.ANOEngineering;
 /// </summary>
 public class ForwardEngineerANOCatalogueEngine
 {
-    private readonly ICatalogueRepository _catalogueRepository;
+    private readonly RDMPDbContext _catalogueDbContext;
     private readonly ForwardEngineerANOCataloguePlanManager _planManager;
     public ICatalogue NewCatalogue { get; private set; }
     public LoadMetadata LoadMetadata { get; private set; }
@@ -46,10 +47,10 @@ public class ForwardEngineerANOCatalogueEngine
     public ForwardEngineerANOCatalogueEngine(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
         ForwardEngineerANOCataloguePlanManager planManager)
     {
-        _catalogueRepository = repositoryLocator.CatalogueRepository;
+        _catalogueDbContext = repositoryLocator.CatalogueDbContext;
         _shareManager = new ShareManager(repositoryLocator);
         _planManager = planManager;
-        _allColumnsInfos = _catalogueRepository.GetAllObjects<ColumnInfo>();
+        _allColumnsInfos = _catalogueDbContext.GetAllObjects<ColumnInfo>();
     }
 
     public void Execute()
@@ -57,287 +58,287 @@ public class ForwardEngineerANOCatalogueEngine
         if (_planManager.TargetDatabase == null)
             throw new Exception("PlanManager has no TargetDatabase set");
 
-        var memoryRepo = new MemoryCatalogueRepository();
+        var memoryRepo = new MemoryRDMPDbContext();
 
-        using (_catalogueRepository.BeginNewTransaction())
-        {
-            try
-            {
-                //for each skipped table
-                foreach (var skippedTable in _planManager.SkippedTables)
-                    //we might have to refactor or port JoinInfos to these tables so we should establish what the parenthood of them was
-                    foreach (var columnInfo in skippedTable.ColumnInfos)
-                        GetNewColumnInfoForOld(columnInfo, true);
+        //using (_catalogueDbContext.BeginNewTransaction())
+        //{
+        //    try
+        //    {
+        //        //for each skipped table
+        //        foreach (var skippedTable in _planManager.SkippedTables)
+        //            //we might have to refactor or port JoinInfos to these tables so we should establish what the parenthood of them was
+        //            foreach (var columnInfo in skippedTable.ColumnInfos)
+        //                GetNewColumnInfoForOld(columnInfo, true);
 
-                //for each table that isn't being skipped
-                foreach (var oldTableInfo in _planManager.TableInfos.Except(_planManager.SkippedTables))
-                {
-                    var columnsToCreate = new List<DatabaseColumnRequest>();
+        //        //for each table that isn't being skipped
+        //        foreach (var oldTableInfo in _planManager.TableInfos.Except(_planManager.SkippedTables))
+        //        {
+        //            var columnsToCreate = new List<DatabaseColumnRequest>();
 
-                    var migratedColumns = new Dictionary<string, ColumnInfo>(StringComparer.CurrentCultureIgnoreCase);
+        //            var migratedColumns = new Dictionary<string, ColumnInfo>(StringComparer.CurrentCultureIgnoreCase);
 
-                    var querybuilderForMigratingTable = new QueryBuilder(null, null);
+        //            var querybuilderForMigratingTable = new QueryBuilder(null, null);
 
-                    //for each column we are not skipping (Drop) work out the endpoint datatype (planner knows this)
-                    foreach (var columnInfo in oldTableInfo.ColumnInfos)
-                    {
-                        var columnPlan = _planManager.GetPlanForColumnInfo(columnInfo);
+        //            //for each column we are not skipping (Drop) work out the endpoint datatype (planner knows this)
+        //            foreach (var columnInfo in oldTableInfo.ColumnInfos)
+        //            {
+        //                var columnPlan = _planManager.GetPlanForColumnInfo(columnInfo);
 
-                        if (columnPlan.Plan != Plan.Drop)
-                        {
-                            //add the column verbatim to the query builder because we know we have to read it from source
-                            querybuilderForMigratingTable.AddColumn(new ColumnInfoToIColumn(memoryRepo, columnInfo));
+        //                if (columnPlan.Plan != Plan.Drop)
+        //                {
+        //                    //add the column verbatim to the query builder because we know we have to read it from source
+        //                    querybuilderForMigratingTable.AddColumn(new ColumnInfoToIColumn(memoryRepo, columnInfo));
 
-                            var colName = columnInfo.GetRuntimeName();
+        //                    var colName = columnInfo.GetRuntimeName();
 
-                            //if it is being ano tabled then give the table name ANO as a prefix
-                            if (columnPlan.Plan == Plan.ANO)
-                                colName = $"ANO{colName}";
+        //                    //if it is being ano tabled then give the table name ANO as a prefix
+        //                    if (columnPlan.Plan == Plan.ANO)
+        //                        colName = $"ANO{colName}";
 
-                            migratedColumns.Add(colName, columnInfo);
+        //                    migratedColumns.Add(colName, columnInfo);
 
-                            columnsToCreate.Add(
-                                new DatabaseColumnRequest(colName, columnPlan.GetEndpointDataType(),
-                                    !columnInfo.IsPrimaryKey)
-                                { IsPrimaryKey = columnInfo.IsPrimaryKey });
-                        }
-                    }
+        //                    columnsToCreate.Add(
+        //                        new DatabaseColumnRequest(colName, columnPlan.GetEndpointDataType(),
+        //                            !columnInfo.IsPrimaryKey)
+        //                        { IsPrimaryKey = columnInfo.IsPrimaryKey });
+        //                }
+        //            }
 
-                    SelectSQLForMigrations.Add(oldTableInfo, querybuilderForMigratingTable);
+        //            SelectSQLForMigrations.Add(oldTableInfo, querybuilderForMigratingTable);
 
-                    //Create the actual table
-                    var tbl = _planManager.TargetDatabase.CreateTable(oldTableInfo.GetRuntimeName(),
-                        columnsToCreate.ToArray());
+        //            //Create the actual table
+        //            var tbl = _planManager.TargetDatabase.CreateTable(oldTableInfo.GetRuntimeName(),
+        //                columnsToCreate.ToArray());
 
-                    //import the created table
-                    var importer = new TableInfoImporter(_catalogueRepository, tbl);
-                    importer.DoImport(out var newTableInfo, out var newColumnInfos);
+        //            //import the created table
+        //            var importer = new TableInfoImporter(_catalogueDbContext, tbl);
+        //            importer.DoImport(out var newTableInfo, out var newColumnInfos);
 
-                    //Audit the parenthood of the TableInfo/ColumnInfos
-                    AuditParenthood(oldTableInfo, newTableInfo);
+        //            //Audit the parenthood of the TableInfo/ColumnInfos
+        //            AuditParenthood(oldTableInfo, newTableInfo);
 
-                    foreach (var newColumnInfo in newColumnInfos)
-                    {
-                        var oldColumnInfo = migratedColumns[newColumnInfo.GetRuntimeName()];
+        //            foreach (var newColumnInfo in newColumnInfos)
+        //            {
+        //                var oldColumnInfo = migratedColumns[newColumnInfo.GetRuntimeName()];
 
-                        var columnPlan = _planManager.GetPlanForColumnInfo(oldColumnInfo);
+        //                var columnPlan = _planManager.GetPlanForColumnInfo(oldColumnInfo);
 
-                        if (columnPlan.Plan == Plan.ANO)
-                        {
-                            newColumnInfo.ANOTable_ID = columnPlan.ANOTable.ID;
-                            newColumnInfo.SaveToDatabase();
-                        }
+        //                if (columnPlan.Plan == Plan.ANO)
+        //                {
+        //                    newColumnInfo.ANOTable_ID = columnPlan.ANOTable.ID;
+        //                    newColumnInfo.SaveToDatabase();
+        //                }
 
-                        //if there was a dilution configured we need to setup a virtual DLE load only column of the input type (this ensures RAW has a valid datatype)
-                        if (columnPlan.Plan == Plan.Dilute)
-                        {
-                            //Create a discarded (load only) column with name matching the new columninfo
-                            var discard = new PreLoadDiscardedColumn(_catalogueRepository, newTableInfo,
-                                newColumnInfo.GetRuntimeName())
-                            {
-                                //record that it exists to support dilution and that the data type matches the input (old) ColumnInfo (i.e. not the new data type!)
-                                Destination = DiscardedColumnDestination.Dilute,
-                                SqlDataType = oldColumnInfo.Data_type
-                            };
+        //                //if there was a dilution configured we need to setup a virtual DLE load only column of the input type (this ensures RAW has a valid datatype)
+        //                if (columnPlan.Plan == Plan.Dilute)
+        //                {
+        //                    //Create a discarded (load only) column with name matching the new columninfo
+        //                    var discard = new PreLoadDiscardedColumn(_catalogueDbContext, newTableInfo,
+        //                        newColumnInfo.GetRuntimeName())
+        //                    {
+        //                        //record that it exists to support dilution and that the data type matches the input (old) ColumnInfo (i.e. not the new data type!)
+        //                        Destination = DiscardedColumnDestination.Dilute,
+        //                        SqlDataType = oldColumnInfo.Data_type
+        //                    };
 
-                            discard.SaveToDatabase();
+        //                    discard.SaveToDatabase();
 
-                            DilutionOperationsForMigrations.Add(discard, columnPlan.Dilution);
-                        }
+        //                    DilutionOperationsForMigrations.Add(discard, columnPlan.Dilution);
+        //                }
 
-                        AuditParenthood(oldColumnInfo, newColumnInfo);
-                    }
+        //                AuditParenthood(oldColumnInfo, newColumnInfo);
+        //            }
 
-                    if (DilutionOperationsForMigrations.Any())
-                    {
-                        newTableInfo.IdentifierDumpServer_ID = _planManager.GetIdentifierDumpServer().ID;
-                        newTableInfo.SaveToDatabase();
-                    }
-                }
+        //            if (DilutionOperationsForMigrations.Any())
+        //            {
+        //                newTableInfo.IdentifierDumpServer_ID = _planManager.GetIdentifierDumpServer().ID;
+        //                newTableInfo.SaveToDatabase();
+        //            }
+        //        }
 
-                NewCatalogue = _planManager.Catalogue.ShallowClone();
-                NewCatalogue.Name = $"ANO{_planManager.Catalogue.Name}";
-                NewCatalogue.Folder = $"\\anonymous{NewCatalogue.Folder}";
-                NewCatalogue.SaveToDatabase();
+        //        NewCatalogue = _planManager.Catalogue.ShallowClone();
+        //        NewCatalogue.Name = $"ANO{_planManager.Catalogue.Name}";
+        //        NewCatalogue.Folder = $"\\anonymous{NewCatalogue.Folder}";
+        //        NewCatalogue.SaveToDatabase();
 
-                AuditParenthood(_planManager.Catalogue, NewCatalogue);
+        //        AuditParenthood(_planManager.Catalogue, NewCatalogue);
 
-                //For each of the old ExtractionInformations (95% of the time that's just a reference to a ColumnInfo e.g. '[People].[Height]' but 5% of the time it's some horrible aliased transform e.g. 'dbo.RunMyCoolFunction([People].[Height]) as BigHeight'
-                foreach (var oldCatalogueItem in _planManager.Catalogue.CatalogueItems)
-                {
-                    var oldColumnInfo = oldCatalogueItem.ColumnInfo;
+        //        //For each of the old ExtractionInformations (95% of the time that's just a reference to a ColumnInfo e.g. '[People].[Height]' but 5% of the time it's some horrible aliased transform e.g. 'dbo.RunMyCoolFunction([People].[Height]) as BigHeight'
+        //        foreach (var oldCatalogueItem in _planManager.Catalogue.CatalogueItems)
+        //        {
+        //            var oldColumnInfo = oldCatalogueItem.ColumnInfo;
 
-                    //catalogue item is not connected to any ColumnInfo
-                    if (oldColumnInfo == null)
-                        continue;
+        //            //catalogue item is not connected to any ColumnInfo
+        //            if (oldColumnInfo == null)
+        //                continue;
 
-                    var columnPlan = _planManager.GetPlanForColumnInfo(oldColumnInfo);
+        //            var columnPlan = _planManager.GetPlanForColumnInfo(oldColumnInfo);
 
-                    //we are not migrating it anyway
-                    if (columnPlan.Plan == Plan.Drop)
-                        continue;
+        //            //we are not migrating it anyway
+        //            if (columnPlan.Plan == Plan.Drop)
+        //                continue;
 
-                    var newColumnInfo = GetNewColumnInfoForOld(oldColumnInfo);
+        //            var newColumnInfo = GetNewColumnInfoForOld(oldColumnInfo);
 
-                    var newCatalogueItem = oldCatalogueItem.ShallowClone(NewCatalogue);
+        //            var newCatalogueItem = oldCatalogueItem.ShallowClone(NewCatalogue);
 
-                    //and rewire its ColumnInfo to the cloned child one
-                    newCatalogueItem.ColumnInfo_ID = newColumnInfo.ID;
+        //            //and rewire its ColumnInfo to the cloned child one
+        //            newCatalogueItem.ColumnInfo_ID = newColumnInfo.ID;
 
-                    //If the old CatalogueItem had the same name as its underlying ColumnInfo then we should use the new one otherwise just copy the old name whatever it was
-                    newCatalogueItem.Name = oldCatalogueItem.Name.Equals(oldColumnInfo.Name)
-                        ? newColumnInfo.GetRuntimeName()
-                        : oldCatalogueItem.Name;
+        //            //If the old CatalogueItem had the same name as its underlying ColumnInfo then we should use the new one otherwise just copy the old name whatever it was
+        //            newCatalogueItem.Name = oldCatalogueItem.Name.Equals(oldColumnInfo.Name)
+        //                ? newColumnInfo.GetRuntimeName()
+        //                : oldCatalogueItem.Name;
 
-                    //add ANO to the front if the underlying column was annoed
-                    if (newColumnInfo.GetRuntimeName().StartsWith("ANO") && !newCatalogueItem.Name.StartsWith("ANO"))
-                        newCatalogueItem.Name = $"ANO{newCatalogueItem.Name}";
+        //            //add ANO to the front if the underlying column was annoed
+        //            if (newColumnInfo.GetRuntimeName().StartsWith("ANO") && !newCatalogueItem.Name.StartsWith("ANO"))
+        //                newCatalogueItem.Name = $"ANO{newCatalogueItem.Name}";
 
-                    newCatalogueItem.SaveToDatabase();
+        //            newCatalogueItem.SaveToDatabase();
 
-                    var oldExtractionInformation = oldCatalogueItem.ExtractionInformation;
+        //            var oldExtractionInformation = oldCatalogueItem.ExtractionInformation;
 
-                    //if the plan is to make the ColumnInfo extractable
-                    if (columnPlan.ExtractionCategoryIfAny != null)
-                    {
-                        //Create a new ExtractionInformation for the new Catalogue
-                        var newExtractionInformation = new ExtractionInformation(_catalogueRepository, newCatalogueItem,
-                            newColumnInfo, newColumnInfo.Name)
-                        {
-                            ExtractionCategory = columnPlan.ExtractionCategoryIfAny.Value
-                        };
+        //            //if the plan is to make the ColumnInfo extractable
+        //            if (columnPlan.ExtractionCategoryIfAny != null)
+        //            {
+        //                //Create a new ExtractionInformation for the new Catalogue
+        //                var newExtractionInformation = new ExtractionInformation(_catalogueDbContext, newCatalogueItem,
+        //                    newColumnInfo, newColumnInfo.Name)
+        //                {
+        //                    ExtractionCategory = columnPlan.ExtractionCategoryIfAny.Value
+        //                };
 
-                        newExtractionInformation.SaveToDatabase();
+        //                newExtractionInformation.SaveToDatabase();
 
-                        //if it was previously extractable
-                        if (oldExtractionInformation != null)
-                        {
-                            var refactorer = new SelectSQLRefactorer();
+        //                //if it was previously extractable
+        //                if (oldExtractionInformation != null)
+        //                {
+        //                    var refactorer = new SelectSQLRefactorer();
 
-                            //restore the old SQL as it existed in the origin table
-                            newExtractionInformation.SelectSQL = oldExtractionInformation.SelectSQL;
+        //                    //restore the old SQL as it existed in the origin table
+        //                    newExtractionInformation.SelectSQL = oldExtractionInformation.SelectSQL;
 
-                            //do a refactor on the old column name for the new column name
-                            SelectSQLRefactorer.RefactorColumnName(newExtractionInformation, oldColumnInfo,
-                                newColumnInfo.Name, true);
+        //                    //do a refactor on the old column name for the new column name
+        //                    SelectSQLRefactorer.RefactorColumnName(newExtractionInformation, oldColumnInfo,
+        //                        newColumnInfo.Name, true);
 
-                            //also refactor any other column names that might be referenced by the transform SQL e.g. it could be a combo column name where forename + surname is the value of the ExtractionInformation
-                            foreach (var kvpOtherCols in _parenthoodDictionary.Where(kvp => kvp.Key is ColumnInfo))
-                            {
-                                //if it's one we have already done, don't do it again
-                                if (Equals(kvpOtherCols.Value, newColumnInfo))
-                                    continue;
+        //                    //also refactor any other column names that might be referenced by the transform SQL e.g. it could be a combo column name where forename + surname is the value of the ExtractionInformation
+        //                    foreach (var kvpOtherCols in _parenthoodDictionary.Where(kvp => kvp.Key is ColumnInfo))
+        //                    {
+        //                        //if it's one we have already done, don't do it again
+        //                        if (Equals(kvpOtherCols.Value, newColumnInfo))
+        //                            continue;
 
-                                //otherwise do a non strict refactoring (don't worry if you don't finda ny references)
-                                SelectSQLRefactorer.RefactorColumnName(newExtractionInformation,
-                                    (ColumnInfo)kvpOtherCols.Key, ((ColumnInfo)kvpOtherCols.Value).Name, false);
-                            }
+        //                        //otherwise do a non strict refactoring (don't worry if you don't finda ny references)
+        //                        SelectSQLRefactorer.RefactorColumnName(newExtractionInformation,
+        //                            (ColumnInfo)kvpOtherCols.Key, ((ColumnInfo)kvpOtherCols.Value).Name, false);
+        //                    }
 
-                            //make the new one exactly as extractable
-                            newExtractionInformation.Order = oldExtractionInformation.Order;
-                            newExtractionInformation.Alias = oldExtractionInformation.Alias;
-                            newExtractionInformation.IsExtractionIdentifier =
-                                oldExtractionInformation.IsExtractionIdentifier;
-                            newExtractionInformation.HashOnDataRelease = oldExtractionInformation.HashOnDataRelease;
-                            newExtractionInformation.IsPrimaryKey = oldExtractionInformation.IsPrimaryKey;
-                            newExtractionInformation.SaveToDatabase();
-                        }
+        //                    //make the new one exactly as extractable
+        //                    newExtractionInformation.Order = oldExtractionInformation.Order;
+        //                    newExtractionInformation.Alias = oldExtractionInformation.Alias;
+        //                    newExtractionInformation.IsExtractionIdentifier =
+        //                        oldExtractionInformation.IsExtractionIdentifier;
+        //                    newExtractionInformation.HashOnDataRelease = oldExtractionInformation.HashOnDataRelease;
+        //                    newExtractionInformation.IsPrimaryKey = oldExtractionInformation.IsPrimaryKey;
+        //                    newExtractionInformation.SaveToDatabase();
+        //                }
 
-                        AuditParenthood(oldCatalogueItem, newCatalogueItem);
+        //                AuditParenthood(oldCatalogueItem, newCatalogueItem);
 
-                        if (oldExtractionInformation != null)
-                            AuditParenthood(oldExtractionInformation, newExtractionInformation);
-                    }
-                }
+        //                if (oldExtractionInformation != null)
+        //                    AuditParenthood(oldExtractionInformation, newExtractionInformation);
+        //            }
+        //        }
 
-                var existingJoinInfos = _catalogueRepository.GetAllObjects<JoinInfo>();
-                var existingLookups = _catalogueRepository.GetAllObjects<Lookup>();
-                var existingLookupComposites = _catalogueRepository.GetAllObjects<LookupCompositeJoinInfo>();
+        //        var existingJoinInfos = _catalogueDbContext.GetAllObjects<JoinInfo>();
+        //        var existingLookups = _catalogueDbContext.GetAllObjects<Lookup>();
+        //        var existingLookupComposites = _catalogueDbContext.GetAllObjects<LookupCompositeJoinInfo>();
 
-                //migrate join infos
-                foreach (var joinInfo in _planManager.GetJoinInfosRequiredCatalogue())
-                {
-                    var newFk = GetNewColumnInfoForOld(joinInfo.ForeignKey);
-                    var newPk = GetNewColumnInfoForOld(joinInfo.PrimaryKey);
+        //        //migrate join infos
+        //        foreach (var joinInfo in _planManager.GetJoinInfosRequiredCatalogue())
+        //        {
+        //            var newFk = GetNewColumnInfoForOld(joinInfo.ForeignKey);
+        //            var newPk = GetNewColumnInfoForOld(joinInfo.PrimaryKey);
 
-                    //already exists
-                    if (!existingJoinInfos.Any(ej => ej.ForeignKey_ID == newFk.ID && ej.PrimaryKey_ID == newPk.ID))
-                        new JoinInfo(_catalogueRepository, newFk, newPk, joinInfo.ExtractionJoinType,
-                            joinInfo.Collation); //create it
-                }
+        //            //already exists
+        //            if (!existingJoinInfos.Any(ej => ej.ForeignKey_ID == newFk.ID && ej.PrimaryKey_ID == newPk.ID))
+        //                new JoinInfo(_catalogueDbContext, newFk, newPk, joinInfo.ExtractionJoinType,
+        //                    joinInfo.Collation); //create it
+        //        }
 
-                //migrate Lookups
-                foreach (var lookup in _planManager.GetLookupsRequiredCatalogue())
-                {
-                    //Find the new columns in the ANO table that match the old lookup columns
-                    var newDesc = GetNewColumnInfoForOld(lookup.Description);
-                    var newFk = GetNewColumnInfoForOld(lookup.ForeignKey);
-                    var newPk = GetNewColumnInfoForOld(lookup.PrimaryKey);
+        //        //migrate Lookups
+        //        foreach (var lookup in _planManager.GetLookupsRequiredCatalogue())
+        //        {
+        //            //Find the new columns in the ANO table that match the old lookup columns
+        //            var newDesc = GetNewColumnInfoForOld(lookup.Description);
+        //            var newFk = GetNewColumnInfoForOld(lookup.ForeignKey);
+        //            var newPk = GetNewColumnInfoForOld(lookup.PrimaryKey);
 
-                    //see if we already have a Lookup declared for the NEW columns (unlikely)
-                    var newLookup =
-                        existingLookups.SingleOrDefault(l =>
-                            l.Description_ID == newDesc.ID && l.ForeignKey_ID == newFk.ID) ??
-                        new Lookup(_catalogueRepository, newDesc, newFk, newPk, lookup.ExtractionJoinType,
-                            lookup.Collation);
+        //            //see if we already have a Lookup declared for the NEW columns (unlikely)
+        //            var newLookup =
+        //                existingLookups.SingleOrDefault(l =>
+        //                    l.Description_ID == newDesc.ID && l.ForeignKey_ID == newFk.ID) ??
+        //                new Lookup(_catalogueDbContext, newDesc, newFk, newPk, lookup.ExtractionJoinType,
+        //                    lookup.Collation);
 
-                    //also mirror any composite (secondary, tertiary join column pairs needed for the Lookup to operate correctly e.g. where TestCode 'HAB1' means 2 different things depending on healthboard)
-                    foreach (var compositeJoin in lookup.GetSupplementalJoins().Cast<LookupCompositeJoinInfo>())
-                    {
-                        var newCompositeFk = GetNewColumnInfoForOld(compositeJoin.ForeignKey);
-                        var newCompositePk = GetNewColumnInfoForOld(compositeJoin.PrimaryKey);
+        //            //also mirror any composite (secondary, tertiary join column pairs needed for the Lookup to operate correctly e.g. where TestCode 'HAB1' means 2 different things depending on healthboard)
+        //            foreach (var compositeJoin in lookup.GetSupplementalJoins().Cast<LookupCompositeJoinInfo>())
+        //            {
+        //                var newCompositeFk = GetNewColumnInfoForOld(compositeJoin.ForeignKey);
+        //                var newCompositePk = GetNewColumnInfoForOld(compositeJoin.PrimaryKey);
 
-                        if (!existingLookupComposites.Any(c =>
-                                c.ForeignKey_ID == newCompositeFk.ID && c.PrimaryKey_ID == newCompositePk.ID))
-                            new LookupCompositeJoinInfo(_catalogueRepository, newLookup, newCompositeFk, newCompositePk,
-                                compositeJoin.Collation);
-                    }
-                }
+        //                if (!existingLookupComposites.Any(c =>
+        //                        c.ForeignKey_ID == newCompositeFk.ID && c.PrimaryKey_ID == newCompositePk.ID))
+        //                    new LookupCompositeJoinInfo(_catalogueDbContext, newLookup, newCompositeFk, newCompositePk,
+        //                        compositeJoin.Collation);
+        //            }
+        //        }
 
-                //create new data load configuration
-                LoadMetadata = new LoadMetadata(_catalogueRepository, $"Anonymising {NewCatalogue}");
-                LoadMetadata.EnsureLoggingWorksFor(NewCatalogue);
-                NewCatalogue.SaveToDatabase();
-                LoadMetadata.LinkToCatalogue(NewCatalogue);
-                if (_planManager.DateColumn != null)
-                {
-                    LoadProgressIfAny = new LoadProgress(_catalogueRepository, LoadMetadata)
-                    {
-                        OriginDate = _planManager.StartDate
-                    };
-                    LoadProgressIfAny.SaveToDatabase();
+        //        //create new data load configuration
+        //        LoadMetadata = new LoadMetadata(_catalogueDbContext, $"Anonymising {NewCatalogue}");
+        //        LoadMetadata.EnsureLoggingWorksFor(NewCatalogue);
+        //        NewCatalogue.SaveToDatabase();
+        //        LoadMetadata.LinkToCatalogue(NewCatalogue);
+        //        if (_planManager.DateColumn != null)
+        //        {
+        //            LoadProgressIfAny = new LoadProgress(_catalogueDbContext, LoadMetadata)
+        //            {
+        //                OriginDate = _planManager.StartDate
+        //            };
+        //            LoadProgressIfAny.SaveToDatabase();
 
-                    //date column based migration only works for single TableInfo migrations (see Plan Manager checks)
-                    var qb = SelectSQLForMigrations.Single(kvp => !kvp.Key.IsLookupTable()).Value;
-                    qb.RootFilterContainer = new SpontaneouslyInventedFilterContainer(memoryRepo, null,
-                        new[]
-                        {
-                            new SpontaneouslyInventedFilter(memoryRepo, null,
-                                $"{_planManager.DateColumn} >= @startDate", "After batch start date", "", null),
-                            new SpontaneouslyInventedFilter(memoryRepo, null, $"{_planManager.DateColumn} <= @endDate",
-                                "Before batch end date", "", null)
-                        }
-                        , FilterContainerOperation.AND);
-                }
+        //            //date column based migration only works for single TableInfo migrations (see Plan Manager checks)
+        //            var qb = SelectSQLForMigrations.Single(kvp => !kvp.Key.IsLookupTable()).Value;
+        //            qb.RootFilterContainer = new SpontaneouslyInventedFilterContainer(memoryRepo, null,
+        //                new[]
+        //                {
+        //                    new SpontaneouslyInventedFilter(memoryRepo, null,
+        //                        $"{_planManager.DateColumn} >= @startDate", "After batch start date", "", null),
+        //                    new SpontaneouslyInventedFilter(memoryRepo, null, $"{_planManager.DateColumn} <= @endDate",
+        //                        "Before batch end date", "", null)
+        //                }
+        //                , FilterContainerOperation.AND);
+        //        }
 
-                try
-                {
-                    foreach (var qb in SelectSQLForMigrations.Values)
-                        Console.WriteLine(qb.SQL);
-                }
-                catch (Exception e)
-                {
-                    throw new Exception("Failed to generate migration SQL", e);
-                }
+        //        try
+        //        {
+        //            foreach (var qb in SelectSQLForMigrations.Values)
+        //                Console.WriteLine(qb.SQL);
+        //        }
+        //        catch (Exception e)
+        //        {
+        //            throw new Exception("Failed to generate migration SQL", e);
+        //        }
 
-                _catalogueRepository.EndTransaction(true);
-            }
-            catch (Exception ex)
-            {
-                _catalogueRepository.EndTransaction(false);
-                throw new Exception("Failed to create ANO version, transaction rolled back successfully", ex);
-            }
-        }
+        //        //_catalogueDbContext.EndTransaction(true);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        //_catalogueDbContext.EndTransaction(false);
+        //        throw new Exception("Failed to create ANO version, transaction rolled back successfully", ex);
+        //    }
+        //}
     }
 
     /// <summary>

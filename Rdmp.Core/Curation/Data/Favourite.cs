@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using Rdmp.Core.Curation.Data.Referencing;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 
@@ -49,7 +50,7 @@ public class Favourite : ReferenceOtherObjectDatabaseEntity
     {
     }
 
-    internal Favourite(RdmpDbContext catalogueDbContext, DbDataReader r) : base(repository, r)
+    internal Favourite(RDMPDbContext catalogueDbContext, DbDataReader r) :base(catalogueDbContext, r)
     {
         Username = r["Username"].ToString();
         FavouritedDate = Convert.ToDateTime(r["FavouritedDate"]);
@@ -59,17 +60,17 @@ public class Favourite : ReferenceOtherObjectDatabaseEntity
     /// <summary>
     /// Records that the current Environment.UserName wants to mark the <paramref name="objectToFavourite"/> as one of his favourite objects
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="objectToFavourite"></param>
-    public Favourite(RdmpDbContext catalogueDbContext, IMapsDirectlyToDatabaseTable objectToFavourite)
+    public Favourite(RDMPDbContext catalogueDbContext, IMapsDirectlyToDatabaseTable objectToFavourite)
     {
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "ReferencedObjectID", objectToFavourite.ID },
-            { "ReferencedObjectType", objectToFavourite.GetType().Name },
-            { "ReferencedObjectRepositoryType", objectToFavourite.Repository.GetType().Name },
-            { "Username", Environment.UserName },
-            { "FavouritedDate", DateTime.Now }
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "ReferencedObjectID", objectToFavourite.ID },
+        //    { "ReferencedObjectType", objectToFavourite.GetType().Name },
+        //    { "ReferencedObjectRepositoryType", objectToFavourite.CatalogueDbContext.GetType().Name },
+        //    { "Username", Environment.UserName },
+        //    { "FavouritedDate", DateTime.Now }
+        //});
     }
 }

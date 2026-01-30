@@ -16,6 +16,7 @@ using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.Curation.FilterImporting;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources;
 using Rdmp.Core.DataExport.DataRelease.Audit;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Logging.PastEvents;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
@@ -180,32 +181,32 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public IProject Project => Repository.GetObjectByID<Project>(Project_ID);
+    public IProject Project => CatalogueDbContext.GetObjectByID<Project>(Project_ID);
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
     public ISqlParameter[] GlobalExtractionFilterParameters =>
-        Repository.GetAllObjectsWithParent<GlobalExtractionFilterParameter>(this)
+        CatalogueDbContext.GetAllObjectsWithParent<GlobalExtractionFilterParameter>(this)
             .Cast<ISqlParameter>().ToArray();
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
     public IEnumerable<ICumulativeExtractionResults> CumulativeExtractionResults =>
-        Repository.GetAllObjectsWithParent<CumulativeExtractionResults>(this);
+        CatalogueDbContext.GetAllObjectsWithParent<CumulativeExtractionResults>(this);
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
     public IEnumerable<ISupplementalExtractionResults> SupplementalExtractionResults =>
-        Repository.GetAllObjectsWithParent<SupplementalExtractionResults>(this);
+        CatalogueDbContext.GetAllObjectsWithParent<SupplementalExtractionResults>(this);
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
     public IExtractableCohort Cohort =>
-        Cohort_ID == null ? null : Repository.GetObjectByID<ExtractableCohort>(Cohort_ID.Value);
+        Cohort_ID == null ? null : CatalogueDbContext.GetObjectByID<ExtractableCohort>(Cohort_ID.Value);
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public ISelectedDataSets[] SelectedDataSets => Repository.GetAllObjectsWithParent<SelectedDataSets>(this)
+    public ISelectedDataSets[] SelectedDataSets => CatalogueDbContext.GetAllObjectsWithParent<SelectedDataSets>(this)
         .Cast<ISelectedDataSets>().ToArray();
 
     /// <inheritdoc/>
@@ -220,14 +221,14 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
 
     /// <inheritdoc cref="DefaultPipeline_ID"/>
     [NoMappingToDatabase]
-    public IPipeline DefaultPipeline => DefaultPipeline_ID == null?null: ((IDataExportRepository) Repository).CatalogueRepository.GetAllObjects<Pipeline>().FirstOrDefault(p => p.ID == DefaultPipeline_ID);
+    public IPipeline DefaultPipeline => DefaultPipeline_ID == null?null: CatalogueDbContext.GetAllObjects<Pipeline>().FirstOrDefault(p => p.ID == DefaultPipeline_ID);
 
     /// <inheritdoc cref="CohortIdentificationConfiguration_ID"/>
     [NoMappingToDatabase]
     public CohortIdentificationConfiguration CohortIdentificationConfiguration =>
         CohortIdentificationConfiguration_ID == null
             ? null
-            : ((IDataExportRepository)Repository).CatalogueRepository.GetObjectByID<CohortIdentificationConfiguration>(
+            : CatalogueDbContext.GetObjectByID<CohortIdentificationConfiguration>(
                 CohortIdentificationConfiguration_ID.Value);
 
     /// <inheritdoc cref="CohortRefreshPipeline_ID"/>
@@ -235,7 +236,7 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
     public IPipeline CohortRefreshPipeline =>
         CohortRefreshPipeline_ID == null
             ? null
-            : (IPipeline)((IDataExportRepository)Repository).CatalogueRepository.GetObjectByID<Pipeline>(
+            : (IPipeline)CatalogueDbContext.GetObjectByID<Pipeline>(
                 CohortRefreshPipeline_ID.Value);
 
     /// <summary>
@@ -262,24 +263,24 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
     }
 
     /// <summary>
-    /// Creates a new extraction configuration in the <paramref name="repository"/> database for the provided <paramref name="project"/>.
+    /// Creates a new extraction configuration in the <paramref name="catalogueDbContext"/> database for the provided <paramref name="project"/>.
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="project"></param>
     /// <param name="name"></param>
-    public ExtractionConfiguration(IDataExportRepository repository, IProject project, string name = null)
+    public ExtractionConfiguration(RDMPDbContext catalogueDbContext, IProject project, string name = null)
     {
-        Repository = repository;
+       CatalogueDbContext = catalogueDbContext;
 
-        Repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "dtCreated", DateTime.Now },
-            { "Project_ID", project.ID },
-            { "Username", Environment.UserName },
-            { "Description", "Initial Configuration" },
-            { "Name", string.IsNullOrWhiteSpace(name) ? $"New ExtractionConfiguration{Guid.NewGuid()}" : name },
-            { "Separator", "," }
-        });
+        //CatalogueDbContext.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "dtCreated", DateTime.Now },
+        //    { "Project_ID", project.ID },
+        //    { "Username", Environment.UserName },
+        //    { "Description", "Initial Configuration" },
+        //    { "Name", string.IsNullOrWhiteSpace(name) ? $"New ExtractionConfiguration{Guid.NewGuid()}" : name },
+        //    { "Separator", "," }
+        //});
     }
 
     /// <summary>
@@ -292,12 +293,12 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
         shortString ? $"({Project.ProjectNumber})" : $"'{Project.Name}' (PNo. {Project.ProjectNumber})";
 
     /// <summary>
-    /// Reads an existing <see cref="IExtractionConfiguration"/> out of the  <paramref name="repository"/> database.
+    /// Reads an existing <see cref="IExtractionConfiguration"/> out of the  <paramref name="catalogueDbContext"/> database.
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="r"></param>
-    internal ExtractionConfiguration(IDataExportRepository repository, DbDataReader r)
-        : base(repository, r)
+    internal ExtractionConfiguration(RDMPDbContext catalogueDbContext, DbDataReader r)
+        :base(catalogueDbContext, r)
     {
         Project_ID = int.Parse(r["Project_ID"].ToString());
 
@@ -356,111 +357,112 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
 
     /// <summary>
     /// Creates a complete copy of the <see cref="IExtractionConfiguration"/>, all selected datasets, filters etc.  The copy is created directly into
-    /// the <see cref="DatabaseEntity.Repository"/> database using a transaction (to prevent a half successful clone being generated).
+    /// the <see cref="DatabaseEntity.CatalogueDbContext"/> database using a transaction (to prevent a half successful clone being generated).
     /// </summary>
     /// <returns></returns>
     public ExtractionConfiguration DeepCloneWithNewIDs()
     {
-        var repo = (IDataExportRepository)Repository;
-        using (repo.BeginNewTransaction())
-        {
-            try
-            {
-                //clone the root object (the configuration) - this includes cloning the link to the correct project and cohort       
-                var clone = ShallowClone();
+        var repo = CatalogueDbContext;
+        //using (repo.BeginNewTransaction())
+        //{
+        //    try
+        //    {
+        //        //clone the root object (the configuration) - this includes cloning the link to the correct project and cohort       
+        //        var clone = ShallowClone();
 
-                // Clone GlobalExtractionFilterParameters
-                foreach (var param in GlobalExtractionFilterParameters.OfType<GlobalExtractionFilterParameter>())
-                {
-                    // Create the new parameter with the same SQL declaration
-                    var clonedParam = new GlobalExtractionFilterParameter(repo, clone, param.ParameterSQL);
+        //        // Clone GlobalExtractionFilterParameters
+        //        foreach (var param in GlobalExtractionFilterParameters.OfType<GlobalExtractionFilterParameter>())
+        //        {
+        //            // Create the new parameter with the same SQL declaration
+        //            var clonedParam = new GlobalExtractionFilterParameter(repo, clone, param.ParameterSQL);
 
-                    // Copy value and comment if present
-                    clonedParam.Value = param.Value;
-                    clonedParam.Comment = param.Comment;
+        //            // Copy value and comment if present
+        //            clonedParam.Value = param.Value;
+        //            clonedParam.Comment = param.Comment;
 
-                    clonedParam.SaveToDatabase();
-                }
+        //            clonedParam.SaveToDatabase();
+        //        }
 
-                //find each of the selected datasets for ourselves and clone those too
-                foreach (SelectedDataSets selected in SelectedDataSets)
-                {
-                    //clone the link meaning that the dataset is now selected for the clone configuration too
-                    var newSelectedDataSet = new SelectedDataSets(repo, clone, selected.ExtractableDataSet, null);
+        //        //find each of the selected datasets for ourselves and clone those too
+        //        foreach (SelectedDataSets selected in SelectedDataSets)
+        //        {
+        //            //clone the link meaning that the dataset is now selected for the clone configuration too
+        //            var newSelectedDataSet = new SelectedDataSets(repo, clone, selected.ExtractableDataSet, null);
 
-                    // now clone each of the columns for each of the datasets that we just created links to (make them the same as the old configuration
-                    foreach (var cloneExtractableColumn in GetAllExtractableColumnsFor(selected.ExtractableDataSet).Select(static extractableColumn => extractableColumn.ShallowClone()))
-                    {
-                        cloneExtractableColumn.ExtractionConfiguration_ID = clone.ID;
-                        cloneExtractableColumn.SaveToDatabase();
-                    }
+        //            // now clone each of the columns for each of the datasets that we just created links to (make them the same as the old configuration
+        //            foreach (var cloneExtractableColumn in GetAllExtractableColumnsFor(selected.ExtractableDataSet).Select(static extractableColumn => extractableColumn.ShallowClone()))
+        //            {
+        //                cloneExtractableColumn.ExtractionConfiguration_ID = clone.ID;
+        //                cloneExtractableColumn.SaveToDatabase();
+        //            }
 
-                    //clone should copy across the forced joins (if any)
-                    foreach (var oldForcedJoin in Repository.GetAllObjectsWithParent<SelectedDataSetsForcedJoin>(
-                                 selected))
-                        new SelectedDataSetsForcedJoin((IDataExportRepository)Repository, newSelectedDataSet,
-                            oldForcedJoin.TableInfo);
+        //            //clone should copy across the forced joins (if any)
+        //            foreach (var oldForcedJoin in CatalogueDbContext.GetAllObjectsWithParent<SelectedDataSetsForcedJoin>(
+        //                         selected))
+        //                new SelectedDataSetsForcedJoin(Repository, newSelectedDataSet,
+        //                    oldForcedJoin.TableInfo);
 
-                    // clone should copy any ExtractionProgresses
-                    if (selected.ExtractionProgressIfAny != null)
-                    {
-                        var old = selected.ExtractionProgressIfAny;
-                        var clonedProgress = new ExtractionProgress(repo, newSelectedDataSet, old.StartDate,
-                            old.EndDate, old.NumberOfDaysPerBatch, old.Name, old.ExtractionInformation_ID);
+        //            // clone should copy any ExtractionProgresses
+        //            if (selected.ExtractionProgressIfAny != null)
+        //            {
+        //                var old = selected.ExtractionProgressIfAny;
+        //                var clonedProgress = new ExtractionProgress(repo, newSelectedDataSet, old.StartDate,
+        //                    old.EndDate, old.NumberOfDaysPerBatch, old.Name, old.ExtractionInformation_ID);
 
-                        // Notice that we do not set the ProgressDate because the cloned copy should be extracting from the beginning
-                        // when it is run.  We don't want the user to have to manually reset it
-                        clonedProgress.SaveToDatabase();
-                    }
+        //                // Notice that we do not set the ProgressDate because the cloned copy should be extracting from the beginning
+        //                // when it is run.  We don't want the user to have to manually reset it
+        //                clonedProgress.SaveToDatabase();
+        //            }
 
-                    try
-                    {
-                        //clone the root filter container
-                        var rootContainer = (FilterContainer)GetFilterContainerFor(selected.ExtractableDataSet);
+        //            try
+        //            {
+        //                //clone the root filter container
+        //                var rootContainer = (FilterContainer)GetFilterContainerFor(selected.ExtractableDataSet);
 
-                        //turns out there wasn't one to clone at all
-                        if (rootContainer == null)
-                            continue;
+        //                //turns out there wasn't one to clone at all
+        //                if (rootContainer == null)
+        //                    continue;
 
-                        //there was one to clone so clone it recursively (all subcontainers) including filters then set the root filter to the new clone
-                        var cloneRootContainer = rootContainer.DeepCloneEntireTreeRecursivelyIncludingFilters();
-                        newSelectedDataSet.RootFilterContainer_ID = cloneRootContainer.ID;
-                        newSelectedDataSet.SaveToDatabase();
-                    }
-                    catch (Exception e)
-                    {
-                        clone.DeleteInDatabase();
-                        throw new Exception(
-                            $"Problem occurred during cloning filters, problem was {e.Message} deleted the clone configuration successfully",
-                            e);
-                    }
-                }
+        //                //there was one to clone so clone it recursively (all subcontainers) including filters then set the root filter to the new clone
+        //                var cloneRootContainer = rootContainer.DeepCloneEntireTreeRecursivelyIncludingFilters();
+        //                newSelectedDataSet.RootFilterContainer_ID = cloneRootContainer.ID;
+        //                newSelectedDataSet.SaveToDatabase();
+        //            }
+        //            catch (Exception e)
+        //            {
+        //                clone.DeleteInDatabase();
+        //                throw new Exception(
+        //                    $"Problem occurred during cloning filters, problem was {e.Message} deleted the clone configuration successfully",
+        //                    e);
+        //            }
+        //        }
 
-                clone.dtCreated = DateTime.Now;
-                clone.IsReleased = false;
-                clone.Username = Environment.UserName;
-                clone.Description = "TO" + "DO:Populate change log here";
-                clone.ReleaseTicket = null;
+        //        clone.dtCreated = DateTime.Now;
+        //        clone.IsReleased = false;
+        //        clone.Username = Environment.UserName;
+        //        clone.Description = "TO" + "DO:Populate change log here";
+        //        clone.ReleaseTicket = null;
 
-                //wire up some changes
-                clone.ClonedFrom_ID = ID;
-                clone.SaveToDatabase();
+        //        //wire up some changes
+        //        clone.ClonedFrom_ID = ID;
+        //        clone.SaveToDatabase();
 
-                repo.EndTransaction(true);
+        //        repo.EndTransaction(true);
 
-                return clone;
-            }
-            catch (Exception)
-            {
-                repo.EndTransaction(false);
-                throw;
-            }
-        }
+        //        return clone;
+        //    }
+        //    catch (Exception)
+        //    {
+        //        repo.EndTransaction(false);
+        //        throw;
+        //    }
+        //}
+        return null;
     }
 
     private ExtractionConfiguration ShallowClone()
     {
-        var clone = new ExtractionConfiguration(DataExportRepository, Project);
+        var clone = new ExtractionConfiguration(CatalogueDbContext, Project);
         CopyShallowValuesTo(clone);
 
         clone.Name = $"Clone of {Name}";
@@ -469,20 +471,20 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
     }
 
     /// <inheritdoc/>
-    public IProject GetProject() => Repository.GetObjectByID<Project>(Project_ID);
+    public IProject GetProject() => CatalogueDbContext.GetObjectByID<Project>(Project_ID);
 
     /// <inheritdoc/>
     public ExtractableColumn[] GetAllExtractableColumnsFor(IExtractableDataSet dataset)
     {
         return
-            Repository.GetAllObjectsWhere<ExtractableColumn>("ExtractionConfiguration_ID", ID)
+            CatalogueDbContext.GetAllObjectsWhere<ExtractableColumn>("ExtractionConfiguration_ID", ID)
                 .Where(e => e.ExtractableDataSet_ID == dataset.ID).ToArray();
     }
 
     /// <inheritdoc/>
     public IContainer GetFilterContainerFor(IExtractableDataSet dataset)
     {
-        return Repository.GetAllObjectsWhere<SelectedDataSets>("ExtractionConfiguration_ID", ID)
+        return CatalogueDbContext.GetAllObjectsWhere<SelectedDataSets>("ExtractionConfiguration_ID", ID)
             .Single(sds => sds.ExtractableDataSet_ID == dataset.ID)
             .RootFilterContainer;
     }
@@ -491,7 +493,7 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
     {
         var uniqueLoggingServerID = -1;
 
-        var repo = (IDataExportRepository)Repository;
+        var repo = CatalogueDbContext;
 
         foreach (int? catalogueID in GetAllExtractableDataSets().Select(ds => ds.Catalogue_ID))
         {
@@ -499,7 +501,7 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
                 throw new Exception(
                     "Cannot get logging server because some ExtractableDatasets in the configuration do not have associated Catalogues (possibly the Catalogue was deleted)");
 
-            var catalogue = repo.CatalogueRepository.GetObjectByID<Catalogue>((int)catalogueID);
+            var catalogue = repo.GetObjectByID<Catalogue>((int)catalogueID);
 
             var loggingServer = catalogue.LiveLoggingServer_ID ?? throw new Exception(
                 $"Catalogue {catalogue.Name} does not have a {(testLoggingServer ? "test" : "")} logging server configured");
@@ -514,19 +516,19 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
             }
         }
 
-        return repo.CatalogueRepository.GetObjectByID<ExternalDatabaseServer>(uniqueLoggingServerID);
+        return repo.GetObjectByID<ExternalDatabaseServer>(uniqueLoggingServerID);
     }
 
     /// <inheritdoc/>
     public IExtractableCohort GetExtractableCohort() => Cohort_ID == null
         ? null
-        : (IExtractableCohort)Repository.GetObjectByID<ExtractableCohort>(Cohort_ID.Value);
+        : (IExtractableCohort)CatalogueDbContext.GetObjectByID<ExtractableCohort>(Cohort_ID.Value);
 
     /// <inheritdoc/>
     public IExtractableDataSet[] GetAllExtractableDataSets()
     {
         return
-            Repository.GetAllObjectsWithParent<SelectedDataSets>(this)
+            CatalogueDbContext.GetAllObjectsWithParent<SelectedDataSets>(this)
                 .Select(sds => sds.ExtractableDataSet)
                 .ToArray();
     }
@@ -555,7 +557,7 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
         if (SelectedDataSets.Any(s => s.ExtractableDataSet_ID == extractableDataSet.ID))
             return;
 
-        var dataExportRepo = (IDataExportRepository)Repository;
+        var dataExportRepo = CatalogueDbContext;
 
         selectedDataSet = new SelectedDataSets(dataExportRepo, this, extractableDataSet, null);
 
@@ -624,9 +626,9 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
         ExtractableColumn addMe;
 
         if (column is ExtractionInformation extractionInformation)
-            addMe = new ExtractableColumn((IDataExportRepository)Repository, forDataSet, this, extractionInformation, -1, query);
+            addMe = new ExtractableColumn(CatalogueDbContext, forDataSet, this, extractionInformation, -1, query);
         else
-            addMe = new ExtractableColumn((IDataExportRepository)Repository, forDataSet, this, null, -1,
+            addMe = new ExtractableColumn(CatalogueDbContext, forDataSet, this, null, -1,
                 query); // its custom column of some kind, not tied to a catalogue entry
 
         addMe.UpdateValuesToMatch(column);
@@ -650,7 +652,7 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
             //failed to get a logging server correctly
 
             //see if there is a default
-            var defaultGetter = Project.DataExportRepository.CatalogueRepository;
+            var defaultGetter = Project.CatalogueDbContext;
             var defaultLoggingServer = defaultGetter.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
 
             //there is a default?
@@ -719,10 +721,10 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
     public override void DeleteInDatabase()
     {
         // Delete only GlobalExtractionFilterParameters for this configuration
-        foreach (var param in Repository.GetAllObjectsWithParent<GlobalExtractionFilterParameter>(this))
+        foreach (var param in CatalogueDbContext.GetAllObjectsWithParent<GlobalExtractionFilterParameter>(this))
             param.DeleteInDatabase();
 
-        foreach (var result in Repository.GetAllObjectsWithParent<SupplementalExtractionResults>(this))
+        foreach (var result in CatalogueDbContext.GetAllObjectsWithParent<SupplementalExtractionResults>(this))
             result.DeleteInDatabase();
 
         base.DeleteInDatabase();

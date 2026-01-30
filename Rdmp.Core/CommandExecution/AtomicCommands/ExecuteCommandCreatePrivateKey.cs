@@ -20,8 +20,8 @@ public class ExecuteCommandCreatePrivateKey : BasicCommandExecution
     public ExecuteCommandCreatePrivateKey(IBasicActivateItems activator, FileInfo keyFileToCreate) : base(activator)
     {
         _keyFileToCreate = keyFileToCreate;
-        _encryption =
-            activator.RepositoryLocator.CatalogueDbContext.EncryptionManager as PasswordEncryptionKeyLocation;
+        _encryption = null;
+            //activator.RepositoryLocator.CatalogueDbContext.EncryptionManager as PasswordEncryptionKeyLocation;
 
         if (_encryption == null)
         {

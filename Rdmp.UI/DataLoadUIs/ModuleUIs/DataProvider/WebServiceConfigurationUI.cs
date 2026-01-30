@@ -9,6 +9,7 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Modules.DataProvider;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Repositories;
 
 namespace Rdmp.UI.DataLoadUIs.ModuleUIs.DataProvider;
@@ -21,7 +22,7 @@ namespace Rdmp.UI.DataLoadUIs.ModuleUIs.DataProvider;
 public partial class WebServiceConfigurationUI : Form, ICustomUI<WebServiceConfiguration>
 {
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-    public ICatalogueRepository CatalogueRepository { get; set; }
+    public RDMPDbContext CatalogueDbContext{ get; set; }
 
     public WebServiceConfigurationUI()
     {
@@ -36,30 +37,30 @@ public partial class WebServiceConfigurationUI : Form, ICustomUI<WebServiceConfi
 
     public void SetUnderlyingObjectTo(WebServiceConfiguration value)
     {
-        var config = value ?? new WebServiceConfiguration(CatalogueRepository);
-        tbEndpoint.Text = config.Endpoint;
-        tbUsername.Text = config.Username;
+        //var config = value ?? new WebServiceConfiguration(CatalogueRepository);
+        //tbEndpoint.Text = config.Endpoint;
+        //tbUsername.Text = config.Username;
 
-        try
-        {
-            tbPassword.Text = config.GetDecryptedPassword();
-        }
-        catch (Exception)
-        {
-            if (
-                MessageBox.Show("Could not decrypt password, would you like to clear it?", "Clear Password",
-                    MessageBoxButtons.YesNo) == DialogResult.Yes)
-                config.Password = "";
-            else
-                throw;
-        }
+        //try
+        //{
+        //    tbPassword.Text = config.GetDecryptedPassword();
+        //}
+        //catch (Exception)
+        //{
+        //    if (
+        //        MessageBox.Show("Could not decrypt password, would you like to clear it?", "Clear Password",
+        //            MessageBoxButtons.YesNo) == DialogResult.Yes)
+        //        config.Password = "";
+        //    else
+        //        throw;
+        //}
 
-        tbMaxBufferSize.Text = config.MaxBufferSize.ToString();
-        tbMaxReceivedMessageSize.Text = config.MaxReceivedMessageSize.ToString();
+        //tbMaxBufferSize.Text = config.MaxBufferSize.ToString();
+        //tbMaxReceivedMessageSize.Text = config.MaxReceivedMessageSize.ToString();
     }
 
     public ICustomUIDrivenClass GetFinalStateOfUnderlyingObject() =>
-        new WebServiceConfiguration(CatalogueRepository)
+        new WebServiceConfiguration(null)
         {
             Endpoint = tbEndpoint.Text,
             Username = tbUsername.Text,
@@ -76,7 +77,7 @@ public partial class WebServiceConfigurationUI : Form, ICustomUI<WebServiceConfi
 
     private void WebServiceConfigurationUI_FormClosing(object sender, FormClosingEventArgs e)
     {
-        if (CatalogueRepository == null)
+        if (CatalogueDbContext == null)
             return;
 
         if (DialogResult != DialogResult.OK)

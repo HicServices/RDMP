@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
@@ -50,9 +51,9 @@ public partial class ArgumentCollectionUI : UserControl
     /// <param name="activator"></param>
     /// <param name="parent"></param>
     /// <param name="argumentsAreForUnderlyingType"></param>
-    /// <param name="catalogueRepository"></param>
+    /// <param name="catalogueDbContext"></param>
     public void Setup(IActivateItems activator, IArgumentHost parent, Type argumentsAreForUnderlyingType,
-        ICatalogueRepository catalogueRepository)
+        RDMPDbContext catalogueDbContext)
     {
         _parent = parent;
         _argumentsAreFor = argumentsAreForUnderlyingType;
@@ -77,7 +78,7 @@ public partial class ArgumentCollectionUI : UserControl
 
         if (_argumentsAreFor != null)
         {
-            var summary = catalogueRepository.CommentStore.GetTypeDocumentationIfExists(argumentsAreForUnderlyingType);
+            string summary = null;//catalogueDbContext.CommentStore.GetTypeDocumentationIfExists(argumentsAreForUnderlyingType);
 
             if (summary != null)
                 helpIcon1.SetHelpText(_argumentsAreFor.Name, summary);
@@ -178,7 +179,7 @@ public partial class ArgumentCollectionUI : UserControl
 
 
         args.Required = required;
-        args.CatalogueRepository = (ICatalogueRepository)argument.Repository;
+        args.CatalogueDbContext = argument.CatalogueDbContext;
         args.Setter = v =>
         {
             ragSmiley.Reset();

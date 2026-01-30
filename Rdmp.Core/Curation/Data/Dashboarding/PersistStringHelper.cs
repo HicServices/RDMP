@@ -103,7 +103,7 @@ public static class PersistStringHelper
         //where obj is <RepositoryType>:<DatabaseObjectType>:<ObjectID>
         sb.Append(string.Join(CollectionObjectSeparator,
             objects.Select(o =>
-                o.Repository.GetType().FullName + Separator + o.GetType().FullName + Separator + o.ID)));
+                o.CatalogueDbContext.GetType().FullName + Separator + o.GetType().FullName + Separator + o.ID)));
 
         //ending bracket for the object collection
         sb.Append(CollectionEndDelimiter);

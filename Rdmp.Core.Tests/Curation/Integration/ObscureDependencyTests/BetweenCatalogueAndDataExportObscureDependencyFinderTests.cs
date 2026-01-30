@@ -57,7 +57,7 @@ public class BetweenCatalogueAndDataExportObscureDependencyFinderTests : Databas
     [Test]
     public void AllowDeletingWhenDataExportManagerIsNotSet()
     {
-        var noDataExportManagerExists = new LinkedRepositoryProvider(CatalogueTableRepository.ConnectionString, null);
+        var noDataExportManagerExists = new LinkedRepositoryProvider(CatalogueTableCatalogueDbContext.ConnectionString, null);
 
         var obscura1 = new BetweenCatalogueAndDataExportObscureDependencyFinder(RepositoryLocator);
         var obscura2 = new BetweenCatalogueAndDataExportObscureDependencyFinder(noDataExportManagerExists);

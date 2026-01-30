@@ -13,8 +13,6 @@ namespace Rdmp.Core.Curation.DataHelper.RegexRedaction;
 /// </summary>
 public interface IRegexRedactionConfiguration: IMapsDirectlyToDatabaseTable
 {
-    ICatalogueRepository CatalogueRepository { get; }
-
     string Name { get; }
     string Description { get; }
     string RegexPattern { get; }

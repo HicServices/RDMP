@@ -42,7 +42,7 @@ public class ExecuteCommandAssociateCatalogueWithLoadMetadata : BasicCommandExec
     {
         _loadMetadata = loadMetadata;
 
-        var cataloguesAlreadyUsedByLoadMetadata = _loadMetadata.CatalogueRepository.GetAllObjectsWhere<LoadMetadataCatalogueLinkage>("LoadMetadataID", loadMetadata.ID).Select(l => l.CatalogueID);
+        var cataloguesAlreadyUsedByLoadMetadata = _loadMetadata.CatalogueDbContext.GetAllObjectsWhere<LoadMetadataCatalogueLinkage>("LoadMetadataID", loadMetadata.ID).Select(l => l.CatalogueID);
         _availableCatalogues = BasicActivator.CoreChildProvider.AllCatalogues.Where(c => !cataloguesAlreadyUsedByLoadMetadata.Contains(c.ID)).ToArray();
         //Ensure logging task is correct
         _otherCatalogues = _loadMetadata.GetAllCatalogues().ToArray();

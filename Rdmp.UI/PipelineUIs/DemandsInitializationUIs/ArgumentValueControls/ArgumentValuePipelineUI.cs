@@ -8,6 +8,7 @@ using System;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Pipelines;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Repositories;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.PipelineUIs.Pipelines;
@@ -29,7 +30,7 @@ public partial class ArgumentValuePipelineUI : UserControl, IArgumentValueUI
     private Type _typeOfUnderlyingClass;
 
 
-    public ArgumentValuePipelineUI(ICatalogueRepository catalogueRepository, IArgumentHost parent, Type argumentType)
+    public ArgumentValuePipelineUI(RDMPDbContext catalogueDbContext, IArgumentHost parent, Type argumentType)
     {
         InitializeComponent();
 
@@ -46,7 +47,7 @@ public partial class ArgumentValuePipelineUI : UserControl, IArgumentValueUI
         var instanceOfParentType = Activator.CreateInstance(_typeOfUnderlyingClass);
 
         var factory =
-            new PipelineSelectionUIFactory(args.CatalogueRepository, args.Required, args, instanceOfParentType);
+            new PipelineSelectionUIFactory(args.CatalogueDbContext, args.Required, args, instanceOfParentType);
         _pipelineSelectionUIInstance = factory.Create(activator);
         _pipelineSelectionUIInstance.CollapseToSingleLineMode();
 

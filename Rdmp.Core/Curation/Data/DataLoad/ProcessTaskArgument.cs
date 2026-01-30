@@ -10,6 +10,7 @@ using System.Data.Common;
 using System.Linq;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Serialization;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Repositories;
@@ -45,7 +46,7 @@ public sealed class ProcessTaskArgument : Argument
 
     /// <inheritdoc cref="ProcessTask_ID"/>
     [NoMappingToDatabase]
-    public ProcessTask ProcessTask => Repository.GetObjectByID<ProcessTask>(ProcessTask_ID);
+    public ProcessTask ProcessTask => CatalogueDbContext.GetObjectByID<ProcessTask>(ProcessTask_ID);
 
     #endregion
 
@@ -57,20 +58,20 @@ public sealed class ProcessTaskArgument : Argument
     /// Stores a new argument value for the class hosted by <see cref="ProcessTask"/>. Use
     /// <see cref="ArgumentFactory"/> if you want to do this in a more structured manner.
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="parent"></param>
-    public ProcessTaskArgument(RdmpDbContext catalogueDbContext, ProcessTask parent)
+    public ProcessTaskArgument(RDMPDbContext catalogueDbContext, ProcessTask parent)
     {
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "ProcessTask_ID", parent.ID },
-            { "Name", $"Parameter{Guid.NewGuid()}" },
-            { "Type", typeof(string).ToString() }
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "ProcessTask_ID", parent.ID },
+        //    { "Name", $"Parameter{Guid.NewGuid()}" },
+        //    { "Type", typeof(string).ToString() }
+        //});
     }
 
-    internal ProcessTaskArgument(RdmpDbContext catalogueDbContext, DbDataReader r)
-        : base(repository, r)
+    internal ProcessTaskArgument(RDMPDbContext catalogueDbContext, DbDataReader r)
+        :base(catalogueDbContext, r)
     {
         ProcessTask_ID = int.Parse(r["ProcessTask_ID"].ToString());
         Type = r["Type"].ToString();
@@ -131,7 +132,7 @@ public sealed class ProcessTaskArgument : Argument
 
     public ProcessTaskArgument ShallowClone(ProcessTask into)
     {
-        var clone = new ProcessTaskArgument(CatalogueRepository, into);
+        var clone = new ProcessTaskArgument(CatalogueDbContext, into);
         CopyShallowValuesTo(clone, true);
 
         return clone;

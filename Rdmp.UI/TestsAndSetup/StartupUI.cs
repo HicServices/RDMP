@@ -118,8 +118,8 @@ public partial class StartupUI : Form, ICheckNotifier
             return;
         }
 
-        if (_startup is { RepositoryLocator.CatalogueDbContext: not null })
-            WideMessageBox.CommentStore = _startup.RepositoryLocator.CatalogueDbContext.CommentStore;
+        //if (_startup is { RepositoryLocator.CatalogueDbContext: not null })
+        //    WideMessageBox.CommentStore = _startup.RepositoryLocator.CatalogueDbContext.CommentStore;
 
         //when things go badly leave the form
         if (ragSmiley1.IsFatal() || CouldNotReachTier1Database)
@@ -307,9 +307,9 @@ public partial class StartupUI : Form, ICheckNotifier
                 if (MessageBox.Show($"Patching Required on database of type {eventArgs.Patcher.Name}", "Patch RDMP",
                         MessageBoxButtons.OKCancel) == DialogResult.OK)
                 {
-                    PatchingUI.ShowIfRequired(
-                        eventArgs.Repository.DiscoveredServer.GetCurrentDatabase(),
-                        eventArgs.Repository, eventArgs.Patcher);
+                    //PatchingUI.ShowIfRequired(
+                    //    eventArgs.CatalogueDbContext.DiscoveredServer.GetCurrentDatabase(),
+                    //    eventArgs.Repository, eventArgs.Patcher);
                     DoNotContinue = true;
                 }
                 else

@@ -45,7 +45,7 @@ public class PlatformDatabaseCreation
             logging = Create(DefaultLoggingDatabaseName, new LoggingDatabasePatcher(), options);
         }
 
-        CatalogueRepository.SuppressHelpLoading = true;
+        //CatalogueDbContext.SuppressHelpLoading = true;
 
         var repo = new PlatformDatabaseCreationRepositoryFinder(options);
 
@@ -57,10 +57,10 @@ public class PlatformDatabaseCreation
 
         if (options.ExampleDatasets || options.Nightmare)
         {
-            var examples = new ExampleDatasetsCreation(new ThrowImmediatelyActivator(repo, null), repo);
-            var server = new DiscoveredServer(options.GetBuilder("ExampleData"));
+            //var examples = new ExampleDatasetsCreation(new ThrowImmediatelyActivator(repo, null), repo);
+            //var server = new DiscoveredServer(options.GetBuilder("ExampleData"));
 
-            examples.Create(server.GetCurrentDatabase(), ThrowImmediatelyCheckNotifier.Quiet, options);
+            //examples.Create(server.GetCurrentDatabase(), ThrowImmediatelyCheckNotifier.Quiet, options);
         }
     }
 

@@ -59,9 +59,7 @@ public abstract class DatabaseEntity : IRevertable, ICanBeSummarised
 
     public RDMPDbContext CatalogueDbContext { get; set; }
 
-    /// <inheritdoc/>
-    //[NoMappingToDatabase]
-    //public ICatalogueRepository CatalogueRepository => Repository as ICatalogueRepository;
+    //public RDMPDbContextRDMPDbContext => Repository as RDMPDbContext;
 
 
     ///// <summary>
@@ -81,7 +79,7 @@ public abstract class DatabaseEntity : IRevertable, ICanBeSummarised
     /// <summary>
     /// Creates a new instance and hydrates it from the current values of <paramref name="r"/>
     /// </summary>
-    /// <param name="catalogueDbContext">The database which the record/object was read from</param>
+    /// <param  name="catalogueDbContext">The database which the record/object was read from</param>
     /// <param name="r">Data reader with values for hydrating this object</param>
     protected DatabaseEntity(RDMPDbContext catalogueDbContext, DbDataReader r)
     {
@@ -119,38 +117,36 @@ public abstract class DatabaseEntity : IRevertable, ICanBeSummarised
             : new Uri(uri.ToString());
     }
 
-    /// <inheritdoc cref="IRepository.GetHashCode(IMapsDirectlyToDatabaseTable)"/>
-    public override int GetHashCode() => Repository.GetHashCode(this);
+    public override int GetHashCode() => 1;// CatalogueDbContext.GetHashCode(this);
 
-    /// <inheritdoc cref="IRepository.AreEqual(IMapsDirectlyToDatabaseTable,object)"/>
-    public override bool Equals(object obj) => Repository.AreEqual(this, obj);
+    public override bool Equals(object obj) => false;// CatalogueDbContext.AreEqual(this, obj);
 
     /// <inheritdoc/>
     public virtual void SaveToDatabase()
     {
-        Repository.SaveToDatabase(this);
+        //CatalogueDbContext.SaveToDatabase(this);
     }
 
     /// <inheritdoc/>
     public virtual void DeleteInDatabase()
     {
-        Repository.DeleteFromDatabase(this);
+        //CatalogueDbContext.DeleteFromDatabase(this);
     }
 
     /// <inheritdoc/>
     public virtual void RevertToDatabaseState()
     {
-        Repository.RevertToDatabaseState(this);
+        //CatalogueDbContext.RevertToDatabaseState(this);
 
         if (this is IInjectKnown ii)
             ii.ClearAllInjections();
     }
 
     /// <inheritdoc/>
-    public RevertableObjectReport HasLocalChanges() => Repository.HasLocalChanges(this);
+    public RevertableObjectReport HasLocalChanges() => null;// CatalogueDbContext.HasLocalChanges(this);
 
     /// <inheritdoc/>
-    public virtual bool Exists() => Repository.StillExists(this);
+    public virtual bool Exists() => true;// CatalogueDbContext.StillExists(this);
 
     /// <summary>
     /// Converts the supplied object to a <see cref="DateTime"/> or null if o is null/DBNull.Value

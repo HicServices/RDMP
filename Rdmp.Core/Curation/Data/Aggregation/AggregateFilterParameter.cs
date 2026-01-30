@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.QueryBuilding.SyntaxChecking;
@@ -71,7 +72,7 @@ public class AggregateFilterParameter : DatabaseEntity, ISqlParameter
 
     /// <inheritdoc cref="AggregateFilter_ID"/>
     [NoMappingToDatabase]
-    public AggregateFilter AggregateFilter => Repository.GetObjectByID<AggregateFilter>(AggregateFilter_ID);
+    public AggregateFilter AggregateFilter => CatalogueDbContext.GetObjectByID<AggregateFilter>(AggregateFilter_ID);
 
     #endregion
 
@@ -89,20 +90,20 @@ public class AggregateFilterParameter : DatabaseEntity, ISqlParameter
     /// Declares a new parameter to be used by the specified AggregateFilter.  Use AggregateFilterFactory to call this
     /// constructor.
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param  name="catalogueDbContext"></param>
     /// <param name="parameterSQL"></param>
     /// <param name="parent"></param>
-    internal AggregateFilterParameter(RdmpDbContext catalogueDbContext, string parameterSQL, AggregateFilter parent)
+    internal AggregateFilterParameter(RDMPDbContext catalogueDbContext, string parameterSQL, AggregateFilter parent)
     {
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "ParameterSQL", parameterSQL },
-            { "AggregateFilter_ID", parent.ID }
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "ParameterSQL", parameterSQL },
+        //    { "AggregateFilter_ID", parent.ID }
+        //});
     }
 
 
-    internal AggregateFilterParameter(RdmpDbContext catalogueDbContext, DbDataReader r) : base(repository, r)
+    internal AggregateFilterParameter(RDMPDbContext catalogueDbContext, DbDataReader r) : base(catalogueDbContext, r)
     {
         AggregateFilter_ID = int.Parse(r["AggregateFilter_ID"].ToString());
         ParameterSQL = r["ParameterSQL"] as string;
@@ -128,7 +129,7 @@ public class AggregateFilterParameter : DatabaseEntity, ISqlParameter
 
     public AggregateFilterParameter ShallowClone(AggregateFilter into)
     {
-        var clone = new AggregateFilterParameter(CatalogueRepository, ParameterSQL, into);
+        var clone = new AggregateFilterParameter(CatalogueDbContext, ParameterSQL, into);
         CopyShallowValuesTo(clone);
         return clone;
     }

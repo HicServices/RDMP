@@ -26,7 +26,7 @@ internal class ChildProviderTests : UITests
         ti.SaveToDatabase();
 
         //creating a child provider when there are TableInfos with null servers should not crash the API!
-        var provider = new CatalogueChildProvider(Repository.CatalogueRepository, null,
+        var provider = new CatalogueChildProvider(CatalogueDbContext.CatalogueRepository, null,
             ThrowImmediatelyCheckNotifier.Quiet, null);
         var desc = provider.GetDescendancyListIfAnyFor(ti);
         Assert.That(desc, Is.Not.Null);
@@ -44,7 +44,7 @@ internal class ChildProviderTests : UITests
         ti.SaveToDatabase();
 
         //creating a child provider when there are TableInfos with null servers should not crash the API!
-        var provider = new CatalogueChildProvider(Repository.CatalogueRepository, null,
+        var provider = new CatalogueChildProvider(CatalogueDbContext.CatalogueRepository, null,
             ThrowImmediatelyCheckNotifier.Quiet, null);
         var desc = provider.GetDescendancyListIfAnyFor(ti);
         Assert.That(desc, Is.Not.Null);

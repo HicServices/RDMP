@@ -1,4 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using MathNet.Numerics.RootFinding;
+using Microsoft.EntityFrameworkCore;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.Curation.Data.Defaults;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Models;
 using System;
 using System.Collections.Generic;
@@ -16,14 +22,17 @@ namespace Rdmp.Core.EntityFramework
            : base(options)
         { }
 
-        public DbSet<Catalogue> Catalogues { get; set; }
-
+        public DbSet<Models.Catalogue> Catalogues { get; set; }
 
         public T[] GetAllObjects<T>() { 
             return null;//todo
         }
 
-        internal T GetObjectByID<T>(int id)
+        public IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjects(Type t){
+            return null;//todo
+        }
+
+        public T GetObjectByID<T>(int id)
         {
             throw new NotImplementedException();
         }
@@ -33,7 +42,7 @@ namespace Rdmp.Core.EntityFramework
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Catalogue>(entity =>
+            modelBuilder.Entity<Models.Catalogue>(entity =>
             {
                 entity.HasKey(e => e.ID);
                 entity.Property(e => e.Name).IsRequired().HasMaxLength(500);
@@ -63,6 +72,75 @@ namespace Rdmp.Core.EntityFramework
             });
         }
 
+        public CohortAggregateContainer GetParent(AggregateConfiguration aggregateConfiguration)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool StillExists<T>(int allegedParent)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<T> GetAllObjectsWhere<T>(string v, int iD)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IExternalDatabaseServer GetDefaultFor(PermissableDefaults liveLoggingServer_ID)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<T> GetAllObjectsInIDList<T>(List<int> list)
+        {
+            throw new NotImplementedException();
+        }
+
+        public T1[] GetAllObjectsWithParent<T1, T2>(T2 catalogue)
+        {
+            throw new NotImplementedException();
+        }
+
+        public CatalogueExtractabilityStatus GetExtractabilityStatus(Curation.Data.Catalogue catalogue)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<AnyTableSqlParameter> GetAllParametersForParentTable(IMapsDirectlyToDatabaseTable oTableWrapperObject)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IMapsDirectlyToDatabaseTable GetObjectByID(Type type, int referencedObjectID)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjectsInIDList(Type elementType, int[] ids)
+        {
+            throw new NotImplementedException();
+        }
+
+        public  IEnumerable<ExtendedProperty> GetExtendedProperties(string replacedBy)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<ExtendedProperty> GetExtendedProperties(string propertyName, IMapsDirectlyToDatabaseTable obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SupportsObjectType(Type requiredType)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<T> SelectAllWhere<T>(string v1, string v2)
+        {
+            throw new NotImplementedException();
+        }
     }
 
 }

@@ -6,6 +6,7 @@
 
 using System;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Repositories;
 
 namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls;
@@ -22,7 +23,8 @@ public class ArgumentValueUIArgs
     public string ContextText { get; set; }
     public Type Type { get; set; }
     public RequiredPropertyInfo Required { get; set; }
-    public ICatalogueRepository CatalogueRepository { get; set; }
+
+    public RDMPDbContext CatalogueDbContext { get; set; }
 
     /// <summary>
     /// Call this when the value populated in the user interface is changed
@@ -43,8 +45,8 @@ public class ArgumentValueUIArgs
             ContextText = ContextText,
             Type = Type,
             Required = Required,
-            CatalogueRepository = CatalogueRepository,
             Setter = Setter,
+            CatalogueDbContext = CatalogueDbContext,
             Fatal = Fatal
         };
 

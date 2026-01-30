@@ -64,11 +64,11 @@ internal class AvailableForceJoinNode : IMasqueradeAs
 
         var foundJoinInfos = new List<JoinInfo>();
 
-        foreach (var theirCols in otherNodes.Where(otherNode => !Equals(otherNode, this))
-                     .Select(otherNode => coreChildProvider.TableInfosToColumnInfos[otherNode.TableInfo.ID].ToArray()))
-            foundJoinInfos.AddRange(
-                TableInfo.CatalogueRepository.JoinManager.GetAllJoinInfosBetweenColumnInfoSets(allJoins, mycols,
-                    theirCols));
+        //foreach (var theirCols in otherNodes.Where(otherNode => !Equals(otherNode, this))
+        //             .Select(otherNode => coreChildProvider.TableInfosToColumnInfos[otherNode.TableInfo.ID].ToArray()))
+        //    foundJoinInfos.AddRange(
+        //        TableInfo.CatalogueDbContext.JoinManager.GetAllJoinInfosBetweenColumnInfoSets(allJoins, mycols,
+        //            theirCols));
 
         JoinInfos = foundJoinInfos.ToArray();
     }

@@ -16,6 +16,7 @@ using Rdmp.Core.DataLoad.Engine.Job.Scheduling;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
 using Rdmp.Core.DataLoad.Triggers.Exceptions;
 using Rdmp.Core.DataLoad.Triggers.Implementations;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
@@ -552,8 +553,8 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
     public override ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
         ISelectedDataSets selectedDataSet) => new MsSqlExtractionReleasePotential(repositoryLocator, selectedDataSet);
 
-    public override FixedReleaseSource<ReleaseAudit> GetReleaseSource(ICatalogueRepository catalogueRepository) =>
-        new MsSqlReleaseSource(catalogueRepository);
+    public override FixedReleaseSource<ReleaseAudit> GetReleaseSource(RDMPDbContext catalogueDbContext) =>
+        new MsSqlReleaseSource(catalogueDbContext);
 
     public override GlobalReleasePotential GetGlobalReleasabilityEvaluator(
         IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISupplementalExtractionResults globalResult,

@@ -55,7 +55,7 @@ public class GovernanceTests : DatabaseTests
 
         var gov = GetGov();
         gov.Name = "Fish";
-        var freshCopy = CatalogueRepository.GetObjectByID<GovernancePeriod>(gov.ID);
+        var freshCopy = CatalogueDbContext.GetObjectByID<GovernancePeriod>(gov.ID);
 
         //local change not applied yet
         Assert.That(freshCopy.Name, Is.Not.EqualTo(gov.Name));
@@ -67,7 +67,7 @@ public class GovernanceTests : DatabaseTests
         Assert.That(freshCopy.Name, Is.Not.EqualTo(gov.Name));
 
         //sync it
-        freshCopy = CatalogueRepository.GetObjectByID<GovernancePeriod>(gov.ID);
+        freshCopy = CatalogueDbContext.GetObjectByID<GovernancePeriod>(gov.ID);
         Assert.That(freshCopy.Name, Is.EqualTo(gov.Name));
     }
 

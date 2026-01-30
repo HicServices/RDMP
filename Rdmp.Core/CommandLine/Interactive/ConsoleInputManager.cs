@@ -20,6 +20,7 @@ using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataExport.DataExtraction;
 using Rdmp.Core.DataViewing;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode;
@@ -47,7 +48,7 @@ public class ConsoleInputManager : BasicActivateItems
     /// </summary>
     /// <param name="repositoryLocator">The databases to connect to</param>
     /// <param name="globalErrorCheckNotifier">The global error provider for non fatal issues</param>
-    public ConsoleInputManager(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
+    public ConsoleInputManager(RDMPDbContext repositoryLocator,
         ICheckNotifier globalErrorCheckNotifier) : base(repositoryLocator, globalErrorCheckNotifier)
     {
     }

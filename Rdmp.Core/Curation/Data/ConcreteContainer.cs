@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using Rdmp.Core.Curation.FilterImporting.Construction;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories.Managers;
 
@@ -38,7 +39,7 @@ public abstract class ConcreteContainer : DatabaseEntity, IContainer
         _manager = manager;
     }
 
-    protected ConcreteContainer(IFilterManager manager, IRepository repository, DbDataReader r) : base(repository, r)
+    protected ConcreteContainer(IFilterManager manager, RDMPDbContext catalogueDbContext, DbDataReader r) :base(catalogueDbContext, r)
     {
         _manager = manager;
         Operation = (FilterContainerOperation)Enum.Parse(typeof(FilterContainerOperation), r["Operation"].ToString());

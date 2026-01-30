@@ -37,8 +37,8 @@ public class ExecuteCommandAddExtractionProgress : BasicCommandExecution
     {
         base.Execute();
 
-        var ep = new ExtractionProgress(BasicActivator.RepositoryLocator.DataExportRepository, _sds);
-        Publish(ep);
-        Activate(ep);
+        //var ep = new ExtractionProgress(BasicActivator.RepositoryLocator.CatalogueDbContext, _sds);
+        //Publish(ep);
+        //Activate(ep);
     }
 }

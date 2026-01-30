@@ -90,7 +90,7 @@ internal class CatalogueItemTests : DatabaseTests
 
         child.SaveToDatabase();
 
-        var childAfter = CatalogueRepository.GetObjectByID<CatalogueItem>(child.ID);
+        var childAfter = CatalogueDbContext.GetObjectByID<CatalogueItem>(child.ID);
 
         Assert.Multiple(() =>
         {

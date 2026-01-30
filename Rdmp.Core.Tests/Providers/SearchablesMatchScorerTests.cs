@@ -203,7 +203,7 @@ internal class SearchablesMatchScorerTests : UnitTests
             Assert.That(score.Value, Is.EqualTo(0));
 
         // Cleanup test
-        foreach (var d in Repository.GetAllObjects<ExtractableDataSet>()) d.DeleteInDatabase();
-        foreach (var cat in Repository.GetAllObjects<Catalogue>()) cat.DeleteInDatabase();
+        foreach (var d in CatalogueDbContext.GetAllObjects<ExtractableDataSet>()) d.DeleteInDatabase();
+        foreach (var cat in CatalogueDbContext.GetAllObjects<Catalogue>()) cat.DeleteInDatabase();
     }
 }

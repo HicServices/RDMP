@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 
@@ -104,11 +105,11 @@ public class DashboardControl : DatabaseEntity
     /// are missing column descriptions then this will return the <see cref="ICatalogue"/> which represents that dataset
     /// </summary>
     [NoMappingToDatabase]
-    public DashboardObjectUse[] ObjectsUsed => Repository.GetAllObjectsWithParent<DashboardObjectUse>(this);
+    public DashboardObjectUse[] ObjectsUsed => CatalogueDbContext.GetAllObjectsWithParent<DashboardObjectUse>(this);
 
     /// <inheritdoc cref="DashboardLayout_ID"/>
     [NoMappingToDatabase]
-    public DashboardLayout ParentLayout => Repository.GetObjectByID<DashboardLayout>(DashboardLayout_ID);
+    public DashboardLayout ParentLayout => CatalogueDbContext.GetObjectByID<DashboardLayout>(DashboardLayout_ID);
 
     #endregion
 
@@ -116,8 +117,8 @@ public class DashboardControl : DatabaseEntity
     {
     }
 
-    internal DashboardControl(RdmpDbContext catalogueDbContext, DbDataReader r)
-        : base(repository, r)
+    internal DashboardControl(RDMPDbContext catalogueDbContext, DbDataReader r)
+        :base(catalogueDbContext, r)
     {
         DashboardLayout_ID = Convert.ToInt32(r["DashboardLayout_ID"]);
         X = Convert.ToInt32(r["X"]);
@@ -132,7 +133,7 @@ public class DashboardControl : DatabaseEntity
     /// <summary>
     /// Adds a new IDashboardableControl (<paramref name="controlType"/>) to the given <see cref="DashboardLayout"/> (<paramref name="parent"/>) at the specified position.
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="parent"></param>
     /// <param name="controlType"></param>
     /// <param name="x"></param>
@@ -140,21 +141,21 @@ public class DashboardControl : DatabaseEntity
     /// <param name="w"></param>
     /// <param name="h"></param>
     /// <param name="persistenceString"></param>
-    public DashboardControl(RdmpDbContext catalogueDbContext, DashboardLayout parent, Type controlType, int x, int y,
+    public DashboardControl(RDMPDbContext catalogueDbContext, DashboardLayout parent, Type controlType, int x, int y,
         int w, int h, string persistenceString)
     {
-        Repository = repository;
+       CatalogueDbContext = catalogueDbContext;
 
-        Repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "DashboardLayout_ID", parent.ID },
-            { "X", x },
-            { "Y", y },
-            { "Width", w },
-            { "Height", h },
-            { "ControlType", controlType.Name },
-            { "PersistenceString", persistenceString }
-        });
+        //CatalogueDbContext.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "DashboardLayout_ID", parent.ID },
+        //    { "X", x },
+        //    { "Y", y },
+        //    { "Width", w },
+        //    { "Height", h },
+        //    { "ControlType", controlType.Name },
+        //    { "PersistenceString", persistenceString }
+        //});
     }
 
     /// <inheritdoc/>
@@ -175,6 +176,6 @@ public class DashboardControl : DatabaseEntity
             o.DeleteInDatabase();
 
         foreach (var objectToSave in collection.DatabaseObjects)
-            new DashboardObjectUse((ICatalogueRepository)Repository, this, objectToSave);
+            new DashboardObjectUse(CatalogueDbContext, this, objectToSave);
     }
 }

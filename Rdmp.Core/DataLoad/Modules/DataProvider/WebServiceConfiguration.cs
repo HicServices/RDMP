@@ -11,6 +11,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.DataLoad.Modules.DataProvider;
@@ -21,7 +22,7 @@ namespace Rdmp.Core.DataLoad.Modules.DataProvider;
 /// </summary>
 public class WebServiceConfiguration : EncryptedPasswordHost, ICustomUIDrivenClass
 {
-    private ICatalogueRepository _repository;
+    private RDMPDbContext _catalogueDbContext;
 
     /// <summary>
     /// For XML Serialization
@@ -30,9 +31,9 @@ public class WebServiceConfiguration : EncryptedPasswordHost, ICustomUIDrivenCla
     {
     }
 
-    public WebServiceConfiguration(RdmpDbContext catalogueDbContext) : base(repository)
+    public WebServiceConfiguration(RDMPDbContext catalogueDbContext) : base(catalogueDbContext)
     {
-        _repository = repository;
+        _catalogueDbContext = catalogueDbContext;
     }
 
     public string Endpoint { get; set; }
@@ -53,7 +54,7 @@ public class WebServiceConfiguration : EncryptedPasswordHost, ICustomUIDrivenCla
         try
         {
             var deserialized = (WebServiceConfiguration)deserializer.Deserialize(new StringReader(value));
-            deserialized.SetRepository(_repository);
+            deserialized.SetRepository(_catalogueDbContext);
 
             Endpoint = deserialized.Endpoint;
             Username = deserialized.Username;

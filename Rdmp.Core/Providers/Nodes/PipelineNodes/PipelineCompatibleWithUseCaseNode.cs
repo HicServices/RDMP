@@ -29,7 +29,7 @@ public class PipelineCompatibleWithUseCaseNode : SpontaneousObject, IMasqueradeA
     {
         Pipeline = pipeline;
         UseCase = useCase;
-        Repository = repo;
+        //Repository = repo;
         _useCaseType = UseCase.GetType();
     }
 

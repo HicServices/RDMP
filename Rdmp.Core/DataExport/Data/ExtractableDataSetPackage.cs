@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Annotations;
@@ -64,7 +65,7 @@ public class ExtractableDataSetPackage : DatabaseEntity, IExtractableDataSetPack
     /// </summary>
     /// <param name="dataExportRepository"></param>
     /// <param name="r"></param>
-    public ExtractableDataSetPackage(IDataExportRepository dataExportRepository, DbDataReader r)
+    public ExtractableDataSetPackage(RDMPDbContext dataExportRepository, DbDataReader r)
         : base(dataExportRepository, r)
     {
         Name = r["Name"].ToString();
@@ -78,14 +79,14 @@ public class ExtractableDataSetPackage : DatabaseEntity, IExtractableDataSetPack
     /// </summary>
     /// <param name="dataExportRepository"></param>
     /// <param name="name"></param>
-    public ExtractableDataSetPackage(IDataExportRepository dataExportRepository, string name)
+    public ExtractableDataSetPackage(RDMPDbContext dataExportRepository, string name)
     {
-        dataExportRepository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "Name", name },
-            { "Creator", Environment.UserName },
-            { "CreationDate", DateTime.Now }
-        });
+        //dataExportCatalogueDbContext.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "Name", name },
+        //    { "Creator", Environment.UserName },
+        //    { "CreationDate", DateTime.Now }
+        //});
     }
 
     /// <summary>

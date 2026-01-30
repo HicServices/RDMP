@@ -71,7 +71,7 @@ public class AggregateConfigurationCombineable : ICombineToMakeCommand
 
         IsPatientIndexTable = Aggregate.IsJoinablePatientIndexTable();
 
-        IsTemplate = aggregate.CatalogueRepository.GetExtendedProperties(ExtendedProperty.IsTemplate, aggregate)
+        IsTemplate = aggregate.CatalogueDbContext.GetExtendedProperties(ExtendedProperty.IsTemplate, aggregate)
             .Any(p => Equals(p.Value, "true"));
 
         //is the aggregate part of cohort identification

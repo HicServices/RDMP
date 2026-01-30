@@ -91,7 +91,7 @@ public partial class RDMPMainForm : RDMPForm
     private FileInfo _persistenceFile;
     private ICheckNotifier _globalErrorCheckNotifier;
     private string _version;
-    private string _connectedTo;
+    //private string _connectedTo;
 
     public void SetRepositoryLocator(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
     {
@@ -169,7 +169,7 @@ public partial class RDMPMainForm : RDMPForm
     public override string Text
     {
         get => base.Text;
-        set => base.Text = $"{value} v{_version} {_connectedTo}".Trim();
+        set => base.Text = $"{value} v{_version}";// {_connectedTo}".Trim();
     }
 
     private void LoadFromXml(Stream stream)

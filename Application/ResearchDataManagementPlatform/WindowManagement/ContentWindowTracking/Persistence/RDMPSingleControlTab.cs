@@ -71,23 +71,23 @@ public class RDMPSingleControlTab : DockContent, IRefreshBusSubscriber
 
     public void ShowHelp(IActivateItems activator)
     {
-        var typeDocs = activator.RepositoryLocator.CatalogueDbContext.CommentStore;
+        //var typeDocs = activator.RepositoryLocator.CatalogueDbContext.CommentStore;
 
-        var sb = new StringBuilder();
+        //var sb = new StringBuilder();
 
-        string firstMatch = null;
+        //string firstMatch = null;
 
-        foreach (var c in Controls)
-            if (typeDocs.ContainsKey(c.GetType().Name))
-            {
-                firstMatch ??= c.GetType().Name;
+        //foreach (var c in Controls)
+        //    if (typeDocs.ContainsKey(c.GetType().Name))
+        //    {
+        //        firstMatch ??= c.GetType().Name;
 
-                sb.AppendLine(typeDocs.GetDocumentationIfExists(c.GetType().Name, false, true));
-                sb.AppendLine();
-            }
+        //        sb.AppendLine(typeDocs.GetDocumentationIfExists(c.GetType().Name, false, true));
+        //        sb.AppendLine();
+        //    }
 
-        if (sb.Length > 0)
-            WideMessageBox.Show(firstMatch, sb.ToString(), Environment.StackTrace, true, firstMatch,
-                WideMessageBoxTheme.Help);
+        //if (sb.Length > 0)
+        //    WideMessageBox.Show(firstMatch, sb.ToString(), Environment.StackTrace, true, firstMatch,
+        //        WideMessageBoxTheme.Help);
     }
 }

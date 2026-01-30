@@ -84,12 +84,12 @@ public class ExtractionInformationTests : DatabaseTests
             parameter.Value = "500";
             parameter.SaveToDatabase();
 
-            var afterSave = CatalogueRepository.GetObjectByID<ExtractionFilterParameter>(parameter.ID);
+            var afterSave = CatalogueDbContext.GetObjectByID<ExtractionFilterParameter>(parameter.ID);
             Assert.That(afterSave.Value, Is.EqualTo("500"));
 
 
             var filterFastThings_NewCopyFromDB =
-                CatalogueRepository.GetObjectByID<ExtractionFilter>(filterFastThings.ID);
+                CatalogueDbContext.GetObjectByID<ExtractionFilter>(filterFastThings.ID);
 
             Assert.Multiple(() =>
             {

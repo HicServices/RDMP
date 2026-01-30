@@ -15,6 +15,7 @@ using Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Reports.ExtractionTime;
 using Rdmp.Core.Repositories;
@@ -54,7 +55,7 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
         AddInitializationObject(ExtractCommand);
         AddInitializationObject(project);
         AddInitializationObject(_dataLoadInfo);
-        AddInitializationObject(project.DataExportRepository.CatalogueRepository);
+        AddInitializationObject(project.CatalogueDbContext);
         AddInitializationObject(activator);
 
         GenerateContext();
@@ -352,7 +353,7 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
             typeof(IExtractCommand),
             typeof(IProject),
             typeof(DataLoadInfo),
-            typeof(ICatalogueRepository),
+            typeof(RDMPDbContext),
             typeof(IBasicActivateItems)
         })
     {

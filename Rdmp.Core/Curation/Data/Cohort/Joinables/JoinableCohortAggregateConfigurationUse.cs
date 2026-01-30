@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 
@@ -61,12 +62,12 @@ public class JoinableCohortAggregateConfigurationUse : DatabaseEntity
     /// <inheritdoc cref="JoinableCohortAggregateConfiguration_ID"/>
     [NoMappingToDatabase]
     public JoinableCohortAggregateConfiguration JoinableCohortAggregateConfiguration =>
-        Repository.GetObjectByID<JoinableCohortAggregateConfiguration>(JoinableCohortAggregateConfiguration_ID);
+        CatalogueDbContext.GetObjectByID<JoinableCohortAggregateConfiguration>(JoinableCohortAggregateConfiguration_ID);
 
     /// <inheritdoc cref="AggregateConfiguration_ID"/>
     [NoMappingToDatabase]
     public AggregateConfiguration AggregateConfiguration =>
-        Repository.GetObjectByID<AggregateConfiguration>(AggregateConfiguration_ID);
+        CatalogueDbContext.GetObjectByID<AggregateConfiguration>(AggregateConfiguration_ID);
 
     #endregion
 
@@ -74,8 +75,8 @@ public class JoinableCohortAggregateConfigurationUse : DatabaseEntity
     {
     }
 
-    internal JoinableCohortAggregateConfigurationUse(RdmpDbContext catalogueDbContext, DbDataReader r)
-        : base(repository, r)
+    internal JoinableCohortAggregateConfigurationUse(RDMPDbContext catalogueDbContext, DbDataReader r)
+        : base(catalogueDbContext, r)
     {
         if (Enum.TryParse(r["JoinType"].ToString(), true, out ExtractionJoinType joinType))
             JoinType = joinType;
@@ -84,10 +85,10 @@ public class JoinableCohortAggregateConfigurationUse : DatabaseEntity
         AggregateConfiguration_ID = Convert.ToInt32(r["AggregateConfiguration_ID"]);
     }
 
-    internal JoinableCohortAggregateConfigurationUse(RdmpDbContext catalogueDbContext, AggregateConfiguration user,
+    internal JoinableCohortAggregateConfigurationUse(RDMPDbContext catalogueDbContext, AggregateConfiguration user,
         JoinableCohortAggregateConfiguration joinable)
     {
-        if (repository.GetAllObjectsWhere<JoinableCohortAggregateConfiguration>("AggregateConfiguration_ID", user.ID)
+        if (catalogueDbContext.GetAllObjectsWhere<JoinableCohortAggregateConfiguration>("AggregateConfiguration_ID", user.ID)
             .Any())
             throw new NotSupportedException(
                 $"Cannot add user {user} because that AggregateConfiguration is itself a JoinableCohortAggregateConfiguration");
@@ -100,12 +101,12 @@ public class JoinableCohortAggregateConfigurationUse : DatabaseEntity
             throw new NotSupportedException(
                 $"Cannot configure AggregateConfiguration {user} as join user because it does not contain exactly 1 IsExtractionIdentifier dimension");
 
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "JoinableCohortAggregateConfiguration_ID", joinable.ID },
-            { "AggregateConfiguration_ID", user.ID },
-            { "JoinType", ExtractionJoinType.Left.ToString() }
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "JoinableCohortAggregateConfiguration_ID", joinable.ID },
+        //    { "AggregateConfiguration_ID", user.ID },
+        //    { "JoinType", ExtractionJoinType.Left.ToString() }
+        //});
     }
 
     /// <summary>

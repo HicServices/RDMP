@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using FAnsi.Discovery.QuerySyntax;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
@@ -97,7 +98,7 @@ public class ExtractionFilterParameterSetValue : DatabaseEntity, ISqlParameter, 
     /// <inheritdoc cref="ExtractionFilterParameterSet_ID"/>
     [NoMappingToDatabase]
     public ExtractionFilterParameterSet ExtractionFilterParameterSet =>
-        Repository.GetObjectByID<ExtractionFilterParameterSet>(ExtractionFilterParameterSet_ID);
+        CatalogueDbContext.GetObjectByID<ExtractionFilterParameterSet>(ExtractionFilterParameterSet_ID);
 
     /// <inheritdoc cref="ExtractionFilterParameter_ID"/>
     [NoMappingToDatabase]
@@ -111,8 +112,8 @@ public class ExtractionFilterParameterSetValue : DatabaseEntity, ISqlParameter, 
         ClearAllInjections();
     }
 
-    internal ExtractionFilterParameterSetValue(RdmpDbContext catalogueDbContext, DbDataReader r)
-        : base(repository, r)
+    internal ExtractionFilterParameterSetValue(RDMPDbContext catalogueDbContext, DbDataReader r)
+        :base(catalogueDbContext, r)
     {
         ExtractionFilterParameterSet_ID = Convert.ToInt32(r["ExtractionFilterParameterSet_ID"]);
         ExtractionFilterParameter_ID = Convert.ToInt32(r["ExtractionFilterParameter_ID"]);
@@ -129,17 +130,17 @@ public class ExtractionFilterParameterSetValue : DatabaseEntity, ISqlParameter, 
     /// 
     /// <para>If a filter has more than one parameter then you will need one <see cref="ExtractionFilterParameterSetValue"/> per parameter per <see cref="ExtractionFilterParameterSet"/></para>
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="parent"></param>
     /// <param name="valueIsForParameter"></param>
-    public ExtractionFilterParameterSetValue(RdmpDbContext catalogueDbContext, ExtractionFilterParameterSet parent,
+    public ExtractionFilterParameterSetValue(RDMPDbContext catalogueDbContext, ExtractionFilterParameterSet parent,
         ExtractionFilterParameter valueIsForParameter)
     {
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "ExtractionFilterParameterSet_ID", parent.ID },
-            { "ExtractionFilterParameter_ID", valueIsForParameter.ID }
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "ExtractionFilterParameterSet_ID", parent.ID },
+        //    { "ExtractionFilterParameter_ID", valueIsForParameter.ID }
+        //});
 
         ClearAllInjections();
     }
@@ -163,6 +164,6 @@ public class ExtractionFilterParameterSetValue : DatabaseEntity, ISqlParameter, 
     public void ClearAllInjections()
     {
         _knownExtractionFilterParameter = new Lazy<ExtractionFilterParameter>(() =>
-            Repository.GetObjectByID<ExtractionFilterParameter>(ExtractionFilterParameter_ID));
+            CatalogueDbContext.GetObjectByID<ExtractionFilterParameter>(ExtractionFilterParameter_ID));
     }
 }

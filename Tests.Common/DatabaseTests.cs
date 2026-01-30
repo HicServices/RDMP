@@ -113,7 +113,7 @@ public partial class DatabaseTests
 
     static DatabaseTests()
     {
-        Rdmp.Core.Repositories.CatalogueRepository.SuppressHelpLoading = true;
+        Rdmp.Core.Repositories.CatalogueDbContext.SuppressHelpLoading = true;
 
         ImplementationManager.Load<MicrosoftSQLImplementation>();
         ImplementationManager.Load<MySqlImplementation>();
@@ -367,7 +367,7 @@ public partial class DatabaseTests
         DeleteAll<TableInfo>(y);
         DeleteAll<DataAccessCredentials>(y);
 
-        foreach (var c in CatalogueRepository.GetAllObjects<Catalogue>())
+        foreach (var c in CatalogueDbContext.GetAllObjects<Catalogue>())
         {
             c.PivotCategory_ExtractionInformation_ID = null;
             c.TimeCoverage_ExtractionInformation_ID = null;
@@ -907,8 +907,8 @@ delete from {1}..Project
         if (ti != null)
         {
             //remove any existing credentials
-            foreach (var cred in CatalogueRepository.GetAllObjects<DataAccessCredentials>())
-                CatalogueRepository.TableInfoCredentialsManager.BreakAllLinksBetween(cred, ti);
+            foreach (var cred in CatalogueDbContext.GetAllObjects<DataAccessCredentials>())
+                CatalogueDbContext.TableInfoCredentialsManager.BreakAllLinksBetween(cred, ti);
 
             //set the new ones
             var credentialsFactory = new DataAccessCredentialsFactory(CatalogueRepository);

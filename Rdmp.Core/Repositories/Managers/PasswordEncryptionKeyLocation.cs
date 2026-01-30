@@ -9,6 +9,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using Rdmp.Core.Curation;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
 
 namespace Rdmp.Core.Repositories.Managers;
@@ -22,17 +23,17 @@ namespace Rdmp.Core.Repositories.Managers;
 /// </summary>
 public class PasswordEncryptionKeyLocation : IEncryptionManager, IInjectKnown
 {
-    private readonly ICatalogueRepository _catalogueRepository;
+    private readonly RDMPDbContext _catalogueDbContext;
 
     public const string RDMP_KEY_LOCATION = "RDMP_KEY_LOCATION";
 
     /// <summary>
     /// Prepares to retrieve/create the key file for the given platform database
     /// </summary>
-    /// <param name="catalogueRepository"></param>
-    public PasswordEncryptionKeyLocation(ICatalogueRepository catalogueRepository)
+    /// <param name="catalogueDbContext"></param>
+    public PasswordEncryptionKeyLocation(RDMPDbContext catalogueDbContext)
     {
-        _catalogueRepository = catalogueRepository;
+        _catalogueDbContext = catalogueDbContext;
 
         ClearAllInjections();
     }
@@ -54,7 +55,7 @@ public class PasswordEncryptionKeyLocation : IEncryptionManager, IInjectKnown
         // Prefer to get it from the environment variable
         var fromEnvVar = Environment.GetEnvironmentVariable(RDMP_KEY_LOCATION);
 
-        return fromEnvVar ?? _catalogueRepository.GetEncryptionKeyPath();
+        return fromEnvVar;//?? _catalogueDbContext.GetEncryptionKeyPath();
     }
 
 
@@ -115,7 +116,7 @@ public class PasswordEncryptionKeyLocation : IEncryptionManager, IInjectKnown
         if (!fileInfo.Exists)
             throw new Exception("Created file but somehow it didn't exist!?!");
 
-        _catalogueRepository.SetEncryptionKeyPath(fileInfo.FullName);
+        //_catalogueDbContext.SetEncryptionKeyPath(fileInfo.FullName);
 
         ClearAllInjections();
 
@@ -136,7 +137,7 @@ public class PasswordEncryptionKeyLocation : IEncryptionManager, IInjectKnown
         //confirms that it is accessible and deserializable
         DeserializeFromLocation(newLocation);
 
-        _catalogueRepository.SetEncryptionKeyPath(newLocation);
+        //_catalogueDbContext.SetEncryptionKeyPath(newLocation);
 
         ClearAllInjections();
     }
@@ -152,7 +153,7 @@ public class PasswordEncryptionKeyLocation : IEncryptionManager, IInjectKnown
         if (GetKeyFileLocation() == null)
             throw new NotSupportedException("Cannot delete key because there is no key file configured");
 
-        _catalogueRepository.DeleteEncryptionKeyPath();
+        //_catalogueDbContext.DeleteEncryptionKeyPath();
 
         ClearAllInjections();
     }

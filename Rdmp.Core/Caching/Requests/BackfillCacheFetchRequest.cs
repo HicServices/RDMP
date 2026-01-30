@@ -7,6 +7,7 @@
 using System;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cache;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 namespace Rdmp.Core.Caching.Requests;
@@ -23,13 +24,15 @@ public class BackfillCacheFetchRequest : ICacheFetchRequest
     public TimeSpan ChunkPeriod { get; set; }
     public IPermissionWindow PermissionWindow { get; set; }
     public ICacheProgress CacheProgress { get; set; }
+
+    public RDMPDbContext CatalogueDbContext { get;  set; }
     public bool IsRetry { get; private set; }
 
     public DateTime End => Start.Add(ChunkPeriod);
 
-    public BackfillCacheFetchRequest(IRepository repository, DateTime start)
+    public BackfillCacheFetchRequest(RDMPDbContext catalogueDbContext, DateTime start)
     {
-        Repository = repository;
+        CatalogueDbContext = catalogueDbContext;
         Start = start;
         IsRetry = false;
     }
@@ -56,7 +59,7 @@ public class BackfillCacheFetchRequest : ICacheFetchRequest
     public ICacheFetchRequest GetNext()
     {
         var nextStart = Start.Add(ChunkPeriod);
-        return new BackfillCacheFetchRequest(Repository, nextStart)
+        return new BackfillCacheFetchRequest(CatalogueDbContext, nextStart)
         {
             CacheProgress = CacheProgress,
             PermissionWindow = PermissionWindow,

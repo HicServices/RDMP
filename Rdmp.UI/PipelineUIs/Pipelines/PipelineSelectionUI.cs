@@ -11,6 +11,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Annotations;
 using Rdmp.Core.Setting;
@@ -23,7 +24,7 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
 {
     private readonly IActivateItems _activator;
     private readonly IPipelineUseCase _useCase;
-    private readonly ICatalogueRepository _repository;
+    private readonly RDMPDbContext _catalogueDbContext;
 
     private IPipeline _pipeline;
     public event Action PipelineDeleted = delegate { };
@@ -69,7 +70,7 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
         ddPipelines.Items.Clear();
 
         //add pipelines sorted alphabetically
-        var allPipelines = _repository.GetAllObjects<Pipeline>().OrderBy(p => p.Name).ToArray();
+        var allPipelines = _catalogueDbContext.GetAllObjects<Pipeline>().OrderBy(p => p.Name).ToArray();
 
         ddPipelines.Items.Add("<<None>>");
 
@@ -107,12 +108,12 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
             : "<<None>>";
     }
 
-    public PipelineSelectionUI(IActivateItems activator, IPipelineUseCase useCase, ICatalogueRepository repository,
+    public PipelineSelectionUI(IActivateItems activator, IPipelineUseCase useCase, RDMPDbContext catalogueDbContext,
         IExtractionConfiguration extractionConfiguration = null)
     {
         _activator = activator;
         _useCase = useCase;
-        _repository = repository;
+        _catalogueDbContext = catalogueDbContext;
         _extractionConfiguration = extractionConfiguration;
         InitializeComponent();
 
@@ -188,7 +189,7 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
 
     private void btnCreateNewPipeline_Click(object sender, EventArgs e)
     {
-        Pipeline = new Pipeline(_repository, $"TO DO:Name this pipeline!{Guid.NewGuid()}");
+        Pipeline = new Pipeline(_catalogueDbContext, $"TO DO:Name this pipeline!{Guid.NewGuid()}");
         ddPipelines.Items.Add(Pipeline);
         ddPipelines.SelectedItem = Pipeline;
 
@@ -198,12 +199,12 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
     private void ShowEditPipelineDialog()
     {
         //create pipeline UI with NO explicit destination/source (both must be configured within the extraction context by the user)
-        var dialog = new ConfigurePipelineUI(_activator, Pipeline, _useCase, _repository);
+        var dialog = new ConfigurePipelineUI(_activator, Pipeline, _useCase, _catalogueDbContext);
         dialog.ShowDialog();
 
         ddPipelines.Items.Remove(Pipeline);
 
-        Pipeline = _repository.GetObjectByID<Pipeline>(Pipeline.ID);
+        Pipeline = _catalogueDbContext.GetObjectByID<Pipeline>(Pipeline.ID);
         ddPipelines.Items.Add(Pipeline);
         ddPipelines.SelectedItem = Pipeline;
 

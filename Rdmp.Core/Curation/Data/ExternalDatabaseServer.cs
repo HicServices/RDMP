@@ -14,6 +14,7 @@ using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Serialization;
 using Rdmp.Core.Databases;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Logging;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
@@ -154,10 +155,10 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
     /// <para>If you are trying to create a database (e.g. a logging database) you should instead use
     /// <see cref="MapsDirectlyToDatabaseTable.Versioning.MasterDatabaseScriptExecutor"/></para>
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="name"></param>
     /// <param name="creatorIfAny">If the database referenced was created according to a specific SQL schema, this is the schema provider</param>
-    public ExternalDatabaseServer(RdmpDbContext catalogueDbContext, string name, IPatcher creatorIfAny)
+    public ExternalDatabaseServer(RDMPDbContext catalogueDbContext, string name, IPatcher creatorIfAny)
     {
         var parameters = new Dictionary<string, object>
         {
@@ -168,23 +169,23 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
         if (creatorIfAny != null)
             parameters.Add("CreatedByAssembly", creatorIfAny.Name);
 
-        Repository = repository;
-        _selfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint(repository, DatabaseType.MicrosoftSQLServer);
-        repository.InsertAndHydrate(this, parameters);
+       CatalogueDbContext = catalogueDbContext;
+        _selfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint(catalogueDbContext, DatabaseType.MicrosoftSQLServer);
+        //repository.InsertAndHydrate(this, parameters);
     }
 
 
     internal ExternalDatabaseServer(ShareManager shareManager, ShareDefinition shareDefinition)
     {
         var repo = shareManager.RepositoryLocator.CatalogueDbContext;
-        Repository = repo;
-        _selfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint(CatalogueRepository,
+        CatalogueDbContext = repo;
+        _selfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint(CatalogueDbContext,
             DatabaseType.MicrosoftSQLServer /*will get changed by UpsertAndHydrate*/);
 
         shareManager.UpsertAndHydrate(this, shareDefinition);
     }
 
-    internal ExternalDatabaseServer(RdmpDbContext catalogueDbContext, DbDataReader r) : base(repository, r)
+    internal ExternalDatabaseServer(RDMPDbContext catalogueDbContext, DbDataReader r) :base(catalogueDbContext, r)
     {
         Name = r["Name"] as string;
         CreatedByAssembly = r["CreatedByAssembly"] as string;
@@ -192,7 +193,7 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
 
         var databaseType = (DatabaseType)Enum.Parse(typeof(DatabaseType), r["DatabaseType"].ToString());
 
-        _selfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint(repository, databaseType)
+        _selfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint(catalogueDbContext, databaseType)
         {
             Database = r["Database"] as string,
             Password = r["Password"] as string,
@@ -274,7 +275,7 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
 
          if (WasCreatedBy(new LoggingDatabasePatcher())){
             //If you're trying to delete a logging server, remove all references to it first
-            var catalogues = Repository.GetAllObjectsWhere<Catalogue>("LiveLoggingServer_ID",ID);
+            var catalogues = CatalogueDbContext.GetAllObjectsWhere<Catalogue>("LiveLoggingServer_ID",ID);
             foreach(var catalogue in catalogues){
                 catalogue.LiveLoggingServer_ID = null;
                 catalogue.SaveToDatabase();
@@ -286,13 +287,13 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
          // but some repositories do not support this implicit removal so lets double check there are no references
          foreach (PermissableDefaults d in Enum.GetValues(typeof(PermissableDefaults)))
          {
-             var existingDefault = CatalogueRepository.GetDefaultFor(d);
-             if (Equals(existingDefault)) CatalogueRepository.ClearDefault(d);
+             var existingDefault = CatalogueDbContext.GetDefaultFor(d);
+             //if (Equals(existingDefault)) CatalogueDbContext.ClearDefault(d);
          }
     }
 
-    public void SetRepository(RdmpDbContext catalogueDbContext)
+    public void SetRepository(RDMPDbContext catalogueDbContext)
     {
-        _selfCertifyingDataAccessPoint.SetRepository(repository);
+        _selfCertifyingDataAccessPoint.SetRepository(catalogueDbContext);
     }
 }

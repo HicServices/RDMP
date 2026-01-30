@@ -36,7 +36,7 @@ public class PackageContentsTests : DatabaseTests
 
             packageContents.AddDataSetToPackage(package, ds);
 
-            results = packageContents.GetAllDataSets(package, DataExportRepository.GetAllObjects<ExtractableDataSet>());
+            results = packageContents.GetAllDataSets(package, DataExportCatalogueDbContext.GetAllObjects<ExtractableDataSet>());
             Assert.That(results, Has.Length.EqualTo(1));
             Assert.That(results[0], Is.EqualTo(ds));
 

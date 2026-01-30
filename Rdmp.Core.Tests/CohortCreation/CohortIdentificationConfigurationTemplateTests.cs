@@ -54,7 +54,7 @@ namespace Rdmp.Core.Tests.CohortCreation
             Assert.DoesNotThrow(() => cmd.Execute());
             var foundTemplate = RepositoryLocator.CatalogueDbContext.GetAllObjectsWhere<CohortIdentificationConfiguration>("Name", $"{cohortName} Template");
             Assert.That(foundTemplate.Length, Is.EqualTo(1));
-            var associations = RepositoryLocator.DataExportRepository.GetAllObjects<ProjectCohortIdentificationConfigurationAssociation>().Where(a => a.CohortIdentificationConfiguration_ID == foundTemplate[0].ID).ToList();
+            var associations = RepositoryLocator.DataExportCatalogueDbContext.GetAllObjects<ProjectCohortIdentificationConfigurationAssociation>().Where(a => a.CohortIdentificationConfiguration_ID == foundTemplate[0].ID).ToList();
             Assert.That(associations.Count, Is.EqualTo(1));
             Assert.That(associations[0].Project.Name, Is.EqualTo(project.Name));
         }
@@ -89,7 +89,7 @@ namespace Rdmp.Core.Tests.CohortCreation
             Assert.DoesNotThrow(() => cmd.Execute());
             var cics = RepositoryLocator.CatalogueDbContext.GetAllObjectsWhere<CohortIdentificationConfiguration>("Name", $"{cohortName}");
             Assert.That(cics.Length, Is.EqualTo(2));
-            var associations = RepositoryLocator.DataExportRepository.GetAllObjects<ProjectCohortIdentificationConfigurationAssociation>().Where(a => cics.Select(c => c.ID).Contains(a.CohortIdentificationConfiguration_ID)).ToList();
+            var associations = RepositoryLocator.DataExportCatalogueDbContext.GetAllObjects<ProjectCohortIdentificationConfigurationAssociation>().Where(a => cics.Select(c => c.ID).Contains(a.CohortIdentificationConfiguration_ID)).ToList();
             Assert.That(associations.Count, Is.EqualTo(1));
             Assert.That(associations[0].Project.Name, Is.EqualTo(project.Name));
         }

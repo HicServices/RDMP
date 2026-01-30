@@ -20,7 +20,7 @@ namespace Rdmp.Core.Curation.Data.Spontaneous;
 /// </summary>
 public class SpontaneouslyInventedFilter : ConcreteFilter
 {
-    private readonly MemoryCatalogueRepository _repo;
+    private readonly MemoryRDMPDbContext _repo;
     private readonly ISqlParameter[] _filterParametersIfAny;
     private int _order =0;
 
@@ -33,7 +33,7 @@ public class SpontaneouslyInventedFilter : ConcreteFilter
     /// <param name="name"></param>
     /// <param name="description"></param>
     /// <param name="filterParametersIfAny"></param>
-    public SpontaneouslyInventedFilter(MemoryCatalogueRepository repo, IContainer notionalParent, string whereSql,
+    public SpontaneouslyInventedFilter(MemoryRDMPDbContext repo, IContainer notionalParent, string whereSql,
         string name, string description, ISqlParameter[] filterParametersIfAny)
     {
         _repo = repo;
@@ -56,7 +56,7 @@ public class SpontaneouslyInventedFilter : ConcreteFilter
     /// </summary>
     /// <param name="repo">The repository to store the temporary object in</param>
     /// <param name="copyFrom"></param>
-    public SpontaneouslyInventedFilter(MemoryCatalogueRepository repo, IFilter copyFrom) : this(repo, null,
+    public SpontaneouslyInventedFilter(MemoryRDMPDbContext repo, IFilter copyFrom) : this(repo, null,
         copyFrom.WhereSQL, copyFrom.Name, copyFrom.Description, copyFrom.GetAllParameters())
     {
     }

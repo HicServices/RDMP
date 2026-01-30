@@ -51,7 +51,7 @@ public class CatalogueConstraintReportTests : TestsRequiringAnExtractionConfigur
         var dqeRepository = GetDqeRepository(dbType);
 
         //there shouldn't be any lingering results in the database
-        Assert.That(dqeRepository.GetMostRecentEvaluationFor(_catalogue), Is.Null);
+        Assert.That(dqeCatalogueDbContext.GetMostRecentEvaluationFor(_catalogue), Is.Null);
 
         //set some validation rules
         testData.catalogue.ValidatorXML = bulkTestDataValidation;
@@ -92,7 +92,7 @@ public class CatalogueConstraintReportTests : TestsRequiringAnExtractionConfigur
 
 
         //get the results now
-        var results = dqeRepository.GetMostRecentEvaluationFor(testData.catalogue);
+        var results = dqeCatalogueDbContext.GetMostRecentEvaluationFor(testData.catalogue);
 
         Assert.That(results, Is.Not.Null);
 
@@ -109,7 +109,7 @@ public class CatalogueConstraintReportTests : TestsRequiringAnExtractionConfigur
         });
 
         //Did it log?
-        var logManager = new LogManager(CatalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID));
+        var logManager = new LogManager(CatalogueDbContext.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID));
         var log = logManager.GetArchivalDataLoadInfos("DQE").FirstOrDefault();
         Assert.That(log, Is.Not.Null);
         Assert.Multiple(() =>

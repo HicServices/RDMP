@@ -6,6 +6,7 @@
 
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Serialization;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Repositories;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -40,20 +41,20 @@ public class LoadMetadataCatalogueLinkage : DatabaseEntity, ILoadMetadataCatalog
     /// <summary>
     /// Creates a link between a catalogue and a data load 
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="loadMetadata"></param>
     /// <param name="catalogue"></param>
-    public LoadMetadataCatalogueLinkage(RdmpDbContext catalogueDbContext, ILoadMetadata loadMetadata, ICatalogue catalogue)
+    public LoadMetadataCatalogueLinkage(RDMPDbContext catalogueDbContext, ILoadMetadata loadMetadata, ICatalogue catalogue)
     {
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            {"LoadMetadataID",  loadMetadata.ID},
-            {"CatalogueID",  catalogue.ID }
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    {"LoadMetadataID",  loadMetadata.ID},
+        //    {"CatalogueID",  catalogue.ID }
+        //});
     }
 
-    internal LoadMetadataCatalogueLinkage(RdmpDbContext catalogueDbContext, DbDataReader r)
-   : base(repository, r)
+    internal LoadMetadataCatalogueLinkage(RDMPDbContext catalogueDbContext, DbDataReader r)
+   :base(catalogueDbContext, r)
     {
         LoadMetadataID = int.Parse(r["LoadMetadataID"].ToString());
         CatalogueID = int.Parse(r["CatalogueID"].ToString());

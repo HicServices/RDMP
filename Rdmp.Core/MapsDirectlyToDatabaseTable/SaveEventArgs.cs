@@ -9,8 +9,8 @@ using System;
 namespace Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 /// <summary>
-/// Event args for the <see cref="IRepository.SaveToDatabase(IMapsDirectlyToDatabaseTable)"/> operation.
-/// See also <see cref="IRepository.Saving"/>
+/// Event args for the  operation.
+/// See also 
 /// </summary>
 public class SaveEventArgs : EventArgs
 {

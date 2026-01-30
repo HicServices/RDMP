@@ -297,7 +297,7 @@ public class LookupTest : DatabaseTests
     public void CompositeLookupTest_SQL()
     {
         //this only works for MSSQL Servers
-        if (CatalogueTableRepository.DiscoveredServer.DatabaseType != DatabaseType.MicrosoftSQLServer)
+        if (CatalogueTableCatalogueDbContext.DiscoveredServer.DatabaseType != DatabaseType.MicrosoftSQLServer)
             Assert.Ignore("This test only targets Microsoft SQL Servers");
 
         TableInfo fkTable = null;
@@ -364,7 +364,7 @@ public class LookupTest : DatabaseTests
     public void LookupTest_CustomSql()
     {
         //this only works for MSSQL Servers
-        if (CatalogueTableRepository.DiscoveredServer.DatabaseType != DatabaseType.MicrosoftSQLServer)
+        if (CatalogueTableCatalogueDbContext.DiscoveredServer.DatabaseType != DatabaseType.MicrosoftSQLServer)
             Assert.Ignore("This test only targets Microsoft SQL Servers");
 
         TableInfo fkTable = null;
@@ -497,13 +497,13 @@ public class LookupTest : DatabaseTests
                 throw new ArgumentOutOfRangeException(nameof(testCase));
         }
 
-        foreach (var d in CatalogueRepository.GetAllObjects<Lookup>())
+        foreach (var d in CatalogueDbContext.GetAllObjects<Lookup>())
             d.DeleteInDatabase();
-        foreach (var d in CatalogueRepository.GetAllObjects<LookupCompositeJoinInfo>())
+        foreach (var d in CatalogueDbContext.GetAllObjects<LookupCompositeJoinInfo>())
             d.DeleteInDatabase();
-        foreach (var d in CatalogueRepository.GetAllObjects<TableInfo>())
+        foreach (var d in CatalogueDbContext.GetAllObjects<TableInfo>())
             d.DeleteInDatabase();
-        foreach (var d in CatalogueRepository.GetAllObjects<Catalogue>())
+        foreach (var d in CatalogueDbContext.GetAllObjects<Catalogue>())
             d.DeleteInDatabase();
 
         maintbl.Drop();

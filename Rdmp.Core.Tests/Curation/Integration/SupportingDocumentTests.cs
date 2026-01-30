@@ -40,7 +40,7 @@ public class SupportingDocumentTests : DatabaseTests
             Assert.That(doc.Description, Is.EqualTo("some exciting file that dave loves"));
         });
 
-        var docAfterCommit = CatalogueRepository.GetObjectByID<SupportingDocument>(doc.ID);
+        var docAfterCommit = CatalogueDbContext.GetObjectByID<SupportingDocument>(doc.ID);
 
         Assert.That(doc.Description, Is.EqualTo(docAfterCommit.Description));
 

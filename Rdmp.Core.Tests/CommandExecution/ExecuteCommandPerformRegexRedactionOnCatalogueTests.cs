@@ -207,7 +207,7 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogueTests : DatabaseTests
         using var dt = Retrieve(_db);
         Assert.That(dt.Rows, Has.Count.EqualTo(1));
         Assert.That(dt.Rows[0].ItemArray[0], Is.EqualTo("1234<DB>1234<DB>1234"));
-        var redactions = CatalogueRepository.GetAllObjectsWhere<RegexRedaction>("ReplacementValue", "<DB>");
+        var redactions = CatalogueDbContext.GetAllObjectsWhere<RegexRedaction>("ReplacementValue", "<DB>");
         Assert.That(redactions, Has.Length.EqualTo(2));
         Assert.That(redactions[0].StartingIndex, Is.EqualTo(4));
         Assert.That(redactions[1].StartingIndex, Is.EqualTo(12));

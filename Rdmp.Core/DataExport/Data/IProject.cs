@@ -51,10 +51,6 @@ public interface IProject : IHasDependencies, INamed, IHasFolder
     /// </summary>
     IProjectCohortIdentificationConfigurationAssociation[] ProjectCohortIdentificationConfigurationAssociations { get; }
 
-    /// <summary>
-    /// The database in which the object is persisted
-    /// </summary>
-    IDataExportRepository DataExportRepository { get; }
 
     /// <summary>
     /// Returns all datasets which are selected in any <see cref="ExtractionConfigurations"/> in the project

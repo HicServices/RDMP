@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using FAnsi.Discovery.QuerySyntax;
 using FAnsi.Discovery.QuerySyntax.Aggregation;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 
@@ -72,7 +73,7 @@ public class AggregateContinuousDateAxis : DatabaseEntity, IQueryAxis
 
     /// <inheritdoc cref="AggregateDimension_ID"/>
     [NoMappingToDatabase]
-    public AggregateDimension AggregateDimension => Repository.GetObjectByID<AggregateDimension>(AggregateDimension_ID);
+    public AggregateDimension AggregateDimension => CatalogueDbContext.GetObjectByID<AggregateDimension>(AggregateDimension_ID);
 
     #endregion
 
@@ -85,23 +86,23 @@ public class AggregateContinuousDateAxis : DatabaseEntity, IQueryAxis
     /// For example if you are graphing the number of prescriptions given out each month then the axis would be applied to the 'PrescribedDate' <see cref="AggregateDimension"/>
     ///  </summary>
     /// <remarks>To use this you will first have to create an AggregateConfiguration and setup the count(*)/sum(*) etc stuff and then add a new AggregateDimension <see cref="AggregateConfiguration.AddDimension"/> </remarks>
-    /// <param name="repository"></param>
+    /// <param  name="catalogueDbContext"></param>
     /// <param name="dimension"></param>
-    public AggregateContinuousDateAxis(RdmpDbContext catalogueDbContext, AggregateDimension dimension)
+    public AggregateContinuousDateAxis(RDMPDbContext catalogueDbContext, AggregateDimension dimension)
     {
         var todaysDateFunction = dimension.AggregateConfiguration.GetQuerySyntaxHelper()
             .GetScalarFunctionSql(MandatoryScalarFunctions.GetTodaysDate);
 
-        repository.InsertAndHydrate(this,
-            new Dictionary<string, object>
-            {
-                { "AggregateDimension_ID", dimension.ID },
-                { "EndDate", todaysDateFunction }
-            });
+        //repository.InsertAndHydrate(this,
+        //    new Dictionary<string, object>
+        //    {
+        //        { "AggregateDimension_ID", dimension.ID },
+        //        { "EndDate", todaysDateFunction }
+        //    });
     }
 
     /// <inheritdoc/>
-    internal AggregateContinuousDateAxis(RdmpDbContext catalogueDbContext, DbDataReader r) : base(repository, r)
+    internal AggregateContinuousDateAxis(RDMPDbContext catalogueDbContext, DbDataReader r) : base(catalogueDbContext, r)
     {
         AggregateDimension_ID = int.Parse(r["AggregateDimension_ID"].ToString());
         StartDate = r["StartDate"].ToString();

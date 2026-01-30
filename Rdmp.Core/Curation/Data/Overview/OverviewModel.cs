@@ -113,7 +113,7 @@ public class OverviewModel
         }
         else
         {
-            var repo = new MemoryCatalogueRepository();
+            var repo = new MemoryRDMPDbContext();
             var qb = new QueryBuilder(null, null);
             qb.AddColumn(new ColumnInfoToIColumn(repo, dateColumn));
             qb.AddCustomLine($"{dateColumn.Name} IS NOT NULL", FAnsi.Discovery.QuerySyntax.QueryComponent.WHERE);
@@ -173,7 +173,7 @@ public class OverviewModel
         }
         else
         {
-            var repo = new MemoryCatalogueRepository();
+            var repo = new MemoryRDMPDbContext();
             var qb = new QueryBuilder(null, null);
             qb.AddColumn(new ColumnInfoToIColumn(repo, dateColumn));
             qb.AddCustomLine($"{dateColumn.Name} IS NOT NULL", FAnsi.Discovery.QuerySyntax.QueryComponent.WHERE);
@@ -205,7 +205,7 @@ public class OverviewModel
     private void GetDataLoads()
     {
         _dataLoads = new DataTable();
-        var repo = new MemoryCatalogueRepository();
+        var repo = new MemoryRDMPDbContext();
         var qb = new QueryBuilder(null, null);
         var columnInfo = _catalogue.CatalogueItems.Where(static c => c.Name == SpecialFieldNames.DataLoadRunID).Select(c => c.ColumnInfo).FirstOrDefault();
         if (columnInfo == null) return;
@@ -231,37 +231,37 @@ public class OverviewModel
         if (_dataLoads.Rows.Count == 0) return null;
 
         var maxDataLoadId = _dataLoads.AsEnumerable().Select(static r => int.Parse(r[0].ToString())).Max();
-        var loggingServers = _activator.RepositoryLocator.CatalogueDbContext.GetAllObjectsWhere<ExternalDatabaseServer>("CreatedByAssembly", "Rdmp.Core/Databases.LoggingDatabase");
+        //var loggingServers = _activator.RepositoryLocator.CatalogueDbContext.GetAllObjectsWhere<ExternalDatabaseServer>("CreatedByAssembly", "Rdmp.Core/Databases.LoggingDatabase");
         var columnInfo = _catalogue.CatalogueItems.Where(c => c.Name == SpecialFieldNames.DataLoadRunID).Select(c => c.ColumnInfo).First();
         var server = columnInfo.Discover(DataAccessContext.InternalDataProcessing).Table.Database.Server;
 
         DataTable dt = new();
-        foreach (var loggingServer in loggingServers)
-        {
-            var logCollection = new ViewLogsCollection(loggingServer, new LogViewerFilter(LoggingTables.DataLoadRun));
-            var dataLoadRunSql = $"{logCollection.GetSql()} WHERE ID={maxDataLoadId}";
-            var logServer = loggingServer.Discover(DataAccessContext.InternalDataProcessing).Server;
-            using var loggingCon = logServer.GetConnection();
-            loggingCon.Open();
-            using var loggingCmd = logServer.GetCommand(dataLoadRunSql, loggingCon);
-            loggingCmd.CommandTimeout = 30000;
-            using var loggingDa = server.GetDataAdapter(loggingCmd);
-            dt.BeginLoadData();
-            loggingDa.Fill(dt);
-            dt.EndLoadData();
-            if (dt.Rows.Count > 0)
-            {
-                break;
-            }
-        }
+        //foreach (var loggingServer in loggingServers)
+        //{
+        //    var logCollection = new ViewLogsCollection(loggingServer, new LogViewerFilter(LoggingTables.DataLoadRun));
+        //    var dataLoadRunSql = $"{logCollection.GetSql()} WHERE ID={maxDataLoadId}";
+        //    var logServer = loggingServer.Discover(DataAccessContext.InternalDataProcessing).Server;
+        //    using var loggingCon = logServer.GetConnection();
+        //    loggingCon.Open();
+        //    using var loggingCmd = logServer.GetCommand(dataLoadRunSql, loggingCon);
+        //    loggingCmd.CommandTimeout = 30000;
+        //    using var loggingDa = server.GetDataAdapter(loggingCmd);
+        //    dt.BeginLoadData();
+        //    loggingDa.Fill(dt);
+        //    dt.EndLoadData();
+        //    if (dt.Rows.Count > 0)
+        //    {
+        //        break;
+        //    }
+        //}
 
         return dt;
     }
 
     public List<CumulativeExtractionResults> GetExtractions()
     {
-        var datasets = _activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", _catalogue.ID).Select(d => d.ID);
-        var results = _activator.RepositoryLocator.DataExportRepository.GetAllObjects<CumulativeExtractionResults>().Where(result => datasets.Contains(result.ExtractableDataSet_ID)).ToList();
+        var datasets = _activator.RepositoryLocator.CatalogueDbContext.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", _catalogue.ID).Select(d => d.ID);
+        var results = _activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<CumulativeExtractionResults>().Where(result => datasets.Contains(result.ExtractableDataSet_ID)).ToList();
         return results;
     }
 }

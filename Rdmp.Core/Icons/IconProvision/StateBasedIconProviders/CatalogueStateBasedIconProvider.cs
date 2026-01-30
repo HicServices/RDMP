@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Icons.IconOverlays;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
@@ -17,10 +18,10 @@ public sealed class CatalogueStateBasedIconProvider : IObjectStateBasedIconProvi
 {
     private static readonly Image<Rgba32> _basic = Image.Load<Rgba32>(CatalogueIcons.Catalogue);
     private static readonly Image<Rgba32> _projectSpecific = Image.Load<Rgba32>(CatalogueIcons.ProjectCatalogue);
-    private readonly IDataExportRepository _dataExportRepository;
+    private readonly RDMPDbContext _dataExportRepository;
 
 
-    public CatalogueStateBasedIconProvider(IDataExportRepository dataExportRepository)
+    public CatalogueStateBasedIconProvider(RDMPDbContext dataExportRepository)
     {
         _dataExportRepository = dataExportRepository;
     }

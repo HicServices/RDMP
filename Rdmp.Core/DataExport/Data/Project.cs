@@ -12,6 +12,7 @@ using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Checks;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Providers;
@@ -80,7 +81,7 @@ public class Project : DatabaseEntity, IProject, ICustomSearchString, ICheckable
     /// <inheritdoc/>
     [NoMappingToDatabase]
     public IExtractionConfiguration[] ExtractionConfigurations =>
-        Repository.GetAllObjectsWithParent<ExtractionConfiguration>(this)
+        CatalogueDbContext.GetAllObjectsWithParent<ExtractionConfiguration>(this)
             .Cast<IExtractionConfiguration>()
             .ToArray();
 
@@ -89,7 +90,7 @@ public class Project : DatabaseEntity, IProject, ICustomSearchString, ICheckable
     [NoMappingToDatabase]
     public IProjectCohortIdentificationConfigurationAssociation[]
         ProjectCohortIdentificationConfigurationAssociations =>
-        Repository.GetAllObjectsWithParent<ProjectCohortIdentificationConfigurationAssociation>(this);
+        CatalogueDbContext.GetAllObjectsWithParent<ProjectCohortIdentificationConfigurationAssociation>(this);
 
     #endregion
 
@@ -100,45 +101,45 @@ public class Project : DatabaseEntity, IProject, ICustomSearchString, ICheckable
     /// <summary>
     /// Defines a new extraction project this is stored in the Data Export database
     /// </summary>
-    public Project(IDataExportRepository repository, string name)
+    public Project(RDMPDbContext catalogueDbContext, string name)
     {
-        Repository = repository;
+       CatalogueDbContext = catalogueDbContext;
 
-        try
-        {
-            Repository.InsertAndHydrate(this, new Dictionary<string, object>
-            {
-                { "Name", name },
-                { "Folder", FolderHelper.Root }
-            });
-        }
-        catch (Exception ex)
-        {
-            //sometimes the user tries to create multiple Projects without fully populating the last one (with a project number)
-            if (ex.Message.Contains("idx_ProjectNumberMustBeUnique"))
-            {
-                Project offender;
-                try
-                {
-                    //find the one with the unset project number
-                    offender = Repository.GetAllObjects<Project>().Single(p => p.ProjectNumber == null);
-                }
-                catch (Exception)
-                {
-                    throw;
-                }
+        //try
+        //{
+        //    CatalogueDbContext.InsertAndHydrate(this, new Dictionary<string, object>
+        //    {
+        //        { "Name", name },
+        //        { "Folder", FolderHelper.Root }
+        //    });
+        //}
+        //catch (Exception ex)
+        //{
+        //    //sometimes the user tries to create multiple Projects without fully populating the last one (with a project number)
+        //    if (ex.Message.Contains("idx_ProjectNumberMustBeUnique"))
+        //    {
+        //        Project offender;
+        //        try
+        //        {
+        //            //find the one with the unset project number
+        //            offender = CatalogueDbContext.GetAllObjects<Project>().Single(p => p.ProjectNumber == null);
+        //        }
+        //        catch (Exception)
+        //        {
+        //            throw;
+        //        }
 
-                throw new Exception(
-                    $"Could not create a new Project because there is already another Project in the system ({offender}) which is missing a Project Number.  All projects must have a ProjectNumber, there can be 1 Project at a time which does not have a number and that is one that is being built by the user right now.  Either delete Project {offender} or give it a project number",
-                    ex);
-            }
+        //        throw new Exception(
+        //            $"Could not create a new Project because there is already another Project in the system ({offender}) which is missing a Project Number.  All projects must have a ProjectNumber, there can be 1 Project at a time which does not have a number and that is one that is being built by the user right now.  Either delete Project {offender} or give it a project number",
+        //            ex);
+        //    }
 
-            throw;
-        }
+        //    throw;
+        //}
     }
 
-    internal Project(IDataExportRepository repository, DbDataReader r)
-        : base(repository, r)
+    internal Project(RDMPDbContext catalogueDbContext, DbDataReader r)
+        :base(catalogueDbContext, r)
     {
         MasterTicket = r["MasterTicket"].ToString();
         Name = r["Name"] as string;
@@ -157,8 +158,8 @@ public class Project : DatabaseEntity, IProject, ICustomSearchString, ICheckable
 
     public void Check(ICheckNotifier notifier)
     {
-        new ProjectChecker(new ThrowImmediatelyActivator(new RepositoryProvider(DataExportRepository), notifier), this)
-            .Check(notifier);
+        //new ProjectChecker(new ThrowImmediatelyActivator(new RepositoryProvider(DataExportRepository), notifier), this)
+        //    .Check(notifier);
     }
 
     /// <summary>
@@ -175,14 +176,14 @@ public class Project : DatabaseEntity, IProject, ICustomSearchString, ICheckable
     public CohortIdentificationConfiguration[] GetAssociatedCohortIdentificationConfigurations()
     {
         var associations =
-            Repository.GetAllObjectsWithParent<ProjectCohortIdentificationConfigurationAssociation>(this);
+            CatalogueDbContext.GetAllObjectsWithParent<ProjectCohortIdentificationConfigurationAssociation>(this);
         return associations.Select(a => a.CohortIdentificationConfiguration).Where(c => c != null && !c.IsTemplate).ToArray();
     }
 
     public CohortIdentificationConfiguration[] GetAssociatedTemplateCohortIdentificationConfigurations()
     {
         var associations =
-            Repository.GetAllObjectsWithParent<ProjectCohortIdentificationConfigurationAssociation>(this);
+            CatalogueDbContext.GetAllObjectsWithParent<ProjectCohortIdentificationConfigurationAssociation>(this);
         return associations.Select(a => a.CohortIdentificationConfiguration).Where(c => c != null && c.IsTemplate).ToArray();
     }
 
@@ -194,12 +195,12 @@ public class Project : DatabaseEntity, IProject, ICustomSearchString, ICheckable
     /// <returns></returns>
     public ProjectCohortIdentificationConfigurationAssociation
         AssociateWithCohortIdentification(CohortIdentificationConfiguration cic) =>
-        new((IDataExportRepository)Repository, this, cic);
+        new(CatalogueDbContext, this, cic);
 
     /// <inheritdoc/>
     public ICatalogue[] GetAllProjectCatalogues()
     {
-        return Repository.GetAllObjects<ExtractableDataSetProject>().Where(edsp => edsp.Project_ID == this.ID).Select(edsp => edsp.DataSet.Catalogue).ToArray(); 
+        return CatalogueDbContext.GetAllObjects<ExtractableDataSetProject>().Where(edsp => edsp.Project_ID == this.ID).Select(edsp => edsp.DataSet.Catalogue).ToArray(); 
     }
 
     /// <inheritdoc/>

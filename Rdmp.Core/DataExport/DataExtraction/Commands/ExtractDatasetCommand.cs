@@ -41,7 +41,7 @@ public class ExtractDatasetCommand : ExtractCommand, IExtractDatasetCommand
 
             Catalogue = value == null
                 ? null
-                : DataExportRepository.CatalogueRepository.GetObjectByID<Catalogue>(value.DataSet.Catalogue_ID);
+                : null;//CatalogueDbContext.GetObjectByID<Catalogue>(value.DataSet.Catalogue_ID);
         }
     }
 
@@ -71,7 +71,7 @@ public class ExtractDatasetCommand : ExtractCommand, IExtractDatasetCommand
         IExtractionDirectory directory, bool includeValidation = false, bool includeLookups = false) : this(
         configuration, datasetBundle.DataSet)
     {
-        DataExportRepository = configuration.DataExportRepository;
+        //DataExportRepository = configuration.DataExportRepository;
         ExtractableCohort = extractableCohort;
         DatasetBundle = datasetBundle;
         ColumnsToExtract = columnsToExtract;
@@ -97,7 +97,6 @@ public class ExtractDatasetCommand : ExtractCommand, IExtractDatasetCommand
     public ExtractDatasetCommand(IExtractionConfiguration configuration, IExtractableDatasetBundle datasetBundle,
         bool includeValidation = false, bool includeLookups = false) : this(configuration, datasetBundle.DataSet)
     {
-        DataExportRepository = configuration.DataExportRepository;
         //ExtractableCohort = ExtractableCohort.GetExtractableCohortByID((int) configuration.Cohort_ID);
         ExtractableCohort = configuration.GetExtractableCohort();
         DatasetBundle = datasetBundle;
@@ -145,9 +144,9 @@ public class ExtractDatasetCommand : ExtractCommand, IExtractDatasetCommand
 
     public void GenerateQueryBuilder()
     {
-        var host = new ExtractionQueryBuilder(DataExportRepository);
-        QueryBuilder = host.GetSQLCommandForFullExtractionSet(this, out var substitutions);
-        ReleaseIdentifierSubstitutions = substitutions;
+        //var host = new ExtractionQueryBuilder(DataExportRepository);
+        //QueryBuilder = host.GetSQLCommandForFullExtractionSet(this, out var substitutions);
+        //ReleaseIdentifierSubstitutions = substitutions;
     }
 
     public override string ToString() => this == EmptyCommand ? "EmptyCommand" : DatasetBundle.DataSet.ToString();

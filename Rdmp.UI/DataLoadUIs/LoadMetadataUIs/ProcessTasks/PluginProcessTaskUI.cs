@@ -62,7 +62,7 @@ public partial class PluginProcessTaskUI : PluginProcessTaskUI_Design, ISaveable
 
         if (_argumentCollection == null)
         {
-            var repo = databaseObject.CatalogueRepository;
+            var repo = databaseObject.CatalogueDbContext;
 
             _argumentCollection = new ArgumentCollectionUI();
 

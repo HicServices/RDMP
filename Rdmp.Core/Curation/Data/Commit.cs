@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 
@@ -53,7 +54,7 @@ public class Commit : DatabaseEntity
 
     #region Relationships
 
-    [NoMappingToDatabase] public Memento[] Mementos => Repository.GetAllObjectsWithParent<Memento>(this);
+    [NoMappingToDatabase] public Memento[] Mementos => CatalogueDbContext.GetAllObjectsWithParent<Memento>(this);
 
     #endregion
 
@@ -61,7 +62,7 @@ public class Commit : DatabaseEntity
     {
     }
 
-    public Commit(ICatalogueRepository repo, DbDataReader r) : base(repo, r)
+    public Commit(RDMPDbContext repo, DbDataReader r) : base(repo, r)
     {
         Transaction = r["Transaction"].ToString();
         Username = r["Username"].ToString();
@@ -69,15 +70,15 @@ public class Commit : DatabaseEntity
         Description = r["Description"].ToString();
     }
 
-    public Commit(RdmpDbContext catalogueDbContext, Guid transaction, string description)
+    public Commit(RDMPDbContext catalogueDbContext, Guid transaction, string description)
     {
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "Transaction", transaction.ToString("N") },
-            { "Username", Environment.UserName },
-            { "Date", DateTime.Now },
-            { "Description", description }
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "Transaction", transaction.ToString("N") },
+        //    { "Username", Environment.UserName },
+        //    { "Date", DateTime.Now },
+        //    { "Description", description }
+        //});
     }
 
     public override string ToString() => Transaction;

@@ -11,6 +11,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using FAnsi.Discovery.QuerySyntax;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
 using Rdmp.Core.Providers;
@@ -107,7 +108,7 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
     /// </summary>
     [NoMappingToDatabase]
     public IEnumerable<ExtractionFilter> ExtractionFilters =>
-        Repository.GetAllObjectsWithParent<ExtractionFilter>(this);
+        CatalogueDbContext.GetAllObjectsWithParent<ExtractionFilter>(this);
 
     #endregion
 
@@ -120,29 +121,29 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
     /// Makes the given <see cref="CatalogueItem"/> which has an underlying column <see cref="ColumnInfo"/> in the data repository database extractable using the
     /// provided SQL code which must be a single line of SELECT sql.
     /// </summary>
-    /// <param name="repository">Platform database to store the new object in</param>
+    /// <param name="catalogueDbContext">Platform database to store the new object in</param>
     /// <param name="catalogueItem">The virtual column to make extractable (could be a transform e.g. YearOfBirth)</param>
     /// <param name="column">The column underlying the virtual column (e.g. `MyTable`.`DateOfBirth`)</param>
     /// <param name="selectSQL">The fully specified column name or transform SQL to execute as a line of SELECT Sql </param>
-    public ExtractionInformation(RdmpDbContext catalogueDbContext, CatalogueItem catalogueItem, ColumnInfo column,
+    public ExtractionInformation(RDMPDbContext catalogueDbContext, CatalogueItem catalogueItem, ColumnInfo column,
         string selectSQL)
     {
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "SelectSQL", string.IsNullOrWhiteSpace(selectSQL) ? column.Name : selectSQL },
-            { "Order", GetMaxOrder(catalogueItem) },
-            { "ExtractionCategory", ExtractionCategory.Core.ToString() },
-            { "CatalogueItem_ID", catalogueItem.ID }
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "SelectSQL", string.IsNullOrWhiteSpace(selectSQL) ? column.Name : selectSQL },
+        //    { "Order", GetMaxOrder(catalogueItem) },
+        //    { "ExtractionCategory", ExtractionCategory.Core.ToString() },
+        //    { "CatalogueItem_ID", catalogueItem.ID }
+        //});
 
-        catalogueItem.ClearAllInjections();
+        //catalogueItem.ClearAllInjections();
 
-        if (catalogueItem.ColumnInfo_ID == null)
-            repository.SaveSpecificPropertyOnlyToDatabase(catalogueItem, "ColumnInfo_ID", column.ID);
-        else if (catalogueItem.ColumnInfo_ID != column.ID)
-            throw new ArgumentException(
-                $"Cannot create an ExtractionInformation for CatalogueItem {catalogueItem} with ColumnInfo {column} because the CatalogueItem is already associated with a different ColumnInfo: {catalogueItem.ColumnInfo}");
-        ClearAllInjections();
+        //if (catalogueItem.ColumnInfo_ID == null)
+        //    repository.SaveSpecificPropertyOnlyToDatabase(catalogueItem, "ColumnInfo_ID", column.ID);
+        //else if (catalogueItem.ColumnInfo_ID != column.ID)
+        //    throw new ArgumentException(
+        //        $"Cannot create an ExtractionInformation for CatalogueItem {catalogueItem} with ColumnInfo {column} because the CatalogueItem is already associated with a different ColumnInfo: {catalogueItem.ColumnInfo}");
+        //ClearAllInjections();
     }
 
     /// <summary>
@@ -167,7 +168,7 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
         }
     }
 
-    internal ExtractionInformation(RdmpDbContext catalogueDbContext, DbDataReader r) : base(repository, r)
+    internal ExtractionInformation(RDMPDbContext catalogueDbContext, DbDataReader r) :base(catalogueDbContext, r)
     {
         SelectSQL = r["SelectSQL"].ToString();
 
@@ -196,7 +197,7 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
     public void ClearAllInjections()
     {
         _knownColumninfo = new Lazy<ColumnInfo>(() => CatalogueItem.ColumnInfo);
-        _knownCatalogueItem = new Lazy<CatalogueItem>(() => Repository.GetObjectByID<CatalogueItem>(CatalogueItem_ID));
+        _knownCatalogueItem = new Lazy<CatalogueItem>(() => CatalogueDbContext.GetObjectByID<CatalogueItem>(CatalogueItem_ID));
     }
 
     /// <inheritdoc/>

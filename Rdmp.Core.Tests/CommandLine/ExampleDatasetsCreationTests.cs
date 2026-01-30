@@ -26,8 +26,8 @@ internal class ExampleDatasetsCreationTests : DatabaseTests
         Assert.Multiple(() =>
         {
             //Should be empty RDMP metadata database
-            Assert.That(CatalogueRepository.GetAllObjects<Catalogue>(), Is.Empty);
-            Assert.That(CatalogueRepository.GetAllObjects<AggregateConfiguration>(), Is.Empty);
+            Assert.That(CatalogueDbContext.GetAllObjects<Catalogue>(), Is.Empty);
+            Assert.That(CatalogueDbContext.GetAllObjects<AggregateConfiguration>(), Is.Empty);
         });
 
         //create the pipelines
@@ -41,14 +41,14 @@ internal class ExampleDatasetsCreationTests : DatabaseTests
             new PlatformDatabaseCreationOptions { Seed = 500, DropDatabases = true });
 
         //should be at least 2 views (marked as view)
-        var views = CatalogueRepository.GetAllObjects<TableInfo>().Count(ti => ti.IsView);
+        var views = CatalogueDbContext.GetAllObjects<TableInfo>().Count(ti => ti.IsView);
         Assert.Multiple(() =>
         {
             Assert.That(views, Is.GreaterThanOrEqualTo(2));
 
             //should have at least created some catalogues, graphs etc
-            Assert.That(CatalogueRepository.GetAllObjects<Catalogue>(), Has.Length.GreaterThanOrEqualTo(4));
-            Assert.That(CatalogueRepository.GetAllObjects<AggregateConfiguration>(), Has.Length.GreaterThanOrEqualTo(4));
+            Assert.That(CatalogueDbContext.GetAllObjects<Catalogue>(), Has.Length.GreaterThanOrEqualTo(4));
+            Assert.That(CatalogueDbContext.GetAllObjects<AggregateConfiguration>(), Has.Length.GreaterThanOrEqualTo(4));
         });
     }
 }

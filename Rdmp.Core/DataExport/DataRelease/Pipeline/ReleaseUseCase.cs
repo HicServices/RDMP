@@ -12,6 +12,7 @@ using Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
 using Rdmp.Core.DataExport.DataRelease.Potential;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
 
@@ -26,7 +27,7 @@ namespace Rdmp.Core.DataExport.DataRelease.Pipeline;
 /// </summary>
 public sealed class ReleaseUseCase : PipelineUseCase
 {
-    public ReleaseUseCase(IProject project, ReleaseData releaseData, ICatalogueRepository catalogueRepository)
+    public ReleaseUseCase(IProject project, ReleaseData releaseData, RDMPDbContext catalogueDbContext)
     {
         ExplicitDestination = null;
 
@@ -53,10 +54,10 @@ public sealed class ReleaseUseCase : PipelineUseCase
                 releasePotentialWithKnownDestination.DatasetExtractionResult.DestinationType,
                 typeof(IExecuteDatasetExtractionDestination));
             var destinationUsedAtExtraction =
-                (IExecuteDatasetExtractionDestination)ObjectConstructor.Construct(destinationType, catalogueRepository);
+                (IExecuteDatasetExtractionDestination)ObjectConstructor.Construct(destinationType, catalogueDbContext);
 
             var fixedReleaseSource =
-                destinationUsedAtExtraction.GetReleaseSource(catalogueRepository);
+                destinationUsedAtExtraction.GetReleaseSource(catalogueDbContext);
 
             ExplicitSource = fixedReleaseSource;
             // destinationUsedAtExtraction.GetReleaseSource(); // new FixedSource<ReleaseAudit>(notifier => CheckRelease(notifier));
@@ -64,7 +65,7 @@ public sealed class ReleaseUseCase : PipelineUseCase
 
         AddInitializationObject(project);
         AddInitializationObject(releaseData);
-        AddInitializationObject(catalogueRepository);
+        AddInitializationObject(catalogueDbContext);
 
         GenerateContext();
     }
@@ -86,7 +87,7 @@ public sealed class ReleaseUseCase : PipelineUseCase
     {
         typeof(Project),
         typeof(ReleaseData),
-        typeof(CatalogueRepository)
+        typeof(RDMPDbContext),
     })
     {
         ExplicitSource = new NullReleaseSource();

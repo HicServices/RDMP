@@ -73,13 +73,13 @@ internal class CommitCohortExample : DatabaseTests
             new GracefulCancellationToken());
 
         //there should be no cohorts yet
-        Assert.That(DataExportRepository.GetAllObjects<ExtractableCohort>(), Is.Empty);
+        Assert.That(DataExportCatalogueDbContext.GetAllObjects<ExtractableCohort>(), Is.Empty);
 
         //dispose of the pipeline
         pipelineDestination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
 
         //now there should be one
-        var cohort = DataExportRepository.GetAllObjects<ExtractableCohort>().Single();
+        var cohort = DataExportCatalogueDbContext.GetAllObjects<ExtractableCohort>().Single();
 
         Assert.Multiple(() =>
         {

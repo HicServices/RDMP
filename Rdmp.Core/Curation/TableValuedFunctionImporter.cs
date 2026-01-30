@@ -12,13 +12,14 @@ using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.DataHelper;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.Curation;
 
 /// <summary>
-/// Generates TableInfo entries in the ICatalogueRepository based the Table Valued Function specified on the live database server.  Table Valued Functions are Microsoft
+/// Generates TableInfo entries in the RDMPDbContextbased the Table Valued Function specified on the live database server.  Table Valued Functions are Microsoft
 /// Sql Server specific, they are like Scalar functions except they return data tables.  RDMP supports building Catalogues that refer to Table Valued Functions.  These
 /// act just like regular tables when it comes to aggregates, data extraction etc except that they can have ISqlParameters declared for them.  Table Valued Functions are
 /// really not nice, especially if they are non deterministic (return different results when given the same parameters), therefore really you should just avoid using them
@@ -26,7 +27,7 @@ namespace Rdmp.Core.Curation;
 /// </summary>
 public class TableValuedFunctionImporter : ITableInfoImporter
 {
-    private readonly ICatalogueRepository _repository;
+    private readonly RDMPDbContext _catalogueDbContext;
     private readonly string _server;
     private readonly string _database;
     private readonly DataAccessContext _usageContext;
@@ -44,15 +45,15 @@ public class TableValuedFunctionImporter : ITableInfoImporter
 
     /// <summary>
     /// Prepares to import the given table valued function <paramref name="tableValuedFunction"/> as <see cref="TableInfo"/> / <see cref="ColumnInfo"/> references in the
-    /// <paramref name="repository"/>.
+    /// <paramref name="catalogueDbContext"/>.
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="tableValuedFunction"></param>
     /// <param name="usageContext"></param>
-    public TableValuedFunctionImporter(RdmpDbContext catalogueDbContext,
+    public TableValuedFunctionImporter(RDMPDbContext catalogueDbContext,
         DiscoveredTableValuedFunction tableValuedFunction, DataAccessContext usageContext = DataAccessContext.Any)
     {
-        _repository = repository;
+        _catalogueDbContext = catalogueDbContext;
         _tableValuedFunction = tableValuedFunction;
         _server = _tableValuedFunction.Database.Server.Name;
         _database = _tableValuedFunction.Database.GetRuntimeName();
@@ -82,7 +83,7 @@ public class TableValuedFunctionImporter : ITableInfoImporter
         var finalName =
             $"{syntax.EnsureWrapped(_database)}.{wrappedSchema}.{_tableValuedFunctionName}({string.Join(',', _parameters.Select(p => p.ParameterName))}) AS {_tableValuedFunctionName}"; //give it an alias so all the children ColumnInfos can be fully specified
 
-        tableInfoCreated = new TableInfo(_repository, finalName)
+        tableInfoCreated = new TableInfo(_catalogueDbContext, finalName)
         {
             Server = _server,
             Database = _database,
@@ -96,7 +97,7 @@ public class TableValuedFunctionImporter : ITableInfoImporter
         var server = _tableValuedFunction.Database.Server;
         if (server.ExplicitUsernameIfAny != null)
         {
-            var credentialsFactory = new DataAccessCredentialsFactory(_repository);
+            var credentialsFactory = new DataAccessCredentialsFactory(_catalogueDbContext);
             credentialsFactory.Create(tableInfoCreated, server.ExplicitUsernameIfAny, server.ExplicitPasswordIfAny,
                 _usageContext);
         }
@@ -106,7 +107,7 @@ public class TableValuedFunctionImporter : ITableInfoImporter
     public ColumnInfo CreateNewColumnInfo(ITableInfo parent, DiscoveredColumn discoveredColumn)
     {
         var toAdd =
-            new ColumnInfo((ICatalogueRepository)parent.Repository, discoveredColumn.GetFullyQualifiedName(),
+            new ColumnInfo(parent.CatalogueDbContext, discoveredColumn.GetFullyQualifiedName(),
                 discoveredColumn.DataType.SQLType, parent)
             {
                 Format = discoveredColumn.Format,
@@ -144,7 +145,7 @@ public class TableValuedFunctionImporter : ITableInfoImporter
     /// <param name="discoveredParameter"></param>
     internal AnyTableSqlParameter CreateParameter(ITableInfo parent, DiscoveredParameter discoveredParameter)
     {
-        var created = new AnyTableSqlParameter(_repository, parent, GetParamaterDeclarationSQL(discoveredParameter));
+        var created = new AnyTableSqlParameter(_catalogueDbContext, parent, GetParamaterDeclarationSQL(discoveredParameter));
         ParametersCreated.Add(created);
         return created;
     }

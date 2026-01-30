@@ -112,7 +112,7 @@ public class ExecuteCommandCloneCohortIdentificationConfiguration : BasicCommand
 
         if (_project != null) // clone the association
             _ = new ProjectCohortIdentificationConfigurationAssociation(
-                BasicActivator.RepositoryLocator.DataExportRepository,
+                BasicActivator.RepositoryLocator.CatalogueDbContext,
                 _project,
                 CloneCreatedIfAny);
 

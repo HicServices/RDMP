@@ -9,6 +9,7 @@ using System.Data.Common;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.FilterImporting;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.QueryBuilding.SyntaxChecking;
@@ -76,7 +77,7 @@ public class ExtractionFilterParameter : DatabaseEntity, IDeleteable, ISqlParame
 
     /// <inheritdoc cref="ExtractionFilter_ID"/>
     [NoMappingToDatabase]
-    public ExtractionFilter ExtractionFilter => Repository.GetObjectByID<ExtractionFilter>(ExtractionFilter_ID);
+    public ExtractionFilter ExtractionFilter => CatalogueDbContext.GetObjectByID<ExtractionFilter>(ExtractionFilter_ID);
 
     #endregion
 
@@ -88,21 +89,21 @@ public class ExtractionFilterParameter : DatabaseEntity, IDeleteable, ISqlParame
     /// Creates a new parameter on the given <paramref name="parent"/>
     /// <para>It is better to use <see cref="ParameterCreator"/> to automatically generate parameters based on the WHERE Sql</para>
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="parameterSQL"></param>
     /// <param name="parent"></param>
-    public ExtractionFilterParameter(RdmpDbContext catalogueDbContext, string parameterSQL, ExtractionFilter parent)
+    public ExtractionFilterParameter(RDMPDbContext catalogueDbContext, string parameterSQL, ExtractionFilter parent)
     {
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "ParameterSQL", parameterSQL },
-            { "ExtractionFilter_ID", parent.ID }
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "ParameterSQL", parameterSQL },
+        //    { "ExtractionFilter_ID", parent.ID }
+        //});
     }
 
 
-    internal ExtractionFilterParameter(RdmpDbContext catalogueDbContext, DbDataReader r)
-        : base(repository, r)
+    internal ExtractionFilterParameter(RDMPDbContext catalogueDbContext, DbDataReader r)
+        :base(catalogueDbContext, r)
     {
         ExtractionFilter_ID = int.Parse(r["ExtractionFilter_ID"].ToString());
         ParameterSQL = r["ParameterSQL"] as string;

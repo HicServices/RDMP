@@ -90,7 +90,7 @@ public partial class CreateNewCatalogueByImportingFileUI_Advanced : UserControl
                 var table = _database.ExpectTable(targetTable);
 
                 var ui = new ConfigureCatalogueExtractabilityUI(_activator,
-                    new TableInfoImporter(_repositoryLocator.CatalogueRepository, table),
+                    new TableInfoImporter(_repositoryLocator.CatalogueDbContext, table),
                     $"File '{_file.FullName}'", _projectSpecific);
                 ui.ShowDialog();
 

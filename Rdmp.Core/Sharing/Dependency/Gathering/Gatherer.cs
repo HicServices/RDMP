@@ -43,9 +43,10 @@ public class Gatherer
 
     public IMapsDirectlyToDatabaseTable[] GetAllObjectsInAllDatabases()
     {
-        var allCatalogueObjects = _repositoryLocator.CatalogueRepository.GetAllObjectsInDatabase();
-        var allDataExportObjects = _repositoryLocator.DataExportRepository.GetAllObjectsInDatabase();
-        return allCatalogueObjects.Union(allDataExportObjects).ToArray();
+        //var allCatalogueObjects = _repositoryLocator.CatalogueDbContext.GetAllObjectsInDatabase();
+        //var allDataExportObjects = _repositoryLocator.CatalogueDbContext.GetAllObjectsInDatabase();
+        //return allCatalogueObjects.Union(allDataExportObjects).ToArray();
+        return Array.Empty<IMapsDirectlyToDatabaseTable>();
     }
 
     /// <summary>
@@ -88,7 +89,7 @@ public class Gatherer
             }
         }
 
-        var linkage = loadMetadata.CatalogueRepository.GetAllObjectsWhere<LoadMetadataCatalogueLinkage>("LoadMetadataID", loadMetadata.ID);
+        var linkage = loadMetadata.CatalogueDbContext.GetAllObjectsWhere<LoadMetadataCatalogueLinkage>("LoadMetadataID", loadMetadata.ID);
         foreach (var link in linkage)
         {
             var glcl = new GatheredObject(link);

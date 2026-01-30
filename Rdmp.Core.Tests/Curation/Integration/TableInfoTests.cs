@@ -28,7 +28,7 @@ internal class TableInfoTests : DatabaseTests
     public void GetAllTableInfos_moreThan1_pass()
     {
         var tableInfo = new TableInfo(CatalogueRepository, "AMAGAD!!!");
-        Assert.That(CatalogueRepository.GetAllObjects<TableInfo>().Any());
+        Assert.That(CatalogueDbContext.GetAllObjects<TableInfo>().Any());
         tableInfo.DeleteInDatabase();
     }
 
@@ -41,7 +41,7 @@ internal class TableInfoTests : DatabaseTests
 
         table.DeleteInDatabase();
 
-        var ex = Assert.Throws<KeyNotFoundException>(() => CatalogueRepository.GetObjectByID<TableInfo>(table.ID));
+        var ex = Assert.Throws<KeyNotFoundException>(() => CatalogueDbContext.GetObjectByID<TableInfo>(table.ID));
         Assert.That($"Could not find TableInfo with ID {table.ID}", Is.EqualTo(ex.Message));
     }
 
@@ -58,7 +58,7 @@ internal class TableInfoTests : DatabaseTests
 
         table.SaveToDatabase();
 
-        var tableAfter = CatalogueRepository.GetObjectByID<TableInfo>(table.ID);
+        var tableAfter = CatalogueDbContext.GetObjectByID<TableInfo>(table.ID);
 
         Assert.Multiple(() =>
         {

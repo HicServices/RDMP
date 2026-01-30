@@ -115,7 +115,7 @@ public class RdmpCommandLineBootStrapper
             // where RDMP objects are stored
             repositoryLocator = opts.GetRepositoryLocator();
 
-            if (repositoryLocator?.CatalogueRepository == null)
+            if (repositoryLocator?.CatalogueDbContext == null)
             {
                 listener.OnNotify(typeof(RdmpCommandLineBootStrapper),
                     new NotifyEventArgs(ProgressEventType.Error,
@@ -126,7 +126,7 @@ public class RdmpCommandLineBootStrapper
 
             if (!CheckRepo(repositoryLocator)) return REPO_ERROR;
 
-            CatalogueRepository.SuppressHelpLoading = false;
+            //CatalogueDbContext.SuppressHelpLoading = false;
             opts.DoStartup(opts.LogStartup ? checker : IgnoreAllErrorsCheckNotifier.Instance);
         }
 
@@ -135,7 +135,7 @@ public class RdmpCommandLineBootStrapper
             checker.Worst = LogLevel.Info;
 
         var runner = explicitRunner ??
-                     RunnerFactory.CreateRunner(new ThrowImmediatelyActivator(repositoryLocator, checker), opts);
+                     RunnerFactory.CreateRunner(new ThrowImmediatelyActivator(repositoryLocator.CatalogueDbContext, checker), opts);
 
         // Let's not worry about global errors during the CreateRunner process
         // These are mainly UI/GUI and unrelated to the actual process to run
@@ -168,17 +168,17 @@ public class RdmpCommandLineBootStrapper
     {
         var logger = LogManager.GetCurrentClassLogger();
         if (repo is not LinkedRepositoryProvider l) return true;
-        if (l.CatalogueRepository is TableRepository c)
-            try
-            {
-                c.DiscoveredServer.TestConnection(15_000);
-            }
-            catch (Exception ex)
-            {
-                logger.Error(ex,
-                    $"Could not reach {c.DiscoveredServer} (Database:{c.DiscoveredServer.GetCurrentDatabase()}).  Ensure that you have configured RDMP database connections in Databases.yaml correctly and/or that you have run install to setup platform databases");
-                return false;
-            }
+        //if (l.CatalogueDbContext is TableRepository c)
+        //    try
+        //    {
+        //        c.DiscoveredServer.TestConnection(15_000);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        logger.Error(ex,
+        //            $"Could not reach {c.DiscoveredServer} (Database:{c.DiscoveredServer.GetCurrentDatabase()}).  Ensure that you have configured RDMP database connections in Databases.yaml correctly and/or that you have run install to setup platform databases");
+        //        return false;
+        //    }
 
         if (l.DataExportRepository is TableRepository d)
             try

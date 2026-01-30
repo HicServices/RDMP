@@ -12,6 +12,7 @@ using BrightIdeasSoftware;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataFlowPipeline;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Progress;
@@ -165,15 +166,15 @@ public partial class PipelineDiagramUI : UserControl
                 //There is a pipeline set but we might have been unable to fully realize it so setup stuff based on PipelineComponents
 
                 //was there an explicit instance?
-                if (_useCase.ExplicitSource != null)
-                    AddExplicit(_useCase.ExplicitSource); //if so add it
-                else
+                //if (_useCase.ExplicitSource != null)
+                //    AddExplicit(_useCase.ExplicitSource); //if so add it
+                //else
                 //there wasn't an explicit one so there was a PipelineComponent maybe? albeit one that might be broken?
-                if (pipeline.SourcePipelineComponent_ID != null)
-                    AddPipelineComponent((int)pipeline.SourcePipelineComponent_ID, PipelineComponentRole.Source,
-                        pipeline.Repository); //add the possibly broken PipelineComponent to the diagram
-                else
-                    AddBlankComponent(PipelineComponentRole.Source); //the user hasn't put one in yet
+                //if (pipeline.SourcePipelineComponent_ID != null)
+                //    AddPipelineComponent((int)pipeline.SourcePipelineComponent_ID, PipelineComponentRole.Source,
+                //        pipeline.Repository); //add the possibly broken PipelineComponent to the diagram
+                //else
+                //    AddBlankComponent(PipelineComponentRole.Source); //the user hasn't put one in yet
 
 
                 foreach (var middleComponent in pipeline.PipelineComponents.Where(c =>
@@ -194,7 +195,7 @@ public partial class PipelineDiagramUI : UserControl
                 {
                     AddPipelineComponent((int)pipeline.DestinationPipelineComponent_ID,
                         PipelineComponentRole.Destination,
-                        pipeline.Repository); //add the possibly broken PipelineComponent to the diagram
+                        pipeline.CatalogueDbContext); //add the possibly broken PipelineComponent to the diagram
                 }
                 else
                 {
@@ -229,7 +230,7 @@ public partial class PipelineDiagramUI : UserControl
     }
 
     //by ID overload
-    private void AddPipelineComponent(int componentID, PipelineComponentRole role, IRepository repository)
+    private void AddPipelineComponent(int componentID, PipelineComponentRole role, RDMPDbContext repository)
     {
         AddPipelineComponent(repository.GetObjectByID<PipelineComponent>(componentID), role);
     }
@@ -427,7 +428,7 @@ public partial class PipelineDiagramUI : UserControl
         var underlyingComponentType = advert.GetComponentType();
 
         //add the component to the pipeline
-        var repository = (ICatalogueRepository)_pipeline.Repository;
+        var repository = _pipeline.CatalogueDbContext;
         var newcomp = new PipelineComponent(repository, _pipeline, underlyingComponentType, -999, advert.ToString())
         {
             Order = GetOrderMakingSpaceIfNessesary(null, divider)

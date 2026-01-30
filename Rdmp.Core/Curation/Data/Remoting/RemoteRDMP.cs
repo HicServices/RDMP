@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Repositories;
@@ -95,26 +96,26 @@ public class RemoteRDMP : DatabaseEntity, INamed, IEncryptedPasswordHost
     }
 
     /// <inheritdoc/>
-    public RemoteRDMP(RdmpDbContext catalogueDbContext) : base()
+    public RemoteRDMP(RDMPDbContext catalogueDbContext) : base()
     {
         // need a new copy of the catalogue repository so a new DB connection can be made to use with the encrypted host.
-        _encryptedPasswordHost = new EncryptedPasswordHost(repository);
+        _encryptedPasswordHost = new EncryptedPasswordHost(catalogueDbContext);
 
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "Name", "Unnamed remote" },
-            { "URL", "https://example.com" }
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "Name", "Unnamed remote" },
+        //    { "URL", "https://example.com" }
+        //});
 
-        if (ID == 0 || Repository != repository)
+        if (ID == 0 || CatalogueDbContext != catalogueDbContext)
             throw new ArgumentException("Repository failed to properly hydrate this class");
     }
 
     /// <inheritdoc/>
-    public RemoteRDMP(RdmpDbContext catalogueDbContext, DbDataReader r) : base(repository, r)
+    public RemoteRDMP(RDMPDbContext catalogueDbContext, DbDataReader r) :base(catalogueDbContext, r)
     {
         // need a new copy of the catalogue repository so a new DB connection can be made to use with the encrypted host.
-        _encryptedPasswordHost = new EncryptedPasswordHost((ICatalogueRepository)repository);
+        _encryptedPasswordHost = new EncryptedPasswordHost(CatalogueDbContext);
 
         URL = r["URL"].ToString();
         Name = r["Name"].ToString();
@@ -170,9 +171,9 @@ public class RemoteRDMP : DatabaseEntity, INamed, IEncryptedPasswordHost
     }
 
 
-    public void SetRepository(RdmpDbContext catalogueDbContext)
+    public void SetRepository(RDMPDbContext catalogueDbContext)
     {
-        _encryptedPasswordHost = new EncryptedPasswordHost(repository)
+        _encryptedPasswordHost = new EncryptedPasswordHost(catalogueDbContext)
         {
             Password = _tempPassword
         };

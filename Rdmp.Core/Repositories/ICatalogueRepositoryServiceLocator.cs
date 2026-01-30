@@ -9,10 +9,11 @@ using Rdmp.Core.EntityFramework;
 namespace Rdmp.Core.Repositories;
 
 /// <summary>
-/// Interface for a class which can find the CatalogueRepository database connection string
+/// Interface for a class which can find the RDMPDbContext database connection string
 /// </summary>
-public interface ICatalogueRepositoryServiceLocator
+public interface RDMPDbContextServiceLocator
 {
-    //ICatalogueRepository CatalogueRepository { get; }
+    //RDMPDbContextRDMPDbContext { get; }
     RDMPDbContext CatalogueDbContext { get; set; }
+    RDMPDbContext DataExportRepository { get; set; }
 }

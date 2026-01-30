@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Repositories;
@@ -71,24 +72,24 @@ public class DataAccessCredentials : DatabaseEntity, IDataAccessCredentials, INa
     /// 
     /// <para>You can also use <see cref="DataAccessCredentialsFactory"/> for easier credentials creation</para>
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="name"></param>
-    public DataAccessCredentials(RdmpDbContext catalogueDbContext, string name = null)
+    public DataAccessCredentials(RDMPDbContext catalogueDbContext, string name = null)
     {
         name ??= $"New Credentials {Guid.NewGuid()}";
 
-        _encryptedPasswordHost = new EncryptedPasswordHost(repository);
+        _encryptedPasswordHost = new EncryptedPasswordHost(catalogueDbContext);
 
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "Name", name }
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "Name", name }
+        //});
     }
 
-    internal DataAccessCredentials(RdmpDbContext catalogueDbContext, DbDataReader r)
-        : base(repository, r)
+    internal DataAccessCredentials(RDMPDbContext catalogueDbContext, DbDataReader r)
+        :base(catalogueDbContext, r)
     {
-        _encryptedPasswordHost = new EncryptedPasswordHost(repository);
+        _encryptedPasswordHost = new EncryptedPasswordHost(catalogueDbContext);
 
         Name = (string)r["Name"];
         Username = r["Username"].ToString();
@@ -98,26 +99,26 @@ public class DataAccessCredentials : DatabaseEntity, IDataAccessCredentials, INa
     /// <inheritdoc/>
     public override void DeleteInDatabase()
     {
-        var users = CatalogueRepository.TableInfoCredentialsManager.GetAllTablesUsingCredentials(this);
+        //var users = CatalogueDbContext.TableInfoCredentialsManager.GetAllTablesUsingCredentials(this);
 
-        // if there are any contexts where there are any associated tables using this credentials
-        if (users.Any(k => k.Value.Any()))
-            throw new CredentialsInUseException(
-                $"Cannot delete credentials {Name} because it is in use by one or more TableInfo objects({string.Join(",", users.SelectMany(u => u.Value).Distinct().Select(t => t.Name))})");
+        //// if there are any contexts where there are any associated tables using this credentials
+        //if (users.Any(k => k.Value.Any()))
+        //    throw new CredentialsInUseException(
+        //        $"Cannot delete credentials {Name} because it is in use by one or more TableInfo objects({string.Join(",", users.SelectMany(u => u.Value).Distinct().Select(t => t.Name))})");
 
-        try
-        {
-            base.DeleteInDatabase();
-        }
-        catch (Exception e)
-        {
-            if (e.Message.Contains("FK_DataAccessCredentials_TableInfo_DataAccessCredentials"))
-                throw new CredentialsInUseException(
-                    $"Cannot delete credentials {Name} because it is in use by one or more TableInfo objects({string.Join("", GetAllTableInfosThatUseThis().Values.Select(t => string.Join(",", t)))})",
-                    e);
+        //try
+        //{
+        //    base.DeleteInDatabase();
+        //}
+        //catch (Exception e)
+        //{
+        //    if (e.Message.Contains("FK_DataAccessCredentials_TableInfo_DataAccessCredentials"))
+        //        throw new CredentialsInUseException(
+        //            $"Cannot delete credentials {Name} because it is in use by one or more TableInfo objects({string.Join("", GetAllTableInfosThatUseThis().Values.Select(t => string.Join(",", t)))})",
+        //            e);
 
-            throw;
-        }
+        //    throw;
+        //}
     }
 
     /// <summary>
@@ -125,8 +126,8 @@ public class DataAccessCredentials : DatabaseEntity, IDataAccessCredentials, INa
     /// credentials are used e.g. <see cref="DataAccessContext.DataLoad"/>
     /// </summary>
     /// <returns></returns>
-    public Dictionary<DataAccessContext, List<ITableInfo>> GetAllTableInfosThatUseThis() =>
-        CatalogueRepository.TableInfoCredentialsManager.GetAllTablesUsingCredentials(this);
+    public Dictionary<DataAccessContext, List<ITableInfo>> GetAllTableInfosThatUseThis() => null;
+        //CatalogueDbContext.TableInfoCredentialsManager.GetAllTablesUsingCredentials(this);
 
     /// <inheritdoc/>
     public override string ToString() => Name;
@@ -154,8 +155,8 @@ public class DataAccessCredentials : DatabaseEntity, IDataAccessCredentials, INa
         return string.IsNullOrWhiteSpace(p) ? string.IsNullOrWhiteSpace(password) : p.Equals(password);
     }
 
-    internal void SetRepository(RdmpDbContext catalogueDbContext)
+    internal void SetRepository(RDMPDbContext catalogueDbContext)
     {
-        _encryptedPasswordHost.SetRepository(repository);
+        _encryptedPasswordHost.SetRepository(catalogueDbContext);
     }
 }

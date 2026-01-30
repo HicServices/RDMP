@@ -86,7 +86,7 @@ public class ExecuteCommandCreateHoldoutLookup : BasicCommandExecution
         base.Execute();
 
         SelectOne(GetChooseCohortDialogArgs(),
-                    BasicActivator.RepositoryLocator.DataExportRepository,
+                    BasicActivator.RepositoryLocator.CatalogueDbContext,
                     out ExternalCohortTable ect);
         if (ect is null)
             return;

@@ -19,6 +19,7 @@ using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.Curation.Data.Remoting;
 using Rdmp.Core.Curation.DataHelper.RegexRedaction;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Repositories;
@@ -69,7 +70,7 @@ public abstract class Argument : DatabaseEntity, IArgument
         typeof(ICustomUIDrivenClass), typeof(EncryptedString),
 
         //special static argument type, always gets the same value never has a database persisted value
-        typeof(CatalogueRepository),
+        typeof(RDMPDbContext),
 
         //user must be IDemandToUseAPipeline<T>
         typeof(Pipeline)
@@ -119,8 +120,8 @@ public abstract class Argument : DatabaseEntity, IArgument
     }
 
     /// <inheritdoc/>
-    protected Argument(RdmpDbContext catalogueDbContext, DbDataReader dataReader)
-        : base(repository, dataReader)
+    protected Argument(RDMPDbContext catalogueDbContext, DbDataReader dataReader)
+        :base(catalogueDbContext, dataReader)
     {
     }
 
@@ -136,8 +137,8 @@ public abstract class Argument : DatabaseEntity, IArgument
         if (type.Equals(typeof(Type).ToString()))
             return string.IsNullOrWhiteSpace(value) ? null : (object)MEF.GetType(value);
 
-        if (type.Equals(typeof(CatalogueRepository).ToString()) || type.Equals(typeof(ICatalogueRepository).ToString()))
-            return Repository;
+        if (type.Equals(typeof(RDMPDbContext).ToString()) || type.Equals(typeof(RDMPDbContext).ToString()))
+            return CatalogueDbContext;
 
 
         //float?
@@ -192,7 +193,7 @@ public abstract class Argument : DatabaseEntity, IArgument
         if (typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(concreteType))
             try
             {
-                return Repository.GetObjectByID(concreteType, Convert.ToInt32(value));
+                return CatalogueDbContext.GetObjectByID(concreteType, Convert.ToInt32(value));
             }
             catch (KeyNotFoundException)
             {
@@ -207,7 +208,7 @@ public abstract class Argument : DatabaseEntity, IArgument
 
             if (typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(elementType))
             {
-                var genericArray = Repository.GetAllObjectsInIDList(elementType, ids).ToArray();
+                var genericArray = CatalogueDbContext.GetAllObjectsInIDList(elementType, ids).ToArray();
                 var typedArray = Array.CreateInstance(elementType, genericArray.Length);
 
                 for (var i = 0; i < genericArray.Length; i++)
@@ -220,7 +221,7 @@ public abstract class Argument : DatabaseEntity, IArgument
         if (typeof(IDictionary).IsAssignableFrom(concreteType)) return DeserializeDictionary(value, concreteType);
 
         if (type.Equals(typeof(EncryptedString).ToString()))
-            return new EncryptedString(CatalogueRepository) { Value = value };
+            return new EncryptedString(CatalogueDbContext) { Value = value };
 
         return type.Equals(typeof(CultureInfo).ToString())
             ? (object)new CultureInfo(value)
@@ -241,7 +242,7 @@ public abstract class Argument : DatabaseEntity, IArgument
             {
                 var t = MEF.GetType(concreteType.FullName);
 
-                result = (ICustomUIDrivenClass)ObjectConstructor.Construct(t, (ICatalogueRepository)Repository);
+                result = (ICustomUIDrivenClass)ObjectConstructor.Construct(t, CatalogueDbContext);
             }
             catch (Exception e)
             {
@@ -252,7 +253,7 @@ public abstract class Argument : DatabaseEntity, IArgument
 
             try
             {
-                result.RestoreStateFrom(value); //, (CatalogueRepository)Repository);
+                result.RestoreStateFrom(value); //, Repository);
             }
             catch (Exception e)
             {
@@ -361,7 +362,7 @@ public abstract class Argument : DatabaseEntity, IArgument
 
         if (o is string)
             return typeof(IEncryptedString).IsAssignableFrom(type)
-                ? new EncryptedString(CatalogueRepository)
+                ? new EncryptedString(CatalogueDbContext)
                 {
                     Value = o.ToString()
                 }.Value

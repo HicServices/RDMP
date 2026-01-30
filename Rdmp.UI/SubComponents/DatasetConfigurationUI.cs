@@ -24,7 +24,7 @@ public partial class DatasetConfigurationUI : DatsetConfigurationUI_Design, IRef
         base.SetDatabaseObject(activator, databaseObject);
         _common.Dataset = databaseObject;
 
-        var catalogues = databaseObject.CatalogueRepository
+        var catalogues = databaseObject.CatalogueDbContext
             .GetAllObjectsWhere<ColumnInfo>("Dataset_ID", databaseObject.ID).SelectMany(static ci => ci.CatalogueItems)
             .Select(static ci => ci.CatalogueName).Distinct().ToList();
         if(catalogues.Count < 1)

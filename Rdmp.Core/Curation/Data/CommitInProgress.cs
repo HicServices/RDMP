@@ -27,7 +27,7 @@ public class CommitInProgress : IDisposable
 
     private IRDMPPlatformRepositoryServiceLocator _locator;
     private List<IRepository> _repositories;
-    private ISerializer _serializer;
+    //private ISerializer _serializer;
 
     /// <summary>
     /// True when <see cref="TryFinish(IBasicActivateItems)"/> is confirmed to definitely be happening.  Controls
@@ -49,8 +49,8 @@ public class CommitInProgress : IDisposable
         _locator = locator;
 
         _repositories = _locator.GetAllRepositories().ToList();
-        _serializer = YamlRepository.CreateSerializer(_repositories.SelectMany(r => r.GetCompatibleTypes()).Distinct()
-        );
+        //_serializer = YamlCatalogueDbContext.CreateSerializer(_repositories.SelectMany(r => r.GetCompatibleTypes()).Distinct()
+        //);
 
         foreach (var repo in _repositories)
         {
@@ -62,8 +62,8 @@ public class CommitInProgress : IDisposable
                 repo.BeginNewTransaction();
         }
 
-        foreach (var t in settings.ObjectsToTrack)
-            originalStates.Add(t, new MementoInProgress(t, _serializer.Serialize(t)));
+        //foreach (var t in settings.ObjectsToTrack)
+        //    originalStates.Add(t, new MementoInProgress(t, _serializer.Serialize(t)));
     }
 
     private void Inserting(object sender, IMapsDirectlyToDatabaseTableEventArgs e)
@@ -111,10 +111,10 @@ public class CommitInProgress : IDisposable
         else
         {
             // an object we are not yet tracking has been deleted
-            originalStates.Add(e.Object, new MementoInProgress(e.Object, _serializer.Serialize(e.Object))
-            {
-                Type = MementoType.Delete
-            });
+            //originalStates.Add(e.Object, new MementoInProgress(e.Object, _serializer.Serialize(e.Object))
+            //{
+            //    Type = MementoType.Delete
+            //});
         }
     }
 
@@ -138,16 +138,16 @@ public class CommitInProgress : IDisposable
         foreach (var t in originalStates)
         {
             // serialize the current state on finishing into yaml (or use null for deleted objects)
-            var newYaml = t.Value.Type == MementoType.Delete ? null : _serializer.Serialize(t.Key);
+            //var newYaml = t.Value.Type == MementoType.Delete ? null : _serializer.Serialize(t.Key);
 
-            //something changed
-            if (newYaml != t.Value.OldYaml) changes.Add(t.Key, Tuple.Create(t.Value, newYaml));
+            ////something changed
+            //if (newYaml != t.Value.OldYaml) changes.Add(t.Key, Tuple.Create(t.Value, newYaml));
         }
 
         if (!changes.Any())
             // no changes so no need for a Commit
             return null;
-        var cataRepo = _locator.CatalogueRepository;
+        var cataRepo = _locator.CatalogueDbContext;
 
         var description = GetDescription(changes);
         var transaction = Guid.NewGuid();

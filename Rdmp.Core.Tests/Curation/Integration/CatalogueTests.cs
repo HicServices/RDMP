@@ -19,7 +19,7 @@ public class CatalogueTests : UnitTests
     public void Test_GetObjects_Catalogue()
     {
         var catalogueWithId = new Catalogue(Repository, "bob");
-        var catas = Repository.GetAllObjects<Catalogue>();
+        var catas = CatalogueDbContext.GetAllObjects<Catalogue>();
 
         Assert.That(catas, Is.Not.Empty);
 
@@ -55,7 +55,7 @@ public class CatalogueTests : UnitTests
         var expectedID = cata.ID;
 
         //find it and change its name
-        var catas = Repository.GetAllObjects<Catalogue>().ToArray();
+        var catas = CatalogueDbContext.GetAllObjects<Catalogue>().ToArray();
 
         foreach (var catalogue in catas)
             if (catalogue.ID == expectedID)
@@ -65,7 +65,7 @@ public class CatalogueTests : UnitTests
             }
 
         //find it again and see if its name has changed - then delete it so we don't pollute the db
-        var catasAfter = Repository.GetAllObjects<Catalogue>().ToArray();
+        var catasAfter = CatalogueDbContext.GetAllObjects<Catalogue>().ToArray();
 
         foreach (var catalogue in catasAfter)
             if (catalogue.ID == expectedID)
@@ -83,7 +83,7 @@ public class CatalogueTests : UnitTests
         var expectedID = cata.ID;
 
         //find it and change its name
-        var catas = Repository.GetAllObjects<Catalogue>().ToArray();
+        var catas = CatalogueDbContext.GetAllObjects<Catalogue>().ToArray();
 
         foreach (var catalogue in catas)
             if (catalogue.ID == expectedID)
@@ -127,7 +127,7 @@ public class CatalogueTests : UnitTests
 
 
         //find it again and see if it has changed - then delete it so we don't pollute the db
-        var catasAfter = Repository.GetAllObjects<Catalogue>().ToArray();
+        var catasAfter = CatalogueDbContext.GetAllObjects<Catalogue>().ToArray();
 
         foreach (var catalogue in catasAfter)
             if (catalogue.ID == expectedID)
@@ -178,7 +178,7 @@ public class CatalogueTests : UnitTests
     [Test]
     public void create_blankConstructorCatalogue_createsNewInDatabase()
     {
-        var before = Repository.GetAllObjects<Catalogue>().Length;
+        var before = CatalogueDbContext.GetAllObjects<Catalogue>().Length;
 
         var newCatalogue = new Catalogue(Repository, "fishing");
         var expectedID = newCatalogue.ID;
@@ -186,7 +186,7 @@ public class CatalogueTests : UnitTests
         Assert.That(expectedID, Is.GreaterThan(1));
 
 
-        var catasAfter = Repository.GetAllObjects<Catalogue>().ToArray();
+        var catasAfter = CatalogueDbContext.GetAllObjects<Catalogue>().ToArray();
         var after = catasAfter.Length;
 
         Assert.That(after - 1, Is.EqualTo(before));
@@ -205,7 +205,7 @@ public class CatalogueTests : UnitTests
     [Test]
     public void GetCatalogueWithID_InvalidID_throwsException()
     {
-        Assert.Throws<KeyNotFoundException>(() => Repository.GetObjectByID<Catalogue>(-1));
+        Assert.Throws<KeyNotFoundException>(() => CatalogueDbContext.GetObjectByID<Catalogue>(-1));
     }
 
     [Test]
@@ -325,7 +325,7 @@ public class CatalogueTests : UnitTests
             Assert.That(c.Folder, Is.EqualTo("\\research\\important"));
             c.SaveToDatabase();
 
-            var c2 = Repository.GetObjectByID<Catalogue>(c.ID);
+            var c2 = CatalogueDbContext.GetObjectByID<Catalogue>(c.ID);
             Assert.That(c2.Folder, Is.EqualTo("\\research\\important"));
         }
         finally

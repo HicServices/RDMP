@@ -77,7 +77,7 @@ public class CustomDataImportingTests : TestsRequiringAnExtractionConfiguration
             extraColumn, 10, extraColumn.SelectSQL);
 
         //get rid of any lingering joins
-        foreach (var j in CatalogueRepository.GetAllObjects<JoinInfo>())
+        foreach (var j in CatalogueDbContext.GetAllObjects<JoinInfo>())
             j.DeleteInDatabase();
 
         //add the ability to join the two tables in the query
@@ -154,7 +154,7 @@ public class CustomDataImportingTests : TestsRequiringAnExtractionConfiguration
         rootContainer.AddChild(filter);
 
         //get rid of any lingering joins
-        foreach (var j in CatalogueRepository.GetAllObjects<JoinInfo>())
+        foreach (var j in CatalogueDbContext.GetAllObjects<JoinInfo>())
             j.DeleteInDatabase();
 
         //add the ability to join the two tables in the query

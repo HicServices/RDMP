@@ -4,10 +4,11 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
+using NPOI.SS.Formula.Functions;
 using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using System;
+using System.Collections.Generic;
 
 namespace Rdmp.Core.Repositories;
 
@@ -16,9 +17,10 @@ namespace Rdmp.Core.Repositories;
 /// </summary>
 public class RepositoryProvider : IRDMPPlatformRepositoryServiceLocator
 {
-    public ICatalogueRepository CatalogueRepository { get; protected init; }
     public IDataExportRepository DataExportRepository { get; protected init; }
     public RDMPDbContext CatalogueDbContext { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public RDMPDbContext DataExportDbContext { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    RDMPDbContext RDMPDbContextServiceLocator.DataExportRepository { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
     /// <summary>
     /// Use when you have an already initialized set of repositories.  Sets up the class to fetch objects from the Catalogue/Data export databases only.
@@ -27,10 +29,10 @@ public class RepositoryProvider : IRDMPPlatformRepositoryServiceLocator
     /// 
     /// </summary>
     /// <param name="dataExportRepository"></param>
-    public RepositoryProvider(IDataExportRepository dataExportRepository)
+    public RepositoryProvider(RDMPDbContext dataExportRepository)
     {
-        CatalogueRepository = dataExportRepository.CatalogueRepository;
-        DataExportRepository = dataExportRepository;
+        //RDMPDbContext = dataExportCatalogueDbContext.RDMPDbContext;
+        //DataExportRepository = dataExportRepository;
     }
 
     protected RepositoryProvider()
@@ -62,13 +64,13 @@ public class RepositoryProvider : IRDMPPlatformRepositoryServiceLocator
     {
         var repoType = GetTypeByName(s, typeof(IRepository));
 
-        if (typeof(ICatalogueRepository).IsAssignableFrom(repoType))
-            return CatalogueRepository;
+        //if (typeof(RDMPDbContext).IsAssignableFrom(repoType))
+        //    return CatalogueDbContext;
 
         return typeof(IDataExportRepository).IsAssignableFrom(repoType)
             ? (IRepository)DataExportRepository
             : throw new NotSupportedException(
-                $"Did not know what instance of IRepository to use for IRepository Type '{repoType}' , expected it to either be CatalogueRepository or DataExportRepository");
+                $"Did not know what instance of IRepository to use for IRepository Type '{repoType}' , expected it to either be RDMPDbContext or DataExportRepository");
     }
 
     private static Type GetTypeByName(string s, Type expectedBaseClassType) => MEF.GetType(s, expectedBaseClassType) ??
@@ -78,27 +80,29 @@ public class RepositoryProvider : IRDMPPlatformRepositoryServiceLocator
     /// <inheritdoc/>
     public IMapsDirectlyToDatabaseTable GetObjectByID<T>(int value) where T : IMapsDirectlyToDatabaseTable
     {
-        if (CatalogueRepository.SupportsObjectType(typeof(T)))
-            return CatalogueRepository.GetObjectByID<T>(value);
-        return DataExportRepository.SupportsObjectType(typeof(T))
-            ? (IMapsDirectlyToDatabaseTable)DataExportRepository.GetObjectByID<T>(value)
-            : throw new ArgumentException(
-                $"Did not know what repository to use to fetch objects of Type '{typeof(T)}'");
+        return CatalogueDbContext.GetObjectByID<T>(value);
+        //if (CatalogueDbContext.SupportsObjectType(typeof(T)))
+        //    return CatalogueDbContext.GetObjectByID<T>(value);
+        //return CatalogueDbContext.SupportsObjectType(typeof(T))
+        //    ? (IMapsDirectlyToDatabaseTable)CatalogueDbContext.GetObjectByID<T>(value)
+        //    : throw new ArgumentException(
+        //        $"Did not know what repository to use to fetch objects of Type '{typeof(T)}'");
     }
 
     /// <inheritdoc/>
     public IMapsDirectlyToDatabaseTable GetObjectByID(Type t, int value)
     {
-        if (CatalogueRepository.SupportsObjectType(t))
-            return CatalogueRepository.GetObjectByID(t, value);
-        return DataExportRepository.SupportsObjectType(t)
-            ? DataExportRepository.GetObjectByID(t, value)
-            : throw new ArgumentException($"Did not know what repository to use to fetch objects of Type '{t}'");
+        return CatalogueDbContext.GetObjectByID(t, value);
+        //if (CatalogueDbContext.SupportsObjectType(t))
+        //    return CatalogueDbContext.GetObjectByID(t, value);
+        //return CatalogueDbContext.SupportsObjectType(t)
+        //    ? CatalogueDbContext.GetObjectByID(t, value)
+        //    : throw new ArgumentException($"Did not know what repository to use to fetch objects of Type '{t}'");
     }
 
     public virtual IEnumerable<IRepository> GetAllRepositories()
     {
-        yield return CatalogueRepository;
+        //yield return CatalogueDbContext;
 
         if (DataExportRepository != null)
             yield return DataExportRepository;

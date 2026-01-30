@@ -13,6 +13,7 @@ using System.Linq;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
@@ -171,8 +172,8 @@ public class ExtractableCohort : DatabaseEntity, IExtractableCohort, IInjectKnow
         ClearAllInjections();
     }
 
-    internal ExtractableCohort(IDataExportRepository repository, DbDataReader r)
-        : base(repository, r)
+    internal ExtractableCohort(RDMPDbContext catalogueDbContext, DbDataReader r)
+        :base(catalogueDbContext, r)
     {
         OverrideReleaseIdentifierSQL = r["OverrideReleaseIdentifierSQL"] as string;
         OriginID = Convert.ToInt32(r["OriginID"]);
@@ -223,22 +224,22 @@ where
     /// Creates a new cohort reference in the data export database.  This must resolve (via <paramref name="originalId"/>) to
     /// a row in the external cohort database (<paramref name="externalSource"/>).
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="externalSource"></param>
     /// <param name="originalId"></param>
-    public ExtractableCohort(IDataExportRepository repository, ExternalCohortTable externalSource, int originalId)
+    public ExtractableCohort(RDMPDbContext catalogueDbContext, ExternalCohortTable externalSource, int originalId)
     {
-        Repository = repository;
+       CatalogueDbContext = catalogueDbContext;
 
         if (!externalSource.IDExistsInCohortTable(originalId))
             throw new Exception(
                 $"ID {originalId} does not exist in Cohort Definitions (Referential Integrity Problem)");
 
-        Repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "OriginID", originalId },
-            { "ExternalCohortTable_ID", externalSource.ID }
-        });
+        //CatalogueDbContext.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "OriginID", originalId },
+        //    { "ExternalCohortTable_ID", externalSource.ID }
+        //});
 
         ClearAllInjections();
     }
@@ -595,7 +596,7 @@ where
     {
         _cacheData = new Lazy<IExternalCohortDefinitionData>(() => GetExternalData());
         _knownExternalCohortTable =
-            new Lazy<IExternalCohortTable>(() => Repository.GetObjectByID<ExternalCohortTable>(ExternalCohortTable_ID));
+            new Lazy<IExternalCohortTable>(() => CatalogueDbContext.GetObjectByID<ExternalCohortTable>(ExternalCohortTable_ID));
         _broken = false;
     }
 
@@ -607,5 +608,5 @@ where
 
     /// <inheritdoc/>
     public IHasDependencies[] GetObjectsDependingOnThis() =>
-        Repository.GetAllObjectsWhere<ExtractionConfiguration>("Cohort_ID ", ID);
+        CatalogueDbContext.GetAllObjectsWhere<ExtractionConfiguration>("Cohort_ID ", ID).ToArray();
 }

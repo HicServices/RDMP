@@ -8,8 +8,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
@@ -31,55 +33,55 @@ public class LinkedRepositoryProvider : RepositoryProvider
 
     public LinkedRepositoryProvider(string catalogueConnectionString, string dataExportConnectionString)
     {
-        try
-        {
-            CatalogueRepository = string.IsNullOrWhiteSpace(catalogueConnectionString)
-                ? null
-                : new CatalogueRepository(new SqlConnectionStringBuilder(catalogueConnectionString));
-        }
-        catch (SourceCodeNotFoundException ex)
-        {
-            throw new Exception("There was a problem with the Catalogue connection string", ex);
-        }
+        //try
+        //{
+        //    RDMPDbContext = string.IsNullOrWhiteSpace(catalogueConnectionString)
+        //        ? null
+        //        : new RDMPDbContext(new DbContextOptions());// { new SqlConnectionStringBuilder(catalogueConnectionString));
+        //}
+        //catch (SourceCodeNotFoundException ex)
+        //{
+        //    throw new Exception("There was a problem with the Catalogue connection string", ex);
+        //}
 
-        try
-        {
-            DataExportRepository = string.IsNullOrWhiteSpace(dataExportConnectionString)
-                ? null
-                : new DataExportRepository(new SqlConnectionStringBuilder(dataExportConnectionString),
-                    CatalogueRepository);
-        }
-        catch (Exception)
-        {
-            DataExportRepository = null;
-            throw;
-        }
+        //try
+        //{
+        //    DataExportRepository = string.IsNullOrWhiteSpace(dataExportConnectionString)
+        //        ? null
+        //        : new DataExportRepository(new SqlConnectionStringBuilder(dataExportConnectionString),
+        //            RDMPDbContext);
+        //}
+        //catch (Exception)
+        //{
+        //    DataExportRepository = null;
+        //    throw;
+        //}
 
-        if (CatalogueRepository != null)
+        if (CatalogueDbContext != null)
             ConfigureObscureDependencies();
     }
 
     /// <summary>
-    /// Call once if the <see cref="CatalogueRepository"/> and <see cref="DataExportRepository"/> are new (not existing already).  This will populate the
-    /// <see cref="TableRepository.ObscureDependencyFinder"/> with appropriate cross database runtime constraints.
+    /// Call once if the <see cref="RDMPDbContext"/> and <see cref="DataExportRepository"/> are new (not existing already).  This will populate the
+    /// with appropriate cross database runtime constraints.
     /// </summary>
     private void ConfigureObscureDependencies()
     {
         //get the catalogues obscure dependency finder
-        var finder = (CatalogueObscureDependencyFinder)CatalogueRepository.ObscureDependencyFinder;
+        //var finder = (CatalogueObscureDependencyFinder)CatalogueDbContext.ObscureDependencyFinder;
 
-        finder.AddOtherDependencyFinderIfNotExists<BetweenCatalogueAndDataExportObscureDependencyFinder>(this);
-        finder.AddOtherDependencyFinderIfNotExists<ValidationXMLObscureDependencyFinder>(this);
-        finder.AddOtherDependencyFinderIfNotExists<ObjectSharingObscureDependencyFinder>(this);
+        //finder.AddOtherDependencyFinderIfNotExists<BetweenCatalogueAndDataExportObscureDependencyFinder>(this);
+        //finder.AddOtherDependencyFinderIfNotExists<ValidationXMLObscureDependencyFinder>(this);
+        //finder.AddOtherDependencyFinderIfNotExists<ObjectSharingObscureDependencyFinder>(this);
 
-        if (DataExportRepository == null)
-            return;
+        //if (DataExportRepository == null)
+        //    return;
 
-        if (DataExportRepository.ObscureDependencyFinder == null)
-            DataExportRepository.ObscureDependencyFinder = new ObjectSharingObscureDependencyFinder(this);
-        else if (DataExportRepository.ObscureDependencyFinder is not ObjectSharingObscureDependencyFinder)
-            throw new Exception(
-                "Expected DataExportRepository.ObscureDependencyFinder to be an ObjectSharingObscureDependencyFinder");
+        //if (CatalogueDbContext.ObscureDependencyFinder == null)
+        //    CatalogueDbContext.ObscureDependencyFinder = new ObjectSharingObscureDependencyFinder(this);
+        //else if (CatalogueDbContext.ObscureDependencyFinder is not ObjectSharingObscureDependencyFinder)
+        //    throw new Exception(
+        //        "Expected CatalogueDbContext.ObscureDependencyFinder to be an ObjectSharingObscureDependencyFinder");
     }
 
     protected override IRepository GetRepository(string s)
@@ -114,7 +116,7 @@ public class LinkedRepositoryProvider : RepositoryProvider
     {
         LoadPluginRepositoryFindersIfNotLoaded();
 
-        yield return CatalogueRepository;
+        //yield return CatalogueDbContext;
 
         if (DataExportRepository != null)
             yield return DataExportRepository;

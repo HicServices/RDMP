@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.IO;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Repositories;
@@ -76,21 +77,21 @@ public class GovernanceDocument : DatabaseEntity, INamed
     /// <summary>
     /// Marks a given <paramref name="file"/> as being important in the obtaining of the <paramref name="parent"/> <see cref="GovernancePeriod"/>
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="parent"></param>
     /// <param name="file"></param>
-    public GovernanceDocument(RdmpDbContext catalogueDbContext, GovernancePeriod parent, FileInfo file)
+    public GovernanceDocument(RDMPDbContext catalogueDbContext, GovernancePeriod parent, FileInfo file)
     {
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "GovernancePeriod_ID", parent.ID },
-            { "URL", file.FullName },
-            { "Name", file.Name }
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "GovernancePeriod_ID", parent.ID },
+        //    { "URL", file.FullName },
+        //    { "Name", file.Name }
+        //});
     }
 
-    internal GovernanceDocument(RdmpDbContext catalogueDbContext, DbDataReader r)
-        : base(repository, r)
+    internal GovernanceDocument(RDMPDbContext catalogueDbContext, DbDataReader r)
+        :base(catalogueDbContext, r)
     {
         //cannot be null
         Name = r["Name"].ToString();

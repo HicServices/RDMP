@@ -51,7 +51,7 @@ public class PipelineTests : DatabaseTests
                     argument2.SetValue(dt);
                     argument2.SaveToDatabase();
 
-                    var argument2Copy = CatalogueRepository.GetObjectByID<PipelineComponentArgument>(argument2.ID);
+                    var argument2Copy = CatalogueDbContext.GetObjectByID<PipelineComponentArgument>(argument2.ID);
                     Assert.That(argument2Copy.GetValueAsSystemType(), Is.EqualTo(dt));
                 }
                 finally

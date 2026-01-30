@@ -53,7 +53,7 @@ public class ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration
 
             if (chosen)
             {
-                _cohort = SelectOne<ExtractableCohort>(BasicActivator.RepositoryLocator.DataExportRepository);
+                _cohort = SelectOne<ExtractableCohort>(BasicActivator.RepositoryLocator.CatalogueDbContext);
 
                 if (_cohort == null)
                     return;
@@ -63,7 +63,7 @@ public class ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration
             if (externalData != null)
             {
                 var projNumber = externalData.ExternalProjectNumber;
-                var projs = BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>()
+                var projs = BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Project>()
                     .Where(p => p.ProjectNumber == projNumber).ToArray();
                 if (projs.Length == 1)
                     ProjectSpecific = projs[0];

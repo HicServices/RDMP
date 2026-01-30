@@ -35,13 +35,13 @@ internal class DitaExtractorTests : DatabaseTests
             var random = new Random();
 
             //delete all catalogues with duplicate names
-            var catalogues = CatalogueRepository.GetAllObjects<Catalogue>().ToArray();
+            var catalogues = CatalogueDbContext.GetAllObjects<Catalogue>().ToArray();
 
             foreach (var cata in catalogues.GroupBy(c => c.Name).Where(g => g.Count() > 1).SelectMany(y => y))
                 cata.DeleteInDatabase();
 
             //make sure all Catalogues have acronyms, if they don't then assign them a super random one
-            foreach (var cata in CatalogueRepository.GetAllObjects<Catalogue>()
+            foreach (var cata in CatalogueDbContext.GetAllObjects<Catalogue>()
                          .Where(c => string.IsNullOrWhiteSpace(c.Acronym)))
             {
                 cata.Acronym = $"RANDOMACRONYM_{random.Next(10000)}";
@@ -73,7 +73,7 @@ internal class DitaExtractorTests : DatabaseTests
         var testDir = _directoryHelper.Directory;
 
         //get rid of any old copies lying around
-        var oldCatalogueVersion = CatalogueRepository.GetAllObjects<Catalogue>()
+        var oldCatalogueVersion = CatalogueDbContext.GetAllObjects<Catalogue>()
             .SingleOrDefault(c => c.Name.Equals("DitaExtractorConstructor_ExtractTestCatalogue_FilesExist"));
         oldCatalogueVersion?.DeleteInDatabase();
 

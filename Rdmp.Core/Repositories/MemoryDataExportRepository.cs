@@ -10,18 +10,19 @@ using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataRelease.Audit;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Repositories.Managers;
 
 namespace Rdmp.Core.Repositories;
 
 /// <summary>
-/// Memory only implementation of <see cref="IDataExportRepository"/>.  Also implements <see cref="ICatalogueRepository"/>.  All objects are created in
+/// Memory only implementation of <see cref="IDataExportRepository"/>.  Also implements <see cref="RDMPDbContext"/>.  All objects are created in
 /// dictionaries and arrays in memory instead of the database.
 /// </summary>
-public class MemoryDataExportRepository : MemoryCatalogueRepository, IDataExportRepository, IDataExportPropertyManager,
+public class MemoryDataExportRepository : MemoryRDMPDbContext, IDataExportRepository, IDataExportPropertyManager,
     IExtractableDataSetPackageManager
 {
-    public ICatalogueRepository CatalogueRepository => this;
+    public RDMPDbContext CatalogueDbContext { get; }
     public IDataExportPropertyManager DataExportPropertyManager => this;
     public IExtractableDataSetPackageManager PackageManager => this;
 

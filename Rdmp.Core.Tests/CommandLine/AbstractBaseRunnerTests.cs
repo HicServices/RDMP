@@ -24,7 +24,7 @@ public class AbstractBaseRunnerTests : UnitTests
     [SetUp]
     public void CleanRemnants()
     {
-        foreach (var o in Repository.GetAllObjectsInDatabase())
+        foreach (var o in CatalogueDbContext.GetAllObjectsInDatabase())
             o.DeleteInDatabase();
     }
 

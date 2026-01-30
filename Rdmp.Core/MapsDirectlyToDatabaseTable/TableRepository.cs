@@ -92,7 +92,7 @@ public abstract class TableRepository : ITableRepository
                 cmd.ExecuteNonQuery();
             }
 
-            //likewise if there are obscure dependency handlers let them handle cascading this delete into the mists of their obscure functionality (e.g. deleting a Catalogue in CatalogueRepository would delete all Evaluations of that Catalogue in the DQE repository because they would then be orphans)
+            //likewise if there are obscure dependency handlers let them handle cascading this delete into the mists of their obscure functionality (e.g. deleting a Catalogue in RDMPDbContext would delete all Evaluations of that Catalogue in the DQE repository because they would then be orphans)
             ObscureDependencyFinder?.HandleCascadeDeletesForDeletedObject(oTableWrapperObject);
         }
 
@@ -382,7 +382,7 @@ public abstract class TableRepository : ITableRepository
                 "Why are you comparing two null things against one another with this method?");
 
         return obj1.GetType() == obj2.GetType() && obj1.ID == ((IMapsDirectlyToDatabaseTable)obj2).ID &&
-               obj1.Repository == ((IMapsDirectlyToDatabaseTable)obj2).Repository;
+               obj1.CatalogueDbContext == ((IMapsDirectlyToDatabaseTable)obj2).CatalogueDbContext;
     }
 
     /// <inheritdoc/>
@@ -655,11 +655,11 @@ public abstract class TableRepository : ITableRepository
 
         var actual = GetObjectByID<T>(id);
 
-        //.Repository does not get included in this list because it is [NoMappingToDatabase]
+        //.CatalogueDbContext does not get included in this list because it is [NoMappingToDatabase]
         foreach (var prop in GetPropertyInfos(typeof(T)))
             prop.SetValue(toCreate, prop.GetValue(actual));
 
-        toCreate.Repository = actual.Repository;
+        toCreate.CatalogueDbContext = actual.CatalogueDbContext;
 
         NewObjectPool.Add(toCreate);
 

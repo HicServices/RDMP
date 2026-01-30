@@ -14,6 +14,7 @@ using System.Data;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.EntityFramework;
 
 namespace Rdmp.Core.Curation.DataHelper.RegexRedaction
 {
@@ -111,29 +112,29 @@ namespace Rdmp.Core.Curation.DataHelper.RegexRedaction
             redactionUpates.ImportRow(match);
         }
 
-        public static void SaveRedactions(ICatalogueRepository catalogueRepo, DiscoveredTable pksToSave, DiscoveredTable redactionsToSaveTable, DiscoveredServer _server, int timeout = 30000)
+        public static void SaveRedactions(RDMPDbContext catalogueRepo, DiscoveredTable pksToSave, DiscoveredTable redactionsToSaveTable, DiscoveredServer _server, int timeout = 30000)
         {
-            var sql = $@"
-                DECLARE @output TABLE (id1 int, inc int IDENTITY(1,1))
-                INSERT INTO RegexRedaction(RedactionConfiguration_ID,ColumnInfo_ID,StartingIndex,ReplacementValue,RedactedValue) OUTPUT inserted.ID as id1 INTO @output
-                SELECT RedactionConfiguration_ID,ColumnInfo_ID,StartingIndex,ReplacementValue,RedactedValue FROM {redactionsToSaveTable.GetFullyQualifiedName()};
+    //        var sql = $@"
+    //            DECLARE @output TABLE (id1 int, inc int IDENTITY(1,1))
+    //            INSERT INTO RegexRedaction(RedactionConfiguration_ID,ColumnInfo_ID,StartingIndex,ReplacementValue,RedactedValue) OUTPUT inserted.ID as id1 INTO @output
+    //            SELECT RedactionConfiguration_ID,ColumnInfo_ID,StartingIndex,ReplacementValue,RedactedValue FROM {redactionsToSaveTable.GetFullyQualifiedName()};
 				
-				DECLARE @IDMATCHER TABLE (RegexRedaction_ID int,ColumnInfo_ID int ,Value varchar(max),ID int , id1 int , inc int)
-				insert into @IDMATCHER(RegexRedaction_ID, ColumnInfo_ID,Value,ID,id1,inc)
-				select RegexRedaction_ID, ColumnInfo_ID,Value,ID,id1,inc
-				FROM {pksToSave.GetFullyQualifiedName()} as t1
-				JOIN @output as t2 ON t1.RegexRedaction_ID+1 = t2.inc
-				where t1.RegexRedaction_ID+1 = t2.inc;
+				//DECLARE @IDMATCHER TABLE (RegexRedaction_ID int,ColumnInfo_ID int ,Value varchar(max),ID int , id1 int , inc int)
+				//insert into @IDMATCHER(RegexRedaction_ID, ColumnInfo_ID,Value,ID,id1,inc)
+				//select RegexRedaction_ID, ColumnInfo_ID,Value,ID,id1,inc
+				//FROM {pksToSave.GetFullyQualifiedName()} as t1
+				//JOIN @output as t2 ON t1.RegexRedaction_ID+1 = t2.inc
+				//where t1.RegexRedaction_ID+1 = t2.inc;
 
-				update @IDMATCHER
-				set RegexRedaction_ID = id1
-				where RegexRedaction_ID+1 = inc;
+				//update @IDMATCHER
+				//set RegexRedaction_ID = id1
+				//where RegexRedaction_ID+1 = inc;
 
-                INSERT INTO RegexRedactionKey(RegexRedaction_ID,ColumnInfo_ID,Value)
-			    select RegexRedaction_ID,ColumnInfo_ID,Value  FROM @IDMATCHER;
-            ";
+    //            INSERT INTO RegexRedactionKey(RegexRedaction_ID,ColumnInfo_ID,Value)
+			 //   select RegexRedaction_ID,ColumnInfo_ID,Value  FROM @IDMATCHER;
+    //        ";
            
-                (catalogueRepo as TableRepository).Insert(sql, null, timeout);
+    //            (catalogueRepo as TableRepository).Insert(sql, null, timeout);
         }
 
         public static void DoJoinUpdate(ColumnInfo column, DiscoveredTable _discoveredTable, DiscoveredServer _server, DataTable redactionUpates, DiscoveredColumn[] _discoveredPKColumns, int timeout = 30000)

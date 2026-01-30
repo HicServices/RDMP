@@ -61,7 +61,7 @@ public class CohortCompiler
     /// </summary>
     public ICoreChildProvider CoreChildProvider
     {
-        get => _coreChildProvider ??= new CatalogueChildProvider(CohortIdentificationConfiguration.CatalogueRepository,
+        get => _coreChildProvider ??= new CatalogueChildProvider(CohortIdentificationConfiguration.CatalogueDbContext,
             null, IgnoreAllErrorsCheckNotifier.Instance, null);
         set => _coreChildProvider = value;
     }

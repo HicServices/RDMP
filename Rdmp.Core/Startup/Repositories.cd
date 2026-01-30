@@ -3,11 +3,11 @@
   <Comment CommentText="Obscure Dependencies are mostly about preventing the user from deleting stuff that is being used by other parts of the system that cannot be enforced with database logic (e.g. prevent deleting a Catalogue when it has been used for extraction configurations in Data Export database).  Also it handles cross database CASCADES e.g. when you delete a catalogue, delete all DQE evaluations of that Catalogue.">
     <Position X="4.991" Y="9.434" Height="1.273" Width="4.111" />
   </Comment>
-  <Class Name="Rdmp.Core.Repositories.CatalogueRepository" Collapsed="true">
+  <Class Name="Rdmp.Core.Repositories.RDMPDbContext" Collapsed="true">
     <Position X="0.5" Y="6.5" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAwgogAZICAAABJAAAABEAQAAAAAYAAAACAAA=</HashCode>
-      <FileName>Repositories\CatalogueRepository.cs</FileName>
+      <FileName>Repositories\CatalogueDbContext.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
@@ -23,10 +23,10 @@
     <Position X="5" Y="6.25" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAoEAABEAEABAIAAgAAAAAAAAAAAAAAACAAA=</HashCode>
-      <FileName>Repositories\DataExportRepository.cs</FileName>
+      <FileName>Repositories\CatalogueDbContext.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
-      <Property Name="CatalogueRepository" />
+      <Property Name="RDMPDbContext" />
     </ShowAsAssociation>
     <Lollipop Position="0.2" />
   </Class>
@@ -46,11 +46,11 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="Rdmp.Core.Repositories.MemoryCatalogueRepository" Collapsed="true">
+  <Class Name="Rdmp.Core.Repositories.MemoryRDMPDbContext" Collapsed="true">
     <Position X="10" Y="12.75" Width="2.25" />
     <TypeIdentifier>
       <HashCode>EFYKCgCEwT+jk5YCABCBRAEIEBEAQAAUYCZEQARCAEI=</HashCode>
-      <FileName>Repositories\MemoryCatalogueRepository.cs</FileName>
+      <FileName>Repositories\MemoryCatalogueDbContext.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
@@ -107,7 +107,7 @@
       <FileName>Startup\LinkedRepositoryProvider.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Rdmp.Core.Repositories.RepositoryProvider" Collapsed="true">
+  <Class Name="Rdmp.Core.Repositories.CatalogueDbContextProvider" Collapsed="true">
     <Position X="11.75" Y="2" Width="2.5" />
     <TypeIdentifier>
       <HashCode>IAACCAAAAABAAAAAUAAQAAAAAAAABAAAAAAAAAABAAA=</HashCode>
@@ -134,7 +134,7 @@
       <FileName>Repositories\IRDMPPlatformRepositoryServiceLocator.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="Rdmp.Core.Repositories.ICatalogueRepository">
+  <Interface Name="Rdmp.Core.Repositories.RDMPDbContext">
     <Position X="10" Y="7" Width="2.25" />
     <AssociationLine Name="GovernanceManager" Type="Rdmp.Core.Repositories.Managers.IGovernanceManager" FixedFromPoint="true" FixedToPoint="true">
       <Path>
@@ -164,7 +164,7 @@
     </AssociationLine>
     <TypeIdentifier>
       <HashCode>AAAAAgCEwAogAZICAAABAAAAABEAQAAAAAYAAAACAAA=</HashCode>
-      <FileName>Repositories\ICatalogueRepository.cs</FileName>
+      <FileName>Repositories\ICatalogueDbContext.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="GovernanceManager" />

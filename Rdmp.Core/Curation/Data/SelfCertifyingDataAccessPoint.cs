@@ -8,6 +8,7 @@ using System;
 using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
@@ -31,7 +32,7 @@ public class SelfCertifyingDataAccessPoint : EncryptedPasswordHost, IDataAccessC
     }
 
     /// <inheritdoc cref="SelfCertifyingDataAccessPoint"/>
-    public SelfCertifyingDataAccessPoint(RdmpDbContext catalogueDbContext, DatabaseType databaseType) : base(repository)
+    public SelfCertifyingDataAccessPoint(RDMPDbContext catalogueDbContext, DatabaseType databaseType) : base(catalogueDbContext)
     {
         DatabaseType = databaseType;
     }

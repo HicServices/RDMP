@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Repositories;
 using System;
 using System.Collections.Generic;
@@ -27,17 +28,17 @@ public class RegexRedactionKey : DatabaseEntity, IRegexRedactionKey
 
     public RegexRedactionKey() { }
 
-    public RegexRedactionKey(RdmpDbContext catalogueDbContext, RegexRedaction redaction, ColumnInfo pkColumn, string value)
+    public RegexRedactionKey(RDMPDbContext catalogueDbContext, RegexRedaction redaction, ColumnInfo pkColumn, string value)
     {
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            {"RegexRedaction_ID", redaction.ID },
-            {"ColumnInfo_ID", pkColumn.ID },
-            {"Value", value },
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    {"RegexRedaction_ID", redaction.ID },
+        //    {"ColumnInfo_ID", pkColumn.ID },
+        //    {"Value", value },
+        //});
     }
 
-    internal RegexRedactionKey(RdmpDbContext catalogueDbContext, DbDataReader r) : base(repository, r)
+    internal RegexRedactionKey(RDMPDbContext catalogueDbContext, DbDataReader r) : base(catalogueDbContext, r)
     {
         _redaction = Int32.Parse(r["RegexRedaction_ID"].ToString());
         _columnInfo = Int32.Parse(r["ColumnInfo_ID"].ToString());

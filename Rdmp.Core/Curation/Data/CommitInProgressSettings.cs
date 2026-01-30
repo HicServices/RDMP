@@ -30,7 +30,7 @@ public class CommitInProgressSettings
     public string Description { get; set; }
 
     /// <summary>
-    /// Set to true to use <see cref="IRepository.BeginNewTransaction"/> to allow cancellation unwinding.
+    /// Set to true to use  to allow cancellation unwinding.
     /// DO NOT use this if you intend for <see cref="CommitInProgress"/> to lie around for a long time
     /// e.g. in a user interface tab
     /// </summary>

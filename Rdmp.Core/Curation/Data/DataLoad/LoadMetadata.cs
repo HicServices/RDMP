@@ -15,6 +15,7 @@ using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Serialization;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Logging.PastEvents;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
@@ -204,12 +205,12 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     /// <inheritdoc/>
     [NoMappingToDatabase]
     public ExternalDatabaseServer OverrideRAWServer => OverrideRAWServer_ID.HasValue
-        ? Repository.GetObjectByID<ExternalDatabaseServer>(OverrideRAWServer_ID.Value)
+        ? CatalogueDbContext.GetObjectByID<ExternalDatabaseServer>(OverrideRAWServer_ID.Value)
         : null;
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public ILoadProgress[] LoadProgresses => Repository.GetAllObjectsWithParent<LoadProgress>(this);
+    public ILoadProgress[] LoadProgresses => CatalogueDbContext.GetAllObjectsWithParent<LoadProgress>(this);
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
@@ -218,7 +219,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         get
         {
             return
-                Repository.GetAllObjectsWithParent<ProcessTask>(this).Cast<IProcessTask>().OrderBy(pt => pt.Order);
+                CatalogueDbContext.GetAllObjectsWithParent<ProcessTask>(this).Cast<IProcessTask>().OrderBy(pt => pt.Order);
         }
     }
 
@@ -233,24 +234,24 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     /// 
     /// <para>To set the loaded tables, set <see cref="Catalogue.LoadMetadatas"/> on some of your datasets</para>
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="name"></param>
     /// <param name="rootLoadMetadata"></param>
-    public LoadMetadata(RdmpDbContext catalogueDbContext, string name = null, LoadMetadata rootLoadMetadata = null)
+    public LoadMetadata(RDMPDbContext catalogueDbContext, string name = null, LoadMetadata rootLoadMetadata = null)
     {
         name ??= $"NewLoadMetadata{Guid.NewGuid()}";
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "Name", name },
-            { "IgnoreTrigger", false /*todo could be system global default here*/ },
-            { "Folder", FolderHelper.Root },
-            {"LastLoadTime", null },
-            {"RootLoadMetadata_ID", rootLoadMetadata is null? null: rootLoadMetadata.ID }
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "Name", name },
+        //    { "IgnoreTrigger", false /*todo could be system global default here*/ },
+        //    { "Folder", FolderHelper.Root },
+        //    {"LastLoadTime", null },
+        //    {"RootLoadMetadata_ID", rootLoadMetadata is null? null: rootLoadMetadata.ID }
+        //});
     }
 
-    internal LoadMetadata(RdmpDbContext catalogueDbContext, DbDataReader r)
-        : base(repository, r)
+    internal LoadMetadata(RDMPDbContext catalogueDbContext, DbDataReader r)
+        :base(catalogueDbContext, r)
     {
         LocationOfForLoadingDirectory = r["LocationOfForLoadingDirectory"].ToString();
         LocationOfForArchivingDirectory = r["LocationOfForArchivingDirectory"].ToString();
@@ -272,7 +273,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
 
     public LoadMetadata Clone()
     {
-        var lmd = new LoadMetadata(CatalogueRepository, Name)
+        var lmd = new LoadMetadata(CatalogueDbContext, Name)
         {
             LocationOfForLoadingDirectory = LocationOfForLoadingDirectory,
             LocationOfForArchivingDirectory = LocationOfForArchivingDirectory,
@@ -295,7 +296,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
             lmd.LinkToCatalogue(catalogue);
         }
         //process task
-        var pts = CatalogueRepository.GetAllObjectsWhere<ProcessTask>("LoadMetadata_ID", ID);
+        var pts = CatalogueDbContext.GetAllObjectsWhere<ProcessTask>("LoadMetadata_ID", ID);
         foreach (ProcessTask pt in pts)
         {
             pt.Clone(lmd);
@@ -310,13 +311,13 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
 
     public void LinkToCatalogue(ICatalogue catalogue)
     {
-        var linkage = new LoadMetadataCatalogueLinkage(CatalogueRepository, this, catalogue);
+        var linkage = new LoadMetadataCatalogueLinkage(CatalogueDbContext, this, catalogue);
         linkage.SaveToDatabase();
     }
 
     public void UnlinkFromCatalogue(ICatalogue catalogue)
     {
-        foreach (var l in CatalogueRepository.GetAllObjects<LoadMetadataCatalogueLinkage>().Where(link => link.CatalogueID == catalogue.ID && link.LoadMetadataID == ID))
+        foreach (var l in CatalogueDbContext.GetAllObjects<LoadMetadataCatalogueLinkage>().Where(link => link.CatalogueID == catalogue.ID && link.LoadMetadataID == ID))
         {
             l.DeleteInDatabase();
         }
@@ -331,14 +332,14 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
             throw new Exception(
                 $"This load is used by {firstOrDefault.Name} so cannot be deleted (Disassociate it first)");
 
-        var versions = Repository.GetAllObjectsWhere<LoadMetadata>("RootLoadMetadata_ID", ID);
+        var versions = CatalogueDbContext.GetAllObjectsWhere<LoadMetadata>("RootLoadMetadata_ID", ID);
         foreach (var version in versions)
         {
             version.DeleteInDatabase();
         }
         if (RootLoadMetadata_ID != null)
         {
-            var catalogueLinkIDs = Repository.GetAllObjectsWhere<LoadMetadataCatalogueLinkage>("LoadMetadataID", ID);
+            var catalogueLinkIDs = CatalogueDbContext.GetAllObjectsWhere<LoadMetadataCatalogueLinkage>("LoadMetadataID", ID);
             foreach (var link in catalogueLinkIDs)
             {
                 link.DeleteInDatabase();
@@ -355,8 +356,8 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     /// <inheritdoc/>
     public IEnumerable<ICatalogue> GetAllCatalogues()
     {
-        var catalogueLinkIDs = Repository.GetAllObjectsWhere<LoadMetadataCatalogueLinkage>("LoadMetadataID", ID).Select(l => l.CatalogueID);
-        return Repository.GetAllObjects<Catalogue>().Where(cat => catalogueLinkIDs.Contains(cat.ID));
+        var catalogueLinkIDs = CatalogueDbContext.GetAllObjectsWhere<LoadMetadataCatalogueLinkage>("LoadMetadataID", ID).Select(l => l.CatalogueID);
+        return CatalogueDbContext.GetAllObjects<Catalogue>().Where(cat => catalogueLinkIDs.Contains(cat.ID));
     }
 
     /// <inheritdoc cref="GetDistinctLoggingDatabase()"/>
@@ -473,7 +474,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
 
         if (catalogue.LiveLoggingServer_ID == null)
         {
-            loggingServer = CatalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
+            loggingServer = CatalogueDbContext.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
 
             if (loggingServer != null)
                 catalogue.LiveLoggingServer_ID = loggingServer.ID;
@@ -483,7 +484,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         }
         else
         {
-            loggingServer = Repository.GetObjectByID<ExternalDatabaseServer>(catalogue.LiveLoggingServer_ID.Value);
+            loggingServer = CatalogueDbContext.GetObjectByID<ExternalDatabaseServer>(catalogue.LiveLoggingServer_ID.Value);
         }
 
         //if there's no logging task yet and there's a logging server
@@ -517,8 +518,9 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
 
     public static bool UsesPersistentRaw(ILoadMetadata loadMetadata)
     {
-        return loadMetadata.CatalogueRepository.GetExtendedProperties(ExtendedProperty.PersistentRaw,
-            loadMetadata).Any(p => p.Value == "true");
+        //return loadMetadata.CatalogueDbContext.GetExtendedProperties(ExtendedProperty.PersistentRaw,
+        //    loadMetadata).Any(p => p.Value == "true");
+        return false;
     }
 
 

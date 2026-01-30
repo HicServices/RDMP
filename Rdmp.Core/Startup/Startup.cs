@@ -17,6 +17,7 @@ using FAnsi.Implementations.Oracle;
 using FAnsi.Implementations.PostgreSql;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Databases;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.Repositories;
@@ -123,7 +124,7 @@ public class Startup
 
         try
         {
-            var dataExportRepository = RepositoryLocator.DataExportRepository;
+            var dataExportRepository = RepositoryLocator.CatalogueDbContext;
 
             //not configured
             if (dataExportRepository == null)
@@ -147,10 +148,10 @@ public class Startup
             FindWithPatcher(patcher, notifier);
     }
 
-    private bool Find(IRepository repository, IPatcher patcher, ICheckNotifier notifier)
+    private bool Find(RDMPDbContext catalogueDbContext, IPatcher patcher, ICheckNotifier notifier)
     {
         //if it's not configured
-        if (repository == null)
+        if (catalogueDbContext == null)
         {
             DatabaseFound(this,
                 new PlatformDatabaseFoundEventArgs(null, patcher, RDMPPlatformDatabaseStatus.Unreachable));
@@ -158,52 +159,52 @@ public class Startup
         }
 
         // it's not a database we are getting this data from then assume it's good to go
-        if (repository is not ITableRepository tableRepository)
+        if (catalogueDbContext is not ITableRepository tableRepository)
             return true;
 
-        //check we can reach it
-        var db = tableRepository.DiscoveredServer.GetCurrentDatabase();
-        notifier.OnCheckPerformed(new CheckEventArgs($"Connecting to {db.GetRuntimeName()} on {db.Server.Name}",
-            CheckResult.Success));
+        ////check we can reach it
+        //var db = tableCatalogueDbContext.DiscoveredServer.GetCurrentDatabase();
+        //notifier.OnCheckPerformed(new CheckEventArgs($"Connecting to {db.GetRuntimeName()} on {db.Server.Name}",
+        //    CheckResult.Success));
 
-        //is it reachable
-        try
-        {
-            tableRepository.TestConnection();
-        }
-        catch (Exception ex)
-        {
-            //no
-            DatabaseFound(this,
-                new PlatformDatabaseFoundEventArgs(tableRepository, patcher, RDMPPlatformDatabaseStatus.Unreachable,
-                    ex));
-            return false;
-        }
+        ////is it reachable
+        //try
+        //{
+        //    tableCatalogueDbContext.TestConnection();
+        //}
+        //catch (Exception ex)
+        //{
+        //    //no
+        //    DatabaseFound(this,
+        //        new PlatformDatabaseFoundEventArgs(tableRepository, patcher, RDMPPlatformDatabaseStatus.Unreachable,
+        //            ex));
+        //    return false;
+        //}
 
 
-        try
-        {
-            //is it up-to-date on patches?
-            var patchingRequired = Patch.IsPatchingRequired(tableRepository.DiscoveredServer.GetCurrentDatabase(),
-                patcher, out _, out _, out _);
-            DatabaseFound(this,
-                new PlatformDatabaseFoundEventArgs(tableRepository, patcher, patchingRequired switch
-                {
-                    Patch.PatchingState.NotRequired => RDMPPlatformDatabaseStatus.Healthy,
-                    Patch.PatchingState.Required => SkipPatching
-                        ? RDMPPlatformDatabaseStatus.Healthy
-                        : RDMPPlatformDatabaseStatus.RequiresPatching,
-                    Patch.PatchingState.SoftwareBehindDatabase => RDMPPlatformDatabaseStatus.SoftwareOutOfDate,
-                    _ => throw new InvalidOperationException(nameof(patchingRequired))
-                }));
-        }
-        catch (Exception e)
-        {
-            //database is broken (maybe the version of the db is ahead of the host assembly?)
-            DatabaseFound(this,
-                new PlatformDatabaseFoundEventArgs(tableRepository, patcher, RDMPPlatformDatabaseStatus.Broken, e));
-            return false;
-        }
+        //try
+        //{
+        //    //is it up-to-date on patches?
+        //    var patchingRequired = Patch.IsPatchingRequired(tableCatalogueDbContext.DiscoveredServer.GetCurrentDatabase(),
+        //        patcher, out _, out _, out _);
+        //    DatabaseFound(this,
+        //        new PlatformDatabaseFoundEventArgs(tableRepository, patcher, patchingRequired switch
+        //        {
+        //            Patch.PatchingState.NotRequired => RDMPPlatformDatabaseStatus.Healthy,
+        //            Patch.PatchingState.Required => SkipPatching
+        //                ? RDMPPlatformDatabaseStatus.Healthy
+        //                : RDMPPlatformDatabaseStatus.RequiresPatching,
+        //            Patch.PatchingState.SoftwareBehindDatabase => RDMPPlatformDatabaseStatus.SoftwareOutOfDate,
+        //            _ => throw new InvalidOperationException(nameof(patchingRequired))
+        //        }));
+        //}
+        //catch (Exception e)
+        //{
+        //    //database is broken (maybe the version of the db is ahead of the host assembly?)
+        //    DatabaseFound(this,
+        //        new PlatformDatabaseFoundEventArgs(tableRepository, patcher, RDMPPlatformDatabaseStatus.Broken, e));
+        //    return false;
+        //}
 
         return true;
     }
@@ -220,7 +221,7 @@ public class Startup
                     .ExpectServer(server, DataAccessContext.InternalDataProcessing)
                     .Builder;
 
-                Find(new CatalogueRepository(builder), patcher, notifier);
+                //Find(new RDMPDbContext(builder), patcher, notifier);
             }
             catch (Exception e)
             {
@@ -237,9 +238,9 @@ public class Startup
     /// <summary>
     /// Load the plugins from the platform DB
     /// </summary>
-    /// <param name="catalogueRepository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="notifier"></param>
-    private static void LoadMEF(ICatalogueRepository catalogueRepository, ICheckNotifier notifier)
+    private static void LoadMEF(RDMPDbContext catalogueDbContext, ICheckNotifier notifier)
     {
         foreach (var (name, body) in LoadModuleAssembly.PluginFiles().SelectMany(LoadModuleAssembly.GetContents))
             try
@@ -257,11 +258,11 @@ public class Startup
                 body.Dispose();
             }
 
-        if (CatalogueRepository.SuppressHelpLoading) return;
+        //if (CatalogueDbContext.SuppressHelpLoading) return;
 
         notifier.OnCheckPerformed(new CheckEventArgs("Loading Help...", CheckResult.Success));
         var sw = Stopwatch.StartNew();
-        catalogueRepository.CommentStore.ReadComments("SourceCodeForSelfAwareness.zip");
+        //catalogueCatalogueDbContext.CommentStore.ReadComments("SourceCodeForSelfAwareness.zip");
         sw.Stop();
         notifier.OnCheckPerformed(new CheckEventArgs($"Help loading took:{sw.Elapsed}", CheckResult.Success));
     }

@@ -43,7 +43,7 @@ public class TestsRequiringFullAnonymisationSuite : TestsRequiringANOStore
             new ExternalDatabaseServer(CatalogueRepository, IdentifierDump_DatabaseName, p);
         IdentifierDump_ExternalDatabaseServer.SetProperties(IdentifierDump_Database);
 
-        CatalogueRepository.SetDefault(PermissableDefaults.IdentifierDumpServer_ID,
+        CatalogueDbContext.SetDefault(PermissableDefaults.IdentifierDumpServer_ID,
             IdentifierDump_ExternalDatabaseServer);
     }
 }

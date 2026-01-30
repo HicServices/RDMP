@@ -16,6 +16,7 @@ using Rdmp.Core.DataExport.DataExtraction.FileOutputFormats;
 using Rdmp.Core.DataExport.DataRelease.Pipeline;
 using Rdmp.Core.DataExport.DataRelease.Potential;
 using Rdmp.Core.DataFlowPipeline;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
@@ -203,7 +204,7 @@ public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
     public override ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
         ISelectedDataSets selectedDataSet) => new FlatFileReleasePotential(repositoryLocator, selectedDataSet);
 
-    public override FixedReleaseSource<ReleaseAudit> GetReleaseSource(ICatalogueRepository catalogueRepository) =>
+    public override FixedReleaseSource<ReleaseAudit> GetReleaseSource(RDMPDbContext catalogueDbContext) =>
         new FlatFileReleaseSource();
 
     public override GlobalReleasePotential GetGlobalReleasabilityEvaluator(

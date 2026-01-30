@@ -106,7 +106,7 @@ public class ExtractionConfigurationChecker : ICheckable
 
     private void CheckInProgressConfiguration(ICheckNotifier notifier)
     {
-        var repo = (IDataExportRepository)_config.Repository;
+        var repo = _config.CatalogueDbContext;
         notifier.OnCheckPerformed(new CheckEventArgs($"Found configuration '{_config}'", CheckResult.Success));
 
         var datasets = _config.GetAllExtractableDataSets().ToArray();

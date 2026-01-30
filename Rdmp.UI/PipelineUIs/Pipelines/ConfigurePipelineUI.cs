@@ -8,6 +8,7 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data.Pipelines;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Repositories;
 using Rdmp.UI.ItemActivation;
 
@@ -27,13 +28,13 @@ public partial class ConfigurePipelineUI : Form
     private PipelineWorkAreaUI _workArea;
 
     public ConfigurePipelineUI(IActivateItems activator, IPipeline pipeline, IPipelineUseCase useCase,
-        ICatalogueRepository repository)
+        RDMPDbContext catalogueDbContext)
     {
         _pipeline = pipeline;
         _useCase = useCase;
         InitializeComponent();
 
-        _workArea = new PipelineWorkAreaUI(activator, pipeline, useCase, repository) { Dock = DockStyle.Fill };
+        _workArea = new PipelineWorkAreaUI(activator, pipeline, useCase, catalogueDbContext) { Dock = DockStyle.Fill };
         panelWorkArea.Controls.Add(_workArea);
 
         tbName.Text = pipeline.Name;

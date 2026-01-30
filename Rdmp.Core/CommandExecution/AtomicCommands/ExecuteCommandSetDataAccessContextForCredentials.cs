@@ -49,10 +49,10 @@ public class ExecuteCommandSetDataAccessContextForCredentials : BasicCommandExec
         if (_node.Context == _newContext)
             return;
 
-        var linker = BasicActivator.RepositoryLocator.CatalogueDbContext.TableInfoCredentialsManager;
+        //var linker = BasicActivator.RepositoryLocator.CatalogueDbContext.TableInfoCredentialsManager;
 
-        linker.BreakLinkBetween(_node.Credentials, _node.TableInfo, _node.Context);
-        linker.CreateLinkBetween(_node.Credentials, _node.TableInfo, _newContext);
+        //linker.BreakLinkBetween(_node.Credentials, _node.TableInfo, _node.Context);
+        //linker.CreateLinkBetween(_node.Credentials, _node.TableInfo, _newContext);
 
         Publish(_node.TableInfo);
     }

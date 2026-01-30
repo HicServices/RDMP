@@ -69,7 +69,7 @@ internal class MemoryRepositoryVsDatabaseRepository : DatabaseTests
         var memoryRepository = new MemoryCatalogueRepository();
 
         var loggingServer = new ExternalDatabaseServer(memoryRepository, "My Logging Server", null);
-        memoryRepository.SetDefault(PermissableDefaults.LiveLoggingServer_ID, loggingServer);
+        memoryCatalogueDbContext.SetDefault(PermissableDefaults.LiveLoggingServer_ID, loggingServer);
 
         var memCatalogue = new Catalogue(memoryRepository, "My New Catalogue");
         Assert.That(loggingServer.ID, Is.EqualTo(memCatalogue.LiveLoggingServer_ID));

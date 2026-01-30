@@ -17,7 +17,7 @@ public class GetDatabaseDiagramBinaryTest : DatabaseTests
     [Test]
     public void GetBinaryText()
     {
-        using var con = CatalogueTableRepository.GetConnection();
+        using var con = CatalogueTableCatalogueDbContext.GetConnection();
         using var cmd = DatabaseCommandHelper.GetCommand(
             "SELECT definition  FROM sysdiagrams where name = 'Catalogue_Data_Diagram' ",
             con.Connection, con.Transaction);

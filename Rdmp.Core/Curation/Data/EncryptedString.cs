@@ -6,6 +6,7 @@
 
 using System;
 using System.Security.Cryptography;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.Curation.Data;
@@ -17,7 +18,7 @@ namespace Rdmp.Core.Curation.Data;
 /// <exception cref="CryptographicException" />
 public class EncryptedString : IEncryptedString
 {
-    private readonly IEncryptStrings _encrypter;
+    //private readonly IEncryptStrings _encrypter;
     private string _value;
 
     /// <inheritdoc/>
@@ -33,21 +34,21 @@ public class EncryptedString : IEncryptedString
         {
             if (string.IsNullOrWhiteSpace(value)) //if it is null
                 _value = null;
-            else if (!_encrypter.IsStringEncrypted(value)) //it is not null, is it already encrypted?
-                try
-                {
-                    _value = _encrypter.Encrypt(value); //not yet encrypted so encrypt it
-                }
-                catch (Exception e)
-                {
-                   if (e.Message.Contains("Bad Length") || e.Message.Contains("data too large for key size"))
-                        throw new InvalidOperationException(
-                            $"The free text Value supplied to this class was too long to be encrypted (Length of string was {value.Length})",
-                            e);
+            //else if (!_encrypter.IsStringEncrypted(value)) //it is not null, is it already encrypted?
+            //    try
+            //    {
+            //        _value = _encrypter.Encrypt(value); //not yet encrypted so encrypt it
+            //    }
+            //    catch (Exception e)
+            //    {
+            //       if (e.Message.Contains("Bad Length") || e.Message.Contains("data too large for key size"))
+            //            throw new InvalidOperationException(
+            //                $"The free text Value supplied to this class was too long to be encrypted (Length of string was {value.Length})",
+            //                e);
 
-                    //it's some other exception
-                    throw;
-                }
+            //        //it's some other exception
+            //        throw;
+            //    }
             else
                 _value = value; //it is encrypted already so just store in normally
         }
@@ -56,10 +57,10 @@ public class EncryptedString : IEncryptedString
     /// <summary>
     /// Creates a new encrypted string using <see cref="SimpleStringValueEncryption"/>
     /// </summary>
-    /// <param name="repository"></param>
-    public EncryptedString(RdmpDbContext catalogueDbContext)
+    /// <param name="catalogueDbContext"></param>
+    public EncryptedString(RDMPDbContext catalogueDbContext)
     {
-        _encrypter = repository.EncryptionManager.GetEncrypter();
+        //_encrypter = repository.EncryptionManager.GetEncrypter();
     }
 
     /// <inheritdoc/>
@@ -68,13 +69,13 @@ public class EncryptedString : IEncryptedString
         if (string.IsNullOrWhiteSpace(Value))
             return null;
 
-        if (_encrypter.IsStringEncrypted(Value))
-            return _encrypter.Decrypt(Value);
+        //if (_encrypter.IsStringEncrypted(Value))
+        //    return _encrypter.Decrypt(Value);
 
         //it's not decrypted... how did that happen
         throw new Exception("Found Value in memory that was not encrypted");
     }
 
     /// <inheritdoc/>
-    public bool IsStringEncrypted(string value) => _encrypter.IsStringEncrypted(value);
+    public bool IsStringEncrypted(string value) => false;// _encrypter.IsStringEncrypted(value);
 }

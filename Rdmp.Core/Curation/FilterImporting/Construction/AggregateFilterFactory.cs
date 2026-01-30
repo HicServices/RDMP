@@ -7,6 +7,7 @@
 using System;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.Curation.FilterImporting.Construction;
@@ -16,23 +17,23 @@ namespace Rdmp.Core.Curation.FilterImporting.Construction;
 /// </summary>
 public class AggregateFilterFactory : IFilterFactory
 {
-    private readonly ICatalogueRepository _repository;
+    private readonly RDMPDbContext _catalogueDbContext;
 
     /// <summary>
-    /// Sets class up to create <see cref="AggregateFilter"/> objects in the provided <paramref name="repository"/>
+    /// Sets class up to create <see cref="AggregateFilter"/> objects in the provided <paramref  name="catalogueDbContext"/>
     /// </summary>
-    /// <param name="repository"></param>
-    public AggregateFilterFactory(RdmpDbContext catalogueDbContext)
+    /// <param  name="catalogueDbContext"></param>
+    public AggregateFilterFactory(RDMPDbContext catalogueDbContext)
     {
-        _repository = repository;
+        _catalogueDbContext = catalogueDbContext;
     }
 
     /// <inheritdoc/>
-    public IFilter CreateNewFilter(string name) => new AggregateFilter(_repository, name);
+    public IFilter CreateNewFilter(string name) => new AggregateFilter(_catalogueDbContext, name);
 
     /// <inheritdoc/>
     public ISqlParameter CreateNewParameter(IFilter filter, string parameterSQL) =>
-        new AggregateFilterParameter(_repository, parameterSQL, (AggregateFilter)filter);
+        new AggregateFilterParameter(_catalogueDbContext, parameterSQL, (AggregateFilter)filter);
 
     /// <inheritdoc/>
     public Type GetRootOwnerType() => typeof(AggregateConfiguration);
@@ -40,5 +41,5 @@ public class AggregateFilterFactory : IFilterFactory
     /// <inheritdoc/>
     public Type GetIContainerTypeIfAny() => typeof(AggregateFilterContainer);
 
-    public IContainer CreateNewContainer() => new AggregateFilterContainer(_repository, FilterContainerOperation.AND);
+    public IContainer CreateNewContainer() => new AggregateFilterContainer(_catalogueDbContext, FilterContainerOperation.AND);
 }

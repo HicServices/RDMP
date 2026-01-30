@@ -74,7 +74,7 @@ public class AggregateTopX : DatabaseEntity, IAggregateTopX
     [NoMappingToDatabase]
     public AggregateDimension OrderByDimensionIfAny => OrderByDimensionIfAny_ID == null
         ? null
-        : Repository.GetObjectByID<AggregateDimension>(OrderByDimensionIfAny_ID.Value);
+        : CatalogueDbContext.GetObjectByID<AggregateDimension>(OrderByDimensionIfAny_ID.Value);
 
     /// <inheritdoc cref="OrderByDimensionIfAny_ID"/>
     [NoMappingToDatabase]
@@ -90,7 +90,7 @@ public class AggregateTopX : DatabaseEntity, IAggregateTopX
     /// <summary>
     /// Creates an instance by reading it out of the database for the provided reader
     /// </summary>
-    /// <param name="catalogueDbContext"></param>
+    /// <param  name="catalogueDbContext"></param>
     /// <param name="r"></param>
     internal AggregateTopX(RDMPDbContext catalogueDbContext, DbDataReader r)
         : base(catalogueDbContext, r)
@@ -106,19 +106,19 @@ public class AggregateTopX : DatabaseEntity, IAggregateTopX
     /// Defines that the given AggregateConfiguration should only return the top X records / pivot categories.  You can only have a single AggregateTopX declared
     /// for a given AggregateConfiguration (enforced with database constraints).
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="forConfiguration"></param>
     /// <param name="topX"></param>
-    public AggregateTopX(RdmpDbContext catalogueDbContext, AggregateConfiguration forConfiguration, int topX)
+    public AggregateTopX(RDMPDbContext catalogueDbContext, AggregateConfiguration forConfiguration, int topX)
     {
         if (forConfiguration.GetTopXIfAny() != null)
             throw new Exception($"AggregateConfiguration {forConfiguration} already has a TopX");
 
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "AggregateConfiguration_ID", forConfiguration.ID },
-            { "TopX", topX },
-            { nameof(OrderByDirection), AggregateTopXOrderByDirection.Descending }
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "AggregateConfiguration_ID", forConfiguration.ID },
+        //    { "TopX", topX },
+        //    { nameof(OrderByDirection), AggregateTopXOrderByDirection.Descending }
+        //});
     }
 }

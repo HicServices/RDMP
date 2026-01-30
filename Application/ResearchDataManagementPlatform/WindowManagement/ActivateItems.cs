@@ -28,6 +28,7 @@ using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataViewing;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Logging;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
@@ -130,7 +131,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
 
     public ActivateItems(ITheme theme, RefreshBus refreshBus, DockPanel mainDockPanel,
         IRDMPPlatformRepositoryServiceLocator repositoryLocator, WindowFactory windowFactory,
-        WindowManager windowManager, ICheckNotifier globalErrorCheckNotifier) : base(repositoryLocator,
+        WindowManager windowManager, ICheckNotifier globalErrorCheckNotifier) : base(repositoryLocator.CatalogueDbContext,
         globalErrorCheckNotifier)
     {
         Theme = theme;
@@ -311,7 +312,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
 
     public string GetDocumentation(Type type)
     {
-        return RepositoryLocator.CatalogueDbContext.CommentStore.GetTypeDocumentationIfExists(type);
+        return "";// RepositoryLocator.CatalogueDbContext.CommentStore.GetTypeDocumentationIfExists(type);
     }
 
     public string CurrentDirectory => Environment.CurrentDirectory;
@@ -946,7 +947,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         return ui.CatalogueCreatedIfAny;
     }
 
-    public override ExternalDatabaseServer CreateNewPlatformDatabase(ICatalogueRepository catalogueRepository,
+    public override ExternalDatabaseServer CreateNewPlatformDatabase(RDMPDbContext catalogueRepository,
         PermissableDefaults defaultToSet, IPatcher patcher, DiscoveredDatabase db)
     {
         // if on wrong Thread

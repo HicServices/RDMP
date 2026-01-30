@@ -47,10 +47,10 @@ public class ExecuteCommandCreateVersionOfCohortConfiguration : BasicCommandExec
                 createdItem.First().Description = _description;
                 createdItem.First().SaveToDatabase();
 
-                var associations = _activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ProjectCohortIdentificationConfigurationAssociation>("CohortIdentificationConfiguration_ID", _cic.ID);
+                var associations = _activator.RepositoryLocator.CatalogueDbContext.GetAllObjectsWhere<ProjectCohortIdentificationConfigurationAssociation>("CohortIdentificationConfiguration_ID", _cic.ID);
                 foreach (var association in associations)
                 {
-                    var link = new ProjectCohortIdentificationConfigurationAssociation(_activator.RepositoryLocator.DataExportRepository, (Project)association.Project, createdItem.First());
+                    var link = new ProjectCohortIdentificationConfigurationAssociation(_activator.RepositoryLocator.CatalogueDbContext, (Project)association.Project, createdItem.First());
                     link.SaveToDatabase();
                 }
 

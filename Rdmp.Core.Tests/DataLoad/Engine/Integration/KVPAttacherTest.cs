@@ -73,7 +73,7 @@ public class KVPAttacherTest : DatabaseTests
         }
 
         var remnantPipeline =
-            CatalogueRepository.GetAllObjects<Pipeline>()
+            CatalogueDbContext.GetAllObjects<Pipeline>()
                 .SingleOrDefault(p => p.Name.Equals("KVPAttacherTestPipeline"));
 
         remnantPipeline?.DeleteInDatabase();

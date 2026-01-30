@@ -19,6 +19,7 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Serialization;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Logging;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
@@ -550,36 +551,36 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
     public LoadMetadata[] LoadMetadatas()
     {
         
-        var loadMetadataLinkIDs = Repository.GetAllObjectsWhere<LoadMetadataCatalogueLinkage>("CatalogueID", ID).Select(l => l.LoadMetadataID);
+        var loadMetadataLinkIDs = CatalogueDbContext.GetAllObjectsWhere<LoadMetadataCatalogueLinkage>("CatalogueID", ID).Select(l => l.LoadMetadataID);
 
-        return Repository.GetAllObjects<LoadMetadata>().Where(cat => loadMetadataLinkIDs.Contains(cat.ID)).ToArray();
+        return CatalogueDbContext.GetAllObjects<LoadMetadata>().Where(cat => loadMetadataLinkIDs.Contains(cat.ID)).ToArray();
     }
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
     public AggregateConfiguration[] AggregateConfigurations =>
-        Repository.GetAllObjectsWithParent<AggregateConfiguration>(this);
+        CatalogueDbContext.GetAllObjectsWithParent<AggregateConfiguration>(this);
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
     public ExternalDatabaseServer LiveLoggingServer =>
        LiveLoggingServer_ID == null
                    ? null
-                   : Repository.GetObjectByID<ExternalDatabaseServer>((int)LiveLoggingServer_ID);
+                   : CatalogueDbContext.GetObjectByID<ExternalDatabaseServer>((int)LiveLoggingServer_ID);
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
     public ExtractionInformation TimeCoverage_ExtractionInformation =>
         TimeCoverage_ExtractionInformation_ID == null
             ? null
-            : Repository.GetObjectByID<ExtractionInformation>(TimeCoverage_ExtractionInformation_ID.Value);
+            : CatalogueDbContext.GetObjectByID<ExtractionInformation>(TimeCoverage_ExtractionInformation_ID.Value);
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
     public ExtractionInformation PivotCategory_ExtractionInformation =>
         PivotCategory_ExtractionInformation_ID == null
             ? null
-            : Repository.GetObjectByID<ExtractionInformation>(PivotCategory_ExtractionInformation_ID.Value);
+            : CatalogueDbContext.GetObjectByID<ExtractionInformation>(PivotCategory_ExtractionInformation_ID.Value);
 
     #endregion
 
@@ -910,7 +911,7 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
 
     /// <summary>
     /// Creates a new instance from an unknown repository (for use with serialization).  You must set
-    /// <see cref="IMapsDirectlyToDatabaseTable.Repository"/> before Methods that retrieve other objects or
+    /// <see cref="IMapsDirectlyToDatabaseTable.CatalogueDbContext"/> before Methods that retrieve other objects or
     /// save state can be called (e.g. <see cref="ISaveable.SaveToDatabase"/>)
     /// </summary>
     public Catalogue()
@@ -923,25 +924,25 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
     /// 
     /// <para>The preferred method of getting a Catalogue is to use <see cref="TableInfoImporter"/> and <see cref="ForwardEngineerCatalogue"/></para>
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="name"></param>
-    public Catalogue(RdmpDbContext catalogueDbContext, string name)
+    public Catalogue(RDMPDbContext catalogueDbContext, string name)
     {
-        var loggingServer = repository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
+        var loggingServer = catalogueDbContext.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
 
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "Name", name },
-            { "LiveLoggingServer_ID", loggingServer == null ? DBNull.Value : loggingServer.ID }
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "Name", name },
+        //    { "LiveLoggingServer_ID", loggingServer == null ? DBNull.Value : loggingServer.ID }
+        //});
 
-        if (ID == 0 || string.IsNullOrWhiteSpace(Name) || Repository != repository)
+        if (ID == 0 || string.IsNullOrWhiteSpace(Name) || CatalogueDbContext != catalogueDbContext)
             throw new ArgumentException("Repository failed to properly hydrate this class");
 
         //if there is a default logging server
         if (LiveLoggingServer_ID == null)
         {
-            var liveLoggingServer = repository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
+            var liveLoggingServer = catalogueDbContext.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
 
             if (liveLoggingServer != null)
                 LiveLoggingServer_ID = liveLoggingServer.ID;
@@ -954,10 +955,10 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
     /// <summary>
     /// Creates a single runtime instance of the Catalogue based on the current state of the row read from the DbDataReader (does not advance the reader)
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="r"></param>
-    internal Catalogue(RdmpDbContext catalogueDbContext, DbDataReader r)
-        : base(repository, r)
+    internal Catalogue(RDMPDbContext catalogueDbContext, DbDataReader r)
+        : base(catalogueDbContext, r)
     {
 
         Acronym = r["Acronym"].ToString();
@@ -1304,7 +1305,7 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
     {
         return CatalogueItems.All(ci => ci.IsColumnInfoCached())
             ? CatalogueItems.Select(ci => ci.ColumnInfo).Where(col => col != null)
-            : Repository.GetAllObjectsInIDList<ColumnInfo>(CatalogueItems.Where(ci => ci.ColumnInfo_ID.HasValue)
+            : CatalogueDbContext.GetAllObjectsInIDList<ColumnInfo>(CatalogueItems.Where(ci => ci.ColumnInfo_ID.HasValue)
                 .Select(ci => ci.ColumnInfo_ID.Value).Distinct().ToList());
     }
 
@@ -1402,13 +1403,13 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
     /// <inheritdoc/>
     public SupportingDocument[] GetAllSupportingDocuments(FetchOptions fetch)
     {
-        return Repository.GetAllObjects<SupportingDocument>().Where(o => Fetch(o, fetch)).ToArray();
+        return CatalogueDbContext.GetAllObjects<SupportingDocument>().Where(o => Fetch(o, fetch)).ToArray();
     }
 
     /// <inheritdoc/>
     public SupportingSQLTable[] GetAllSupportingSQLTablesForCatalogue(FetchOptions fetch)
     {
-        return Repository.GetAllObjects<SupportingSQLTable>().Where(o => Fetch(o, fetch)).ToArray();
+        return CatalogueDbContext.GetAllObjects<SupportingSQLTable>().Where(o => Fetch(o, fetch)).ToArray();
     }
 
     private bool Fetch(ISupportingObject o, FetchOptions fetch)
@@ -1479,26 +1480,26 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
     {
         _extractabilityStatus = null;
         _knownCatalogueItems =
-            new Lazy<CatalogueItem[]>(() => Repository.GetAllObjectsWithParent<CatalogueItem, Catalogue>(this));
+            new Lazy<CatalogueItem[]>(() => CatalogueDbContext.GetAllObjectsWithParent<CatalogueItem, Catalogue>(this));
     }
 
     /// <inheritdoc/>
-    public CatalogueExtractabilityStatus GetExtractabilityStatus(IDataExportRepository dataExportRepository)
+    public CatalogueExtractabilityStatus GetExtractabilityStatus(RDMPDbContext catalogueDbContext)
     {
-        if (_extractabilityStatus != null)
-            return _extractabilityStatus;
+        //if (_extractabilityStatus != null)
+        //    return _extractabilityStatus;
 
-        if (dataExportRepository == null)
-            return null;
+        //if (dataExportRepository == null)
+        //    return null;
 
-        _extractabilityStatus = dataExportRepository.GetExtractabilityStatus(this);
+        _extractabilityStatus = CatalogueDbContext.GetExtractabilityStatus(this);
         return _extractabilityStatus;
     }
 
     /// <inheritdoc/>
-    public bool IsProjectSpecific(IDataExportRepository dataExportRepository)
+    public bool IsProjectSpecific(RDMPDbContext catalogueDbContext)
     {
-        var e = GetExtractabilityStatus(dataExportRepository);
+        var e = GetExtractabilityStatus(catalogueDbContext);
         return e is { IsProjectSpecific: true };
     }
 
@@ -1553,7 +1554,7 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
     /// <inheritdoc/>
     public ICatalogue ShallowClone()
     {
-        var clone = new Catalogue(CatalogueRepository, $"{Name} Clone");
+        var clone = new Catalogue(CatalogueDbContext, $"{Name} Clone");
         CopyShallowValuesTo(clone);
         return clone;
     }

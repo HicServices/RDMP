@@ -55,7 +55,7 @@ public class ExecuteCommandCreateNewExtractionConfigurationForProject : BasicCom
     {
         if (cohortIfAny is null)
             // no cohort so all Project are valid
-            return BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>();
+            return BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Project>();
 
         // we have a cohort so can only create an ExtractionConfiguration for Projects that share
         // the cohorts project number
@@ -117,7 +117,7 @@ public class ExecuteCommandCreateNewExtractionConfigurationForProject : BasicCom
                 return;
 
         // create the new config
-        var newConfig = new ExtractionConfiguration(BasicActivator.RepositoryLocator.DataExportRepository, p, name);
+        var newConfig = new ExtractionConfiguration(BasicActivator.RepositoryLocator.CatalogueDbContext, p, name);
 
         if (CohortIfAny != null)
         {

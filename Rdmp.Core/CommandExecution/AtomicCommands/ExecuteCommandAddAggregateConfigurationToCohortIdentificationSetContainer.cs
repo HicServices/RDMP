@@ -128,10 +128,11 @@ public class ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetCon
 
             // Are there templates that we can use instead of showing all?
             var cataRepo = BasicActivator.RepositoryLocator.CatalogueDbContext;
-            var templates = cataRepo.GetExtendedProperties(ExtendedProperty.IsTemplate)
-                .Select(p => p.GetReferencedObject(BasicActivator.RepositoryLocator))
-                .OfType<AggregateConfiguration>()
-                .ToArray();
+            //var templates = cataRepo.GetExtendedProperties(ExtendedProperty.IsTemplate)
+            //    .Select(p => p.GetReferencedObject(BasicActivator.RepositoryLocator))
+            //    .OfType<AggregateConfiguration>()
+            //    .ToArray();
+            var templates = Array.Empty<AggregateConfiguration>();
 
             // yes
             if (templates.Any())

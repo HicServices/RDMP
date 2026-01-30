@@ -11,6 +11,7 @@ using FAnsi.Discovery;
 using Microsoft.Data.SqlClient;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.DataHelper;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
@@ -26,7 +27,7 @@ public class TableInfoSynchronizer
 {
     private readonly ITableInfo _tableToSync;
     private DiscoveredServer _toSyncTo;
-    private ICatalogueRepository _repository;
+    private RDMPDbContext _repository;
 
     public HashSet<Catalogue> ChangedCatalogues = new();
 
@@ -38,7 +39,7 @@ public class TableInfoSynchronizer
     public TableInfoSynchronizer(ITableInfo tableToSync)
     {
         _tableToSync = tableToSync;
-        _repository = _tableToSync.CatalogueRepository;
+        _repository = _tableToSync.CatalogueDbContext;
 
         _toSyncTo = DataAccessPortal.ExpectServer(tableToSync, DataAccessContext.InternalDataProcessing);
     }

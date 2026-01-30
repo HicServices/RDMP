@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Providers;
 
 namespace Rdmp.Core.Repositories.Managers.HighPerformance;
@@ -24,7 +25,7 @@ internal class CohortContainerManagerFromChildProvider : CohortContainerManager
 {
     private readonly Dictionary<int, List<IOrderable>> _contents = new();
 
-    public CohortContainerManagerFromChildProvider(CatalogueRepository repository, CatalogueChildProvider childProvider)
+    public CohortContainerManagerFromChildProvider(RDMPDbContext repository, CatalogueChildProvider childProvider)
         : base(repository)
     {
         FetchAllRelationships(childProvider);
@@ -40,59 +41,59 @@ internal class CohortContainerManagerFromChildProvider : CohortContainerManager
 
     public void FetchAllRelationships(ICoreChildProvider childProvider)
     {
-        using var con = CatalogueRepository.GetConnection();
-        //find all the cohort SET operation subcontainers e.g. UNION Ag1,Ag2,(Agg3 INTERSECT Agg4) would have 2 CohortAggregateContainers (the UNION and the INTERSECT) in which the INTERSECT was the child container of the UNION
-        var r = CatalogueRepository.DiscoveredServer
-            .GetCommand(
-                "SELECT [CohortAggregateContainer_ParentID],[CohortAggregateContainer_ChildID] FROM [CohortAggregateSubContainer] ORDER BY CohortAggregateContainer_ParentID",
-                con).ExecuteReader();
+        //using var con = CatalogueDbContext.GetConnection();
+        ////find all the cohort SET operation subcontainers e.g. UNION Ag1,Ag2,(Agg3 INTERSECT Agg4) would have 2 CohortAggregateContainers (the UNION and the INTERSECT) in which the INTERSECT was the child container of the UNION
+        //var r = CatalogueDbContext.DiscoveredServer
+        //    .GetCommand(
+        //        "SELECT [CohortAggregateContainer_ParentID],[CohortAggregateContainer_ChildID] FROM [CohortAggregateSubContainer] ORDER BY CohortAggregateContainer_ParentID",
+        //        con).ExecuteReader();
 
-        while (r.Read())
-        {
-            var currentParentId = Convert.ToInt32(r["CohortAggregateContainer_ParentID"]);
-            var currentChildId = Convert.ToInt32(r["CohortAggregateContainer_ChildID"]);
+        //while (r.Read())
+        //{
+        //    var currentParentId = Convert.ToInt32(r["CohortAggregateContainer_ParentID"]);
+        //    var currentChildId = Convert.ToInt32(r["CohortAggregateContainer_ChildID"]);
 
-            if (!_contents.ContainsKey(currentParentId))
-                _contents.Add(currentParentId, new List<IOrderable>());
+        //    if (!_contents.ContainsKey(currentParentId))
+        //        _contents.Add(currentParentId, new List<IOrderable>());
 
-            _contents[currentParentId]
-                .Add(childProvider.AllCohortAggregateContainers.Single(c => c.ID == currentChildId));
-        }
+        //    _contents[currentParentId]
+        //        .Add(childProvider.AllCohortAggregateContainers.Single(c => c.ID == currentChildId));
+        //}
 
-        r.Close();
+        //r.Close();
 
-        //now find all the Agg configurations within the containers too, (in the above example we will find Agg1 in the UNION container at order 1 and Agg2 at order 2 and then we find Agg3 and Agg4 in the INTERSECT container)
-        r = CatalogueRepository.DiscoveredServer
-            .GetCommand(
-                @"SELECT [CohortAggregateContainer_ID], [AggregateConfiguration_ID],[Order] FROM [CohortAggregateContainer_AggregateConfiguration] ORDER BY CohortAggregateContainer_ID",
-                con).ExecuteReader();
+        ////now find all the Agg configurations within the containers too, (in the above example we will find Agg1 in the UNION container at order 1 and Agg2 at order 2 and then we find Agg3 and Agg4 in the INTERSECT container)
+        //r = CatalogueDbContext.DiscoveredServer
+        //    .GetCommand(
+        //        @"SELECT [CohortAggregateContainer_ID], [AggregateConfiguration_ID],[Order] FROM [CohortAggregateContainer_AggregateConfiguration] ORDER BY CohortAggregateContainer_ID",
+        //        con).ExecuteReader();
 
-        while (r.Read())
-        {
-            var currentParentId = Convert.ToInt32(r["CohortAggregateContainer_ID"]);
-            var currentChildId = Convert.ToInt32(r["AggregateConfiguration_ID"]);
-            var currentOrder = Convert.ToInt32(r["Order"]);
+        //while (r.Read())
+        //{
+        //    var currentParentId = Convert.ToInt32(r["CohortAggregateContainer_ID"]);
+        //    var currentChildId = Convert.ToInt32(r["AggregateConfiguration_ID"]);
+        //    var currentOrder = Convert.ToInt32(r["Order"]);
 
-            if (!_contents.ContainsKey(currentParentId))
-                _contents.Add(currentParentId, new List<IOrderable>());
+        //    if (!_contents.ContainsKey(currentParentId))
+        //        _contents.Add(currentParentId, new List<IOrderable>());
 
-            AggregateConfiguration config;
+        //    AggregateConfiguration config;
 
-            try
-            {
-                config = childProvider.AllAggregateConfigurations.Single(a => a.ID == currentChildId);
-            }
-            catch (Exception)
-            {
-                throw new Exception(
-                    $"Error occurred trying to find AggregateConfiguration with ID {currentChildId} which is allegedly a child of CohortAggregateContainer {currentParentId}");
-            }
+        //    try
+        //    {
+        //        config = childProvider.AllAggregateConfigurations.Single(a => a.ID == currentChildId);
+        //    }
+        //    catch (Exception)
+        //    {
+        //        throw new Exception(
+        //            $"Error occurred trying to find AggregateConfiguration with ID {currentChildId} which is allegedly a child of CohortAggregateContainer {currentParentId}");
+        //    }
 
-            config.SetKnownOrder(currentOrder);
+        //    config.SetKnownOrder(currentOrder);
 
-                _contents[currentParentId].Add(config);
-        }
+        //        _contents[currentParentId].Add(config);
+        //}
 
-        r.Close();
+        //r.Close();
     }
 }

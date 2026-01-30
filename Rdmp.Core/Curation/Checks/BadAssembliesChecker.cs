@@ -17,7 +17,7 @@ namespace Rdmp.Core.Curation.Checks;
 public class BadAssembliesChecker : ICheckable
 {
     /// <summary>
-    /// Prepares to check the currently loaded assemblies defined in the MEF (Call CatalogueRepository.MEF to get the MEF), call Check to start the checking process
+    /// Prepares to check the currently loaded assemblies defined in the MEF (Call CatalogueDbContext.MEF to get the MEF), call Check to start the checking process
     /// </summary>
     public BadAssembliesChecker()
     {

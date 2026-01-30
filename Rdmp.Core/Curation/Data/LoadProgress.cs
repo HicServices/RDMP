@@ -10,6 +10,7 @@ using System.Data.Common;
 using System.Linq;
 using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Repositories;
@@ -91,11 +92,11 @@ public class LoadProgress : DatabaseEntity, ILoadProgress, ICheckable
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public ILoadMetadata LoadMetadata => Repository.GetObjectByID<LoadMetadata>(LoadMetadata_ID);
+    public ILoadMetadata LoadMetadata => CatalogueDbContext.GetObjectByID<LoadMetadata>(LoadMetadata_ID);
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public ICacheProgress CacheProgress => Repository.GetAllObjectsWithParent<CacheProgress>(this).SingleOrDefault();
+    public ICacheProgress CacheProgress => CatalogueDbContext.GetAllObjectsWithParent<CacheProgress>(this).SingleOrDefault();
 
     #endregion
 
@@ -104,18 +105,18 @@ public class LoadProgress : DatabaseEntity, ILoadProgress, ICheckable
     }
 
     /// <inheritdoc cref="ILoadProgress"/>
-    public LoadProgress(RdmpDbContext catalogueDbContext, LoadMetadata parent)
+    public LoadProgress(RDMPDbContext catalogueDbContext, LoadMetadata parent)
     {
-        repository.InsertAndHydrate(this,
-            new Dictionary<string, object>
-            {
-                { "Name", Guid.NewGuid().ToString() },
-                { "LoadMetadata_ID", parent.ID }
-            });
+        //repository.InsertAndHydrate(this,
+        //    new Dictionary<string, object>
+        //    {
+        //        { "Name", Guid.NewGuid().ToString() },
+        //        { "LoadMetadata_ID", parent.ID }
+        //    });
     }
 
-    internal LoadProgress(RdmpDbContext catalogueDbContext, DbDataReader r)
-        : base(repository, r)
+    internal LoadProgress(RDMPDbContext catalogueDbContext, DbDataReader r)
+        :base(catalogueDbContext, r)
     {
         Name = r["Name"] as string;
         OriginDate = ObjectToNullableDateTime(r["OriginDate"]);

@@ -115,41 +115,41 @@ public class ExecuteCommandAddCatalogueToCohortIdentificationSetContainer : Basi
         {
             var cic = _targetCohortAggregateContainer.GetCohortIdentificationConfiguration();
             List<int> associatedProjectCataloguesIDs= new();
-            var pcica = BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjects<ProjectCohortIdentificationConfigurationAssociation>().Where(pcica => pcica.CohortIdentificationConfiguration_ID == cic.ID).FirstOrDefault();
+            var pcica = BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllObjects<ProjectCohortIdentificationConfigurationAssociation>().Where(pcica => pcica.CohortIdentificationConfiguration_ID == cic.ID).FirstOrDefault();
             if(pcica is not null)
             {
                 associatedProjectCataloguesIDs = pcica.Project.GetAllProjectCatalogues().Select(c => c.ID).ToList();
             }
-            if (!BasicActivator.SelectObjects(new DialogArgs
-            {
-                WindowTitle = "Add Catalogue(s) to Container",
-                TaskDescription =
-                        $"Choose which Catalogues to add to the cohort container '{_targetCohortAggregateContainer.Name}'.  Catalogues must have at least one IsExtractionIdentifier column."
-            }, BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Catalogue>().Where(c => !c.IsInternalDataset &&(!c.IsProjectSpecific(BasicActivator.RepositoryLocator.DataExportRepository) || associatedProjectCataloguesIDs.Contains(c.ID))).ToArray(), out var selected))
-                // user didn't pick one
-                return;
+            //if (!BasicActivator.SelectObjects(new DialogArgs
+            //{
+            //    WindowTitle = "Add Catalogue(s) to Container",
+            //    TaskDescription =
+            //            $"Choose which Catalogues to add to the cohort container '{_targetCohortAggregateContainer.Name}'.  Catalogues must have at least one IsExtractionIdentifier column."
+            //}, BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Catalogue>().Where(c => !c.IsInternalDataset &&(!c.IsProjectSpecific(BasicActivator.RepositoryLocator.CatalogueDbContext) || associatedProjectCataloguesIDs.Contains(c.ID))).ToArray(), out var selected))
+            //    // user didn't pick one
+            //    return;
 
             // for each catalogue they picked
-            foreach (var catalogue in selected)
-            {
-                if(BasicActivator.IsInteractive && catalogue.IsDeprecated)
-                {
-                    var confirmDeprecatedUser = BasicActivator.YesNo($"{catalogue.Name} is marked as deprecated. Are you sure you wish to use it?", "Confirm use of Deprecated Catalogue");
-                    if (!confirmDeprecatedUser)
-                    {
-                        continue;
-                    }
-                }
-                var combineable = new CatalogueCombineable(catalogue);
+            //foreach (var catalogue in selected)
+            //{
+            //    if(BasicActivator.IsInteractive && catalogue.IsDeprecated)
+            //    {
+            //        var confirmDeprecatedUser = BasicActivator.YesNo($"{catalogue.Name} is marked as deprecated. Are you sure you wish to use it?", "Confirm use of Deprecated Catalogue");
+            //        if (!confirmDeprecatedUser)
+            //        {
+            //            continue;
+            //        }
+            //    }
+            //    var combineable = new CatalogueCombineable(catalogue);
 
-                UpdateIsImpossibleFor(combineable);
+            //    UpdateIsImpossibleFor(combineable);
 
-                if (IsImpossible)
-                    throw new ImpossibleCommandException(this, ReasonCommandImpossible);
+            //    if (IsImpossible)
+            //        throw new ImpossibleCommandException(this, ReasonCommandImpossible);
 
-                // add it to the cic container
-                Execute(combineable, catalogue == selected.Last());
-            }
+            //    // add it to the cic container
+            //    Execute(combineable, catalogue == selected.Last());
+            //}
         }
         else
         {

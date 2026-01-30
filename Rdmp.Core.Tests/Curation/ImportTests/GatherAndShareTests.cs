@@ -121,7 +121,7 @@ public class GatherAndShareTests : DatabaseTests
 
         //change a property and save it
         anoTableAfter.Suffix = "CAMMELS!";
-        CatalogueRepository.SaveToDatabase(anoTableAfter);
+        CatalogueDbContext.SaveToDatabase(anoTableAfter);
         //anoTableAfter.SaveToDatabase(); <- this decides to go check the ANOTable exists on the server referenced which is imaginary btw >< that's why we have the above line instead
 
         //reimport (this time it should be an update, we import the share definitions and it overrides our database copy (sharing is UPSERT)
@@ -206,10 +206,10 @@ public class GatherAndShareTests : DatabaseTests
         shareManager.ImportSharedObject(shareDefinition);
 
         //revert the memory copy and check it got overwritten with the original saved values
-        cata = CatalogueRepository.GetObjectByID<Catalogue>(cata.ID);
+        cata = CatalogueDbContext.GetObjectByID<Catalogue>(cata.ID);
         Assert.That(cata.Name, Is.EqualTo("Cata"));
 
-        var exports = CatalogueRepository.GetAllObjects<ObjectExport>();
+        var exports = CatalogueDbContext.GetAllObjects<ObjectExport>();
         Assert.That(exports.Any());
 
         //now delete and report

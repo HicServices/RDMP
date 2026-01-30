@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Modules.LoadProgressUpdating;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Repositories;
 using Rdmp.UI.ScintillaHelper;
 using ScintillaNET;
@@ -52,7 +53,7 @@ public partial class DataLoadProgressUpdateInfoUI : Form, ICustomUI<DataLoadProg
     }
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-    public ICatalogueRepository CatalogueRepository { get; set; }
+    public RDMPDbContext CatalogueDbContext { get; set; }
 
     public void SetGenericUnderlyingObjectTo(ICustomUIDrivenClass value)
     {
@@ -122,7 +123,7 @@ public partial class DataLoadProgressUpdateInfoUI : Form, ICustomUI<DataLoadProg
     private void DataLoadProgressUpdateInfoUI_FormClosing(object sender, FormClosingEventArgs e)
     {
         //use pressed Ok or Cancel
-        if (_programaticClose || CatalogueRepository == null)
+        if (_programaticClose || CatalogueDbContext == null)
             return;
 
         //User hit the X in the corner or Alt+F4 etc.

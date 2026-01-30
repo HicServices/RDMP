@@ -37,12 +37,12 @@ public partial class FilterGraphUI : AggregateGraphUI, IObjectCollectionControl
         var rootContainer = basicQueryBuilder.RootFilterContainer;
 
         //stick our IFilter into the root container (actually create a new root container with our filter in it and move the old root if any into it)
-        rootContainer =
-            new SpontaneouslyInventedFilterContainer(new MemoryCatalogueRepository(),
-                rootContainer == null ? null : new[] { rootContainer },
-                new[] { _collection.GetFilter() }, FilterContainerOperation.AND);
+        //rootContainer =
+        //    new SpontaneouslyInventedFilterContainer(new MemoryCatalogueRepository(),
+        //        rootContainer == null ? null : new[] { rootContainer },
+        //        new[] { _collection.GetFilter() }, FilterContainerOperation.AND);
 
-        basicQueryBuilder.RootFilterContainer = rootContainer;
+        //basicQueryBuilder.RootFilterContainer = rootContainer;
 
         return basicQueryBuilder;
     }

@@ -90,7 +90,7 @@ public class ExecuteCommandViewExtractionSql : ExecuteCommandViewDataBase, IAtom
 
         if (sds == null && _extractionConfiguration != null)
             sds = SelectOne(
-                BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjectsWithParent<SelectedDataSets>(
+                BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllObjectsWithParent<SelectedDataSets>(
                     _extractionConfiguration));
 
         return _selectedDataSet == null

@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Repositories;
@@ -31,7 +32,7 @@ namespace Rdmp.Core.Curation.Data.Governance;
 /// </summary>
 public class GovernancePeriod : DatabaseEntity, ICheckable, INamed
 {
-    private IGovernanceManager _manager;
+    //private IGovernanceManager _manager;
 
     #region Database Properties
 
@@ -97,13 +98,13 @@ public class GovernancePeriod : DatabaseEntity, ICheckable, INamed
     /// </summary>
     [NoMappingToDatabase]
     public IEnumerable<GovernanceDocument> GovernanceDocuments =>
-        Repository.GetAllObjectsWithParent<GovernanceDocument>(this);
+        CatalogueDbContext.GetAllObjectsWithParent<GovernanceDocument>(this);
 
     /// <summary>
     /// All datasets to which this governance grants permission to hold
     /// </summary>
     [NoMappingToDatabase]
-    public IEnumerable<ICatalogue> GovernedCatalogues => _manager.GetAllGovernedCatalogues(this);
+    public IEnumerable<ICatalogue> GovernedCatalogues => null;// _manager.GetAllGovernedCatalogues(this);
 
     #endregion
 
@@ -114,21 +115,21 @@ public class GovernancePeriod : DatabaseEntity, ICheckable, INamed
     /// <summary>
     /// Creates a new <see cref="GovernancePeriod"/> in the database.  This grants (ethical) permission to hold datasets referenced by <see cref="GovernedCatalogues"/>.
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="name"></param>
-    public GovernancePeriod(RdmpDbContext catalogueDbContext, string name = null)
+    public GovernancePeriod(RDMPDbContext catalogueDbContext, string name = null)
     {
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "Name", name ?? $"GovernancePeriod{Guid.NewGuid()}" },
-            { "StartDate", DateTime.Now.Date }
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "Name", name ?? $"GovernancePeriod{Guid.NewGuid()}" },
+        //    { "StartDate", DateTime.Now.Date }
+        //});
 
-        _manager = CatalogueRepository.GovernanceManager;
+        //_manager = CatalogueDbContext.GovernanceManager;
     }
 
-    internal GovernancePeriod(RdmpDbContext catalogueDbContext, DbDataReader r)
-        : base(repository, r)
+    internal GovernancePeriod(RDMPDbContext catalogueDbContext, DbDataReader r)
+        :base(catalogueDbContext, r)
     {
         //cannot be null
         Name = r["Name"].ToString();
@@ -139,7 +140,7 @@ public class GovernancePeriod : DatabaseEntity, ICheckable, INamed
         EndDate = ObjectToNullableDateTime(r["EndDate"]);
         Description = r["Description"] as string;
 
-        _manager = CatalogueRepository.GovernanceManager;
+        //_manager = CatalogueDbContext.GovernanceManager;
     }
 
     /// <inheritdoc/>
@@ -171,7 +172,7 @@ public class GovernancePeriod : DatabaseEntity, ICheckable, INamed
     /// <param name="c"></param>
     public void DeleteGovernanceRelationshipTo(ICatalogue c)
     {
-        _manager.Unlink(this, c);
+        //_manager.Unlink(this, c);
     }
 
     /// <summary>
@@ -184,7 +185,7 @@ public class GovernancePeriod : DatabaseEntity, ICheckable, INamed
     /// <param name="c"></param>
     public void CreateGovernanceRelationshipTo(ICatalogue c)
     {
-        _manager.Link(this, c);
+        //_manager.Link(this, c);
     }
 
     /// <summary>

@@ -70,7 +70,7 @@ public class PersistenceDecisionFactory
         if (!persistString.StartsWith(PersistableSingleDatabaseObjectDockContent.Prefix))
             return null;
 
-        //return Prefix + s + _control.GetType().Name + s + _databaseObject.Repository.GetType() +  s + _databaseObject.GetType().Name + s + _databaseObject.ID;
+        //return Prefix + s + _control.GetType().Name + s + _databaseObject.CatalogueDbContext.GetType() +  s + _databaseObject.GetType().Name + s + _databaseObject.ID;
         var tokens = persistString.Split(PersistStringHelper.Separator);
 
         if (tokens.Length != 5)

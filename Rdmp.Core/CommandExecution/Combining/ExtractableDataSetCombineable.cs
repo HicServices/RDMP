@@ -28,9 +28,9 @@ public class ExtractableDataSetCombineable : ICombineToMakeCommand
 
     public ExtractableDataSetCombineable(ExtractableDataSetPackage extractableDataSetPackage)
     {
-        var repository = (IDataExportRepository)extractableDataSetPackage.Repository;
-        ExtractableDataSets =
-            repository.GetAllDataSets(extractableDataSetPackage, repository.GetAllObjects<ExtractableDataSet>());
+        var repository = extractableDataSetPackage.CatalogueDbContext;
+        //ExtractableDataSets =
+        //    repository.GetAllDataSets(extractableDataSetPackage, repository.GetAllObjects<ExtractableDataSet>());
     }
 
     public string GetSqlString() => null;

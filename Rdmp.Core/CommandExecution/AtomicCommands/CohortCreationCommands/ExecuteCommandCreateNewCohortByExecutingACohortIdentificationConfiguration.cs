@@ -93,7 +93,7 @@ public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfig
             if (projAssociations.Length > 0)
             {
                 currentProj = Project != null ? Project : projAssociations.Length == 1 ? projAssociations[0].Project : null;
-                Project = BasicActivator.CohortCommitProjectSelect(currentProj, BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>().ToArray());
+                Project = BasicActivator.CohortCommitProjectSelect(currentProj, BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Project>().ToArray());
                 if (Project is null) return;
             }
         }

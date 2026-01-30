@@ -8,6 +8,7 @@ using System;
 using System.Data.Common;
 using FAnsi.Implementations.MicrosoftSQL;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.QueryBuilding;
@@ -96,7 +97,7 @@ public abstract class ConcreteColumn : DatabaseEntity, IColumn, IOrderable, ICom
     #endregion
 
     /// <inheritdoc/>
-    protected ConcreteColumn(IRepository repository, DbDataReader r) : base(repository, r)
+    protected ConcreteColumn(RDMPDbContext catalogueDbContext, DbDataReader r) :base(catalogueDbContext, r)
     {
     }
 

@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Pipelines;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.UI.ItemActivation;
@@ -31,7 +32,7 @@ public class ArgumentValueUIFactory
         _activator = activator;
         var argumentType = args.Type;
         IArgumentValueUI toReturn;
-        var catalogueRepository = args.CatalogueRepository;
+        var catalogueDbContext = args.CatalogueDbContext;
         try
         {
             //if it's an array
@@ -47,7 +48,7 @@ public class ArgumentValueUIFactory
             //if it's a pipeline
             if (typeof(IPipeline).IsAssignableFrom(argumentType))
             {
-                toReturn = new ArgumentValuePipelineUI(catalogueRepository, args.Parent, argumentType);
+                toReturn = new ArgumentValuePipelineUI(catalogueDbContext, args.Parent, argumentType);
             }
             else if (typeof(bool) == argumentType)
             {
@@ -130,45 +131,45 @@ public class ArgumentValueUIFactory
 
         //Populate dropdown with the appropriate types
         if (argumentType == typeof(TableInfo))
-            array = GetTableInfosInScope(args.CatalogueRepository, args.Parent)
+            array = GetTableInfosInScope(args.CatalogueDbContext, args.Parent)
                 .ToArray(); //explicit cases where selection is constrained somehow
         else if (argumentType == typeof(ColumnInfo))
-            array = GetColumnInfosInScope(args.CatalogueRepository, args.Parent).ToArray();
+            array = GetColumnInfosInScope(args.CatalogueDbContext, args.Parent).ToArray();
         else if (argumentType == typeof(PreLoadDiscardedColumn))
-            array = GetAllPreloadDiscardedColumnsInScope(args.CatalogueRepository, args.Parent).ToArray();
+            array = GetAllPreloadDiscardedColumnsInScope(args.CatalogueDbContext, args.Parent).ToArray();
         else if (argumentType == typeof(LoadProgress) && args.Parent is ProcessTask pt)
             array = pt.LoadMetadata.LoadProgresses;
         else
-            array = args.CatalogueRepository.GetAllObjects(argumentType)
+            array = args.CatalogueDbContext.GetAllObjects(argumentType)
                 .ToArray(); //Default case fetch all the objects of the Type
 
         return new ArgumentValueComboBoxUI(_activator, array);
     }
 
-    private static IEnumerable<TableInfo> GetTableInfosInScope(RdmpDbContext catalogueDbContext, IArgumentHost parent)
+    private static IEnumerable<TableInfo> GetTableInfosInScope(RDMPDbContext catalogueDbContext, IArgumentHost parent)
     {
         if (parent is ProcessTask pt)
             return pt.GetTableInfos();
 
         return parent is LoadMetadata lmd
             ? lmd.GetDistinctTableInfoList(true)
-            : (IEnumerable<TableInfo>)repository.GetAllObjects<TableInfo>();
+            : (IEnumerable<TableInfo>)catalogueDbContext.GetAllObjects<TableInfo>();
     }
 
 
-    private static IEnumerable<ColumnInfo> GetColumnInfosInScope(RdmpDbContext catalogueDbContext, IArgumentHost parent)
+    private static IEnumerable<ColumnInfo> GetColumnInfosInScope(RDMPDbContext catalogueDbContext, IArgumentHost parent)
     {
         return parent is ProcessTask || parent is LoadMetadata
-            ? GetTableInfosInScope(repository, parent).SelectMany(ti => ti.ColumnInfos)
-            : repository.GetAllObjects<ColumnInfo>();
+            ? GetTableInfosInScope(catalogueDbContext, parent).SelectMany(ti => ti.ColumnInfos)
+            : catalogueDbContext.GetAllObjects<ColumnInfo>();
     }
 
     private static IEnumerable<PreLoadDiscardedColumn> GetAllPreloadDiscardedColumnsInScope(
-        ICatalogueRepository repository, IArgumentHost parent)
+        RDMPDbContext catalogueDbContext, IArgumentHost parent)
     {
         return parent is ProcessTask || parent is LoadMetadata
-            ? GetTableInfosInScope(repository, parent).SelectMany(t => t.PreLoadDiscardedColumns)
-            : repository.GetAllObjects<PreLoadDiscardedColumn>();
+            ? GetTableInfosInScope(catalogueDbContext, parent).SelectMany(t => t.PreLoadDiscardedColumns)
+            : catalogueDbContext.GetAllObjects<PreLoadDiscardedColumn>();
     }
 
     /// <summary>

@@ -97,7 +97,7 @@ public partial class TableInfoUI : TableInfoUI_Design, ISaveableUI
             var newName = _tableInfo.GetFullyQualifiedName();
             _tableInfo.Name = newName;
 
-            var oldName = _tableInfo.Repository.GetObjectByID<TableInfo>(_tableInfo.ID).GetFullyQualifiedName();
+            var oldName = _tableInfo.CatalogueDbContext.GetObjectByID<TableInfo>(_tableInfo.ID).GetFullyQualifiedName();
 
             if (oldName != newName &&
                 Activator.YesNo(

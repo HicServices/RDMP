@@ -73,94 +73,94 @@ public class SqlQueryBuilderHelper
     {
         var Joins = new List<JoinInfo>();
 
-        if (qb.TablesUsedInQuery == null)
-            throw new NullReferenceException(
-                "You must populate TablesUsedInQuery before calling FindRequiredJoins, try calling GetTablesUsedInQuery");
+        //if (qb.TablesUsedInQuery == null)
+        //    throw new NullReferenceException(
+        //        "You must populate TablesUsedInQuery before calling FindRequiredJoins, try calling GetTablesUsedInQuery");
 
-        //there are no tables so how could there be any joins!
-        if (!qb.TablesUsedInQuery.Any())
-            throw new QueryBuildingException(
-                "Query has no TableInfos! Make sure your query has at least one column with an underlying ColumnInfo / TableInfo set - possibly you have deleted the TableInfo? this would result in orphan CatalogueItem");
+        ////there are no tables so how could there be any joins!
+        //if (!qb.TablesUsedInQuery.Any())
+        //    throw new QueryBuildingException(
+        //        "Query has no TableInfos! Make sure your query has at least one column with an underlying ColumnInfo / TableInfo set - possibly you have deleted the TableInfo? this would result in orphan CatalogueItem");
 
-        ICatalogueRepository cataRepository;
-        try
-        {
-            cataRepository = (ICatalogueRepository)qb.TablesUsedInQuery.Select(t => t.Repository).Distinct().Single();
-        }
-        catch (Exception e)
-        {
-            throw new Exception(
-                $"Tables ({string.Join(",", qb.TablesUsedInQuery)}) do not seem to come from the same repository", e);
-        }
+        //RDMPDbContextcataRepository;
+        //try
+        //{
+        //    cataRepository = qb.TablesUsedInQuery.Select(t => t.CatalogueDbContext).Distinct().Single();
+        //}
+        //catch (Exception e)
+        //{
+        //    throw new Exception(
+        //        $"Tables ({string.Join(",", qb.TablesUsedInQuery)}) do not seem to come from the same repository", e);
+        //}
 
-        foreach (TableInfo table1 in qb.TablesUsedInQuery)
-            foreach (TableInfo table2 in qb.TablesUsedInQuery)
-                if (table1.ID != table2.ID) //each table must join with a single other table
-                {
-                    //figure out which of the users columns is from table 1 to join using
-                    var availableJoins = cataRepository.JoinManager.GetAllJoinInfosBetweenColumnInfoSets(
-                        table1.ColumnInfos.ToArray(),
-                        table2.ColumnInfos.ToArray());
+        //foreach (TableInfo table1 in qb.TablesUsedInQuery)
+        //    foreach (TableInfo table2 in qb.TablesUsedInQuery)
+        //        if (table1.ID != table2.ID) //each table must join with a single other table
+        //        {
+        //            //figure out which of the users columns is from table 1 to join using
+        //            var availableJoins = cataCatalogueDbContext.JoinManager.GetAllJoinInfosBetweenColumnInfoSets(
+        //                table1.ColumnInfos.ToArray(),
+        //                table2.ColumnInfos.ToArray());
 
-                if (availableJoins.Length == 0)
-                    continue; //try another table
+        //        if (availableJoins.Length == 0)
+        //            continue; //try another table
 
-                var comboJoinResolved = false;
+        //        var comboJoinResolved = false;
 
-                    //if there are more than 1 join info between the two tables then we need to either do a combo join or complain to user
-                    if (availableJoins.Length > 1)
-                    {
-                        var additionalErrorMessageWhyWeCantDoComboJoin = "";
-                        //if there are multiple joins but they all join between the same 2 tables in the same direction
-                        if (availableJoins.Select(j => j.PrimaryKey.TableInfo_ID).Distinct().Count() == 1
-                            &&
-                            availableJoins.Select(j => j.ForeignKey.TableInfo_ID).Distinct().Count() == 1)
-                            if (availableJoins.Select(j => j.ExtractionJoinType).Distinct().Count() == 1)
-                            {
-                                //add as combo join
-                                for (var i = 1; i < availableJoins.Length; i++)
-                                    availableJoins[0].AddQueryBuildingTimeComboJoinDiscovery(availableJoins[i]);
-                                comboJoinResolved = true;
-                            }
-                            else
-                            {
-                                additionalErrorMessageWhyWeCantDoComboJoin =
-                                    " Although joins are all between the same tables in the same direction, the ExtractionJoinTypes are different (e.g. LEFT and RIGHT) which prevents forming a Combo AND based join using both relationships";
-                            }
-                        else
-                            additionalErrorMessageWhyWeCantDoComboJoin =
-                                " The Joins do not go in the same direction e.g. Table1.FK=>Table=2.PK and then a reverse relationship Table2.FK=>Table1.PK, in this case the system cannot do a Combo AND based join";
+        //            //if there are more than 1 join info between the two tables then we need to either do a combo join or complain to user
+        //            if (availableJoins.Length > 1)
+        //            {
+        //                var additionalErrorMessageWhyWeCantDoComboJoin = "";
+        //                //if there are multiple joins but they all join between the same 2 tables in the same direction
+        //                if (availableJoins.Select(j => j.PrimaryKey.TableInfo_ID).Distinct().Count() == 1
+        //                    &&
+        //                    availableJoins.Select(j => j.ForeignKey.TableInfo_ID).Distinct().Count() == 1)
+        //                    if (availableJoins.Select(j => j.ExtractionJoinType).Distinct().Count() == 1)
+        //                    {
+        //                        //add as combo join
+        //                        for (var i = 1; i < availableJoins.Length; i++)
+        //                            availableJoins[0].AddQueryBuildingTimeComboJoinDiscovery(availableJoins[i]);
+        //                        comboJoinResolved = true;
+        //                    }
+        //                    else
+        //                    {
+        //                        additionalErrorMessageWhyWeCantDoComboJoin =
+        //                            " Although joins are all between the same tables in the same direction, the ExtractionJoinTypes are different (e.g. LEFT and RIGHT) which prevents forming a Combo AND based join using both relationships";
+        //                    }
+        //                else
+        //                    additionalErrorMessageWhyWeCantDoComboJoin =
+        //                        " The Joins do not go in the same direction e.g. Table1.FK=>Table=2.PK and then a reverse relationship Table2.FK=>Table1.PK, in this case the system cannot do a Combo AND based join";
 
-                        var possibleJoinsWere = availableJoins.Select(s => $"JoinInfo[{s}]")
-                            .Aggregate((a, b) => a + Environment.NewLine + b);
+        //                var possibleJoinsWere = availableJoins.Select(s => $"JoinInfo[{s}]")
+        //                    .Aggregate((a, b) => a + Environment.NewLine + b);
 
-                        if (!comboJoinResolved)
-                            throw new QueryBuildingException(
-                                $"Found {availableJoins.Length} possible Joins for {table1.Name} and {table2.Name}, did not know which to use.  Available joins were:{Environment.NewLine}{possibleJoinsWere}{Environment.NewLine} It was not possible to configure a Composite Join because:{Environment.NewLine}{additionalErrorMessageWhyWeCantDoComboJoin}");
-                    }
+        //                if (!comboJoinResolved)
+        //                    throw new QueryBuildingException(
+        //                        $"Found {availableJoins.Length} possible Joins for {table1.Name} and {table2.Name}, did not know which to use.  Available joins were:{Environment.NewLine}{possibleJoinsWere}{Environment.NewLine} It was not possible to configure a Composite Join because:{Environment.NewLine}{additionalErrorMessageWhyWeCantDoComboJoin}");
+        //            }
 
-                    if (!Joins.Contains(availableJoins[0]))
-                        Joins.Add(availableJoins[0]);
-                }
+        //            if (!Joins.Contains(availableJoins[0]))
+        //                Joins.Add(availableJoins[0]);
+        //        }
 
-        if (qb.TablesUsedInQuery.Count - GetDistinctRequiredLookups(qb).Count() - Joins.Count > 1)
-            throw new QueryBuildingException(
-                $"There were {qb.TablesUsedInQuery.Count} Tables involved in assembling this query ( {qb.TablesUsedInQuery.Aggregate("", (s, n) => $"{s}{n},").TrimEnd(',')}) of which  {GetDistinctRequiredLookups(qb).Count()} were Lookups and {Joins.Count} were JoinInfos, this leaves 2+ tables unjoined (no JoinInfo found)");
+        //if (qb.TablesUsedInQuery.Count - GetDistinctRequiredLookups(qb).Count() - Joins.Count > 1)
+        //    throw new QueryBuildingException(
+        //        $"There were {qb.TablesUsedInQuery.Count} Tables involved in assembling this query ( {qb.TablesUsedInQuery.Aggregate("", (s, n) => $"{s}{n},").TrimEnd(',')}) of which  {GetDistinctRequiredLookups(qb).Count()} were Lookups and {Joins.Count} were JoinInfos, this leaves 2+ tables unjoined (no JoinInfo found)");
 
 
-        //make sure there are not multiple primary key tables (those should be configured as lookups
-        if (Joins.Count > 0 && qb.PrimaryExtractionTable == null)
-        {
-            var primaryKeyTables = new List<string>(Joins.Select(p => p.PrimaryKey.TableInfo.Name).Distinct());
+        ////make sure there are not multiple primary key tables (those should be configured as lookups
+        //if (Joins.Count > 0 && qb.PrimaryExtractionTable == null)
+        //{
+        //    var primaryKeyTables = new List<string>(Joins.Select(p => p.PrimaryKey.TableInfo.Name).Distinct());
 
-            if (primaryKeyTables.Count > 1)
-            {
-                //there are multiple primary key tables... see if we are configured to support them
-                var primaryKeyTablesAsString = primaryKeyTables.Aggregate((a, b) => $"{a},{b}");
-                throw new QueryBuildingException(
-                    $"Found {primaryKeyTables.Count} primary key tables but PrimaryExtractionTable (Fix this by setting one TableInfo as 'IsPrimaryExtractionTable'), primary key tables identified include: {primaryKeyTablesAsString}");
-            }
-        }
+        //    if (primaryKeyTables.Count > 1)
+        //    {
+        //        //there are multiple primary key tables... see if we are configured to support them
+        //        var primaryKeyTablesAsString = primaryKeyTables.Aggregate((a, b) => $"{a},{b}");
+        //        throw new QueryBuildingException(
+        //            $"Found {primaryKeyTables.Count} primary key tables but PrimaryExtractionTable (Fix this by setting one TableInfo as 'IsPrimaryExtractionTable'), primary key tables identified include: {primaryKeyTablesAsString}");
+        //    }
+        //}
 
         return qb.PrimaryExtractionTable != null && qb.TablesUsedInQuery.Contains(qb.PrimaryExtractionTable) == false
             ? throw new QueryBuildingException(
@@ -314,18 +314,18 @@ public class SqlQueryBuilderHelper
         //there must be at least one TableInfo here to do this... but we are going to look up all available JoinInfos from these tables to identify opportunistic joins
         foreach (var table in toReturn.ToArray())
         {
-            var available =
-                table.CatalogueRepository.JoinManager.GetAllJoinInfosWhereTableContains(table, JoinInfoType.AnyKey);
+            //var available =
+            //    table.CatalogueDbContext.JoinManager.GetAllJoinInfosWhereTableContains(table, JoinInfoType.AnyKey);
 
-            foreach (var newAvailableJoin in available)
-                foreach (var availableTable in new TableInfo[]
-                             { newAvailableJoin.PrimaryKey.TableInfo, newAvailableJoin.ForeignKey.TableInfo })
-                    //if it's a never before seen table
-                    if (!toReturn.Contains(availableTable))
-                        //are there any filters which reference the available TableInfo
-                        if (filters.Any(f => f.WhereSQL != null && f.WhereSQL.ToLower().Contains(
-                                $"{availableTable.Name.ToLower()}.")))
-                            toReturn.Add(availableTable);
+            //foreach (var newAvailableJoin in available)
+            //    foreach (var availableTable in new TableInfo[]
+            //                 { newAvailableJoin.PrimaryKey.TableInfo, newAvailableJoin.ForeignKey.TableInfo })
+            //        //if it's a never before seen table
+            //        if (!toReturn.Contains(availableTable))
+            //            //are there any filters which reference the available TableInfo
+            //            if (filters.Any(f => f.WhereSQL != null && f.WhereSQL.ToLower().Contains(
+            //                    $"{availableTable.Name.ToLower()}.")))
+            //                toReturn.Add(availableTable);
         }
 
 

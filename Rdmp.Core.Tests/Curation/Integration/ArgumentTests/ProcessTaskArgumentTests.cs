@@ -28,7 +28,7 @@ public class ProcessTaskArgumentTests : DatabaseTests
     {
         var tableInfoName = $"TableInfoFor_{new StackTrace().GetFrame(0).GetMethod().Name}";
 
-        var toCleanup = CatalogueRepository.GetAllObjects<TableInfo>()
+        var toCleanup = CatalogueDbContext.GetAllObjects<TableInfo>()
             .SingleOrDefault(t => t.Name.Equals(tableInfoName));
 
         toCleanup?.DeleteInDatabase();
@@ -48,7 +48,7 @@ public class ProcessTaskArgumentTests : DatabaseTests
                 pta.SetValue(tableInfo);
                 pta.SaveToDatabase();
 
-                var newInstanceOfPTA = CatalogueRepository.GetObjectByID<ProcessTaskArgument>(pta.ID);
+                var newInstanceOfPTA = CatalogueDbContext.GetObjectByID<ProcessTaskArgument>(pta.ID);
 
                 Assert.That(pta.Value, Is.EqualTo(newInstanceOfPTA.Value));
 
@@ -75,9 +75,9 @@ public class ProcessTaskArgumentTests : DatabaseTests
         var tableInfoName = $"TableInfoFor_{methodName}";
         var preLoadDiscardedColumnName = $"PreLoadDiscardedColumnFor_{methodName}";
 
-        var toCleanup = CatalogueRepository.GetAllObjects<TableInfo>()
+        var toCleanup = CatalogueDbContext.GetAllObjects<TableInfo>()
             .SingleOrDefault(t => t.Name.Equals(tableInfoName));
-        var toCleanupCol = CatalogueRepository.GetAllObjects<PreLoadDiscardedColumn>()
+        var toCleanupCol = CatalogueDbContext.GetAllObjects<PreLoadDiscardedColumn>()
             .SingleOrDefault(c => c.RuntimeColumnName.Equals(preLoadDiscardedColumnName));
 
         //must delete pre load discarded first
@@ -103,7 +103,7 @@ public class ProcessTaskArgumentTests : DatabaseTests
                 pta.SetValue(preloadDiscardedColumn);
                 pta.SaveToDatabase();
 
-                var newInstanceOfPTA = CatalogueRepository.GetObjectByID<ProcessTaskArgument>(pta.ID);
+                var newInstanceOfPTA = CatalogueDbContext.GetObjectByID<ProcessTaskArgument>(pta.ID);
                 Assert.That(pta.Value, Is.EqualTo(newInstanceOfPTA.Value));
 
                 var p1 = (PreLoadDiscardedColumn)pta.GetValueAsSystemType();
@@ -128,7 +128,7 @@ public class ProcessTaskArgumentTests : DatabaseTests
     {
         var tableInfoName = $"TableInfoFor_{new StackTrace().GetFrame(0).GetMethod().Name}";
 
-        var toCleanup = CatalogueRepository.GetAllObjects<TableInfo>()
+        var toCleanup = CatalogueDbContext.GetAllObjects<TableInfo>()
             .SingleOrDefault(t => t.Name.Equals(tableInfoName));
 
         toCleanup?.DeleteInDatabase();
@@ -170,7 +170,7 @@ public class ProcessTaskArgumentTests : DatabaseTests
     {
         var tableInfoName = $"TableInfoFor_{new StackTrace().GetFrame(0).GetMethod().Name}";
 
-        var toCleanup = CatalogueRepository.GetAllObjects<TableInfo>()
+        var toCleanup = CatalogueDbContext.GetAllObjects<TableInfo>()
             .SingleOrDefault(t => t.Name.Equals(tableInfoName));
 
         toCleanup?.DeleteInDatabase();
@@ -223,7 +223,7 @@ public class ProcessTaskArgumentTests : DatabaseTests
             pta.SetValue(new EncryptedString(CatalogueRepository) { Value = "test123" });
             pta.SaveToDatabase();
 
-            var loadedPta = CatalogueRepository.GetObjectByID<ProcessTaskArgument>(pta.ID);
+            var loadedPta = CatalogueDbContext.GetObjectByID<ProcessTaskArgument>(pta.ID);
             var value = loadedPta.GetValueAsSystemType() as EncryptedString;
             Assert.That(value, Is.Not.Null);
             Assert.That(value.GetDecryptedValue(), Is.EqualTo("test123"));
@@ -232,7 +232,7 @@ public class ProcessTaskArgumentTests : DatabaseTests
         {
             if (pta != null)
             {
-                var processTask = CatalogueRepository.GetObjectByID<ProcessTask>(pta.ProcessTask_ID);
+                var processTask = CatalogueDbContext.GetObjectByID<ProcessTask>(pta.ProcessTask_ID);
                 processTask.DeleteInDatabase();
             }
 

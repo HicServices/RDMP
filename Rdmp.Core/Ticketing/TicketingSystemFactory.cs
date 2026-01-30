@@ -7,6 +7,7 @@
 using System;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
@@ -18,11 +19,11 @@ namespace Rdmp.Core.Ticketing;
 /// </summary>
 public class TicketingSystemFactory
 {
-    private readonly ICatalogueRepository _repository;
+    private readonly RDMPDbContext _catalogueDbContext;
 
-    public TicketingSystemFactory(RdmpDbContext catalogueDbContext)
+    public TicketingSystemFactory(RDMPDbContext catalogueDbContext)
     {
-        _repository = repository;
+        _catalogueDbContext = catalogueDbContext;
     }
 
     public static Type[] GetAllKnownTicketingSystems() => MEF.GetTypes<ITicketingSystem>().ToArray();
@@ -47,7 +48,7 @@ public class TicketingSystemFactory
 
         //if there are credentials create with those (otherwise create with null credentials)
         if (ticketingSystemConfiguration.DataAccessCredentials_ID != null)
-            creds = _repository.GetObjectByID<DataAccessCredentials>((int)ticketingSystemConfiguration
+            creds = _catalogueDbContext.GetObjectByID<DataAccessCredentials>((int)ticketingSystemConfiguration
                 .DataAccessCredentials_ID);
 
         return Create(ticketingSystemConfiguration.Type, ticketingSystemConfiguration.Url, creds);

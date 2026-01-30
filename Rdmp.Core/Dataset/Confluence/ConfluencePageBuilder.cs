@@ -88,7 +88,7 @@ namespace Rdmp.Core.Dataset.Confluence
 
         private static string BuildDataVariableRecord(CatalogueItem catalogueItem)
         {
-            var lookups = catalogueItem.CatalogueRepository.GetAllObjectsWhere<Lookup>("ForeignKey_ID", catalogueItem.ColumnInfo.ID);
+            var lookups = catalogueItem.CatalogueDbContext.GetAllObjectsWhere<Lookup>("ForeignKey_ID", catalogueItem.ColumnInfo.ID);
             return $"""
                 <tr>
                     <td>{catalogueItem.Name}</td>
@@ -96,7 +96,7 @@ namespace Rdmp.Core.Dataset.Confluence
                     <td>{catalogueItem.ExtractionInformation.IsPrimaryKey}</td>
                     <td>{catalogueItem.Description}</td>
                     <td>{catalogueItem.ExtractionInformation.IsExtractionIdentifier}</td>
-                    <td>{lookups.Length != 0}</td>
+                    <td>{lookups.Any()}</td>
                 </tr>
                 """;
         }

@@ -10,6 +10,7 @@ using Rdmp.Core.Caching.Requests.FetchRequestProvider;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
@@ -22,7 +23,7 @@ namespace Rdmp.Core.Caching.Pipeline.Sources;
 /// </summary>
 /// <typeparam name="T"></typeparam>
 public abstract class CacheSource<T> : ICacheSource, IPluginDataFlowSource<T>,
-    IPipelineRequirement<ICatalogueRepository> where T : class, ICacheChunk
+    IPipelineRequirement<RDMPDbContext> where T : class, ICacheChunk
 {
     public ICacheFetchRequestProvider RequestProvider { get; set; }
     public IPermissionWindow PermissionWindow { get; set; }
@@ -30,7 +31,7 @@ public abstract class CacheSource<T> : ICacheSource, IPluginDataFlowSource<T>,
     protected T Chunk;
     protected ICacheFetchRequest Request;
 
-    protected ICatalogueRepository CatalogueRepository;
+    protected RDMPDbContext CatalogueDbContext;
 
     /// <summary>
     /// Enforces behaviour required for logging unsuccessful cache requests and providing implementation-independent checks, so that the plugin author
@@ -101,8 +102,8 @@ public abstract class CacheSource<T> : ICacheSource, IPluginDataFlowSource<T>,
     public abstract T TryGetPreview();
     public abstract void Check(ICheckNotifier notifier);
 
-    public void PreInitialize(ICatalogueRepository value, IDataLoadEventListener listener)
+    public void PreInitialize(RDMPDbContext value, IDataLoadEventListener listener)
     {
-        CatalogueRepository = value;
+        CatalogueDbContext = value;
     }
 }

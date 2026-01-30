@@ -18,7 +18,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 public class ExecuteCommandExportLoggedDataToCsv : BasicCommandExecution
 {
     private LogViewerFilter _filter;
-    private ExternalDatabaseServer[] _loggingServers;
+    //private ExternalDatabaseServer[] _loggingServers;
 
     [UseWithObjectConstructor]
     public ExecuteCommandExportLoggedDataToCsv(IBasicActivateItems activator, LoggingTables table, int idIfAny)
@@ -29,52 +29,52 @@ public class ExecuteCommandExportLoggedDataToCsv : BasicCommandExecution
     public ExecuteCommandExportLoggedDataToCsv(IBasicActivateItems activator, LogViewerFilter filter) : base(activator)
     {
         _filter = filter ?? new LogViewerFilter(LoggingTables.DataLoadTask);
-        _loggingServers =
-            BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllDatabases<LoggingDatabasePatcher>();
+        //_loggingServers =
+        //    BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllDatabases<LoggingDatabasePatcher>();
 
-        if (!_loggingServers.Any())
-            SetImpossible("There are no logging servers");
+        //if (!_loggingServers.Any())
+        SetImpossible("There are no logging servers");
     }
 
     public override string GetCommandName() => "Export to CSV";
 
     public override void Execute()
     {
-        var db = SelectOne(_loggingServers, null, true);
-        var server = db.Discover(DataAccessContext.Logging).Server;
+//        var db = SelectOne(_loggingServers, null, true);
+//        var server = db.Discover(DataAccessContext.Logging).Server;
 
-        if (db != null)
-        {
-            using var con = server.GetConnection();
-            con.Open();
+//        if (db != null)
+//        {
+//            using var con = server.GetConnection();
+//            con.Open();
 
-            var sql = string.Format(@"SELECT * FROM (
-SELECT [dataLoadRunID]
-      ,eventType
-      ,[description]
-      ,[source]
-      ,[time]
-      ,[ID]
-  FROM {0}
-  {2}
-UNION
-SELECT [dataLoadRunID]
-      ,'OnError'
-      ,[description]
-      ,[source]
-      ,[time]
-      ,[ID]
-  FROM {1}
-  {2}
- ) as x
-order by time ASC", LoggingTables.ProgressLog, LoggingTables.FatalError, _filter.GetWhereSql());
+//            var sql = string.Format(@"SELECT * FROM (
+//SELECT [dataLoadRunID]
+//      ,eventType
+//      ,[description]
+//      ,[source]
+//      ,[time]
+//      ,[ID]
+//  FROM {0}
+//  {2}
+//UNION
+//SELECT [dataLoadRunID]
+//      ,'OnError'
+//      ,[description]
+//      ,[source]
+//      ,[time]
+//      ,[ID]
+//  FROM {1}
+//  {2}
+// ) as x
+//order by time ASC", LoggingTables.ProgressLog, LoggingTables.FatalError, _filter.GetWhereSql());
 
-            var output = BasicActivator.SelectFile("Output CSV file");
+//            var output = BasicActivator.SelectFile("Output CSV file");
 
-            var extract = new ExtractTableVerbatim(server, sql, output.Name, output.Directory, ",",
-                CultureInfo.CurrentCulture.DateTimeFormat.FullDateTimePattern);
+//            var extract = new ExtractTableVerbatim(server, sql, output.Name, output.Directory, ",",
+//                CultureInfo.CurrentCulture.DateTimeFormat.FullDateTimePattern);
 
-            extract.DoExtraction();
-        }
+//            extract.DoExtraction();
+//        }
     }
 }

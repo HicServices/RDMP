@@ -38,13 +38,13 @@ public class ANOMigrationTests : TestsRequiringANOStore
 
         DeleteANOEndpoint();
 
-        var remnantANO = CatalogueRepository.GetAllObjects<ANOTable>()
+        var remnantANO = CatalogueDbContext.GetAllObjects<ANOTable>()
             .SingleOrDefault(a => a.TableName.Equals("ANOCondition"));
 
         remnantANO?.DeleteInDatabase();
 
         //cleanup
-        foreach (var remnant in CatalogueRepository.GetAllObjects<TableInfo>()
+        foreach (var remnant in CatalogueDbContext.GetAllObjects<TableInfo>()
                      .Where(t => t.GetRuntimeName().Equals(TableName)))
             remnant.DeleteInDatabase();
 

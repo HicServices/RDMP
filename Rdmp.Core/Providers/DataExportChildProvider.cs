@@ -18,6 +18,7 @@ using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline;
 using Rdmp.Core.DataExport.DataRelease.Pipeline;
 using Rdmp.Core.DataLoad.Engine.Pipeline;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Providers.Nodes.CohortNodes;
@@ -99,11 +100,11 @@ public class DataExportChildProvider : CatalogueChildProvider
 
     private DeployedExtractionFilterParameter[] _allParameters;
 
-    private IDataExportRepository dataExportRepository;
+    private RDMPDbContext dataExportRepository;
 
     public DataExportChildProvider(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
         IChildProvider[] pluginChildProviders, ICheckNotifier errorsCheckNotifier,
-        DataExportChildProvider previousStateIfKnown) : base(repositoryLocator.CatalogueRepository,
+        DataExportChildProvider previousStateIfKnown) : base(repositoryLocator.CatalogueDbContext,
         pluginChildProviders, errorsCheckNotifier, previousStateIfKnown)
     {
         ForbidListedSources = previousStateIfKnown?.ForbidListedSources ?? new List<ExternalCohortTable>();
@@ -206,7 +207,7 @@ public class DataExportChildProvider : CatalogueChildProvider
                 { "Caching", CachingPipelineUseCase.DesignTime() },
                 {
                     "Aggregate Committing",
-                    CreateTableFromAggregateUseCase.DesignTime(repositoryLocator.CatalogueRepository)
+                    CreateTableFromAggregateUseCase.DesignTime(repositoryLocator.CatalogueDbContext)
                 }
             });
         }
@@ -240,8 +241,8 @@ public class DataExportChildProvider : CatalogueChildProvider
 
     private void BuildSelectedDatasets()
     {
-        _selectedDataSetsWithNoIsExtractionIdentifier =
-            new HashSet<ISelectedDataSets>(dataExportRepository.GetSelectedDatasetsWithNoExtractionIdentifiers());
+        //_selectedDataSetsWithNoIsExtractionIdentifier =
+        //    new HashSet<ISelectedDataSets>(D.GetSelectedDatasetsWithNoExtractionIdentifiers());
 
         SelectedDataSets = GetAllObjects<SelectedDataSets>(dataExportRepository);
         ReportProgress("Fetching data export objects");
@@ -275,17 +276,17 @@ public class DataExportChildProvider : CatalogueChildProvider
 
         //if we are using a database repository then we can make use of the caching class DataExportFilterManagerFromChildProvider to speed up
         //filter contents
-        _dataExportFilterManager = dataExportRepository is not DataExportRepository dbRepo
-            ? dataExportRepository.FilterManager
-            : new DataExportFilterManagerFromChildProvider(dbRepo, this);
+        //_dataExportFilterManager = dataExportRepository is not RDMPDbContext dbRepo
+        //    ? dataExportRepository.FilterManager
+        //    : new DataExportFilterManagerFromChildProvider(dbRepo, this);
     }
 
     private void AddChildren(IExtractableDataSetPackage package, DescendancyList descendancy)
     {
-        var children = new HashSet<object>(dataExportRepository.GetAllDataSets(package, ExtractableDataSets)
-            .Select(ds => new PackageContentNode(package, ds, dataExportRepository)));
+        //var children = new HashSet<object>(dataExportCatalogueDbContext.GetAllDataSets(package, ExtractableDataSets)
+        //    .Select(ds => new PackageContentNode(package, ds, dataExportRepository)));
 
-        AddToDictionaries(children, descendancy);
+        //AddToDictionaries(children, descendancy);
     }
 
     private void AddChildren(Project project, DescendancyList descendancy)
@@ -743,7 +744,7 @@ public class DataExportChildProvider : CatalogueChildProvider
     {
         lock (WriteLock)
         {
-            return dataExportRepository.GetAllDataSets(package, ExtractableDataSets);
+            return null; //dataExportRepository.GetAllDataSets(package, ExtractableDataSets);
         }
     }
 
@@ -783,13 +784,13 @@ public class DataExportChildProvider : CatalogueChildProvider
     /// <summary>
     /// Returns all <see cref="ExtractableColumn"/> Injected with their corresponding <see cref="ExtractionInformation"/>
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <returns></returns>
-    public ExtractableColumn[] GetAllExtractableColumns(IDataExportRepository repository)
+    public ExtractableColumn[] GetAllExtractableColumns(RDMPDbContext catalogueDbContext)
     {
         lock (WriteLock)
         {
-            var toReturn = repository.GetAllObjects<ExtractableColumn>();
+            var toReturn = catalogueDbContext.GetAllObjects<ExtractableColumn>();
             foreach (var c in toReturn)
                 if (c.CatalogueExtractionInformation_ID == null)
                 {

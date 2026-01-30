@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.Repositories;
@@ -20,7 +21,7 @@ public interface IExtractableDataSet : IMapsDirectlyToDatabaseTable, IRevertable
 {
     /// <summary>
     /// The <see cref="Curation.Data.Catalogue"/> (dataset) which this object allows the extraction of.  The Catalogue object will exist in
-    /// the <see cref="ICatalogueRepository"/> database (while the <see cref="IExtractableDataSet"/> exists in the <see cref="IDataExportRepository"/>).
+    /// the <see cref="RDMPDbContext"/> database (while the <see cref="IExtractableDataSet"/> exists in the <see cref="IDataExportRepository"/>).
     /// </summary>
     int Catalogue_ID { get; set; }
 

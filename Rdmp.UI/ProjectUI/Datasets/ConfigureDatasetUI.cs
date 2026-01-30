@@ -634,7 +634,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design, ILifetimeSu
 
         //identify the existing force joins
         var existingForceJoins = new HashSet<SelectedDataSetsForcedJoin>(
-            SelectedDataSet.Repository.GetAllObjectsWithParent<SelectedDataSetsForcedJoin>(SelectedDataSet));
+            SelectedDataSet.CatalogueDbContext.GetAllObjectsWithParent<SelectedDataSetsForcedJoin>(SelectedDataSet));
 
         foreach (var node in nodes)
         {

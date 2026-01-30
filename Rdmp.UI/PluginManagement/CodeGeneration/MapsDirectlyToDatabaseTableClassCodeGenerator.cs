@@ -65,7 +65,7 @@ public class MapsDirectlyToDatabaseTableClassCodeGenerator
 
 
         constructors.AppendLine(
-            $"\tpublic {_table.GetRuntimeName()}(IRepository repository, DbDataReader r): base(repository, r)");
+            $"\tpublic {_table.GetRuntimeName()}(IRepository repository, DbDataReader r):base(catalogueDbContext, r)");
         constructors.AppendLine("\t{");
 
         foreach (var col in columns.Where(c => c.GetRuntimeName() != "ID"))

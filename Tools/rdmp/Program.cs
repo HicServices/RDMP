@@ -167,7 +167,7 @@ internal class Program
 
         start.DatabaseFound += (s, e) =>
         {
-            var db = e.Repository.DiscoveredServer.GetCurrentDatabase();
+            var db = e.CatalogueDbContext.DiscoveredServer.GetCurrentDatabase();
 
             switch (e.Status)
             {

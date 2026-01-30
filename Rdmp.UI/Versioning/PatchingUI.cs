@@ -9,6 +9,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using FAnsi.Discovery;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.ReusableLibraryCode.Checks;
@@ -27,14 +28,14 @@ namespace Rdmp.UI.Versioning;
 public partial class PatchingUI : Form
 {
     private readonly DiscoveredDatabase _database;
-    private readonly ITableRepository _repository;
+    private readonly RDMPDbContext _catalogueDbContext;
 
     private IPatcher _patcher;
 
-    private PatchingUI(DiscoveredDatabase database, ITableRepository repository, IPatcher patcher)
+    private PatchingUI(DiscoveredDatabase database, RDMPDbContext catalogueDbContext, IPatcher patcher)
     {
         _database = database;
-        _repository = repository;
+        _catalogueDbContext = catalogueDbContext;
         _patcher = patcher;
         InitializeComponent();
         btnAttemptPatching.Enabled = false;
@@ -52,7 +53,7 @@ public partial class PatchingUI : Form
         }
         else
         {
-            tbDatabase.Text = $"{_database.GetRuntimeName()}, Version:{repository.GetVersion()}";
+            //tbDatabase.Text = $"{_database.GetRuntimeName()}, Version:{repository.GetVersion()}";
         }
         btnAttemptPatching_Click(null, null);
 
@@ -82,9 +83,9 @@ public partial class PatchingUI : Form
             //patching worked so prevent them doing it again!
             btnAttemptPatching.Enabled = false;
 
-            if (_repository != null)
+            if (_catalogueDbContext != null)
             {
-                _repository.ClearUpdateCommandCache();
+                //_catalogueDbContext.ClearUpdateCommandCache();
                 checksUI1.OnCheckPerformed(new CheckEventArgs("Cleared UPDATE commands cache", CheckResult.Success,
                     null));
             }
@@ -102,7 +103,7 @@ public partial class PatchingUI : Form
 
     public static void ShowIfRequired(DiscoveredDatabase database, ITableRepository repository, IPatcher patcher)
     {
-        if (Patch.IsPatchingRequired(database, patcher, out _, out _, out _) == Patch.PatchingState.Required)
-            new PatchingUI(database, repository, patcher).ShowDialog();
+        //if (Patch.IsPatchingRequired(database, patcher, out _, out _, out _) == Patch.PatchingState.Required)
+        //    new PatchingUI(database, repository, patcher).ShowDialog();
     }
 }

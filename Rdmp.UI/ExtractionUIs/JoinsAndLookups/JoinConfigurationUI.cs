@@ -96,7 +96,7 @@ public partial class JoinConfigurationUI : JoinConfiguration_Design
         if (Activator.SelectObject(new DialogArgs
         {
             TaskDescription = $"Which other table should be joined to '{_leftTableInfo.Name}'?"
-        }, _leftTableInfo.Repository.GetAllObjects<TableInfo>().Where(t => t.ID != _leftTableInfo.ID).ToArray(),
+        }, _leftTableInfo.CatalogueDbContext.GetAllObjects<TableInfo>().Where(t => t.ID != _leftTableInfo.ID).ToArray(),
                 out var selected))
             SetRightTableInfo(selected);
     }
@@ -166,7 +166,7 @@ public partial class JoinConfigurationUI : JoinConfiguration_Design
             else
                 throw new Exception("You must select an Extraction Join direction");
 
-            var cataRepo = _leftTableInfo.CatalogueRepository;
+            var cataRepo = _leftTableInfo.CatalogueDbContext;
 
             for (var i = 0; i < pks.Length; i++)
                 if (cataRepo.GetAllObjects<JoinInfo>()

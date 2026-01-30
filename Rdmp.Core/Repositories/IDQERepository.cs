@@ -7,6 +7,7 @@
 using System.Collections.Generic;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataQualityEngine.Data;
+using Rdmp.Core.EntityFramework;
 
 namespace Rdmp.Core.Repositories;
 
@@ -19,7 +20,7 @@ public interface IDQERepository
     /// The Catalogue database to which the IDs in <see cref="Evaluation"/> refer to.  Each DQE repo can serve
     /// only a single RDMP Catalogue database
     /// </summary>
-    ICatalogueRepository CatalogueRepository { get; }
+    RDMPDbContext CatalogueDbContext { get; }
 
     /// <summary>
     /// Returns the most recently run DQE results for <paramref name="c"/> or null

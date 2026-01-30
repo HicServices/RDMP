@@ -62,7 +62,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
         var autoSuggestProjectNumbers = false;
         var autoSuggestProjectNumbersSetting = activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Setting>().FirstOrDefault(static s => s.Key == "AutoSuggestProjectNumbers");
         if (autoSuggestProjectNumbersSetting is not null) autoSuggestProjectNumbers = Convert.ToBoolean(autoSuggestProjectNumbersSetting.Value);
-        _existingProjects = activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>();
+        _existingProjects = activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Project>();
 
         if (!autoSuggestProjectNumbers) return;
 
@@ -88,7 +88,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
             .GetAllObjects<ExtractableDataSet>());
         btnPackage.Image = activator.CoreIconProvider.GetImage(RDMPConcept.ExtractableDataSetPackage).ImageToBitmap();
         btnPackage.Enabled =
-            activator.RepositoryLocator.DataExportRepository.GetAllObjects<ExtractableDataSetPackage>().Any();
+            activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<ExtractableDataSetPackage>().Any();
 
         cbxCohort.DataSource = activator.RepositoryLocator.CatalogueDbContext
             .GetAllObjects<CohortIdentificationConfiguration>();
@@ -113,7 +113,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
 
     private void IdentifyCompatibleCohortSources()
     {
-        var sources = Activator.RepositoryLocator.DataExportRepository.GetAllObjects<ExternalCohortTable>();
+        var sources = Activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<ExternalCohortTable>();
 
         ddCohortSources.Items.AddRange(sources);
 
@@ -488,15 +488,15 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
         {
             TaskDescription =
                         "Which Package(s) should be added to the Project.  Datasets in all packages chosen will be added to the Project"
-        }, Activator.RepositoryLocator.DataExportRepository.GetAllObjects<ExtractableDataSetPackage>(),
+        }, Activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<ExtractableDataSetPackage>(),
                 out var selected))
         {
-            _selectedDatasets = selected
-                .SelectMany(p =>
-                    Activator.RepositoryLocator.DataExportRepository.GetAllDataSets(p,
-                        cbxDatasets.Items.Cast<ExtractableDataSet>().ToArray()))
-                .Distinct()
-                .ToArray();
+            //_selectedDatasets = selected
+            //    .SelectMany(p =>
+            //        Activator.RepositoryLocator.CatalogueDbContext.GetAllDataSets(p,
+            //            cbxDatasets.Items.Cast<ExtractableDataSet>().ToArray()))
+            //    .Distinct()
+            //    .ToArray();
 
             UpdateDatasetControlVisibility();
         }

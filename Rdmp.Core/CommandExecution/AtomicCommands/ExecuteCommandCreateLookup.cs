@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
 
@@ -19,7 +20,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 /// </summary>
 public class ExecuteCommandCreateLookup : BasicCommandExecution
 {
-    private readonly ICatalogueRepository _catalogueRepository;
+    private readonly RDMPDbContext _catalogueDbContext;
     private readonly ExtractionInformation _foreignKeyExtractionInformation;
     private readonly ColumnInfo[] _lookupDescriptionColumns;
     private readonly List<Tuple<ColumnInfo, ColumnInfo>> _fkToPkTuples;
@@ -34,7 +35,7 @@ public class ExecuteCommandCreateLookup : BasicCommandExecution
     /// 
     /// <para>See parameter descriptions for help</para>
     /// </summary>
-    /// <param name="catalogueRepository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="foreignKeyExtractionInformation">The extractable column in the main dataset which contains the lookup code foreign key e.g. PatientSexCode </param>
     /// <param name="lookupDescriptionColumns">The column(s) in the lookup that contain the free text description of the code e.g. SexDescription, SexDescriptionLong etc</param>
     /// <param name="fkToPkTuples">Must have at least 1, Item1 must be the foreign key column in the main dataset, Item2 must be the primary key column in the lookup.
@@ -42,11 +43,11 @@ public class ExecuteCommandCreateLookup : BasicCommandExecution
     /// <param name="collation"></param>
     /// <param name="alsoCreateExtractionInformations">True to create a new virtual column in the main dataset so that the code description appears inline with the rest of
     /// the column(s) in the dataset (when the SELECT query is built)</param>
-    public ExecuteCommandCreateLookup(ICatalogueRepository catalogueRepository,
+    public ExecuteCommandCreateLookup(RDMPDbContext catalogueDbContext,
         ExtractionInformation foreignKeyExtractionInformation, ColumnInfo[] lookupDescriptionColumns,
         List<Tuple<ColumnInfo, ColumnInfo>> fkToPkTuples, string collation, bool alsoCreateExtractionInformations)
     {
-        _catalogueRepository = catalogueRepository;
+        _catalogueDbContext = catalogueDbContext;
         _foreignKeyExtractionInformation = foreignKeyExtractionInformation;
         _lookupDescriptionColumns = lookupDescriptionColumns;
         _fkToPkTuples = fkToPkTuples;
@@ -65,7 +66,7 @@ public class ExecuteCommandCreateLookup : BasicCommandExecution
     /// <summary>
     /// Creates a knowledge that one <see cref="TableInfo"/> provides a description for a code in a column of a <see cref="Catalogue"/> (<see cref="ExtractionInformation"/>).
     /// </summary>
-    /// <param name="catalogueRepository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="foreignKeyExtractionInformation">The extractable column in the main dataset which contains the lookup code foreign key e.g. PatientSexCode </param>
     /// <param name="lookupDescriptionColumn">The column in the lookup table containing the code description that you want</param>
     /// <param name="lookupTablePrimaryKey">The column in the lookup which contains the code e.g. LocationCode</param>
@@ -73,10 +74,10 @@ public class ExecuteCommandCreateLookup : BasicCommandExecution
     /// <param name="alsoCreateExtractionInformations">True to create a new virtual column in the main dataset so that the code description appears inline with the rest of
     /// the columns in the dataset (when the SELECT query is built)</param>
     [UseWithObjectConstructor]
-    public ExecuteCommandCreateLookup(ICatalogueRepository catalogueRepository,
+    public ExecuteCommandCreateLookup(RDMPDbContext catalogueDbContext,
         ExtractionInformation foreignKeyExtractionInformation, ColumnInfo lookupDescriptionColumn,
         ColumnInfo lookupTablePrimaryKey, string collation, bool alsoCreateExtractionInformations)
-        : this(catalogueRepository, foreignKeyExtractionInformation, new[] { lookupDescriptionColumn },
+        : this(catalogueDbContext, foreignKeyExtractionInformation, new[] { lookupDescriptionColumn },
             new List<Tuple<ColumnInfo, ColumnInfo>>
                 { Tuple.Create(foreignKeyExtractionInformation.ColumnInfo, lookupTablePrimaryKey) }, collation,
             alsoCreateExtractionInformations)
@@ -90,11 +91,11 @@ public class ExecuteCommandCreateLookup : BasicCommandExecution
 
         foreach (var descCol in _lookupDescriptionColumns)
         {
-            var lookup = new Lookup(_catalogueRepository, descCol, _fkToPkTuples.First().Item1,
+            var lookup = new Lookup(_catalogueDbContext, descCol, _fkToPkTuples.First().Item1,
                 _fkToPkTuples.First().Item2, ExtractionJoinType.Left, _collation);
 
             foreach (var supplementalKeyPair in _fkToPkTuples.Skip(1))
-                new LookupCompositeJoinInfo(_catalogueRepository, lookup, supplementalKeyPair.Item1,
+                new LookupCompositeJoinInfo(_catalogueDbContext, lookup, supplementalKeyPair.Item1,
                     supplementalKeyPair.Item2, _collation);
 
             if (_alsoCreateExtractionInformations)
@@ -103,7 +104,7 @@ public class ExecuteCommandCreateLookup : BasicCommandExecution
                     ? $"{_foreignKeyExtractionInformation.GetRuntimeName()}_Desc"
                     : $"{_foreignKeyExtractionInformation.GetRuntimeName()}_{descCol.GetRuntimeName()}";
 
-                var newCatalogueItem = new CatalogueItem(_catalogueRepository, _catalogue, proposedName);
+                var newCatalogueItem = new CatalogueItem(_catalogueDbContext, _catalogue, proposedName);
                 newCatalogueItem.SetColumnInfo(descCol);
 
                 //bump everyone down 1
@@ -115,7 +116,7 @@ public class ExecuteCommandCreateLookup : BasicCommandExecution
                 }
 
                 var newExtractionInformation =
-                    new ExtractionInformation(_catalogueRepository, newCatalogueItem, descCol, descCol.ToString())
+                    new ExtractionInformation(_catalogueDbContext, newCatalogueItem, descCol, descCol.ToString())
                     {
                         ExtractionCategory = ExtractionCategory.Supplemental,
                         Alias = newCatalogueItem.Name,

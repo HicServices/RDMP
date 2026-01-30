@@ -242,7 +242,7 @@ internal class YamlRepositoryTests
         // Make an orphan container by deleting the root
 
         // don't check before deleting stuff
-        ((CatalogueObscureDependencyFinder)ac.CatalogueRepository.ObscureDependencyFinder).OtherDependencyFinders
+        ((CatalogueObscureDependencyFinder)ac.CatalogueDbContext.ObscureDependencyFinder).OtherDependencyFinders
             .Clear();
 
         // delete the root filter

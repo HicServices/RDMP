@@ -7,6 +7,7 @@
 using System;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cache;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 
@@ -27,20 +28,22 @@ public class CacheFetchRequest : ICacheFetchRequest
     public ICacheProgress CacheProgress { get; set; }
     public ICacheFetchFailure PreviousFailure { get; set; }
 
+    public RDMPDbContext CatalogueDbContext { get; set; }
+
 
     /// <summary>
     /// Is this CacheFetchRequest a retry of a previously failed fetch request?
     /// </summary>
     public bool IsRetry => PreviousFailure != null;
 
-    public CacheFetchRequest(IRepository repository, DateTime start)
+    public CacheFetchRequest(RDMPDbContext catalogueDbContext, DateTime start)
     {
-        Repository = repository;
+       CatalogueDbContext = catalogueDbContext;
         Start = start;
         PreviousFailure = null;
     }
 
-    public CacheFetchRequest(IRepository repository) : this(repository, DateTime.MinValue)
+    public CacheFetchRequest(RDMPDbContext catalogueDbContext) : this(catalogueDbContext, DateTime.MinValue)
     {
     }
 
@@ -73,7 +76,7 @@ public class CacheFetchRequest : ICacheFetchRequest
         }
         else
         {
-            _ = new CacheFetchFailure((ICatalogueRepository)Repository, CacheProgress, Start, End, e);
+            _ = new CacheFetchFailure(CatalogueDbContext, CacheProgress, Start, End, e);
         }
     }
 
@@ -92,7 +95,7 @@ public class CacheFetchRequest : ICacheFetchRequest
     public ICacheFetchRequest GetNext()
     {
         var nextStart = Start.Add(ChunkPeriod);
-        return new CacheFetchRequest(Repository, nextStart)
+        return new CacheFetchRequest(CatalogueDbContext, nextStart)
         {
             CacheProgress = CacheProgress,
             PermissionWindow = PermissionWindow,

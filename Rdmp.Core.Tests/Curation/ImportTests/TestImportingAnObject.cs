@@ -15,7 +15,7 @@ public class TestImportingAnObject : DatabaseTests
     public void ImportACatalogue()
     {
         var c = new Catalogue(CatalogueRepository, "omg cata");
-        Assert.AreEqual(CatalogueRepository.GetAllObjects<Catalogue>().Count(), 1);
+        Assert.AreEqual(CatalogueDbContext.GetAllObjects<Catalogue>().Count(), 1);
 
         var shareManager = new ShareManager(RepositoryLocator);
 
@@ -24,14 +24,14 @@ public class TestImportingAnObject : DatabaseTests
         Assert.AreEqual(c.Name, c2.Name);
         Assert.AreNotEqual(c.ID,c2.ID);
 
-        Assert.AreEqual(CatalogueRepository.GetAllObjects<Catalogue>().Count(),2);
+        Assert.AreEqual(CatalogueDbContext.GetAllObjects<Catalogue>().Count(),2);
 
     }
 
     [Test]
     public void TestSharingAPluginIgnoringCollisions()
     {
-        foreach (var oldP in CatalogueRepository.GetAllObjects<Plugin>())
+        foreach (var oldP in CatalogueDbContext.GetAllObjects<Plugin>())
             oldP.DeleteInDatabase();
 
         var fi = new FileInfo("CommitAssemblyEmptyAssembly.dll");
@@ -53,7 +53,7 @@ public class TestImportingAnObject : DatabaseTests
     [Test]
     public void TestSharingAPluginReplaceBinary()
     {
-        foreach (var oldP in CatalogueRepository.GetAllObjects<Plugin>())
+        foreach (var oldP in CatalogueDbContext.GetAllObjects<Plugin>())
             oldP.DeleteInDatabase();
 
         var fi = new FileInfo("CommitAssemblyEmptyAssembly.dll");
@@ -90,7 +90,7 @@ public class TestImportingAnObject : DatabaseTests
     [TestCase(true)]
     public void TestSharingAPluginReplaceDllBinary(bool fiddleIds)
     {
-        foreach (var oldP in CatalogueRepository.GetAllObjects<Plugin>())
+        foreach (var oldP in CatalogueDbContext.GetAllObjects<Plugin>())
             oldP.DeleteInDatabase();
 
         var fi = new FileInfo("CommitAssemblyEmptyAssembly.dll");
@@ -125,7 +125,7 @@ public class TestImportingAnObject : DatabaseTests
     [Test]
     public void JsonTest()
     {
-        foreach (var oldP in CatalogueRepository.GetAllObjects<Plugin>())
+        foreach (var oldP in CatalogueDbContext.GetAllObjects<Plugin>())
             oldP.DeleteInDatabase();
 
         var fi = new FileInfo("CommitAssemblyEmptyAssembly.dll");

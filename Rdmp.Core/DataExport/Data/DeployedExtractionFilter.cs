@@ -11,6 +11,7 @@ using System.Linq;
 using Rdmp.Core.Curation.Checks;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.FilterImporting.Construction;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Repositories;
@@ -61,13 +62,13 @@ public class DeployedExtractionFilter : ConcreteFilter
     /// Returns all parameters declared against this filter (does not include other parameters in scope e.g. globals)
     /// </summary>
     [NoMappingToDatabase]
-    public DeployedExtractionFilterParameter[] ExtractionFilterParameters => Repository
+    public DeployedExtractionFilterParameter[] ExtractionFilterParameters => CatalogueDbContext
         .GetAllObjectsWhere<DeployedExtractionFilterParameter>("ExtractionFilter_ID", ID).ToArray();
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
     public override IContainer FilterContainer => FilterContainer_ID.HasValue
-        ? Repository.GetObjectByID<FilterContainer>(FilterContainer_ID.Value)
+        ? CatalogueDbContext.GetObjectByID<FilterContainer>(FilterContainer_ID.Value)
         : null;
 
     public override int Order { get => _order; set => SetField(ref _order, value); }
@@ -79,7 +80,7 @@ public class DeployedExtractionFilter : ConcreteFilter
 
     /// <inheritdoc/>
     public override IFilterFactory GetFilterFactory() =>
-        new DeployedExtractionFilterFactory((IDataExportRepository)Repository);
+        new DeployedExtractionFilterFactory(CatalogueDbContext);
 
     /// <inheritdoc/>
     public override Catalogue GetCatalogue()
@@ -109,26 +110,26 @@ public class DeployedExtractionFilter : ConcreteFilter
     /// 
     /// <para>This object is created into the data export metadata database</para>
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="name"></param>
     /// <param name="container"></param>
-    public DeployedExtractionFilter(IDataExportRepository repository, string name, FilterContainer container)
+    public DeployedExtractionFilter(RDMPDbContext catalogueDbContext, string name, FilterContainer container)
     {
-        Repository = repository;
-        Repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "Name", name != null ? (object)name : DBNull.Value },
-            { "FilterContainer_ID", container != null ? (object)container.ID : DBNull.Value }
-        });
+       CatalogueDbContext = catalogueDbContext;
+        //CatalogueDbContext.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "Name", name != null ? (object)name : DBNull.Value },
+        //    { "FilterContainer_ID", container != null ? (object)container.ID : DBNull.Value }
+        //});
     }
 
     /// <summary>
     /// Read an existing WHERE filter out of the database
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="r"></param>
-    internal DeployedExtractionFilter(IDataExportRepository repository, DbDataReader r)
-        : base(repository, r)
+    internal DeployedExtractionFilter(RDMPDbContext catalogueDbContext, DbDataReader r)
+        :base(catalogueDbContext, r)
     {
         WhereSQL = r["WhereSQL"] as string;
         Description = r["Description"] as string;
@@ -160,7 +161,7 @@ public class DeployedExtractionFilter : ConcreteFilter
         base.Check(notifier);
 
         var checker = new ClonedFilterChecker(this, ClonedFromExtractionFilter_ID,
-            ((IDataExportRepository)Repository).CatalogueRepository);
+            CatalogueDbContext);
         checker.Check(notifier);
     }
 
@@ -176,13 +177,13 @@ public class DeployedExtractionFilter : ConcreteFilter
         if (FilterContainer_ID == null)
             return null;
 
-        var container = Repository.GetObjectByID<FilterContainer>(FilterContainer_ID.Value);
+        var container = CatalogueDbContext.GetObjectByID<FilterContainer>(FilterContainer_ID.Value);
         return container.GetSelectedDataSetsRecursively();
     }
 
     public DeployedExtractionFilter ShallowClone(FilterContainer into)
     {
-        var clone = new DeployedExtractionFilter(DataExportRepository, Name, into);
+        var clone = new DeployedExtractionFilter(CatalogueDbContext, Name, into);
         CopyShallowValuesTo(clone);
         return clone;
     }

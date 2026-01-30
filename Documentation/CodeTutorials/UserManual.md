@@ -77,10 +77,10 @@ In a normal RDMP deployment, users access a single shared Metadata database.
 
 You can install the client software via the [installer link on the Github site](https://github.com/HicServices/RDMP#install ).  Once installed the software will guide you through the process of setting up platform databases / connecting to existing platform databases (see [Platform Database Setup](#platform-database-setup)).
 
-It is possible to run RDMP as a standalone tool without an Sql Server instance using a [File System Backend](./YamlRepository.md) but this approach is recommended only for single user or standalone systems where RDMP performs a specific activity in isolation (e.g. data load, cohort creation etc).
+It is possible to run RDMP as a standalone tool without an Sql Server instance using a [File System Backend](./YamlCatalogueDbContext.md) but this approach is recommended only for single user or standalone systems where RDMP performs a specific activity in isolation (e.g. data load, cohort creation etc).
 
 ## System Requirements
-You will need an Sql Server instance (unless using a [file system backend](./YamlRepository.md)).  Sql Server Express is free.  Alternatively you can install LocalDb from the Visual Studio Installer:
+You will need an Sql Server instance (unless using a [file system backend](./YamlCatalogueDbContext.md)).  Sql Server Express is free.  Alternatively you can install LocalDb from the Visual Studio Installer:
 
 ![Platform database setup](Images/Tests/InstallingLocalDb.png)
 
@@ -124,7 +124,7 @@ There are a couple of other database types which can be created as and when you 
 |Anonymisation|Provides a way of performing identifier dropping / substitution on data load for when you want an entirely anonymous data repository|
 |[Plugin Databases](./FAQ.md#plugins)| RDMP supports plugins which can in some cases have their own database(s)|
 
-_\* Unless using [file system backend](./YamlRepository.md)_
+_\* Unless using [file system backend](./YamlCatalogueDbContext.md)_
 
 ## Example Data
 Example data can be setup on install by ticking the 'Example Datasets' checkbox during platform database setup.

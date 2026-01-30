@@ -193,7 +193,7 @@ public class GoToCommandFactory : CommandFactoryBase
             { OverrideCommandName = "Usages (in Cohort Builder)" };
 
             yield return new ExecuteCommandShow(_activator, () =>
-                _activator.RepositoryLocator.DataExportRepository
+                _activator.RepositoryLocator.CatalogueDbContext
                     .GetAllObjectsWhere<DeployedExtractionFilter>("ClonedFromExtractionFilter_ID", masterFilter.ID)
                     .Select(f => f.GetDataset()?.ExtractionConfiguration)
                     .Where(c => c != null).Distinct()
@@ -281,7 +281,7 @@ public class GoToCommandFactory : CommandFactoryBase
                 if (cataEds != null)
                 {
                     yield return new ExecuteCommandShow(_activator,
-                         () => (cataEds.SelectMany(c => c.Projects.Select(p => p.ID)).Select(p => _activator.RepositoryLocator.DataExportRepository.GetObjectByID<Project>(p))))
+                         () => (cataEds.SelectMany(c => c.Projects.Select(p => p.ID)).Select(p => _activator.RepositoryLocator.CatalogueDbContext.GetObjectByID<Project>(p))))
                     {
                         OverrideCommandName = "Associated Projects",
                         OverrideIcon = GetImage(RDMPConcept.Project)
@@ -411,13 +411,15 @@ public class GoToCommandFactory : CommandFactoryBase
 
     private IEnumerable<IMapsDirectlyToDatabaseTable> GetReplacementIfAny(IMapsDirectlyToDatabaseTable mt)
     {
-        var replacement = _activator.RepositoryLocator.CatalogueDbContext
-            .GetAllObjectsWhere<ExtendedProperty>("Name", ExtendedProperty.ReplacedBy)
-            .FirstOrDefault(r => r.IsReferenceTo(mt));
 
-        return replacement == null
-            ? Enumerable.Empty<IMapsDirectlyToDatabaseTable>()
-            : new[] { mt.Repository.GetObjectByID(mt.GetType(), int.Parse(replacement.Value)) };
+        return Enumerable.Empty<IMapsDirectlyToDatabaseTable>();
+        //var replacement = _activator.RepositoryLocator.CatalogueDbContext
+        //    .GetAllObjectsWhere<ExtendedProperty>("Name", ExtendedProperty.ReplacedBy)
+        //    .FirstOrDefault(r => r.IsReferenceTo(mt));
+
+        //return replacement == null
+        //    ? Enumerable.Empty<IMapsDirectlyToDatabaseTable>()
+        //    : new[] { mt.CatalogueDbContext.GetObjectByID(mt.GetType(), int.Parse(replacement.Value)) };
     }
 
     private Image<Rgba32> GetImage(RDMPConcept concept) => _activator.CoreIconProvider.GetImage(concept);

@@ -319,7 +319,7 @@ MrMurder,2001-01-01,Yella");
     public void DLELoadTwoTables(DatabaseType databaseType)
     {
         //setup the data tables
-        var logServer = CatalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
+        var logServer = CatalogueDbContext.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
         var logManager = new LogManager(logServer);
 
         var db = GetCleanedServer(databaseType);

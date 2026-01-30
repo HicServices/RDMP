@@ -34,7 +34,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         public override void Execute()
         {
             base.Execute();
-            var memoryRepo = new MemoryCatalogueRepository();
+            var memoryRepo = new MemoryRDMPDbContext();
             var columnInfo = _activator.RepositoryLocator.CatalogueDbContext.GetObjectByID<ColumnInfo>(_redaction.ColumnInfo_ID);
             var catalogue = columnInfo.CatalogueItems.FirstOrDefault().Catalogue;
             var server = catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.InternalDataProcessing, false);

@@ -96,8 +96,8 @@ public class RDMPBootStrapper
                      !string.IsNullOrWhiteSpace(_dataExportConnection))
             {
                 startup.RepositoryLocator = new LinkedRepositoryProvider(_catalogueConnection, _dataExportConnection);
-                startup.RepositoryLocator.CatalogueDbContext.TestConnection();
-                startup.RepositoryLocator.DataExportRepository.TestConnection();
+                //startup.RepositoryLocator.CatalogueDbContext.TestConnection();
+                //startup.RepositoryLocator.CatalogueDbContext.TestConnection();
             }
 
             var startupUI = new StartupUI(startup);

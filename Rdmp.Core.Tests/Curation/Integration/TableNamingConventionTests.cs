@@ -19,7 +19,7 @@ internal class TableNamingConventionTests : DatabaseTests
     public void GetAllTableInfos_moreThan1_pass()
     {
         var ti = new TableInfo(CatalogueRepository, "AMAGAD!!!");
-        Assert.That(CatalogueRepository.GetAllObjects<TableInfo>().Any());
+        Assert.That(CatalogueDbContext.GetAllObjects<TableInfo>().Any());
         ti.DeleteInDatabase();
     }
 
@@ -37,7 +37,7 @@ internal class TableNamingConventionTests : DatabaseTests
 
         tableInfo.SaveToDatabase();
 
-        var tableInfoAfter = CatalogueRepository.GetObjectByID<TableInfo>(tableInfo.ID);
+        var tableInfoAfter = CatalogueDbContext.GetObjectByID<TableInfo>(tableInfo.ID);
 
         Assert.Multiple(() =>
         {

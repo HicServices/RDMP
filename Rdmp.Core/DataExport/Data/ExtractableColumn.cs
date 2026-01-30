@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
 using Rdmp.Core.QueryBuilding;
@@ -100,35 +101,35 @@ public class ExtractableColumn : ConcreteColumn, IComparable, IInjectKnown<Catal
 
     /// <summary>
     /// Creates a new line of SELECT Sql for the given <paramref name="dataset"/> as it is extracted in the provided <paramref name="configuration"/>.  The new object will
-    /// be created in the <paramref name="repository"/> database.
+    /// be created in the <paramref name="catalogueDbContext"/> database.
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="dataset"></param>
     /// <param name="configuration"></param>
     /// <param name="extractionInformation"></param>
     /// <param name="order"></param>
     /// <param name="selectSQL"></param>
-    public ExtractableColumn(IDataExportRepository repository, IExtractableDataSet dataset,
+    public ExtractableColumn(RDMPDbContext catalogueDbContext, IExtractableDataSet dataset,
         ExtractionConfiguration configuration, ExtractionInformation extractionInformation, int order, string selectSQL)
     {
-        Repository = repository;
-        Repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "ExtractableDataSet_ID", dataset.ID },
-            { "ExtractionConfiguration_ID", configuration.ID },
-            {
-                "CatalogueExtractionInformation_ID",
-                extractionInformation == null ? DBNull.Value : (object)extractionInformation.ID
-            },
-            { "Order", order },
-            { "SelectSQL", string.IsNullOrWhiteSpace(selectSQL) ? DBNull.Value : (object)selectSQL }
-        });
+       CatalogueDbContext = catalogueDbContext;
+        //CatalogueDbContext.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "ExtractableDataSet_ID", dataset.ID },
+        //    { "ExtractionConfiguration_ID", configuration.ID },
+        //    {
+        //        "CatalogueExtractionInformation_ID",
+        //        extractionInformation == null ? DBNull.Value : (object)extractionInformation.ID
+        //    },
+        //    { "Order", order },
+        //    { "SelectSQL", string.IsNullOrWhiteSpace(selectSQL) ? DBNull.Value : (object)selectSQL }
+        //});
 
         ClearAllInjections();
     }
 
-    internal ExtractableColumn(IDataExportRepository repository, DbDataReader r)
-        : base(repository, r)
+    internal ExtractableColumn(RDMPDbContext catalogueDbContext, DbDataReader r)
+        :base(catalogueDbContext, r)
     {
         ExtractableDataSet_ID = int.Parse(r["ExtractableDataSet_ID"].ToString());
         ExtractionConfiguration_ID = int.Parse(r["ExtractionConfiguration_ID"].ToString());
@@ -226,7 +227,7 @@ public class ExtractableColumn : ConcreteColumn, IComparable, IInjectKnown<Catal
 
         try
         {
-            return ((IDataExportRepository)Repository).CatalogueRepository.GetObjectByID<ExtractionInformation>(
+            return CatalogueDbContext.GetObjectByID<ExtractionInformation>(
                 CatalogueExtractionInformation_ID.Value);
         }
         catch (KeyNotFoundException)
@@ -274,10 +275,10 @@ public class ExtractableColumn : ConcreteColumn, IComparable, IInjectKnown<Catal
 
     public ExtractableColumn ShallowClone()
     {
-        var eds = DataExportRepository.GetObjectByID<ExtractableDataSet>(ExtractableDataSet_ID);
-        var config = DataExportRepository.GetObjectByID<ExtractionConfiguration>(ExtractionConfiguration_ID);
+        var eds = CatalogueDbContext.GetObjectByID<ExtractableDataSet>(ExtractableDataSet_ID);
+        var config = CatalogueDbContext.GetObjectByID<ExtractionConfiguration>(ExtractionConfiguration_ID);
 
-        var clone = new ExtractableColumn(DataExportRepository, eds, config, CatalogueExtractionInformation, Order,
+        var clone = new ExtractableColumn(CatalogueDbContext, eds, config, CatalogueExtractionInformation, Order,
             SelectSQL);
         CopyShallowValuesTo(clone);
         return clone;

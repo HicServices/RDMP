@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework;
 
 namespace Rdmp.Core.Repositories.Managers;
 
@@ -17,11 +18,11 @@ namespace Rdmp.Core.Repositories.Managers;
 /// </summary>
 public class JoinManager : IJoinManager
 {
-    private readonly ICatalogueRepository _repository;
+    private readonly RDMPDbContext _catalogueDbContext;
 
-    public JoinManager(RdmpDbContext catalogueDbContext)
+    public JoinManager(RDMPDbContext catalogueDbContext)
     {
-        _repository = repository;
+        _catalogueDbContext = catalogueDbContext;
     }
 
     public JoinInfo[] GetAllJoinInfosBetweenColumnInfoSets(JoinInfo[] joinInfos, ColumnInfo[] set1, ColumnInfo[] set2)
@@ -45,7 +46,7 @@ public class JoinManager : IJoinManager
     }
 
     public JoinInfo[] GetAllJoinInfosBetweenColumnInfoSets(ColumnInfo[] set1, ColumnInfo[] set2) =>
-        GetAllJoinInfosBetweenColumnInfoSets(_repository.GetAllObjects<JoinInfo>(), set1, set2);
+        GetAllJoinInfosBetweenColumnInfoSets(_catalogueDbContext.GetAllObjects<JoinInfo>(), set1, set2);
 
     public JoinInfo[] GetAllJoinInfosWhereTableContains(ITableInfo tableInfo, JoinInfoType type)
     {
@@ -53,13 +54,13 @@ public class JoinManager : IJoinManager
 
         return type switch
         {
-            JoinInfoType.AnyKey => _repository.GetAllObjects<JoinInfo>()
+            JoinInfoType.AnyKey => _catalogueDbContext.GetAllObjects<JoinInfo>()
                 .Where(j => ids.Contains(j.ForeignKey_ID) || ids.Contains(j.PrimaryKey_ID))
                 .ToArray(),
-            JoinInfoType.ForeignKey => _repository.GetAllObjects<JoinInfo>()
+            JoinInfoType.ForeignKey => _catalogueDbContext.GetAllObjects<JoinInfo>()
                 .Where(j => ids.Contains(j.ForeignKey_ID))
                 .ToArray(),
-            JoinInfoType.PrimaryKey => _repository.GetAllObjects<JoinInfo>()
+            JoinInfoType.PrimaryKey => _catalogueDbContext.GetAllObjects<JoinInfo>()
                 .Where(j => ids.Contains(j.PrimaryKey_ID))
                 .ToArray(),
             _ => throw new ArgumentOutOfRangeException(nameof(type))

@@ -61,7 +61,7 @@ public class AggregationContainerTask : Compileable, IOrderable
             throw new Exception(
                 $"Aggregate Container {Container.ID} does not have any datasets in it and neither does an of its direct subcontainers have any, how far down the tree do you expect me to look!");
 
-        var catas = Container.Repository.GetAllObjectsInIDList<Catalogue>(cataIDs);
+        var catas = Container.CatalogueDbContext.GetAllObjectsInIDList<Catalogue>(cataIDs);
 
         return catas.SelectMany(c => c.GetTableInfoList(false)).ToArray();
     }

@@ -17,7 +17,7 @@ internal class TestExecuteCommandSet : CommandCliTests
     [Test]
     public void Test_CatalogueDescription_Normal()
     {
-        var cata = new Catalogue(Repository.CatalogueRepository, "Bob");
+        var cata = new Catalogue(CatalogueDbContext.CatalogueRepository, "Bob");
 
         GetInvoker().ExecuteCommand(typeof(ExecuteCommandSet), new CommandLineObjectPicker(new[]
         {
@@ -31,7 +31,7 @@ internal class TestExecuteCommandSet : CommandCliTests
     [Test]
     public void Test_CatalogueDescription_Null()
     {
-        var cata = new Catalogue(Repository.CatalogueRepository, "Bob")
+        var cata = new Catalogue(CatalogueDbContext.CatalogueRepository, "Bob")
         {
             Description = "something cool"
         };

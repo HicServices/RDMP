@@ -10,6 +10,7 @@ using System.Data.Common;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
 using Rdmp.Core.Repositories;
@@ -48,7 +49,7 @@ public class ProjectCohortIdentificationConfigurationAssociation : DatabaseEntit
 
     /// <inheritdoc cref="Project_ID"/>
     [NoMappingToDatabase]
-    public IProject Project => Repository.GetObjectByID<Project>(Project_ID);
+    public IProject Project => CatalogueDbContext.GetObjectByID<Project>(Project_ID);
 
     private Lazy<CohortIdentificationConfiguration> _knownCic;
 
@@ -66,29 +67,29 @@ public class ProjectCohortIdentificationConfigurationAssociation : DatabaseEntit
     }
 
     /// <summary>
-    /// Declares in the <paramref name="repository"/> database that the given <paramref name="cic"/> cohort query is associated with the supplied <paramref name="project"/>.
+    /// Declares in the <paramref name="catalogueDbContext"/> database that the given <paramref name="cic"/> cohort query is associated with the supplied <paramref name="project"/>.
     /// This is usually done after using the query to build an <see cref="IExtractableCohort"/> (But it can be done manually by the user too).
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="project"></param>
     /// <param name="cic"></param>
-    public ProjectCohortIdentificationConfigurationAssociation(IDataExportRepository repository, Project project,
+    public ProjectCohortIdentificationConfigurationAssociation(RDMPDbContext catalogueDbContext, Project project,
         CohortIdentificationConfiguration cic)
     {
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "Project_ID", project.ID },
-            { "CohortIdentificationConfiguration_ID", cic.ID }
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "Project_ID", project.ID },
+        //    { "CohortIdentificationConfiguration_ID", cic.ID }
+        //});
 
-        if (ID == 0 || Repository != repository)
+        if (ID == 0 || CatalogueDbContext != catalogueDbContext)
             throw new ArgumentException("Repository failed to properly hydrate this class");
 
         ClearAllInjections();
     }
 
-    internal ProjectCohortIdentificationConfigurationAssociation(IDataExportRepository repository, DbDataReader r)
-        : base(repository, r)
+    internal ProjectCohortIdentificationConfigurationAssociation(RDMPDbContext catalogueDbContext, DbDataReader r)
+        :base(catalogueDbContext, r)
     {
         Project_ID = Convert.ToInt32(r["Project_ID"]);
         CohortIdentificationConfiguration_ID = Convert.ToInt32(r["CohortIdentificationConfiguration_ID"]);
@@ -108,7 +109,7 @@ public class ProjectCohortIdentificationConfigurationAssociation : DatabaseEntit
     }
 
     private CohortIdentificationConfiguration FetchCohortIdentificationConfiguration() =>
-        DataExportRepository.CatalogueRepository.GetAllObjectsWhere<CohortIdentificationConfiguration>("ID",
+        CatalogueDbContext.GetAllObjectsWhere<CohortIdentificationConfiguration>("ID",
             CohortIdentificationConfiguration_ID).SingleOrDefault();
 
 

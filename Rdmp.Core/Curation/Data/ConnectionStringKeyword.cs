@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using FAnsi;
 using FAnsi.Discovery.ConnectionStringDefaults;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Annotations;
@@ -68,26 +69,26 @@ public class ConnectionStringKeyword : DatabaseEntity, INamed, ICheckable
     /// <summary>
     /// Defines a new keyword that should be set on all connections to databases of <see cref="DatabaseType"/> when making new connections
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="databaseType"></param>
     /// <param name="keyword"></param>
     /// <param name="value"></param>
-    public ConnectionStringKeyword(RdmpDbContext catalogueDbContext, DatabaseType databaseType, string keyword,
+    public ConnectionStringKeyword(RDMPDbContext catalogueDbContext, DatabaseType databaseType, string keyword,
         string value)
     {
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "DatabaseType", databaseType.ToString() },
-            { "Name", keyword },
-            { "Value", value }
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "DatabaseType", databaseType.ToString() },
+        //    { "Name", keyword },
+        //    { "Value", value }
+        //});
 
-        if (ID == 0 || Repository != repository)
+        if (ID == 0 || CatalogueDbContext != catalogueDbContext)
             throw new ArgumentException("Repository failed to properly hydrate this class");
     }
 
-    internal ConnectionStringKeyword(RdmpDbContext catalogueDbContext, DbDataReader r)
-        : base(repository, r)
+    internal ConnectionStringKeyword(RDMPDbContext catalogueDbContext, DbDataReader r)
+        : base(catalogueDbContext, r)
     {
         DatabaseType = (DatabaseType)Enum.Parse(typeof(DatabaseType), r["DatabaseType"].ToString());
         Name = r["Name"].ToString();

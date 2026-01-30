@@ -11,6 +11,7 @@ using System.Linq;
 using FAnsi.Discovery;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.Pipelines;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Logging.PastEvents;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
@@ -102,22 +103,22 @@ public class CacheProgress : DatabaseEntity, ICacheProgress
     ///<inheritdoc/>
     [NoMappingToDatabase]
     public IEnumerable<ICacheFetchFailure> CacheFetchFailures =>
-        Repository.GetAllObjectsWithParent<CacheFetchFailure>(this);
+        CatalogueDbContext.GetAllObjectsWithParent<CacheFetchFailure>(this);
 
     /// <inheritdoc cref="ICacheProgress.LoadProgress_ID"/>
     [NoMappingToDatabase]
-    public ILoadProgress LoadProgress => Repository.GetObjectByID<LoadProgress>(LoadProgress_ID);
+    public ILoadProgress LoadProgress => CatalogueDbContext.GetObjectByID<LoadProgress>(LoadProgress_ID);
 
     /// <inheritdoc cref="ICacheProgress.Pipeline_ID"/>
     [NoMappingToDatabase]
-    public IPipeline Pipeline => Pipeline_ID == null ? null : Repository.GetObjectByID<Pipeline>((int)Pipeline_ID);
+    public IPipeline Pipeline => Pipeline_ID == null ? null : CatalogueDbContext.GetObjectByID<Pipeline>((int)Pipeline_ID);
 
     /// <inheritdoc cref="ICacheProgress.PermissionWindow_ID"/>
     [NoMappingToDatabase]
     public IPermissionWindow PermissionWindow =>
         PermissionWindow_ID == null
             ? null
-            : Repository.GetObjectByID<PermissionWindow>((int)PermissionWindow_ID);
+            : CatalogueDbContext.GetObjectByID<PermissionWindow>((int)PermissionWindow_ID);
 
     #endregion
 
@@ -150,19 +151,19 @@ public class CacheProgress : DatabaseEntity, ICacheProgress
     /// Defines that the given <see cref="LoadProgress"/> is a DLE data load that is driven by reading data from a cache.  The instance created can be used
     /// to describe which pipeline should be run to fill that cache, the period that has been fetched from the remote endpoint so far etc.
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param  name="catalogueDbContext"></param>
     /// <param name="loadProgress"></param>
-    public CacheProgress(RdmpDbContext catalogueDbContext, ILoadProgress loadProgress)
+    public CacheProgress(RDMPDbContext catalogueDbContext, ILoadProgress loadProgress)
     {
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "LoadProgress_ID", loadProgress.ID },
-            { "Name", $"New CacheProgress {Guid.NewGuid()}" }
-        });
+        //catalogueDbContext.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "LoadProgress_ID", loadProgress.ID },
+        //    { "Name", $"New CacheProgress {Guid.NewGuid()}" }
+        //});
     }
 
-    internal CacheProgress(RdmpDbContext catalogueDbContext, DbDataReader r)
-        : base(repository, r)
+    internal CacheProgress(RDMPDbContext catalogueDbContext, DbDataReader r)
+        :base(catalogueDbContext, r)
     {
         LoadProgress_ID = int.Parse(r["LoadProgress_ID"].ToString());
         PermissionWindow_ID = ObjectToNullableInt(r["PermissionWindow_ID"]);
@@ -179,22 +180,22 @@ public class CacheProgress : DatabaseEntity, ICacheProgress
     {
         var toReturnIds = new List<int>();
 
-        using (var conn = ((CatalogueRepository)Repository).GetConnection())
-        {
-            using var cmd =
-                DatabaseCommandHelper.GetCommand($@"SELECT ID FROM CacheFetchFailure 
-WHERE CacheProgress_ID = @CacheProgressID AND ResolvedOn IS NULL
-ORDER BY FetchRequestStart
-OFFSET {start} ROWS
-FETCH NEXT {batchSize} ROWS ONLY", conn.Connection, conn.Transaction);
-            DatabaseCommandHelper.AddParameterWithValueToCommand("@CacheProgressID", cmd, ID);
+//        using (var conn = (Repository).GetConnection())
+//        {
+//            using var cmd =
+//                DatabaseCommandHelper.GetCommand($@"SELECT ID FROM CacheFetchFailure 
+//WHERE CacheProgress_ID = @CacheProgressID AND ResolvedOn IS NULL
+//ORDER BY FetchRequestStart
+//OFFSET {start} ROWS
+//FETCH NEXT {batchSize} ROWS ONLY", conn.Connection, conn.Transaction);
+//            DatabaseCommandHelper.AddParameterWithValueToCommand("@CacheProgressID", cmd, ID);
 
-            using var reader = cmd.ExecuteReader();
-            while (reader.Read())
-                toReturnIds.Add(Convert.ToInt32(reader["ID"]));
-        }
+//            using var reader = cmd.ExecuteReader();
+//            while (reader.Read())
+//                toReturnIds.Add(Convert.ToInt32(reader["ID"]));
+//        }
 
-        return Repository.GetAllObjectsInIDList<CacheFetchFailure>(toReturnIds);
+        return CatalogueDbContext.GetAllObjectsInIDList<CacheFetchFailure>(toReturnIds);
     }
 
     ///<inheritdoc/>
@@ -241,12 +242,12 @@ FETCH NEXT {batchSize} ROWS ONLY", conn.Connection, conn.Transaction);
     /// Returns
     /// </summary>
     /// <returns></returns>
-    public DiscoveredServer GetDistinctLoggingDatabase() => CatalogueRepository.GetDefaultLogManager()?.Server ??
-                                                            throw new Exception("No default logging server configured");
+    public DiscoveredServer GetDistinctLoggingDatabase() => null;// CatalogueDbContext.GetDefaultLogManager()?.Server ??
+                                                            //throw new Exception("No default logging server configured");
 
     public DiscoveredServer GetDistinctLoggingDatabase(out IExternalDatabaseServer serverChosen)
     {
-        serverChosen = CatalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
+        serverChosen = CatalogueDbContext.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
         return GetDistinctLoggingDatabase();
     }
 

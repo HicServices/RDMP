@@ -71,16 +71,16 @@ public partial class ChoosePlatformDatabasesUI : Form
         TableRepository cataDb = null;
         TableRepository dataExportDb = null;
 
-        try
-        {
-            //are we dealing with a database object repository?
-            cataDb = _repositoryLocator.CatalogueRepository as TableRepository;
-            dataExportDb = _repositoryLocator.DataExportRepository as TableRepository;
-        }
-        catch (CorruptRepositoryConnectionDetailsException)
-        {
-            MessageBox.Show("Current connection strings are invalid and have been cleared");
-        }
+        //try
+        //{
+        //    //are we dealing with a database object repository?
+        //    cataDb = _repositoryLocator.CatalogueRepository as TableRepository;
+        //    dataExportDb = _repositoryLocator.DataExportRepository as TableRepository;
+        //}
+        //catch (CorruptRepositoryConnectionDetailsException)
+        //{
+        //    MessageBox.Show("Current connection strings are invalid and have been cleared");
+        //}
 
         //only enable connection string setting if it is a user settings repo
         tbDataExportManagerConnectionString.Enabled =
@@ -237,14 +237,14 @@ public partial class ChoosePlatformDatabasesUI : Form
             SaveConnectionStrings();
 
             var repo = catalogue
-                ? (TableRepository)_repositoryLocator.CatalogueRepository
-                : (TableRepository)_repositoryLocator.DataExportRepository;
+                ? _repositoryLocator.CatalogueDbContext
+                : _repositoryLocator.CatalogueDbContext;
 
-            if (repo == null || string.IsNullOrWhiteSpace(repo.ConnectionString))
-            {
-                checksUI1.OnCheckPerformed(new CheckEventArgs("No connection string has been set", CheckResult.Fail));
-                return;
-            }
+            //if (repo == null || string.IsNullOrWhiteSpace(repo.ConnectionString))
+            //{
+            //    checksUI1.OnCheckPerformed(new CheckEventArgs("No connection string has been set", CheckResult.Fail));
+            //    return;
+            //}
 
             checksUI1.StartChecking(new MissingFieldsChecker(repo));
             checksUI1.AllChecksComplete += ShowNextStageOnChecksComplete;
@@ -347,7 +347,7 @@ public partial class ChoosePlatformDatabasesUI : Form
     private static void PostFixPipelines(PlatformDatabaseCreationOptions opts)
     {
         var repo = new PlatformDatabaseCreationRepositoryFinder(opts);
-        var bulkInsertCsvPipe = repo.CatalogueRepository
+        var bulkInsertCsvPipe = repo.CatalogueDbContext
             .GetAllObjects<Pipeline>()
             .FirstOrDefault(p => p.Name == "BULK INSERT: CSV Import File (manual column-type editing)");
         if (bulkInsertCsvPipe != null)

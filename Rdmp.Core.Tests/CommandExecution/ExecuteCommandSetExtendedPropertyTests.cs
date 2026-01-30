@@ -37,9 +37,9 @@ internal class ExecuteCommandSetExtendedPropertyTests : CommandCliTests
         Assert.Multiple(() =>
         {
             Assert.That(
-                Repository.CatalogueRepository.GetExtendedProperties(ac1), Is.Empty);
+                CatalogueDbContext.CatalogueDbContext.GetExtendedProperties(ac1), Is.Empty);
             Assert.That(
-                Repository.CatalogueRepository.GetExtendedProperties(ac2), Is.Empty);
+                CatalogueDbContext.CatalogueDbContext.GetExtendedProperties(ac2), Is.Empty);
         });
 
         var cmd = new ExecuteCommandSetExtendedProperty(GetMockActivator(), new[] { ac1, ac2 },
@@ -49,8 +49,8 @@ internal class ExecuteCommandSetExtendedPropertyTests : CommandCliTests
 
         cmd.Execute();
 
-        var declaration1 = Repository.CatalogueRepository.GetExtendedProperties(ac1).Single();
-        var declaration2 = Repository.CatalogueRepository.GetExtendedProperties(ac2).Single();
+        var declaration1 = CatalogueDbContext.CatalogueDbContext.GetExtendedProperties(ac1).Single();
+        var declaration2 = CatalogueDbContext.CatalogueDbContext.GetExtendedProperties(ac2).Single();
 
         foreach (var dec in new[] { declaration1, declaration2 })
         {
@@ -74,9 +74,9 @@ internal class ExecuteCommandSetExtendedPropertyTests : CommandCliTests
         {
             // should now be back where we started
             Assert.That(
-                Repository.CatalogueRepository.GetExtendedProperties(ac1), Is.Empty);
+                CatalogueDbContext.CatalogueDbContext.GetExtendedProperties(ac1), Is.Empty);
             Assert.That(
-                Repository.CatalogueRepository.GetExtendedProperties(ac2), Is.Empty);
+                CatalogueDbContext.CatalogueDbContext.GetExtendedProperties(ac2), Is.Empty);
         });
     }
 }

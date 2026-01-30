@@ -6,6 +6,7 @@
 
 using System;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Repositories;
@@ -17,8 +18,8 @@ namespace Rdmp.Core.Icons.IconProvision;
 
 public class DataExportIconProvider : CatalogueIconProvider
 {
-    public DataExportIconProvider(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
-        IIconProvider[] pluginIconProviders) : base(repositoryLocator, pluginIconProviders)
+    public DataExportIconProvider(RDMPDbContext catalogueDbContext,
+        IIconProvider[] pluginIconProviders) : base(catalogueDbContext, pluginIconProviders)
     {
         //Calls to the Resource manager cause file I/O (I think or at the least CPU use anyway) so cache them all at once
         StateBasedIconProviders.Add(new ExtractableDataSetStateBasedIconProvider(CatalogueStateBasedIconProvider));

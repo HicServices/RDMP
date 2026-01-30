@@ -41,7 +41,7 @@ public class DataLoadChainer : IDataProvider, IInteractiveCheckable
     private DleRunner _runner;
     private ICheckNotifier _checker;
     private IBasicActivateItems _activator;
-    private IDataLoadEventListener _listener;
+    //private IDataLoadEventListener _listener;
 
     public void Check(ICheckNotifier notifier)
     {
@@ -57,31 +57,31 @@ public class DataLoadChainer : IDataProvider, IInteractiveCheckable
             return;
         }
 
-        var catalogueString = (_activator.RepositoryLocator.CatalogueDbContext as TableRepository).ConnectionString;
+        //var catalogueString = (_activator.RepositoryLocator.CatalogueDbContext as TableRepository).ConnectionString;
 
-        var dataExportManagerConnectionString = (_activator.RepositoryLocator.DataExportRepository as TableRepository).ConnectionString;
+        //var dataExportManagerConnectionString = (_activator.RepositoryLocator.CatalogueDbContext as TableRepository).ConnectionString;
 
-        LinkedRepositoryProvider newrepo;
+        //LinkedRepositoryProvider newrepo;
 
-        try
-        {
-            newrepo = new LinkedRepositoryProvider(catalogueString, dataExportManagerConnectionString);
-        }
-        catch (Exception ex)
-        {
-            notifier.OnCheckPerformed(new CheckEventArgs($"Unable to create {nameof(LinkedRepositoryProvider)}", CheckResult.Fail, ex));
-            return;
-        }
-        var finder = newrepo;
-        var dleOptions = new DleOptions()
-        {
-            LoadMetadata = DataLoad.ID.ToString(),
-            Command = CommandLineActivity.check,
-        };
-        _runner = new DleRunner(_activator, dleOptions);
-        _checker = notifier;
-        _listener = new FromCheckNotifierToDataLoadEventListener(notifier);
-        _runner.Run(finder, _listener, notifier, new GracefulCancellationToken());
+        //try
+        //{
+        //    newrepo = new LinkedRepositoryProvider(catalogueString, dataExportManagerConnectionString);
+        //}
+        //catch (Exception ex)
+        //{
+        //    notifier.OnCheckPerformed(new CheckEventArgs($"Unable to create {nameof(LinkedRepositoryProvider)}", CheckResult.Fail, ex));
+        //    return;
+        //}
+        //var finder = newrepo;
+        //var dleOptions = new DleOptions()
+        //{
+        //    LoadMetadata = DataLoad.ID.ToString(),
+        //    Command = CommandLineActivity.check,
+        //};
+        //_runner = new DleRunner(_activator, dleOptions);
+        //_checker = notifier;
+        //_listener = new FromCheckNotifierToDataLoadEventListener(notifier);
+        //_runner.Run(finder, _listener, notifier, new GracefulCancellationToken());
     }
 
     public ExitCodeType Fetch(IDataLoadJob job, GracefulCancellationToken cancellationToken)

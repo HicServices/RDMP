@@ -26,6 +26,7 @@ using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataViewing;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Logging.PastEvents;
@@ -121,10 +122,10 @@ public abstract class BasicActivateItems : IBasicActivateItems
 
     public bool IsAbleToLaunchSubprocesses { get; protected set; }
 
-    public BasicActivateItems(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
+    public BasicActivateItems(RDMPDbContext catalogueDbContext,
         ICheckNotifier globalErrorCheckNotifier)
     {
-        RepositoryLocator = repositoryLocator;
+        //RepositoryLocator = catalogueDbContext;
         GlobalErrorCheckNotifier = globalErrorCheckNotifier;
 
         ServerDefaults = null;//RepositoryLocator.CatalogueDbContext;
@@ -139,7 +140,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
         CoreChildProvider = GetChildProvider();
 
         //handle custom icons from plugin user interfaces in which
-        CoreIconProvider = new DataExportIconProvider(repositoryLocator, PluginUserInterfaces.ToArray());
+        CoreIconProvider = new DataExportIconProvider(catalogueDbContext, PluginUserInterfaces.ToArray());
     }
 
     protected virtual ICoreChildProvider GetChildProvider()
@@ -148,7 +149,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
         ICoreChildProvider temp = null;
 
         //prefer a linked repository with both
-        if (RepositoryLocator.DataExportRepository != null)
+        if (RepositoryLocator.CatalogueDbContext != null)
             try
             {
                 temp = new DataExportChildProvider(RepositoryLocator, PluginUserInterfaces.ToArray(),
@@ -380,12 +381,12 @@ public abstract class BasicActivateItems : IBasicActivateItems
         {
             case Catalogue c:
                 {
-                    var extractableDataSets = RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", c.ID);
+                    var extractableDataSets = RepositoryLocator.CatalogueDbContext.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", c.ID);
                     if (extractableDataSets.Any())
                     {
                         foreach (var ds in extractableDataSets)
                         {
-                            var selectedDatasets = RepositoryLocator.DataExportRepository.GetAllObjectsWhere<SelectedDataSets>("ExtractableDataSet_ID", ds.ID);
+                            var selectedDatasets = RepositoryLocator.CatalogueDbContext.GetAllObjectsWhere<SelectedDataSets>("ExtractableDataSet_ID", ds.ID);
                             if (selectedDatasets.Any())
                             {
                                 this.Show("Catalogue is used in a number of projects. Remove this catalogue from all projects to allow deletion");
@@ -663,7 +664,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
 
         return new CohortCreationRequest(project,
             new CohortDefinition(null, name, version, projectNumber.Value, externalCohortTable),
-            RepositoryLocator.DataExportRepository, cohortInitialDescription);
+            RepositoryLocator.CatalogueDbContext, cohortInitialDescription);
     }
 
     public virtual IProject CohortCommitProjectSelect(IProject currentProject, Project[] projects)
@@ -695,7 +696,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
         if (extractionIdentifierColumns != null && extractionIdentifierColumns.Any())
         {
             // Make the Catalogue extractable
-            var eds = new ExtractableDataSet(RepositoryLocator.DataExportRepository, cata);
+            var eds = new ExtractableDataSet(RepositoryLocator.CatalogueDbContext, cata);
 
             // Mark the columns specified IsExtractionIdentifier
             foreach (var col in extractionIdentifierColumns)
@@ -710,7 +711,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
             // Catalogue must be extractable to be project specific
             if (projectSpecific != null)
             {
-                var edsp = new ExtractableDataSetProject(RepositoryLocator.DataExportRepository, eds, projectSpecific);
+                var edsp = new ExtractableDataSetProject(RepositoryLocator.CatalogueDbContext, eds, projectSpecific);
                 edsp.SaveToDatabase();
                 eds.Projects.Add(projectSpecific);
                 eds.SaveToDatabase();
@@ -726,7 +727,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
         return cata;
     }
 
-    public virtual ExternalDatabaseServer CreateNewPlatformDatabase(ICatalogueRepository catalogueRepository,
+    public virtual ExternalDatabaseServer CreateNewPlatformDatabase(RDMPDbContext catalogueDbContext,
         PermissableDefaults defaultToSet, IPatcher patcher, DiscoveredDatabase db)
     {
         if (db == null && IsInteractive) db = SelectDatabase(true, "Select database");
@@ -739,12 +740,12 @@ public abstract class BasicActivateItems : IBasicActivateItems
         var executor = new MasterDatabaseScriptExecutor(db);
         executor.CreateAndPatchDatabase(patcher, new AcceptAllCheckNotifier { WriteToConsole = true });
 
-        var eds = new ExternalDatabaseServer(catalogueRepository,
+        var eds = new ExternalDatabaseServer(catalogueDbContext,
             $"New {(defaultToSet == PermissableDefaults.None ? "" : defaultToSet.ToString())}Server", patcher);
         eds.SetProperties(db);
 
-        if (defaultToSet != PermissableDefaults.None)
-            catalogueRepository.SetDefault(defaultToSet, eds);
+        //if (defaultToSet != PermissableDefaults.None)
+        //    catalogueDbContext.SetDefault(defaultToSet, eds);
 
         return eds;
     }
@@ -820,7 +821,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
     /// <inheritdoc/>
     public bool UseCommits()
     {
-        //var repo = RepositoryLocator?.CatalogueRepository;
+        //var repo = RepositoryLocator?.RDMPDbContext;
 
         //// system is in a very bad state
         //if (repo == null)
@@ -829,4 +830,5 @@ public abstract class BasicActivateItems : IBasicActivateItems
         // does user want to do commits? and we have a db repo
         return UserSettings.EnableCommits;// && repo.SupportsCommits;
     }
+
 }

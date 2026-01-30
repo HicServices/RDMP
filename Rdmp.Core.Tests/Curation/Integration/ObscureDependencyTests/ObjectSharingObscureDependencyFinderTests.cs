@@ -33,7 +33,7 @@ public class ObjectSharingObscureDependencyFinderTests : DatabaseTests
         var c2 = new Catalogue(CatalogueRepository, "Catapault (Import)");
         var ci2 = new CatalogueItem(CatalogueRepository, c2, "string (Import)");
 
-        Assert.That(CatalogueRepository.GetAllObjects<ObjectExport>(), Is.Empty);
+        Assert.That(CatalogueDbContext.GetAllObjects<ObjectExport>(), Is.Empty);
         var ec = _share.GetNewOrExistingExportFor(c);
         var eci = _share.GetNewOrExistingExportFor(ci);
 
@@ -42,12 +42,12 @@ public class ObjectSharingObscureDependencyFinderTests : DatabaseTests
 
         Assert.Multiple(() =>
         {
-            Assert.That(CatalogueRepository.GetAllObjects<ObjectExport>(), Has.Length.EqualTo(2));
-            Assert.That(CatalogueRepository.GetAllObjects<ObjectImport>(), Has.Length.EqualTo(2));
+            Assert.That(CatalogueDbContext.GetAllObjects<ObjectExport>(), Has.Length.EqualTo(2));
+            Assert.That(CatalogueDbContext.GetAllObjects<ObjectImport>(), Has.Length.EqualTo(2));
         });
-        Assert.That(CatalogueRepository.GetAllObjects<ObjectImport>()
+        Assert.That(CatalogueDbContext.GetAllObjects<ObjectImport>()
 , Has.Length.EqualTo(2)); //successive calls shouldn't generate extra entries since they are same obj
-        Assert.That(CatalogueRepository.GetAllObjects<ObjectImport>(), Has.Length.EqualTo(2));
+        Assert.That(CatalogueDbContext.GetAllObjects<ObjectImport>(), Has.Length.EqualTo(2));
 
         //cannot delete the shared object
         Assert.Throws<Exception>(c.DeleteInDatabase);
@@ -56,7 +56,7 @@ public class ObjectSharingObscureDependencyFinderTests : DatabaseTests
         Assert.DoesNotThrow(c2.DeleteInDatabase);
 
         //now that we deleted the import it should have deleted everything else including the CatalogueItem import which magically disappeared when we deleted the Catalogue via database level cascade events
-        Assert.That(CatalogueRepository.GetAllObjects<ObjectImport>(), Is.Empty);
+        Assert.That(CatalogueDbContext.GetAllObjects<ObjectImport>(), Is.Empty);
 
         _share.GetImportAs(eci.SharingUID, ci2);
     }

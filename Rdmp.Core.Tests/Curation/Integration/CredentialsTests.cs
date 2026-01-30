@@ -22,7 +22,7 @@ public class CredentialsTests : DatabaseTests
     {
         base.OneTimeSetUp();
 
-        foreach (var table in CatalogueRepository.GetAllObjects<TableInfo>())
+        foreach (var table in CatalogueDbContext.GetAllObjects<TableInfo>())
             if (table.Name.Equals("GetCredentialsFromATableInfo")
                 ||
                 table.Name.Equals("Create2TableInfosThatShareTheSameCredentialAndTestDeletingIt1")
@@ -41,7 +41,7 @@ public class CredentialsTests : DatabaseTests
                )
                 table.DeleteInDatabase();
 
-        foreach (var cred in CatalogueRepository.GetAllObjects<DataAccessCredentials>())
+        foreach (var cred in CatalogueDbContext.GetAllObjects<DataAccessCredentials>())
             if (cred.Name.Equals("bob")
                 ||
                 cred.Name.Equals("Test")
@@ -80,7 +80,7 @@ public class CredentialsTests : DatabaseTests
 
         newCredentials.SaveToDatabase();
 
-        var newCopy = CatalogueRepository.GetAllObjects<DataAccessCredentials>()
+        var newCopy = CatalogueDbContext.GetAllObjects<DataAccessCredentials>()
             .SingleOrDefault(c => c.Username == "myusername");
         Assert.That(newCopy, Is.Not.Null);
 
@@ -206,7 +206,7 @@ public class CredentialsTests : DatabaseTests
             originalCredentials.Password = "pass";
             originalCredentials.SaveToDatabase();
 
-            var newCopy = CatalogueRepository.GetObjectByID<DataAccessCredentials>(originalCredentials.ID);
+            var newCopy = CatalogueDbContext.GetObjectByID<DataAccessCredentials>(originalCredentials.ID);
             Assert.Multiple(() =>
             {
                 Assert.That(newCopy.Name, Is.EqualTo(originalCredentials.Name));
@@ -389,7 +389,7 @@ public class CredentialsTests : DatabaseTests
         var t1 = new TableInfo(CatalogueRepository, "tbl1");
         var t2 = new TableInfo(CatalogueRepository, "tbl2");
 
-        var credCount = CatalogueRepository.GetAllObjects<DataAccessCredentials>().Length;
+        var credCount = CatalogueDbContext.GetAllObjects<DataAccessCredentials>().Length;
 
         //if there is a username then we need to associate it with the TableInfo we just created
         var credentialsFactory = new DataAccessCredentialsFactory(CatalogueRepository);
@@ -398,7 +398,7 @@ public class CredentialsTests : DatabaseTests
 
         Assert.Multiple(() =>
         {
-            Assert.That(CatalogueRepository.GetAllObjects<DataAccessCredentials>(), Has.Length.EqualTo(credCount + 1));
+            Assert.That(CatalogueDbContext.GetAllObjects<DataAccessCredentials>(), Has.Length.EqualTo(credCount + 1));
 
             Assert.That(cred2, Is.EqualTo(cred),
                 $"Expected {nameof(DataAccessCredentialsFactory)} to reuse existing credentials for both tables as they have the same username/password - e.g. bulk insert");

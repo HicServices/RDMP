@@ -69,7 +69,7 @@ internal class CohortIdentificationConfigurationUnitTests : UITests
             Assert.That(ac1.Order, Is.EqualTo(0));
             Assert.That(ac2.Order, Is.EqualTo(1));
 
-            Assert.That(Repository.GetAllObjects<AggregateConfiguration>(), Has.Length.EqualTo(2),
+            Assert.That(CatalogueDbContext.GetAllObjects<AggregateConfiguration>(), Has.Length.EqualTo(2),
                 "Expected you to create 2 AggregateConfiguration only");
         });
     }
@@ -144,10 +144,10 @@ internal class CohortIdentificationConfigurationUnitTests : UITests
     private void DeleteOldAggregates()
     {
         //remove any remnants so we can count them at the end to make sure no duplicates were created
-        foreach (var ac in Repository.GetAllObjects<AggregateConfiguration>())
+        foreach (var ac in CatalogueDbContext.GetAllObjects<AggregateConfiguration>())
             ac.DeleteInDatabase();
 
-        Assert.That(Repository.GetAllObjects<AggregateConfiguration>(), Is.Empty,
+        Assert.That(CatalogueDbContext.GetAllObjects<AggregateConfiguration>(), Is.Empty,
             "We just deleted the AggregateConfigurations why were there suddenly some in the db!?");
     }
 }

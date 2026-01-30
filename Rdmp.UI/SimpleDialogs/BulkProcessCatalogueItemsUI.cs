@@ -217,14 +217,14 @@ public partial class BulkProcessCatalogueItemsUI : BulkProcessCatalogueItems_Des
                     }
 
                     //we got to here so we have a legit 1 column info to cataitem we can enable for extraction
-                    var created = new ExtractionInformation((CatalogueRepository)catalogueItem.Repository,
-                        catalogueItem, col, null);
+                    //var created = new ExtractionInformation((CatalogueRepository)catalogueItem.Repository,
+                    //    catalogueItem, col, null);
 
-                    if (ddExtractionCategory.SelectedItem != null)
-                    {
-                        created.ExtractionCategory = (ExtractionCategory)ddExtractionCategory.SelectedItem;
-                        created.SaveToDatabase();
-                    }
+                    //if (ddExtractionCategory.SelectedItem != null)
+                    //{
+                    //    created.ExtractionCategory = (ExtractionCategory)ddExtractionCategory.SelectedItem;
+                    //    created.SaveToDatabase();
+                    //}
 
                     countExtractionInformationsCreated++;
                 }

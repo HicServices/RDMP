@@ -28,7 +28,7 @@ public class SupportingDocumentsFetcher
     public SupportingDocumentsFetcher(SupportingDocument document)
     {
         _document = document;
-        _catalogue = document.Repository.GetObjectByID<Catalogue>(document.Catalogue_ID);
+        _catalogue = document.CatalogueDbContext.GetObjectByID<Catalogue>(document.Catalogue_ID);
         _singleDocument = true;
     }
 

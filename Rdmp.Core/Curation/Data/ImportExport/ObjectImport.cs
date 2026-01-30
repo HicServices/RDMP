@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using Rdmp.Core.Curation.Data.Referencing;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 
@@ -52,26 +53,26 @@ public class ObjectImport : ReferenceOtherObjectDatabaseEntity
     /// <summary>
     /// Use GetImportAs to access this
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="sharingUID"></param>
     /// <param name="localObject"></param>
-    internal ObjectImport(RdmpDbContext catalogueDbContext, string sharingUID, IMapsDirectlyToDatabaseTable localObject)
+    internal ObjectImport(RDMPDbContext catalogueDbContext, string sharingUID, IMapsDirectlyToDatabaseTable localObject)
     {
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "ReferencedObjectRepositoryType", localObject.Repository.GetType().Name },
-            { "ReferencedObjectType", localObject.GetType().Name },
-            { "ReferencedObjectID", localObject.ID },
-            { "SharingUID", sharingUID }
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "ReferencedObjectRepositoryType", localObject.CatalogueDbContext.GetType().Name },
+        //    { "ReferencedObjectType", localObject.GetType().Name },
+        //    { "ReferencedObjectID", localObject.ID },
+        //    { "SharingUID", sharingUID }
+        //});
 
-        if (ID == 0 || Repository != repository)
+        if (ID == 0 || CatalogueDbContext != catalogueDbContext)
             throw new ArgumentException("Repository failed to properly hydrate this class");
     }
 
     /// <inheritdoc/>
-    public ObjectImport(RdmpDbContext catalogueDbContext, DbDataReader r)
-        : base(repository, r)
+    public ObjectImport(RDMPDbContext catalogueDbContext, DbDataReader r)
+        :base(catalogueDbContext, r)
     {
         SharingUID = r["SharingUID"].ToString();
     }

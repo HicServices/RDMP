@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode;
@@ -59,7 +60,7 @@ public class Evaluation : DatabaseEntity
         set => columnStates = value;
     }
 
-    [NoMappingToDatabase] public DQERepository DQERepository { get; set; }
+    [NoMappingToDatabase] public RDMPDbContext DQERepository { get; set; }
 
     public Evaluation()
     {
@@ -67,25 +68,25 @@ public class Evaluation : DatabaseEntity
 
     public IEnumerable<DQEGraphAnnotation> GetAllDQEGraphAnnotations(string pivotCategory = null)
     {
-        return DQERepository.GetAllObjects<DQEGraphAnnotation>()
+        return CatalogueDbContext.GetAllObjects<DQEGraphAnnotation>()
             .Where(a => a.Evaluation_ID == ID && a.PivotCategory.Equals(pivotCategory ?? "ALL"));
     }
 
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="r"></param>
-    internal Evaluation(DQERepository repository, DbDataReader r) : base(repository, r)
+    internal Evaluation(RDMPDbContext catalogueDbContext, DbDataReader r) :base(catalogueDbContext, r)
     {
-        DQERepository = repository;
+        DQERepository = catalogueDbContext;
 
         DateOfEvaluation = DateTime.Parse(r["DateOfEvaluation"].ToString());
         CatalogueID = int.Parse(r["CatalogueID"].ToString());
 
         try
         {
-            Catalogue = DQERepository.CatalogueRepository.GetObjectByID<Catalogue>(CatalogueID);
+            Catalogue = CatalogueDbContext.GetObjectByID<Catalogue>(CatalogueID);
         }
         catch (Exception e)
         {
@@ -98,17 +99,17 @@ public class Evaluation : DatabaseEntity
     /// <summary>
     /// Starts a new evaluation with the given transaction
     /// </summary>
-    internal Evaluation(DQERepository dqeRepository, ICatalogue c)
+    internal Evaluation(RDMPDbContext dqeRepository, ICatalogue c)
     {
         DQERepository = dqeRepository;
         Catalogue = c;
 
-        dqeRepository.InsertAndHydrate(this,
-            new Dictionary<string, object>
-            {
-                { "CatalogueID", c.ID },
-                { "DateOfEvaluation", DateTime.Now }
-            });
+        //dqeCatalogueDbContext.InsertAndHydrate(this,
+        //    new Dictionary<string, object>
+        //    {
+        //        { "CatalogueID", c.ID },
+        //        { "DateOfEvaluation", DateTime.Now }
+        //    });
     }
 
 
@@ -124,23 +125,23 @@ public class Evaluation : DatabaseEntity
         var toReturn = new List<string>();
         var sql = $"select distinct PivotCategory From RowState where Evaluation_ID  = {ID}";
 
-        using (var con = DQERepository.GetConnection())
-        {
-            using var cmd = DatabaseCommandHelper.GetCommand(sql, con.Connection, con.Transaction);
-            using var r = cmd.ExecuteReader();
-            while (r.Read())
-                toReturn.Add((string)r["PivotCategory"]);
-        }
+        //using (var con = DQECatalogueDbContext.GetConnection())
+        //{
+        //    using var cmd = DatabaseCommandHelper.GetCommand(sql, con.Connection, con.Transaction);
+        //    using var r = cmd.ExecuteReader();
+        //    while (r.Read())
+        //        toReturn.Add((string)r["PivotCategory"]);
+        //}
 
         return toReturn.ToArray();
     }
 
     public override void DeleteInDatabase()
     {
-        var affectedRows = DQERepository.Delete($"DELETE FROM Evaluation where ID = {ID}");
+        //var affectedRows = DQECatalogueDbContext.Delete($"DELETE FROM Evaluation where ID = {ID}");
 
-        if (affectedRows == 0)
-            throw new Exception($"Delete statement resulted in {affectedRows} affected rows");
+        //if (affectedRows == 0)
+        //    throw new Exception($"Delete statement resulted in {affectedRows} affected rows");
     }
 
     /// <summary>
@@ -159,37 +160,37 @@ public class Evaluation : DatabaseEntity
     private void LoadRowAndColumnStates()
     {
         var states = new List<RowState>();
-        if (Repository is not TableRepository repo)
-            throw new Exception(
-                $"Repository was not a {nameof(TableRepository)}.  Evaluation class requires a database back repository to fetch RowStates/ColumnStates.  Repository was of Type '{Repository.GetType().Name}'");
+        //if (Repository is not TableRepository repo)
+        //    throw new Exception(
+        //        $"Repository was not a {nameof(TableRepository)}.  Evaluation class requires a database back repository to fetch RowStates/ColumnStates.  Repository was of Type '{CatalogueDbContext.GetType().Name}'");
 
-        using var con = repo.GetConnection();
-        //get all the row level data
-        using (var cmdGetRowStates = DatabaseCommandHelper.GetCommand(
-                   $"select * from RowState WHERE Evaluation_ID = {ID}",
-                   con.Connection, con.Transaction))
-        {
-            using var r2 = cmdGetRowStates.ExecuteReader();
-            while (r2.Read())
-                states.Add(new RowState(r2));
-            rowStates = states.ToArray();
-            r2.Close();
-        }
+        //using var con = repo.GetConnection();
+        ////get all the row level data
+        //using (var cmdGetRowStates = DatabaseCommandHelper.GetCommand(
+        //           $"select * from RowState WHERE Evaluation_ID = {ID}",
+        //           con.Connection, con.Transaction))
+        //{
+        //    using var r2 = cmdGetRowStates.ExecuteReader();
+        //    while (r2.Read())
+        //        states.Add(new RowState(r2));
+        //    rowStates = states.ToArray();
+        //    r2.Close();
+        //}
 
 
         //get all the column level data
-        using var cmdGetColumnStates = DatabaseCommandHelper.GetCommand(
-            $"select * from ColumnState WHERE ColumnState.Evaluation_ID = {ID}",
-            con.Connection, con.Transaction);
-        {
-            using var r2 = cmdGetColumnStates.ExecuteReader();
-            var colStates = new List<ColumnState>();
+        //using var cmdGetColumnStates = DatabaseCommandHelper.GetCommand(
+        //    $"select * from ColumnState WHERE ColumnState.Evaluation_ID = {ID}",
+        //    con.Connection, con.Transaction);
+        //{
+        //    using var r2 = cmdGetColumnStates.ExecuteReader();
+        //    var colStates = new List<ColumnState>();
 
-            while (r2.Read())
-                colStates.Add(new ColumnState(r2));
+        //    while (r2.Read())
+        //        colStates.Add(new ColumnState(r2));
 
-            columnStates = colStates.ToArray();
-            r2.Close();
-        }
+        //    columnStates = colStates.ToArray();
+        //    r2.Close();
+        //}
     }
 }

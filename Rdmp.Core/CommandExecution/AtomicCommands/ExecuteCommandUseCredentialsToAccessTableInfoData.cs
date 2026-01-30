@@ -48,8 +48,8 @@ public sealed class ExecuteCommandUseCredentialsToAccessTableInfoData : BasicCom
         if (creds == null)
             return;
 
-        BasicActivator.RepositoryLocator.CatalogueDbContext.TableInfoCredentialsManager.CreateLinkBetween(creds,
-            _tableInfo, DataAccessContext.Any);
+        //BasicActivator.RepositoryLocator.CatalogueDbContext.TableInfoCredentialsManager.CreateLinkBetween(creds,
+        //    _tableInfo, DataAccessContext.Any);
         Publish(_tableInfo);
     }
 }

@@ -93,7 +93,7 @@ namespace Rdmp.UI.LocationsMenu.Versioning
             {
                 if (_activator.YesNo("Are you sure you want to revert the cohort to this version?", "Revert Cohort to this Version"))
                 {
-                    var rootCic = _activator.RepositoryLocator.CatalogueDbContext.GetAllObjectsWhere<CohortIdentificationConfiguration>("ID", _cic.ClonedFrom_ID).FirstOrDefault();
+                    var rootCic = _activator.RepositoryLocator.CatalogueDbContext.GetAllObjectsWhere<CohortIdentificationConfiguration>("ID", (int)_cic.ClonedFrom_ID).FirstOrDefault();
                     if (rootCic != null)
                     {
                         var revertCmd = new ExecuteCommandRevertToHistoricalCohortVersion(_activator, rootCic, _cic);

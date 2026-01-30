@@ -9,6 +9,7 @@ using System.Data.Common;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.FilterImporting.Construction;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.DataExport.Data;
@@ -27,20 +28,20 @@ public class FilterContainer : ConcreteContainer, IContainer
     /// <summary>
     /// Creates a new instance with the given <paramref name="operation"/>
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="operation"></param>
-    public FilterContainer(IDataExportRepository repository,
-        FilterContainerOperation operation = FilterContainerOperation.AND) : base(repository.FilterManager)
+    public FilterContainer(RDMPDbContext catalogueDbContext,
+        FilterContainerOperation operation = FilterContainerOperation.AND) : base()//(repository.FilterManager)
     {
-        Repository = repository;
-        Repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "Operation", operation.ToString() }
-        });
+       CatalogueDbContext = catalogueDbContext;
+        //CatalogueDbContext.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "Operation", operation.ToString() }
+        //});
     }
 
-    internal FilterContainer(IDataExportRepository repository, DbDataReader r) : base(repository.FilterManager,
-        repository, r)
+    internal FilterContainer(RDMPDbContext catalogueDbContext, DbDataReader r) : base()//base(repository.FilterManager,
+        //repository, r)
     {
     }
 
@@ -107,7 +108,7 @@ public class FilterContainer : ConcreteContainer, IContainer
 
     private FilterContainer ShallowClone()
     {
-        var clone = new FilterContainer(DataExportRepository, Operation);
+        var clone = new FilterContainer(CatalogueDbContext, Operation);
         CopyShallowValuesTo(clone);
         return clone;
     }
@@ -123,7 +124,7 @@ public class FilterContainer : ConcreteContainer, IContainer
 
         return root == null
             ? null
-            : Repository.GetAllObjectsWhere<SelectedDataSets>("RootFilterContainer_ID", root.ID).SingleOrDefault();
+            : CatalogueDbContext.GetAllObjectsWhere<SelectedDataSets>("RootFilterContainer_ID", root.ID).SingleOrDefault();
     }
 
 
@@ -153,13 +154,13 @@ public class FilterContainer : ConcreteContainer, IContainer
         return parent?.GetSelectedDataSetsRecursively();
     }
 
-    public override IFilterFactory GetFilterFactory() => new DeployedExtractionFilterFactory(DataExportRepository);
+    public override IFilterFactory GetFilterFactory() => new DeployedExtractionFilterFactory(CatalogueDbContext);
 
     public override void DeleteInDatabase()
     {
         base.DeleteInDatabase();
 
-        foreach (var sds in Repository.GetAllObjectsWhere<SelectedDataSets>(
+        foreach (var sds in CatalogueDbContext.GetAllObjectsWhere<SelectedDataSets>(
                      nameof(SelectedDataSets.RootFilterContainer_ID), ID))
         {
             sds.RootFilterContainer_ID = null;

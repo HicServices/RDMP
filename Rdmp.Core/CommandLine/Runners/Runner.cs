@@ -46,7 +46,7 @@ public abstract class Runner : IRunner
             return repo.GetObjectByID<T>(id);
         }
 
-        var picker = new CommandLineObjectPicker(new[] { arg }, new ThrowImmediatelyActivator(locator));
+        var picker = new CommandLineObjectPicker(new[] { arg }, new ThrowImmediatelyActivator(locator.CatalogueDbContext));
         return !picker[0].HasValueOfType(typeof(T))
             ? throw new ArgumentException(
                 $"Could not translate '{arg}' into a valid object of Type '{typeof(T).Name}'.  The referenced object may not exist or has been renamed.")
@@ -66,7 +66,7 @@ public abstract class Runner : IRunner
                 .ToArray());
         }
 
-        var picker = new CommandLineObjectPicker(new[] { arg }, new ThrowImmediatelyActivator(locator));
+        var picker = new CommandLineObjectPicker(new[] { arg }, new ThrowImmediatelyActivator(locator.CatalogueDbContext));
         return !picker[0].HasValueOfType(typeof(T[]))
             ? throw new ArgumentException(
                 $"Could not translate '{arg}' into a valid objects of Type '{typeof(T).Name}'.  The referenced object may not exist or has been renamed.")

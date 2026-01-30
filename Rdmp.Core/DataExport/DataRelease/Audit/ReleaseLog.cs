@@ -11,6 +11,7 @@ using System.IO;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataRelease.Potential;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode;
 
@@ -93,9 +94,9 @@ public class ReleaseLog : DatabaseEntity, IReleaseLog
             try
             {
                 ICumulativeExtractionResults cumulativeExtractionResults =
-                    Repository.GetObjectByID<CumulativeExtractionResults>(CumulativeExtractionResults_ID);
+                    CatalogueDbContext.GetObjectByID<CumulativeExtractionResults>(CumulativeExtractionResults_ID);
                 IExtractableDataSet ds =
-                    Repository.GetObjectByID<ExtractableDataSet>(cumulativeExtractionResults.ExtractableDataSet_ID);
+                    CatalogueDbContext.GetObjectByID<ExtractableDataSet>(cumulativeExtractionResults.ExtractableDataSet_ID);
                 _datasetName = ds.ToString();
             }
             catch (Exception e)
@@ -112,28 +113,28 @@ public class ReleaseLog : DatabaseEntity, IReleaseLog
     {
     }
 
-    public ReleaseLog(IDataExportRepository repository, ReleasePotential dataset,
+    public ReleaseLog(RDMPDbContext catalogueDbContext, ReleasePotential dataset,
         ReleaseEnvironmentPotential environment, bool isPatch, DirectoryInfo releaseDirectory,
         FileInfo datasetFileBeingReleased)
     {
-        repository.InsertAndHydrate(this,
-            new Dictionary<string, object>
-            {
-                { "CumulativeExtractionResults_ID", dataset.DatasetExtractionResult.ID },
-                { "Username", Environment.UserName },
-                { "DateOfRelease", DateTime.Now },
-                {
-                    "MD5OfDatasetFile",
-                    datasetFileBeingReleased == null ? "X" : UsefulStuff.HashFile(datasetFileBeingReleased.FullName)
-                },
-                { "DatasetState", dataset.DatasetExtractionResult.ToString() },
-                { "EnvironmentState", environment.Assesment.ToString() },
-                { "IsPatch", isPatch },
-                { "ReleaseFolder", releaseDirectory.FullName }
-            });
+        //repository.InsertAndHydrate(this,
+        //    new Dictionary<string, object>
+        //    {
+        //        { "CumulativeExtractionResults_ID", dataset.DatasetExtractionResult.ID },
+        //        { "Username", Environment.UserName },
+        //        { "DateOfRelease", DateTime.Now },
+        //        {
+        //            "MD5OfDatasetFile",
+        //            datasetFileBeingReleased == null ? "X" : UsefulStuff.HashFile(datasetFileBeingReleased.FullName)
+        //        },
+        //        { "DatasetState", dataset.DatasetExtractionResult.ToString() },
+        //        { "EnvironmentState", environment.Assesment.ToString() },
+        //        { "IsPatch", isPatch },
+        //        { "ReleaseFolder", releaseDirectory.FullName }
+        //    });
     }
 
-    public ReleaseLog(IDataExportRepository repository, DbDataReader r) : base(repository, r)
+    public ReleaseLog(RDMPDbContext catalogueDbContext, DbDataReader r) :base(catalogueDbContext, r)
     {
         CumulativeExtractionResults_ID = Convert.ToInt32(r["CumulativeExtractionResults_ID"]);
         Username = r["Username"].ToString();

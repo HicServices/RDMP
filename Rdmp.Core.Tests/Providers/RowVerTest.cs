@@ -24,9 +24,9 @@ internal class RowVerTest : DatabaseTests
         var cata = new Catalogue(CatalogueRepository, "FFFF");
 
         //When we get all the Catalogues we should include cata
-        Assert.That(CatalogueRepository.GetAllObjects<Catalogue>(), Does.Contain(cata));
-        Assert.That(CatalogueRepository.GetAllObjects<Catalogue>()[0], Is.EqualTo(cata));
-        Assert.That(CatalogueRepository.GetAllObjects<Catalogue>()[0], Is.Not.SameAs(cata));
+        Assert.That(CatalogueDbContext.GetAllObjects<Catalogue>(), Does.Contain(cata));
+        Assert.That(CatalogueDbContext.GetAllObjects<Catalogue>()[0], Is.EqualTo(cata));
+        Assert.That(CatalogueDbContext.GetAllObjects<Catalogue>()[0], Is.Not.SameAs(cata));
 
         //create a cache
         var rowVerCache = new RowVerCache<Catalogue>(CatalogueTableRepository);

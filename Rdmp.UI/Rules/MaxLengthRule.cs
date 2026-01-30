@@ -19,7 +19,7 @@ namespace Rdmp.UI.Rules;
 internal class MaxLengthRule<T> : BinderRule<T> where T : IMapsDirectlyToDatabaseTable
 {
     private string _problemDescription;
-    private int? _maxLength;
+    private int? _maxLength=100;
 
     public MaxLengthRule(IActivateItems activator, T toTest, Func<T, object> propertyToCheck, Control control,
         string propertyToCheckName)
@@ -27,8 +27,8 @@ internal class MaxLengthRule<T> : BinderRule<T> where T : IMapsDirectlyToDatabas
     {
         _problemDescription = "Value is too long";
 
-        _maxLength = TryGetMaxLengthFrom(activator.RepositoryLocator.CatalogueDbContext, toTest) ??
-                     TryGetMaxLengthFrom(activator.RepositoryLocator.DataExportRepository, toTest);
+        //_maxLength = TryGetMaxLengthFrom(activator.RepositoryLocator.CatalogueDbContext, toTest) ??
+        //             TryGetMaxLengthFrom(activator.RepositoryLocator.DataExportRepository, toTest);
     }
 
     private int? TryGetMaxLengthFrom(IRepository repo, T toTest)

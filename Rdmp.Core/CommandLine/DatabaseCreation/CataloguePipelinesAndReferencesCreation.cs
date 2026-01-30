@@ -52,10 +52,10 @@ public class CataloguePipelinesAndReferencesCreation
 
     private void CreateServers(PlatformDatabaseCreationOptions options)
     {
-        var defaults = _repositoryLocator.CatalogueRepository;
+        var defaults = _repositoryLocator.CatalogueDbContext;
         if (options.CreateLoggingServer)
         {
-            _edsLogging = new ExternalDatabaseServer(_repositoryLocator.CatalogueRepository, "Logging", new LoggingDatabasePatcher())
+            _edsLogging = new ExternalDatabaseServer(_repositoryLocator.CatalogueDbContext, "Logging", new LoggingDatabasePatcher())
             {
                 Server = _logging?.DataSource ?? throw new InvalidOperationException("Null logging database provided"),
                 Database = _logging.InitialCatalog
@@ -68,11 +68,11 @@ public class CataloguePipelinesAndReferencesCreation
             }
 
             _edsLogging.SaveToDatabase();
-            defaults.SetDefault(PermissableDefaults.LiveLoggingServer_ID, _edsLogging);
+            //defaults.SetDefault(PermissableDefaults.LiveLoggingServer_ID, _edsLogging);
             Console.WriteLine("Successfully configured default logging server");
         }
 
-        var edsDQE = new ExternalDatabaseServer(_repositoryLocator.CatalogueRepository, "DQE", new DataQualityEnginePatcher())
+        var edsDQE = new ExternalDatabaseServer(_repositoryLocator.CatalogueDbContext, "DQE", new DataQualityEnginePatcher())
         {
             Server = _dqe.DataSource,
             Database = _dqe.InitialCatalog
@@ -85,10 +85,10 @@ public class CataloguePipelinesAndReferencesCreation
         }
 
         edsDQE.SaveToDatabase();
-        defaults.SetDefault(PermissableDefaults.DQE, edsDQE);
+        //defaults.SetDefault(PermissableDefaults.DQE, edsDQE);
         Console.WriteLine("Successfully configured default dqe server");
 
-        var edsRAW = new ExternalDatabaseServer(_repositoryLocator.CatalogueRepository, "RAW Server", null)
+        var edsRAW = new ExternalDatabaseServer(_repositoryLocator.CatalogueDbContext, "RAW Server", null)
         {
             Server = _dqe.DataSource
         };
@@ -106,7 +106,7 @@ public class CataloguePipelinesAndReferencesCreation
         }
 
         edsRAW.SaveToDatabase();
-        defaults.SetDefault(PermissableDefaults.RAWDataLoadServer, edsRAW);
+        //defaults.SetDefault(PermissableDefaults.RAWDataLoadServer, edsRAW);
         Console.WriteLine("Successfully configured RAW server");
     }
 
@@ -170,7 +170,7 @@ public class CataloguePipelinesAndReferencesCreation
         var i = 1;
         foreach (var componentType in componentTypes)
         {
-            var component = new PipelineComponent(_repositoryLocator.CatalogueRepository, pipeline, componentType, i++);
+            var component = new PipelineComponent(_repositoryLocator.CatalogueDbContext, pipeline, componentType, i++);
             component.CreateArgumentsForClassIfNotExists(componentType);
             component.Pipeline_ID = pipeline.ID;
         }
@@ -180,11 +180,11 @@ public class CataloguePipelinesAndReferencesCreation
 
     private Pipeline CreatePipeline(string nameOfPipe, Type sourceType, Type destinationTypeIfAny)
     {
-        var pipe = new Pipeline(_repositoryLocator.CatalogueRepository, nameOfPipe);
+        var pipe = new Pipeline(_repositoryLocator.CatalogueDbContext, nameOfPipe);
 
         if (sourceType != null)
         {
-            var source = new PipelineComponent(_repositoryLocator.CatalogueRepository, pipe, sourceType, 0);
+            var source = new PipelineComponent(_repositoryLocator.CatalogueDbContext, pipe, sourceType, 0);
             source.CreateArgumentsForClassIfNotExists(sourceType);
             pipe.SourcePipelineComponent_ID = source.ID;
         }
@@ -192,7 +192,7 @@ public class CataloguePipelinesAndReferencesCreation
         if (destinationTypeIfAny != null)
         {
             var destination =
-                new PipelineComponent(_repositoryLocator.CatalogueRepository, pipe, destinationTypeIfAny, 100);
+                new PipelineComponent(_repositoryLocator.CatalogueDbContext, pipe, destinationTypeIfAny, 100);
             destination.CreateArgumentsForClassIfNotExists(destinationTypeIfAny);
             pipe.DestinationPipelineComponent_ID = destination.ID;
         }

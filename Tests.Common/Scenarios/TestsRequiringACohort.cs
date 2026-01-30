@@ -130,13 +130,13 @@ GO
 
     private void CreateExternalCohortTableReference()
     {
-        var alreadyExisting = DataExportRepository.GetAllObjects<ExternalCohortTable>()
+        var alreadyExisting = DataExportCatalogueDbContext.GetAllObjects<ExternalCohortTable>()
             .SingleOrDefault(external => external.Name.Equals(ExternalCohortTableNameInCatalogue));
 
         if (alreadyExisting != null)
         {
             //remove dependencies cohorts
-            var toCleanup = DataExportRepository.GetAllObjects<ExtractableCohort>()
+            var toCleanup = DataExportCatalogueDbContext.GetAllObjects<ExtractableCohort>()
                 .SingleOrDefault(ec => ec.OriginID == cohortIDInTestData);
 
 
@@ -144,7 +144,7 @@ GO
             {
                 //cleanup any configs that use the cohort
                 foreach (
-                    var configToCleanup in DataExportRepository.GetAllObjects<ExtractionConfiguration>()
+                    var configToCleanup in DataExportCatalogueDbContext.GetAllObjects<ExtractionConfiguration>()
                         .Where(config => config.Cohort_ID == toCleanup.ID))
                     configToCleanup.DeleteInDatabase();
 

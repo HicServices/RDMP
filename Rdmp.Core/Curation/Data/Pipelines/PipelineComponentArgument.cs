@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode;
@@ -39,7 +40,7 @@ public class PipelineComponentArgument : Argument, IPipelineComponentArgument
 
     /// <inheritdoc cref="PipelineComponent_ID"/>
     [NoMappingToDatabase]
-    public IPipelineComponent PipelineComponent => Repository.GetObjectByID<PipelineComponent>(PipelineComponent_ID);
+    public IPipelineComponent PipelineComponent => CatalogueDbContext.GetObjectByID<PipelineComponent>(PipelineComponent_ID);
 
     #endregion
 
@@ -52,20 +53,20 @@ public class PipelineComponentArgument : Argument, IPipelineComponentArgument
     /// 
     /// <para>You should probably call <see cref="IArgumentHost.CreateArgumentsForClassIfNotExists{T}"/> instead</para>
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="parent"></param>
-    public PipelineComponentArgument(RdmpDbContext catalogueDbContext, PipelineComponent parent)
+    public PipelineComponentArgument(RDMPDbContext catalogueDbContext, PipelineComponent parent)
     {
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "PipelineComponent_ID", parent.ID },
-            { "Name", $"Parameter{Guid.NewGuid()}" },
-            { "Type", typeof(string).ToString() }
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "PipelineComponent_ID", parent.ID },
+        //    { "Name", $"Parameter{Guid.NewGuid()}" },
+        //    { "Type", typeof(string).ToString() }
+        //});
     }
 
-    internal PipelineComponentArgument(RdmpDbContext catalogueDbContext, DbDataReader r)
-        : base(repository, r)
+    internal PipelineComponentArgument(RDMPDbContext catalogueDbContext, DbDataReader r)
+        :base(catalogueDbContext, r)
     {
         PipelineComponent_ID = int.Parse(r["PipelineComponent_ID"].ToString());
         Type = r["Type"].ToString();
@@ -89,7 +90,7 @@ public class PipelineComponentArgument : Argument, IPipelineComponentArgument
     /// <inheritdoc/>
     public void Clone(PipelineComponent intoTargetComponent)
     {
-        var cloneArg = new PipelineComponentArgument(intoTargetComponent.CatalogueRepository, intoTargetComponent)
+        var cloneArg = new PipelineComponentArgument(intoTargetComponent.CatalogueDbContext, intoTargetComponent)
         {
             Name = Name,
             Value = Value,

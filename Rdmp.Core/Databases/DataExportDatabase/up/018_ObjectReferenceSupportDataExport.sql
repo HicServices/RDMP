@@ -6,7 +6,7 @@ if(not exists (select 1 from sys.columns where OBJECT_NAME(object_id) = 'Supplem
 	EXEC sp_rename 'SupplementalExtractionResults.ExtractedId', 'ReferencedObjectID', 'COLUMN'; 
 
 if(not exists (select 1 from sys.columns where OBJECT_NAME(object_id) = 'SupplementalExtractionResults' and name ='ReferencedObjectRepositoryType'))
-	EXEC sp_rename 'SupplementalExtractionResults.RepositoryType', 'ReferencedObjectRepositoryType', 'COLUMN'; 
+	EXEC sp_rename 'SupplementalExtractionResults.CatalogueDbContextType', 'ReferencedObjectRepositoryType', 'COLUMN'; 
 
 if(not exists (select 1 from sys.columns where OBJECT_NAME(object_id) = 'SupplementalExtractionResults' and name ='ReferencedObjectType'))
 	EXEC sp_rename 'SupplementalExtractionResults.ExtractedType', 'ReferencedObjectType', 'COLUMN'; 

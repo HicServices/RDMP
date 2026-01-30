@@ -173,7 +173,7 @@ public class ParameterCollectionUIOptionsFactory
             parameterName = $"@{parameterName}";
 
         var ec = (ExtractionConfiguration)collector;
-        return new GlobalExtractionFilterParameter((IDataExportRepository)ec.Repository, ec,
+        return new GlobalExtractionFilterParameter(ec.CatalogueDbContext, ec,
             AnyTableSqlParameter.GetDefaultDeclaration(parameterName));
     }
 }

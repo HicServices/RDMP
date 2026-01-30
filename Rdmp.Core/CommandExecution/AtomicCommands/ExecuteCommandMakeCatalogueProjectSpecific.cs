@@ -79,7 +79,7 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
 
         base.Execute();
 
-        ProjectSpecificCatalogueManager.MakeCatalogueProjectSpecific(BasicActivator.RepositoryLocator.DataExportRepository, _catalogue, _project);
+        ProjectSpecificCatalogueManager.MakeCatalogueProjectSpecific(BasicActivator.RepositoryLocator.CatalogueDbContext, _catalogue, _project);
         Publish(_catalogue);
     }
 
@@ -105,10 +105,10 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
     private List<Project> GetListOfValidProjects()
     {
         var dataExportChildProvider = ((DataExportChildProvider)_activator.CoreChildProvider);
-        var eds = _activator.RepositoryLocator.DataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(_catalogue);
-        var edsp = _activator.RepositoryLocator.DataExportRepository.GetAllObjects<ExtractableDataSetProject>().Where(edsp => eds.Contains(edsp.DataSet));
+        var eds = _activator.RepositoryLocator.CatalogueDbContext.GetAllObjectsWithParent<ExtractableDataSet>(_catalogue);
+        var edsp = _activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<ExtractableDataSetProject>().Where(edsp => eds.Contains(edsp.DataSet));
         var pti = edsp.Select(e => e.Project_ID).ToList();
-        var validProjects = dataExportChildProvider.Projects.Where(p => _force ||(!pti.Contains(p.ID) && ProjectSpecificCatalogueManager.CanMakeCatalogueProjectSpecific(_activator.RepositoryLocator.DataExportRepository, _catalogue, p, pti)));
+        var validProjects = dataExportChildProvider.Projects.Where(p => _force ||(!pti.Contains(p.ID) && ProjectSpecificCatalogueManager.CanMakeCatalogueProjectSpecific(_activator.RepositoryLocator.CatalogueDbContext, _catalogue, p, pti)));
         return validProjects.ToList();
     }
 
@@ -129,7 +129,7 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
             SetImpossible("Catalogue cannot be null");
             return;
         }
-        var status = _catalogue.GetExtractabilityStatus(BasicActivator.RepositoryLocator.DataExportRepository);
+        var status = _catalogue.GetExtractabilityStatus(BasicActivator.RepositoryLocator.CatalogueDbContext);
         if (!GetListOfValidProjects().Any() && !_force)
         {
             SetImpossible("No valid Projects available");

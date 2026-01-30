@@ -73,7 +73,7 @@ internal class NightmareDatasets : DataGenerator
         // Based on DLS figures see: https://github.com/HicServices/RDMP/issues/1224
         for (var i = 0; i < 500 * Factor; i++)
         {
-            var cata = new Catalogue(_repos.CatalogueRepository, $"Catalogue {GetRandomGPCode(r)}")
+            var cata = new Catalogue(_repos.CatalogueDbContext, $"Catalogue {GetRandomGPCode(r)}")
             {
                 Description = GetRandomSentence(r)
             };
@@ -90,12 +90,12 @@ internal class NightmareDatasets : DataGenerator
 
             foreach (var col in CreateTable())
             {
-                var ci = new CatalogueItem(_repos.CatalogueRepository, cata, col.Name);
+                var ci = new CatalogueItem(_repos.CatalogueDbContext, cata, col.Name);
 
                 // = 60%  of columns are extractable
                 if (r.Next(10) < 6)
                 {
-                    var ei = new ExtractionInformation(_repos.CatalogueRepository, ci, col, col.Name)
+                    var ei = new ExtractionInformation(_repos.CatalogueDbContext, ci, col, col.Name)
                     {
                         ExtractionCategory = extractionCategories.GetRandom(r)
                     };
@@ -172,7 +172,7 @@ internal class NightmareDatasets : DataGenerator
 
                     request.PushToServer(con);
 
-                    var cohort = new ExtractableCohort(_repos.DataExportRepository, ect,
+                    var cohort = new ExtractableCohort(_repos.CatalogueDbContext, ect,
                         request.NewCohortDefinition.ID.Value);
                     config.Cohort_ID = cohort.ID;
                     config.SaveToDatabase();
@@ -196,7 +196,7 @@ internal class NightmareDatasets : DataGenerator
                     // 5% have subcontainers
                     if (r.Next(20) == 0)
                     {
-                        var subContainer = new FilterContainer(_repos.DataExportRepository);
+                        var subContainer = new FilterContainer(_repos.CatalogueDbContext);
                         sds.RootFilterContainer.AddChild(subContainer);
                         AddExtractionFiltersTo(subContainer);
                     }
@@ -207,7 +207,7 @@ internal class NightmareDatasets : DataGenerator
         // 200 cics
         for (var i = 0; i < 200 * Factor; i++)
         {
-            var cic = new CohortIdentificationConfiguration(_repos.CatalogueRepository,
+            var cic = new CohortIdentificationConfiguration(_repos.CatalogueDbContext,
                 $"Cohort Query {GetRandomGPCode(r)}");
 
             // 25% of cics are associated with a specific project
@@ -222,7 +222,7 @@ internal class NightmareDatasets : DataGenerator
         var numberOfFilters = GetGaussianInt(0, 2);
         for (var f = 0; f < numberOfFilters; f++)
         {
-            var filter = new DeployedExtractionFilter(_repos.DataExportRepository,
+            var filter = new DeployedExtractionFilter(_repos.CatalogueDbContext,
                 $"Filter {Guid.NewGuid()}", null)
             {
                 WhereSQL = "ColX > 0"
@@ -238,7 +238,7 @@ internal class NightmareDatasets : DataGenerator
         // 762 tables
         // 18415 columns
         // = average of 24 columns per table
-        var ti = new TableInfo(_repos.CatalogueRepository, $"[MyDb].[Table{TablesCount++}]");
+        var ti = new TableInfo(_repos.CatalogueDbContext, $"[MyDb].[Table{TablesCount++}]");
 
         // let's not set the server name on 1 in 20 so we get all those
         // horrible null references out in the open
@@ -260,7 +260,7 @@ internal class NightmareDatasets : DataGenerator
 
         var numberOfColumns = GetGaussianInt(1, 48);
         for (var j = 0; j < numberOfColumns; j++)
-            yield return new ColumnInfo(_repos.CatalogueRepository, $"MyCol{ColumnsCount++}", "varchar(10)", ti);
+            yield return new ColumnInfo(_repos.CatalogueDbContext, $"MyCol{ColumnsCount++}", "varchar(10)", ti);
     }
 
     // we are not actually interested in these methods, just want to use GetGaussian etc

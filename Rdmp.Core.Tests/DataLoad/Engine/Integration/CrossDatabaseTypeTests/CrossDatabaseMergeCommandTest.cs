@@ -89,7 +89,7 @@ public class CrossDatabaseMergeCommandTest : FromToDatabaseTests
         var migrationHost = new MigrationHost(From, To, configuration, new HICDatabaseConfiguration(lmd));
 
         //set SetUp a logging task
-        var logServer = CatalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
+        var logServer = CatalogueDbContext.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
         var logManager = new LogManager(logServer);
         logManager.CreateNewLoggingTaskIfNotExists("CrossDatabaseMergeCommandTest");
         var dli = logManager.CreateDataLoadInfo("CrossDatabaseMergeCommandTest", "tests", "running test", "", true);

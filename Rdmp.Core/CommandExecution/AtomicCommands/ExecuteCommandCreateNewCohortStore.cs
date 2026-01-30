@@ -54,7 +54,7 @@ internal sealed class ExecuteCommandCreateNewCohortStore : BasicCommandExecution
 
         //Create cohort store database
         var wizard = new CreateNewCohortDatabaseWizard(databaseToCreate,
-            activator.RepositoryLocator.CatalogueDbContext, activator.RepositoryLocator.DataExportRepository,
+            activator.RepositoryLocator.CatalogueDbContext, activator.RepositoryLocator.CatalogueDbContext,
             allowNullReleaseIdentifiers);
         Created = wizard.CreateDatabase(new PrivateIdentifierPrototype(privateFieldName, privateFieldDataType),
             ThrowImmediatelyCheckNotifier.Quiet);

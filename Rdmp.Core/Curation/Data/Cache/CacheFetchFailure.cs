@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode;
 
@@ -79,27 +80,27 @@ public class CacheFetchFailure : DatabaseEntity, ICacheFetchFailure
     /// <summary>
     /// Documents that a given cache fetch request was not successfully executed e.g. the remote endpoint returned an error for that date range.
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param  name="catalogueDbContext"></param>
     /// <param name="cacheProgress"></param>
     /// <param name="start"></param>
     /// <param name="end"></param>
     /// <param name="e"></param>
-    public CacheFetchFailure(RdmpDbContext catalogueDbContext, ICacheProgress cacheProgress, DateTime start,
+    public CacheFetchFailure(RDMPDbContext catalogueDbContext, ICacheProgress cacheProgress, DateTime start,
         DateTime end, Exception e)
     {
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "CacheProgress_ID", cacheProgress.ID },
-            { "FetchRequestStart", start },
-            { "FetchRequestEnd", end },
-            { "ExceptionText", ExceptionHelper.ExceptionToListOfInnerMessages(e, true) },
-            { "LastAttempt", DateTime.Now },
-            { "ResolvedOn", DBNull.Value }
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "CacheProgress_ID", cacheProgress.ID },
+        //    { "FetchRequestStart", start },
+        //    { "FetchRequestEnd", end },
+        //    { "ExceptionText", ExceptionHelper.ExceptionToListOfInnerMessages(e, true) },
+        //    { "LastAttempt", DateTime.Now },
+        //    { "ResolvedOn", DBNull.Value }
+        //});
     }
 
-    internal CacheFetchFailure(RdmpDbContext catalogueDbContext, DbDataReader r)
-        : base(repository, r)
+    internal CacheFetchFailure(RDMPDbContext catalogueDbContext, DbDataReader r)
+        : base(catalogueDbContext, r)
     {
         CacheProgress_ID = int.Parse(r["CacheProgress_ID"].ToString());
         FetchRequestStart = (DateTime)r["FetchRequestStart"];

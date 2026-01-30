@@ -148,15 +148,15 @@ public class AtomicCommandFactory : CommandFactoryBase
                     SuggestedCategory = Extraction
                 };
 
-                if (c.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository))
-                {
-                    yield return new ExecuteCommandMakeProjectSpecificCatalogueNormalAgain(_activator, c, null)
-                    {
-                        Weight = -99.0009f,
-                        SuggestedCategory = Extraction,
-                        OverrideCommandName = "Remove Project Specific Catalogue from a Project"
-                    };
-                }
+                //if (c.IsProjectSpecific(_activator.RepositoryLocator.CatalogueDbContext))
+                //{
+                //    yield return new ExecuteCommandMakeProjectSpecificCatalogueNormalAgain(_activator, c, null)
+                //    {
+                //        Weight = -99.0009f,
+                //        SuggestedCategory = Extraction,
+                //        OverrideCommandName = "Remove Project Specific Catalogue from a Project"
+                //    };
+                //}
                 yield return new ExecuteCommandSetExtractionIdentifier(_activator, c, null, null)
                 {
                     Weight = -99.0008f,
@@ -289,18 +289,18 @@ public class AtomicCommandFactory : CommandFactoryBase
             {
                 yield return new ExecuteCommandSetAggregateDimension(_activator, ac);
 
-                yield return _activator.RepositoryLocator.CatalogueDbContext
-                    .GetExtendedProperties(ExtendedProperty.IsTemplate, ac)
-                    .Any(v => v.Value.Equals("true"))
-                    ? new ExecuteCommandSetExtendedProperty(_activator, new[] { ac }, ExtendedProperty.IsTemplate, null)
-                    {
-                        OverrideCommandName = "Make Non Template"
-                    }
-                    : (IAtomicCommand)new ExecuteCommandSetExtendedProperty(_activator, new[] { ac },
-                        ExtendedProperty.IsTemplate, "true")
-                    {
-                        OverrideCommandName = "Make Reusable Template"
-                    };
+                //yield return _activator.RepositoryLocator.CatalogueDbContext
+                //    .GetExtendedProperties(ExtendedProperty.IsTemplate, ac)
+                //    .Any(v => v.Value.Equals("true"))
+                //    ? new ExecuteCommandSetExtendedProperty(_activator, new[] { ac }, ExtendedProperty.IsTemplate, null)
+                //    {
+                //        OverrideCommandName = "Make Non Template"
+                //    }
+                //    : (IAtomicCommand)new ExecuteCommandSetExtendedProperty(_activator, new[] { ac },
+                //        ExtendedProperty.IsTemplate, "true")
+                //    {
+                //        OverrideCommandName = "Make Reusable Template"
+                //    };
             }
 
             // graph options
@@ -368,34 +368,34 @@ public class AtomicCommandFactory : CommandFactoryBase
             yield return new ExecuteCommandAssociateCatalogueWithLoadMetadata(_activator, aculmd.LoadMetadata);
 
         if (Is(o, out AllDataAccessCredentialsNode _))
-            yield return new ExecuteCommandNewObject(_activator,
-                () => new DataAccessCredentials(_activator.RepositoryLocator.CatalogueDbContext,
-                    $"New Blank Credentials {Guid.NewGuid()}"))
-            {
-                OverrideCommandName = "Add New Credentials"
-            };
+            //yield return new ExecuteCommandNewObject(_activator,
+            //    () => new DataAccessCredentials(_activator.RepositoryLocator.CatalogueDbContext,
+            //        $"New Blank Credentials {Guid.NewGuid()}"))
+            //{
+            //    OverrideCommandName = "Add New Credentials"
+            //};
 
         if (Is(o, out DataAccessCredentialUsageNode usage))
         {
-            var existingUsages =
-                _activator.RepositoryLocator.CatalogueDbContext.TableInfoCredentialsManager.GetCredentialsIfExistsFor(
-                    usage.TableInfo);
+            //var existingUsages =
+            //    _activator.RepositoryLocator.CatalogueDbContext.TableInfoCredentialsManager.GetCredentialsIfExistsFor(
+            //        usage.TableInfo);
 
-            foreach (DataAccessContext context in Enum.GetValues(typeof(DataAccessContext)))
-                yield return new ExecuteCommandSetDataAccessContextForCredentials(_activator, usage, context,
-                    existingUsages)
-                {
-                    SuggestedCategory = SetUsageContext
-                };
+            //foreach (DataAccessContext context in Enum.GetValues(typeof(DataAccessContext)))
+            //    yield return new ExecuteCommandSetDataAccessContextForCredentials(_activator, usage, context,
+            //        existingUsages)
+            //    {
+            //        SuggestedCategory = SetUsageContext
+            //    };
         }
 
         if (Is(o, out AllConnectionStringKeywordsNode _))
-            yield return new ExecuteCommandNewObject(_activator,
-                () => new ConnectionStringKeyword(_activator.RepositoryLocator.CatalogueDbContext,
-                    DatabaseType.MicrosoftSQLServer, "NewKeyword", "v"))
-            {
-                OverrideCommandName = "Add New Connection String Keyword"
-            };
+            //yield return new ExecuteCommandNewObject(_activator,
+            //    () => new ConnectionStringKeyword(_activator.RepositoryLocator.CatalogueDbContext,
+            //        DatabaseType.MicrosoftSQLServer, "NewKeyword", "v"))
+            //{
+            //    OverrideCommandName = "Add New Connection String Keyword"
+            //};
 
         if (Is(o, out AllExternalServersNode _))
         {
@@ -676,10 +676,10 @@ public class AtomicCommandFactory : CommandFactoryBase
 
             yield return new ExecuteCommandSyncTableInfo(_activator, ti, false, false);
             yield return new ExecuteCommandSyncTableInfo(_activator, ti, true, false);
-            yield return new ExecuteCommandNewObject(_activator,
-                () => new ColumnInfo(_activator.RepositoryLocator.CatalogueDbContext, Guid.NewGuid().ToString(),
-                    "fish", ti))
-            { OverrideCommandName = "Add New ColumnInfo" };
+            //yield return new ExecuteCommandNewObject(_activator,
+            //    () => new ColumnInfo(_activator.RepositoryLocator.CatalogueDbContext, Guid.NewGuid().ToString(),
+            //        "fish", ti))
+            //{ OverrideCommandName = "Add New ColumnInfo" };
         }
 
         if (Is(o, out ColumnInfo colInfo))

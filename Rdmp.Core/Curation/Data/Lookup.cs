@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode;
@@ -98,19 +99,19 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
     /// These are dereferenced cached versions of the entities to which the _ID properties refer to, to change them change the _ID version
     /// </summary>
     [NoMappingToDatabase]
-    public ColumnInfo Description => _description ??= Repository.GetObjectByID<ColumnInfo>(Description_ID);
+    public ColumnInfo Description => _description ??= CatalogueDbContext.GetObjectByID<ColumnInfo>(Description_ID);
 
     /// <summary>
     /// These are dereferenced cached versions of the entities to which the _ID properties refer to, to change them change the _ID version
     /// </summary>
     [NoMappingToDatabase]
-    public ColumnInfo ForeignKey => _foreignKey ??= Repository.GetObjectByID<ColumnInfo>(ForeignKey_ID);
+    public ColumnInfo ForeignKey => _foreignKey ??= CatalogueDbContext.GetObjectByID<ColumnInfo>(ForeignKey_ID);
 
     /// <summary>
     /// These are dereferenced cached versions of the entities to which the _ID properties refer to, to change them change the _ID version
     /// </summary>
     [NoMappingToDatabase]
-    public ColumnInfo PrimaryKey => _primaryKey ??= Repository.GetObjectByID<ColumnInfo>(PrimaryKey_ID);
+    public ColumnInfo PrimaryKey => _primaryKey ??= CatalogueDbContext.GetObjectByID<ColumnInfo>(PrimaryKey_ID);
 
     #endregion
 
@@ -121,13 +122,13 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
     /// <summary>
     /// Declares that the columns provide form a foreign key join to lookup table relationship
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="description">The lookup table description column</param>
     /// <param name="foreignKey">The main dataset column that joins to the lookup e.g. Prescribing.DrugCode</param>
     /// <param name="primaryKey">The lookup table column that contains the code e.g. z_DrugLookup.Code</param>
     /// <param name="type"></param>
     /// <param name="collation"></param>
-    public Lookup(RdmpDbContext catalogueDbContext, ColumnInfo description, ColumnInfo foreignKey, ColumnInfo primaryKey,
+    public Lookup(RDMPDbContext catalogueDbContext, ColumnInfo description, ColumnInfo foreignKey, ColumnInfo primaryKey,
         ExtractionJoinType type, string collation)
     {
         //do checks before it hits the database.
@@ -144,18 +145,18 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
         if (description.ID == primaryKey.ID)
             throw new ArgumentException("Description Column and PrimaryKey Column cannot be the same column!");
 
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "Description_ID", description.ID },
-            { "ForeignKey_ID", foreignKey.ID },
-            { "PrimaryKey_ID", primaryKey.ID },
-            { "ExtractionJoinType", type.ToString() },
-            { "Collation", string.IsNullOrWhiteSpace(collation) ? DBNull.Value : (object)collation }
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "Description_ID", description.ID },
+        //    { "ForeignKey_ID", foreignKey.ID },
+        //    { "PrimaryKey_ID", primaryKey.ID },
+        //    { "ExtractionJoinType", type.ToString() },
+        //    { "Collation", string.IsNullOrWhiteSpace(collation) ? DBNull.Value : (object)collation }
+        //});
     }
 
-    internal Lookup(RdmpDbContext catalogueDbContext, DbDataReader r)
-        : base(repository, r)
+    internal Lookup(RDMPDbContext catalogueDbContext, DbDataReader r)
+        :base(catalogueDbContext, r)
     {
         Description_ID = int.Parse(r["Description_ID"].ToString());
         ForeignKey_ID = int.Parse(r["ForeignKey_ID"].ToString());
@@ -196,28 +197,28 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
         if (foreignKeyTable.Equals(primaryKeyTable))
             throw new NotSupportedException("Tables must be different");
 
-        if (!foreignKeyTable.Repository.Equals(primaryKeyTable.Repository))
+        if (!foreignKeyTable.CatalogueDbContext.Equals(primaryKeyTable.CatalogueDbContext))
             throw new NotSupportedException("TableInfos come from different repositories!");
 
-        var repo = (CatalogueRepository)foreignKeyTable.Repository;
-        using var con = repo.GetConnection();
-        using (var cmd = DatabaseCommandHelper.GetCommand(@"SELECT * FROM [Lookup] 
-  WHERE 
-  (SELECT TableInfo_ID FROM ColumnInfo where ID = PrimaryKey_ID) = @primaryKeyTableID
-  AND
-  (SELECT TableInfo_ID FROM ColumnInfo where ID = [ForeignKey_ID]) = @foreignKeyTableID"
-                   , con.Connection, con.Transaction))
-        {
-            cmd.Parameters.Add(DatabaseCommandHelper.GetParameter("@primaryKeyTableID", cmd));
-            cmd.Parameters.Add(DatabaseCommandHelper.GetParameter("@foreignKeyTableID", cmd));
+  //      var repo = foreignKeyTable.CatalogueDbContext;
+  //      using var con = repo.GetConnection();
+  //      using (var cmd = DatabaseCommandHelper.GetCommand(@"SELECT * FROM [Lookup] 
+  //WHERE 
+  //(SELECT TableInfo_ID FROM ColumnInfo where ID = PrimaryKey_ID) = @primaryKeyTableID
+  //AND
+  //(SELECT TableInfo_ID FROM ColumnInfo where ID = [ForeignKey_ID]) = @foreignKeyTableID"
+  //                 , con.Connection, con.Transaction))
+  //      {
+  //          cmd.Parameters.Add(DatabaseCommandHelper.GetParameter("@primaryKeyTableID", cmd));
+  //          cmd.Parameters.Add(DatabaseCommandHelper.GetParameter("@foreignKeyTableID", cmd));
 
-            cmd.Parameters["@primaryKeyTableID"].Value = primaryKeyTable.ID;
-            cmd.Parameters["@foreignKeyTableID"].Value = foreignKeyTable.ID;
+  //          cmd.Parameters["@primaryKeyTableID"].Value = primaryKeyTable.ID;
+  //          cmd.Parameters["@foreignKeyTableID"].Value = foreignKeyTable.ID;
 
-            using var r = cmd.ExecuteReader();
-            while (r.Read())
-                toReturn.Add(new Lookup(repo, r));
-        }
+  //          using var r = cmd.ExecuteReader();
+  //          while (r.Read())
+  //              toReturn.Add(new Lookup(repo, r));
+  //      }
 
         return toReturn.ToArray();
     }
@@ -257,7 +258,7 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
 
     /// <inheritdoc/>
     public IEnumerable<ISupplementalJoin> GetSupplementalJoins() =>
-        Repository.GetAllObjectsWhere<LookupCompositeJoinInfo>("OriginalLookup_ID", ID);
+        CatalogueDbContext.GetAllObjectsWhere<LookupCompositeJoinInfo>("OriginalLookup_ID", ID);
 
     /// <inheritdoc/>
     public ExtractionJoinType GetInvertedJoinType() => throw new NotSupportedException(
@@ -290,6 +291,6 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
     }
 
     /// <inheritdoc/>
-    public string GetCustomJoinSql() => CatalogueRepository.GetExtendedProperties(ExtendedProperty.CustomJoinSql, this)
-        .FirstOrDefault()?.Value;
+    public string GetCustomJoinSql() => "";// CatalogueDbContext.GetExtendedProperties(ExtendedProperty.CustomJoinSql, this)
+        //.FirstOrDefault()?.Value;
 }

@@ -31,7 +31,7 @@ internal class ConsoleGuiEdit : Window
 
         ColorScheme = ConsoleMainWindow.ColorScheme;
         collection =
-            TableRepository.GetPropertyInfos(DatabaseObject.GetType())
+            TableCatalogueDbContext.GetPropertyInfos(DatabaseObject.GetType())
                 .Select(p => new PropertyInListView(p, DatabaseObject)).ToList();
 
         list = new ListView(collection)

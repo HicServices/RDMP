@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using FAnsi.Discovery;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Repositories;
@@ -128,13 +129,13 @@ public class SupportingSQLTable : DatabaseEntity, INamed, ISupportingObject
 
     /// <inheritdoc cref="Catalogue_ID"/>
     [NoMappingToDatabase]
-    public Catalogue Catalogue => Repository.GetObjectByID<Catalogue>(Catalogue_ID);
+    public Catalogue Catalogue => CatalogueDbContext.GetObjectByID<Catalogue>(Catalogue_ID);
 
     /// <inheritdoc cref="ExternalDatabaseServer_ID"/>
     [NoMappingToDatabase]
     public ExternalDatabaseServer ExternalDatabaseServer => ExternalDatabaseServer_ID == null
         ? null
-        : Repository.GetObjectByID<ExternalDatabaseServer>((int)ExternalDatabaseServer_ID);
+        : CatalogueDbContext.GetObjectByID<ExternalDatabaseServer>((int)ExternalDatabaseServer_ID);
 
     #endregion
 
@@ -145,20 +146,20 @@ public class SupportingSQLTable : DatabaseEntity, INamed, ISupportingObject
     /// <summary>
     /// Defines a new table that helps in understanding the given dataset <paramref name="parent"/>
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="parent"></param>
     /// <param name="name"></param>
-    public SupportingSQLTable(RdmpDbContext catalogueDbContext, ICatalogue parent, string name)
+    public SupportingSQLTable(RDMPDbContext catalogueDbContext, ICatalogue parent, string name)
     {
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "Name", name },
-            { "Catalogue_ID", parent.ID }
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "Name", name },
+        //    { "Catalogue_ID", parent.ID }
+        //});
     }
 
-    internal SupportingSQLTable(RdmpDbContext catalogueDbContext, DbDataReader r)
-        : base(repository, r)
+    internal SupportingSQLTable(RDMPDbContext catalogueDbContext, DbDataReader r)
+        :base(catalogueDbContext, r)
     {
         Catalogue_ID = int.Parse(r["Catalogue_ID"].ToString());
         Description = r["Description"] as string;

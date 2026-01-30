@@ -35,8 +35,8 @@ public class ProcessTaskTests : DatabaseTests
             });
 
             //get fresh copy out of database to ensure it is still there
-            var orig = CatalogueRepository.GetObjectByID<ProcessTask>(processTask1.ID);
-            clone = CatalogueRepository.GetObjectByID<ProcessTask>(clone.ID);
+            var orig = CatalogueDbContext.GetObjectByID<ProcessTask>(processTask1.ID);
+            clone = CatalogueDbContext.GetObjectByID<ProcessTask>(clone.ID);
 
             Assert.Multiple(() =>
             {
@@ -95,8 +95,8 @@ public class ProcessTaskTests : DatabaseTests
 
             //////////////////////////////////////////////////////////////////CHECK CLONAGE OF PROCESS TASK ////////////////////////////////////////////////////////////
             //get fresh copy out of database to ensure it is still there
-            var orig = CatalogueRepository.GetObjectByID<ProcessTask>(processTask1.ID);
-            clone = CatalogueRepository.GetObjectByID<ProcessTask>(clone.ID);
+            var orig = CatalogueDbContext.GetObjectByID<ProcessTask>(processTask1.ID);
+            clone = CatalogueDbContext.GetObjectByID<ProcessTask>(clone.ID);
 
             Assert.Multiple(() =>
             {

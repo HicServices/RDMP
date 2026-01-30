@@ -135,7 +135,7 @@ public class CohortSummaryQueryBuilder
             throw new NotSupportedException(
                 "This method only works when there is a cohort aggregate, it does not work for CohortAggregateContainers");
 
-        var memoryRepository = new MemoryCatalogueRepository();
+        var memoryRepository = new MemoryRDMPDbContext();
 
         //Get a builder for creating the basic aggregate graph
         var summaryBuilder = _summary.GetQueryBuilder();
@@ -204,7 +204,7 @@ public class CohortSummaryQueryBuilder
     {
         var cachingServer = GetQueryCachingServer() ??
                             throw new NotSupportedException("No Query Caching Server configured");
-        var memoryRepository = new MemoryCatalogueRepository();
+        var memoryRepository = new MemoryRDMPDbContext();
 
         //Get a builder for creating the basic aggregate graph
         var builder = _summary.GetQueryBuilder();

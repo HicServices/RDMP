@@ -65,15 +65,15 @@ public class AtomicCommandMenuItem : ToolStripMenuItem
 
                 if (match.Success)
                 {
-                    var helpDict = _activator.RepositoryLocator.CatalogueDbContext.CommentStore;
+                    //var helpDict = _activator.RepositoryLocator.CatalogueDbContext.CommentStore;
 
-                    if (helpDict != null && helpDict.ContainsKey(match.Value))
-                    {
-                        ExceptionViewer.Show(
-                            $"Rule Broken{Environment.NewLine}{helpDict[match.Value]}{Environment.NewLine}({match.Value})",
-                            ex);
-                        return;
-                    }
+                    //if (helpDict != null && helpDict.ContainsKey(match.Value))
+                    //{
+                    //    ExceptionViewer.Show(
+                    //        $"Rule Broken{Environment.NewLine}{helpDict[match.Value]}{Environment.NewLine}({match.Value})",
+                    //        ex);
+                    //    return;
+                    //}
                 }
             }
 

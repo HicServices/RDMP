@@ -320,17 +320,17 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
             if (!shouldBeExtractable) //it's already not extractable job done
                 return;
             //make it extractable
-            var newExtractionInformation = new ExtractionInformation((ICatalogueRepository)n.ColumnInfo.Repository,
-                n.CatalogueItem, n.ColumnInfo, n.ColumnInfo.Name);
+            //var newExtractionInformation = new ExtractionInformation((ICatalogueRepository)n.ColumnInfo.Repository,
+            //    n.CatalogueItem, n.ColumnInfo, n.ColumnInfo.Name);
 
-            if (category.HasValue)
-            {
-                newExtractionInformation.ExtractionCategory = category.Value;
-                newExtractionInformation.Order = olvColumnExtractability.IndexOf(n);
-                newExtractionInformation.SaveToDatabase();
-            }
+            //if (category.HasValue)
+            //{
+            //    newExtractionInformation.ExtractionCategory = category.Value;
+            //    newExtractionInformation.Order = olvColumnExtractability.IndexOf(n);
+            //    newExtractionInformation.SaveToDatabase();
+            //}
 
-            n.ExtractionInformation = newExtractionInformation;
+            //n.ExtractionInformation = newExtractionInformation;
         }
 
         olvColumnExtractability.RefreshObject(n);
@@ -499,13 +499,13 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
                 return;
         }
 
-        var existingJoins = Activator.RepositoryLocator.CatalogueDbContext.JoinManager
-            .GetAllJoinInfosBetweenColumnInfoSets(joinFrom.ColumnInfos,
-                TableInfoCreated.ColumnInfos);
+        //var existingJoins = Activator.RepositoryLocator.CatalogueDbContext.JoinManager
+        //    .GetAllJoinInfosBetweenColumnInfoSets(joinFrom.ColumnInfos,
+        //        TableInfoCreated.ColumnInfos);
 
-        // we already know how to join these tables
-        if (existingJoins.Any())
-            return;
+        //// we already know how to join these tables
+        //if (existingJoins.Any())
+            //return;
 
         // let the user configure how to join to the second table
         var cmdAddJoin = new ExecuteCommandAddJoinInfo(Activator, (TableInfo)joinFrom);
@@ -692,7 +692,7 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
             {
                 TaskDescription =
                             "Which Project should this Catalogue be associated with? ProjectSpecific Catalogues can only be extracted in extractions of that Project and will not appear in the main Catalogues tree."
-            }, Activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>().ToArray(),
+            }, Activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Project>().ToArray(),
                     out var selected))
                 SelectProject(selected);
         }

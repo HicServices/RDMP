@@ -115,7 +115,7 @@ public class CommittingNewCohortsTests : TestsRequiringACohort
         //there should be a new ExtractableCohort now
         Assert.That(request.NewCohortDefinition.ID, Is.Not.Null);
 
-        var ec = DataExportRepository.GetAllObjects<ExtractableCohort>()
+        var ec = DataExportCatalogueDbContext.GetAllObjects<ExtractableCohort>()
             .Single(c => c.OriginID == request.NewCohortDefinition.ID);
 
         //with the data in it from the test file

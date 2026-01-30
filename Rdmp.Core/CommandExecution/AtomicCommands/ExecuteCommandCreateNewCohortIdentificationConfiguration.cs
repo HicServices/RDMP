@@ -83,7 +83,7 @@ public class ExecuteCommandCreateNewCohortIdentificationConfiguration : BasicCom
 
         if (proj == null && BasicActivator.IsInteractive && PromptToPickAProject)
         {
-            var projects = BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>();
+            var projects = BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Project>();
 
             if (projects.Any())
                 proj = (Project)BasicActivator.SelectOne(new DialogArgs

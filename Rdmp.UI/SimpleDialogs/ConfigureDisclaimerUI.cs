@@ -33,11 +33,11 @@ public partial class ConfigureDisclaimerUI : RDMPForm
         if (VisualStudioDesignMode)
             return;
 
-        var value =
-            Activator.RepositoryLocator.DataExportRepository.DataExportPropertyManager.GetValue(DataExportProperty
-                .ReleaseDocumentDisclaimer);
+        //var value =
+        //    Activator.RepositoryLocator.CatalogueDbContext.DataExportPropertyManager.GetValue(DataExportProperty
+        //        .ReleaseDocumentDisclaimer);
 
-        tb.Text = value ?? GetDefaultText();
+        //tb.Text = value ?? GetDefaultText();
 
         _allowClose = true;
 
@@ -60,8 +60,8 @@ Once you have finished your project, please inform HIC who will make arrangement
 
     private void btnSaveAndClose_Click(object sender, EventArgs e)
     {
-        Activator.RepositoryLocator.DataExportRepository.DataExportPropertyManager.SetValue(
-            DataExportProperty.ReleaseDocumentDisclaimer, tb.Text);
+        //Activator.RepositoryLocator.CatalogueDbContext.DataExportPropertyManager.SetValue(
+        //    DataExportProperty.ReleaseDocumentDisclaimer, tb.Text);
         _allowClose = true;
         DialogResult = DialogResult.OK;
         Close();

@@ -13,6 +13,7 @@ using System.Text.RegularExpressions;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Serialization;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Repositories;
@@ -129,12 +130,12 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
 
     /// <inheritdoc cref="LoadMetadata_ID"/>
     [NoMappingToDatabase]
-    public LoadMetadata LoadMetadata => Repository.GetObjectByID<LoadMetadata>(LoadMetadata_ID);
+    public LoadMetadata LoadMetadata => CatalogueDbContext.GetObjectByID<LoadMetadata>(LoadMetadata_ID);
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
     public IEnumerable<ProcessTaskArgument> ProcessTaskArguments =>
-        Repository.GetAllObjectsWithParent<ProcessTaskArgument>(this);
+        CatalogueDbContext.GetAllObjectsWithParent<ProcessTaskArgument>(this);
 
     /// <summary>
     /// All <see cref="ILoadProgress"/> (if any) that can be advanced by executing this load.  This allows batch execution of large loads
@@ -151,49 +152,49 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
     /// <summary>
     /// Creates a new operation in the data load (e.g. copy files from A to B, load all CSV files to RAW table B etc)
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="parent"></param>
     /// <param name="stage"></param>
-    public ProcessTask(RdmpDbContext catalogueDbContext, ILoadMetadata parent, LoadStage stage)
+    public ProcessTask(RDMPDbContext catalogueDbContext, ILoadMetadata parent, LoadStage stage)
     {
-        var order =
-            repository.GetAllObjectsWithParent<ProcessTask>(parent).Select(t => t.Order).DefaultIfEmpty().Max() + 1;
+        //var order =
+        //    repository.GetAllObjectsWithParent<ProcessTask>(parent).Select(t => t.Order).DefaultIfEmpty().Max() + 1;
 
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "LoadMetadata_ID", parent.RootLoadMetadata_ID??parent.ID },
-            { "ProcessTaskType", ProcessTaskType.Executable.ToString() },
-            { "LoadStage", stage },
-            { "Name", $"New Process{Guid.NewGuid()}" },
-            { "Order", order },
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "LoadMetadata_ID", parent.RootLoadMetadata_ID??parent.ID },
+        //    { "ProcessTaskType", ProcessTaskType.Executable.ToString() },
+        //    { "LoadStage", stage },
+        //    { "Name", $"New Process{Guid.NewGuid()}" },
+        //    { "Order", order },
+        //});
     }
 
     /// <summary>
     /// Creates a new operation in the data load (e.g. copy files from A to B, load all CSV files to RAW table B etc)
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="parent"></param>
     /// <param name="stage"></param>
     /// <param name="serialisableConfiguration"></param>
-    public ProcessTask(RdmpDbContext catalogueDbContext, ILoadMetadata parent, LoadStage stage, string serialisableConfiguration = null)
+    public ProcessTask(RDMPDbContext catalogueDbContext, ILoadMetadata parent, LoadStage stage, string serialisableConfiguration = null)
     {
-        var order =
-            repository.GetAllObjectsWithParent<ProcessTask>(parent).Select(t => t.Order).DefaultIfEmpty().Max() + 1;
+        //var order =
+        //    repository.GetAllObjectsWithParent<ProcessTask>(parent).Select(t => t.Order).DefaultIfEmpty().Max() + 1;
 
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-             { "LoadMetadata_ID", parent.RootLoadMetadata_ID??parent.ID },
-            { "ProcessTaskType", ProcessTaskType.Executable.ToString() },
-            { "LoadStage", stage },
-            { "Name", $"New Process{Guid.NewGuid()}" },
-            { "Order", order },
-            {"SerialisableConfiguration", serialisableConfiguration}
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //     { "LoadMetadata_ID", parent.RootLoadMetadata_ID??parent.ID },
+        //    { "ProcessTaskType", ProcessTaskType.Executable.ToString() },
+        //    { "LoadStage", stage },
+        //    { "Name", $"New Process{Guid.NewGuid()}" },
+        //    { "Order", order },
+        //    {"SerialisableConfiguration", serialisableConfiguration}
+        //});
     }
 
-    internal ProcessTask(RdmpDbContext catalogueDbContext, DbDataReader r)
-        : base(repository, r)
+    internal ProcessTask(RDMPDbContext catalogueDbContext, DbDataReader r)
+        :base(catalogueDbContext, r)
     {
         LoadMetadata_ID = int.Parse(r["LoadMetaData_ID"].ToString());
 
@@ -301,7 +302,7 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
             : new CheckEventArgs($"Found File '{Path}'", CheckResult.Success));
 
 
-        var matchingPaths = Repository.GetAllObjects<ProcessTask>().Where(pt => pt.Path.Equals(Path));
+        var matchingPaths = CatalogueDbContext.GetAllObjects<ProcessTask>().Where(pt => pt.Path.Equals(Path));
         foreach (var duplicate in matchingPaths.Except(new[] { this }))
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
@@ -333,7 +334,7 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
     public IEnumerable<IArgument> GetAllArguments() => ProcessTaskArguments;
 
     /// <inheritdoc/>
-    public IArgument CreateNewArgument() => new ProcessTaskArgument((ICatalogueRepository)Repository, this);
+    public IArgument CreateNewArgument() => new ProcessTaskArgument(CatalogueDbContext, this);
 
     /// <inheritdoc/>
     public string GetClassNameWhoArgumentsAreFor() => Path;
@@ -347,42 +348,43 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
     /// <returns>the new ProcessTask (the clone has a different ID to the parent)</returns>
     public ProcessTask CloneToNewLoadMetadataStage(LoadMetadata loadMetadata, LoadStage loadStage)
     {
-        var cataRepository = (ICatalogueRepository)Repository;
+        var cataRepository = CatalogueDbContext;
 
         //clone only accepts sql connections so make sure we aren't in mysql land or something
-        using (cataRepository.BeginNewTransaction())
-        {
-            try
-            {
-                //get list of arguments to also clone (will happen outside of transaction
-                var toCloneArguments = ProcessTaskArguments.ToArray();
+        //using (cataCatalogueDbContext.BeginNewTransaction())
+        //{
+        //    try
+        //    {
+        //        //get list of arguments to also clone (will happen outside of transaction
+        //        var toCloneArguments = ProcessTaskArguments.ToArray();
 
-                //create a new transaction for all the cloning - note that once all objects are cloned the transaction is committed then all the objects are adjusted outside the transaction
-                var clone = new ProcessTask(CatalogueRepository, LoadMetadata, loadStage);
-                CopyShallowValuesTo(clone);
+        //        //create a new transaction for all the cloning - note that once all objects are cloned the transaction is committed then all the objects are adjusted outside the transaction
+        //        var clone = new ProcessTask(RDMPDbContext, LoadMetadata, loadStage);
+        //        CopyShallowValuesTo(clone);
 
-                //foreach of our child arguments
-                foreach (var argument in toCloneArguments)
-                    //clone it but rewire it to the proper ProcessTask parent (the clone)
-                    argument.ShallowClone(clone);
+        //        //foreach of our child arguments
+        //        foreach (var argument in toCloneArguments)
+        //            //clone it but rewire it to the proper ProcessTask parent (the clone)
+        //            argument.ShallowClone(clone);
 
-                //the values passed into parameter
-                clone.LoadMetadata_ID = loadMetadata.ID;
-                clone.LoadStage = loadStage;
-                clone.SaveToDatabase();
+        //        //the values passed into parameter
+        //        clone.LoadMetadata_ID = loadMetadata.ID;
+        //        clone.LoadStage = loadStage;
+        //        clone.SaveToDatabase();
 
-                //it worked
-                cataRepository.EndTransaction(true);
+        //        //it worked
+        //        cataCatalogueDbContext.EndTransaction(true);
 
-                //return the clone
-                return clone;
-            }
-            catch (Exception)
-            {
-                cataRepository.EndTransaction(false);
-                throw;
-            }
-        }
+        //        //return the clone
+        //        return clone;
+        //    }
+        //    catch (Exception)
+        //    {
+        //        cataCatalogueDbContext.EndTransaction(false);
+        //        throw;
+        //    }
+        //}
+        return null;
     }
 
     /// <inheritdoc/>
@@ -449,7 +451,7 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
 
     public ProcessTask Clone(LoadMetadata lmd)
     {
-        var pt = new ProcessTask(CatalogueRepository, lmd, LoadStage) {
+        var pt = new ProcessTask(CatalogueDbContext, lmd, LoadStage) {
             ProcessTaskType = ProcessTaskType,
             Order = Order,
             IsDisabled = IsDisabled,

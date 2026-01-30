@@ -39,7 +39,7 @@ internal class SetDumpServerMenuItem : RDMPToolStripMenuItem
 
         var cataRepo = activator.RepositoryLocator.CatalogueDbContext;
 
-        _availableServers = cataRepo.GetAllDatabases<IdentifierDumpDatabasePatcher>();
+        _availableServers = Array.Empty< ExternalDatabaseServer>();// cataRepo.GetAllDatabases<IdentifierDumpDatabasePatcher>();
 
         var miUseExisting = new ToolStripMenuItem("Use Existing...",
             IconOverlayProvider.GetOverlayNoCache(img, OverlayKind.Link).ImageToBitmap(), UseExisting)

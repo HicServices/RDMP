@@ -45,14 +45,14 @@ public class ExecuteCommandImportAlreadyExistingCohort : BasicCommandExecution, 
         var ect = _externalCohortTable;
         if (ect == null)
         {
-            var available = BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjects<ExternalCohortTable>();
+            var available = BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllObjects<ExternalCohortTable>();
             if (!SelectOne(available, out ect, null, true)) return;
         }
 
         var newId = _explicitOriginIDToImport ?? GetWhichCohortToImport(ect);
         if (!newId.HasValue) return;
 
-        _ = new ExtractableCohort(BasicActivator.RepositoryLocator.DataExportRepository, ect, newId.Value);
+        //_ = new ExtractableCohort(BasicActivator.RepositoryLocator.CatalogueDbContext, ect, newId.Value);
         Publish(ect);
     }
 
@@ -63,7 +63,7 @@ public class ExecuteCommandImportAlreadyExistingCohort : BasicCommandExecution, 
 
 
         // the ones we already know about
-        var existing = new HashSet<int>(BasicActivator.RepositoryLocator.DataExportRepository
+        var existing = new HashSet<int>(BasicActivator.RepositoryLocator.CatalogueDbContext
             .GetAllObjects<ExtractableCohort>().Where(c => c.ExternalCohortTable_ID == ect.ID).Select(c => c.OriginID));
 
         // new ones we don't know about yet

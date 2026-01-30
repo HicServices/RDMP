@@ -19,6 +19,7 @@ using Rdmp.Core.DataExport.DataRelease.Pipeline;
 using Rdmp.Core.DataExport.DataRelease.Potential;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Logging;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
@@ -264,7 +265,7 @@ e.g. /$i/$a")]
         IMapsDirectlyToDatabaseTable globalToCheck);
 
     /// <inheritdoc/>
-    public abstract FixedReleaseSource<ReleaseAudit> GetReleaseSource(ICatalogueRepository catalogueRepository);
+    public abstract FixedReleaseSource<ReleaseAudit> GetReleaseSource(RDMPDbContext catalogueDbContext);
 
     #endregion
 
@@ -422,7 +423,7 @@ e.g. /$i/$a")]
                 var extractGlobalsCommand = _request as ExtractGlobalsCommand;
                 Debug.Assert(extractGlobalsCommand != null, "extractGlobalsCommand != null");
                 var result = new SupplementalExtractionResults(
-                    extractGlobalsCommand.RepositoryLocator.DataExportRepository,
+                    extractGlobalsCommand.RepositoryLocator.CatalogueDbContext,
                     extractGlobalsCommand.Configuration,
                     null,
                     doc);
@@ -476,7 +477,7 @@ e.g. /$i/$a")]
                 var extractGlobalsCommand = _request as ExtractGlobalsCommand;
                 Debug.Assert(extractGlobalsCommand != null, "extractGlobalsCommand != null");
                 var result =
-                    new SupplementalExtractionResults(extractGlobalsCommand.RepositoryLocator.DataExportRepository,
+                    new SupplementalExtractionResults(extractGlobalsCommand.RepositoryLocator.CatalogueDbContext,
                         extractGlobalsCommand.Configuration,
                         sql.SQL,
                         sql);

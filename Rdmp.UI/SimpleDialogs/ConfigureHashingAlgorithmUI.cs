@@ -52,32 +52,32 @@ public partial class ConfigureHashingAlgorithmUI : RDMPForm
         if (VisualStudioDesignMode)
             return;
 
-        //get the current hashing algorithm
-        var value =
-            Activator.RepositoryLocator.DataExportRepository.DataExportPropertyManager.GetValue(DataExportProperty
-                .HashingAlgorithmPattern);
-        tbHashingAlgorithm.Text = value;
+        ////get the current hashing algorithm
+        //var value =
+        //    Activator.RepositoryLocator.CatalogueDbContext.DataExportPropertyManager.GetValue(DataExportProperty
+        //        .HashingAlgorithmPattern);
+        //tbHashingAlgorithm.Text = value;
     }
 
     private void tbHashingAlgorithm_TextChanged(object sender, EventArgs e)
     {
         var pattern = tbHashingAlgorithm.Text;
 
-        try
-        {
-            QueryPreview.ReadOnly = false;
-            QueryPreview.Text = pattern.Replace("{0}", "[TEST]..[ExampleColumn]").Replace("{1}", "123");
-            Activator.RepositoryLocator.DataExportRepository.DataExportPropertyManager.SetValue(
-                DataExportProperty.HashingAlgorithmPattern, pattern);
-        }
-        catch (Exception exception)
-        {
-            QueryPreview.Text = ExceptionHelper.ExceptionToListOfInnerMessages(exception);
-        }
-        finally
-        {
-            QueryPreview.ReadOnly = true;
-        }
+        //try
+        //{
+        //    QueryPreview.ReadOnly = false;
+        //    QueryPreview.Text = pattern.Replace("{0}", "[TEST]..[ExampleColumn]").Replace("{1}", "123");
+        //    Activator.RepositoryLocator.CatalogueDbContext.DataExportPropertyManager.SetValue(
+        //        DataExportProperty.HashingAlgorithmPattern, pattern);
+        //}
+        //catch (Exception exception)
+        //{
+        //    QueryPreview.Text = ExceptionHelper.ExceptionToListOfInnerMessages(exception);
+        //}
+        //finally
+        //{
+        //    QueryPreview.ReadOnly = true;
+        //}
     }
 
     private void btnReferenceColumn_Click(object sender, EventArgs e)

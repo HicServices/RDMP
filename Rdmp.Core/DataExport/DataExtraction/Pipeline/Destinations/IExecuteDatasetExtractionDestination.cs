@@ -13,6 +13,7 @@ using Rdmp.Core.DataExport.DataRelease.Pipeline;
 using Rdmp.Core.DataExport.DataRelease.Potential;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Logging;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
@@ -61,9 +62,9 @@ public interface IExecuteDatasetExtractionDestination : IPluginDataFlowComponent
     /// Factory method, returns a source component (for a release pipeline) which is capable of detecting and packaging up the artifacts created
     /// by this <see cref="IExecuteDatasetExtractionDestination"/> (destination component for the extraction pipeline)
     /// </summary>
-    /// <param name="catalogueRepository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <returns></returns>
-    FixedReleaseSource<ReleaseAudit> GetReleaseSource(ICatalogueRepository catalogueRepository);
+    FixedReleaseSource<ReleaseAudit> GetReleaseSource(RDMPDbContext catalogueDbContext);
 
     /// <summary>
     /// Returns an assessment of how complete the <paramref name="globalResult"/> extraction process is (e.g. does the extracted file exist on disk /

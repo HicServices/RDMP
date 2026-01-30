@@ -113,7 +113,7 @@ public partial class SupportingSQLTableUI : SupportingSQLTableUI_Design, ISaveab
     {
         ddExternalServers.Items.Clear();
         ddExternalServers.Items.Add(NoExternalServer);
-        ddExternalServers.Items.AddRange(_supportingSQLTable.Repository.GetAllObjects<ExternalDatabaseServer>()
+        ddExternalServers.Items.AddRange(_supportingSQLTable.CatalogueDbContext.GetAllObjects<ExternalDatabaseServer>()
             .ToArray());
 
         if (_supportingSQLTable != null)

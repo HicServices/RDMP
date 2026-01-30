@@ -78,10 +78,10 @@ public class ExecuteCommandRestoreRegexRedactedValueInCatalogueTests: DatabaseTe
         dt = Retrieve(db);
         Assert.That(dt.Rows.Count, Is.EqualTo(1));
         Assert.That(dt.Rows[0].ItemArray[0], Is.EqualTo("1234<GG>1234"));
-        var redaction = CatalogueRepository.GetAllObjects<RegexRedaction>().Last();
+        var redaction = CatalogueDbContext.GetAllObjects<RegexRedaction>().Last();
         var revert = new ExecuteCommandRestoreRegexRedactedValueInCatalogue(activator, redaction);
         Assert.DoesNotThrow(() => revert.Execute());
-        var foundRedaction = CatalogueRepository.GetAllObjectsWhere<RegexRedaction>("RedactionConfiguration_ID", regexConfiguration.ID).ToList();
+        var foundRedaction = CatalogueDbContext.GetAllObjectsWhere<RegexRedaction>("RedactionConfiguration_ID", regexConfiguration.ID).ToList();
         Assert.That(foundRedaction.Count, Is.EqualTo(0));
         dt = Retrieve(db);
         Assert.That(dt.Rows.Count, Is.EqualTo(1));
@@ -103,10 +103,10 @@ public class ExecuteCommandRestoreRegexRedactedValueInCatalogueTests: DatabaseTe
         dt = Retrieve(db);
         Assert.That(dt.Rows.Count, Is.EqualTo(1));
         Assert.That(dt.Rows[0].ItemArray[0], Is.EqualTo("1234<GG>1234"));
-        var redaction = CatalogueRepository.GetAllObjects<RegexRedaction>().Last();
+        var redaction = CatalogueDbContext.GetAllObjects<RegexRedaction>().Last();
         var revert = new ExecuteCommandRestoreRegexRedactedValueInCatalogue(activator, redaction);
         Assert.DoesNotThrow(() => revert.Execute());
-        var foundRedaction = CatalogueRepository.GetAllObjectsWhere<RegexRedaction>("RedactionConfiguration_ID", regexConfiguration.ID).ToList();
+        var foundRedaction = CatalogueDbContext.GetAllObjectsWhere<RegexRedaction>("RedactionConfiguration_ID", regexConfiguration.ID).ToList();
         Assert.That(foundRedaction.Count, Is.EqualTo(0));
         dt = Retrieve(db);
         Assert.That(dt.Rows.Count, Is.EqualTo(1));
@@ -116,10 +116,10 @@ public class ExecuteCommandRestoreRegexRedactedValueInCatalogueTests: DatabaseTe
         dt = Retrieve(db);
         Assert.That(dt.Rows.Count, Is.EqualTo(1));
         Assert.That(dt.Rows[0].ItemArray[0], Is.EqualTo("1234<GG>1234"));
-        redaction = CatalogueRepository.GetAllObjects<RegexRedaction>().Last();
+        redaction = CatalogueDbContext.GetAllObjects<RegexRedaction>().Last();
         revert = new ExecuteCommandRestoreRegexRedactedValueInCatalogue(activator, redaction);
         Assert.DoesNotThrow(() => revert.Execute());
-        foundRedaction = CatalogueRepository.GetAllObjectsWhere<RegexRedaction>("RedactionConfiguration_ID", regexConfiguration.ID).ToList();
+        foundRedaction = CatalogueDbContext.GetAllObjectsWhere<RegexRedaction>("RedactionConfiguration_ID", regexConfiguration.ID).ToList();
         Assert.That(foundRedaction.Count, Is.EqualTo(0));
         dt = Retrieve(db);
         Assert.That(dt.Rows.Count, Is.EqualTo(1));
@@ -143,14 +143,14 @@ public class ExecuteCommandRestoreRegexRedactedValueInCatalogueTests: DatabaseTe
         dt = Retrieve(db);
         Assert.That(dt.Rows.Count, Is.EqualTo(1));
         Assert.That(dt.Rows[0].ItemArray[0], Is.EqualTo("1234<DB>1234<DB>1234"));
-        var redactions = CatalogueRepository.GetAllObjectsWhere<RegexRedaction>("ReplacementValue", "<DB>");
+        var redactions = CatalogueDbContext.GetAllObjectsWhere<RegexRedaction>("ReplacementValue", "<DB>");
         Assert.That(redactions.Length, Is.EqualTo(2));
         Assert.That(redactions[0].StartingIndex, Is.EqualTo(4));
         Assert.That(redactions[1].StartingIndex, Is.EqualTo(12));
         //restore the second one
         var revert = new ExecuteCommandRestoreRegexRedactedValueInCatalogue(activator, redactions[1]);
         Assert.DoesNotThrow(() => revert.Execute());
-        var foundRedaction = CatalogueRepository.GetAllObjectsWhere<RegexRedaction>("RedactionConfiguration_ID", regexConfiguration.ID).ToList();
+        var foundRedaction = CatalogueDbContext.GetAllObjectsWhere<RegexRedaction>("RedactionConfiguration_ID", regexConfiguration.ID).ToList();
         Assert.That(foundRedaction.Count, Is.EqualTo(1));
         dt = Retrieve(db);
         Assert.That(dt.Rows.Count, Is.EqualTo(1));
@@ -158,7 +158,7 @@ public class ExecuteCommandRestoreRegexRedactedValueInCatalogueTests: DatabaseTe
         //restore the first one
         revert = new ExecuteCommandRestoreRegexRedactedValueInCatalogue(activator, redactions[0]);
         Assert.DoesNotThrow(() => revert.Execute());
-        foundRedaction = CatalogueRepository.GetAllObjectsWhere<RegexRedaction>("RedactionConfiguration_ID", regexConfiguration.ID).ToList();
+        foundRedaction = CatalogueDbContext.GetAllObjectsWhere<RegexRedaction>("RedactionConfiguration_ID", regexConfiguration.ID).ToList();
         Assert.That(foundRedaction.Count, Is.EqualTo(0));
         dt = Retrieve(db);
         Assert.That(dt.Rows.Count, Is.EqualTo(1));

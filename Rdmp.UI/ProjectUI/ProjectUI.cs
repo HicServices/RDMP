@@ -194,7 +194,7 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
     private void mi_SetDescription_Click(object sender, EventArgs e)
     {
         var toSetDescriptionOn =
-            Activator.RepositoryLocator.DataExportRepository.GetObjectByID<ExtractionConfiguration>(
+            Activator.RepositoryLocator.CatalogueDbContext.GetObjectByID<ExtractionConfiguration>(
                 _rightClickedRowExtractionConfigurationID);
 
         if (toSetDescriptionOn.IsReleased)
@@ -216,7 +216,7 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
     private void mi_ChooseFileSeparator_Click(object sender, EventArgs e)
     {
         var toSetDescriptionOn =
-            Activator.RepositoryLocator.DataExportRepository.GetObjectByID<ExtractionConfiguration>(
+            Activator.RepositoryLocator.CatalogueDbContext.GetObjectByID<ExtractionConfiguration>(
                 _rightClickedRowExtractionConfigurationID);
 
         if (toSetDescriptionOn.IsReleased)
@@ -253,7 +253,7 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
                     int.Parse(dataGridView1.Rows[e.RowIndex].Cells["ID"].Value.ToString());
 
                 var selectedExtractionConfiguration =
-                    Activator.RepositoryLocator.DataExportRepository.GetObjectByID<ExtractionConfiguration>(
+                    Activator.RepositoryLocator.CatalogueDbContext.GetObjectByID<ExtractionConfiguration>(
                         _rightClickedRowExtractionConfigurationID);
 
                 menu.Items.Clear();

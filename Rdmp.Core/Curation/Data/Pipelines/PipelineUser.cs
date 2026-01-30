@@ -7,6 +7,7 @@
 using System;
 using System.Reflection;
 using Rdmp.Core.Curation.Data.Cache;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.Curation.Data.Pipelines;
@@ -20,7 +21,7 @@ namespace Rdmp.Core.Curation.Data.Pipelines;
 public class PipelineUser : IPipelineUser
 {
     private readonly PropertyInfo _property;
-    private ICatalogueRepository _catalogueRepository;
+    private RDMPDbContext _catalogueDbContext;
 
     /// <summary>
     /// The object which references a <see cref="Pipeline"/> for which you want the user to be able to change selected instance.
@@ -40,8 +41,8 @@ public class PipelineUser : IPipelineUser
     /// </summary>
     /// <param name="property"></param>
     /// <param name="user"></param>
-    /// <param name="repository"></param>
-    public PipelineUser(PropertyInfo property, DatabaseEntity user, ICatalogueRepository repository = null)
+    /// <param name="catalogueDbContext"></param>
+    public PipelineUser(PropertyInfo property, DatabaseEntity user, RDMPDbContext catalogueDbContext = null)
     {
         _property = property;
         User = user;
@@ -50,21 +51,21 @@ public class PipelineUser : IPipelineUser
             throw new NotSupportedException($"Property {property} must be of PropertyType nullable int");
 
         //if user passed in an explicit one
-        _catalogueRepository = repository;
+        _catalogueDbContext = catalogueDbContext;
 
         //otherwise get it from the user
-        if (_catalogueRepository == null)
+        if (_catalogueDbContext == null)
         {
-            _catalogueRepository = User.Repository as ICatalogueRepository ??
+            _catalogueDbContext = User.CatalogueDbContext ??
                                    throw new Exception(
                                        "User does not have a Repository! how can it be a DatabaseEntity!");
 
-            if (User.Repository is IDataExportRepository dataExportRepo)
-                _catalogueRepository = dataExportRepo.CatalogueRepository;
+            //if (User.CatalogueDbContext is IDataExportRepository dataExportRepo)
+            //    catalogueDbContext = dataExportRepo.;
 
-            if (_catalogueRepository == null)
+            if (catalogueDbContext == null)
                 throw new Exception(
-                    $"Repository of Host '{User}' was not an ICatalogueRepository or a IDataExportRepository.  user came from a Repository called '{user.Repository.GetType().Name}' in this case you will need to specify the ICatalogueRepository property to this method so we know where to fetch Pipelines from");
+                    $"Repository of Host '{User}' was not an RDMPDbContextor a ICatalogueDbContext.  user came from a Repository called '{user.CatalogueDbContext.GetType().Name}' in this case you will need to specify the RDMPDbContextproperty to this method so we know where to fetch Pipelines from");
         }
 
         Getter = Get;
@@ -84,7 +85,7 @@ public class PipelineUser : IPipelineUser
     {
         var id = (int?)_property.GetValue(User);
 
-        return id == null ? null : _catalogueRepository.GetObjectByID<Pipeline>(id.Value);
+        return id == null ? null : _catalogueDbContext.GetObjectByID<Pipeline>(id.Value);
     }
 
     private void Set(Pipeline newPipelineOrNull)

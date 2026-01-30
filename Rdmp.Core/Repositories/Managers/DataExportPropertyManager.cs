@@ -90,31 +90,31 @@ internal class DataExportPropertyManager : IDataExportPropertyManager
 
     #region read/write to database
 
-    private int IssueDeleteCommand(string property) =>
-        _repository.Delete("DELETE FROM [ConfigurationProperties] WHERE Property=@property",
-            new Dictionary<string, object>
-            {
-                { "property", property }
-            });
+    private int IssueDeleteCommand(string property) => 1;
+        //_catalogueDbContext.Delete("DELETE FROM [ConfigurationProperties] WHERE Property=@property",
+        //    new Dictionary<string, object>
+        //    {
+        //        { "property", property }
+        //    });
 
     private void IssueInsertCommand(string property, string value)
     {
-        _repository.Insert("INSERT INTO [ConfigurationProperties](Property,Value) VALUES (@property,@value)",
-            new Dictionary<string, object>
-            {
-                { "value", value },
-                { "property", property }
-            });
+        //_catalogueDbContext.Insert("INSERT INTO [ConfigurationProperties](Property,Value) VALUES (@property,@value)",
+        //    new Dictionary<string, object>
+        //    {
+        //        { "value", value },
+        //        { "property", property }
+        //    });
     }
 
     private void IssueUpdateCommand(string property, string value)
     {
-        _repository.Update("UPDATE [ConfigurationProperties] set Value=@value where Property=@property",
-            new Dictionary<string, object>
-            {
-                { "value", value },
-                { "property", property }
-            });
+        //_catalogueDbContext.Update("UPDATE [ConfigurationProperties] set Value=@value where Property=@property",
+        //    new Dictionary<string, object>
+        //    {
+        //        { "value", value },
+        //        { "property", property }
+        //    });
     }
 
     private void RefreshCache()

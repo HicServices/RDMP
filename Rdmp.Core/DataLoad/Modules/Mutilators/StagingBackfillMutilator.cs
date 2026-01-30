@@ -112,7 +112,7 @@ public class StagingBackfillMutilator : IPluginMutilateDataTables
     /// <param name="joinPathToTimeTable"></param>
     private void ProcessPredecessors(TableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable)
     {
-        var repository = tiCurrent.Repository;
+        var repository = tiCurrent.CatalogueDbContext;
 
         // Find all parents of this table
         var allJoinInfos = repository.GetAllObjects<JoinInfo>();
@@ -150,7 +150,7 @@ public class StagingBackfillMutilator : IPluginMutilateDataTables
     /// <param name="joinPathToTimeTable"></param>
     private void ProcessOldUpdatesInTable(TableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable)
     {
-        var repository = tiCurrent.Repository;
+        var repository = tiCurrent.CatalogueDbContext;
 
         // Process old updates in children first
         // Does toCurrent have any children?

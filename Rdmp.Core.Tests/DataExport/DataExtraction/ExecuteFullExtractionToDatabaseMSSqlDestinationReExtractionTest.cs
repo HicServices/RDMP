@@ -65,13 +65,13 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
             RepositoryLocator, UnitTestLoggingConnectionString, DataQualityEngineConnectionString);
 
         // find the excel loading pipeline
-        var pipe = CatalogueRepository.GetAllObjects<Pipeline>().OrderByDescending(p => p.ID)
+        var pipe = CatalogueDbContext.GetAllObjects<Pipeline>().OrderByDescending(p => p.ID)
             .FirstOrDefault(p => p.Name.Contains("BULK INSERT: CSV Import File (automated column-type detection)"));
 
         if (pipe is null)
         {
             creator.CreatePipelines(new PlatformDatabaseCreationOptions { });
-            pipe = CatalogueRepository.GetAllObjects<Pipeline>().OrderByDescending(p => p.ID)
+            pipe = CatalogueDbContext.GetAllObjects<Pipeline>().OrderByDescending(p => p.ID)
             .FirstOrDefault(p => p.Name.Contains("BULK INSERT: CSV Import File (automated column-type detection)"));
         }
 
@@ -82,7 +82,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
             null, db, pipe, null);
 
         cmd.Execute();
-        var catalogue = CatalogueRepository.GetAllObjects<Catalogue>().FirstOrDefault(static c => c.Name == "bob");
+        var catalogue = CatalogueDbContext.GetAllObjects<Catalogue>().FirstOrDefault(static c => c.Name == "bob");
         var chiColumnInfo = catalogue.CatalogueItems.First(static ci => ci.Name == "chi");
         var ei = chiColumnInfo.ExtractionInformation;
         ei.IsExtractionIdentifier = true;
@@ -166,7 +166,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
                     };
 
         newExternal.SaveToDatabase();
-        var cohortPipeline = CatalogueRepository.GetAllObjects<Pipeline>().First(static p => p.Name == "CREATE COHORT:By Executing Cohort Identification Configuration");
+        var cohortPipeline = CatalogueDbContext.GetAllObjects<Pipeline>().First(static p => p.Name == "CREATE COHORT:By Executing Cohort Identification Configuration");
         var newCohortCmd = new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(
             new ThrowImmediatelyActivator(RepositoryLocator),
             cic,
@@ -294,12 +294,12 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
             RepositoryLocator, UnitTestLoggingConnectionString, DataQualityEngineConnectionString);
 
         // find the excel loading pipeline
-        var pipe = CatalogueRepository.GetAllObjects<Pipeline>().OrderByDescending(p => p.ID)
+        var pipe = CatalogueDbContext.GetAllObjects<Pipeline>().OrderByDescending(p => p.ID)
             .FirstOrDefault(p => p.Name.Contains("BULK INSERT: CSV Import File (automated column-type detection)"));
         if (pipe is null)
         {
             creator.CreatePipelines(new PlatformDatabaseCreationOptions { });
-            pipe = CatalogueRepository.GetAllObjects<Pipeline>().OrderByDescending(p => p.ID)
+            pipe = CatalogueDbContext.GetAllObjects<Pipeline>().OrderByDescending(p => p.ID)
             .FirstOrDefault(p => p.Name.Contains("BULK INSERT: CSV Import File (automated column-type detection)"));
         }
         // run an import of the file using the pipeline
@@ -309,7 +309,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
             null, db, pipe, null);
 
         cmd.Execute();
-        var catalogue = CatalogueRepository.GetAllObjects<Catalogue>().FirstOrDefault(static c => c.Name == "bob");
+        var catalogue = CatalogueDbContext.GetAllObjects<Catalogue>().FirstOrDefault(static c => c.Name == "bob");
         var chiColumnInfo = catalogue.CatalogueItems.First(static ci => ci.Name == "chi");
         var ei = chiColumnInfo.ExtractionInformation;
         ei.IsExtractionIdentifier = true;
@@ -392,7 +392,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
                     };
 
         newExternal.SaveToDatabase();
-        var cohortPipeline = CatalogueRepository.GetAllObjects<Pipeline>().First(static p => p.Name == "CREATE COHORT:By Executing Cohort Identification Configuration");
+        var cohortPipeline = CatalogueDbContext.GetAllObjects<Pipeline>().First(static p => p.Name == "CREATE COHORT:By Executing Cohort Identification Configuration");
         var newCohortCmd = new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(
             new ThrowImmediatelyActivator(RepositoryLocator),
             cic,
@@ -549,13 +549,13 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
 
 
         // find the excel loading pipeline
-        var pipe = CatalogueRepository.GetAllObjects<Pipeline>().OrderByDescending(p => p.ID)
+        var pipe = CatalogueDbContext.GetAllObjects<Pipeline>().OrderByDescending(p => p.ID)
             .FirstOrDefault(p => p.Name.Contains("BULK INSERT: CSV Import File (automated column-type detection)"));
 
         if (pipe is null)
         {
             creator.CreatePipelines(new PlatformDatabaseCreationOptions { });
-            pipe = CatalogueRepository.GetAllObjects<Pipeline>().OrderByDescending(p => p.ID)
+            pipe = CatalogueDbContext.GetAllObjects<Pipeline>().OrderByDescending(p => p.ID)
             .FirstOrDefault(p => p.Name.Contains("BULK INSERT: CSV Import File (automated column-type detection)"));
         }
 
@@ -566,7 +566,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
             null, db, pipe, null);
 
         cmd.Execute();
-        var catalogue = CatalogueRepository.GetAllObjects<Catalogue>().FirstOrDefault(static c => c.Name == "bob");
+        var catalogue = CatalogueDbContext.GetAllObjects<Catalogue>().FirstOrDefault(static c => c.Name == "bob");
         var chiColumnInfo = catalogue.CatalogueItems.First(static ci => ci.Name == "chi");
         var ei = chiColumnInfo.ExtractionInformation;
         ei.IsExtractionIdentifier = true;
@@ -654,7 +654,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
                     };
 
         newExternal.SaveToDatabase();
-        var cohortPipeline = CatalogueRepository.GetAllObjects<Pipeline>().First(static p => p.Name == "CREATE COHORT:By Executing Cohort Identification Configuration");
+        var cohortPipeline = CatalogueDbContext.GetAllObjects<Pipeline>().First(static p => p.Name == "CREATE COHORT:By Executing Cohort Identification Configuration");
         var newCohortCmd = new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(
             new ThrowImmediatelyActivator(RepositoryLocator),
             cic,
@@ -818,13 +818,13 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
 
 
         // find the excel loading pipeline
-        var pipe = CatalogueRepository.GetAllObjects<Pipeline>().OrderByDescending(p => p.ID)
+        var pipe = CatalogueDbContext.GetAllObjects<Pipeline>().OrderByDescending(p => p.ID)
             .FirstOrDefault(p => p.Name.Contains("BULK INSERT: CSV Import File (automated column-type detection)"));
 
         if (pipe is null)
         {
             creator.CreatePipelines(new PlatformDatabaseCreationOptions { });
-            pipe = CatalogueRepository.GetAllObjects<Pipeline>().OrderByDescending(p => p.ID)
+            pipe = CatalogueDbContext.GetAllObjects<Pipeline>().OrderByDescending(p => p.ID)
             .FirstOrDefault(p => p.Name.Contains("BULK INSERT: CSV Import File (automated column-type detection)"));
         }
 
@@ -835,7 +835,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
             null, db, pipe, null);
 
         cmd.Execute();
-        var catalogue = CatalogueRepository.GetAllObjects<Catalogue>().FirstOrDefault(static c => c.Name == "bob");
+        var catalogue = CatalogueDbContext.GetAllObjects<Catalogue>().FirstOrDefault(static c => c.Name == "bob");
         var chiColumnInfo = catalogue.CatalogueItems.First(static ci => ci.Name == "chi");
         var ei = chiColumnInfo.ExtractionInformation;
         ei.IsPrimaryKey = true;
@@ -920,7 +920,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
                     };
 
         newExternal.SaveToDatabase();
-        var cohortPipeline = CatalogueRepository.GetAllObjects<Pipeline>().First(static p => p.Name == "CREATE COHORT:By Executing Cohort Identification Configuration");
+        var cohortPipeline = CatalogueDbContext.GetAllObjects<Pipeline>().First(static p => p.Name == "CREATE COHORT:By Executing Cohort Identification Configuration");
         var newCohortCmd = new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(
             new ThrowImmediatelyActivator(RepositoryLocator),
             cic,
@@ -1077,13 +1077,13 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
 
 
         // find the excel loading pipeline
-        var pipe = CatalogueRepository.GetAllObjects<Pipeline>().OrderByDescending(p => p.ID)
+        var pipe = CatalogueDbContext.GetAllObjects<Pipeline>().OrderByDescending(p => p.ID)
             .FirstOrDefault(p => p.Name.Contains("BULK INSERT: CSV Import File (automated column-type detection)"));
 
         if (pipe is null)
         {
             creator.CreatePipelines(new PlatformDatabaseCreationOptions { });
-            pipe = CatalogueRepository.GetAllObjects<Pipeline>().OrderByDescending(p => p.ID)
+            pipe = CatalogueDbContext.GetAllObjects<Pipeline>().OrderByDescending(p => p.ID)
             .FirstOrDefault(p => p.Name.Contains("BULK INSERT: CSV Import File (automated column-type detection)"));
         }
 
@@ -1094,7 +1094,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
             null, db, pipe, null);
 
         cmd.Execute();
-        var catalogue = CatalogueRepository.GetAllObjects<Catalogue>().FirstOrDefault(static c => c.Name == "bob");
+        var catalogue = CatalogueDbContext.GetAllObjects<Catalogue>().FirstOrDefault(static c => c.Name == "bob");
         var chiColumnInfo = catalogue.CatalogueItems.First(static ci => ci.Name == "chi");
         var ei = chiColumnInfo.ExtractionInformation;
         ei.IsPrimaryKey = true;
@@ -1179,7 +1179,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
                     };
 
         newExternal.SaveToDatabase();
-        var cohortPipeline = CatalogueRepository.GetAllObjects<Pipeline>().First(static p => p.Name == "CREATE COHORT:By Executing Cohort Identification Configuration");
+        var cohortPipeline = CatalogueDbContext.GetAllObjects<Pipeline>().First(static p => p.Name == "CREATE COHORT:By Executing Cohort Identification Configuration");
         var newCohortCmd = new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(
             new ThrowImmediatelyActivator(RepositoryLocator),
             cic,

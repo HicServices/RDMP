@@ -7,6 +7,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.DataExport.CohortDescribing;
@@ -26,11 +27,11 @@ public class CohortDescriptionFactory
     /// Count, CountDistinct etc.  The ExtractableCohortDescription objects returned from Create will not be populated with values until the async finishes and will have only
     /// placeholder values like "Loading..." etc
     /// </summary>
-    /// <param name="repository">The DataExportRepository containing all your cohort references (ExtractableCohorts)</param>
-    public CohortDescriptionFactory(IDataExportRepository repository)
+    /// <param name="catalogueDbContext">The DataExportRepository containing all your cohort references (ExtractableCohorts)</param>
+    public CohortDescriptionFactory(RDMPDbContext catalogueDbContext)
     {
-        _sources = repository.GetAllObjects<ExternalCohortTable>();
-        _cohorts = repository.GetAllObjects<ExtractableCohort>();
+        _sources = catalogueDbContext.GetAllObjects<ExternalCohortTable>();
+        _cohorts = catalogueDbContext.GetAllObjects<ExtractableCohort>();
     }
 
     /// <summary>

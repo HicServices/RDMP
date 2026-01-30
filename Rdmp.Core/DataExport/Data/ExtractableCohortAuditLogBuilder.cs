@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using FAnsi.Discovery;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 namespace Rdmp.Core.DataExport.Data;
@@ -79,13 +80,13 @@ public partial class ExtractableCohortAuditLogBuilder
 
         if (LegacyCic.IsMatch(audit))
             return GetObjectFromLog<CohortIdentificationConfiguration>(LegacyCic.Match(audit),
-                repositoryLocator.CatalogueRepository);
+                repositoryLocator.CatalogueDbContext);
 
         if (audit.Contains(InCohortIdentificationConfiguration))
-            return GetObjectFromLog<CohortIdentificationConfiguration>(audit, repositoryLocator.CatalogueRepository);
+            return GetObjectFromLog<CohortIdentificationConfiguration>(audit, repositoryLocator.CatalogueDbContext);
 
         if (audit.Contains(InExtractionInformation))
-            return GetObjectFromLog<ExtractionInformation>(audit, repositoryLocator.CatalogueRepository);
+            return GetObjectFromLog<ExtractionInformation>(audit, repositoryLocator.CatalogueDbContext);
 
         if (audit.Contains(InFile))
         {
@@ -112,21 +113,21 @@ public partial class ExtractableCohortAuditLogBuilder
         return null;
     }
 
-    private static T GetObjectFromLog<T>(string audit, IRepository repository)
+    private static T GetObjectFromLog<T>(string audit, RDMPDbContext catalogueDbContext)
         where T : class, IMapsDirectlyToDatabaseTable
     {
         var m = RegexGetID.Match(audit);
 
         // If the ID bit is  missing
-        return !m.Success ? null : GetObjectFromLog<T>(m, repository);
+        return !m.Success ? null : GetObjectFromLog<T>(m, catalogueDbContext);
     }
 
-    private static T GetObjectFromLog<T>(Match m, IRepository repository) where T : class, IMapsDirectlyToDatabaseTable
+    private static T GetObjectFromLog<T>(Match m, RDMPDbContext catalogueDbContext) where T : class, IMapsDirectlyToDatabaseTable
     {
         try
         {
             var objId = int.Parse(m.Groups[1].Value);
-            return repository.GetObjectByID<T>(objId);
+            return catalogueDbContext.GetObjectByID<T>(objId);
         }
         catch (System.Exception)
         {

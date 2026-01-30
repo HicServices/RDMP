@@ -18,25 +18,25 @@ namespace Rdmp.Core.Startup;
 /// Records connection strings to the Catalogue and DataExport databases (See LinkedRepositoryProvider) in the user settings file for the current
 /// user.
 /// 
-/// <para>Use properties CatalogueRepository and DataExportRepository for interacting with objects saved in those databases (and to create new ones).</para>
+/// <para>Use properties RDMPDbContext and DataExportRepository for interacting with objects saved in those databases (and to create new ones).</para>
 /// </summary>
 public class UserSettingsRepositoryFinder : IRDMPPlatformRepositoryServiceLocator
 {
     private LinkedRepositoryProvider _linkedRepositoryProvider;
 
-    public ICatalogueRepository CatalogueRepository
-    {
-        get
-        {
-            if (_linkedRepositoryProvider == null)
-                RefreshRepositoriesFromUserSettings();
+    //public RDMPDbContext CatalogueDbContext
+    //{
+    //    get
+    //    {
+    //        if (_linkedRepositoryProvider == null)
+    //            RefreshRepositoriesFromUserSettings();
 
-            return _linkedRepositoryProvider == null
-                ? throw new Exception(
-                    "RefreshRepositoriesFromUserSettings failed to populate_linkedRepositoryProvider as expected ")
-                : _linkedRepositoryProvider.CatalogueRepository;
-        }
-    }
+    //        return _linkedRepositoryProvider == null
+    //            ? throw new Exception(
+    //                "RefreshRepositoriesFromUserSettings failed to populate_linkedRepositoryProvider as expected ")
+    //            : _linkedRepositoryProvider.CatalogueDbContext;
+    //    }
+    //}
 
     public IDataExportRepository DataExportRepository
     {
@@ -52,7 +52,9 @@ public class UserSettingsRepositoryFinder : IRDMPPlatformRepositoryServiceLocato
         }
     }
 
-    public RDMPDbContext CatalogueDbContext { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public RDMPDbContext CatalogueDbContext { get ; set; }
+    public RDMPDbContext DataExportDbContext { get ; set ; }
+    RDMPDbContext RDMPDbContextServiceLocator.DataExportRepository { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
     public IMapsDirectlyToDatabaseTable GetArbitraryDatabaseObject(string repositoryTypeName,
         string databaseObjectTypeName, int objectID) =>
@@ -63,11 +65,11 @@ public class UserSettingsRepositoryFinder : IRDMPPlatformRepositoryServiceLocato
 
     public void RefreshRepositoriesFromUserSettings()
     {
-        CommentStore commentStore = null;
+        //CommentStore commentStore = null;
 
         //if we have a catalogue repository with loaded CommentStore then grab it
-        if (_linkedRepositoryProvider is { CatalogueRepository.CommentStore: not null })
-            commentStore = _linkedRepositoryProvider.CatalogueRepository.CommentStore;
+        //if (_linkedRepositoryProvider is { CatalogueDbContext.CommentStore: not null })
+        //    commentStore = _linkedRepositoryProvider.CatalogueDbContext.CommentStore;
 
         //user must have a Catalogue
         var catalogueString = UserSettings.CatalogueConnectionString;
@@ -90,8 +92,8 @@ public class UserSettingsRepositoryFinder : IRDMPPlatformRepositoryServiceLocato
         //preserve the currently loaded MEF assemblies
 
         //if we have a new repo
-        if (newrepo.CatalogueRepository != null)
-            newrepo.CatalogueRepository.CommentStore = commentStore ?? newrepo.CatalogueRepository.CommentStore;
+        //if (newrepo.RDMPDbContext != null)
+        //    newrepo.CatalogueDbContext.CommentStore = commentStore ?? newrepo.CatalogueDbContext.CommentStore;
 
 
         _linkedRepositoryProvider = newrepo;

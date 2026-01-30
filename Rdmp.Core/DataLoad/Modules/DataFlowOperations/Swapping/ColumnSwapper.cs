@@ -321,7 +321,7 @@ False - Drop the row from the DataTable (and issue a warning)", DefaultValue = t
 
     protected virtual string GetMappingTableSql()
     {
-        var repo = new MemoryCatalogueRepository();
+        var repo = new MemoryRDMPDbContext();
 
         var qb = new QueryBuilder("DISTINCT", null, null);
         qb.AddColumn(new ColumnInfoToIColumn(repo, MappingFromColumn));

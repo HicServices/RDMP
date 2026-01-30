@@ -5,12 +5,13 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
-using System.Text.RegularExpressions;
-using Rdmp.Core.ReusableLibraryCode.Annotations;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.ReusableLibraryCode.Annotations;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Text.RegularExpressions;
 
 namespace Rdmp.Core.Curation.DataHelper.RegexRedaction;
 
@@ -62,18 +63,18 @@ public class RegexRedactionConfiguration : DatabaseEntity, IRegexRedactionConfig
 
     public RegexRedactionConfiguration() { }
 
-    public RegexRedactionConfiguration(RdmpDbContext catalogueDbContext, string name, Regex regexPattern, string redactionString, string description = null,string folder="\\")
+    public RegexRedactionConfiguration(RDMPDbContext catalogueDbContext, string name, Regex regexPattern, string redactionString, string description = null,string folder="\\")
     {
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "Name", name },
-            { "RegexPattern", regexPattern.ToString() },
-            {"RedactionString", redactionString },
-            {"Description",description }
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "Name", name },
+        //    { "RegexPattern", regexPattern.ToString() },
+        //    {"RedactionString", redactionString },
+        //    {"Description",description }
+        //});
     }
 
-    internal RegexRedactionConfiguration(RdmpDbContext catalogueDbContext, DbDataReader r) : base(repository, r)
+    internal RegexRedactionConfiguration(RDMPDbContext catalogueDbContext, DbDataReader r) : base(catalogueDbContext, r)
     {
         Name = r["Name"].ToString();
         Description = r["Description"].ToString();

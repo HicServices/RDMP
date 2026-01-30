@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Repositories;
@@ -68,29 +69,29 @@ public class RegexRedaction : DatabaseEntity, IRegexRedaction
 
     #region Relationships
     [NoMappingToDatabase]
-    public List<RegexRedactionKey> RedactionKeys => [.. CatalogueRepository.GetAllObjectsWhere<RegexRedactionKey>("RegexRedaction_ID", ID)];
+    public List<RegexRedactionKey> RedactionKeys => [.. CatalogueDbContext.GetAllObjectsWhere<RegexRedactionKey>("RegexRedaction_ID", ID)];
     #endregion
 
 
     public RegexRedaction() { }
 
-    public RegexRedaction(RdmpDbContext catalogueDbContext, int redactionConfigurationID, int startingIndex, string redactionValue, string replacementValue, int columnInfoID, Dictionary<ColumnInfo,string> pkValues)
+    public RegexRedaction(RDMPDbContext catalogueDbContext, int redactionConfigurationID, int startingIndex, string redactionValue, string replacementValue, int columnInfoID, Dictionary<ColumnInfo,string> pkValues)
     {
-        repository.InsertAndHydrate(this, new Dictionary<string, object> {
-            {"RedactionConfiguration_ID",redactionConfigurationID},
-            {"StartingIndex",startingIndex},
-            {"RedactedValue", redactionValue },
-            {"ReplacementValue", replacementValue },
-            {"ColumnInfo_ID", columnInfoID }
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object> {
+        //    {"RedactionConfiguration_ID",redactionConfigurationID},
+        //    {"StartingIndex",startingIndex},
+        //    {"RedactedValue", redactionValue },
+        //    {"ReplacementValue", replacementValue },
+        //    {"ColumnInfo_ID", columnInfoID }
+        //});
         foreach (var tuple in pkValues)
         {
-            var key = new RegexRedactionKey(repository, this, tuple.Key, tuple.Value);
+            var key = new RegexRedactionKey(catalogueDbContext, this, tuple.Key, tuple.Value);
             key.SaveToDatabase();
         }
     }
 
-    internal RegexRedaction(RdmpDbContext catalogueDbContext, DbDataReader r) : base(repository, r)
+    internal RegexRedaction(RDMPDbContext catalogueDbContext, DbDataReader r) : base(catalogueDbContext, r)
     {
         _redactionConfigurationID = Int32.Parse(r["RedactionConfiguration_ID"].ToString());
         _startingIndex = Int32.Parse(r["StartingIndex"].ToString());

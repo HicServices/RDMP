@@ -162,8 +162,8 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
     {
         if (!_collection.IsSingleCatalogueMode)
         {
-            var catalogues = Activator.CoreChildProvider.AllCatalogues
-                .Where(c => _collection.Include(c, Activator.RepositoryLocator.DataExportRepository)).ToArray();
+            var catalogues = Activator.CoreChildProvider.AllCatalogues;
+                //.Where(c => _collection.Include(c, Activator.RepositoryLocator.DataExportRepository)).ToArray();
 
             //if there are some
             return catalogues.Any()

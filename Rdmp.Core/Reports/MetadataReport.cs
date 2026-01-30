@@ -13,6 +13,7 @@ using System.Linq;
 using System.Threading;
 using NPOI.XWPF.UserModel;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
@@ -34,7 +35,7 @@ public delegate BitmapWithDescription[] RequestCatalogueImagesHandler(Catalogue 
 /// </summary>
 public class MetadataReport : DocXHelper
 {
-    private readonly ICatalogueRepository _repository;
+    private readonly RDMPDbContext _catalogueDbContext;
     private readonly MetadataReportArgs _args;
     private readonly HashSet<TableInfo> _lookupsEncounteredToAppearInAppendix = new();
 
@@ -45,9 +46,9 @@ public class MetadataReport : DocXHelper
     private const int TextFontSize = 7;
 
 
-    public MetadataReport(RdmpDbContext catalogueDbContext, MetadataReportArgs args)
+    public MetadataReport(RDMPDbContext catalogueDbContext, MetadataReportArgs args)
     {
-        _repository = repository;
+        _catalogueDbContext = catalogueDbContext;
         _args = args;
     }
 
@@ -320,7 +321,7 @@ public class MetadataReport : DocXHelper
             {
                 var pkTableId = lookups.Select(l => l.PrimaryKey.TableInfo_ID).Distinct().SingleOrDefault();
 
-                var lookupTable = _repository.GetObjectByID<TableInfo>(pkTableId);
+                var lookupTable = _catalogueDbContext.GetObjectByID<TableInfo>(pkTableId);
 
                 _lookupsEncounteredToAppearInAppendix.Add(lookupTable);
 
@@ -428,7 +429,7 @@ public class MetadataReport : DocXHelper
                 c.GetAllExtractionInformation(ExtractionCategory.Any)
                     .Select(ei => ei.ColumnInfo.TableInfo_ID)
                     .Distinct()
-                    .Select(_repository.GetObjectByID<TableInfo>)
+                    .Select(_catalogueDbContext.GetObjectByID<TableInfo>)
                     .ToArray();
 
             //there is only one table that we can query

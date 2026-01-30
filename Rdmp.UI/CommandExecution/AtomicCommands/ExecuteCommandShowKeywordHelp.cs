@@ -44,26 +44,26 @@ public class ExecuteCommandShowKeywordHelp : BasicUICommandExecution, IAtomicCom
         string title = null;
         string docs = null;
 
-        //get docs from masquerader if it has any
-        if (_args.Masquerader != null)
-        {
-            title = GetTypeName(_args.Masquerader.GetType());
-            docs = Activator.RepositoryLocator.CatalogueDbContext.CommentStore.GetTypeDocumentationIfExists(
-                _args.Masquerader.GetType());
-        }
+        ////get docs from masquerader if it has any
+        //if (_args.Masquerader != null)
+        //{
+        //    title = GetTypeName(_args.Masquerader.GetType());
+        //    docs = Activator.RepositoryLocator.CatalogueDbContext.CommentStore.GetTypeDocumentationIfExists(
+        //        _args.Masquerader.GetType());
+        //}
 
-        //if not get them from the actual class
-        if (docs == null)
-        {
-            title = GetTypeName(_args.Model.GetType());
+        ////if not get them from the actual class
+        //if (docs == null)
+        //{
+        //    title = GetTypeName(_args.Model.GetType());
 
-            //does the class have state dependent alternative to xmldoc?
-            if (_args.Model is IKnowWhatIAm knows)
-                docs = knows.WhatIsThis(); //yes
-            else
-                docs = Activator.RepositoryLocator.CatalogueDbContext.CommentStore.GetTypeDocumentationIfExists(
-                    _args.Model.GetType());
-        }
+        //    //does the class have state dependent alternative to xmldoc?
+        //    if (_args.Model is IKnowWhatIAm knows)
+        //        docs = knows.WhatIsThis(); //yes
+        //    else
+        //        docs = Activator.RepositoryLocator.CatalogueDbContext.CommentStore.GetTypeDocumentationIfExists(
+        //            _args.Model.GetType());
+        //}
 
         //if we have docs show them otherwise just the Type name
         if (docs != null)

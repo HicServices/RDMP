@@ -75,7 +75,7 @@ public class DleRunner : Runner
 
                 // Create the pipeline to pass into the DataLoadProcess object
                 var dataLoadFactory = new HICDataLoadFactory(loadMetadata, databaseConfiguration, flags,
-                    locator.CatalogueRepository, logManager);
+                    locator.CatalogueDbContext, logManager);
 
                 var execution = dataLoadFactory.Create(listener);
                 IDataLoadProcess dataLoadProcess;

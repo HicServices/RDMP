@@ -67,7 +67,7 @@ internal class ExecuteCommandGenerateReleaseDocument : BasicCommandExecution, IA
         try
         {
             var generator = new WordDataReleaseFileGenerator(_extractionConfiguration,
-                BasicActivator.RepositoryLocator.DataExportRepository);
+                BasicActivator.RepositoryLocator.CatalogueDbContext);
 
             //null means leave word file on screen and don't save
             generator.GenerateWordFile(null);

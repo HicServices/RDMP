@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Comment CommentText="These classes directly mirror the database tables.  As soon as you invoke the Constructor an instance will be created in the database.  Each object also has a constructor that takes a DbReader, this is to retrieve instances of the class back out of the database again.  You should use the CatalogueRepository methods to get these objects rather than trying to use that constructor e.g. CatalogueRepository.GetAllObjects&lt;Catalogue&gt;()">
+  <Comment CommentText="These classes directly mirror the database tables.  As soon as you invoke the Constructor an instance will be created in the database.  Each object also has a constructor that takes a DbReader, this is to retrieve instances of the class back out of the database again.  You should use the RDMPDbContext methods to get these objects rather than trying to use that constructor e.g. CatalogueDbContext.GetAllObjects&lt;Catalogue&gt;()">
     <Position X="2.5" Y="8.198" Height="1.333" Width="4.106" />
   </Comment>
   <Comment CommentText="All these classes (DatabaseEntity) are stored in the 'Catalogue Repository' (Database).  These classes cannot exist unless there is a matching record in the database">
@@ -120,11 +120,11 @@
     <Position X="12.5" Y="13.5" Width="1.5" />
     <TypeIdentifier />
   </Class>
-  <Class Name="Rdmp.Core.Repositories.CatalogueRepository" Collapsed="true">
+  <Class Name="Rdmp.Core.Repositories.RDMPDbContext" Collapsed="true">
     <Position X="6.5" Y="15" Width="2.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAwgogAZICAAABJAAAABEAQAAAAAYAAAACCAA=</HashCode>
-      <FileName>Repositories\CatalogueRepository.cs</FileName>
+      <FileName>Repositories\CatalogueDbContext.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
@@ -161,11 +161,11 @@
       <FileName>QueryBuilding\IColumn.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="Rdmp.Core.Repositories.ICatalogueRepository" Collapsed="true">
+  <Interface Name="Rdmp.Core.Repositories.RDMPDbContext" Collapsed="true">
     <Position X="5.5" Y="13.75" Width="4" />
     <TypeIdentifier>
       <HashCode>AAAAAgCEwAogAZICAAABAAAAABEAQAAAAAYAAAACAAA=</HashCode>
-      <FileName>Repositories\ICatalogueRepository.cs</FileName>
+      <FileName>Repositories\ICatalogueDbContext.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="MapsDirectlyToDatabaseTable.Versioning.IPatcher" Collapsed="true">

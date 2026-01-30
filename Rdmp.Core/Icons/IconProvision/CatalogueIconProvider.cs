@@ -15,6 +15,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.DataFlowPipeline.Requirements;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Icons.IconOverlays;
 using Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
@@ -40,14 +41,14 @@ public class CatalogueIconProvider : ICoreIconProvider
 
     public Image<Rgba32> ImageUnknown => ImagesCollection[RDMPConcept.NoIconAvailable];
 
-    public CatalogueIconProvider(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
+    public CatalogueIconProvider(RDMPDbContext catalogueDbContext,
         IIconProvider[] pluginIconProviders)
     {
         _pluginIconProviders = pluginIconProviders;
         ImagesCollection = new EnumImageCollection<RDMPConcept>(CatalogueIcons.ResourceManager);
 
-        StateBasedIconProviders.Add(CatalogueStateBasedIconProvider =
-            new CatalogueStateBasedIconProvider(repositoryLocator.DataExportRepository));
+        //StateBasedIconProviders.Add(CatalogueStateBasedIconProvider =
+        //    new CatalogueStateBasedIconProvider(repositoryLocator.DataExportRepository));
         StateBasedIconProviders.Add(new ExtractionInformationStateBasedIconProvider());
         StateBasedIconProviders.Add(new ExtractableColumnStateBasedIconProvider());
         StateBasedIconProviders.Add(new CheckResultStateBasedIconProvider());

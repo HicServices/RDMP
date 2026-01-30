@@ -110,7 +110,7 @@ public class QueryTimeColumn : IComparable
         var allAvailableLookups = Array.Empty<Lookup>();
 
         if (firstTable != null)
-            allAvailableLookups = firstTable.Repository.GetAllObjects<Lookup>();
+            allAvailableLookups = firstTable.CatalogueDbContext.GetAllObjects<Lookup>();
 
         foreach (var column in ColumnsInOrder)
         {

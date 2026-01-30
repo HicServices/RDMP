@@ -15,6 +15,7 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.EntityNaming;
 using Rdmp.Core.DataLoad.Engine.Job;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
@@ -55,17 +56,18 @@ public class HICDatabaseConfiguration
     /// <param name="lmd"></param>
     /// <param name="namer"></param>
     public HICDatabaseConfiguration(ILoadMetadata lmd, INameDatabasesAndTablesDuringLoads namer = null) :
-        this(lmd.GetDistinctLiveDatabaseServer(), namer, lmd.CatalogueRepository, lmd.OverrideRAWServer)
+        this(lmd.GetDistinctLiveDatabaseServer(), namer, null, lmd.OverrideRAWServer)
+        //this(lmd.GetDistinctLiveDatabaseServer(), namer, lmd.CatalogueDbContext, lmd.OverrideRAWServer)
     {
-        var globalIgnorePattern = GetGlobalIgnorePatternIfAny(lmd.CatalogueRepository);
+        var globalIgnorePattern = GetGlobalIgnorePatternIfAny(lmd.CatalogueDbContext);
 
         if (globalIgnorePattern != null && !string.IsNullOrWhiteSpace(globalIgnorePattern.Regex))
             IgnoreColumns = new Regex(globalIgnorePattern.Regex);
     }
 
-    public static StandardRegex GetGlobalIgnorePatternIfAny(RdmpDbContext catalogueDbContext)
+    public static StandardRegex GetGlobalIgnorePatternIfAny(RDMPDbContext catalogueDbContext)
     {
-        return repository.GetAllObjects<StandardRegex>().OrderBy(r => r.ID)
+        return catalogueDbContext.GetAllObjects<StandardRegex>().OrderBy(r => r.ID)
             .FirstOrDefault(r => r.ConceptName == StandardRegex.DataLoadEngineGlobalIgnorePattern);
     }
 

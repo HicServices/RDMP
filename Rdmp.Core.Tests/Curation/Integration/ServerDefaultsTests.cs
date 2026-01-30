@@ -17,11 +17,11 @@ public class ServerDefaultsTests : DatabaseTests
     [Test]
     public void TestClearSameDefaultTwice()
     {
-        Assert.That(CatalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID), Is.Not.Null);
-        CatalogueRepository.ClearDefault(PermissableDefaults.LiveLoggingServer_ID);
-        CatalogueRepository.ClearDefault(PermissableDefaults.LiveLoggingServer_ID);
-        CatalogueRepository.ClearDefault(PermissableDefaults.LiveLoggingServer_ID);
-        Assert.That(CatalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID), Is.Null);
+        Assert.That(CatalogueDbContext.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID), Is.Not.Null);
+        CatalogueDbContext.ClearDefault(PermissableDefaults.LiveLoggingServer_ID);
+        CatalogueDbContext.ClearDefault(PermissableDefaults.LiveLoggingServer_ID);
+        CatalogueDbContext.ClearDefault(PermissableDefaults.LiveLoggingServer_ID);
+        Assert.That(CatalogueDbContext.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID), Is.Null);
     }
 
     [Test]
@@ -59,21 +59,21 @@ public class ServerDefaultsTests : DatabaseTests
     public void TestDeletingClearsDefault()
     {
         var eds = new ExternalDatabaseServer(CatalogueRepository, "mydb", new LoggingDatabasePatcher());
-        var old = CatalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
+        var old = CatalogueDbContext.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
 
         try
         {
             //make the new server the default for logging
-            CatalogueRepository.SetDefault(PermissableDefaults.LiveLoggingServer_ID, eds);
+            CatalogueDbContext.SetDefault(PermissableDefaults.LiveLoggingServer_ID, eds);
 
             //now we deleted it!
             eds.DeleteInDatabase();
 
-            Assert.That(CatalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID), Is.Null);
+            Assert.That(CatalogueDbContext.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID), Is.Null);
         }
         finally
         {
-            CatalogueRepository.SetDefault(PermissableDefaults.LiveLoggingServer_ID, old);
+            CatalogueDbContext.SetDefault(PermissableDefaults.LiveLoggingServer_ID, old);
         }
     }
 }

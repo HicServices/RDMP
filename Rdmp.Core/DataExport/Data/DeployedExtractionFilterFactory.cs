@@ -7,6 +7,7 @@
 using System;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.FilterImporting.Construction;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.DataExport.Data;
@@ -17,23 +18,23 @@ namespace Rdmp.Core.DataExport.Data;
 /// </summary>
 public class DeployedExtractionFilterFactory : IFilterFactory
 {
-    private readonly IDataExportRepository _repository;
+    private readonly RDMPDbContext _catalogueDbContext;
 
     /// <summary>
-    /// Prepares to create extraction filters for project datasets int eh provided <paramref name="repository"/>
+    /// Prepares to create extraction filters for project datasets int eh provided <paramref name="catalogueDbContext"/>
     /// </summary>
-    /// <param name="repository"></param>
-    public DeployedExtractionFilterFactory(IDataExportRepository repository)
+    /// <param name="catalogueDbContext"></param>
+    public DeployedExtractionFilterFactory(RDMPDbContext catalogueDbContext)
     {
-        _repository = repository;
+        _catalogueDbContext = catalogueDbContext;
     }
 
     /// <inheritdoc/>
-    public IFilter CreateNewFilter(string name) => new DeployedExtractionFilter(_repository, name, null);
+    public IFilter CreateNewFilter(string name) => new DeployedExtractionFilter(_catalogueDbContext, name, null);
 
     /// <inheritdoc/>
     public ISqlParameter CreateNewParameter(IFilter filter, string parameterSQL) =>
-        new DeployedExtractionFilterParameter(_repository, parameterSQL, filter);
+        new DeployedExtractionFilterParameter(_catalogueDbContext, parameterSQL, filter);
 
     /// <inheritdoc/>
     public Type GetRootOwnerType() => typeof(SelectedDataSets);
@@ -41,5 +42,5 @@ public class DeployedExtractionFilterFactory : IFilterFactory
     /// <inheritdoc/>
     public Type GetIContainerTypeIfAny() => typeof(FilterContainer);
 
-    public IContainer CreateNewContainer() => new FilterContainer(_repository);
+    public IContainer CreateNewContainer() => new FilterContainer(_catalogueDbContext);
 }

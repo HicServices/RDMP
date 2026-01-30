@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
 using Rdmp.Core.Repositories;
@@ -54,27 +55,27 @@ public class SelectedDataSetsForcedJoin : DatabaseEntity, ISelectedDataSetsForce
     }
 
     /// <summary>
-    /// Creates a new declaration in the <paramref name="repository"/> database that the given <paramref name="tableInfo"/> should
+    /// Creates a new declaration in the <paramref name="catalogueDbContext"/> database that the given <paramref name="tableInfo"/> should
     /// always be joined against when extract the <paramref name="sds"/>.
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="sds"></param>
     /// <param name="tableInfo"></param>
-    public SelectedDataSetsForcedJoin(IDataExportRepository repository, SelectedDataSets sds, ITableInfo tableInfo)
+    public SelectedDataSetsForcedJoin(RDMPDbContext catalogueDbContext, SelectedDataSets sds, ITableInfo tableInfo)
     {
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "SelectedDataSets_ID", sds.ID },
-            { "TableInfo_ID", tableInfo.ID }
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "SelectedDataSets_ID", sds.ID },
+        //    { "TableInfo_ID", tableInfo.ID }
+        //});
 
-        if (ID == 0 || Repository != repository)
+        if (ID == 0 || CatalogueDbContext != catalogueDbContext)
             throw new ArgumentException("Repository failed to properly hydrate this class");
 
         ClearAllInjections();
     }
 
-    internal SelectedDataSetsForcedJoin(IRepository repository, DbDataReader r) : base(repository, r)
+    internal SelectedDataSetsForcedJoin(RDMPDbContext catalogueDbContext, DbDataReader r) :base(catalogueDbContext, r)
     {
         SelectedDataSets_ID = Convert.ToInt32(r["SelectedDataSets_ID"]);
         TableInfo_ID = Convert.ToInt32(r["TableInfo_ID"]);
@@ -95,5 +96,5 @@ public class SelectedDataSetsForcedJoin : DatabaseEntity, ISelectedDataSetsForce
     }
 
     private TableInfo FetchTableInfo() =>
-        ((IDataExportRepository)Repository).CatalogueRepository.GetObjectByID<TableInfo>(TableInfo_ID);
+        CatalogueDbContext.GetObjectByID<TableInfo>(TableInfo_ID);
 }

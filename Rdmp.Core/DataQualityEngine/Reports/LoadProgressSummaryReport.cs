@@ -53,7 +53,7 @@ public class LoadProgressSummaryReport : ICheckable
 
         try
         {
-            dqeRepository = new DQERepository(loadProgress.CatalogueRepository);
+            dqeRepository = new DQERepository(loadProgress.CatalogueDbContext);
         }
         catch (NotSupportedException)
         {
@@ -78,7 +78,7 @@ public class LoadProgressSummaryReport : ICheckable
 
                 notifier?.OnCheckPerformed(
                     new CheckEventArgs(
-                        $"Catalogue '{catalogue}' does not have any DQE evaluations on it in the DQE Repository.  You should run the DQE on the dataset",
+                        $"Catalogue '{catalogue}' does not have any DQE evaluations on it in the DQE CatalogueDbContext.  You should run the DQE on the dataset",
                         CheckResult.Warning));
             }
             else
@@ -200,7 +200,7 @@ public class LoadProgressSummaryReport : ICheckable
     {
         try
         {
-            dqeRepository = new DQERepository((ICatalogueRepository)_loadProgress.Repository);
+            dqeRepository = new DQERepository(_loadProgress.CatalogueDbContext);
         }
         catch (Exception ex)
         {

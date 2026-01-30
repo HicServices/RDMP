@@ -95,8 +95,8 @@ public abstract class RDMPCommandLineOptions
     public virtual IRDMPPlatformRepositoryServiceLocator GetRepositoryLocator()
     {
         if (_repositoryLocator != null) return _repositoryLocator;
-        if (!string.IsNullOrWhiteSpace(Dir))
-            return _repositoryLocator = new RepositoryProvider(new YamlRepository(new DirectoryInfo(Dir)));
+        //if (!string.IsNullOrWhiteSpace(Dir))
+        //    return _repositoryLocator = new RepositoryProvider(new YamlRepository(new DirectoryInfo(Dir)));
 
         GetConnectionStrings(out var c, out var d);
         return _repositoryLocator = new LinkedRepositoryProvider(c?.ConnectionString, d?.ConnectionString);
@@ -111,7 +111,7 @@ public abstract class RDMPCommandLineOptions
     /// <param name="d">Data export database connection string or null if no explicit value has been defined.</param>
     public void GetConnectionStrings(out SqlConnectionStringBuilder c, out SqlConnectionStringBuilder d)
     {
-        CatalogueRepository.SuppressHelpLoading = !ShouldLoadHelp();
+        //CatalogueDbContext.SuppressHelpLoading = !ShouldLoadHelp();
 
         if (CatalogueConnectionString != null)
             try

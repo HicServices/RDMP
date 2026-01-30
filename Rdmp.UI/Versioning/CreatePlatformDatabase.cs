@@ -12,6 +12,7 @@ using FAnsi;
 using FAnsi.Discovery;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Defaults;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
@@ -135,7 +136,7 @@ public partial class CreatePlatformDatabase : Form
                     e.Cancel = true;
     }
 
-    public static ExternalDatabaseServer CreateNewExternalServer(RdmpDbContext catalogueDbContext,
+    public static ExternalDatabaseServer CreateNewExternalServer(RDMPDbContext catalogueDbContext,
         PermissableDefaults defaultToSet, IPatcher patcher)
     {
         var createPlatform = new CreatePlatformDatabase(patcher);
@@ -145,11 +146,11 @@ public partial class CreatePlatformDatabase : Form
 
         if (db != null)
         {
-            var newServer = new ExternalDatabaseServer(repository, db.GetRuntimeName(), patcher);
+            var newServer = new ExternalDatabaseServer(catalogueDbContext, db.GetRuntimeName(), patcher);
             newServer.SetProperties(db);
 
-            if (defaultToSet != PermissableDefaults.None)
-                repository.SetDefault(defaultToSet, newServer);
+            //if (defaultToSet != PermissableDefaults.None)
+            //    catalogueDbContext.SetDefault(defaultToSet, newServer);
 
             return newServer;
         }

@@ -10,6 +10,7 @@ using System.Data.Common;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.FilterImporting.Construction;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
 using Rdmp.Core.Repositories;
@@ -64,7 +65,7 @@ public class SelectedDataSets : DatabaseEntity, ISelectedDataSets, IInjectKnown<
     public IContainer RootFilterContainer =>
         RootFilterContainer_ID == null
             ? null
-            : Repository.GetObjectByID<FilterContainer>(RootFilterContainer_ID.Value);
+            : CatalogueDbContext.GetObjectByID<FilterContainer>(RootFilterContainer_ID.Value);
 
     /// <inheritdoc cref="ExtractionConfiguration_ID"/>
     [NoMappingToDatabase]
@@ -82,7 +83,7 @@ public class SelectedDataSets : DatabaseEntity, ISelectedDataSets, IInjectKnown<
     /// <inheritdoc/>
     [NoMappingToDatabase]
     public IExtractionProgress ExtractionProgressIfAny =>
-        DataExportRepository.GetAllObjectsWithParent<ExtractionProgress>(this).SingleOrDefault();
+        CatalogueDbContext.GetAllObjectsWithParent<ExtractionProgress>(this).SingleOrDefault();
 
     #endregion
 
@@ -91,8 +92,8 @@ public class SelectedDataSets : DatabaseEntity, ISelectedDataSets, IInjectKnown<
         ClearAllInjections();
     }
 
-    internal SelectedDataSets(IDataExportRepository repository, DbDataReader r)
-        : base(repository, r)
+    internal SelectedDataSets(RDMPDbContext catalogueDbContext, DbDataReader r)
+        :base(catalogueDbContext, r)
     {
         ExtractionConfiguration_ID = Convert.ToInt32(r["ExtractionConfiguration_ID"]);
         ExtractableDataSet_ID = Convert.ToInt32(r["ExtractableDataSet_ID"]);
@@ -100,21 +101,21 @@ public class SelectedDataSets : DatabaseEntity, ISelectedDataSets, IInjectKnown<
     }
 
     /// <summary>
-    /// Declares in the <paramref name="repository"/> database that the given <paramref name="dataSet"/> should be extracted as part of the given <paramref name="configuration"/>.
+    /// Declares in the <paramref name="catalogueDbContext"/> database that the given <paramref name="dataSet"/> should be extracted as part of the given <paramref name="configuration"/>.
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="configuration"></param>
     /// <param name="dataSet"></param>
     /// <param name="rootContainerIfAny">Adds the restriction that the extraction SQL should include the WHERE logic in this container</param>
-    public SelectedDataSets(IDataExportRepository repository, ExtractionConfiguration configuration,
+    public SelectedDataSets(RDMPDbContext catalogueDbContext, ExtractionConfiguration configuration,
         IExtractableDataSet dataSet, FilterContainer rootContainerIfAny)
     {
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "ExtractionConfiguration_ID", configuration.ID },
-            { "ExtractableDataSet_ID", dataSet.ID },
-            { "RootFilterContainer_ID", rootContainerIfAny != null ? (object)rootContainerIfAny.ID : DBNull.Value }
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "ExtractionConfiguration_ID", configuration.ID },
+        //    { "ExtractableDataSet_ID", dataSet.ID },
+        //    { "RootFilterContainer_ID", rootContainerIfAny != null ? (object)rootContainerIfAny.ID : DBNull.Value }
+        //});
 
         ClearAllInjections();
         InjectKnown(dataSet);
@@ -152,7 +153,7 @@ public class SelectedDataSets : DatabaseEntity, ISelectedDataSets, IInjectKnown<
     }
 
     private IExtractionConfiguration FetchExtractionConfiguration() =>
-        Repository.GetObjectByID<ExtractionConfiguration>(ExtractionConfiguration_ID);
+        CatalogueDbContext.GetObjectByID<ExtractionConfiguration>(ExtractionConfiguration_ID);
 
     /// <inheritdoc/>
     public void InjectKnown(ISelectedDataSetsForcedJoin[] instances)
@@ -169,12 +170,12 @@ public class SelectedDataSets : DatabaseEntity, ISelectedDataSets, IInjectKnown<
     }
 
     private ISelectedDataSetsForcedJoin[] FetchForcedJoins() =>
-        Repository.GetAllObjectsWithParent<SelectedDataSetsForcedJoin>(this).ToArray();
+        CatalogueDbContext.GetAllObjectsWithParent<SelectedDataSetsForcedJoin>(this).ToArray();
 
     public ICatalogue GetCatalogue() => ExtractableDataSet.Catalogue;
 
     private IExtractableDataSet FetchExtractableDataset() =>
-        Repository.GetObjectByID<ExtractableDataSet>(ExtractableDataSet_ID);
+        CatalogueDbContext.GetObjectByID<ExtractableDataSet>(ExtractableDataSet_ID);
 
     /// <inheritdoc/>
     public ICumulativeExtractionResults GetCumulativeExtractionResultsIfAny()
@@ -185,12 +186,12 @@ public class SelectedDataSets : DatabaseEntity, ISelectedDataSets, IInjectKnown<
     public void CreateRootContainerIfNotExists()
     {
         if (RootFilterContainer_ID != null) return;
-        var container = new FilterContainer(DataExportRepository, FilterContainerOperation.AND);
+        var container = new FilterContainer(CatalogueDbContext, FilterContainerOperation.AND);
         RootFilterContainer_ID = container.ID;
         SaveToDatabase();
     }
 
-    public IFilterFactory GetFilterFactory() => new DeployedExtractionFilterFactory(DataExportRepository);
+    public IFilterFactory GetFilterFactory() => new DeployedExtractionFilterFactory(CatalogueDbContext);
 
     public override void DeleteInDatabase()
     {

@@ -11,6 +11,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments;
 using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components;
@@ -26,16 +27,16 @@ public class RuntimeTaskPackager
     public readonly IEnumerable<IProcessTask> ProcessTasks;
     private readonly Dictionary<LoadStage, IStageArgs> _loadArgsDictionary;
     private readonly IEnumerable<ICatalogue> _cataloguesToLoad;
-    private readonly ICatalogueRepository _repository;
+    private readonly RDMPDbContext _catalogueDbContext;
 
     public RuntimeTaskPackager(IEnumerable<IProcessTask> processTasks,
         Dictionary<LoadStage, IStageArgs> loadArgsDictionary, IEnumerable<ICatalogue> cataloguesToLoad,
-        ICatalogueRepository repository)
+        RDMPDbContext catalogueDbContext)
     {
         ProcessTasks = processTasks;
         _loadArgsDictionary = loadArgsDictionary;
         _cataloguesToLoad = cataloguesToLoad;
-        _repository = repository;
+        _catalogueDbContext = catalogueDbContext;
     }
 
     public List<IRuntimeTask> GetRuntimeTasksForStage(LoadStage loadStage)
@@ -45,7 +46,7 @@ public class RuntimeTaskPackager
         if (!tasksForThisLoadStage.Any())
             return new List<IRuntimeTask>();
 
-        var factory = new RuntimeTaskFactory(_repository);
+        var factory = new RuntimeTaskFactory(_catalogueDbContext);
         return tasksForThisLoadStage
             .Select(processTask => RuntimeTaskFactory.Create(processTask, _loadArgsDictionary[processTask.LoadStage]))
             .Cast<IRuntimeTask>().OrderBy(task => task.ProcessTask.Order).ToList();

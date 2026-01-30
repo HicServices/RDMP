@@ -103,7 +103,7 @@ public class EndToEndTableValuedFunction : DatabaseTests
         TestDataExportOfTvf();
 
         //tear down
-        DataExportRepository.GetAllObjects<ExtractableCohort>().Single().DeleteInDatabase();
+        DataExportCatalogueDbContext.GetAllObjects<ExtractableCohort>().Single().DeleteInDatabase();
         _externalCohortTable.DeleteInDatabase();
 
         _database.ExpectTable("NonTVFTable").Drop();
@@ -423,7 +423,7 @@ end
     {
         var config = new ExtractionConfiguration(DataExportRepository, _project)
         {
-            Cohort_ID = DataExportRepository.GetAllObjects<ExtractableCohort>().Single().ID
+            Cohort_ID = DataExportCatalogueDbContext.GetAllObjects<ExtractableCohort>().Single().ID
         };
         config.SaveToDatabase();
 

@@ -13,6 +13,7 @@ using FAnsi.Discovery;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.DataExtraction;
 using Rdmp.Core.DataFlowPipeline;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
@@ -25,13 +26,13 @@ namespace Rdmp.Core.DataExport.DataRelease.Pipeline;
 /// </summary>
 public class MsSqlReleaseSource : FixedReleaseSource<ReleaseAudit>
 {
-    private readonly ICatalogueRepository _catalogueRepository;
+    private readonly RDMPDbContext _catalogueDbContext;
     private DiscoveredDatabase _database;
     private DirectoryInfo _dataPathMap;
 
-    public MsSqlReleaseSource(ICatalogueRepository catalogueRepository)
+    public MsSqlReleaseSource(RDMPDbContext catalogueDbContext)
     {
-        _catalogueRepository = catalogueRepository;
+        _catalogueDbContext = catalogueDbContext;
     }
 
     protected override ReleaseAudit GetChunkImpl(IDataLoadEventListener listener,
@@ -156,7 +157,7 @@ public class MsSqlReleaseSource : FixedReleaseSource<ReleaseAudit>
         var externalServerId = int.Parse(foundConnection.Split('|')[0]);
         var dbName = foundConnection.Split('|')[1];
 
-        var externalServer = _catalogueRepository.GetObjectByID<ExternalDatabaseServer>(externalServerId);
+        var externalServer = _catalogueDbContext.GetObjectByID<ExternalDatabaseServer>(externalServerId);
         if (!string.IsNullOrWhiteSpace(externalServer.MappedDataPath))
             _dataPathMap = new DirectoryInfo(externalServer.MappedDataPath);
         else

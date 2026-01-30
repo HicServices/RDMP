@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
@@ -15,13 +16,13 @@ namespace Rdmp.Core.Curation.Data;
 /// </summary>
 public class DataAccessCredentialsFactory
 {
-    private readonly ICatalogueRepository _cataRepository;
+    private readonly RDMPDbContext _cataRepository;
 
     /// <summary>
     /// Creates a new <see cref="DataAccessCredentialsFactory"/> for creating <see cref="DataAccessCredentials"/> which will be stored in the database provided (<paramref name="cataRepository"/>)
     /// </summary>
     /// <param name="cataRepository"></param>
-    public DataAccessCredentialsFactory(ICatalogueRepository cataRepository)
+    public DataAccessCredentialsFactory(RDMPDbContext cataRepository)
     {
         _cataRepository = cataRepository;
     }
@@ -37,23 +38,24 @@ public class DataAccessCredentialsFactory
     public DataAccessCredentials Create(ITableInfo tableInfoCreated, string username, string password,
         DataAccessContext usageContext)
     {
-        var credentialsToAssociate =
-            _cataRepository.TableInfoCredentialsManager.GetCredentialByUsernameAndPasswordIfExists(username, password);
+        //var credentialsToAssociate =
+        //    _cataCatalogueDbContext.TableInfoCredentialsManager.GetCredentialByUsernameAndPasswordIfExists(username, password);
 
-        if (credentialsToAssociate == null)
-        {
-            //create one
-            credentialsToAssociate = new DataAccessCredentials(_cataRepository)
-            {
-                Username = username,
-                Password = password
-            };
-            credentialsToAssociate.SaveToDatabase();
-        }
+        //if (credentialsToAssociate == null)
+        //{
+        //    //create one
+        //    credentialsToAssociate = new DataAccessCredentials(_cataRepository)
+        //    {
+        //        Username = username,
+        //        Password = password
+        //    };
+        //    credentialsToAssociate.SaveToDatabase();
+        //}
 
-        _cataRepository.TableInfoCredentialsManager.CreateLinkBetween(credentialsToAssociate, tableInfoCreated,
-            usageContext);
+        //_cataCatalogueDbContext.TableInfoCredentialsManager.CreateLinkBetween(credentialsToAssociate, tableInfoCreated,
+        //    usageContext);
 
-        return credentialsToAssociate;
+        //return credentialsToAssociate;
+        return null;
     }
 }

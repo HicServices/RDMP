@@ -54,23 +54,23 @@ public class TestsRequiringANOStore : TestsRequiringA
             new ExternalDatabaseServer(CatalogueRepository, ANOStore_DatabaseName, new ANOStorePatcher());
         ANOStore_ExternalDatabaseServer.SetProperties(ANOStore_Database);
 
-        CatalogueRepository.SetDefault(PermissableDefaults.ANOStore, ANOStore_ExternalDatabaseServer);
+        CatalogueDbContext.SetDefault(PermissableDefaults.ANOStore, ANOStore_ExternalDatabaseServer);
     }
 
     private void RemovePreExistingReference()
     {
         //There will likely be an old reference to the external database server
-        var preExisting = CatalogueRepository.GetAllObjects<ExternalDatabaseServer>()
+        var preExisting = CatalogueDbContext.GetAllObjects<ExternalDatabaseServer>()
             .SingleOrDefault(e => e.Name.Equals(ANOStore_DatabaseName));
 
         if (preExisting == null) return;
 
         //Some child tests will likely create ANOTables that reference this server so we need to cleanup those for them so that we can cleanup the old server reference too
-        foreach (var lingeringTablesReferencingServer in CatalogueRepository.GetAllObjects<ANOTable>()
+        foreach (var lingeringTablesReferencingServer in CatalogueDbContext.GetAllObjects<ANOTable>()
                      .Where(a => a.Server_ID == preExisting.ID))
         {
             //unhook the anonymisation transform from any ColumnInfos using it
-            foreach (var colWithANOTransform in CatalogueRepository.GetAllObjects<ColumnInfo>()
+            foreach (var colWithANOTransform in CatalogueDbContext.GetAllObjects<ColumnInfo>()
                          .Where(c => c.ANOTable_ID == lingeringTablesReferencingServer.ID))
             {
                 Console.WriteLine(

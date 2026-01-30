@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.DataRelease.Audit;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
 using Rdmp.Core.Repositories;
@@ -123,13 +124,13 @@ public class CumulativeExtractionResults : DatabaseEntity, ICumulativeExtraction
     [NoMappingToDatabase]
     public List<ISupplementalExtractionResults> SupplementalExtractionResults =>
         new(
-            Repository.GetAllObjectsWithParent<SupplementalExtractionResults>(this));
+            CatalogueDbContext.GetAllObjectsWithParent<SupplementalExtractionResults>(this));
 
     /// <inheritdoc/>
     public ISupplementalExtractionResults AddSupplementalExtractionResult(string sqlExecuted,
         IMapsDirectlyToDatabaseTable extractedObject)
     {
-        var result = new SupplementalExtractionResults(DataExportRepository, this, sqlExecuted, extractedObject);
+        var result = new SupplementalExtractionResults(CatalogueDbContext, this, sqlExecuted, extractedObject);
         SupplementalExtractionResults.Add(result);
         return result;
     }
@@ -151,21 +152,21 @@ public class CumulativeExtractionResults : DatabaseEntity, ICumulativeExtraction
     /// Creates a new audit record in the data export database for describing an extraction attempt of the given <paramref name="dataset"/> in the
     /// extraction <paramref name="configuration"/>.
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="configuration"></param>
     /// <param name="dataset"></param>
     /// <param name="sql"></param>
-    public CumulativeExtractionResults(IDataExportRepository repository, IExtractionConfiguration configuration,
+    public CumulativeExtractionResults(RDMPDbContext catalogueDbContext, IExtractionConfiguration configuration,
         IExtractableDataSet dataset, string sql)
     {
-        Repository = repository;
-        Repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "ExtractionConfiguration_ID", configuration.ID },
-            { "ExtractableDataSet_ID", dataset.ID },
-            { "SQLExecuted", sql },
-            { "CohortExtracted", configuration.Cohort_ID }
-        });
+       CatalogueDbContext = catalogueDbContext;
+        //CatalogueDbContext.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "ExtractionConfiguration_ID", configuration.ID },
+        //    { "ExtractableDataSet_ID", dataset.ID },
+        //    { "SQLExecuted", sql },
+        //    { "CohortExtracted", configuration.Cohort_ID }
+        //});
 
         ClearAllInjections();
     }
@@ -173,10 +174,10 @@ public class CumulativeExtractionResults : DatabaseEntity, ICumulativeExtraction
     /// <summary>
     /// Reads an existing audit record out of the data export database
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="r"></param>
-    internal CumulativeExtractionResults(IDataExportRepository repository, DbDataReader r)
-        : base(repository, r)
+    internal CumulativeExtractionResults(RDMPDbContext catalogueDbContext, DbDataReader r)
+        :base(catalogueDbContext, r)
     {
         ExtractionConfiguration_ID = int.Parse(r["ExtractionConfiguration_ID"].ToString());
         ExtractableDataSet_ID = int.Parse(r["ExtractableDataSet_ID"].ToString());
@@ -196,9 +197,10 @@ public class CumulativeExtractionResults : DatabaseEntity, ICumulativeExtraction
     /// <inheritdoc/>
     public IReleaseLog GetReleaseLogEntryIfAny()
     {
-        var repo = (IDataExportRepository)Repository;
+        //var repo = Repository;
 
-        return repo.GetReleaseLogEntryIfAny(this);
+        //return repo.GetReleaseLogEntryIfAny(this);
+        return null;
     }
 
     /// <inheritdoc/>
@@ -246,6 +248,6 @@ public class CumulativeExtractionResults : DatabaseEntity, ICumulativeExtraction
     public void ClearAllInjections()
     {
         _knownExtractableDataSet =
-            new Lazy<IExtractableDataSet>(() => Repository.GetObjectByID<ExtractableDataSet>(ExtractableDataSet_ID));
+            new Lazy<IExtractableDataSet>(() => CatalogueDbContext.GetObjectByID<ExtractableDataSet>(ExtractableDataSet_ID));
     }
 }

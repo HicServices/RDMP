@@ -50,10 +50,10 @@ public class CustomDateCachingTests : DatabaseTests
         destinationComponent.GetAllArguments().Returns(Array.Empty<IArgument>());
 
         var pipeline = Substitute.For<IPipeline>();
-        pipeline.Repository.Returns(CatalogueRepository);
+        pipeline.CatalogueDbContext.Returns(CatalogueRepository);
         pipeline.Source.Returns(sourceComponent);
         pipeline.Destination.Returns(destinationComponent);
-        pipeline.Repository.Returns(CatalogueRepository);
+        pipeline.CatalogueDbContext.Returns(CatalogueRepository);
         pipeline.PipelineComponents.Returns(Enumerable.Empty<IPipelineComponent>().OrderBy(o => o).ToList());
         var lmd = Substitute.For<ILoadMetadata>();
 
@@ -70,7 +70,7 @@ public class CustomDateCachingTests : DatabaseTests
         cacheProgress.Pipeline.Returns(pipeline);
         cacheProgress.ChunkPeriod.Returns(new TimeSpan(1, 0, 0, 0));
         cacheProgress.LoadProgress_ID.Returns(-1);
-        cacheProgress.Repository.Returns(CatalogueRepository);
+        cacheProgress.CatalogueDbContext.Returns(CatalogueRepository);
         cacheProgress.LoadProgress.Returns(loadProgress);
         cacheProgress.CacheFillProgress.Returns(new DateTime(2020, 1, 1));
 

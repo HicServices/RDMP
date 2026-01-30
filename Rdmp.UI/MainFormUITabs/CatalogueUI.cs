@@ -108,7 +108,7 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
             .Select(static catalogueItem => catalogueItem.ColumnInfo.Dataset_ID)
             .Where(static datasetId => datasetId != null)
             .Select(datasetId =>
-                _catalogue.CatalogueRepository.GetAllObjectsWhere<Dataset>("ID", datasetId).First())
+                _catalogue.CatalogueDbContext.GetAllObjectsWhere<Dataset>("ID", (int)datasetId).First())
             .Select(static ds => ds.Name).ToList();
         editableCatalogueName.TextValue = _catalogue.Name;
         editableCatalogueName.Title = "Name";

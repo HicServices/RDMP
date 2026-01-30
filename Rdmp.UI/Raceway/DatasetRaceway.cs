@@ -100,12 +100,12 @@ public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
 
         foreach (var cata in allCatalogues.OrderBy(c => c.Name))
         {
-            var eval = dqeRepository.GetMostRecentEvaluationFor(cata);
+            //var eval = dqeCatalogueDbContext.GetMostRecentEvaluationFor(cata);
 
             Dictionary<DateTime, ArchivalPeriodicityCount> dictionary = null;
 
-            if (eval != null)
-                dictionary = PeriodicityState.GetPeriodicityCountsForEvaluation(eval, true);
+            //if (eval != null)
+            //    dictionary = PeriodicityState.GetPeriodicityCountsForEvaluation(eval, true);
 
             cataloguesToAdd.Add(cata, dictionary);
         }
@@ -265,13 +265,13 @@ public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
             TaskDescription = "Choose a Package.  All Catalogues in the Package will be added to the diagram."
         }, dataExportChildProvider.AllPackages, out var packageToAdd))
         {
-            var contents =
-                _activator.RepositoryLocator.DataExportRepository.GetAllDataSets(packageToAdd,
-                    dataExportChildProvider.ExtractableDataSets);
+            //var contents =
+            //    _activator.RepositoryLocator.CatalogueDbContext.GetAllDataSets(packageToAdd,
+            //        dataExportChildProvider.ExtractableDataSets);
 
-            foreach (var cata in contents.Select(ds => ds.Catalogue))
-                if (!_collection.GetCatalogues().Contains(cata))
-                    AddCatalogue((Catalogue)cata);
+            //foreach (var cata in contents.Select(ds => ds.Catalogue))
+            //    if (!_collection.GetCatalogues().Contains(cata))
+            //        AddCatalogue((Catalogue)cata);
 
             SaveCollectionChanges();
             GenerateChart();

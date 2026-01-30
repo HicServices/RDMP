@@ -9,6 +9,7 @@ using System.Linq;
 using FAnsi.Discovery;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Spontaneous;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 
@@ -19,33 +20,33 @@ namespace Rdmp.Core.Curation.Checks;
 /// </summary>
 public class MissingFieldsChecker : ICheckable
 {
-    private readonly TableRepository _repository;
+    private readonly RDMPDbContext _catalogueDbContext;
 
-    public MissingFieldsChecker(TableRepository repository)
+    public MissingFieldsChecker(RDMPDbContext catalogueDbContext)
     {
-        _repository = repository;
+        _catalogueDbContext = catalogueDbContext;
     }
 
     public void Check(ICheckNotifier notifier)
     {
-        var server = _repository.DiscoveredServer;
-        if (!server.Exists())
-        {
-            notifier.OnCheckPerformed(new CheckEventArgs("Could not reach server", CheckResult.Fail));
-            return;
-        }
+        //var server = _catalogueDbContext.DiscoveredServer;
+        //if (!server.Exists())
+        //{
+        //    notifier.OnCheckPerformed(new CheckEventArgs("Could not reach server", CheckResult.Fail));
+        //    return;
+        //}
 
-        var db = server.GetCurrentDatabase();
-        if (!db.Exists())
-        {
-            notifier.OnCheckPerformed(new CheckEventArgs($"Could not find database {db}", CheckResult.Fail));
-            return;
-        }
+        //var db = server.GetCurrentDatabase();
+        //if (!db.Exists())
+        //{
+        //    notifier.OnCheckPerformed(new CheckEventArgs($"Could not find database {db}", CheckResult.Fail));
+        //    return;
+        //}
 
-        var tables = db.DiscoverTables(false);
+        //var tables = db.DiscoverTables(false);
 
-        foreach (var type in _repository.GetCompatibleTypes())
-            CheckEntities(notifier, type, tables);
+        //foreach (var type in _catalogueDbContext.GetCompatibleTypes())
+        //    CheckEntities(notifier, type, tables);
     }
 
     /// <summary>

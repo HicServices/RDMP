@@ -6,6 +6,7 @@
 
 using System;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.Curation.FilterImporting.Construction;
@@ -16,7 +17,7 @@ namespace Rdmp.Core.Curation.FilterImporting.Construction;
 /// </summary>
 public class ExtractionFilterFactory : IFilterFactory
 {
-    private readonly ICatalogueRepository _repository;
+    private readonly RDMPDbContext _catalogueDbContext;
     private readonly ExtractionInformation _extractionInformation;
 
     /// <summary>
@@ -26,16 +27,16 @@ public class ExtractionFilterFactory : IFilterFactory
     /// <param name="extractionInformation"></param>
     public ExtractionFilterFactory(ExtractionInformation extractionInformation)
     {
-        _repository = (ICatalogueRepository)extractionInformation.Repository;
+        _catalogueDbContext = extractionInformation.CatalogueDbContext;
         _extractionInformation = extractionInformation;
     }
 
     /// <inheritdoc/>
-    public IFilter CreateNewFilter(string name) => new ExtractionFilter(_repository, name, _extractionInformation);
+    public IFilter CreateNewFilter(string name) => new ExtractionFilter(_catalogueDbContext, name, _extractionInformation);
 
     /// <inheritdoc/>
     public ISqlParameter CreateNewParameter(IFilter filter, string parameterSQL) =>
-        new ExtractionFilterParameter(_repository, parameterSQL, (ExtractionFilter)filter);
+        new ExtractionFilterParameter(_catalogueDbContext, parameterSQL, (ExtractionFilter)filter);
 
     /// <inheritdoc/>
     public Type GetRootOwnerType() => typeof(ExtractionInformation);

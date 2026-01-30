@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Modules.DataFlowSources;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Repositories;
 using Rdmp.UI.SimpleDialogs;
 
@@ -26,8 +27,8 @@ namespace Rdmp.UI.DataLoadUIs.ModuleUIs.DataFlowSources;
 /// </summary>
 public partial class ExplicitTypingCollectionUI : Form, ICustomUI<ExplicitTypingCollection>
 {
-    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-    public ICatalogueRepository CatalogueRepository { get; set; }
+    //[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    //public ICatalogueRepository CatalogueRepository { get; set; }
 
     public ExplicitTypingCollectionUI()
     {
@@ -36,6 +37,9 @@ public partial class ExplicitTypingCollectionUI : Form, ICustomUI<ExplicitTyping
     }
 
     private List<ExplicitColumnTypeUI> types = new();
+
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    public RDMPDbContext CatalogueDbContext { get ; set; }
 
     private void btnAddColumn_Click(object sender, EventArgs e)
     {
@@ -107,12 +111,13 @@ public partial class ExplicitTypingCollectionUI : Form, ICustomUI<ExplicitTyping
 
     private void ExplicitTypingCollectionUI_FormClosing(object sender, FormClosingEventArgs e)
     {
-        if (CatalogueRepository == null)
-            return;
+        //if (CatalogueRepository == null)
+        //    return;
 
-        if (DialogResult != DialogResult.OK)
-            if (MessageBox.Show("Close without saving?", "Cancel Changes", MessageBoxButtons.YesNo) !=
-                DialogResult.Yes)
-                e.Cancel = true;
+        //if (DialogResult != DialogResult.OK)
+        //    if (MessageBox.Show("Close without saving?", "Cancel Changes", MessageBoxButtons.YesNo) !=
+        //        DialogResult.Yes)
+        //        e.Cancel = true;
+        return;
     }
 }

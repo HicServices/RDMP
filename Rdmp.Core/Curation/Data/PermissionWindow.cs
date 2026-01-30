@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
 using Rdmp.Core.Curation.Data.Cache;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Repositories;
@@ -70,7 +71,7 @@ public class PermissionWindow : DatabaseEntity, IPermissionWindow
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public IEnumerable<ICacheProgress> CacheProgresses => Repository.GetAllObjectsWithParent<CacheProgress>(this);
+    public IEnumerable<ICacheProgress> CacheProgresses => CatalogueDbContext.GetAllObjectsWithParent<CacheProgress>(this);
 
     #endregion
 
@@ -115,18 +116,18 @@ public class PermissionWindow : DatabaseEntity, IPermissionWindow
     /// <summary>
     /// Create a new time window in which you can restrict things (caching, loading etc) from happening outside
     /// </summary>
-    /// <param name="repository"></param>
-    public PermissionWindow(RdmpDbContext catalogueDbContext)
+    /// <param name="catalogueDbContext"></param>
+    public PermissionWindow(RDMPDbContext catalogueDbContext)
     {
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "PermissionPeriodConfig", DBNull.Value },
-            { "Name", $"New PermissionWindow{Guid.NewGuid()}" }
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "PermissionPeriodConfig", DBNull.Value },
+        //    { "Name", $"New PermissionWindow{Guid.NewGuid()}" }
+        //});
     }
 
-    internal PermissionWindow(RdmpDbContext catalogueDbContext, DbDataReader r)
-        : base(repository, r)
+    internal PermissionWindow(RDMPDbContext catalogueDbContext, DbDataReader r)
+        :base(catalogueDbContext, r)
     {
         Name = r["Name"].ToString();
         Description = r["Description"].ToString();

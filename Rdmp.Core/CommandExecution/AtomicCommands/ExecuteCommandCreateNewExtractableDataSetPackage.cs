@@ -16,7 +16,7 @@ public class ExecuteCommandCreateNewExtractableDataSetPackage : BasicCommandExec
 {
     public ExecuteCommandCreateNewExtractableDataSetPackage(IBasicActivateItems activator) : base(activator)
     {
-        if (BasicActivator.RepositoryLocator.DataExportRepository == null)
+        if (BasicActivator.RepositoryLocator.CatalogueDbContext == null)
             SetImpossible("Data export database is not setup");
 
         UseTripleDotSuffix = true;
@@ -31,7 +31,7 @@ public class ExecuteCommandCreateNewExtractableDataSetPackage : BasicCommandExec
 
         if (TypeText("Name for package", "Name", 500, null, out var name))
         {
-            var p = new ExtractableDataSetPackage(BasicActivator.RepositoryLocator.DataExportRepository, name);
+            var p = new ExtractableDataSetPackage(BasicActivator.RepositoryLocator.CatalogueDbContext, name);
             Publish(p);
             Emphasise(p);
         }

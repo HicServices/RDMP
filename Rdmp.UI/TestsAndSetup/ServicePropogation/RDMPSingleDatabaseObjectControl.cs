@@ -196,7 +196,7 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
             //DatabaseEntity was not an aggregateFilter
             return true;
         }
-        AggregateFilterContainer afc = af.CatalogueRepository.GetAllObjectsWhere<AggregateFilterContainer>("ID", af.FilterContainer_ID).FirstOrDefault();
+        AggregateFilterContainer afc = af.CatalogueDbContext.GetAllObjectsWhere<AggregateFilterContainer>("ID", (int)af.FilterContainer_ID).FirstOrDefault();
         if (afc != null)
         {
             AggregateConfiguration ac = afc.GetAggregate();

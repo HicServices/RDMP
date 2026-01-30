@@ -30,7 +30,7 @@ public class SimpleCohortIdentificationTests : DatabaseTests
             config.SaveToDatabase();
 
 
-            var config2 = CatalogueRepository.GetObjectByID<CohortIdentificationConfiguration>(config.ID);
+            var config2 = CatalogueDbContext.GetObjectByID<CohortIdentificationConfiguration>(config.ID);
             Assert.That(config2.Description, Is.EqualTo("Hi there"));
         }
         finally
@@ -52,7 +52,7 @@ public class SimpleCohortIdentificationTests : DatabaseTests
             container.Operation = SetOperation.INTERSECT;
             container.SaveToDatabase();
 
-            var container2 = CatalogueRepository.GetObjectByID<CohortAggregateContainer>(container.ID);
+            var container2 = CatalogueDbContext.GetObjectByID<CohortAggregateContainer>(container.ID);
             Assert.That(container2.Operation, Is.EqualTo(SetOperation.INTERSECT));
         }
         finally
@@ -94,7 +94,7 @@ public class SimpleCohortIdentificationTests : DatabaseTests
 
             //container 2 was contained within container 1 so should have also been deleted
             Assert.Throws<KeyNotFoundException>(
-                () => CatalogueRepository.GetObjectByID<CohortAggregateContainer>(container2.ID));
+                () => CatalogueDbContext.GetObjectByID<CohortAggregateContainer>(container2.ID));
         }
     }
 }

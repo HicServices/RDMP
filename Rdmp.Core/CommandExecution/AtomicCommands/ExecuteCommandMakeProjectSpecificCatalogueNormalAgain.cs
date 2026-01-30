@@ -21,7 +21,7 @@ public class ExecuteCommandMakeProjectSpecificCatalogueNormalAgain : BasicComman
     private Catalogue _catalogue;
     private List<ExtractableDataSet> _extractableDataSets;
     private ExtractableDataSet _extractableDataSet;
-    private Project _selectedProj;
+    //private Project _selectedProj;
 
     public ExecuteCommandMakeProjectSpecificCatalogueNormalAgain(IBasicActivateItems activator, Catalogue catalogue, ExtractableDataSet eds) :
         base(activator)
@@ -30,7 +30,7 @@ public class ExecuteCommandMakeProjectSpecificCatalogueNormalAgain : BasicComman
         _extractableDataSet = eds;
 
 
-        var dataExportRepository = BasicActivator.RepositoryLocator.DataExportRepository;
+        var dataExportRepository = BasicActivator.RepositoryLocator.CatalogueDbContext;
         if (dataExportRepository == null)
         {
             SetImpossible("Data Export functionality is not available");
@@ -43,7 +43,7 @@ public class ExecuteCommandMakeProjectSpecificCatalogueNormalAgain : BasicComman
 
     public override void Execute()
     {
-        var dataExportRepository = BasicActivator.RepositoryLocator.DataExportRepository;
+        var dataExportRepository = BasicActivator.RepositoryLocator.CatalogueDbContext;
 
         base.Execute();
         _extractableDataSets = dataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(_catalogue).Where(eds => eds.Projects.Any() && eds.Projects.Select(p => ProjectSpecificCatalogueManager.CanMakeCatalogueNonProjectSpecific(dataExportRepository, _catalogue, eds, p)).Contains(true)).ToList();
@@ -59,9 +59,9 @@ public class ExecuteCommandMakeProjectSpecificCatalogueNormalAgain : BasicComman
         {
 
             var projectIds = _extractableDataSets.SelectMany(eds => eds.Projects.Where(p => ProjectSpecificCatalogueManager.CanMakeCatalogueNonProjectSpecific(dataExportRepository,_catalogue, eds,p))).Select(p => p.ID);
-            _selectedProj = SelectOne<Project>(BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjectsInIDList<Project>(projectIds).ToList());
-            if (_selectedProj is null) return;
-            _extractableDataSet = _extractableDataSets.FirstOrDefault(eds => eds.Projects.Select(p => p.ID).Contains(_selectedProj.ID));
+        //    _selectedProj = SelectOne<Project>(BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllObjectsInIDList<Project>(projectIds).ToList());
+        //    if (_selectedProj is null) return;
+        //    _extractableDataSet = _extractableDataSets.FirstOrDefault(eds => eds.Projects.Select(p => p.ID).Contains(_selectedProj.ID));
         }
         if (_extractableDataSet == null)
         {
@@ -74,7 +74,7 @@ public class ExecuteCommandMakeProjectSpecificCatalogueNormalAgain : BasicComman
             return;
         }
 
-        ProjectSpecificCatalogueManager.MakeCatalogueNonProjectSpecific(BasicActivator.RepositoryLocator.DataExportRepository, _catalogue, _extractableDataSet,_selectedProj);
+        //ProjectSpecificCatalogueManager.MakeCatalogueNonProjectSpecific(BasicActivator.RepositoryLocator.CatalogueDbContext, _catalogue, _extractableDataSet,_selectedProj);
 
         Publish(_catalogue);
     }

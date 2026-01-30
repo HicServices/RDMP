@@ -29,7 +29,7 @@ public class MementoTests : DatabaseTests
         mem.RevertToDatabaseState();
         Assert.That(mem.BeforeYaml, Is.EqualTo("yar"));
 
-        var mem2 = CatalogueRepository.GetObjectByID<Memento>(mem.ID);
+        var mem2 = CatalogueDbContext.GetObjectByID<Memento>(mem.ID);
 
         Assert.Multiple(() =>
         {
@@ -54,7 +54,7 @@ public class MementoTests : DatabaseTests
         var mem = new Memento(CatalogueRepository, commit, MementoType.Add, c, null, "blerg");
         mem.SaveToDatabase();
 
-        foreach (var check in new[] { mem, CatalogueRepository.GetObjectByID<Memento>(mem.ID) })
+        foreach (var check in new[] { mem, CatalogueDbContext.GetObjectByID<Memento>(mem.ID) })
         {
             Assert.Multiple(() =>
             {
@@ -79,7 +79,7 @@ public class MementoTests : DatabaseTests
         var mem = new Memento(CatalogueRepository, commit, MementoType.Delete, c, "blah", null);
         mem.SaveToDatabase();
 
-        foreach (var check in new[] { mem, CatalogueRepository.GetObjectByID<Memento>(mem.ID) })
+        foreach (var check in new[] { mem, CatalogueDbContext.GetObjectByID<Memento>(mem.ID) })
         {
             Assert.Multiple(() =>
             {

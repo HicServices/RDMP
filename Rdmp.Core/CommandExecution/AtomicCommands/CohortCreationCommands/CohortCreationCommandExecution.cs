@@ -79,7 +79,7 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
         if (ect == null)
             if (!SelectOne(
                     GetChooseCohortDialogArgs(),
-                    BasicActivator.RepositoryLocator.DataExportRepository,
+                    BasicActivator.RepositoryLocator.CatalogueDbContext,
                     out ect)) //not yet, get user to pick one
                 return null; //user didn't select one and cancelled dialog
 
@@ -125,7 +125,7 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
 
         return new CohortCreationRequest(Project,
             new CohortDefinition(null, name, version, Project.ProjectNumber.Value, ect),
-            BasicActivator.RepositoryLocator.DataExportRepository, auditLogDescription);
+            BasicActivator.RepositoryLocator.CatalogueDbContext, auditLogDescription);
     }
 
     public virtual IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
@@ -206,7 +206,7 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
 
         }
         var cohortIDs = cohortsThatAreDeprecatedOrHaveBeenDeprecated.Select(c => c.ID).ToList();
-        var extractionConfigurations = activator.RepositoryLocator.DataExportRepository.GetAllObjects<ExtractionConfiguration>().Where(ei => !ei.IsReleased && ei.Cohort_ID is not null && cohortIDs.Contains((int)ei.Cohort_ID));
+        var extractionConfigurations = activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<ExtractionConfiguration>().Where(ei => !ei.IsReleased && ei.Cohort_ID is not null && cohortIDs.Contains((int)ei.Cohort_ID));
         if (extractionConfigurations.Any() && activator.YesNo("""
 Would you like to replace all uses of a deprecated cohort in this project with this cohort?
 This will update all non-released Extraction configurations that use the now deprecated cohort to use the cohort you have just created.

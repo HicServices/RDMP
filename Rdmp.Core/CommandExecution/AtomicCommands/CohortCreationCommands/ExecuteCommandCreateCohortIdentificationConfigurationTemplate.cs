@@ -29,7 +29,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands
 
         public override void Execute()
         {
-            var associations = _activator.RepositoryLocator.DataExportRepository.GetAllObjects<ProjectCohortIdentificationConfigurationAssociation>();
+            var associations = _activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<ProjectCohortIdentificationConfigurationAssociation>();
             var projectAssociations = associations.Where(a => a.CohortIdentificationConfiguration_ID == _cic.ID).ToList();
             base.Execute();
             var clone = _cic.CreateClone(ThrowImmediatelyCheckNotifier.Quiet);
@@ -45,7 +45,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands
                     //multiple, make them pick
                     if (_activator.YesNo("This Cohort Configuration is associated with multiple Projects. Would you like to associate this Template with one of them?", "Associate with a Project"))
                     {
-                        _selectedProject = _activator.SelectOne("Select a Project to associate this Template with", _activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>());
+                        _selectedProject = _activator.SelectOne("Select a Project to associate this Template with", _activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Project>());
                     }
                 }
                 else if (projectAssociations.Count == 1)
@@ -62,7 +62,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands
                     //ask if they want to use it in a project
                     if (_activator.YesNo("Would you like to associate this Template with a project?", "Associate with a Project"))
                     {
-                        _selectedProject = _activator.SelectOne("Select a Project to associate this Template with", _activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>());
+                        _selectedProject = _activator.SelectOne("Select a Project to associate this Template with", _activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Project>());
                     }
                 }
             }

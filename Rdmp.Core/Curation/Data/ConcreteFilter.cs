@@ -11,6 +11,7 @@ using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.FilterImporting.Construction;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.QueryBuilding.SyntaxChecking;
@@ -28,7 +29,7 @@ namespace Rdmp.Core.Curation.Data;
 public abstract class ConcreteFilter : DatabaseEntity, IFilter, ICheckable, IOrderable
 {
     /// <inheritdoc/>
-    protected ConcreteFilter(IRepository repository, DbDataReader r) : base(repository, r)
+    protected ConcreteFilter(RDMPDbContext catalogueDbContext, DbDataReader r) : base(catalogueDbContext, r)
     {
     }
 

@@ -344,7 +344,7 @@ public class ANOTableTests : TestsRequiringANOStore
     {
         const string name = "ANOMyTable";
 
-        var toCleanup = CatalogueRepository.GetAllObjects<ANOTable>().SingleOrDefault(a => a.TableName.Equals(name));
+        var toCleanup = CatalogueDbContext.GetAllObjects<ANOTable>().SingleOrDefault(a => a.TableName.Equals(name));
 
         toCleanup?.DeleteInDatabase();
 

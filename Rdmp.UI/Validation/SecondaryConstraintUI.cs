@@ -11,6 +11,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.Repositories;
@@ -54,7 +55,7 @@ public partial class SecondaryConstraintUI : UserControl
 
     private bool loadingComplete;
 
-    public SecondaryConstraintUI(RdmpDbContext catalogueDbContext, SecondaryConstraint secondaryConstriant,
+    public SecondaryConstraintUI(RDMPDbContext catalogueDbContext, SecondaryConstraint secondaryConstriant,
         string[] otherColumns)
     {
         const int rowHeight = 30;
@@ -64,7 +65,7 @@ public partial class SecondaryConstraintUI : UserControl
 
         InitializeComponent();
 
-        if (repository == null)
+        if (catalogueDbContext == null)
             return;
 
         cbxConsequence.DataSource = Enum.GetValues(typeof(Consequence));
@@ -179,7 +180,7 @@ public partial class SecondaryConstraintUI : UserControl
                         AutoCompleteSource = AutoCompleteSource.ListItems,
                         AutoCompleteMode = AutoCompleteMode.Suggest
                     };
-                    var entities = repository.GetAllObjects(_requiredProperties[i].PropertyType).ToArray();
+                    var entities = catalogueDbContext.GetAllObjects(_requiredProperties[i].PropertyType).ToArray();
 
                     if (!entities.Any())
                     {

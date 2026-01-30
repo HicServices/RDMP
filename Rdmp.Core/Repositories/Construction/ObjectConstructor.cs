@@ -11,6 +11,7 @@ using System.Linq;
 using System.Reflection;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.ImportExport;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 namespace Rdmp.Core.Repositories.Construction;
@@ -49,14 +50,14 @@ public class ObjectConstructor
         Construct<IRDMPPlatformRepositoryServiceLocator>(t, serviceLocator, allowBlank);
 
     /// <summary>
-    /// Constructs a new instance of Type t using the default constructor or one that takes an ICatalogueRepository (or any derived class)
+    /// Constructs a new instance of Type t using the default constructor or one that takes an RDMPDbContext(or any derived class)
     /// </summary>
     /// <param name="t"></param>
-    /// <param name="catalogueRepository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="allowBlank"></param>
     /// <returns></returns>
-    public static object Construct(Type t, ICatalogueRepository catalogueRepository, bool allowBlank = true) =>
-        Construct<ICatalogueRepository>(t, catalogueRepository, allowBlank);
+    public static object Construct(Type t, RDMPDbContext catalogueDbContext, bool allowBlank = true) =>
+        Construct<RDMPDbContext>(t, catalogueDbContext, allowBlank);
 
     /// <summary>
     /// Constructs a new instance of Type objectType by invoking the constructor MyClass(IRepository x, DbDataReader r) (See <see cref="DatabaseEntity"/>).
@@ -326,7 +327,7 @@ public class ObjectConstructor
 
     /// <summary>
     /// Returns the most likely constructor for creating new instances of a <see cref="DatabaseEntity"/> class e.g.
-    /// for <see cref="Catalogue"/> it would return the constructor <see cref="Catalogue(ICatalogueRepository,string)"/>
+    /// for <see cref="Catalogue"/> it would return the constructor/>
     /// </summary>
     /// <param name="type"></param>
     /// <returns></returns>

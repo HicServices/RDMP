@@ -52,10 +52,10 @@ public class WindowLayout : DatabaseEntity, INamed
     /// <summary>
     /// Record the new layout in the database
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="name">Human readable name for the layout</param>
     /// <param name="layoutXml">The layout Xml of RDMPMainForm, use GetCurrentLayoutXml to get this, cannot be null</param>
-    public WindowLayout(RDMPDbContext repository, string name, string layoutXml)
+    public WindowLayout(RDMPDbContext catalogueDbContext, string name, string layoutXml)
     {
         //repository.InsertAndHydrate(this, new Dictionary<string, object>
         //{
@@ -63,12 +63,12 @@ public class WindowLayout : DatabaseEntity, INamed
         //    { "LayoutData", layoutXml }
         //});
 
-        if (ID == 0 || Repository != repository)
+        if (ID == 0 || CatalogueDbContext != catalogueDbContext)
             throw new ArgumentException("Repository failed to properly hydrate this class");
     }
 
     /// <inheritdoc/>
-    public WindowLayout(RdmpDbContext catalogueDbContext, DbDataReader r) : base(repository, r)
+    public WindowLayout(RDMPDbContext catalogueDbContext, DbDataReader r) :base(catalogueDbContext, r)
     {
         Name = r["Name"].ToString();
         LayoutData = r["LayoutData"].ToString();

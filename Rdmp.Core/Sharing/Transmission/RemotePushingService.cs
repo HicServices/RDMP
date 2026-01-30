@@ -36,7 +36,7 @@ public class RemotePushingService
     {
         _repositoryLocator = repositoryLocator;
         this.listener = listener;
-        remotes = _repositoryLocator.CatalogueRepository.GetAllObjects<RemoteRDMP>();
+        remotes = _repositoryLocator.CatalogueDbContext.GetAllObjects<RemoteRDMP>();
         _gatherer = new Gatherer(_repositoryLocator);
         _shareManager = new ShareManager(_repositoryLocator);
     }

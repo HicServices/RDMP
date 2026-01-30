@@ -18,7 +18,7 @@ public class StandardRegexTests : DatabaseTests
     public void CreateNew_UseConstraint()
     {
         // Clean SetUp any existing regexes
-        CatalogueRepository.GetAllObjects<StandardRegex>().Where(r => r.ConceptName == "Fish").ToList()
+        CatalogueDbContext.GetAllObjects<StandardRegex>().Where(r => r.ConceptName == "Fish").ToList()
             .ForEach(r => r.DeleteInDatabase());
 
         var regex = new StandardRegex(CatalogueRepository);

@@ -115,62 +115,62 @@ public partial class AggregateEditorUI : AggregateEditor_Design, ISaveableUI
 
     private CheckState ForceJoinCheckStatePutter(object rowObject, CheckState newValue)
     {
-        var ti = rowObject as TableInfo;
+        //var ti = rowObject as TableInfo;
 
-        var joiner = _aggregate.CatalogueRepository.AggregateForcedJoinManager;
+        //var joiner = _aggregate.CatalogueDbContext.AggregateForcedJoinManager;
 
-        //user is trying to use a joinable something
-        if (newValue == CheckState.Checked)
-        {
-            //user is trying to turn on usage of a TableInfo
-            if (ti != null)
-            {
-                joiner.CreateLinkBetween(_aggregate, ti);
-                _forcedJoins.Add(ti);
-            }
+        ////user is trying to use a joinable something
+        //if (newValue == CheckState.Checked)
+        //{
+        //    //user is trying to turn on usage of a TableInfo
+        //    if (ti != null)
+        //    {
+        //        joiner.CreateLinkBetween(_aggregate, ti);
+        //        _forcedJoins.Add(ti);
+        //    }
 
-            // user is trying to join to a Patient Index table
-            if (rowObject is JoinableCohortAggregateConfiguration patientIndexTable)
-            {
-                if (_aggregate.Catalogue.IsApiCall())
-                {
-                    Activator.Show("API calls cannot join to patient index tables");
-                    return CheckState.Unchecked;
-                }
+        //    // user is trying to join to a Patient Index table
+        //    if (rowObject is JoinableCohortAggregateConfiguration patientIndexTable)
+        //    {
+        //        if (_aggregate.Catalogue.IsApiCall())
+        //        {
+        //            Activator.Show("API calls cannot join to patient index tables");
+        //            return CheckState.Unchecked;
+        //        }
 
-                // if other check boxes are ticked
-                if (olvJoin.CheckedObjects.OfType<JoinableCohortAggregateConfigurationUse>().Any())
-                {
-                    Activator.Show("You cannot join to more than 1 patient index table at once");
-                    return CheckState.Unchecked;
-                }
+        //        // if other check boxes are ticked
+        //        if (olvJoin.CheckedObjects.OfType<JoinableCohortAggregateConfigurationUse>().Any())
+        //        {
+        //            Activator.Show("You cannot join to more than 1 patient index table at once");
+        //            return CheckState.Unchecked;
+        //        }
 
-                var joinUse = patientIndexTable.AddUser(_aggregate);
-                olvJoin.RemoveObject(patientIndexTable);
-                olvJoin.AddObject(joinUse);
-            }
-        }
-        else
-        {
-            //user is trying to turn off usage of a TableInfo
-            if (ti != null)
-            {
-                joiner.BreakLinkBetween(_aggregate, ti);
-                _forcedJoins.Remove(ti);
-            }
+        //        var joinUse = patientIndexTable.AddUser(_aggregate);
+        //        olvJoin.RemoveObject(patientIndexTable);
+        //        olvJoin.AddObject(joinUse);
+        //    }
+        //}
+        //else
+        //{
+        //    //user is trying to turn off usage of a TableInfo
+        //    if (ti != null)
+        //    {
+        //        joiner.BreakLinkBetween(_aggregate, ti);
+        //        _forcedJoins.Remove(ti);
+        //    }
 
-            if (rowObject is JoinableCohortAggregateConfigurationUse patientIndexTableUse)
-            {
-                var joinable = patientIndexTableUse.JoinableCohortAggregateConfiguration;
+        //    if (rowObject is JoinableCohortAggregateConfigurationUse patientIndexTableUse)
+        //    {
+        //        var joinable = patientIndexTableUse.JoinableCohortAggregateConfiguration;
 
-                patientIndexTableUse.DeleteInDatabase();
-                olvJoin.RemoveObject(patientIndexTableUse);
-                olvJoin.AddObject(joinable);
-            }
-        }
+        //        patientIndexTableUse.DeleteInDatabase();
+        //        olvJoin.RemoveObject(patientIndexTableUse);
+        //        olvJoin.AddObject(joinable);
+        //    }
+        //}
 
-        SetDatabaseObject(Activator, _aggregate);
-        Publish();
+        //SetDatabaseObject(Activator, _aggregate);
+        //Publish();
 
         return newValue;
     }

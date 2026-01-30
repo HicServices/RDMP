@@ -5,14 +5,15 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-/// Helper class for becoming an IEncryptedPasswordHost via SimpleStringValueEncryption.  This class needs an ICatalogueRepository because
-/// SimpleStringValueEncryption is only secure when there is a private RSA encryption key specified in the CatalogueRepository.  This key
+/// Helper class for becoming an IEncryptedPasswordHost via SimpleStringValueEncryption.  This class needs an RDMPDbContextbecause
+/// SimpleStringValueEncryption is only secure when there is a private RSA encryption key specified in the CatalogueDbContext.  This key
 /// certificate will be a file location.  This allows you to use windows file system based user authentication to securely encrypt strings
 /// within RDMP databases.
 /// 
@@ -47,21 +48,21 @@ public class EncryptedPasswordHost : IEncryptedPasswordHost
     /// <summary>
     /// Prepares the object for decrypting/encrypting passwords based on the <see cref="Repositories.Managers.PasswordEncryptionKeyLocation"/>
     /// </summary>
-    /// <param name="repository"></param>
-    public EncryptedPasswordHost(RdmpDbContext catalogueDbContext)
+    /// <param name="catalogueDbContext"></param>
+    public EncryptedPasswordHost(RDMPDbContext catalogueDbContext)
     {
-        _encryptedString = new EncryptedString(repository);
+        _encryptedString = new EncryptedString(catalogueDbContext);
     }
 
     /// <summary>
     /// Updates the encryption method to use a real encryption strategy.  Should be called
     /// after deserialization and only if the blank constructor was used.
     /// </summary>
-    /// <param name="repository"></param>
-    public void SetRepository(RdmpDbContext catalogueDbContext)
+    /// <param name="catalogueDbContext"></param>
+    public void SetRepository(RDMPDbContext catalogueDbContext)
     {
         if (_encryptedString is FakeEncryptedString f)
-            _encryptedString = new EncryptedString(repository)
+            _encryptedString = new EncryptedString(catalogueDbContext)
             {
                 Value = f.Value
             };

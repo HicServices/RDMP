@@ -117,7 +117,7 @@ public partial class CustomMetadataReport
 
         try
         {
-            DQERepository = new DQERepository(repositoryLocator.CatalogueRepository);
+            DQERepository = new DQERepository(repositoryLocator.CatalogueDbContext);
         }
         catch (NotSupportedException)
         {

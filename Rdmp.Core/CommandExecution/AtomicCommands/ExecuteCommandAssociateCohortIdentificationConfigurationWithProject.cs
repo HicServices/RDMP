@@ -40,7 +40,7 @@ public sealed class ExecuteCommandAssociateCohortIdentificationConfigurationWith
         if (_project == null)
         {
             //project is not known so get all projects
-            var valid = BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>();
+            var valid = BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Project>();
 
             //except if the cic is the launch point
             if (_cic != null)
@@ -82,7 +82,7 @@ public sealed class ExecuteCommandAssociateCohortIdentificationConfigurationWith
 
         //create new relationship in database between the cic and project
         _ = new ProjectCohortIdentificationConfigurationAssociation(
-            BasicActivator.RepositoryLocator.DataExportRepository, _project, _cic);
+            BasicActivator.RepositoryLocator.CatalogueDbContext, _project, _cic);
 
         Publish(_project);
         Publish(_cic);

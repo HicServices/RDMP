@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Repositories;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls;
@@ -20,25 +21,25 @@ namespace Rdmp.UI.PipelineUIs.Pipelines.PluginPipelineUsers;
 /// </summary>
 public class PipelineSelectionUIFactory
 {
-    private readonly ICatalogueRepository _repository;
+    private readonly RDMPDbContext _catalogueDbContext;
     private readonly IPipelineUser _user;
     private readonly IPipelineUseCase _useCase;
     private readonly IExtractionConfiguration _extractionCurationConfiguration;
 
     private IPipelineSelectionUI _pipelineSelectionUIInstance;
 
-    public PipelineSelectionUIFactory(RdmpDbContext catalogueDbContext, IPipelineUser user, IPipelineUseCase useCase, IExtractionConfiguration extractionConfiguration = null)
+    public PipelineSelectionUIFactory(RDMPDbContext catalogueDbContext, IPipelineUser user, IPipelineUseCase useCase, IExtractionConfiguration extractionConfiguration = null)
     {
-        _repository = repository;
+        _catalogueDbContext = catalogueDbContext;
         _user = user;
         _useCase = useCase;
         _extractionCurationConfiguration = extractionConfiguration;
     }
 
-    public PipelineSelectionUIFactory(RdmpDbContext catalogueDbContext, RequiredPropertyInfo requirement,
+    public PipelineSelectionUIFactory(RDMPDbContext catalogueDbContext, RequiredPropertyInfo requirement,
         ArgumentValueUIArgs args, object demanderInstance)
     {
-        _repository = repository;
+        _catalogueDbContext = catalogueDbContext;
 
         var pluginUserAndCase = new PluginPipelineUser(requirement, args, demanderInstance);
         _user = pluginUserAndCase;
@@ -49,7 +50,7 @@ public class PipelineSelectionUIFactory
         Control containerControl = null)
     {
         //setup getter as an event handler for the selection ui
-        _pipelineSelectionUIInstance = new PipelineSelectionUI(activator, _useCase, _repository, _extractionCurationConfiguration);
+        _pipelineSelectionUIInstance = new PipelineSelectionUI(activator, _useCase, _catalogueDbContext, _extractionCurationConfiguration);
 
         if (_user != null)
         {

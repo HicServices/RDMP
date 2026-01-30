@@ -52,7 +52,7 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
     public override void Execute()
     {
         base.Execute();
-        var memoryRepo = new MemoryCatalogueRepository();
+        var memoryRepo = new MemoryRDMPDbContext();
 
         foreach (var columnInfo in _columns.Where(c => !c.IsPrimaryKey))
         {

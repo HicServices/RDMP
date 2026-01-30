@@ -13,6 +13,7 @@ using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Referencing;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.QueryBuilding.SyntaxChecking;
@@ -101,23 +102,23 @@ public class AnyTableSqlParameter : ReferenceOtherObjectDatabaseEntity, ISqlPara
     /// should be of a type which passes <see cref="IsSupportedType"/>.  When the object is used for query generation by an <see cref="QueryBuilding.ISqlQueryBuilder"/>
     /// then the parameter will be used
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="parent"></param>
     /// <param name="parameterSQL"></param>
-    public AnyTableSqlParameter(RdmpDbContext catalogueDbContext, IMapsDirectlyToDatabaseTable parent,
+    public AnyTableSqlParameter(RDMPDbContext catalogueDbContext, IMapsDirectlyToDatabaseTable parent,
         string parameterSQL)
     {
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "ReferencedObjectID", parent.ID },
-            { "ReferencedObjectType", parent.GetType().Name },
-            { "ReferencedObjectRepositoryType", parent.Repository.GetType().Name },
-            { "ParameterSQL", parameterSQL }
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "ReferencedObjectID", parent.ID },
+        //    { "ReferencedObjectType", parent.GetType().Name },
+        //    { "ReferencedObjectRepositoryType", parent.CatalogueDbContext.GetType().Name },
+        //    { "ParameterSQL", parameterSQL }
+        //});
     }
 
-    internal AnyTableSqlParameter(RdmpDbContext catalogueDbContext, DbDataReader r)
-        : base(repository, r)
+    internal AnyTableSqlParameter(RDMPDbContext catalogueDbContext, DbDataReader r)
+        : base(catalogueDbContext, r)
     {
         Value = r["Value"] as string;
         ParameterSQL = r["ParameterSQL"] as string;
@@ -194,7 +195,7 @@ public class AnyTableSqlParameter : ReferenceOtherObjectDatabaseEntity, ISqlPara
     {
         var type = typeof(Catalogue).Assembly.GetTypes().Single(t => t.Name.Equals(ReferencedObjectType));
 
-        return Repository.GetObjectByID(type, ReferencedObjectID);
+        return CatalogueDbContext.GetObjectByID(type, ReferencedObjectID);
     }
 
     /// <inheritdoc/>

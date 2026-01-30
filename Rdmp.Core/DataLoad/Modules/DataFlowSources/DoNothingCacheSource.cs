@@ -30,7 +30,7 @@ public class DoNothingCacheSource : CacheSource<ICacheChunk>
         {
             runs++;
 
-            return new DoNothingCacheChunk(CatalogueRepository)
+            return new DoNothingCacheChunk(CatalogueDbContext)
             {
                 RunIteration = runs
             };

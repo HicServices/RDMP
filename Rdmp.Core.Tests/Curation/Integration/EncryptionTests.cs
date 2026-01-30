@@ -19,7 +19,7 @@ public class EncryptionTests : DatabaseTests
     [Test]
     public void EncryptAndThenDecryptString()
     {
-        var encrypter = CatalogueRepository.EncryptionManager.GetEncrypter();
+        var encrypter = CatalogueDbContext.EncryptionManager.GetEncrypter();
 
         const string toEncrypt = "Amagad";
         var encryptedBinaryString = encrypter.Encrypt(toEncrypt);
@@ -34,7 +34,7 @@ public class EncryptionTests : DatabaseTests
     [Test]
     public void CheckIfThingsAreEncryptedOrNot()
     {
-        var encrypter = CatalogueRepository.EncryptionManager.GetEncrypter();
+        var encrypter = CatalogueDbContext.EncryptionManager.GetEncrypter();
 
         const string toEncrypt = "Amagad";
         var encryptedBinaryString = encrypter.Encrypt(toEncrypt);
@@ -53,7 +53,7 @@ public class EncryptionTests : DatabaseTests
     public void MultiEncryptingShouldntBreakIt()
     {
         //cleanup
-        foreach (var c in CatalogueRepository.GetAllObjects<DataAccessCredentials>()
+        foreach (var c in CatalogueDbContext.GetAllObjects<DataAccessCredentials>()
                      .Where(c => c.Name.Equals("frankieFran")))
             c.DeleteInDatabase();
 
@@ -90,7 +90,7 @@ public class EncryptionTests : DatabaseTests
     public void DataAccessCredentialsEncryption()
     {
         //cleanup
-        foreach (var c in CatalogueRepository.GetAllObjects<DataAccessCredentials>()
+        foreach (var c in CatalogueDbContext.GetAllObjects<DataAccessCredentials>()
                      .Where(c => c.Name.Equals("frankieFran")))
             c.DeleteInDatabase();
 
@@ -107,7 +107,7 @@ public class EncryptionTests : DatabaseTests
 
             //save it
             creds.SaveToDatabase();
-            using (var con = CatalogueTableRepository.GetConnection())
+            using (var con = CatalogueTableCatalogueDbContext.GetConnection())
             {
                 string value;
                 using (var cmd = DatabaseCommandHelper.GetCommand(
@@ -123,7 +123,7 @@ public class EncryptionTests : DatabaseTests
             }
 
             //get a new copy out of the database
-            var newCopy = CatalogueRepository.GetObjectByID<DataAccessCredentials>(creds.ID);
+            var newCopy = CatalogueDbContext.GetObjectByID<DataAccessCredentials>(creds.ID);
             Assert.Multiple(() =>
             {
                 Assert.That(newCopy.Password, Is.EqualTo(creds.Password)); //passwords should match
@@ -151,7 +151,7 @@ public class EncryptionTests : DatabaseTests
     public void TestFreakyPasswordValues(string freakyPassword)
     {
         //cleanup
-        foreach (var c in CatalogueRepository.GetAllObjects<DataAccessCredentials>()
+        foreach (var c in CatalogueDbContext.GetAllObjects<DataAccessCredentials>()
                      .Where(c => c.Name.Equals("frankieFran")))
             c.DeleteInDatabase();
 
@@ -168,7 +168,7 @@ public class EncryptionTests : DatabaseTests
 
             //save it
             creds.SaveToDatabase();
-            using (var con = CatalogueTableRepository.GetConnection())
+            using (var con = CatalogueTableCatalogueDbContext.GetConnection())
             {
                 string value;
                 using (var cmd = DatabaseCommandHelper.GetCommand(
@@ -184,7 +184,7 @@ public class EncryptionTests : DatabaseTests
             }
 
             //get a new copy out of the database
-            var newCopy = CatalogueRepository.GetObjectByID<DataAccessCredentials>(creds.ID);
+            var newCopy = CatalogueDbContext.GetObjectByID<DataAccessCredentials>(creds.ID);
             Assert.Multiple(() =>
             {
                 Assert.That(newCopy.Password, Is.EqualTo(creds.Password)); //passwords should match
@@ -210,7 +210,7 @@ public class EncryptionTests : DatabaseTests
     public void MigrationOfOldPasswordsTest()
     {
         //cleanup
-        foreach (var c in CatalogueRepository.GetAllObjects<DataAccessCredentials>()
+        foreach (var c in CatalogueDbContext.GetAllObjects<DataAccessCredentials>()
                      .Where(c => c.Name.Equals("frankieFran")))
             c.DeleteInDatabase();
 
@@ -219,7 +219,7 @@ public class EncryptionTests : DatabaseTests
         try
         {
             //update the database to an unencrypted password (like would be the case before software patch)
-            using (var con = CatalogueTableRepository.GetConnection())
+            using (var con = CatalogueTableCatalogueDbContext.GetConnection())
             {
                 using var cmd = DatabaseCommandHelper.GetCommand(
                     "UPDATE DataAccessCredentials set Password = 'fish' where Name='frankieFran'", con.Connection,
@@ -227,7 +227,7 @@ public class EncryptionTests : DatabaseTests
                 Assert.That(cmd.ExecuteNonQuery(), Is.EqualTo(1));
             }
 
-            var newCopy = CatalogueRepository.GetObjectByID<DataAccessCredentials>(creds.ID);
+            var newCopy = CatalogueDbContext.GetObjectByID<DataAccessCredentials>(creds.ID);
 
             Assert.Multiple(() =>
             {

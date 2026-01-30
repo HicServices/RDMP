@@ -13,6 +13,7 @@ using Rdmp.Core.CommandLine.Interactive;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataViewing;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
@@ -24,7 +25,7 @@ namespace Rdmp.Core.CommandExecution;
 /// </summary>
 public class ThrowImmediatelyActivator : BasicActivateItems
 {
-    public ThrowImmediatelyActivator(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
+    public ThrowImmediatelyActivator(RDMPDbContext repositoryLocator,
         ICheckNotifier notifier = null) : base(repositoryLocator, notifier ?? ThrowImmediatelyCheckNotifier.Quiet)
     {
     }

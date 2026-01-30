@@ -10,6 +10,7 @@ using System.Data.Common;
 using System.Linq;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.FilterImporting.Construction;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 
@@ -45,17 +46,17 @@ public class AggregateFilterContainer : ConcreteContainer, IDisableable
     /// <summary>
     /// Creates a new IContainer in the dtabase for use with an <see cref="AggregateConfiguration"/>
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param  name="catalogueDbContext"></param>
     /// <param name="operation"></param>
-    public AggregateFilterContainer(RdmpDbContext catalogueDbContext, FilterContainerOperation operation) : base(
-        repository.FilterManager)
+    public AggregateFilterContainer(RDMPDbContext catalogueDbContext, FilterContainerOperation operation) : base(null)
+        //catalogueDbContext.FilterManager)
     {
-        repository.InsertAndHydrate(this, new Dictionary<string, object> { { "Operation", operation.ToString() } });
+        //catalogueDbContext.InsertAndHydrate(this, new Dictionary<string, object> { { "Operation", operation.ToString() } });
     }
 
 
-    internal AggregateFilterContainer(RdmpDbContext catalogueDbContext, DbDataReader r) : base(repository.FilterManager,
-        repository, r)
+    internal AggregateFilterContainer(RDMPDbContext catalogueDbContext, DbDataReader r) : base(null)//catalogueDbContext.FilterManager,
+        //catalogueDbContext, r)
     {
         IsDisabled = Convert.ToBoolean(r["IsDisabled"]);
     }
@@ -127,7 +128,7 @@ public class AggregateFilterContainer : ConcreteContainer, IDisableable
 
     private AggregateFilterContainer ShallowClone()
     {
-        var container = new AggregateFilterContainer(CatalogueRepository, Operation);
+        var container = new AggregateFilterContainer(CatalogueDbContext, Operation);
         CopyShallowValuesTo(container);
         return container;
     }
@@ -139,7 +140,7 @@ public class AggregateFilterContainer : ConcreteContainer, IDisableable
     /// <returns></returns>
     public AggregateConfiguration GetAggregate()
     {
-        var aggregateConfiguration = Repository.GetAllObjectsWhere<AggregateConfiguration>("RootFilterContainer_ID", ID)
+        var aggregateConfiguration = CatalogueDbContext.GetAllObjectsWhere<AggregateConfiguration>("RootFilterContainer_ID", ID)
             .SingleOrDefault();
 
         if (aggregateConfiguration != null)
@@ -150,13 +151,13 @@ public class AggregateFilterContainer : ConcreteContainer, IDisableable
         return ((AggregateFilterContainer)parentContainer)?.GetAggregate();
     }
 
-    public override IFilterFactory GetFilterFactory() => new AggregateFilterFactory(CatalogueRepository);
+    public override IFilterFactory GetFilterFactory() => new AggregateFilterFactory(CatalogueDbContext);
 
     public override void DeleteInDatabase()
     {
         base.DeleteInDatabase();
 
-        foreach (var ac in Repository.GetAllObjectsWhere<AggregateConfiguration>(
+        foreach (var ac in CatalogueDbContext.GetAllObjectsWhere<AggregateConfiguration>(
                      nameof(AggregateConfiguration.RootFilterContainer_ID), ID))
         {
             ac.RootFilterContainer_ID = null;

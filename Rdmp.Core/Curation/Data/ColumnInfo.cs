@@ -13,6 +13,7 @@ using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using FAnsi.Naming;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
@@ -220,7 +221,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
 
     /// <inheritdoc cref="ANOTable_ID"/>
     [NoMappingToDatabase]
-    public ANOTable ANOTable => ANOTable_ID == null ? null : Repository.GetObjectByID<ANOTable>((int)ANOTable_ID);
+    public ANOTable ANOTable => ANOTable_ID == null ? null : CatalogueDbContext.GetObjectByID<ANOTable>((int)ANOTable_ID);
 
     /// <summary>
     /// Fetches all <see cref="ExtractionInformation"/> which draw on this <see cref="ColumnInfo"/>.  This could be none (if it is not extractable) or more than one
@@ -237,7 +238,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     /// non extractable <see cref="CatalogueItem"/> linked to this <see cref="ColumnInfo"/> in <see cref="Catalogue"/>s.
     /// </summary>
     [NoMappingToDatabase]
-    public IEnumerable<CatalogueItem> CatalogueItems => Repository.GetAllObjectsWithParent<CatalogueItem>(this);
+    public IEnumerable<CatalogueItem> CatalogueItems => CatalogueDbContext.GetAllObjectsWithParent<CatalogueItem>(this);
 
     #endregion
 
@@ -277,22 +278,22 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     /// when first importing a table reference (See <see cref="TableInfoImporter"/>)  and again whenever there are new columns
     /// discovered during table sync (See <see cref="TableInfoSynchronizer"/>)
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="name"></param>
     /// <param name="type"></param>
     /// <param name="parent"></param>
-    public ColumnInfo(RdmpDbContext catalogueDbContext, string name, string type, ITableInfo parent)
+    public ColumnInfo(RDMPDbContext catalogueDbContext, string name, string type, ITableInfo parent)
     {
         //defaults
         DuplicateRecordResolutionIsAscending = true;
 
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "Name", name != null ? (object)name : DBNull.Value },
-            { "Data_type", type != null ? (object)type : DBNull.Value },
-            { "TableInfo_ID", parent.ID },
-            { "IgnoreInLoads", false }
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "Name", name != null ? (object)name : DBNull.Value },
+        //    { "Data_type", type != null ? (object)type : DBNull.Value },
+        //    { "TableInfo_ID", parent.ID },
+        //    { "IgnoreInLoads", false }
+        //});
 
         ClearAllInjections();
     }
@@ -309,8 +310,8 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     }
 
 
-    internal ColumnInfo(RdmpDbContext catalogueDbContext, DbDataReader r)
-        : base(repository, r)
+    internal ColumnInfo(RDMPDbContext catalogueDbContext, DbDataReader r)
+        : base(catalogueDbContext, r)
     {
         TableInfo_ID = int.Parse(r["TableInfo_ID"].ToString());
         Name = r["Name"].ToString();
@@ -470,7 +471,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
 
         //also join infoslookups are dependent on us
         dependantObjects.AddRange(
-            Repository.GetAllObjects<JoinInfo>().Where(j =>
+            CatalogueDbContext.GetAllObjects<JoinInfo>().Where(j =>
                 j.ForeignKey_ID == ID ||
                 j.PrimaryKey_ID == ID));
 
@@ -511,12 +512,12 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     public Lookup[] GetAllLookupForColumnInfoWhereItIsA(LookupType type)
     {
         if (type == LookupType.Description)
-            return Repository.GetAllObjectsWhere<Lookup>("Description_ID", ID);
-        if (type == LookupType.AnyKey)
-            return Repository.GetAllObjectsWhere<Lookup>("ForeignKey_ID", ID, ExpressionType.OrElse, "PrimaryKey_ID",
-                ID);
+            return CatalogueDbContext.GetAllObjectsWhere<Lookup>("Description_ID", ID).ToArray();
+        //if (type == LookupType.AnyKey)
+        //    return CatalogueDbContext.GetAllObjectsWhere<Lookup>("ForeignKey_ID", ID, ExpressionType.OrElse, "PrimaryKey_ID",
+        //        ID);
         return type == LookupType.ForeignKey
-            ? Repository.GetAllObjectsWhere<Lookup>("ForeignKey_ID", ID)
+            ? CatalogueDbContext.GetAllObjectsWhere<Lookup>("ForeignKey_ID", ID).ToArray()
             : throw new NotImplementedException($"Unrecognised LookupType {type}");
     }
 
@@ -529,7 +530,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     ///<inheritdoc/>
     public void ClearAllInjections()
     {
-        _knownTableInfo = new Lazy<TableInfo>(() => Repository.GetObjectByID<TableInfo>(TableInfo_ID));
+        _knownTableInfo = new Lazy<TableInfo>(() => CatalogueDbContext.GetObjectByID<TableInfo>(TableInfo_ID));
     }
 
     /// <summary>

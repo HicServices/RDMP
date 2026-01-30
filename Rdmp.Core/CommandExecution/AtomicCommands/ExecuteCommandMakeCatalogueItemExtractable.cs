@@ -39,7 +39,7 @@ public class ExecuteCommandMakeCatalogueItemExtractable : BasicCommandExecution,
             _catalogueItem, _catalogueItem.ColumnInfo, _catalogueItem.ColumnInfo.Name);
 
         //it will be Core but if the Catalogue is ProjectSpecific then instead we should make our new ExtractionInformation ExtractionCategory.ProjectSpecific
-        if (_catalogueItem.Catalogue.IsProjectSpecific(BasicActivator.RepositoryLocator.DataExportRepository))
+        if (_catalogueItem.Catalogue.IsProjectSpecific(BasicActivator.RepositoryLocator.CatalogueDbContext))
         {
             newExtractionInformation.ExtractionCategory = ExtractionCategory.ProjectSpecific;
             newExtractionInformation.SaveToDatabase();

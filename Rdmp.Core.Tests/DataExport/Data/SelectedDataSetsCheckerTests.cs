@@ -52,7 +52,7 @@ public class SelectedDataSetsCheckerTests : TestsRequiringAnExtractionConfigurat
         // normal checks pass
         var checker = new SelectedDataSetsChecker(new ThrowImmediatelyActivator(RepositoryLocator), _selectedDataSet);
 
-        foreach (var r in DataExportRepository.GetAllObjects<CumulativeExtractionResults>()) r.DeleteInDatabase();
+        foreach (var r in DataExportCatalogueDbContext.GetAllObjects<CumulativeExtractionResults>()) r.DeleteInDatabase();
 
         var ep = new ExtractionProgress(DataExportRepository, _selectedDataSet, new DateTime(1990, 1, 1),
             new DateTime(2001, 1, 1), 100, "mybatch",
@@ -93,7 +93,7 @@ public class SelectedDataSetsCheckerTests : TestsRequiringAnExtractionConfigurat
 
         ep.SaveToDatabase();
 
-        foreach (var r in DataExportRepository.GetAllObjects<CumulativeExtractionResults>()) r.DeleteInDatabase();
+        foreach (var r in DataExportCatalogueDbContext.GetAllObjects<CumulativeExtractionResults>()) r.DeleteInDatabase();
 
 
         // audit has SQL is good, it contains the correct cohort

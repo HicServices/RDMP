@@ -39,7 +39,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands
 
         public override void Execute()
         {
-            var associations = _activator.RepositoryLocator.DataExportRepository.GetAllObjects<ProjectCohortIdentificationConfigurationAssociation>();
+            var associations = _activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<ProjectCohortIdentificationConfigurationAssociation>();
             var projectAssociations = associations.Where(a => a.CohortIdentificationConfiguration_ID == _cic.ID).ToList();
             if (_activator.IsInteractive && projectAssociations.Any())
             {
@@ -48,7 +48,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands
                     //multiple, make them pick
                     if (_activator.YesNo("This Template is associated with multiple Projects. Would you like to associate this cohort configuration with one of them?", "Associate with a Project"))
                     {
-                        _selectedProject = _activator.SelectOne("Select a Project to associate this cohort with", _activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>());
+                        _selectedProject = _activator.SelectOne("Select a Project to associate this cohort with", _activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Project>());
                     }
                 }
                 else if (projectAssociations.Count == 1)
@@ -65,7 +65,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands
                     //ask if they want to use it in a project
                     if (_activator.YesNo("Would you like to associate this cohort configuration with a project?", "Associate with a Project"))
                     {
-                        _selectedProject = _activator.SelectOne("Select a Project to associate this cohort with", _activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>());
+                        _selectedProject = _activator.SelectOne("Select a Project to associate this cohort with", _activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Project>());
                     }
                 }
             }

@@ -18,6 +18,7 @@ using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Pipelines;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.Repositories;
@@ -54,7 +55,7 @@ public class CommandInvoker
         _argumentDelegates = _basicActivator.GetDelegates();
 
 
-        AddDelegate(typeof(ICatalogueRepository), true, p => _repositoryLocator.CatalogueRepository);
+        AddDelegate(typeof(RDMPDbContext), true, p => _repositoryLocator.CatalogueDbContext);
         AddDelegate(typeof(IDataExportRepository), true, p => _repositoryLocator.DataExportRepository);
         AddDelegate(_basicActivator.GetType(), true, p => _basicActivator);
         AddDelegate(typeof(IRDMPPlatformRepositoryServiceLocator), true, p => _repositoryLocator);
@@ -435,10 +436,11 @@ public class CommandInvoker
         if (type.IsAbstract || type.IsInterface)
             return _basicActivator.GetAll(type).ToArray();
 
-        if (_repositoryLocator.CatalogueRepository.SupportsObjectType(type))
-            return _repositoryLocator.CatalogueRepository.GetAllObjects(type).ToArray();
-        return _repositoryLocator.DataExportRepository.SupportsObjectType(type)
-            ? _repositoryLocator.DataExportRepository.GetAllObjects(type).ToArray()
-            : null;
+        //if (_repositoryLocator.CatalogueDbContext.SupportsObjectType(type))
+        //    return _repositoryLocator.CatalogueDbContext.GetAllObjects(type).ToArray();
+        //return _repositoryLocator.CatalogueDbContext.SupportsObjectType(type)
+        //    ? _repositoryLocator.CatalogueDbContext.GetAllObjects(type).ToArray()
+        //    : null;
+        return null;
     }
 }

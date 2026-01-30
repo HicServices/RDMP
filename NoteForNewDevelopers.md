@@ -51,7 +51,7 @@ All technical and repo specific documentation are stored in markdown (`.md` form
 - [Cohort Builder docs including info on list caching](./Rdmp.Core/CohortCreation/CohortCreation.md)
 - [Tree layout documentation](./Rdmp.Core/Providers/Providers.md)
 - [Aggregate Graphs](./Documentation/CodeTutorials/Graphs.md)
-- [YamlRepository](./Documentation/CodeTutorials/YamlRepository.md)
+- [YamlRepository](./Documentation/CodeTutorials/YamlCatalogueDbContext.md)
 - [Custom Metadata Reports](./Documentation/CodeTutorials/CustomMetadataSubstitutions.md)
 
 ## Commands
@@ -214,10 +214,10 @@ RDMP supports plugins.  The following plugin repositories are used by HIC / EPCC
 <!-- markdown-link-check-disable-next-line -->
 - [RdmpExtensions](https://github.com/HicServices/RdmpExtensions): Private repository containing HIC specific components but which may be more widely useful e.g. run Python scripts.  If you get a 404 trying to access this then ask to be granted rights to read/write the repo
 
-[YamlRepository]: ./Rdmp.Core/Repositories/YamlRepository.cs
-[CatalogueRepository]: ./Rdmp.Core/Repositories/CatalogueRepository.cs
-[DataExportRepository]: ./Rdmp.Core/Repositories/DataExportRepository.cs
-[DQERepository]: ./Rdmp.Core/Repositories/DQERepository.cs
+[YamlRepository]: ./Rdmp.Core/Repositories/YamlCatalogueDbContext.cs
+[CatalogueRepository]: ./Rdmp.Core/Repositories/CatalogueDbContext.cs
+[DataExportRepository]: ./Rdmp.Core/Repositories/DataExportCatalogueDbContext.cs
+[DQERepository]: ./Rdmp.Core/Repositories/DQECatalogueDbContext.cs
 [Project]: ./Documentation/CodeTutorials/Glossary.md#Project
 [ExtendedProperty]: ./Rdmp.Core/Curation/Data/ExtendedProperty.cs
 [[DBMS]]: ./Documentation/CodeTutorials/Glossary.md#[DBMS]

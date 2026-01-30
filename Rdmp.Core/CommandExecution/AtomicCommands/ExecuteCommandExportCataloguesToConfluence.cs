@@ -261,7 +261,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", _apiKey);
 
             var catalogues = _activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Catalogue>()
-                .Where(c => !c.IsDeprecated && !c.IsInternalDataset && !c.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository))
+                .Where(c => !c.IsDeprecated && !c.IsInternalDataset && !c.IsProjectSpecific(_activator.RepositoryLocator.CatalogueDbContext))
                 .ToList();
             var builder = new ConfluencePageBuilder(catalogues, _owner, _description, _subdomain);
             var uri = _isServiceAccount ? $"https://api.atlassian.com/ex/confluence/{_subdomain}/api/v2/pages" : $"https://{_subdomain}.atlassian.net/wiki/api/v2/pages";

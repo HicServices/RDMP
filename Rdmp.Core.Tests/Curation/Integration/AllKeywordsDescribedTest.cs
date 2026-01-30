@@ -24,7 +24,7 @@ public class AllKeywordsDescribedTest : DatabaseTests
     {
         base.OneTimeSetUp();
 
-        CatalogueRepository.CommentStore.ReadComments(TestContext.CurrentContext.TestDirectory);
+        CatalogueDbContext.CommentStore.ReadComments(TestContext.CurrentContext.TestDirectory);
     }
 
     [Test]
@@ -41,8 +41,8 @@ public class AllKeywordsDescribedTest : DatabaseTests
             .Select(type => new
             {
                 type,
-                docs = CatalogueRepository.CommentStore[type.Name] ??
-                       CatalogueRepository.CommentStore[$"I{type.Name}"]
+                docs = CatalogueDbContext.CommentStore[type.Name] ??
+                       CatalogueDbContext.CommentStore[$"I{type.Name}"]
             })
             .Where(t => string.IsNullOrWhiteSpace(t.docs))
             .Select(t =>
@@ -62,11 +62,11 @@ public class AllKeywordsDescribedTest : DatabaseTests
         //ensures the DQERepository gets a chance to add its help text
         new DQERepository(CatalogueRepository);
 
-        allKeys.AddRange(GetForeignKeys(CatalogueTableRepository.DiscoveredServer));
-        allKeys.AddRange(GetForeignKeys(DataExportTableRepository.DiscoveredServer));
+        allKeys.AddRange(GetForeignKeys(CatalogueTableCatalogueDbContext.DiscoveredServer));
+        allKeys.AddRange(GetForeignKeys(DataExportTableCatalogueDbContext.DiscoveredServer));
         allKeys.AddRange(GetForeignKeys(new DiscoveredServer(DataQualityEngineConnectionString)));
 
-        var problems = allKeys.Where(fkName => !CatalogueRepository.CommentStore.ContainsKey(fkName))
+        var problems = allKeys.Where(fkName => !CatalogueDbContext.CommentStore.ContainsKey(fkName))
             .Select(fkName => $"{fkName} is a foreign Key (which does not CASCADE) but does not have any HelpText")
             .ToList();
 
@@ -84,13 +84,13 @@ public class AllKeywordsDescribedTest : DatabaseTests
         //ensures the DQERepository gets a chance to add its help text
         new DQERepository(CatalogueRepository);
 
-        allIndexes.AddRange(GetIndexes(CatalogueTableRepository.DiscoveredServer));
-        allIndexes.AddRange(GetIndexes(DataExportTableRepository.DiscoveredServer));
+        allIndexes.AddRange(GetIndexes(CatalogueTableCatalogueDbContext.DiscoveredServer));
+        allIndexes.AddRange(GetIndexes(DataExportTableCatalogueDbContext.DiscoveredServer));
         allIndexes.AddRange(GetIndexes(new DiscoveredServer(DataQualityEngineConnectionString)));
 
         var problems = new List<string>();
         foreach (var idx in allIndexes)
-            if (!CatalogueRepository.CommentStore.ContainsKey(idx))
+            if (!CatalogueDbContext.CommentStore.ContainsKey(idx))
                 problems.Add($"{idx} is an index but does not have any HelpText");
 
         foreach (var problem in problems)

@@ -66,7 +66,7 @@ public partial class ExampleDatasetsCreation
 
         if (db.Server.Builder is SqlConnectionStringBuilder b)
         {
-            var keywords = _repos.CatalogueRepository
+            var keywords = _repos.CatalogueDbContext
                 .GetAllObjects<ConnectionStringKeyword>()
                 .Where(k => k.DatabaseType == DatabaseType.MicrosoftSQLServer)
                 .ToArray();
@@ -197,7 +197,7 @@ public partial class ExampleDatasetsCreation
 
         //Find the pipeline for committing cohorts
         var cohortCreationPipeline =
-            _repos.CatalogueRepository.GetAllObjects<Pipeline>().FirstOrDefault(p =>
+            _repos.CatalogueDbContext.GetAllObjects<Pipeline>().FirstOrDefault(p =>
                 p?.Source?.Class == typeof(CohortIdentificationConfigurationSource).FullName) ??
             throw new Exception("Could not find a cohort committing pipeline");
 
@@ -256,7 +256,7 @@ public partial class ExampleDatasetsCreation
     private void ReleaseAllConfigurations(ICheckNotifier notifier,
         params ExtractionConfiguration[] extractionConfigurations)
     {
-        var releasePipeline = _repos.CatalogueRepository.GetAllObjects<Pipeline>()
+        var releasePipeline = _repos.CatalogueDbContext.GetAllObjects<Pipeline>()
             .FirstOrDefault(p => p?.Destination?.Class == typeof(BasicDataReleaseDestination).FullName);
 
         try
@@ -320,13 +320,13 @@ public partial class ExampleDatasetsCreation
             catalogue.GetTableInfoList(false).SelectMany(t => t.ColumnInfos)
                 .SingleOrDefault(c => c.GetRuntimeName() == columnInfoName) ??
             throw new Exception($"Could not find ColumnInfo called '{columnInfoName}' in Catalogue {catalogue}");
-        var ci = new CatalogueItem(_repos.CatalogueRepository, catalogue, name)
+        var ci = new CatalogueItem(_repos.CatalogueDbContext, catalogue, name)
         {
             ColumnInfo_ID = col.ID
         };
         ci.SaveToDatabase();
 
-        return new ExtractionInformation(_repos.CatalogueRepository, ci, col, selectSQL);
+        return new ExtractionInformation(_repos.CatalogueDbContext, ci, col, selectSQL);
     }
 
     private ExtractionConfiguration CreateExtractionConfiguration(Project project, ExtractableCohort cohort,
@@ -342,13 +342,13 @@ public partial class ExampleDatasetsCreation
         foreach (var c in catalogues)
         {
             //Get its extractableness
-            var eds = _repos.DataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(c).SingleOrDefault()
+            var eds = _repos.CatalogueDbContext.GetAllObjectsWithParent<ExtractableDataSet>(c).SingleOrDefault()
                       ?? new ExtractableDataSet(_repos.DataExportRepository, c); //or make it extractable
 
             extractionConfiguration.AddDatasetToConfiguration(eds);
         }
 
-        var extractionPipeline = _repos.CatalogueRepository.GetAllObjects<Pipeline>().FirstOrDefault(p =>
+        var extractionPipeline = _repos.CatalogueDbContext.GetAllObjects<Pipeline>().FirstOrDefault(p =>
             p?.Destination?.Class == typeof(ExecuteDatasetExtractionFlatFileDestination).FullName);
 
         if (isReleased && extractionConfiguration != null)
@@ -406,10 +406,10 @@ public partial class ExampleDatasetsCreation
     private CohortIdentificationConfiguration CreateCohortIdentificationConfiguration(ExtractionFilter inclusionFilter1)
     {
         //Create the top level configuration object
-        var cic = new CohortIdentificationConfiguration(_repos.CatalogueRepository, "Tayside Lung Cancer Cohort");
+        var cic = new CohortIdentificationConfiguration(_repos.CatalogueDbContext, "Tayside Lung Cancer Cohort");
 
         //create a UNION container for Inclusion Criteria
-        var container = new CohortAggregateContainer(_repos.CatalogueRepository, SetOperation.UNION)
+        var container = new CohortAggregateContainer(_repos.CatalogueDbContext, SetOperation.UNION)
         {
             Name = "Inclusion Criteria"
         };
@@ -425,13 +425,13 @@ public partial class ExampleDatasetsCreation
         container.AddChild(ac, 0);
 
         //Add the filter to the WHERE logic of the cohort set
-        var whereContainer = new AggregateFilterContainer(_repos.CatalogueRepository, FilterContainerOperation.OR);
+        var whereContainer = new AggregateFilterContainer(_repos.CatalogueDbContext, FilterContainerOperation.OR);
 
         ac.Name = $"People with {inclusionFilter1.Name}";
         ac.RootFilterContainer_ID = whereContainer.ID;
         cic.EnsureNamingConvention(ac); //this will put cicx at the front and cause implicit SaveToDatabase
 
-        var filterImporter = new FilterImporter(new AggregateFilterFactory(_repos.CatalogueRepository), null);
+        var filterImporter = new FilterImporter(new AggregateFilterFactory(_repos.CatalogueDbContext), null);
         var cloneFilter = filterImporter.ImportFilter(whereContainer, inclusionFilter1, null);
 
         whereContainer.AddChild(cloneFilter);
@@ -444,7 +444,7 @@ public partial class ExampleDatasetsCreation
         AggregateFilterContainer container;
         if (graph.RootFilterContainer_ID == null)
         {
-            container = new AggregateFilterContainer(_repos.CatalogueRepository, FilterContainerOperation.AND);
+            container = new AggregateFilterContainer(_repos.CatalogueDbContext, FilterContainerOperation.AND);
             graph.RootFilterContainer_ID = container.ID;
             graph.SaveToDatabase();
         }
@@ -453,7 +453,7 @@ public partial class ExampleDatasetsCreation
             container = (AggregateFilterContainer)graph.RootFilterContainer;
         }
 
-        var filter = new AggregateFilter(_repos.CatalogueRepository, name, container)
+        var filter = new AggregateFilter(_repos.CatalogueDbContext, name, container)
         {
             WhereSQL = whereSql
         };
@@ -509,7 +509,7 @@ public partial class ExampleDatasetsCreation
     private IFilter CreateFilter(ICatalogue cata, string name, string parentExtractionInformation, string whereSql,
         string desc)
     {
-        var filter = new ExtractionFilter(_repos.CatalogueRepository, name,
+        var filter = new ExtractionFilter(_repos.CatalogueDbContext, name,
             GetExtractionInformation(cata, parentExtractionInformation))
         {
             WhereSQL = whereSql,
@@ -534,7 +534,7 @@ public partial class ExampleDatasetsCreation
     private AggregateConfiguration CreateGraph(ICatalogue cata, string name, string dimension1, bool isAxis,
         string dimension2)
     {
-        var ac = new AggregateConfiguration(_repos.CatalogueRepository, cata, name)
+        var ac = new AggregateConfiguration(_repos.CatalogueDbContext, cata, name)
         {
             CountSQL = "count(*) as NumberOfRecords"
         };
@@ -548,7 +548,7 @@ public partial class ExampleDatasetsCreation
 
         if (isAxis)
         {
-            var axis = new AggregateContinuousDateAxis(_repos.CatalogueRepository, mainDimension)
+            var axis = new AggregateContinuousDateAxis(_repos.CatalogueDbContext, mainDimension)
             {
                 StartDate = "'1970-01-01'",
                 AxisIncrement = FAnsi.Discovery.QuerySyntax.Aggregation.AxisIncrement.Year
@@ -628,7 +628,7 @@ public partial class ExampleDatasetsCreation
 
     private ITableInfo ImportTableInfo(DiscoveredTable tbl)
     {
-        var importer = new TableInfoImporter(_repos.CatalogueRepository, tbl);
+        var importer = new TableInfoImporter(_repos.CatalogueDbContext, tbl);
         importer.DoImport(out var ti, out _);
 
         return ti;

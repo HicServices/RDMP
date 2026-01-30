@@ -37,12 +37,12 @@ public class CohortVersioningTests : CohortQueryBuilderWithCacheTests
         var cic = GenerateCIC();
         var cmd = new ExecuteCommandCreateVersionOfCohortConfiguration(activator, cic);
         Assert.DoesNotThrow(() => cmd.Execute());
-        var newCic = CatalogueRepository.GetAllObjectsWhere<CohortIdentificationConfiguration>("ClonedFrom_ID", cic.ID);
+        var newCic = CatalogueDbContext.GetAllObjectsWhere<CohortIdentificationConfiguration>("ClonedFrom_ID", cic.ID);
         Assert.That(newCic, Has.Length.EqualTo(1));
         Assert.That(newCic.First().Version, Is.EqualTo(1));
 
         Assert.DoesNotThrow(() => cmd.Execute());
-        newCic = CatalogueRepository.GetAllObjectsWhere<CohortIdentificationConfiguration>("ClonedFrom_ID", cic.ID);
+        newCic = CatalogueDbContext.GetAllObjectsWhere<CohortIdentificationConfiguration>("ClonedFrom_ID", cic.ID);
         Assert.That(newCic, Has.Length.EqualTo(2));
         Assert.Multiple(() =>
         {
@@ -59,7 +59,7 @@ public class CohortVersioningTests : CohortQueryBuilderWithCacheTests
         var cic = GenerateCIC();
         var cmd = new ExecuteCommandCreateVersionOfCohortConfiguration(activator, cic,"Name","Description");
         Assert.DoesNotThrow(() => cmd.Execute());
-        var newCic = CatalogueRepository.GetAllObjectsWhere<CohortIdentificationConfiguration>("ClonedFrom_ID", cic.ID);
+        var newCic = CatalogueDbContext.GetAllObjectsWhere<CohortIdentificationConfiguration>("ClonedFrom_ID", cic.ID);
         Assert.That(newCic, Has.Length.EqualTo(1));
         Assert.That(newCic.First().Version, Is.EqualTo(1));
         Assert.That(newCic.First().Name, Is.EqualTo("Name"));
@@ -76,7 +76,7 @@ public class CohortVersioningTests : CohortQueryBuilderWithCacheTests
         var cic = GenerateCIC();
         var cmd = new ExecuteCommandCreateVersionOfCohortConfiguration(activator, cic, "MyName!");
         Assert.DoesNotThrow(() => cmd.Execute());
-        var newCic = CatalogueRepository.GetAllObjectsWhere<CohortIdentificationConfiguration>("ClonedFrom_ID", cic.ID);
+        var newCic = CatalogueDbContext.GetAllObjectsWhere<CohortIdentificationConfiguration>("ClonedFrom_ID", cic.ID);
         Assert.That(newCic, Has.Length.EqualTo(1));
         Assert.Multiple(() =>
         {
@@ -98,7 +98,7 @@ public class CohortVersioningTests : CohortQueryBuilderWithCacheTests
         cic.SaveToDatabase();
         var cmd = new ExecuteCommandCreateVersionOfCohortConfiguration(activator, cic, "MyName!");
         Assert.DoesNotThrow(() => cmd.Execute());
-        var newCic = CatalogueRepository.GetAllObjectsWhere<CohortIdentificationConfiguration>("ClonedFrom_ID", cic.ID);
+        var newCic = CatalogueDbContext.GetAllObjectsWhere<CohortIdentificationConfiguration>("ClonedFrom_ID", cic.ID);
         Assert.That(newCic, Has.Length.EqualTo(1));
         Assert.Multiple(() =>
         {
@@ -107,11 +107,11 @@ public class CohortVersioningTests : CohortQueryBuilderWithCacheTests
         });
         cic.RootCohortAggregateContainer_ID = null;
         cic.SaveToDatabase();
-        var fetchedCic = CatalogueRepository.GetAllObjectsWhere<CohortIdentificationConfiguration>("ID", cic.ID);
+        var fetchedCic = CatalogueDbContext.GetAllObjectsWhere<CohortIdentificationConfiguration>("ID", cic.ID);
         Assert.That(fetchedCic.First().RootCohortAggregateContainer_ID, Is.Null);
         var restoreCmd = new ExecuteCommandRevertToHistoricalCohortVersion(activator, fetchedCic.First(), newCic.First());
         Assert.DoesNotThrow(()=> restoreCmd.Execute());
-        fetchedCic = CatalogueRepository.GetAllObjectsWhere<CohortIdentificationConfiguration>("ID", cic.ID);
+        fetchedCic = CatalogueDbContext.GetAllObjectsWhere<CohortIdentificationConfiguration>("ID", cic.ID);
         Assert.That(fetchedCic.First().RootCohortAggregateContainer_ID, Is.Not.Null);
 
     }
@@ -128,7 +128,7 @@ public class CohortVersioningTests : CohortQueryBuilderWithCacheTests
         cic.SaveToDatabase();
         var cmd = new ExecuteCommandCreateVersionOfCohortConfiguration(activator, cic, "MyName!");
         Assert.DoesNotThrow(() => cmd.Execute());
-        var newCic = CatalogueRepository.GetAllObjectsWhere<CohortIdentificationConfiguration>("ClonedFrom_ID", cic.ID);
+        var newCic = CatalogueDbContext.GetAllObjectsWhere<CohortIdentificationConfiguration>("ClonedFrom_ID", cic.ID);
         Assert.That(newCic, Has.Length.EqualTo(1));
         Assert.Multiple(() =>
         {
@@ -137,7 +137,7 @@ public class CohortVersioningTests : CohortQueryBuilderWithCacheTests
         });
         cic.RootCohortAggregateContainer_ID = null;
         cic.SaveToDatabase();
-        var fetchedCic = CatalogueRepository.GetAllObjectsWhere<CohortIdentificationConfiguration>("ID", cic.ID);
+        var fetchedCic = CatalogueDbContext.GetAllObjectsWhere<CohortIdentificationConfiguration>("ID", cic.ID);
         Assert.That(fetchedCic.First().RootCohortAggregateContainer_ID, Is.Null);
         var restoreCmd = new ExecuteCommandRevertToHistoricalCohortVersion(activator, newCic.First(), fetchedCic.First());
         var ex = Assert.Throws<Exception>(() => restoreCmd.Execute());

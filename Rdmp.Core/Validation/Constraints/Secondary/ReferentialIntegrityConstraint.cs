@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.Data.Common;
 using System.Xml.Serialization;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
@@ -25,7 +26,7 @@ namespace Rdmp.Core.Validation.Constraints.Secondary;
 /// </summary>
 public class ReferentialIntegrityConstraint : SecondaryConstraint, ICheckable
 {
-    private readonly IRepository _repository;
+    private readonly RDMPDbContext _catalogueDbContext;
 
     [Description("When ticked, the current value MUST NOT appear in the OtherColumnInfo")]
     public bool InvertLogic { get; set; }
@@ -42,7 +43,7 @@ public class ReferentialIntegrityConstraint : SecondaryConstraint, ICheckable
             _otherColumnInfoID = value;
 
             if (value > 0)
-                OtherColumnInfo = _repository.GetObjectByID<ColumnInfo>(value);
+                OtherColumnInfo = _catalogueDbContext.GetObjectByID<ColumnInfo>(value);
         }
     }
 
@@ -70,12 +71,12 @@ public class ReferentialIntegrityConstraint : SecondaryConstraint, ICheckable
             throw new Exception(
                 "Cannot deserialize/construct this class because the static LocatorForXMLDeserialization field has not been set");
 
-        _repository = Validator.LocatorForXMLDeserialization.CatalogueRepository;
+        //_repository = Validator.LocatorForXMLDeserialization.RDMPDbContext;
     }
 
-    public ReferentialIntegrityConstraint(IRepository repository)
+    public ReferentialIntegrityConstraint(RDMPDbContext catalogueDbContext)
     {
-        _repository = repository;
+        _catalogueDbContext = catalogueDbContext;
     }
 
     private HashSet<string> _uniqueValues;

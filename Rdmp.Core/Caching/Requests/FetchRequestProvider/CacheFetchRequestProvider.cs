@@ -48,7 +48,7 @@ public class CacheFetchRequestProvider : ICacheFetchRequestProvider
             throw new Exception(
                 "Don't know when to begin loading the cache from. Neither CacheProgress or LoadProgress has a relevant date.");
 
-        var initialFetchRequest = new CacheFetchRequest(CacheProgress.Repository)
+        var initialFetchRequest = new CacheFetchRequest(CacheProgress.CatalogueDbContext)
         {
             CacheProgress = CacheProgress,
             ChunkPeriod = CacheProgress.ChunkPeriod,
@@ -71,7 +71,7 @@ public class CacheFetchRequestProvider : ICacheFetchRequestProvider
     private ICacheFetchRequest CreateNext()
     {
         var nextStart = Current.Start.Add(Current.ChunkPeriod);
-        return new CacheFetchRequest(CacheProgress.Repository, nextStart)
+        return new CacheFetchRequest(CacheProgress.CatalogueDbContext, nextStart)
         {
             CacheProgress = Current.CacheProgress,
             PermissionWindow = Current.PermissionWindow,

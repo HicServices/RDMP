@@ -38,7 +38,7 @@ internal class CohortIdentificationConfigurationMergerTests : CohortIdentificati
             Assert.That(cic2.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively(), Has.Count.EqualTo(1));
         });
 
-        var numberOfCicsBefore = CatalogueRepository.GetAllObjects<CohortIdentificationConfiguration>().Length;
+        var numberOfCicsBefore = CatalogueDbContext.GetAllObjects<CohortIdentificationConfiguration>().Length;
 
         var result = merger.Merge(new[] { cic1, cic2 }, SetOperation.UNION);
 
@@ -64,7 +64,7 @@ internal class CohortIdentificationConfigurationMergerTests : CohortIdentificati
                 "Expected the merge to include clone aggregates not the originals! (aggregate2)");
 
             // Now should be a new one
-            Assert.That(CatalogueRepository.GetAllObjects<CohortIdentificationConfiguration>(), Has.Length.EqualTo(numberOfCicsBefore + 1));
+            Assert.That(CatalogueDbContext.GetAllObjects<CohortIdentificationConfiguration>(), Has.Length.EqualTo(numberOfCicsBefore + 1));
         });
 
         var newCicId = result.ID;
@@ -118,14 +118,14 @@ internal class CohortIdentificationConfigurationMergerTests : CohortIdentificati
         sub2.AddChild(aggregate2, 0);
         sub2.AddChild(aggregate3, 1);
 
-        var numberOfCicsBefore = CatalogueRepository.GetAllObjects<CohortIdentificationConfiguration>().Length;
+        var numberOfCicsBefore = CatalogueDbContext.GetAllObjects<CohortIdentificationConfiguration>().Length;
 
         var results = merger.UnMerge(root);
 
         Assert.Multiple(() =>
         {
             // Now should be two new ones
-            Assert.That(CatalogueRepository.GetAllObjects<CohortIdentificationConfiguration>(), Has.Length.EqualTo(numberOfCicsBefore + 2));
+            Assert.That(CatalogueDbContext.GetAllObjects<CohortIdentificationConfiguration>(), Has.Length.EqualTo(numberOfCicsBefore + 2));
             Assert.That(results, Has.Length.EqualTo(2));
         });
 
@@ -176,7 +176,7 @@ internal class CohortIdentificationConfigurationMergerTests : CohortIdentificati
             Assert.That(cic2.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively(), Has.Count.EqualTo(1));
         });
 
-        var numberOfCicsBefore = CatalogueRepository.GetAllObjects<CohortIdentificationConfiguration>().Length;
+        var numberOfCicsBefore = CatalogueDbContext.GetAllObjects<CohortIdentificationConfiguration>().Length;
 
         //import 2 into 1
         merger.Import(new[] { cic2 }, cic1.RootCohortAggregateContainer);
@@ -184,7 +184,7 @@ internal class CohortIdentificationConfigurationMergerTests : CohortIdentificati
         Assert.Multiple(() =>
         {
             //no new cics
-            Assert.That(CatalogueRepository.GetAllObjects<CohortIdentificationConfiguration>(), Has.Length.EqualTo(numberOfCicsBefore));
+            Assert.That(CatalogueDbContext.GetAllObjects<CohortIdentificationConfiguration>(), Has.Length.EqualTo(numberOfCicsBefore));
 
             // cic 1 should now have both aggregates
             Assert.That(cic1.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively(), Has.Count.EqualTo(2));

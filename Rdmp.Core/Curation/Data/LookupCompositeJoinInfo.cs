@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 
@@ -63,11 +64,11 @@ public class LookupCompositeJoinInfo : DatabaseEntity, ISupplementalJoin
 
     /// <inheritdoc cref="IJoin.ForeignKey"/>
     [NoMappingToDatabase]
-    public ColumnInfo ForeignKey => Repository.GetObjectByID<ColumnInfo>(ForeignKey_ID);
+    public ColumnInfo ForeignKey => CatalogueDbContext.GetObjectByID<ColumnInfo>(ForeignKey_ID);
 
     /// <inheritdoc cref="IJoin.PrimaryKey"/>
     [NoMappingToDatabase]
-    public ColumnInfo PrimaryKey => Repository.GetObjectByID<ColumnInfo>(PrimaryKey_ID);
+    public ColumnInfo PrimaryKey => CatalogueDbContext.GetObjectByID<ColumnInfo>(PrimaryKey_ID);
 
     #endregion
 
@@ -76,7 +77,7 @@ public class LookupCompositeJoinInfo : DatabaseEntity, ISupplementalJoin
     }
 
     /// <inheritdoc cref="LookupCompositeJoinInfo"/>
-    public LookupCompositeJoinInfo(RdmpDbContext catalogueDbContext, Lookup parent, ColumnInfo foreignKey,
+    public LookupCompositeJoinInfo(RDMPDbContext catalogueDbContext, Lookup parent, ColumnInfo foreignKey,
         ColumnInfo primaryKey, string collation = null)
     {
         if (foreignKey.ID == primaryKey.ID)
@@ -85,17 +86,17 @@ public class LookupCompositeJoinInfo : DatabaseEntity, ISupplementalJoin
         if (foreignKey.TableInfo_ID == primaryKey.TableInfo_ID)
             throw new ArgumentException("Join Key 1 and Join Key 2 are from the same table, this is not cool");
 
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "OriginalLookup_ID", parent.ID },
-            { "ForeignKey_ID", foreignKey.ID },
-            { "PrimaryKey_ID", primaryKey.ID },
-            { "Collation", string.IsNullOrWhiteSpace(collation) ? DBNull.Value : (object)collation }
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "OriginalLookup_ID", parent.ID },
+        //    { "ForeignKey_ID", foreignKey.ID },
+        //    { "PrimaryKey_ID", primaryKey.ID },
+        //    { "Collation", string.IsNullOrWhiteSpace(collation) ? DBNull.Value : (object)collation }
+        //});
     }
 
-    internal LookupCompositeJoinInfo(RdmpDbContext catalogueDbContext, DbDataReader r)
-        : base(repository, r)
+    internal LookupCompositeJoinInfo(RDMPDbContext catalogueDbContext, DbDataReader r)
+        :base(catalogueDbContext, r)
     {
         Collation = r["Collation"] as string;
         OriginalLookup_ID = int.Parse(r["OriginalLookup_ID"].ToString());

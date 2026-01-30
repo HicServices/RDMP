@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Repositories;
@@ -62,7 +63,7 @@ public class DashboardLayout : DatabaseEntity, INamed
     /// Returns all controls that should be rendered on the given dashboard
     /// </summary>
     [NoMappingToDatabase]
-    public DashboardControl[] Controls => Repository.GetAllObjectsWithParent<DashboardControl>(this);
+    public DashboardControl[] Controls => CatalogueDbContext.GetAllObjectsWithParent<DashboardControl>(this);
 
     #endregion
 
@@ -70,8 +71,8 @@ public class DashboardLayout : DatabaseEntity, INamed
     {
     }
 
-    internal DashboardLayout(RdmpDbContext catalogueDbContext, DbDataReader r)
-        : base(repository, r)
+    internal DashboardLayout(RDMPDbContext catalogueDbContext, DbDataReader r)
+        :base(catalogueDbContext, r)
     {
         Name = r["Name"].ToString();
         Created = Convert.ToDateTime(r["Created"]);
@@ -81,17 +82,17 @@ public class DashboardLayout : DatabaseEntity, INamed
     /// <summary>
     /// Creates a new empty dashboard with the given name ready for controls to be added by the user
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="name"></param>
-    public DashboardLayout(RdmpDbContext catalogueDbContext, string name)
+    public DashboardLayout(RDMPDbContext catalogueDbContext, string name)
     {
-        Repository = repository;
+       CatalogueDbContext = catalogueDbContext;
 
-        Repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "Username", Environment.UserName },
-            { "Name", name }
-        });
+        //CatalogueDbContext.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "Username", Environment.UserName },
+        //    { "Name", name }
+        //});
     }
 
     /// <inheritdoc/>

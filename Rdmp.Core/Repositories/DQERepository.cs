@@ -12,6 +12,7 @@ using FAnsi.Discovery;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.DataQualityEngine.Data;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
@@ -25,26 +26,26 @@ namespace Rdmp.Core.Repositories;
 /// 
 /// <para>This class allows you to fetch objects and should be passed into constructors of classes you want to construct in the Data Quality database.</para>
 /// 
-/// <para>Data Qualilty Engine databases are only valid when you have a CatalogueRepository database too and are always paired to a specific CatalogueRepository database (i.e.
-/// there are IDs in the dqe database that specifically map to objects in the Catalogue database).  You can use the CatalogueRepository property to fetch/create objects
+/// <para>Data Qualilty Engine databases are only valid when you have a RDMPDbContext database too and are always paired to a specific RDMPDbContext database (i.e.
+/// there are IDs in the dqe database that specifically map to objects in the Catalogue database).  You can use the RDMPDbContext property to fetch/create objects
 /// in the paired Catalogue database.</para>
 /// </summary>
 public class DQERepository : TableRepository, IDQERepository
 {
     /// <inheritdoc/>
-    public ICatalogueRepository CatalogueRepository { get; private set; }
+    public RDMPDbContext CatalogueDbContext { get; private set; }
 
     /// <summary>
     /// Creates a new DQERepository storing/reading data from the default
-    /// DQE server configured in <paramref name="catalogueRepository"/>
+    /// DQE server configured in <paramref name="catalogueDbContext"/>
     /// </summary>
-    /// <param name="catalogueRepository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <exception cref="NotSupportedException">If there is no default DQE database configured</exception>
-    public DQERepository(ICatalogueRepository catalogueRepository)
+    public DQERepository(RDMPDbContext catalogueDbContext)
     {
-        CatalogueRepository = catalogueRepository;
+        CatalogueDbContext = catalogueDbContext;
 
-        var server = CatalogueRepository.GetDefaultFor(PermissableDefaults.DQE) ?? throw new NotSupportedException(
+        var server = CatalogueDbContext.GetDefaultFor(PermissableDefaults.DQE) ?? throw new NotSupportedException(
             "There is no DataQualityEngine Reporting Server (ExternalDatabaseServer).  You will need to create/set one in CatalogueManager by using 'Locations=>Manage External Servers...'");
         DiscoveredServer = DataAccessPortal.ExpectServer(server, DataAccessContext.InternalDataProcessing);
         _connectionStringBuilder = DiscoveredServer.Builder;
@@ -52,15 +53,15 @@ public class DQERepository : TableRepository, IDQERepository
 
     /// <summary>
     /// Creates a new DQERepository storing/reading data from <paramref name="db"/> instead of the default
-    /// (if any) listed in the <paramref name="catalogueRepository"/>.  Use this constructor if you do not
+    /// (if any) listed in the <paramref name="catalogueDbContext"/>.  Use this constructor if you do not
     /// want to use <see cref="IServerDefaults.GetDefaultFor(PermissableDefaults)"/> to find the DQE but instead want to
     /// use an explicit database (<paramref name="db"/>)
     /// </summary>
-    /// <param name="catalogueRepository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="db"></param>
-    public DQERepository(ICatalogueRepository catalogueRepository, DiscoveredDatabase db)
+    public DQERepository(RDMPDbContext catalogueDbContext, DiscoveredDatabase db)
     {
-        CatalogueRepository = catalogueRepository;
+        CatalogueDbContext = catalogueDbContext;
         DiscoveredServer = db.Server;
         _connectionStringBuilder = DiscoveredServer.Builder;
     }

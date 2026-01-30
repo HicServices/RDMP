@@ -614,7 +614,7 @@ DistinctByDestinationPKs - Performs a GROUP BY on each batch of records to ensur
             foreach (var audit in previousAudit)
                 audit.DeleteInDatabase();
 
-            var extractionResults = new CumulativeExtractionResults(dataExportRepo, Request.Configuration,
+            var extractionResults = new CumulativeExtractionResults(Request.Catalogue.CatalogueDbContext, Request.Configuration,
                 Request.DatasetBundle.DataSet, sql);
 
             var filterDescriptions =
@@ -630,7 +630,7 @@ DistinctByDestinationPKs - Performs a GROUP BY on each batch of records to ensur
 
     private void StartAuditGlobals()
     {
-        var repo = GlobalsRequest.RepositoryLocator.DataExportRepository;
+        var repo = GlobalsRequest.RepositoryLocator.CatalogueDbContext;
 
         var previousAudit = repo
             .GetAllObjectsWhere<SupplementalExtractionResults>("ExtractionConfiguration_ID",

@@ -18,6 +18,7 @@ using Rdmp.Core.Curation.Data.DataLoad.Extensions;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.EntityNaming;
 using Rdmp.Core.DataLoad.Triggers;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
@@ -164,14 +165,14 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
     /// <inheritdoc/>
     [NoMappingToDatabase]
     public PreLoadDiscardedColumn[] PreLoadDiscardedColumns =>
-        Repository.GetAllObjectsWithParent<PreLoadDiscardedColumn>(this);
+        CatalogueDbContext.GetAllObjectsWithParent<PreLoadDiscardedColumn>(this);
 
     /// <inheritdoc cref="IdentifierDumpServer_ID"/>
     [NoMappingToDatabase]
     public ExternalDatabaseServer IdentifierDumpServer =>
         IdentifierDumpServer_ID == null
             ? null
-            : Repository.GetObjectByID<ExternalDatabaseServer>((int)IdentifierDumpServer_ID);
+            : CatalogueDbContext.GetObjectByID<ExternalDatabaseServer>((int)IdentifierDumpServer_ID);
 
     #endregion
 
@@ -181,26 +182,26 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
     }
 
     /// <summary>
-    /// Defines a new table reference in the platform database <paramref name="repository"/>.
+    /// Defines a new table reference in the platform database <paramref name="catalogueDbContext"/>.
     /// <para>Usually you should use <see cref="TableInfoImporter"/> instead</para>
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="name"></param>
-    public TableInfo(RdmpDbContext catalogueDbContext, string name)
+    public TableInfo(RDMPDbContext catalogueDbContext, string name)
     {
-        var dumpServer = repository.GetDefaultFor(PermissableDefaults.IdentifierDumpServer_ID);
+        var dumpServer = catalogueDbContext.GetDefaultFor(PermissableDefaults.IdentifierDumpServer_ID);
 
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "Name", name },
-            { "IdentifierDumpServer_ID", dumpServer?.ID ?? (object)DBNull.Value }
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "Name", name },
+        //    { "IdentifierDumpServer_ID", dumpServer?.ID ?? (object)DBNull.Value }
+        //});
 
         ClearAllInjections();
     }
 
-    internal TableInfo(RdmpDbContext catalogueDbContext, DbDataReader r)
-        : base(repository, r)
+    internal TableInfo(RDMPDbContext catalogueDbContext, DbDataReader r)
+        : base(catalogueDbContext, r)
     {
         Name = r["Name"].ToString();
         DatabaseType = (DatabaseType)Enum.Parse(typeof(DatabaseType), r["DatabaseType"].ToString());
@@ -228,7 +229,7 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
     public override string ToString() => Name;
 
     /// <inheritdoc/>
-    public ISqlParameter[] GetAllParameters() => CatalogueRepository.GetAllParametersForParentTable(this).ToArray();
+    public ISqlParameter[] GetAllParameters() => CatalogueDbContext.GetAllParametersForParentTable(this).ToArray();
 
     /// <summary>
     /// Sorts two <see cref="TableInfo"/> alphabetically
@@ -297,42 +298,43 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
     public void SetCredentials(DataAccessCredentials credentials, DataAccessContext context,
         bool allowOverwriting = false)
     {
-        var existingCredentials =
-            CatalogueRepository.TableInfoCredentialsManager.GetCredentialsIfExistsFor(this, context);
+        //var existingCredentials =
+        //    CatalogueDbContext.TableInfoCredentialsManager.GetCredentialsIfExistsFor(this, context);
 
-        //if user told us to set credentials to null complain
-        if (credentials == null)
-            throw new Exception(
-                "Credentials was null, to remove a credential use TableInfoToCredentialsLinker.BreakLinkBetween instead");
+        ////if user told us to set credentials to null complain
+        //if (credentials == null)
+        //    throw new Exception(
+        //        "Credentials was null, to remove a credential use TableInfoToCredentialsLinker.BreakLinkBetween instead");
 
-        //if there are existing credentials already
-        if (existingCredentials != null)
-        {
-            //user is trying to set the same credentials again
-            if (existingCredentials.Equals(credentials))
-                return; //don't bother
+        ////if there are existing credentials already
+        //if (existingCredentials != null)
+        //{
+        //    //user is trying to set the same credentials again
+        //    if (existingCredentials.Equals(credentials))
+        //        return; //don't bother
 
-            if (!allowOverwriting)
-                throw new Exception(
-                    $"Cannot overwrite existing credentials {existingCredentials.Name} with new credentials {credentials.Name} with context {context} because allowOverwriting was false");
+        //    if (!allowOverwriting)
+        //        throw new Exception(
+        //            $"Cannot overwrite existing credentials {existingCredentials.Name} with new credentials {credentials.Name} with context {context} because allowOverwriting was false");
 
-            //allow overwriting is on
-            //remove the existing link
-            CatalogueRepository.TableInfoCredentialsManager.BreakLinkBetween(existingCredentials, this, context);
-        }
+        //    //allow overwriting is on
+        //    //remove the existing link
+        //    CatalogueDbContext.TableInfoCredentialsManager.BreakLinkBetween(existingCredentials, this, context);
+        //}
 
-        //create a new one to the new credentials
-        CatalogueRepository.TableInfoCredentialsManager.CreateLinkBetween(credentials, this, context);
+        ////create a new one to the new credentials
+        //CatalogueDbContext.TableInfoCredentialsManager.CreateLinkBetween(credentials, this, context);
     }
 
     /// <inheritdoc/>
     public IHasDependencies[] GetObjectsThisDependsOn()
     {
-        return
-            CatalogueRepository.TableInfoCredentialsManager.GetCredentialsIfExistsFor(this)
-                .Select(kvp => kvp.Value)
-                .Cast<IHasDependencies>()
-                .ToArray();
+        return Array.Empty<IHasDependencies>();
+        //return
+        //    CatalogueDbContext.TableInfoCredentialsManager.GetCredentialsIfExistsFor(this)
+        //        .Select(kvp => kvp.Value)
+        //        .Cast<IHasDependencies>()
+        //        .ToArray();
     }
 
     /// <inheritdoc/>
@@ -379,10 +381,10 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
     /// <inheritdoc/>
     public bool IsLookupTable() => _knownIsLookup.Value;
 
-    private bool FetchIsLookup() => CatalogueRepository.IsLookupTable(this);
+    private bool FetchIsLookup() => false;// CatalogueDbContext.IsLookupTable(this);
 
     /// <inheritdoc/>
-    public Catalogue[] GetAllRelatedCatalogues() => CatalogueRepository.GetAllCataloguesUsing(this);
+    public Catalogue[] GetAllRelatedCatalogues() => Array.Empty<Catalogue>();// CatalogueDbContext.GetAllCataloguesUsing(this);
 
     /// <inheritdoc/>
     public IEnumerable<IHasStageSpecificRuntimeName> GetColumnsAtStage(LoadStage loadStage)
@@ -434,14 +436,14 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
 
             //avoid access to
             var context1 = context;
-            _knownCredentials.Add(context1,
-                new Lazy<IDataAccessCredentials>(() =>
-                    CatalogueRepository.TableInfoCredentialsManager.GetCredentialsIfExistsFor(this,
-                        context1)));
+            //_knownCredentials.Add(context1,
+            //    new Lazy<IDataAccessCredentials>(() =>
+            //        CatalogueDbContext.TableInfoCredentialsManager.GetCredentialsIfExistsFor(this,
+            //            context1)));
         }
     }
 
-    private ColumnInfo[] FetchColumnInfos() => Repository.GetAllObjectsWithParent<ColumnInfo, TableInfo>(this);
+    private ColumnInfo[] FetchColumnInfos() => CatalogueDbContext.GetAllObjectsWithParent<ColumnInfo, TableInfo>(this);
 
     /// <inheritdoc/>
     public DiscoveredTable Discover(DataAccessContext context)

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using FAnsi.Implementations.MicrosoftSQL;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
 using Rdmp.Core.Repositories;
@@ -126,23 +127,23 @@ public class PreLoadDiscardedColumn : DatabaseEntity, IPreLoadDiscardedColumn, I
     /// Creates a new virtual column that will be created in RAW during data loads but does not appear in the LIVE table schema.  This allows
     /// identifiable data to be loaded and processed in a data load without ever hitting the live database.
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="parent"></param>
     /// <param name="name"></param>
-    public PreLoadDiscardedColumn(RdmpDbContext catalogueDbContext, ITableInfo parent, string name = null)
+    public PreLoadDiscardedColumn(RDMPDbContext catalogueDbContext, ITableInfo parent, string name = null)
     {
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "TableInfo_ID", parent.ID },
-            { "Destination", DiscardedColumnDestination.Oblivion },
-            { "RuntimeColumnName", name ?? $"NewColumn{Guid.NewGuid()}" }
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "TableInfo_ID", parent.ID },
+        //    { "Destination", DiscardedColumnDestination.Oblivion },
+        //    { "RuntimeColumnName", name ?? $"NewColumn{Guid.NewGuid()}" }
+        //});
 
         ClearAllInjections();
     }
 
-    internal PreLoadDiscardedColumn(RdmpDbContext catalogueDbContext, DbDataReader r)
-        : base(repository, r)
+    internal PreLoadDiscardedColumn(RDMPDbContext catalogueDbContext, DbDataReader r)
+        :base(catalogueDbContext, r)
     {
         TableInfo_ID = int.Parse(r["TableInfo_ID"].ToString());
         Destination = (DiscardedColumnDestination)r["Destination"];
@@ -216,6 +217,6 @@ public class PreLoadDiscardedColumn : DatabaseEntity, IPreLoadDiscardedColumn, I
 
     public void ClearAllInjections()
     {
-        _knownTableInfo = new Lazy<ITableInfo>(() => Repository.GetObjectByID<TableInfo>(TableInfo_ID));
+        _knownTableInfo = new Lazy<ITableInfo>(() => CatalogueDbContext.GetObjectByID<TableInfo>(TableInfo_ID));
     }
 }

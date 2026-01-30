@@ -45,6 +45,6 @@ public class DataAccessCredentialUsageNode : Node, IDeleteable
 
     public void DeleteInDatabase()
     {
-        TableInfo.CatalogueRepository.TableInfoCredentialsManager.BreakLinkBetween(Credentials, TableInfo, Context);
+        //TableInfo.CatalogueDbContext.TableInfoCredentialsManager.BreakLinkBetween(Credentials, TableInfo, Context);
     }
 }

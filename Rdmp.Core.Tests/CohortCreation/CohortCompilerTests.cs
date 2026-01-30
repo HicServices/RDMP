@@ -44,7 +44,7 @@ public class CohortCompilerTests : CohortIdentificationTests
             }
 
             //now add it again
-            var newAggregate1 = CatalogueRepository.GetObjectByID<AggregateConfiguration>(aggregate1.ID);
+            var newAggregate1 = CatalogueDbContext.GetObjectByID<AggregateConfiguration>(aggregate1.ID);
 
             compiler.AddTask(newAggregate1, null);
             Assert.That(compiler.Tasks, Has.Count.EqualTo(1)); //should still be 1 task

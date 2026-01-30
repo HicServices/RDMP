@@ -64,7 +64,7 @@ public class ParameterCollectionUIOptions
             parameterName = $"@{parameterName}";
 
         var entity = (IMapsDirectlyToDatabaseTable)collector;
-        var newParam = new AnyTableSqlParameter((ICatalogueRepository)entity.Repository, entity,
+        var newParam = new AnyTableSqlParameter(entity.CatalogueDbContext, entity,
             AnyTableSqlParameter.GetDefaultDeclaration(parameterName))
         {
             Value = AnyTableSqlParameter.DefaultValue

@@ -18,7 +18,7 @@ internal class DataExportRepositoryTests : DatabaseTests
     public void TestNoIsExtractionIdentifierFinding()
     {
         //nothing in database means no dodgy datasets
-        Assert.That(DataExportRepository.GetSelectedDatasetsWithNoExtractionIdentifiers(), Is.Empty);
+        Assert.That(DataExportCatalogueDbContext.GetSelectedDatasetsWithNoExtractionIdentifiers(), Is.Empty);
 
         var cata = new Catalogue(CatalogueRepository, "ommn");
         var ds = new ExtractableDataSet(DataExportRepository, cata);
@@ -27,7 +27,7 @@ internal class DataExportRepositoryTests : DatabaseTests
         var sds = new SelectedDataSets(DataExportRepository, config, ds, null);
 
         //only one selected dataset
-        var dodgy = DataExportRepository.GetSelectedDatasetsWithNoExtractionIdentifiers().ToArray();
+        var dodgy = DataExportCatalogueDbContext.GetSelectedDatasetsWithNoExtractionIdentifiers().ToArray();
         Assert.That(dodgy, Has.Length.EqualTo(1));
         Assert.That(dodgy[0], Is.EqualTo(sds));
 
@@ -38,7 +38,7 @@ internal class DataExportRepositoryTests : DatabaseTests
         var ec = new ExtractableColumn(DataExportRepository, ds, config, ei, 0, col.Name);
 
         //still shouldn't be dodgy
-        dodgy = DataExportRepository.GetSelectedDatasetsWithNoExtractionIdentifiers().ToArray();
+        dodgy = DataExportCatalogueDbContext.GetSelectedDatasetsWithNoExtractionIdentifiers().ToArray();
         Assert.That(dodgy, Has.Length.EqualTo(1));
         Assert.That(dodgy[0], Is.EqualTo(sds));
 
@@ -47,7 +47,7 @@ internal class DataExportRepositoryTests : DatabaseTests
         ec.SaveToDatabase();
 
         //no longer dodgy because there is an extraction identifier
-        dodgy = DataExportRepository.GetSelectedDatasetsWithNoExtractionIdentifiers().ToArray();
+        dodgy = DataExportCatalogueDbContext.GetSelectedDatasetsWithNoExtractionIdentifiers().ToArray();
         Assert.That(dodgy, Is.Empty);
     }
 }

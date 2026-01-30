@@ -37,7 +37,7 @@ public sealed class ExecuteCommandLinkCatalogueToDataset : BasicCommandExecution
             if (!_linkAll) continue;
 
             var databaseName = ci.Name[..ci.Name.LastIndexOf('.')];
-            var catalogueItems = ci.CatalogueRepository.GetAllObjects<ColumnInfo>().Where(ci => ci.Name[..ci.Name.LastIndexOf(".", StringComparison.Ordinal)] == databaseName).ToList();
+            var catalogueItems = ci.CatalogueDbContext.GetAllObjects<ColumnInfo>().Where(ci => ci.Name[..ci.Name.LastIndexOf(".", StringComparison.Ordinal)] == databaseName).ToList();
             foreach (var aci in catalogueItems)
             {
                 aci.Dataset_ID = _dataset.ID;

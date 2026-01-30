@@ -31,7 +31,7 @@ public class LoadMetadataTests : DatabaseTests
             loadMetadata.LocationOfCacheDirectory = Path.Combine(TestContext.CurrentContext.TestDirectory, loadMetadata.DefaultCachePath);
             loadMetadata.SaveToDatabase();
 
-            var loadMetadataWithIdAfterwards = CatalogueRepository.GetObjectByID<LoadMetadata>(loadMetadata.ID);
+            var loadMetadataWithIdAfterwards = CatalogueDbContext.GetObjectByID<LoadMetadata>(loadMetadata.ID);
             Assert.That(Path.Combine(TestContext.CurrentContext.TestDirectory, loadMetadata.DefaultForLoadingPath), Is.EqualTo(loadMetadataWithIdAfterwards.LocationOfForLoadingDirectory));
             Assert.That(Path.Combine(TestContext.CurrentContext.TestDirectory, loadMetadata.DefaultForArchivingPath), Is.EqualTo(loadMetadataWithIdAfterwards.LocationOfForArchivingDirectory));
             Assert.That(Path.Combine(TestContext.CurrentContext.TestDirectory, loadMetadata.DefaultExecutablesPath), Is.EqualTo(loadMetadataWithIdAfterwards.LocationOfExecutablesDirectory));

@@ -15,12 +15,12 @@ public class ConfigurationPropertiesTests : DatabaseTests
     [Test]
     public void CreateNewArgumentAndGetValue()
     {
-        DataExportRepository.DataExportPropertyManager.SetValue(DataExportProperty.HashingAlgorithmPattern, "hi");
+        DataExportCatalogueDbContext.DataExportPropertyManager.SetValue(DataExportProperty.HashingAlgorithmPattern, "hi");
         Assert.That(
-DataExportRepository.DataExportPropertyManager.GetValue(DataExportProperty.HashingAlgorithmPattern), Is.EqualTo("hi"));
+DataExportCatalogueDbContext.DataExportPropertyManager.GetValue(DataExportProperty.HashingAlgorithmPattern), Is.EqualTo("hi"));
 
         //make sure delete
-        DataExportRepository.DataExportPropertyManager.SetValue(DataExportProperty.HashingAlgorithmPattern, null);
-        Assert.That(DataExportRepository.DataExportPropertyManager.GetValue(DataExportProperty.HashingAlgorithmPattern), Is.Null);
+        DataExportCatalogueDbContext.DataExportPropertyManager.SetValue(DataExportProperty.HashingAlgorithmPattern, null);
+        Assert.That(DataExportCatalogueDbContext.DataExportPropertyManager.GetValue(DataExportProperty.HashingAlgorithmPattern), Is.Null);
     }
 }

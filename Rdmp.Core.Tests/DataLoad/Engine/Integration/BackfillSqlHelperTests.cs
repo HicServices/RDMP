@@ -41,18 +41,18 @@ public class BackfillSqlHelperTests : FromToDatabaseTests
         ThreeTableSetupWhereTimePeriodIsGrandparent();
 
         var ciTimePeriodicity =
-            CatalogueRepository.GetAllObjects<ColumnInfo>()
+            CatalogueDbContext.GetAllObjects<ColumnInfo>()
                 .SingleOrDefault(c => c.GetRuntimeName().Equals("HeaderDate")) ??
             throw new InvalidOperationException("Could not find TimePeriodicity column");
         var sqlHelper = new BackfillSqlHelper(ciTimePeriodicity, From, To);
 
-        var tiHeader = CatalogueRepository.GetAllObjects<TableInfo>().Single(t => t.GetRuntimeName().Equals("Headers"));
-        var tiSamples = CatalogueRepository.GetAllObjects<TableInfo>()
+        var tiHeader = CatalogueDbContext.GetAllObjects<TableInfo>().Single(t => t.GetRuntimeName().Equals("Headers"));
+        var tiSamples = CatalogueDbContext.GetAllObjects<TableInfo>()
             .Single(t => t.GetRuntimeName().Equals("Samples"));
-        var tiResults = CatalogueRepository.GetAllObjects<TableInfo>()
+        var tiResults = CatalogueDbContext.GetAllObjects<TableInfo>()
             .Single(t => t.GetRuntimeName().Equals("Results"));
 
-        var joinInfos = CatalogueRepository.GetAllObjects<JoinInfo>();
+        var joinInfos = CatalogueDbContext.GetAllObjects<JoinInfo>();
         var joinPath = new List<JoinInfo>
         {
             joinInfos.Single(info => info.PrimaryKey.TableInfo_ID == tiHeader.ID),

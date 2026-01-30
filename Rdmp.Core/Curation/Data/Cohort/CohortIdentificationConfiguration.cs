@@ -14,6 +14,7 @@ using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.FilterImporting;
 using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.Databases;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.QueryBuilding;
@@ -190,21 +191,21 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     public CohortAggregateContainer RootCohortAggregateContainer =>
         RootCohortAggregateContainer_ID == null
             ? null
-            : Repository.GetObjectByID<CohortAggregateContainer>((int)RootCohortAggregateContainer_ID);
+            : CatalogueDbContext.GetObjectByID<CohortAggregateContainer>((int)RootCohortAggregateContainer_ID);
 
     /// <inheritdoc cref="QueryCachingServer_ID"/>
     [NoMappingToDatabase]
     public ExternalDatabaseServer QueryCachingServer =>
         QueryCachingServer_ID == null
             ? null
-            : Repository.GetObjectByID<ExternalDatabaseServer>(QueryCachingServer_ID.Value);
+            : CatalogueDbContext.GetObjectByID<ExternalDatabaseServer>(QueryCachingServer_ID.Value);
 
     #endregion
 
 
     public List<CohortIdentificationConfiguration> GetVersions()
     {
-        return CatalogueRepository.GetAllObjectsWhere<CohortIdentificationConfiguration>("ClonedFrom_ID", ID).Where(cic => cic.Version != null).ToList();
+        return CatalogueDbContext.GetAllObjectsWhere<CohortIdentificationConfiguration>("ClonedFrom_ID", ID).Where(cic => cic.Version != null).ToList();
     }
 
     public CohortIdentificationConfiguration()
@@ -215,22 +216,22 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     /// Declares a new configuration for identifying patient lists matching a study requirements based on the results of cohort sets / patient index tables and set operations
     /// <see cref="CohortIdentificationConfiguration"/>
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="name"></param>
-    public CohortIdentificationConfiguration(RdmpDbContext catalogueDbContext, string name)
+    public CohortIdentificationConfiguration(RDMPDbContext catalogueDbContext, string name)
     {
-        var queryCache = repository.GetDefaultFor(PermissableDefaults.CohortIdentificationQueryCachingServer_ID);
+        var queryCache = catalogueDbContext.GetDefaultFor(PermissableDefaults.CohortIdentificationQueryCachingServer_ID);
 
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "Name", name },
-            { "QueryCachingServer_ID", queryCache?.ID ?? (object)DBNull.Value },
-            { "Folder", FolderHelper.Root }
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "Name", name },
+        //    { "QueryCachingServer_ID", queryCache?.ID ?? (object)DBNull.Value },
+        //    { "Folder", FolderHelper.Root }
+        //});
     }
 
-    internal CohortIdentificationConfiguration(RdmpDbContext catalogueDbContext, DbDataReader r)
-        : base(repository, r)
+    internal CohortIdentificationConfiguration(RDMPDbContext catalogueDbContext, DbDataReader r)
+        : base(catalogueDbContext, r)
     {
         Name = r["Name"].ToString();
         Description = r["Description"] as string;
@@ -259,10 +260,10 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
         //shouldn't ever happen but double check anyway in case somebody removes the CASCADE
         if (Exists())
             base.DeleteInDatabase();
-        else
-            //make sure to do the obscure cross server/database cascade activities too
-            //if the repository has obscure dependencies
-            CatalogueRepository.ObscureDependencyFinder?.HandleCascadeDeletesForDeletedObject(this);
+        //else
+        //    //make sure to do the obscure cross server/database cascade activities too
+        //    //if the repository has obscure dependencies
+        //    CatalogueDbContext.ObscureDependencyFinder?.HandleCascadeDeletesForDeletedObject(this);
     }
 
     /// <summary>
@@ -274,7 +275,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
         if (RootCohortAggregateContainer_ID != null) return;
         //create a new one and record its ID
         RootCohortAggregateContainer_ID =
-            new CohortAggregateContainer((ICatalogueRepository)Repository, SetOperation.UNION).ID;
+            new CohortAggregateContainer(CatalogueDbContext, SetOperation.UNION).ID;
 
         //save us to database to cement the object
         SaveToDatabase();
@@ -307,7 +308,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
         $"cic {Name}";
 
     /// <inheritdoc/>
-    public ISqlParameter[] GetAllParameters() => CatalogueRepository.GetAllParametersForParentTable(this).ToArray();
+    public ISqlParameter[] GetAllParameters() => CatalogueDbContext.GetAllParametersForParentTable(this).ToArray();
 
 
     /// <inheritdoc cref="CICPrefix"/>
@@ -342,7 +343,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
 
 
         var otherConfigurations =
-            Repository.GetAllObjects<AggregateConfiguration>().Except(new[] { aggregate }).ToArray();
+            CatalogueDbContext.GetAllObjects<AggregateConfiguration>().Except(new[] { aggregate }).ToArray();
 
         //if there is a conflict on the name
         if (otherConfigurations.Any(c => c.Name.Equals(origName)))
@@ -365,7 +366,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     /// <returns></returns>
     public CohortIdentificationConfiguration CreateClone(ICheckNotifier notifier)
     {
-        var clone = new CohortIdentificationConfiguration((ICatalogueRepository)Repository, $"{Name} (Clone)");
+        var clone = new CohortIdentificationConfiguration(CatalogueDbContext, $"{Name} (Clone)");
         return CloneIntoExistingConfiguration(notifier, clone);
     }
 
@@ -378,61 +379,61 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     /// <returns></returns>
     public CohortIdentificationConfiguration CloneIntoExistingConfiguration(ICheckNotifier notifier, CohortIdentificationConfiguration cloneTarget, bool IncludeClonedFrom = true)
     {
-        //todo this would be nice if it was ICatalogueRepository but transaction is super SQLy
-        var cataRepo = (ICatalogueRepository)Repository;
-        //start a new super transaction
-        using (cataRepo.BeginNewTransaction())
-        {
-            try
-            {
-                notifier.OnCheckPerformed(new CheckEventArgs("Super Transaction started on Catalogue Repository",
-                    CheckResult.Success));
+        ////todo this would be nice if it was RDMPDbContextbut transaction is super SQLy
+        //var cataRepo = CatalogueDbContext;
+        ////start a new super transaction
+        //using (cataRepo.BeginNewTransaction())
+        //{
+        //    try
+        //    {
+        //        notifier.OnCheckPerformed(new CheckEventArgs("Super Transaction started on Catalogue Repository",
+        //            CheckResult.Success));
 
-                notifier.OnCheckPerformed(new CheckEventArgs(
-                    $"Created clone configuration '{cloneTarget.Name}' with ID {cloneTarget.ID} called {cloneTarget}",
-                    CheckResult.Success));
+        //        notifier.OnCheckPerformed(new CheckEventArgs(
+        //            $"Created clone configuration '{cloneTarget.Name}' with ID {cloneTarget.ID} called {cloneTarget}",
+        //            CheckResult.Success));
 
-                //clone the global parameters
-                foreach (var p in GetAllParameters())
-                {
-                    notifier.OnCheckPerformed(new CheckEventArgs($"Cloning global parameter {p.ParameterName}",
-                        CheckResult.Success));
-                    var cloneP = new AnyTableSqlParameter(cataRepo, cloneTarget, p.ParameterSQL)
-                    {
-                        Comment = p.Comment,
-                        Value = p.Value
-                    };
-                    cloneP.SaveToDatabase();
-                }
+        //        //clone the global parameters
+        //        foreach (var p in GetAllParameters())
+        //        {
+        //            notifier.OnCheckPerformed(new CheckEventArgs($"Cloning global parameter {p.ParameterName}",
+        //                CheckResult.Success));
+        //            var cloneP = new AnyTableSqlParameter(cataRepo, cloneTarget, p.ParameterSQL)
+        //            {
+        //                Comment = p.Comment,
+        //                Value = p.Value
+        //            };
+        //            cloneP.SaveToDatabase();
+        //        }
 
-                //key is the original, value is the clone
-                var parentToCloneJoinablesDictionary = GetAllJoinables().ToDictionary(joinable => joinable,
-                    joinable => new JoinableCohortAggregateConfiguration(cataRepo, cloneTarget,
-                        joinable.AggregateConfiguration.CreateClone()));
+        //        //key is the original, value is the clone
+        //        var parentToCloneJoinablesDictionary = GetAllJoinables().ToDictionary(joinable => joinable,
+        //            joinable => new JoinableCohortAggregateConfiguration(cataRepo, cloneTarget,
+        //                joinable.AggregateConfiguration.CreateClone()));
 
-                if (IncludeClonedFrom)
-                    cloneTarget.ClonedFrom_ID = ID;
-                cloneTarget.RootCohortAggregateContainer_ID = RootCohortAggregateContainer
-                    .CloneEntireTreeRecursively(notifier, this, cloneTarget, parentToCloneJoinablesDictionary).ID;
-                cloneTarget.SaveToDatabase();
+        //        if (IncludeClonedFrom)
+        //            cloneTarget.ClonedFrom_ID = ID;
+        //        cloneTarget.RootCohortAggregateContainer_ID = RootCohortAggregateContainer
+        //            .CloneEntireTreeRecursively(notifier, this, cloneTarget, parentToCloneJoinablesDictionary).ID;
+        //        cloneTarget.SaveToDatabase();
 
-                notifier.OnCheckPerformed(
-                    new CheckEventArgs("Clone creation successful, about to commit Super Transaction",
-                        CheckResult.Success));
-                cataRepo.EndTransaction(true);
-                notifier.OnCheckPerformed(new CheckEventArgs("Super Transaction committed successfully",
-                    CheckResult.Success));
+        //        notifier.OnCheckPerformed(
+        //            new CheckEventArgs("Clone creation successful, about to commit Super Transaction",
+        //                CheckResult.Success));
+        //        cataRepo.EndTransaction(true);
+        //        notifier.OnCheckPerformed(new CheckEventArgs("Super Transaction committed successfully",
+        //            CheckResult.Success));
 
-                return cloneTarget;
-            }
-            catch (Exception e)
-            {
-                cataRepo.EndTransaction(false);
-                notifier.OnCheckPerformed(new CheckEventArgs(
-                    "Cloning failed, See Exception for details, the Super Transaction was rolled back successfully though",
-                    CheckResult.Fail, e));
-            }
-        }
+        //        return cloneTarget;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        cataRepo.EndTransaction(false);
+        //        notifier.OnCheckPerformed(new CheckEventArgs(
+        //            "Cloning failed, See Exception for details, the Super Transaction was rolled back successfully though",
+        //            CheckResult.Fail, e));
+        //    }
+        //}
 
         return null;
     }
@@ -454,22 +455,22 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
         if (!useTransaction)
             return CreateCloneOfAggregateConfigurationPrivate(toClone, resolveMultipleExtractionIdentifiers);
 
-        if (Repository is ITableRepository tableRepo)
-            using (tableRepo.BeginNewTransactedConnection())
-            {
-                try
-                {
-                    var toReturn =
-                        CreateCloneOfAggregateConfigurationPrivate(toClone, resolveMultipleExtractionIdentifiers);
-                    tableRepo.EndTransactedConnection(true);
-                    return toReturn;
-                }
-                catch (Exception)
-                {
-                    tableRepo.EndTransactedConnection(false); //abandon
-                    throw;
-                }
-            }
+        //if (Repository is ITableRepository tableRepo)
+        //    using (tableRepo.BeginNewTransactedConnection())
+        //    {
+        //        try
+        //        {
+        //            var toReturn =
+        //                CreateCloneOfAggregateConfigurationPrivate(toClone, resolveMultipleExtractionIdentifiers);
+        //            tableRepo.EndTransactedConnection(true);
+        //            return toReturn;
+        //        }
+        //        catch (Exception)
+        //        {
+        //            tableRepo.EndTransactedConnection(false); //abandon
+        //            throw;
+        //        }
+        //    }
 
         return CreateCloneOfAggregateConfigurationPrivate(toClone, resolveMultipleExtractionIdentifiers);
     }
@@ -477,7 +478,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     private AggregateConfiguration CreateCloneOfAggregateConfigurationPrivate(AggregateConfiguration toClone,
         ChooseWhichExtractionIdentifierToUseFromManyHandler resolveMultipleExtractionIdentifiers)
     {
-        var cataRepo = CatalogueRepository;
+        var cataRepo = CatalogueDbContext;
 
         //clone will not have axis or pivot or dimensions other than extraction identifier
         var newConfiguration = toClone.ShallowClone();
@@ -493,7 +494,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
 
         //clone parameters
         foreach (var toCloneParameter in toClone.Parameters)
-            new AnyTableSqlParameter((ICatalogueRepository)newConfiguration.Repository, newConfiguration,
+            new AnyTableSqlParameter(newConfiguration.CatalogueDbContext, newConfiguration,
                 toCloneParameter.ParameterSQL)
             {
                 Value = toCloneParameter.Value,
@@ -502,8 +503,8 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
 
 
         //now clone its AggregateForcedJoins
-        foreach (var t in cataRepo.AggregateForcedJoinManager.GetAllForcedJoinsFor(toClone))
-            cataRepo.AggregateForcedJoinManager.CreateLinkBetween(newConfiguration, t);
+        //foreach (var t in cataRepo.AggregateForcedJoinManager.GetAllForcedJoinsFor(toClone))
+        //    cataRepo.AggregateForcedJoinManager.CreateLinkBetween(newConfiguration, t);
 
         if (!toClone.Catalogue.IsApiCall())
         {
@@ -567,7 +568,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
         ChooseWhichExtractionIdentifierToUseFromManyHandler resolveMultipleExtractionIdentifiers,
         bool importMandatoryFilters = true)
     {
-        var cataRepo = (ICatalogueRepository)Repository;
+        var cataRepo = CatalogueDbContext;
 
         var configuration = new AggregateConfiguration(cataRepo, catalogue, $"People in {catalogue}");
         EnsureNamingConvention(configuration);
@@ -593,7 +594,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     private void ImportMandatoryFilters(ICatalogue catalogue, AggregateConfiguration configuration,
         ISqlParameter[] globalParameters)
     {
-        var filterImporter = new FilterImporter(new AggregateFilterFactory((ICatalogueRepository)catalogue.Repository),
+        var filterImporter = new FilterImporter(new AggregateFilterFactory(catalogue.CatalogueDbContext),
             globalParameters);
 
         //Find any Mandatory Filters
@@ -602,7 +603,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
         var createdSoFar = new List<AggregateFilter>();
 
         if (!mandatoryFilters.Any()) return;
-        var container = new AggregateFilterContainer((ICatalogueRepository)Repository, FilterContainerOperation.AND);
+        var container = new AggregateFilterContainer(CatalogueDbContext, FilterContainerOperation.AND);
         configuration.RootFilterContainer_ID = container.ID;
         configuration.SaveToDatabase();
 
@@ -690,7 +691,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     /// </summary>
     /// <returns></returns>
     public JoinableCohortAggregateConfiguration[] GetAllJoinables() =>
-        Repository.GetAllObjectsWithParent<JoinableCohortAggregateConfiguration>(this).ToArray();
+        CatalogueDbContext.GetAllObjectsWithParent<JoinableCohortAggregateConfiguration>(this).ToArray();
 
 
     /// <summary>

@@ -11,6 +11,7 @@ using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.DataExport;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.Commands;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Managers;
@@ -24,11 +25,11 @@ namespace Rdmp.Core.QueryBuilding;
 /// </summary>
 public class ExtractionQueryBuilder
 {
-    private readonly IDataExportRepository _repository;
+    private readonly RDMPDbContext _catalogueDbContext;
 
-    public ExtractionQueryBuilder(IDataExportRepository repository)
+    public ExtractionQueryBuilder(RDMPDbContext catalogueDbContext)
     {
-        _repository = repository;
+        _catalogueDbContext = catalogueDbContext;
     }
 
     /// <summary>
@@ -82,8 +83,8 @@ public class ExtractionQueryBuilder
                 break;
         }
 
-        var hashingAlgorithm =
-            _repository.DataExportPropertyManager.GetValue(DataExportProperty.HashingAlgorithmPattern);
+        var hashingAlgorithm = "";
+        //    _catalogueDbContext.DataExportPropertyManager.GetValue(DataExportProperty.HashingAlgorithmPattern);
         if (string.IsNullOrWhiteSpace(hashingAlgorithm))
             hashingAlgorithm = null;
 
@@ -119,7 +120,7 @@ public class ExtractionQueryBuilder
         queryBuilder.RootFilterContainer = request.Configuration.GetFilterContainerFor(request.DatasetBundle.DataSet);
 
         var externalCohortTable =
-            _repository.GetObjectByID<ExternalCohortTable>(request.ExtractableCohort.ExternalCohortTable_ID);
+            _catalogueDbContext.GetObjectByID<ExternalCohortTable>(request.ExtractableCohort.ExternalCohortTable_ID);
 
         if (request.ExtractableCohort != null)
         {

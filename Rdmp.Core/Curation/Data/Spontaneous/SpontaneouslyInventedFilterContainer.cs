@@ -31,7 +31,7 @@ namespace Rdmp.Core.Curation.Data.Spontaneous;
 /// </summary>
 public class SpontaneouslyInventedFilterContainer : ConcreteContainer, IContainer
 {
-    public SpontaneouslyInventedFilterContainer(MemoryCatalogueRepository repo, IContainer[] subContainersIfAny,
+    public SpontaneouslyInventedFilterContainer(MemoryRDMPDbContext repo, IContainer[] subContainersIfAny,
         IFilter[] filtersIfAny, FilterContainerOperation operation) : base(repo)
     {
         repo.InsertAndHydrate(this, new Dictionary<string, object>());

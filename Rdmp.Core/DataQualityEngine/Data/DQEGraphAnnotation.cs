@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.DataQualityEngine.Data;
@@ -37,31 +38,31 @@ public class DQEGraphAnnotation : DatabaseEntity
     {
     }
 
-    public DQEGraphAnnotation(DQERepository repository, double startX, double startY, double endX, double endY,
+    public DQEGraphAnnotation(RDMPDbContext catalogueDbContext, double startX, double startY, double endX, double endY,
         string text, Evaluation evaluation, DQEGraphType annotationIsForGraphType, string pivotCategory)
     {
-        Repository = repository;
+       CatalogueDbContext = catalogueDbContext;
 
         var username = Environment.UserName;
 
-        Repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "StartX", startX },
-            { "StartY", startY },
-            { "EndX", endX },
-            { "EndY", endY },
-            { "Text", text },
-            { "Evaluation_ID", evaluation.ID },
-            { "Username", username },
-            { "CreationDate", DateTime.Now },
-            { "AnnotationIsForGraph", annotationIsForGraphType },
-            { "PivotCategory", pivotCategory }
-        });
+        //CatalogueDbContext.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "StartX", startX },
+        //    { "StartY", startY },
+        //    { "EndX", endX },
+        //    { "EndY", endY },
+        //    { "Text", text },
+        //    { "Evaluation_ID", evaluation.ID },
+        //    { "Username", username },
+        //    { "CreationDate", DateTime.Now },
+        //    { "AnnotationIsForGraph", annotationIsForGraphType },
+        //    { "PivotCategory", pivotCategory }
+        //});
     }
 
-    public DQEGraphAnnotation(DQERepository repository, DbDataReader r) : base(repository, r)
+    public DQEGraphAnnotation(RDMPDbContext catalogueDbContext, DbDataReader r) :base(catalogueDbContext, r)
     {
-        Repository = repository;
+       CatalogueDbContext = catalogueDbContext;
 
         //coordinates of the annotation
         StartX = double.Parse(r["StartX"].ToString());

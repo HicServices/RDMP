@@ -40,7 +40,7 @@ internal class ExecuteCommandRunner : IRunner
     public int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener,
         ICheckNotifier checkNotifier, GracefulCancellationToken token)
     {
-        _input = new ConsoleInputManager(repositoryLocator, checkNotifier)
+        _input = new ConsoleInputManager(repositoryLocator.CatalogueDbContext, checkNotifier)
         {
             // if there is a single command we are running then disable user input
             // but allow it if the input is ./rdmp cmd (i.e. run in a loop prompting for commands)

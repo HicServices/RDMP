@@ -61,7 +61,7 @@ public class ExecuteCommandAddNewSupportingSqlTable : BasicCommandExecution, IAt
                 // user cancelled typing a name
                 return;
 
-        var newSqlTable = new SupportingSQLTable((ICatalogueRepository)c.Repository, c, name ??
+        var newSqlTable = new SupportingSQLTable(c.CatalogueDbContext, c, name ??
             $"New Supporting SQL Table {Guid.NewGuid()}");
 
         Activate(newSqlTable);

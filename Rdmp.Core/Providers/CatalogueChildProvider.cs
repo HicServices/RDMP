@@ -157,7 +157,7 @@ public class CatalogueChildProvider : ICoreChildProvider
     public Dictionary<int, ExtractionInformation> AllExtractionInformationsDictionary { get; private set; }
     protected Dictionary<int, ExtractionInformation> _extractionInformationsByCatalogueItem;
 
-    private IFilterManager _aggregateFilterManager;
+    //private IFilterManager _aggregateFilterManager;
 
     //Filters for Aggregates (includes filter containers (AND/OR)
     public Dictionary<int, AggregateFilterContainer> AllAggregateContainersDictionary { get; private set; }
@@ -167,12 +167,12 @@ public class CatalogueChildProvider : ICoreChildProvider
     public AggregateFilterParameter[] AllAggregateFilterParameters { get; private set; }
 
     //Catalogue master filters (does not include any support for filter containers (AND/OR)
-    private ExtractionFilter[] AllCatalogueFilters;
+    //private ExtractionFilter[] AllCatalogueFilters;
     public ExtractionFilterParameter[] AllCatalogueParameters;
     public ExtractionFilterParameterSet[] AllCatalogueValueSets;
     public ExtractionFilterParameterSetValue[] AllCatalogueValueSetValues;
 
-    private ICohortContainerManager _cohortContainerManager;
+    //private ICohortContainerManager _cohortContainerManager;
 
     public CohortIdentificationConfiguration[] AllCohortIdentificationConfigurations { get; private set; }
     public CohortIdentificationConfiguration[] AllTemplateCohortIdentificationConfigurations { get; private set; }
@@ -225,7 +225,7 @@ public class CatalogueChildProvider : ICoreChildProvider
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="catalogueDbContext"></param>
+    /// <param  name="catalogueDbContext"></param>
     /// <param name="pluginChildProviders"></param>
     /// <param name="errorsCheckNotifier">Where to report errors building the hierarchy e.g. when <paramref name="pluginChildProviders"/> crash.  Set to null for <see cref="IgnoreAllErrorsCheckNotifier"/></param>
     /// <param name="previousStateIfKnown">Previous child provider state if you know it otherwise null</param>
@@ -548,9 +548,9 @@ public class CatalogueChildProvider : ICoreChildProvider
         ////if we have a database repository then we should get answers from the caching version CohortContainerManagerFromChildProvider otherwise
         ////just use the one that is configured on the repository.
 
-        //_cohortContainerManager = _catalogueRepository is CatalogueRepository cataRepo
+        //_cohortContainerManager = _catalogueRepository is RDMPDbContext cataRepo
         //    ? new CohortContainerManagerFromChildProvider(cataRepo, this)
-        //    : _catalogueRepository.CohortContainerManager;
+        //    : _catalogueCatalogueDbContext.CohortContainerManager;
     }
 
     private void BuildAggregateConfigurations()
@@ -594,9 +594,9 @@ public class CatalogueChildProvider : ICoreChildProvider
         //AllAggregateFilters = GetAllObjects<AggregateFilter>(_catalogueRepository);
         //AllAggregateFilterParameters = GetAllObjects<AggregateFilterParameter>(_catalogueRepository);
 
-        //_aggregateFilterManager = _catalogueRepository is CatalogueRepository cataRepo
+        //_aggregateFilterManager = _catalogueRepository is RDMPDbContext cataRepo
         //    ? new FilterManagerFromChildProvider(cataRepo, this)
-        //    : _catalogueRepository.FilterManager;
+        //    : _catalogueCatalogueDbContext.FilterManager;
     }
 
 
@@ -828,7 +828,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         //var children = new HashSet<object>();
 
         //var isKeyMissing = false;
-        //if (_catalogueRepository.EncryptionManager is PasswordEncryptionKeyLocation keyLocation)
+        //if (_catalogueCatalogueDbContext.EncryptionManager is PasswordEncryptionKeyLocation keyLocation)
         //    isKeyMissing = string.IsNullOrWhiteSpace(keyLocation.GetKeyFileLocation());
 
         //children.Add(new DecryptionPrivateKeyNode(isKeyMissing));
@@ -1215,30 +1215,30 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     private void AddChildren(AggregateFilterContainer container, DescendancyList descendancy)
     {
-        var childrenObjects = new List<object>();
+        //var childrenObjects = new List<object>();
 
-        var subcontainers = _aggregateFilterManager.GetSubContainers(container);
-        var filters = _aggregateFilterManager.GetFilters(container);
+        //var subcontainers = _aggregateFilterManager.GetSubContainers(container);
+        //var filters = _aggregateFilterManager.GetFilters(container);
 
-        foreach (AggregateFilterContainer subcontainer in subcontainers)
-        {
-            //one of our children is this subcontainer
-            childrenObjects.Add(subcontainer);
+        //foreach (AggregateFilterContainer subcontainer in subcontainers)
+        //{
+        //    //one of our children is this subcontainer
+        //    childrenObjects.Add(subcontainer);
 
-            //but also document its children
-            AddChildren(subcontainer, descendancy.Add(subcontainer));
-        }
+        //    //but also document its children
+        //    AddChildren(subcontainer, descendancy.Add(subcontainer));
+        //}
 
-        //also add the filters for the container
-        foreach (var f in filters)
-        {
-            // for filters add the parameters under them
-            AddChildren((AggregateFilter)f, descendancy.Add(f));
-            childrenObjects.Add(f);
-        }
+        ////also add the filters for the container
+        //foreach (var f in filters)
+        //{
+        //    // for filters add the parameters under them
+        //    AddChildren((AggregateFilter)f, descendancy.Add(f));
+        //    childrenObjects.Add(f);
+        //}
 
-        //add our children to the dictionary
-        AddToDictionaries(new HashSet<object>(childrenObjects), descendancy);
+        ////add our children to the dictionary
+        //AddToDictionaries(new HashSet<object>(childrenObjects), descendancy);
     }
 
     private void AddChildren(AggregateFilter f, DescendancyList descendancy)
@@ -1273,12 +1273,12 @@ public class CatalogueChildProvider : ICoreChildProvider
     {
         var children = new HashSet<object>();
 
-        foreach (var filter in AllCatalogueFilters.Where(f => f.ExtractionInformation_ID == extractionInformation.ID))
-        {
-            //add the filter as a child of the
-            children.Add(filter);
-            AddChildren(filter, descendancy.Add(filter));
-        }
+        //foreach (var filter in AllCatalogueFilters.Where(f => f.ExtractionInformation_ID == extractionInformation.ID))
+        //{
+        //    //add the filter as a child of the
+        //    children.Add(filter);
+        //    AddChildren(filter, descendancy.Add(filter));
+        //}
 
         AddToDictionaries(children, descendancy);
     }
@@ -1375,31 +1375,31 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     private void AddChildren(CohortAggregateContainer container, DescendancyList descendancy)
     {
-        //get subcontainers
-        var subcontainers = _cohortContainerManager.GetChildren(container).OfType<CohortAggregateContainer>().ToList();
+        ////get subcontainers
+        //var subcontainers = _cohortContainerManager.GetChildren(container).OfType<CohortAggregateContainer>().ToList();
 
-        //if there are subcontainers
-        foreach (var subcontainer in subcontainers)
-            AddChildren(subcontainer, descendancy.Add(subcontainer));
+        ////if there are subcontainers
+        //foreach (var subcontainer in subcontainers)
+        //    AddChildren(subcontainer, descendancy.Add(subcontainer));
 
-        //get our configurations
-        var configurations = _cohortContainerManager.GetChildren(container).OfType<AggregateConfiguration>().ToList();
+        ////get our configurations
+        //var configurations = _cohortContainerManager.GetChildren(container).OfType<AggregateConfiguration>().ToList();
 
-        //record the configurations children including full descendancy
-        foreach (var configuration in configurations)
-        {
-            ForceAggregateNaming(configuration, descendancy);
-            AddChildren(configuration, descendancy.Add(configuration));
+        ////record the configurations children including full descendancy
+        //foreach (var configuration in configurations)
+        //{
+        //    ForceAggregateNaming(configuration, descendancy);
+        //    AddChildren(configuration, descendancy.Add(configuration));
 
-            //it's no longer an orphan because it's in a known cic
-            OrphanAggregateConfigurations.Remove(configuration);
-        }
+        //    //it's no longer an orphan because it's in a known cic
+        //    OrphanAggregateConfigurations.Remove(configuration);
+        //}
 
-        //all our children (containers and aggregates)
-        //children are all aggregates and containers at the current hierarchy level in order
-        var children = subcontainers.Union(configurations.Cast<IOrderable>()).OrderBy(o => o.Order).ToList();
+        ////all our children (containers and aggregates)
+        ////children are all aggregates and containers at the current hierarchy level in order
+        //var children = subcontainers.Union(configurations.Cast<IOrderable>()).OrderBy(o => o.Order).ToList();
 
-        AddToDictionaries(new HashSet<object>(children), descendancy);
+        //AddToDictionaries(new HashSet<object>(children), descendancy);
     }
 
     private void ForceAggregateNaming(AggregateConfiguration configuration, DescendancyList descendancy)
@@ -1755,11 +1755,11 @@ public class CatalogueChildProvider : ICoreChildProvider
         }
     }
 
-    protected T[] GetAllObjects<T>(IRepository repository) where T : IMapsDirectlyToDatabaseTable
+    protected T[] GetAllObjects<T>(RDMPDbContext catalogueDbContext) where T : IMapsDirectlyToDatabaseTable
     {
         lock (WriteLock)
         {
-            return repository.GetAllObjects<T>();
+            return catalogueDbContext.GetAllObjects<T>();
         }
     }
 

@@ -26,7 +26,7 @@ namespace Tests.Common.Scenarios;
 /// </summary>
 public class BulkTestsData
 {
-    private readonly ICatalogueRepository _repository;
+    private readonly RDMPDBContext _catalogueDbContext;
 
     /// <summary>
     /// The database in which to create the test data table
@@ -83,12 +83,12 @@ public class BulkTestsData
     /// Prepares to create a new table in the <paramref name="targetDatabase"/> of test data using <see cref="Demography"/>. To actually generate the data
     /// call <see cref="SetupTestData"/>
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="targetDatabase"></param>
     /// <param name="numberOfRows"></param>
-    public BulkTestsData(RdmpDbContext catalogueDbContext, DiscoveredDatabase targetDatabase, int numberOfRows = 10000)
+    public BulkTestsData(RDMPDbContext catalogueDbContext, DiscoveredDatabase targetDatabase, int numberOfRows = 10000)
     {
-        _repository = repository;
+        _catalogueDbContext = catalogueDbContext;
         BulkDataDatabase = targetDatabase;
         ExpectedNumberOfRowsInTestData = numberOfRows;
 

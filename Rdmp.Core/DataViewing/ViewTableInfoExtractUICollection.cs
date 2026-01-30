@@ -75,7 +75,7 @@ public class ViewTableInfoExtractUICollection : PersistableObjectCollection, IVi
         if (ViewType == ViewType.TOP_100)
             qb.TopX = 100;
 
-        var memoryRepository = new MemoryCatalogueRepository();
+        var memoryRepository = new MemoryRDMPDbContext();
 
         qb.AddColumnRange(TableInfo.ColumnInfos.Select(c => new ColumnInfoToIColumn(memoryRepository, c)).ToArray());
 

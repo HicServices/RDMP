@@ -10,6 +10,7 @@ using System.Data.Common;
 using System.Linq;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataFlowPipeline;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode;
@@ -61,11 +62,11 @@ public class PipelineComponent : DatabaseEntity, IPipelineComponent
     /// <inheritdoc/>
     [NoMappingToDatabase]
     public IEnumerable<IPipelineComponentArgument> PipelineComponentArguments =>
-        Repository.GetAllObjectsWithParent<PipelineComponentArgument>(this);
+        CatalogueDbContext.GetAllObjectsWithParent<PipelineComponentArgument>(this);
 
     /// <inheritdoc cref="Pipeline_ID"/>
     [NoMappingToDatabase]
-    public IHasDependencies Pipeline => Repository.GetObjectByID<Pipeline>(Pipeline_ID);
+    public IHasDependencies Pipeline => CatalogueDbContext.GetObjectByID<Pipeline>(Pipeline_ID);
 
     #endregion
 
@@ -80,25 +81,25 @@ public class PipelineComponent : DatabaseEntity, IPipelineComponent
     /// Creates a new component in the <paramref name="parent"/> <see cref="Pipeline"/>.  This will mean that when run the <see cref="Pipeline"/>
     /// will instantiate and run the given <paramref name="componentType"/>.
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="parent"></param>
     /// <param name="componentType"></param>
     /// <param name="order"></param>
     /// <param name="name"></param>
-    public PipelineComponent(RdmpDbContext catalogueDbContext, IPipeline parent, Type componentType, int order,
+    public PipelineComponent(RDMPDbContext catalogueDbContext, IPipeline parent, Type componentType, int order,
         string name = null)
     {
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "Name", name ?? $"Run {componentType.Name}" },
-            { "Pipeline_ID", parent.ID },
-            { "Class", componentType.ToString() },
-            { "Order", order }
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "Name", name ?? $"Run {componentType.Name}" },
+        //    { "Pipeline_ID", parent.ID },
+        //    { "Class", componentType.ToString() },
+        //    { "Order", order }
+        //});
     }
 
-    internal PipelineComponent(RdmpDbContext catalogueDbContext, DbDataReader r)
-        : base(repository, r)
+    internal PipelineComponent(RDMPDbContext catalogueDbContext, DbDataReader r)
+        :base(catalogueDbContext, r)
     {
         Order = int.Parse(r["Order"].ToString());
         Pipeline_ID = int.Parse(r["Pipeline_ID"].ToString());
@@ -110,7 +111,7 @@ public class PipelineComponent : DatabaseEntity, IPipelineComponent
     public IEnumerable<IArgument> GetAllArguments() => PipelineComponentArguments;
 
     /// <inheritdoc/>
-    public IArgument CreateNewArgument() => new PipelineComponentArgument((ICatalogueRepository)Repository, this);
+    public IArgument CreateNewArgument() => new PipelineComponentArgument(CatalogueDbContext, this);
 
     /// <inheritdoc/>
     public string GetClassNameWhoArgumentsAreFor() => Class;
@@ -125,7 +126,7 @@ public class PipelineComponent : DatabaseEntity, IPipelineComponent
     /// <inheritdoc/>
     public PipelineComponent Clone(Pipeline intoTargetPipeline)
     {
-        var cataRepo = (ICatalogueRepository)intoTargetPipeline.Repository;
+        var cataRepo = intoTargetPipeline.CatalogueDbContext;
 
         var type = GetClassAsSystemType();
 
@@ -178,14 +179,14 @@ public class PipelineComponent : DatabaseEntity, IPipelineComponent
 
     public override void DeleteInDatabase()
     {
-        if (Pipeline is Pipeline parent)
-        {
-            if (parent.SourcePipelineComponent_ID == ID)
-                CatalogueRepository.SaveSpecificPropertyOnlyToDatabase(parent, "SourcePipelineComponent_ID", null);
+        //if (Pipeline is Pipeline parent)
+        //{
+        //    if (parent.SourcePipelineComponent_ID == ID)
+        //        CatalogueDbContext.SaveSpecificPropertyOnlyToDatabase(parent, "SourcePipelineComponent_ID", null);
 
-            if (parent.DestinationPipelineComponent_ID == ID)
-                CatalogueRepository.SaveSpecificPropertyOnlyToDatabase(parent, "DestinationPipelineComponent_ID", null);
-        }
+        //    if (parent.DestinationPipelineComponent_ID == ID)
+        //        CatalogueDbContext.SaveSpecificPropertyOnlyToDatabase(parent, "DestinationPipelineComponent_ID", null);
+        //}
 
         base.DeleteInDatabase();
     }

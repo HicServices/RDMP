@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Text.RegularExpressions;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 
@@ -69,18 +70,18 @@ public class StandardRegex : DatabaseEntity, ICheckable
     /// Creates a new standardised reusable regular expression in the database that can be referenced by pipeline components (this helps centralise patterns
     /// rather than having replication between components/pipelines)
     /// </summary>
-    /// <param name="repository"></param>
-    public StandardRegex(RdmpDbContext catalogueDbContext)
+    /// <param name="catalogueDbContext"></param>
+    public StandardRegex(RDMPDbContext catalogueDbContext)
     {
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "ConceptName", $"New StandardRegex{Guid.NewGuid()}" },
-            { "Regex", ".*" }
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "ConceptName", $"New StandardRegex{Guid.NewGuid()}" },
+        //    { "Regex", ".*" }
+        //});
     }
 
-    internal StandardRegex(RdmpDbContext catalogueDbContext, DbDataReader r)
-        : base(repository, r)
+    internal StandardRegex(RDMPDbContext catalogueDbContext, DbDataReader r)
+        :base(catalogueDbContext, r)
     {
         ConceptName = r["ConceptName"].ToString();
         Regex = r["Regex"].ToString();

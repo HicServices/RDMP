@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.Ticketing;
@@ -21,7 +22,7 @@ namespace Rdmp.Core.DataExport.DataRelease;
 /// </summary>
 public class ReleaseEnvironmentPotential : ICheckable
 {
-    private readonly IDataExportRepository _repository;
+    private readonly RDMPDbContext _catalogueDbContext;
     public IExtractionConfiguration Configuration { get; private set; }
     public IProject Project { get; private set; }
 
@@ -32,7 +33,7 @@ public class ReleaseEnvironmentPotential : ICheckable
 
     public ReleaseEnvironmentPotential(IExtractionConfiguration configuration)
     {
-        _repository = configuration.DataExportRepository;
+        _catalogueDbContext = configuration.CatalogueDbContext;
         Configuration = configuration;
         Project = configuration.Project;
     }
@@ -41,10 +42,10 @@ public class ReleaseEnvironmentPotential : ICheckable
     {
         Assesment = TicketingReleaseabilityEvaluation.TicketingLibraryMissingOrNotConfiguredCorrectly;
 
-        var configuration = _repository.CatalogueRepository
+        var configuration = _catalogueDbContext
             .GetAllObjectsWhere<TicketingSystemConfiguration>("IsActive", 1).SingleOrDefault();
         if (configuration == null) return;
-        var factory = new TicketingSystemFactory(_repository.CatalogueRepository);
+        var factory = new TicketingSystemFactory(_catalogueDbContext);
 
 
         ITicketingSystem ticketingSystem;

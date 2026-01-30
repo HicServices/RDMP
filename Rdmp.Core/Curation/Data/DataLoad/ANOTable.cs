@@ -13,6 +13,7 @@ using FAnsi.Discovery;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Serialization;
 using Rdmp.Core.Databases;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
@@ -110,7 +111,7 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable, ICheckable, IRev
 
     /// <inheritdoc cref="Server_ID"/>
     [NoMappingToDatabase]
-    public ExternalDatabaseServer Server => Repository.GetObjectByID<ExternalDatabaseServer>(Server_ID);
+    public ExternalDatabaseServer Server => CatalogueDbContext.GetObjectByID<ExternalDatabaseServer>(Server_ID);
 
     #endregion
 
@@ -125,11 +126,11 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable, ICheckable, IRev
     /// Declares that a new ANOTable (anonymous mapping table) should exist in the referenced database.  You can call this constructor without first creating the table.  If you do
     /// you should set <see cref="NumberOfIntegersToUseInAnonymousRepresentation"/> and <see cref="NumberOfCharactersToUseInAnonymousRepresentation"/> then <see cref="PushToANOServerAsNewTable"/>
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param name="catalogueDbContext"></param>
     /// <param name="externalDatabaseServer"></param>
     /// <param name="tableName"></param>
     /// <param name="suffix"></param>
-    public ANOTable(RdmpDbContext catalogueDbContext, ExternalDatabaseServer externalDatabaseServer, string tableName,
+    public ANOTable(RDMPDbContext catalogueDbContext, ExternalDatabaseServer externalDatabaseServer, string tableName,
         string suffix)
     {
         if (string.IsNullOrWhiteSpace(tableName))
@@ -139,19 +140,19 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable, ICheckable, IRev
         NumberOfIntegersToUseInAnonymousRepresentation = 1;
         NumberOfCharactersToUseInAnonymousRepresentation = 1;
 
-        if (repository.GetAllObjects<ANOTable>().Any(a => string.Equals(a.Suffix, suffix)))
-            throw new Exception($"There is already another {nameof(ANOTable)} with the suffix '{suffix}'");
+        //if (repository.GetAllObjects<ANOTable>().Any(a => string.Equals(a.Suffix, suffix)))
+        //    throw new Exception($"There is already another {nameof(ANOTable)} with the suffix '{suffix}'");
 
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "TableName", tableName },
-            { "Suffix", suffix },
-            { "Server_ID", externalDatabaseServer.ID }
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "TableName", tableName },
+        //    { "Suffix", suffix },
+        //    { "Server_ID", externalDatabaseServer.ID }
+        //});
     }
 
-    internal ANOTable(RdmpDbContext catalogueDbContext, DbDataReader r)
-        : base(repository, r)
+    internal ANOTable(RDMPDbContext catalogueDbContext, DbDataReader r)
+        :base(catalogueDbContext, r)
     {
         Server_ID = Convert.ToInt32(r["Server_ID"]);
         TableName = r["TableName"].ToString();
@@ -174,7 +175,7 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable, ICheckable, IRev
     public override void SaveToDatabase()
     {
         Check(ThrowImmediatelyCheckNotifier.Quiet);
-        Repository.SaveToDatabase(this);
+        //CatalogueDbContext.SaveToDatabase(this);
     }
 
     /// <summary>
@@ -184,7 +185,7 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable, ICheckable, IRev
     public override void DeleteInDatabase()
     {
         DeleteANOTableInANOStore();
-        Repository.DeleteFromDatabase(this);
+        //CatalogueDbContext.DeleteFromDatabase(this);
     }
 
     /// <inheritdoc/>
@@ -434,5 +435,5 @@ CONSTRAINT AK_{TableName} UNIQUE({anonymousColumnName})
     public IHasDependencies[] GetObjectsThisDependsOn() => Array.Empty<IHasDependencies>();
 
     /// <inheritdoc/>
-    public IHasDependencies[] GetObjectsDependingOnThis() => Repository.GetAllObjectsWithParent<ColumnInfo>(this);
+    public IHasDependencies[] GetObjectsDependingOnThis() => CatalogueDbContext.GetAllObjectsWithParent<ColumnInfo>(this);
 }

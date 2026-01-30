@@ -8,6 +8,7 @@ using System;
 using System.Linq;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
@@ -18,7 +19,7 @@ namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
 /// </summary>
 public class RuntimeTaskFactory
 {
-    public RuntimeTaskFactory(RdmpDbContext catalogueDbContext)
+    public RuntimeTaskFactory(RDMPDbContext catalogueDbContext)
     {
     }
 

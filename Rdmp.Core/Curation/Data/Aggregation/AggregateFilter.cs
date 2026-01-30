@@ -10,6 +10,7 @@ using System.Data.Common;
 using System.Linq;
 using Rdmp.Core.Curation.Checks;
 using Rdmp.Core.Curation.FilterImporting.Construction;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Repositories;
@@ -79,7 +80,7 @@ public class AggregateFilter : ConcreteFilter, IDisableable
     [NoMappingToDatabase]
     public IEnumerable<AggregateFilterParameter> AggregateFilterParameters
     {
-        get { return Repository.GetAllObjectsWithParent<AggregateFilterParameter>(this); }
+        get { return CatalogueDbContext.GetAllObjectsWithParent<AggregateFilterParameter>(this); }
     }
 
     /// <inheritdoc/>
@@ -88,7 +89,7 @@ public class AggregateFilter : ConcreteFilter, IDisableable
     ///<inheritdoc/>
     [NoMappingToDatabase]
     public override IContainer FilterContainer => FilterContainer_ID.HasValue
-        ? Repository.GetObjectByID<AggregateFilterContainer>(FilterContainer_ID.Value)
+        ? CatalogueDbContext.GetObjectByID<AggregateFilterContainer>(FilterContainer_ID.Value)
         : null;
 
     public override int Order { get => _order; set => SetField(ref _order, value); }
@@ -102,22 +103,22 @@ public class AggregateFilter : ConcreteFilter, IDisableable
     /// <summary>
     /// Defines a new filter (line of WHERE SQL) in the specified AggregateFilterContainer (AND / OR).  Calling this constructor creates a new object in the database
     /// </summary>
-    /// <param name="repository"></param>
+    /// <param  name="catalogueDbContext"></param>
     /// <param name="name"></param>
     /// <param name="container"></param>
-    public AggregateFilter(RdmpDbContext catalogueDbContext, string name = null,
+    public AggregateFilter(RDMPDbContext catalogueDbContext, string name = null,
         AggregateFilterContainer container = null)
     {
         name ??= $"New AggregateFilter{Guid.NewGuid()}";
 
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "Name", name },
-            { "FilterContainer_ID", container != null ? (object)container.ID : DBNull.Value }
-        });
+        //repository.InsertAndHydrate(this, new Dictionary<string, object>
+        //{
+        //    { "Name", name },
+        //    { "FilterContainer_ID", container != null ? (object)container.ID : DBNull.Value }
+        //});
     }
 
-    internal AggregateFilter(RdmpDbContext catalogueDbContext, DbDataReader r) : base(repository, r)
+    internal AggregateFilter(RDMPDbContext catalogueDbContext, DbDataReader r) : base(catalogueDbContext, r)
     {
         WhereSQL = r["WhereSQL"] as string;
         Description = r["Description"] as string;
@@ -148,7 +149,7 @@ public class AggregateFilter : ConcreteFilter, IDisableable
         if (AssociatedColumnInfo_ID != null)
             try
             {
-                return Repository.GetObjectByID<ColumnInfo>((int)AssociatedColumnInfo_ID);
+                return CatalogueDbContext.GetObjectByID<ColumnInfo>((int)AssociatedColumnInfo_ID);
             }
             catch (KeyNotFoundException)
             {
@@ -159,7 +160,7 @@ public class AggregateFilter : ConcreteFilter, IDisableable
     }
 
     /// <inheritdoc/>
-    public override IFilterFactory GetFilterFactory() => new AggregateFilterFactory((ICatalogueRepository)Repository);
+    public override IFilterFactory GetFilterFactory() => new AggregateFilterFactory(CatalogueDbContext);
 
     /// <inheritdoc/>
     public override Catalogue GetCatalogue()
@@ -174,7 +175,7 @@ public class AggregateFilter : ConcreteFilter, IDisableable
     {
         base.Check(notifier);
 
-        var checker = new ClonedFilterChecker(this, ClonedFromExtractionFilter_ID, Repository);
+        var checker = new ClonedFilterChecker(this, ClonedFromExtractionFilter_ID, CatalogueDbContext);
         checker.Check(notifier);
     }
 
@@ -198,13 +199,13 @@ public class AggregateFilter : ConcreteFilter, IDisableable
         if (FilterContainer_ID == null)
             return null;
 
-        var container = Repository.GetObjectByID<AggregateFilterContainer>(FilterContainer_ID.Value);
+        var container = CatalogueDbContext.GetObjectByID<AggregateFilterContainer>(FilterContainer_ID.Value);
         return container.GetAggregate();
     }
 
     public AggregateFilter ShallowClone(AggregateFilterContainer into)
     {
-        var clone = new AggregateFilter(CatalogueRepository, Name, into);
+        var clone = new AggregateFilter(CatalogueDbContext, Name, into);
         CopyShallowValuesTo(clone);
         return clone;
     }

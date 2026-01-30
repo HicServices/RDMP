@@ -13,7 +13,7 @@ Often your class will have foreign key properties e.g. `CatalogueItem.Catalogue_
 ```csharp
  public Catalogue Catalogue 
  {
-	get { return Repository.GetObjectByID<Catalogue>(Catalogue_ID); }
+	get { return CatalogueDbContext.GetObjectByID<Catalogue>(Catalogue_ID); }
  }
 ```
 
@@ -50,7 +50,7 @@ public class AggregateTopX: DatabaseEntity
 	}
 	
 	//constructor for creating new instances in memory/database simultaneously
-	public AggregateTopX(IRepository repository,AggregateConfiguration config)
+	public AggregateTopX(RDMPDbContext catalogueDbContext,AggregateConfiguration config)
 	{
 		repository.InsertAndHydrate(this,new Dictionary<string, object>()
 		{
@@ -62,7 +62,7 @@ public class AggregateTopX: DatabaseEntity
 	}
 	
 	//internal constructor for creating instances out of the database
-	internal AggregateTopX(IRepository repository, DbDataReader r): base(repository, r)
+	internal AggregateTopX(RDMPDbContext catalogueDbContext, DbDataReader r):base(catalogueDbContext, r)
 	{
 		AggregateConfiguration_ID = Convert.ToInt32(r["AggregateConfiguration_ID"]);
 	}
@@ -78,7 +78,7 @@ First create a relationship property with a getter that gets the parent object. 
 	[NoMappingToDatabase]
     public AggregateConfiguration AggregateConfiguration
     {
-        get { return Repository.GetObjectByID<AggregateConfiguration>(AggregateConfiguration_ID); }
+        get { return CatalogueDbContext.GetObjectByID<AggregateConfiguration>(AggregateConfiguration_ID); }
     }
 
     #endregion
@@ -100,7 +100,7 @@ To cache this result we should move the call to a `Lazy<AggregateConfiguration>`
 
     public void SetupLazy()
     {
-        _knownAggregateConfiguration = new Lazy<AggregateConfiguration>(() => Repository.GetObjectByID<AggregateConfiguration>(AggregateConfiguration_ID));
+        _knownAggregateConfiguration = new Lazy<AggregateConfiguration>(() => CatalogueDbContext.GetObjectByID<AggregateConfiguration>(AggregateConfiguration_ID));
     }
     #endregion
 ```
@@ -137,7 +137,7 @@ public class AggregateTopX : DatabaseEntity, IInjectKnown<AggregateConfiguration
     }
     
     //Constructor that puts a new record into the database
-    public AggregateTopX(IRepository repository, AggregateConfiguration config)
+    public AggregateTopX(RDMPDbContext catalogueDbContext, AggregateConfiguration config)
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>()
 		{
@@ -149,8 +149,8 @@ public class AggregateTopX : DatabaseEntity, IInjectKnown<AggregateConfiguration
     }
 
     //Constructor for fetching existing instances out of the database
-    internal AggregateTopX(IRepository repository, DbDataReader r)
-        : base(repository, r)
+    internal AggregateTopX(RDMPDbContext catalogueDbContext, DbDataReader r)
+        :base(catalogueDbContext, r)
     {
         AggregateConfiguration_ID = Convert.ToInt32(r["AggregateConfiguration_ID"]);
     }
@@ -162,7 +162,7 @@ public class AggregateTopX : DatabaseEntity, IInjectKnown<AggregateConfiguration
 
     public void ClearAllInjections()
     {
-        _knownAggregateConfiguration = new Lazy<AggregateConfiguration>(() => Repository.GetObjectByID<AggregateConfiguration>(AggregateConfiguration_ID));
+        _knownAggregateConfiguration = new Lazy<AggregateConfiguration>(() => CatalogueDbContext.GetObjectByID<AggregateConfiguration>(AggregateConfiguration_ID));
     }
 }
 ```
@@ -179,7 +179,7 @@ public void InjectKnown(AggregateConfiguration instance)
 
 ```csharp
  //Constructor that puts a new record into the database
-    public AggregateTopX(IRepository repository, AggregateConfiguration config)
+    public AggregateTopX(RDMPDbContext catalogueDbContext, AggregateConfiguration config)
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>()
 		{
@@ -193,8 +193,8 @@ public void InjectKnown(AggregateConfiguration instance)
     }
 
     //Constructor for fetching existing instances out of the database
-    internal AggregateTopX(IRepository repository, DbDataReader r)
-        : base(repository, r)
+    internal AggregateTopX(RDMPDbContext catalogueDbContext, DbDataReader r)
+        :base(catalogueDbContext, r)
     {
         AggregateConfiguration_ID = Convert.ToInt32(r["AggregateConfiguration_ID"]);
 

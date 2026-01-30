@@ -74,7 +74,7 @@ public partial class ArgumentValueArrayUI : UserControl, IArgumentValueUI
         var elementType = type.GetElementType() ??
                           throw new NotSupportedException(
                               $"No array element existed for DemandsInitialization Type {type}");
-        if (!_args.CatalogueRepository.SupportsObjectType(elementType))
+        if (!_args.CatalogueDbContext.SupportsObjectType(elementType))
             throw new NotSupportedException(
                 $"CatalogueRepository does not support element {elementType} for DemandsInitialization Type {type}");
 
@@ -83,7 +83,7 @@ public partial class ArgumentValueArrayUI : UserControl, IArgumentValueUI
             TaskDescription = $"Which objects should be selected for Argument '{_args.Required.Name}'",
             InitialObjectSelection = _value is IEnumerable<IMapsDirectlyToDatabaseTable> v ? v.ToArray() : null,
             AllowSelectingNull = true
-        }, _args.CatalogueRepository.GetAllObjects(elementType).ToArray(), out var selected))
+        }, _args.CatalogueDbContext.GetAllObjects(elementType).ToArray(), out var selected))
         {
             _args.Setter(selected);
             SetUp(selected);
