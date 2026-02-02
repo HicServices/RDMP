@@ -171,14 +171,14 @@ public class ExtractionQueryBuilder
         request.BatchEnd = end;
         var memoryRepo = new MemoryCatalogueRepository();
         var identifier = request.Catalogue.CatalogueItems.FirstOrDefault(ci => ci.ExtractionInformation != null ?ci.ExtractionInformation.IsExtractionIdentifier:false);
-
+        var deltaWhere = $"{((ignoreBatchingForTheseIdentifiers is null || identifier == null) ? "" : $"OR {identifier.ColumnInfo.GetFullyQualifiedName()} in ({string.Join(',', ignoreBatchingForTheseIdentifiers.Select(i => $"'{i}'"))})")})";
         var line =
             // if it is a first batch, also pull the null dates and historical records
             !request.IsBatchResume
-                ? $"(({ei.SelectSQL} >= @batchStart AND {ei.SelectSQL} < @batchEnd) OR {ei.SelectSQL} is null {((ignoreBatchingForTheseIdentifiers is null || identifier == null) ? "" : $"OR {identifier.ColumnInfo.GetFullyQualifiedName()} in ({string.Join(',', ignoreBatchingForTheseIdentifiers.Select(i => $"'{i}'"))})")})"
+                ? $"(({ei.SelectSQL} >= @batchStart AND {ei.SelectSQL} < @batchEnd) OR {ei.SelectSQL} is null {deltaWhere})"
                 :
                 // it is a subsequent batch
-                $"({ei.SelectSQL} >= @batchStart AND {ei.SelectSQL} < @batchEnd)";
+                $"(({ei.SelectSQL} >= @batchStart AND {ei.SelectSQL} < @batchEnd) {deltaWhere})";
 
 
         queryBuilder.AddCustomLine(line, QueryComponent.WHERE);

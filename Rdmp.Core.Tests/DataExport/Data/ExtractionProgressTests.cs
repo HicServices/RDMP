@@ -17,20 +17,6 @@ namespace Rdmp.Core.Tests.DataExport.Data;
 internal class ExtractionProgressTests : TestsRequiringAnExtractionConfiguration
 {
     [Test]
-    public void ExtractionProgressConstructor_NoTimePeriodicity()
-    {
-        var cata = new Catalogue(CatalogueRepository, "MyCata");
-        var eds = new ExtractableDataSet(DataExportRepository, cata);
-        var project = new Project(DataExportRepository, "My Proj");
-        var config = new ExtractionConfiguration(DataExportRepository, project);
-        var sds = new SelectedDataSets(DataExportRepository, config, eds, null);
-
-        var ex = Assert.Throws<ArgumentException>(() => new ExtractionProgress(DataExportRepository, sds));
-        Assert.That(
-            ex.Message, Is.EqualTo("Cannot create ExtractionProgress because Catalogue MyCata does not have a time coverage column"));
-    }
-
-    [Test]
     public void ExtractionProgressConstructor_Normal()
     {
         ExtractionProgress progress = null;

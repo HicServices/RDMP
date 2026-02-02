@@ -65,6 +65,7 @@ public class ExtractionRunner : ManyRunner
             GetObjectFromCommandLineString<ExtractionConfiguration>(RepositoryLocator,
                 _options.ExtractionConfiguration);
         _project = _configuration.Project;
+        _deltaExtractionCohortToCompareTo = _options.DeltaExtractionCohort;
         _pipeline = GetObjectFromCommandLineString<Pipeline>(RepositoryLocator, _options.Pipeline);
 
         if (HasConfigurationPreviouslyBeenReleased())

@@ -7,6 +7,7 @@
 using System.Collections.Generic;
 using CommandLine;
 using CommandLine.Text;
+using Rdmp.Core.DataExport.Data;
 
 namespace Rdmp.Core.CommandLine.Options;
 
@@ -24,6 +25,11 @@ public class ExtractionOptions : ConcurrentRDMPCommandLineOptions
 
     [Option('p', "Pipeline", HelpText = "The ID of the extraction Pipeline to use", Required = true)]
     public string Pipeline { get; set; }
+
+    [Option('d', "DeltaExtractionCohort",
+        HelpText =
+            "The ExtractableCohort ID to use for delta extraction (only extract records added/changed since last extraction)")]
+    public ExtractableCohort DeltaExtractionCohort { get; set; }
 
     [Option('s', "Datasets",
         HelpText =
