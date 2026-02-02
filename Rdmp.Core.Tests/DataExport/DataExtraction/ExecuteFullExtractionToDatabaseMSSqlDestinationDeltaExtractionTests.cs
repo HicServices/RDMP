@@ -285,13 +285,9 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
             var cmdNewFilterContainer = new ExecuteCommandAddNewFilterContainer(new ThrowImmediatelyActivator(RepositoryLocator), agg1);
             cmdNewFilterContainer.Execute();
 
-            //var aggfilterContainer = new AggregateFilterContainer(CatalogueRepository, FilterContainerOperation.AND);
-            //aggfilterContainer.SaveToDatabase();
-            //agg1.RootFilterContainer_ID = aggfilterContainer.ID;
             var aggfiltercontainer = RepositoryLocator.CatalogueRepository.GetAllObjects<AggregateFilterContainer>().Last();
             var aggFilter = new AggregateFilter(CatalogueRepository, "not this person", aggfiltercontainer);
-            //var x = newExternal.DiscoverCohortTable().GetDataTable();
-            aggFilter.WhereSQL = $"chi is not '{newExternal.DiscoverCohortTable().GetDataTable().Rows[1]["chi"].ToString()}'";//TODO
+            aggFilter.WhereSQL = $"chi != '{newExternal.DiscoverCohortTable().GetDataTable().Rows[1]["chi"].ToString()}'";//TODO
             aggFilter.SaveToDatabase();
 
             var updateCohortCmd = new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(
