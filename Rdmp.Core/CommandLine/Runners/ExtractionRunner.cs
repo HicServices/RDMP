@@ -109,12 +109,24 @@ public class ExtractionRunner : ManyRunner
             {
                 if (_configuration.MostRecentCohortUsed_ID != null && historicalCohorts.Any())
                 {
-                    var suggestedcohort = historicalCohorts.FirstOrDefault(c => c.ID == _configuration.MostRecentCohortUsed_ID);
-                    _deltaExtractionCohortToCompareTo = (IExtractableCohort)_activator.SelectOne(new DialogArgs() { }, historicalCohorts.ToArray());//todo actually suggest 
+                    var suggestedCohort = historicalCohorts.FirstOrDefault(c => c.ID == _configuration.MostRecentCohortUsed_ID);
+                    if (suggestedCohort is not null && _activator.YesNo($"""
+                        Do you want to use the most recent successful extracted cohort ({suggestedCohort.ToString()}) to perform a delta extraction?
+                        """
+                        , "Use Most Recent Cohort as Delta Base?"))
+
+                    {
+                        _deltaExtractionCohortToCompareTo = suggestedCohort;
+
+                    }
+                    else
+                    {
+                        _deltaExtractionCohortToCompareTo = (IExtractableCohort)_activator.SelectOne(new DialogArgs() { }, [.. historicalCohorts]);
+                    }
 
                 }
             }
-            if(_deltaExtractionCohortToCompareTo is not null)
+            if (_deltaExtractionCohortToCompareTo is not null)
             {
                 //find people to delete
                 var oldCohort = _deltaExtractionCohortToCompareTo.FetchEntireCohort();

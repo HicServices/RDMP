@@ -236,7 +236,6 @@ namespace Rdmp.UI.MainFormUITabs
             tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 8F));
             tableLayoutPanel1.Size = new System.Drawing.Size(426, 236);
             tableLayoutPanel1.TabIndex = 8;
-            tableLayoutPanel1.Paint += tableLayoutPanel1_Paint;
             // 
             // panel1
             // 

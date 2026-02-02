@@ -153,11 +153,6 @@ public partial class ExtractionProgressUI : ExtractionProgressUI_Design, ISaveab
         ExtractionProgress.Retry = (RetryStrategy)ddRetry.SelectedItem;
     }
 
-    private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)
-    {
-
-    }
-
     private void cbIsDeltaExtraction_CheckedChanged(object sender, EventArgs e)
     {
         ExtractionProgress.IsDeltaExtraction = cbIsDeltaExtraction.Checked;
