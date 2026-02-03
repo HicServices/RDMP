@@ -95,7 +95,7 @@ public class ExtractionRunner : ManyRunner
                     foreach (var row in existingCohorts.AsEnumerable())
                     {
                         var matchingCohort = _activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableCohort>("OriginID", int.Parse((row["id"].ToString()))).FirstOrDefault();
-                        if (matchingCohort is not null && matchingCohort.ID != _configuration.Cohort.ID)//don't suggest current cohort
+                        if (matchingCohort is not null && matchingCohort.ID < _configuration.Cohort.ID )//don't suggest current cohort or newer cohorts
                         {
                             historicalCohorts.Add(matchingCohort);
                         }

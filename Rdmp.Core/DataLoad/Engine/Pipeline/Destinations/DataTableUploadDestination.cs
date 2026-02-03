@@ -9,6 +9,8 @@ using FAnsi.Connections;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using FAnsi.Discovery.TableCreation;
+using FAnsi.Implementations.MicrosoftSQL;
+using Microsoft.Data.SqlClient;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataFlowPipeline;
@@ -148,6 +150,10 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
     }
     public void Cleanup(List<string> identifiersToRemove)
     {
+        if (identifiersToRemove != null && identifiersToRemove.Any())
+        {
+            _bulkcopy.Dispose();
+        }
     }
     public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,
         GracefulCancellationToken cancellationToken)
@@ -412,6 +418,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             if (toProcess.Rows.Count == 0 && !rowsToModify.Any()) return null;
             if (toProcess.Rows.Count > 0)
             {
+                //todo this isn't uploading records
                 _affectedRows += _bulkcopy.Upload(toProcess);
             }
 

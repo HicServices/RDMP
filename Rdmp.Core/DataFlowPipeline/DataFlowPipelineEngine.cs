@@ -188,7 +188,6 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
             }
             _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Trace, $"About to Run the cleanup step for {Destination}"));
 
-            Destination.Cleanup(IdentifiersToRemove);
 
 
             _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Trace, $"About to Dispose {Destination}"));
@@ -205,6 +204,10 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
                 _listener.OnNotify(Destination,
                     new NotifyEventArgs(ProgressEventType.Error, "Error Disposing Destination Component", e));
             }
+
+            //used for misc cleanup outside of the standard RDMP dispose flow
+            Destination.Cleanup(IdentifiersToRemove);
+
         }
 
         if (exception != null)

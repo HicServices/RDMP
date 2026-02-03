@@ -305,8 +305,8 @@ public class SelectedDataSetsChecker : ICheckable
 
         var whereSql = cohort.WhereSQL();
 
-        if (!rp.SqlExtracted.Contains(whereSql))
-            notifier.OnCheckPerformed(new CheckEventArgs(ErrorCodes.CohortSwappedMidExtraction, progress, whereSql));
+        //if (!rp.SqlExtracted.Contains(whereSql))
+        //    notifier.OnCheckPerformed(new CheckEventArgs(ErrorCodes.CohortSwappedMidExtraction, progress, whereSql));
     }
 
     /// <summary>

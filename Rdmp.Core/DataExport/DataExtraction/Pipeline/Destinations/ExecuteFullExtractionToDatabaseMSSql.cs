@@ -183,10 +183,10 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
 
             //See if table already exists on the server (likely to cause problems including duplication, schema changes in configuration etc)
             var existing = _destinationDatabase.ExpectTable(tblName);
-            if (existing.Exists())
+            if (existing.Exists())//the issue is here, itsnot being triggered, as it's a batch? should it be a batch?
             {
                 var hasPKs = existing.DiscoverColumns().Any(col => col.IsPrimaryKey);
-                if (_request.IsBatchResume)
+                if (_request.IsBatchResume && !(UseArchiveTrigger && hasPKs))
                 {
                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
                         $"Table {existing.GetFullyQualifiedName()} already exists but it IsBatchResume so no problem."));
@@ -229,8 +229,8 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                         {
                             foreach (var column in newColumns)
                             {
-                                existing.AddColumn(column, new TypeGuesser.DatabaseTypeRequest(toProcess.Columns[column].DataType), true, 30000);
-                                archiveTable.AddColumn(column, new TypeGuesser.DatabaseTypeRequest(toProcess.Columns[column].DataType), true,30000);
+                                existing.AddColumn(column, new TypeGuesser.DatabaseTypeRequest(toProcess.Columns[column].DataType), true, AlterTimeout);
+                                archiveTable.AddColumn(column, new TypeGuesser.DatabaseTypeRequest(toProcess.Columns[column].DataType), true, AlterTimeout);
                             }
                             if (present)
                             {
@@ -535,14 +535,16 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
 
     public override void Cleanup(List<string> identifiersToRemove)
     {
+
         if (_request is ExtractGlobalsCommand || identifiersToRemove == null || !identifiersToRemove.Any()) return;
         var tbl = _destinationDatabase.ExpectTable(_toProcess.TableName);
         using (var conn = _destinationDatabase.Server.GetConnection())
         {
             conn.Open();
-            var sql = $"""DELETE FROM {tbl.GetFullyQualifiedName()} where [ReleaseId] in ({string.Join(',', identifiersToRemove.Select(i => $"'{i}'"))})""";
+            var sql = $"""DELETE FROM {tbl.GetFullyQualifiedName()} where [ReleaseId] in ({string.Join(',', identifiersToRemove.Select(i => $"'{i}'"))})""";//this is timing out, an open connection somewhere?
             using (var cmd = _destinationDatabase.Server.GetCommand(sql, conn))
             {
+                cmd.CommandTimeout = AlterTimeout;
                 cmd.ExecuteNonQuery();
             }
             conn.Close();
