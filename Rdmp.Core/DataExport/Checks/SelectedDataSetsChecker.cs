@@ -194,8 +194,10 @@ public class SelectedDataSetsChecker : ICheckable
                 $"'{ds}' Core columns not selected for extractions: {Environment.NewLine + string.Join(',', nonSelectedCore.Select(o => o.ToString() + Environment.NewLine))}{Environment.NewLine} Extraction Configuration: '{config}' ",
                 CheckResult.Warning));
 
-        ComplainIfUserHasHotSwappedCohort(notifier, cohort);
-
+        if (SelectedDataSet.ExtractionProgressIfAny is null || !SelectedDataSet.ExtractionProgressIfAny.IsDeltaExtraction)
+        {
+            ComplainIfUserHasHotSwappedCohort(notifier, cohort);
+        }
         //Make sure cohort and dataset are on same server before checking (can still get around this at runtime by using ExecuteCrossServerDatasetExtractionSource)
         if (!cohortServer.Server.Name.Equals(server.Name, StringComparison.CurrentCultureIgnoreCase) ||
             !cohortServer.Server.DatabaseType.Equals(server.DatabaseType))
@@ -304,9 +306,9 @@ public class SelectedDataSetsChecker : ICheckable
         }
 
         var whereSql = cohort.WhereSQL();
-
-        //if (!rp.SqlExtracted.Contains(whereSql))
-        //    notifier.OnCheckPerformed(new CheckEventArgs(ErrorCodes.CohortSwappedMidExtraction, progress, whereSql));
+        //what is there is no cohort?
+        if (!rp.SqlExtracted.Contains(whereSql))
+            notifier.OnCheckPerformed(new CheckEventArgs(ErrorCodes.CohortSwappedMidExtraction, progress, whereSql));
     }
 
     /// <summary>

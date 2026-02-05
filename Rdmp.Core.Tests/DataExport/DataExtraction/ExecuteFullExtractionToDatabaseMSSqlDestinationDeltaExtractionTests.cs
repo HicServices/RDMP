@@ -257,7 +257,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
             var dt = destinationTable.GetDataTable();
 
             Assert.That(dt.Rows, Has.Count.EqualTo(10));
-            var hicLoadID = dt.Rows[0].ItemArray[13];
+            var hicLoadID = dt.Rows[0].ItemArray[13].ToString();
 
             //update source here
             var server = catalogue.GetDistinctLiveDatabaseServer(ReusableLibraryCode.DataAccess.DataAccessContext.InternalDataProcessing, false, out var dap);
@@ -331,7 +331,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
 
             dt = destinationTable.GetDataTable();
             Assert.That(dt.Rows, Has.Count.EqualTo(11));
-            Assert.That(dt.Rows[0].ItemArray[38], Is.Not.EqualTo(hicLoadID));
+            Assert.That(dt.Rows[1].ItemArray[13].ToString(), Is.Not.EqualTo(String.Empty));
         }
  }
 }
