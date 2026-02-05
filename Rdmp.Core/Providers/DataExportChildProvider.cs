@@ -246,7 +246,7 @@ public class DataExportChildProvider : CatalogueChildProvider
             AddChildren(child, descendancy.Add(child));
 
         //add catalogues in folder
-        foreach (var cic in folder.ChildObjects) AddToDictionaries(new HashSet<object>() { cic }, descendancy.SetBetterRouteExists());//AddChildren(cic, descendancy.Add(cic));
+        foreach (var cic in folder.ChildObjects) AddToDictionaries(new HashSet<object>() { cic }, descendancy.SetBetterRouteExists());
 
         // Children are the folders + objects
         AddToDictionaries(new HashSet<object>(
@@ -365,14 +365,9 @@ public class DataExportChildProvider : CatalogueChildProvider
         AddChildren(savedCohortsNode, descendancy.Add(savedCohortsNode));
 
         var associatedCohortConfigurations = FolderHelper.BuildFolderTree(projectCohortsNode.Project.GetAssociatedCohortIdentificationConfigurations());
-        associatedCohortConfigurations.Name = $"Associated Cohort Configurations - {projectCohortsNode.Project.Name}";
-        //{
-        //    Name = "Associated Cohort Configurations",
-        //    Parent = projectCohortsNode
-        //};
-        //var associatedCohortConfigurations = new CommittedCohortIdentificationNode(projectCohortsNode.Project);
+        associatedCohortConfigurations.Name = "Associated Cohort Configurations";
         children.Add(associatedCohortConfigurations);
-        //AddChildren(associatedCohortConfigurations, descendancy.Add(associatedCohortConfigurations));
+        AddChildren(associatedCohortConfigurations, descendancy.Add(associatedCohortConfigurations));
 
 
         var associatedTemplatesNode = new AssociatedCohortIdentificationTemplatesNode(projectCohortsNode.Project);
