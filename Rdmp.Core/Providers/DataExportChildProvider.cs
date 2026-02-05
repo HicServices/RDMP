@@ -389,18 +389,6 @@ public class DataExportChildProvider : CatalogueChildProvider
         AddToDictionaries(children, descendancy);
     }
 
-    private void AddChildren(CommittedCohortIdentificationNode associatedCohortConfigurations, DescendancyList descendancy)
-    {
-        var children = new HashSet<object>();
-        var associatedCohorts = associatedCohortConfigurations.Project.GetAssociatedCohortIdentificationConfigurations();
-        foreach (var cohort in associatedCohorts)
-        {
-            children.Add(cohort);
-        }
-
-        AddToDictionaries(children, descendancy);
-    }
-
     private void AddChildren(ProjectSavedCohortsNode savedCohortsNode, DescendancyList descendancy)
     {
         var children = new HashSet<object>();
