@@ -49,7 +49,6 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
     private int? _defaultPipeline_ID;
     private int? _cohortIdentificationConfigurationID;
     private int? _cohortRefreshPipelineID;
-    private int? _MostRecentCohortUsed_ID;
 
     /// <inheritdoc/>
     public int? CohortRefreshPipeline_ID
@@ -84,12 +83,6 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
     {
         get => _cohort_ID;
         set => SetField(ref _cohort_ID, value);
-    }
-
-    public int? MostRecentCohortUsed_ID
-    {
-        get => _MostRecentCohortUsed_ID;
-        set => SetField(ref _MostRecentCohortUsed_ID, value);
     }
 
     /// <inheritdoc/>
@@ -335,7 +328,6 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
         DefaultPipeline_ID = ObjectToNullableInt(r["DefaultPipeline_ID"]);
         CohortIdentificationConfiguration_ID = ObjectToNullableInt(r["CohortIdentificationConfiguration_ID"]);
         CohortRefreshPipeline_ID = ObjectToNullableInt(r["CohortRefreshPipeline_ID"]);
-        MostRecentCohortUsed_ID = ObjectToNullableInt(r["MostRecentCohortUsed_ID"]);
     }
 
     /// <inheritdoc/>

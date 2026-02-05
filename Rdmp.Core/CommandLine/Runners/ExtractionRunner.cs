@@ -108,9 +108,9 @@ public class ExtractionRunner : ManyRunner
             }
             if (_activator.IsInteractive && _isDeltaExtraction && _deltaExtractionCohortToCompareTo is null)//todo should be able to pass this in via cli, and do something when it is not passed via cli
             {
-                if (_configuration.MostRecentCohortUsed_ID != null && historicalCohorts.Any())
+                if (historicalCohorts.Any())
                 {
-                    var suggestedCohort = historicalCohorts.FirstOrDefault(c => c.ID == _configuration.MostRecentCohortUsed_ID);
+                    IExtractableCohort suggestedCohort = null;// historicalCohorts.FirstOrDefault(c => c.ID == _configuration.MostRecentCohortUsed_ID);
                     if (suggestedCohort is not null && _activator.YesNo($"""
                         Do you want to use the most recent successful extracted cohort ({suggestedCohort.ToString()}) to perform a delta extraction?
                         """
@@ -155,8 +155,8 @@ public class ExtractionRunner : ManyRunner
                 if (!status.Any(s => s != ExtractCommandState.Completed))
                 {
                     //all worked as expected
-                    _configuration.MostRecentCohortUsed_ID = _configuration.Cohort.ID;
-                    _configuration.SaveToDatabase();
+                    //_configuration.MostRecentCohortUsed_ID = _configuration.Cohort.ID;
+                    //_configuration.SaveToDatabase();
                 }
                 if (UserSettings.ExtractionWebhookUrl is not null)
                 {
