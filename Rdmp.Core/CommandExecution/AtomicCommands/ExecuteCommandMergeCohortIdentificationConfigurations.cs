@@ -37,8 +37,7 @@ public class ExecuteCommandMergeCohortIdentificationConfigurations : BasicComman
         }
 
         var merger =
-            new CohortIdentificationConfigurationMerger(
-                (CatalogueRepository)BasicActivator.RepositoryLocator.CatalogueRepository);
+            new CohortIdentificationConfigurationMerger(BasicActivator);
         var result = merger.Merge(toMerge, SetOperation.UNION);
 
         if (result == null) return;
