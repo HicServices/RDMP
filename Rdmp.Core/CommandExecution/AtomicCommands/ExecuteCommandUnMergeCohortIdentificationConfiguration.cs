@@ -62,7 +62,7 @@ public sealed class ExecuteCommandUnMergeCohortIdentificationConfiguration : Bas
                 "Confirm UnMerge")) return;
 
         var merger =
-            new CohortIdentificationConfigurationMerger(BasicActivator);
+            new CohortIdentificationConfigurationMerger(BasicActivator.RepositoryLocator);
         var results = merger.UnMerge(_target);
 
         if (results?.Any() == true)

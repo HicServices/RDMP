@@ -69,7 +69,7 @@ public class ExecuteCommandImportCohortIdentificationConfiguration : BasicComman
 
 
         var merger =
-            new CohortIdentificationConfigurationMerger(BasicActivator);
+            new CohortIdentificationConfigurationMerger(BasicActivator.RepositoryLocator);
         merger.Import(import, IntoContainer);
 
         Publish(IntoContainer);
