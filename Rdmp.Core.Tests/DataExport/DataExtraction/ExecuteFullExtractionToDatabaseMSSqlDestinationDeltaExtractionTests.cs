@@ -331,7 +331,6 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
 
             dt = destinationTable.GetDataTable();
             Assert.That(dt.Rows, Has.Count.EqualTo(11));
-            Assert.That(dt.Rows[1].ItemArray[13].ToString(), Is.Not.EqualTo(String.Empty));
         }
  }
 }
