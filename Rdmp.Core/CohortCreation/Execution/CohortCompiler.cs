@@ -320,6 +320,28 @@ public class CohortCompiler
             task.State = CompilationState.Crashed;
         }
 
+        if(task.Child is CohortAggregateContainer cac)
+        {
+            foreach (var cacac in cac.GetAggregateConfigurations())
+            {
+                if (cacac.Catalogue != null && cacac.Catalogue.IsInternalDataset)
+                {
+                    task.CrashMessage = new ArgumentException($"Catalogue {ac.Catalogue.Name} is marked as Internal. Internal Catalogues cannot be used in Cohort Identification Configurations.");
+                    task.State = CompilationState.Crashed;
+                    break;
+                }
+            }
+        }
+
+        if (task.Child is AggregateConfiguration ac)
+        {
+            if (ac.Catalogue != null && ac.Catalogue.IsInternalDataset)
+            {
+                task.CrashMessage = new ArgumentException($"Catalogue {ac.Catalogue.Name} is marked as Internal. Internal Catalogues cannot be used in Cohort Identification Configurations.");
+                task.State = CompilationState.Crashed;
+            }
+        }
+
         task.Log = queryBuilder?.Results?.Log;
 
 
