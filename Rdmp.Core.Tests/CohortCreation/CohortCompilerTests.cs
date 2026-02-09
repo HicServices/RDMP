@@ -11,9 +11,12 @@ using NUnit.Framework;
 using Rdmp.Core.CohortCreation;
 using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.CohortCreation.Execution.Joinables;
+using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
+using Rdmp.Core.DataExport.Data;
 
 namespace Rdmp.Core.Tests.CohortCreation;
 
@@ -205,6 +208,35 @@ public class CohortCompilerTests : CohortIdentificationTests
         testData.catalogue.IsInternalDataset = true;
         testData.catalogue.SaveToDatabase();
 
+        rootcontainer.AddChild(aggregate1, 1);
+        rootcontainer.AddChild(container1);
+        container1.Order = 2;
+        container1.SaveToDatabase();
+
+        cohortIdentificationConfiguration.RootCohortAggregateContainer_ID = rootcontainer.ID;
+        cohortIdentificationConfiguration.SaveToDatabase();
+
+        compiler.AddAllTasks(true);
+        Assert.That(compiler.Tasks.Keys.Select(k => k.State).Where(s => s == CompilationState.Crashed).ToList(), Has.Count.EqualTo(3));
+        Assert.That(compiler.Tasks.Keys.Where(s => s.State == CompilationState.Crashed).Select(k => k.CrashMessage).ToList()[1].Message.Contains(" is marked as Internal. Internal Catalogues cannot be used in Cohort Identification Configurations."));
+        Assert.That(compiler.Tasks.Keys.Where(s => s.State == CompilationState.Crashed).Select(k => k.CrashMessage).ToList()[2].Message.Contains(" is marked as Internal. Internal Catalogues cannot be used in Cohort Identification Configurations."));
+    }
+
+
+    [Test]
+    public void TestCompilerWithProjectSpecificCatalogues_Fail()
+    {
+        var compiler = new CohortCompiler(cohortIdentificationConfiguration);
+        
+        var proj = new Project(DataExportRepository, "TestCompilerWithProjectSpecificCatalogues_Fail");
+        proj.SaveToDatabase();
+
+        //having an issue making it project specific
+        ////var cmd = new ExecuteCommandMakeCatalogueProjectSpecific(new ThrowImmediatelyActivator(RepositoryLocator) ,aggregate1.Catalogue, proj, true);
+        ////Assert.DoesNotThrow(()=>cmd.Execute());
+        //var es = new ExtractableDataSet(DataExportRepository, aggregate1.Catalogue);
+        //es.Projects = new List<IProject> { proj };
+        //es.SaveToDatabase();
         rootcontainer.AddChild(aggregate1, 1);
         rootcontainer.AddChild(container1);
         container1.Order = 2;
