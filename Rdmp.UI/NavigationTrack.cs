@@ -64,7 +64,7 @@ public class NavigationTrack<T>
     public void Prune()
     {
         _navigationStack = new Stack<T>(_navigationStack.ToArray().Take(MaxHistory + 1).Reverse().Where(_isAlive));
-        _forward = new Stack<T>(_forward.ToArray().Reverse().Where(_isAlive));
+        _forward = new Stack<T>(_forward.ToArray().AsEnumerable().Reverse().Where(_isAlive));
     }
 
     /// <summary>
