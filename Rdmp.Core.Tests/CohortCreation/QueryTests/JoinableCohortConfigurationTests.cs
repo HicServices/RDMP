@@ -402,7 +402,7 @@ ABS(DATEDIFF(year, {0}.dtCreated, [" + TestDatabaseNames.Prefix + @"ScratchArea]
 
         try
         {
-            var clone = cohortIdentificationConfiguration.CreateClone(ThrowImmediatelyCheckNotifier.Quiet);
+            var clone = cohortIdentificationConfiguration.CreateClone(ThrowImmediatelyCheckNotifier.Quiet, DataExportRepository);
 
             var cloneBuilder = new CohortQueryBuilder(clone, null);
 
