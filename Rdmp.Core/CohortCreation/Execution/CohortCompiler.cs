@@ -343,7 +343,6 @@ public class CohortCompiler
                         }
                     }
                 }
-
             }
         }
 
