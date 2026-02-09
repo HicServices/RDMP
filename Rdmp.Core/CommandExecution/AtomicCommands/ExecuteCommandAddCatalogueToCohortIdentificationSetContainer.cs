@@ -60,7 +60,7 @@ public class ExecuteCommandAddCatalogueToCohortIdentificationSetContainer : Basi
 
             if(catalogue.IsInternalDataset)
             {
-                SetImpossible($"Catalogue '{catalogue}' is an internal dataset and cannot be added to a Cohort Identification Set Container");
+                SetImpossible($"Catalogue '{catalogue}' is an Internal dataset and cannot be added to a Cohort Identification Set Container");
                 return;
             }
 
