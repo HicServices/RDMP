@@ -197,4 +197,25 @@ public class CohortCompilerTests : CohortIdentificationTests
             aggregate5.DeleteInDatabase();
         }
     }
+
+    [Test]
+    public void TestCompilerWithInternalCatalogues()
+    {
+        var compiler = new CohortCompiler(cohortIdentificationConfiguration);
+        testData.catalogue.IsInternalDataset = true;
+        testData.catalogue.SaveToDatabase();
+
+        rootcontainer.AddChild(aggregate1, 1);
+        rootcontainer.AddChild(container1);
+        container1.Order = 2;
+        container1.SaveToDatabase();
+
+        cohortIdentificationConfiguration.RootCohortAggregateContainer_ID = rootcontainer.ID;
+        cohortIdentificationConfiguration.SaveToDatabase();
+
+        compiler.AddAllTasks(true);
+        Assert.That(compiler.Tasks.Keys.Select(k => k.State).Where(s => s == CompilationState.Crashed).ToList(), Has.Count.EqualTo(3));
+        Assert.That(compiler.Tasks.Keys.Where(s => s.State == CompilationState.Crashed).Select(k => k.CrashMessage).ToList()[1].Message.Contains(" is marked as Internal. Internal Catalogues cannot be used in Cohort Identification Configurations."));
+        Assert.That(compiler.Tasks.Keys.Where(s => s.State == CompilationState.Crashed).Select(k => k.CrashMessage).ToList()[2].Message.Contains(" is marked as Internal. Internal Catalogues cannot be used in Cohort Identification Configurations."));
+    }
 }
