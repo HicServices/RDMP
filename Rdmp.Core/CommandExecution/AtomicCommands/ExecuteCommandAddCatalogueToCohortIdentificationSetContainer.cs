@@ -58,6 +58,12 @@ public class ExecuteCommandAddCatalogueToCohortIdentificationSetContainer : Basi
         {
             _catalogueCombineable = new CatalogueCombineable(catalogue);
 
+            if(catalogue.IsInternalDataset)
+            {
+                SetImpossible($"Catalogue '{catalogue}' is an Internal dataset and cannot be added to a Cohort Identification Set Container");
+                return;
+            }
+
             if (identifierColumn != null)
             {
                 if (!identifierColumn.IsExtractionIdentifier)
