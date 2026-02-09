@@ -366,6 +366,7 @@ public class DataExportChildProvider : CatalogueChildProvider
 
         var associatedCohortConfigurations = FolderHelper.BuildFolderTree(projectCohortsNode.Project.GetAssociatedCohortIdentificationConfigurations());
         associatedCohortConfigurations.Name = "Associated Cohort Configurations";
+        associatedCohortConfigurations.Parent = new FolderNode<CohortIdentificationConfiguration>($"\\{projectCohortsNode.Project}\\{projectCohortsNode}");
         children.Add(associatedCohortConfigurations);
         AddChildren(associatedCohortConfigurations, descendancy.Add(associatedCohortConfigurations));
 
