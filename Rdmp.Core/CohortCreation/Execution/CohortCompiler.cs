@@ -326,7 +326,7 @@ public class CohortCompiler
             {
                 if (cacac.Catalogue != null && cacac.Catalogue.IsInternalDataset)
                 {
-                    task.CrashMessage = new ArgumentException($"Catalogue {ac.Catalogue.Name} is marked as Internal. Internal Catalogues cannot be used in Cohort Identification Configurations.");
+                    task.CrashMessage = new ArgumentException($"Catalogue {cacac.Catalogue.Name} is marked as Internal. Internal Catalogues cannot be used in Cohort Identification Configurations.");
                     task.State = CompilationState.Crashed;
                     break;
                 }
