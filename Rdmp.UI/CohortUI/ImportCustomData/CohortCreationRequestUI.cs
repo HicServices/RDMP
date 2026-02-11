@@ -60,7 +60,6 @@ public partial class CohortCreationRequestUI : RDMPForm
         lblExternalCohortTable.Text = _target.ToString();
 
         SetProject(project);
-
         pbProject.Image = CatalogueIcons.Project.ImageToBitmap();
         pbCohortSource.Image = CatalogueIcons.ExternalCohortTable.ImageToBitmap();
         taskDescriptionLabel1.SetupFor(new DialogArgs
@@ -122,6 +121,8 @@ public partial class CohortCreationRequestUI : RDMPForm
             return;
         }
 
+
+        //todo if cb is checked, copy over the project specific catalogues
 
         //construct the result
         Result = new CohortCreationRequest(Project,
@@ -317,6 +318,7 @@ public partial class CohortCreationRequestUI : RDMPForm
         //if a project is selected and the project has no project number
         lblErrorNoProjectNumber.Visible = Project is { ProjectNumber: null };
         tbSetProjectNumber.Visible = Project is { ProjectNumber: null };
+        cbCopyProjectSpecificCatalogues.Visible = project != null?project.GetAllProjectCatalogues().Any():false;
     }
 
     private void tbName_TextChanged(object sender, EventArgs e)
