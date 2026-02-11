@@ -13,7 +13,7 @@ namespace Rdmp.Core.Curation.Data;
 /// <see cref="Folder"/> is primarily used in <see cref="FolderHelper.BuildFolderTree{T}(T[], FolderNode{T})"/>
 /// to build a virtual folder structure based on the current string values.
 /// </summary>
-public interface IHasFolder : IMapsDirectlyToDatabaseTable, ISaveable
+public interface IHasFolder //: IMapsDirectlyToDatabaseTable, ISaveable
 {
     /// <summary>
     /// A useful virtual folder in which to depict the object.  Note that this is not usually

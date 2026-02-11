@@ -43,13 +43,13 @@ public class CohortSummaryAggregateGraphUI : AggregateGraphUI, IObjectCollection
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {
-        _collection.RevertIfMatchedInCollectionObjects(e.Object, out var shouldCloseInstead);
+        //_collection.RevertIfMatchedInCollectionObjects(e.Object, out var shouldCloseInstead);
 
-        if (shouldCloseInstead)
-            ParentForm?.Close();
-        else
-            //now reload the graph because the change was to a relevant object
-            LoadGraphAsync();
+        //if (shouldCloseInstead)
+        //    ParentForm?.Close();
+        //else
+        //    //now reload the graph because the change was to a relevant object
+        //    LoadGraphAsync();
     }
 
     public void SetCollection(IActivateItems activator, IPersistableObjectCollection collection)

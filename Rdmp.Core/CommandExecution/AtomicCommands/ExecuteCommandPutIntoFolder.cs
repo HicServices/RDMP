@@ -80,10 +80,10 @@ public class ExecuteCommandPutIntoFolder : BasicCommandExecution
         foreach (var c in _toMove)
         {
             c.Folder = f;
-            c.SaveToDatabase();
+            //c.SaveToDatabase();
         }
 
         //Folder has changed so publish the change (but only change the last Catalogue so we don't end up subbing a million global refresh changes)
-        Publish(_toMove.Last());
+        //Publish(_toMove.Last());
     }
 }

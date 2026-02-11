@@ -295,7 +295,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
     /// <returns></returns>
     public bool HasProblem(object model)
     {
-        return ProblemProviders.Any(p => p.HasProblem(model));
+        return false;// ProblemProviders.Any(p => p.HasProblem(model));
     }
 
     /// <summary>
@@ -307,7 +307,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
     /// <returns></returns>
     public string DescribeProblemIfAny(object model)
     {
-        return ProblemProviders.Select(p => p.DescribeProblem(model)).FirstOrDefault(desc => desc != null);
+        return null;// ProblemProviders.Select(p => p.DescribeProblem(model)).FirstOrDefault(desc => desc != null);
     }
 
     public string GetDocumentation(Type type)
@@ -369,7 +369,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
 
     public T Activate<T, T2>(T2 databaseObject)
         where T : RDMPSingleDatabaseObjectControl<T2>, new()
-        where T2 : DatabaseEntity
+        where T2 : IMapsDirectlyToDatabaseTable
     {
         return Activate<T, T2>(databaseObject, CoreIconProvider.GetImage(databaseObject));
     }
@@ -397,7 +397,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
 
     private T Activate<T, T2>(T2 databaseObject, Image<Rgba32> tabImage)
         where T : RDMPSingleDatabaseObjectControl<T2>, new()
-        where T2 : DatabaseEntity
+        where T2 : IMapsDirectlyToDatabaseTable
     {
         if (PopExisting(typeof(T), databaseObject, out var existingHostedControlInstance))
             return (T)existingHostedControlInstance;

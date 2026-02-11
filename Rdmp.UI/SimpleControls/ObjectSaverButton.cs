@@ -11,6 +11,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
@@ -43,7 +44,7 @@ public class ObjectSaverButton
         _btnUndoRedo.Click += btnUndoRedo_Click;
     }
 
-    private DatabaseEntity _o;
+    //private IMapsDirectlyToDatabaseTable _o;
 
     public event Action AfterSave;
 
@@ -55,7 +56,7 @@ public class ObjectSaverButton
     private bool _isEnabled;
     private bool _undo = true;
 
-    public void SetupFor(IRDMPControl control, DatabaseEntity o, IActivateItems activator)
+    public void SetupFor(IRDMPControl control, IMapsDirectlyToDatabaseTable o, IActivateItems activator)
     {
         control.CommonFunctionality.Add(_btnSave);
         control.CommonFunctionality.Add(_btnUndoRedo);
@@ -68,14 +69,14 @@ public class ObjectSaverButton
         Enable(false);
 
         //if it is a fresh instance
-        if (!ReferenceEquals(_o, o))
-        {
-            //subscribe to property change events
-            if (_o != null)
-                _o.PropertyChanged -= PropertyChanged;
-            _o = o;
-            _o.PropertyChanged += PropertyChanged;
-        }
+        //if (!ReferenceEquals(_o, o))
+        //{
+        //    //subscribe to property change events
+        //    if (_o != null)
+        //        _o.PropertyChanged -= PropertyChanged;
+        //    _o = o;
+        //    _o.PropertyChanged += PropertyChanged;
+        //}
 
         //already set up before
         if (_activator != null)
@@ -120,16 +121,17 @@ public class ObjectSaverButton
 
     public void Save()
     {
-        if (_o == null)
-            throw new Exception(
-                "Cannot Save because ObjectSaverButton has not been set up yet, call SetupFor first (e.g. in your SetDatabaseObject method) ");
+        //if (_o == null)
+        //    throw new Exception(
+        //        "Cannot Save because ObjectSaverButton has not been set up yet, call SetupFor first (e.g. in your SetDatabaseObject method) ");
 
         if (BeforeSave != null)
-            if (!BeforeSave(_o))
+            if(!BeforeSave(null))
+            //if (!BeforeSave(_o))
                 return;
 
-        _o.SaveToDatabase();
-        _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_o));
+        //_o.SaveToDatabase();
+        //_activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_o));
         Enable(false);
 
         SetReadyToUndo();
@@ -155,28 +157,28 @@ public class ObjectSaverButton
     {
         if (_undoneChanges is not { Evaluation: ChangeDescription.DatabaseCopyDifferent }) return;
 
-        foreach (var difference in _undoneChanges.Differences)
-            difference.Property.SetValue(_o, difference.LocalValue);
+        //foreach (var difference in _undoneChanges.Differences)
+        //    difference.Property.SetValue(_o, difference.LocalValue);
 
         SetReadyToUndo();
     }
 
     public void Undo()
     {
-        var changes = _o.HasLocalChanges();
+        //var changes = false;// _o.HasLocalChanges();
 
         //no changes anyway user must have made a change and then reverted it
-        if (changes.Evaluation != ChangeDescription.DatabaseCopyDifferent)
-            return;
+        //if (changes.Evaluation != ChangeDescription.DatabaseCopyDifferent)
+        //    return;
 
-        //reset to the database state
-        _o.RevertToDatabaseState();
+        ////reset to the database state
+        ////_o.RevertToDatabaseState();
 
-        //publish that the object has changed
-        _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_o));
+        ////publish that the object has changed
+        //_activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_o));
 
-        //show the redo image
-        SetReadyToRedo(changes);
+        ////show the redo image
+        //SetReadyToRedo(changes);
 
         //publish probably disabled us
         Enable(true);
@@ -204,38 +206,39 @@ public class ObjectSaverButton
     {
         if (!IsDifferent()) return;
 
-        if (
-            //if we didn't think there were changes
-            !_isEnabled &&
+        //if (
+        //    //if we didn't think there were changes
+        //    !_isEnabled &&
 
-            //but there are!
-            _activator.ShouldReloadFreshCopy(_o))
-        {
-            _o.RevertToDatabaseState();
+        //    //but there are!
+        //    //_activator.ShouldReloadFreshCopy(_o))
+        //{
+        //    //_o.RevertToDatabaseState();
 
-            //if we are not in the middle of publishing already
-            if (!_activator.RefreshBus.PublishInProgress)
-                _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_o));
-        }
+        //    //if we are not in the middle of publishing already
+        //    if (!_activator.RefreshBus.PublishInProgress)
+        //        _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_o));
+        //}
     }
 
     private bool IsDifferent()
     {
-        var changes = _o?.HasLocalChanges();
+        //var changes = _o?.HasLocalChanges();
         //are there changes
-        return changes?.Evaluation == ChangeDescription.DatabaseCopyDifferent && changes.Differences.Any(); //are there changes to properties
+        //return changes?.Evaluation == ChangeDescription.DatabaseCopyDifferent && changes.Differences.Any(); //are there changes to properties
+        return true;
     }
 
     public void CheckForUnsavedChangesAnOfferToSave()
     {
-        // If there is no object, or it does not exist don't try to save it
-        if (_o == null || !_o.Exists() || !_isEnabled)
-            return;
+        //// If there is no object, or it does not exist don't try to save it
+        //if (_o == null || !_o.Exists() || !_isEnabled)
+        //    return;
 
-        if (_activator.YesNo($"Save Changes To '{_o}'?", "Save Changes"))
-            Save();
-        else
-            _o.RevertToDatabaseState();
+        //if (_activator.YesNo($"Save Changes To '{_o}'?", "Save Changes"))
+        //    Save();
+        //else
+        //    _o.RevertToDatabaseState();
     }
 
     public bool IsEnabled => _isEnabled;

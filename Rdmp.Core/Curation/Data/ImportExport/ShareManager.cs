@@ -326,8 +326,8 @@ public class ShareManager
             {
                 if (deleteExisting)
                 {
-                    var actual = (IMapsDirectlyToDatabaseTable)GetExistingImportObject(sd.SharingGuid);
-                    actual?.DeleteInDatabase();
+                    //var actual = (IMapsDirectlyToDatabaseTable)GetExistingImportObject(sd.SharingGuid);
+                    //actual?.DeleteInDatabase();
                 }
 
                 var instance = (IMapsDirectlyToDatabaseTable)ObjectConstructor.ConstructIfPossible(sd.Type, this, sd) ??

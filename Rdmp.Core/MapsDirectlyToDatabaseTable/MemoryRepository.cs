@@ -64,7 +64,7 @@ public class MemoryRepository : IRepository
 
         Objects.TryAdd(toCreate, 0);
 
-        toCreate.PropertyChanged += toCreate_PropertyChanged;
+        //toCreate.PropertyChanged += toCreate_PropertyChanged;
 
         NewObjectPool.Add(toCreate);
 

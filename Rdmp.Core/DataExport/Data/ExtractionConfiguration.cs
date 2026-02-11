@@ -689,11 +689,11 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
     /// <inheritdoc/>
     public void Unfreeze()
     {
-        foreach (var l in ReleaseLog)
-            l.DeleteInDatabase();
+        //foreach (var l in ReleaseLog)
+        //    l.DeleteInDatabase();
 
-        foreach (var r in CumulativeExtractionResults)
-            r.DeleteInDatabase();
+        //foreach (var r in CumulativeExtractionResults)
+        //    r.DeleteInDatabase();
 
         IsReleased = false;
         SaveToDatabase();

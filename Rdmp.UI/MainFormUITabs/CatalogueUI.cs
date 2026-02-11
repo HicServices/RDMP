@@ -40,7 +40,7 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
 {
     internal Scintilla _scintillaDescription;
 
-    private Catalogue _catalogue;
+    private Core.Models.Catalogue _catalogue;
 
     public CatalogueUI()
     {
@@ -86,12 +86,13 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
                 {
                     catalogueItem.Periodicity = _catalogue.Periodicity;
                     catalogueItem.Topic = _catalogue.Search_keywords;
-                    catalogueItem.SaveToDatabase();
+                    //catalogueItem.SaveToDatabase();
                 }
             }
     }
 
-    public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
+
+    public override void SetDatabaseObject(IActivateItems activator, Core.Models.Catalogue databaseObject)
     {
         if (_scintillaDescription == null)
         {
@@ -104,12 +105,12 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
         base.SetDatabaseObject(activator, databaseObject);
 
         _catalogue = databaseObject;
-        var associatedDatasets = _catalogue.CatalogueItems
-            .Select(static catalogueItem => catalogueItem.ColumnInfo.Dataset_ID)
-            .Where(static datasetId => datasetId != null)
-            .Select(datasetId =>
-                _catalogue.CatalogueDbContext.GetAllObjectsWhere<Dataset>("ID", (int)datasetId).First())
-            .Select(static ds => ds.Name).ToList();
+        //var associatedDatasets = _catalogue.CatalogueItems
+        //    .Select(static catalogueItem => catalogueItem.ColumnInfo.Dataset_ID)
+        //    .Where(static datasetId => datasetId != null)
+        //    .Select(datasetId =>
+        //        _catalogue.CatalogueDbContext.GetAllObjectsWhere<Dataset>("ID", (int)datasetId).First())
+        //    .Select(static ds => ds.Name).ToList();
         editableCatalogueName.TextValue = _catalogue.Name;
         editableCatalogueName.Title = "Name";
         editableCatalogueName.Icon = CatalogueIcons.Catalogue.ImageToBitmap();
@@ -120,7 +121,7 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
 
     }
 
-    protected override void SetBindings(BinderWithErrorProviderFactory rules, Catalogue databaseObject)
+    protected override void SetBindings(BinderWithErrorProviderFactory rules, Core.Models.Catalogue databaseObject)
     {
         base.SetBindings(rules, databaseObject);
         Bind(cbDeprecated, "Checked", "IsDeprecated", c => c.IsDeprecated);
@@ -166,32 +167,32 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
 
     private void c_tbDetailPageURL_TextChanged(object sender, EventArgs e)
     {
-        SetUrl((TextBox)sender, v => _catalogue.Detail_Page_URL = v);
+        SetUrl((TextBox)sender, v => _catalogue.Detail_Page_URL = v.ToString());
     }
 
     private void c_tbAPIAccessURL_TextChanged(object sender, EventArgs e)
     {
-        SetUrl((TextBox)sender, v => _catalogue.API_access_URL = v);
+        SetUrl((TextBox)sender, v => _catalogue.API_access_URL = v.ToString());
     }
 
     private void c_tbBrowseUrl_TextChanged(object sender, EventArgs e)
     {
-        SetUrl((TextBox)sender, v => _catalogue.Browse_URL = v);
+        SetUrl((TextBox)sender, v => _catalogue.Browse_URL = v.ToString());
     }
 
     private void c_tbBulkDownloadUrl_TextChanged(object sender, EventArgs e)
     {
-        SetUrl((TextBox)sender, v => _catalogue.Bulk_Download_URL = v);
+        SetUrl((TextBox)sender, v => _catalogue.Bulk_Download_URL = v.ToString());
     }
 
     private void c_tbQueryToolUrl_TextChanged(object sender, EventArgs e)
     {
-        SetUrl((TextBox)sender, v => _catalogue.Query_tool_URL = v);
+        SetUrl((TextBox)sender, v => _catalogue.Query_tool_URL = v.ToString());
     }
 
     private void c_tbSourceUrl_TextChanged(object sender, EventArgs e)
     {
-        SetUrl((TextBox)sender, v => _catalogue.Source_URL = v);
+        SetUrl((TextBox)sender, v => _catalogue.Source_URL = v.ToString());
     }
 
     private void ticketingControl1_Load(object sender, EventArgs e)
@@ -530,6 +531,6 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<CatalogueUI_Design, UserControl>))]
-public abstract class CatalogueUI_Design : RDMPSingleDatabaseObjectControl<Catalogue>
+public abstract class CatalogueUI_Design : RDMPSingleDatabaseObjectControl<Core.Models.Catalogue>
 {
 }

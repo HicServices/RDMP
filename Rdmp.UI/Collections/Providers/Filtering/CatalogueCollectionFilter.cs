@@ -6,6 +6,7 @@
 
 using BrightIdeasSoftware;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Providers;
 using Rdmp.Core.ReusableLibraryCode.Settings;
 
@@ -17,12 +18,12 @@ namespace Rdmp.UI.Collections.Providers.Filtering;
 /// </summary>
 public class CatalogueCollectionFilter : IModelFilter
 {
-    public ICoreChildProvider ChildProvider { get; set; }
+    public RDMPDbContext ChildProvider { get; set; }
     private readonly bool _isInternal;
     private readonly bool _isDeprecated;
     private readonly bool _isProjectSpecific;
 
-    public CatalogueCollectionFilter(ICoreChildProvider childProvider)
+    public CatalogueCollectionFilter(RDMPDbContext childProvider)
     {
         ChildProvider = childProvider;
         _isInternal = UserSettings.ShowInternalCatalogues;
@@ -30,7 +31,7 @@ public class CatalogueCollectionFilter : IModelFilter
         _isProjectSpecific = UserSettings.ShowProjectSpecificCatalogues;
     }
 
-    public bool Filter(object modelObject) => SearchablesMatchScorer.Filter(modelObject,
-        ChildProvider.GetDescendancyListIfAnyFor(modelObject), _isInternal, _isDeprecated,
-        _isProjectSpecific);
+    public bool Filter(object modelObject) => true;//SearchablesMatchScorer.Filter(modelObject,
+        //ChildProvider.GetDescendancyListIfAnyFor(modelObject), _isInternal, _isDeprecated,
+        //_isProjectSpecific);
 }

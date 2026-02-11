@@ -47,21 +47,21 @@ public class GoToCommandFactory : CommandFactoryBase
         if (Is(forObject, out IMapsDirectlyToDatabaseTable mt))
         {
             // Go to import / export definitions
-            var export = _activator.CoreChildProvider.AllExports.FirstOrDefault(export => export.IsReferenceTo(mt));
+            //var export = null;//_activator.CoreChildProvider.AllExports.FirstOrDefault(export => export.IsReferenceTo(mt));
 
-            if (export != null)
-                yield return new ExecuteCommandShow(_activator, export, 0, true)
-                { OverrideCommandName = "Show Export Definition" };
+            //if (export != null)
+            //    yield return new ExecuteCommandShow(_activator, export, 0, true)
+            //    { OverrideCommandName = "Show Export Definition" };
 
-            var import = _activator.RepositoryLocator.CatalogueDbContext.GetReferencesTo<ObjectImport>(mt)
-                .FirstOrDefault();
-            if (import != null)
-                yield return new ExecuteCommandShow(_activator, import, 0)
-                { OverrideCommandName = "Show Import Definition" };
+            //var import = null;// _activator.RepositoryLocator.CatalogueDbContext.GetReferencesTo<ObjectImport>(mt)
+            //    //.FirstOrDefault();
+            //if (import != null)
+            //    yield return new ExecuteCommandShow(_activator, import, 0)
+            //    { OverrideCommandName = "Show Import Definition" };
 
-            if (SupportsReplacement(forObject))
-                yield return new ExecuteCommandShow(_activator, () => GetReplacementIfAny(mt))
-                { OverrideCommandName = "Replacement" };
+            //if (SupportsReplacement(forObject))
+            //    yield return new ExecuteCommandShow(_activator, () => GetReplacementIfAny(mt))
+            //    { OverrideCommandName = "Replacement" };
 
 
             yield return new ExecuteCommandSimilar(_activator, mt, false) { GoTo = true };

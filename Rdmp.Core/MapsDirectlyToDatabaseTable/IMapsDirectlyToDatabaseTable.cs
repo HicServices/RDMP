@@ -6,6 +6,7 @@
 
 using Rdmp.Core.EntityFramework;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace Rdmp.Core.MapsDirectlyToDatabaseTable;
 
@@ -17,24 +18,21 @@ namespace Rdmp.Core.MapsDirectlyToDatabaseTable;
 /// classes must follow strict rules e.g. all public properties must directly match columns in the database table holding them (See DatabaseEntity).  This is
 /// done in order to prevent corruption / race conditions / data loass etc in a multi user environment.</para>
 /// </summary>
-public interface IMapsDirectlyToDatabaseTable : IDeleteable, INotifyPropertyChanged
+public interface IMapsDirectlyToDatabaseTable// : IDeleteable, INotifyPropertyChanged
 {
     /// <summary>
     /// Every database table that stores an <see cref="IMapsDirectlyToDatabaseTable"/> must have an identity column called ID which must be the primary key.
     /// Therefore for a given <see cref="IRepository"/> this uniquely identifies a given object.
     /// </summary>
+    [Key]
     int ID { get; set; }
 
-    /// <summary>
-    /// The persistence database that stores the object.  For example a <see cref="TableRepository"/>.
-    /// </summary>
+
     [NoMappingToDatabase]
     RDMPDbContext CatalogueDbContext { get; set; }
 
-    /// <summary>
-    /// Makes any persistent Property change attempts throw an Exception. (See also <see cref="INotifyPropertyChanged.PropertyChanged"/>)
-    /// </summary>
-    void SetReadOnly();
+
+    //void SetReadOnly();
 
     //you must have a Property for each thing in your database table (With the same name)
 

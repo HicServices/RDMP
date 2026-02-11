@@ -102,7 +102,7 @@ public partial class DashboardableControlHostPanel : RDMPUserControl
         if (_editMode)
         {
             var layout = _databaseRecord.ParentLayout;
-            Activator.DeleteWithConfirmation(_databaseRecord);
+            //Activator.DeleteWithConfirmation(_databaseRecord);
             Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(layout));
         }
     }

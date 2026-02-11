@@ -85,7 +85,7 @@ public class ExecuteCommandCloneExtractionConfiguration : BasicCommandExecution
             if(!_activeItems.YesNo("Do you want to include this extraction's extraction progress in this clone?", "Include Extraction Progress?")) {
                 foreach (var ep in clone.SelectedDataSets.Where(sds => sds.ExtractionProgressIfAny != null).Select(sds => sds.ExtractionProgressIfAny))
                 {
-                    ep.DeleteInDatabase();
+                    //ep.DeleteInDatabase();
                 }
             }
         }

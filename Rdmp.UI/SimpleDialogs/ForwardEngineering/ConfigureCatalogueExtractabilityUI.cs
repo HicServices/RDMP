@@ -463,7 +463,7 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
         }
 
         _choicesFinalised = true;
-        _catalogue.DeleteInDatabase();
+        //_catalogue.DeleteInDatabase();
 
         // prevents wrappers thinking no Catalogue was created and offering to drop the TableInfo!
         _catalogue = addToInstead;
@@ -581,11 +581,11 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
                 if (confirm != DialogResult.Cancel)
                 {
                     DialogResult = DialogResult.Cancel;
-                    _catalogue.DeleteInDatabase();
+                    //_catalogue.DeleteInDatabase();
                     _catalogue = null;
                     if (confirm == DialogResult.No)
                     {
-                        _tableInfo.DeleteInDatabase();
+                        //_tableInfo.DeleteInDatabase();
                         _tableInfo = null;
                         if (TableCreated != null && TableCreated.Exists())
                             TableCreated.Drop();
@@ -607,7 +607,7 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
                         "Confirm", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
                     DialogResult = DialogResult.Cancel;
-                    _catalogue.DeleteInDatabase();
+                    //_catalogue.DeleteInDatabase();
                     _catalogue = null;
                 }
                 else

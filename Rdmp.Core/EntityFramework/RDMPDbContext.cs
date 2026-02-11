@@ -6,7 +6,9 @@ using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Models;
+using Rdmp.Core.Providers;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +25,8 @@ namespace Rdmp.Core.EntityFramework
         { }
 
         public DbSet<Models.Catalogue> Catalogues { get; set; }
+        public DbSet<Models.CatalogueItem> CatalogueItems { get; set; }
+        public DbSet<Models.ColumnInfo> ColumnInfos { get; set; }
 
         public T[] GetAllObjects<T>() { 
             return null;//todo
@@ -42,6 +46,21 @@ namespace Rdmp.Core.EntityFramework
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Models.CatalogueItem>(entity =>
+            {
+                entity.HasKey(e => e.ID);
+                entity.Property(e => e.Name).IsRequired().HasMaxLength(500);
+                entity.HasIndex(e => e.Name);
+                //entity.(e => e.Catalogue);
+            });
+            modelBuilder.Entity<Models.ColumnInfo>(entity =>
+            {
+                entity.HasKey(e => e.ID);
+                entity.Property(e => e.Name).IsRequired().HasMaxLength(500);
+                entity.HasIndex(e => e.Name);
+                //entity.HasIndex(e => e.CatalogueItem);
+            });
+
             modelBuilder.Entity<Models.Catalogue>(entity =>
             {
                 entity.HasKey(e => e.ID);
@@ -67,7 +86,6 @@ namespace Rdmp.Core.EntityFramework
 
        //         entity.Property(e => e.UpdateLag).HasConversion(v => v.ToString(),
        //v => (UpdateLagTimes)Enum.Parse(typeof(UpdateLagTimes), v));
-
 
             });
         }
@@ -140,6 +158,29 @@ namespace Rdmp.Core.EntityFramework
         public IEnumerable<T> SelectAllWhere<T>(string v1, string v2)
         {
             throw new NotImplementedException();
+        }
+
+        public DescendancyList GetDescendancyListIfAnyFor(object modelObject)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<object> GetChildren(object obj)
+        {
+            if(obj is FolderNode<Core.Models.Catalogue> fnc)
+            {
+                return Catalogues.Where(c => c.Folder == fnc.FullName);
+            }
+            if(obj is Models.Catalogue catalogue)
+            {
+                return CatalogueItems.Where(ci => ci.Catalogue.ID == catalogue.ID);
+            }
+            if(obj is Models.CatalogueItem catalogueItem)
+            {
+                return ColumnInfos.Where(ci => ci.CatalogueItems.Select(ci => ci.ID).Contains(catalogueItem.ID));
+            }
+
+            return new List<string>() { };
         }
     }
 

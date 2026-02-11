@@ -249,13 +249,13 @@ public abstract class ReleasePotential : ICheckable
                 CheckResult.Fail));
 
         var existingReleaseLog = DatasetExtractionResult.GetReleaseLogEntryIfAny();
-        if (existingReleaseLog != null)
-             if (notifier.OnCheckPerformed(new CheckEventArgs(
-                    $"Dataset {DataSet} has probably already been released as per {existingReleaseLog}!",
-                    CheckResult.Warning,
-                    null,
-                    "Do you want to delete the old release Log? You should check the values first.")))
-                existingReleaseLog.DeleteInDatabase();
+        //if (existingReleaseLog != null)
+        //     if (notifier.OnCheckPerformed(new CheckEventArgs(
+        //            $"Dataset {DataSet} has probably already been released as per {existingReleaseLog}!",
+        //            CheckResult.Warning,
+        //            null,
+        //            "Do you want to delete the old release Log? You should check the values first.")))
+        //        existingReleaseLog.DeleteInDatabase();
 
         var cols = Configuration.GetAllExtractableColumnsFor(DataSet)
             .OfType<ExtractableColumn>()

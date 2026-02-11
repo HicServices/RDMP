@@ -143,11 +143,11 @@ public class ReleaseRunner : ManyRunner
 
             message = oldResults.Aggregate(message, (s, n) => s + Environment.NewLine + n);
 
-            if (
-                checkNotifier.OnCheckPerformed(new CheckEventArgs(message, CheckResult.Fail, null,
-                    $"Delete expired CumulativeExtractionResults for configuration.{Environment.NewLine}Not doing so may result in failures at Release time.")))
-                foreach (var result in oldResults)
-                    result.DeleteInDatabase();
+            //if (
+            //    checkNotifier.OnCheckPerformed(new CheckEventArgs(message, CheckResult.Fail, null,
+            //        $"Delete expired CumulativeExtractionResults for configuration.{Environment.NewLine}Not doing so may result in failures at Release time.")))
+            //    foreach (var result in oldResults)
+            //        result.DeleteInDatabase();
         }
 
         var oldLostSupplemental = configuration.CumulativeExtractionResults
@@ -165,11 +165,11 @@ public class ReleaseRunner : ManyRunner
             message = oldLostSupplemental.Aggregate(message,
                 (s, n) => s + Environment.NewLine + n.DestinationDescription);
 
-            if (
-                checkNotifier.OnCheckPerformed(new CheckEventArgs(message, CheckResult.Fail, null,
-                    $"Delete expired Extraction Results for configuration.{Environment.NewLine}Not doing so may result in failures at Release time.")))
-                foreach (var result in oldLostSupplemental)
-                    result.DeleteInDatabase();
+            //if (
+            //    checkNotifier.OnCheckPerformed(new CheckEventArgs(message, CheckResult.Fail, null,
+            //        $"Delete expired Extraction Results for configuration.{Environment.NewLine}Not doing so may result in failures at Release time.")))
+                //foreach (var result in oldLostSupplemental)
+                //    result.DeleteInDatabase();
         }
     }
 

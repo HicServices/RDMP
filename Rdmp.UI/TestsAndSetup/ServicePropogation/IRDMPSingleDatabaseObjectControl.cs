@@ -7,6 +7,7 @@
 using System;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SingleControlForms;
 
@@ -15,8 +16,8 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation;
 public interface IRDMPSingleDatabaseObjectControl : IContainerControl, INamedTab, IConsultableBeforeClosing,
     IRDMPControl
 {
-    DatabaseEntity DatabaseObject { get; }
+    IMapsDirectlyToDatabaseTable DatabaseObject { get; }
 
-    void SetDatabaseObject(IActivateItems activator, DatabaseEntity databaseObject);
+    void SetDatabaseObject(IActivateItems activator, IMapsDirectlyToDatabaseTable databaseObject);
     Type GetTypeOfT();
 }

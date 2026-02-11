@@ -7,6 +7,7 @@
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
@@ -21,9 +22,9 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands;
 /// </summary>
 public class ExecuteCommandRefreshObject : BasicUICommandExecution, IAtomicCommand
 {
-    private readonly DatabaseEntity _databaseEntity;
+    private readonly IMapsDirectlyToDatabaseTable _databaseEntity;
 
-    public ExecuteCommandRefreshObject(IActivateItems activator, DatabaseEntity databaseEntity) : base(activator)
+    public ExecuteCommandRefreshObject(IActivateItems activator, IMapsDirectlyToDatabaseTable databaseEntity) : base(activator)
     {
         _databaseEntity = databaseEntity;
 
@@ -37,7 +38,7 @@ public class ExecuteCommandRefreshObject : BasicUICommandExecution, IAtomicComma
     {
         base.Execute();
 
-        _databaseEntity.RevertToDatabaseState();
+        //_databaseEntity.RevertToDatabaseState();
         BasicActivator.HardRefresh = true;
         Publish(_databaseEntity);
     }

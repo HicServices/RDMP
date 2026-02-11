@@ -37,7 +37,7 @@ internal abstract class BinderRule<T> : IBinderRule where T : IMapsDirectlyToDat
 
         activator.OnRuleRegistered(this);
 
-        toTest.PropertyChanged += ToTest_PropertyChanged;
+        //toTest.PropertyChanged += ToTest_PropertyChanged;
     }
 
     private void ToTest_PropertyChanged(object sender, PropertyChangedEventArgs e)

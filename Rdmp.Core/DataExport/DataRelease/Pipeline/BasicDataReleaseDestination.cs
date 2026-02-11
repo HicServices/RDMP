@@ -56,7 +56,7 @@ public class BasicDataReleaseDestination : IPluginDataFlowComponent<ReleaseAudit
                 foreach (var redundantResult in configuration.CumulativeExtractionResults.Where(r =>
                              potentials.All(rp => rp.DataSet.ID != r.ExtractableDataSet_ID)))
                 {
-                    redundantResult.DeleteInDatabase();
+                    //redundantResult.DeleteInDatabase();
                     recordsDeleted++;
                 }
 

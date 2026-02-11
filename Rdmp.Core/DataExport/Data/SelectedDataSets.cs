@@ -197,7 +197,7 @@ public class SelectedDataSets : DatabaseEntity, ISelectedDataSets, IInjectKnown<
     {
         var cols = ExtractionConfiguration.GetAllExtractableColumnsFor(ExtractableDataSet);
 
-        ExtractionProgressIfAny?.DeleteInDatabase();
+        //ExtractionProgressIfAny?.DeleteInDatabase();
         base.DeleteInDatabase();
 
         foreach (var col in cols)

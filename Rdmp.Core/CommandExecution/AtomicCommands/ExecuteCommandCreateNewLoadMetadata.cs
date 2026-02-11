@@ -16,8 +16,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandCreateNewLoadMetadata : BasicCommandExecution, IAtomicCommandWithTarget
 {
-    private Catalogue[] _availableCatalogues;
-    private Catalogue _catalogue;
+    private Core.Models.Catalogue[] _availableCatalogues;
+    //private Core.Models.Catalogue _catalogue;
 
     /// <summary>
     /// The folder to put the new <see cref="LoadMetadata"/> in.  Defaults to <see cref="FolderHelper.Root"/>
@@ -30,7 +30,7 @@ public class ExecuteCommandCreateNewLoadMetadata : BasicCommandExecution, IAtomi
         Catalogue catalogue = null) : base(activator)
     {
         _availableCatalogues =
-            activator.CoreChildProvider.AllCatalogues.ToArray();
+            activator.RepositoryLocator.CatalogueDbContext.Catalogues.ToArray();
 
         if (!_availableCatalogues.Any())
             SetImpossible("There are no available Catalogues");
@@ -47,33 +47,33 @@ public class ExecuteCommandCreateNewLoadMetadata : BasicCommandExecution, IAtomi
     {
         base.Execute();
 
-        var catalogueBefore = _catalogue;
-        try
-        {
-            //if we don't have an explicit one picked yet
-            if (_catalogue == null)
-                if (!SelectOne(_availableCatalogues, out _catalogue)) //get user to pick one
-                    return; //user cancelled
+        //var catalogueBefore = _catalogue;
+        //try
+        //{
+        //    //if we don't have an explicit one picked yet
+        //    if (_catalogue == null)
+        //        if (!SelectOne(_availableCatalogues, out _catalogue)) //get user to pick one
+        //            return; //user cancelled
 
-            //create the load
-            var lmd = new LoadMetadata(_catalogue.CatalogueDbContext, $"Loading {_catalogue.Name}");
+        //    //create the load
+        //    var lmd = new LoadMetadata(_catalogue.CatalogueDbContext, $"Loading {_catalogue.Name}");
 
-            lmd.EnsureLoggingWorksFor(_catalogue);
+        //    lmd.EnsureLoggingWorksFor(_catalogue);
 
-            _catalogue.SaveToDatabase();
+        //    _catalogue.SaveToDatabase();
 
-            lmd.Folder = Folder;
-            lmd.SaveToDatabase();
+        //    lmd.Folder = Folder;
+        //    lmd.SaveToDatabase();
 
-            lmd.LinkToCatalogue(_catalogue);
-            Publish(lmd);
+        //    lmd.LinkToCatalogue(_catalogue);
+        //    Publish(lmd);
 
-            Activate(lmd);
-        }
-        finally
-        {
-            _catalogue = catalogueBefore;
-        }
+        //    Activate(lmd);
+        //}
+        //finally
+        //{
+        //    _catalogue = catalogueBefore;
+        //}
     }
 
 
@@ -84,7 +84,7 @@ public class ExecuteCommandCreateNewLoadMetadata : BasicCommandExecution, IAtomi
 
     public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
     {
-        _catalogue = (Catalogue)target;
+        //_catalogue = (Catalogue)target;
         return this;
     }
 }

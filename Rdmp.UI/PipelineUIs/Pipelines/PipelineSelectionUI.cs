@@ -217,7 +217,7 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
         if (MessageBox.Show($"Are you sure you want to delete {Pipeline.Name}? ", "Confirm deleting pipeline?",
                 MessageBoxButtons.YesNoCancel) == DialogResult.Yes)
         {
-            Pipeline.DeleteInDatabase();
+            //Pipeline.DeleteInDatabase();
             Pipeline = null;
             PipelineDeleted();
             RefreshPipelineList();

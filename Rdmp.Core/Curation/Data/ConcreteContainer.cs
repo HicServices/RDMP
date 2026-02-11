@@ -89,13 +89,13 @@ public abstract class ConcreteContainer : DatabaseEntity, IContainer
     {
         var children = GetAllFiltersIncludingInSubContainersRecursively();
 
-        //then delete any children it has itself
-        foreach (var subContainer in GetAllSubContainersRecursively().Where(subContainer => subContainer.Exists()))
-            subContainer.DeleteInDatabase();
+        ////then delete any children it has itself
+        //foreach (var subContainer in GetAllSubContainersRecursively().Where(subContainer => subContainer.Exists()))
+        //    subContainer.DeleteInDatabase();
 
-        //clean up the orphans that will be created by killing ourselves
-        foreach (var filter in children.Where(filter => filter.Exists()))
-            filter.DeleteInDatabase();
+        ////clean up the orphans that will be created by killing ourselves
+        //foreach (var filter in children.Where(filter => filter.Exists()))
+        //    filter.DeleteInDatabase();
 
         // then delete the actual component
         base.DeleteInDatabase();

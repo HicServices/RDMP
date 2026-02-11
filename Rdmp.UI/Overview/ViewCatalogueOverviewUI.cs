@@ -30,7 +30,7 @@ namespace Rdmp.UI.Overview;
 /// </summary>
 public partial class ViewCatalogueOverviewUI : ViewCatalogueOverviewUI_Design
 {
-    private Catalogue _catalogue;
+    private Core.Models.Catalogue _catalogue;
     private OverviewModel _overview;
     private List<CatalogueItem> _dateColumns;
     private static readonly string[] frequencies = new[] { "Day", "Month", "Year" };
@@ -59,10 +59,10 @@ public partial class ViewCatalogueOverviewUI : ViewCatalogueOverviewUI_Design
         }
         try
         {
-            var syntaxHelper = _catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.InternalDataProcessing, false)?.GetQuerySyntaxHelper();
-            var dateTypeString = syntaxHelper.TypeTranslater.GetSQLDBTypeForCSharpType(new TypeGuesser.DatabaseTypeRequest(typeof(DateTime)));
-
-            _dateColumns = _catalogue.CatalogueItems.Where(ci => ci.ColumnInfo.Data_type == dateTypeString).ToList();
+            //var syntaxHelper = _catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.InternalDataProcessing, false)?.GetQuerySyntaxHelper();
+            //var dateTypeString = syntaxHelper.TypeTranslater.GetSQLDBTypeForCSharpType(new TypeGuesser.DatabaseTypeRequest(typeof(DateTime)));
+            _dateColumns = null;
+            //_dateColumns = _catalogue.CatalogueItems.Where(ci => ci.ColumnInfo.Data_type == dateTypeString).ToList();
         }
         catch
         {
@@ -120,8 +120,8 @@ public partial class ViewCatalogueOverviewUI : ViewCatalogueOverviewUI_Design
     public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
     {
         base.SetDatabaseObject(activator, databaseObject);
-        _catalogue = databaseObject;
-        _overview = new OverviewModel(activator, _catalogue);
+        _catalogue = null;// databaseObject;
+        _overview = null;// new OverviewModel(activator, _catalogue);
         cbFrequency.Items.Clear();
         cbFrequency.Items.AddRange(frequencies);
         cbFrequency.SelectedIndex = 1;
@@ -166,7 +166,7 @@ public partial class ViewCatalogueOverviewUI : ViewCatalogueOverviewUI_Design
 
     private void btnSettings_Click(object sender, EventArgs e)
     {
-        Activator.Activate<CatalogueUI, Catalogue>(_catalogue);
+        Activator.Activate<CatalogueUI, Core.Models.Catalogue>(_catalogue);
     }
 
     private void button1_Click(object sender, EventArgs e)

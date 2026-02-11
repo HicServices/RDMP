@@ -611,8 +611,8 @@ DistinctByDestinationPKs - Performs a GROUP BY on each batch of records to ensur
         else
         {
             //delete old audit records
-            foreach (var audit in previousAudit)
-                audit.DeleteInDatabase();
+            //foreach (var audit in previousAudit)
+                //audit.DeleteInDatabase();
 
             var extractionResults = new CumulativeExtractionResults(Request.Catalogue.CatalogueDbContext, Request.Configuration,
                 Request.DatasetBundle.DataSet, sql);

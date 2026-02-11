@@ -629,7 +629,7 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
     private IEnumerable ChildrenGetter(object model) => AxeChildren != null && AxeChildren.Contains(model.GetType())
         ? Array.Empty<object>()
-        : (IEnumerable)CoreChildProvider.GetChildren(model);
+        : (IEnumerable)RepositoryLocator.CatalogueDbContext.GetChildren(model);//  .GetChildren(model);
 
     private bool CanExpandGetter(object model)
     {

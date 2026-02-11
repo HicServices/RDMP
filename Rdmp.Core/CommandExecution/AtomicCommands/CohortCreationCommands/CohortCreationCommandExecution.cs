@@ -66,8 +66,8 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
             return;
         }
 
-        if (!dataExport.CohortSources.Any())
-            SetImpossible("There are no cohort sources configured, you must create one in the Saved Cohort tabs");
+        //if (!dataExport.CohortSources.Any())
+        //    SetImpossible("There are no cohort sources configured, you must create one in the Saved Cohort tabs");
     }
 
     protected ICohortCreationRequest GetCohortCreationRequest(string auditLogDescription)

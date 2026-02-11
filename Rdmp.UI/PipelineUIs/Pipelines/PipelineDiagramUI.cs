@@ -96,7 +96,7 @@ public partial class PipelineDiagramUI : UserControl
                     _pipeline.SaveToDatabase();
                 }
 
-                SelectedComponent.DeleteInDatabase();
+                //SelectedComponent.DeleteInDatabase();
                 RefreshUIFromDatabase();
 
                 SelectedComponent = null;

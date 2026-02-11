@@ -27,6 +27,9 @@ namespace Rdmp.Core.Models
         public virtual TableInfo TableInfo { get; set; }
 
         public virtual ICollection<CatalogueItem> CatalogueItems { get; set; }
+
+        public override string ToString() => Name;
+
     }
 
 }

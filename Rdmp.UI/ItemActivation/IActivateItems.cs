@@ -68,7 +68,7 @@ public interface IActivateItems : IBasicActivateItems
     /// <typeparam name="T2"></typeparam>
     /// <param name="databaseObject"></param>
     /// <returns></returns>
-    T Activate<T, T2>(T2 databaseObject) where T : RDMPSingleDatabaseObjectControl<T2>, new() where T2 : DatabaseEntity;
+    T Activate<T, T2>(T2 databaseObject) where T : RDMPSingleDatabaseObjectControl<T2>, new() where T2 : IMapsDirectlyToDatabaseTable;
 
     /// <summary>
     /// Launches a new instance of the specified IObjectCollectionControl with the supplied collection.

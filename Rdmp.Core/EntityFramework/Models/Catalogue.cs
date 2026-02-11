@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -6,7 +9,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Rdmp.Core.Models
 {
     [Table("Catalogue")]
-    public class Catalogue
+    public class Catalogue: IHasFolder, IMapsDirectlyToDatabaseTable
     {
         [Key]
         public int ID { get; set; }
@@ -85,7 +88,12 @@ namespace Rdmp.Core.Models
         public virtual ICollection<CatalogueItem> CatalogueItems { get; set; }
         public virtual ICollection<LoadMetadata> LoadMetadatas { get; set; }
 
+        [NotMapped]
+        public RDMPDbContext CatalogueDbContext { get; set; }
+
+        public override string ToString() => Name;
     }
+
 
     // Enums
     public enum CatalogueType

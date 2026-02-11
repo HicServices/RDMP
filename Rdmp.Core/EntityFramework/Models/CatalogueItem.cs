@@ -40,5 +40,7 @@ namespace Rdmp.Core.Models
 
         [ForeignKey("ColumnInfo_ID")]
         public virtual ColumnInfo ColumnInfo { get; set; }
+        public override string ToString() => Name;
+
     }
 }

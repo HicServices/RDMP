@@ -223,7 +223,7 @@ namespace Rdmp.UI.SimpleDialogs
         private void tbFilter_TextChanged(object sender, EventArgs e)
         {
             folv.UseFiltering = true;
-            var catalogueFilter = new CatalogueCollectionFilter(_activator.CoreChildProvider);
+            var catalogueFilter = new CatalogueCollectionFilter(_activator.RepositoryLocator.CatalogueDbContext);
             var aggregateFilter = new CohortAggregateContainerFilter();
 
 

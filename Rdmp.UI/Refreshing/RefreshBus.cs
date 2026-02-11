@@ -52,16 +52,16 @@ public class RefreshBus
                 // Set cursor as hourglass
                 Cursor.Current = Cursors.WaitCursor;
 
-                //refresh it from the child provider
-                if (e.Exists)
-                {
-                    e.Object.RevertToDatabaseState();
-                }
-                else
-                {
-                    if (ChildProvider != null && e.DeletedObjectDescendancy == null)
-                        e.DeletedObjectDescendancy = ChildProvider.GetDescendancyListIfAnyFor(e.Object);
-                }
+                ////refresh it from the child provider
+                //if (e.Exists)
+                //{
+                //    e.Object.RevertToDatabaseState();
+                //}
+                //else
+                //{
+                //    if (ChildProvider != null && e.DeletedObjectDescendancy == null)
+                //        e.DeletedObjectDescendancy = ChildProvider.GetDescendancyListIfAnyFor(e.Object);
+                //}
 
                 RefreshObject?.Invoke(sender, e);
             }

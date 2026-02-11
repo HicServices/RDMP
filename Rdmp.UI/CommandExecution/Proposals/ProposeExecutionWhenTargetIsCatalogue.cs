@@ -14,27 +14,27 @@ using Rdmp.UI.MainFormUITabs;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsCatalogue : RDMPCommandExecutionProposal<Catalogue>
+internal class ProposeExecutionWhenTargetIsCatalogue : RDMPCommandExecutionProposal<Core.Models.Catalogue>
 {
     public ProposeExecutionWhenTargetIsCatalogue(IActivateItems itemActivator) : base(itemActivator)
     {
     }
 
-    public override bool CanActivate(Catalogue target) => true;
+    public override bool CanActivate(Core.Models.Catalogue target) => true;
 
-    public override void Activate(Catalogue c)
+    public override void Activate(Core.Models.Catalogue c)
     {
-        ItemActivator.Activate<CatalogueUI, Catalogue>(c);
+        ItemActivator.Activate<CatalogueUI, Core.Models.Catalogue>(c);
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Catalogue targetCatalogue,
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Core.Models.Catalogue targetCatalogue,
         InsertOption insertOption = InsertOption.Default)
     {
-        if (cmd is FileCollectionCombineable sourceFileCollection)
-            return sourceFileCollection.IsShareDefinition
-                ? new ExecuteCommandImportCatalogueDescriptionsFromShare(ItemActivator, sourceFileCollection,
-                    targetCatalogue)
-                : new ExecuteCommandAddNewSupportingDocument(ItemActivator, sourceFileCollection, targetCatalogue);
+        //if (cmd is FileCollectionCombineable sourceFileCollection)
+        //    return sourceFileCollection.IsShareDefinition
+        //        ? new ExecuteCommandImportCatalogueDescriptionsFromShare(ItemActivator, sourceFileCollection,
+        //            targetCatalogue)
+        //        : new ExecuteCommandAddNewSupportingDocument(ItemActivator, sourceFileCollection, targetCatalogue);
 
         return null;
     }

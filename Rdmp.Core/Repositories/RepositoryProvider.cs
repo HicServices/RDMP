@@ -50,7 +50,7 @@ public class RepositoryProvider : IRDMPPlatformRepositoryServiceLocator
     {
         var repository = GetRepository(repositoryTypeName);
         var objectType = GetTypeByName(databaseObjectTypeName, typeof(IMapsDirectlyToDatabaseTable));
-
+        if (repository is null) return null;
         return !repository.StillExists(objectType, objectId) ? null : repository.GetObjectByID(objectType, objectId);
     }
 

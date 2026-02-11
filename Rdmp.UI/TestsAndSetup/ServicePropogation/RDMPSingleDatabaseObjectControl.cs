@@ -37,7 +37,7 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation;
 /// <typeparam name="T"></typeparam>
 [TechnicalUI]
 public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDMPSingleDatabaseObjectControl
-    where T : DatabaseEntity
+    where T : IMapsDirectlyToDatabaseTable
 {
     /// <summary>
     /// True to track changes made to the <see cref="DatabaseObject"/> hosted by this control
@@ -49,7 +49,7 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
 
     /// <summary>
     /// Tracks changes to <see cref="DatabaseObject"/> since last save.  Note that this is null
-    /// before <see cref="SetDatabaseObject(IActivateItems, DatabaseEntity)"/> has been called
+    /// before <see cref="SetDatabaseObject(IActivateItems, IMapsDirectlyToDatabaseTable)"/> has been called
     /// or if <see cref="UseCommitSystem"/> is false.
     /// </summary>
     protected CommitInProgress CurrentCommit;
@@ -67,7 +67,7 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
 
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-    public DatabaseEntity DatabaseObject { get; private set; }
+    public IMapsDirectlyToDatabaseTable DatabaseObject { get; private set; }
 
     protected RDMPCollection AssociatedCollection = RDMPCollection.None;
 
@@ -86,7 +86,7 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
     {
         SetItemActivator(activator);
         _activator = activator;
-        Activator.RefreshBus.EstablishSelfDestructProtocol(this, activator, databaseObject);
+        //Activator.RefreshBus.EstablishSelfDestructProtocol(this, activator, databaseObject);
         DatabaseObject = databaseObject;
 
         CommonFunctionality.ClearToolStrip();
@@ -325,7 +325,7 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
         }
     }
 
-    public void SetDatabaseObject(IActivateItems activator, DatabaseEntity databaseObject)
+    public void SetDatabaseObject(IActivateItems activator, IMapsDirectlyToDatabaseTable databaseObject)
     {
         SetDatabaseObject(activator, (T)databaseObject);
     }

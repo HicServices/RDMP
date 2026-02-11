@@ -16,6 +16,7 @@ using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.Curation.Data.Spontaneous;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.EntityFramework;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 
