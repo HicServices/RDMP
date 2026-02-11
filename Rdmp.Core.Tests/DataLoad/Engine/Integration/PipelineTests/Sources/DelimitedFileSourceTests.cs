@@ -55,7 +55,7 @@ public class DelimitedFileSourceTests
     {
         var testFile = new FileInfo(filename);
         var source = new DelimitedFlatFileDataFlowSource();
-        source.PreInitialize(new FlatFileToLoad(testFile), ThrowImmediatelyDataLoadEventListener.Quiet);
+        source.PreInitialize(null,new FlatFileToLoad(testFile), ThrowImmediatelyDataLoadEventListener.Quiet);
         var ex = Assert.Throws<Exception>(() =>
             source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken()));
         Assert.That(ex.Message, Does.Contain("Separator has not been set"));
@@ -67,7 +67,7 @@ public class DelimitedFileSourceTests
         var testFile = new FileInfo(filename);
 
         var source = new DelimitedFlatFileDataFlowSource();
-        source.PreInitialize(new FlatFileToLoad(testFile), ThrowImmediatelyDataLoadEventListener.Quiet);
+        source.PreInitialize(null,new FlatFileToLoad(testFile), ThrowImmediatelyDataLoadEventListener.Quiet);
         source.Separator = ",";
         source.ForceHeaders = "chi  ,Study ID\t ,Date";
         source.ForceHeadersReplacesFirstLineInFile = true;
@@ -103,7 +103,7 @@ public class DelimitedFileSourceTests
     {
         var testFile = new FileInfo(filename);
         var source = new DelimitedFlatFileDataFlowSource();
-        source.PreInitialize(new FlatFileToLoad(testFile), ThrowImmediatelyDataLoadEventListener.Quiet);
+        source.PreInitialize(null,new FlatFileToLoad(testFile), ThrowImmediatelyDataLoadEventListener.Quiet);
         source.Separator = ",";
         source.StronglyTypeInput = true; //makes the source interpret the file types properly
 
@@ -129,7 +129,7 @@ public class DelimitedFileSourceTests
     {
         var testFile = new FileInfo(filename);
         var source = new DelimitedFlatFileDataFlowSource();
-        source.PreInitialize(new FlatFileToLoad(testFile), ThrowImmediatelyDataLoadEventListener.Quiet);
+        source.PreInitialize(null,new FlatFileToLoad(testFile), ThrowImmediatelyDataLoadEventListener.Quiet);
         source.Separator = ",";
         source.StronglyTypeInput = true; //makes the source interpret the file types properly
 
@@ -173,7 +173,7 @@ public class DelimitedFileSourceTests
         var testFile = new FileInfo(filename);
 
         var source = new DelimitedFlatFileDataFlowSource();
-        source.PreInitialize(new FlatFileToLoad(testFile), ThrowImmediatelyDataLoadEventListener.Quiet);
+        source.PreInitialize(null,new FlatFileToLoad(testFile), ThrowImmediatelyDataLoadEventListener.Quiet);
         source.Separator = ",";
         source.IgnoreQuotes = true;
         source.MaxBatchSize = 10000;
@@ -212,7 +212,7 @@ public class DelimitedFileSourceTests
         var testFile = new FileInfo(filename);
 
         var source = new DelimitedFlatFileDataFlowSource();
-        source.PreInitialize(new FlatFileToLoad(testFile), ThrowImmediatelyDataLoadEventListener.Quiet);
+        source.PreInitialize(null,new FlatFileToLoad(testFile), ThrowImmediatelyDataLoadEventListener.Quiet);
         source.Separator = ",";
 
         source.MaxBatchSize = 10000;
@@ -272,7 +272,7 @@ public class DelimitedFileSourceTests
         var testFile = new FileInfo(filename);
 
         var source = new DelimitedFlatFileDataFlowSource();
-        source.PreInitialize(new FlatFileToLoad(testFile), ThrowImmediatelyDataLoadEventListener.Quiet);
+        source.PreInitialize(null,new FlatFileToLoad(testFile), ThrowImmediatelyDataLoadEventListener.Quiet);
         source.Separator = ",";
         source.MaxBatchSize = 10000;
 
@@ -318,7 +318,7 @@ public class DelimitedFileSourceTests
         var testFile = new FileInfo(filename);
 
         var source = new DelimitedFlatFileDataFlowSource();
-        source.PreInitialize(new FlatFileToLoad(testFile), ThrowImmediatelyDataLoadEventListener.Quiet);
+        source.PreInitialize(null,new FlatFileToLoad(testFile), ThrowImmediatelyDataLoadEventListener.Quiet);
         source.Separator = ",";
         source.MaxBatchSize = 10000;
 
@@ -365,7 +365,7 @@ public class DelimitedFileSourceTests
         var testFile = new FileInfo(filename);
 
         var source = new DelimitedFlatFileDataFlowSource();
-        source.PreInitialize(new FlatFileToLoad(testFile), ThrowImmediatelyDataLoadEventListener.Quiet);
+        source.PreInitialize(null,new FlatFileToLoad(testFile), ThrowImmediatelyDataLoadEventListener.Quiet);
         source.Separator = ",";
         source.MaxBatchSize = 10000;
 
@@ -405,7 +405,7 @@ old"",2001-01-05");
         var testFile = new FileInfo(filename);
 
         var source = new DelimitedFlatFileDataFlowSource();
-        source.PreInitialize(new FlatFileToLoad(testFile), ThrowImmediatelyDataLoadEventListener.Quiet);
+        source.PreInitialize(null,new FlatFileToLoad(testFile), ThrowImmediatelyDataLoadEventListener.Quiet);
         source.Separator = ",";
         source.MaxBatchSize = 10000;
         source.AttemptToResolveNewLinesInRecords = true;
@@ -447,7 +447,7 @@ old"",2001-01-05");
         var testFile = new FileInfo(filename);
 
         var source = new DelimitedFlatFileDataFlowSource();
-        source.PreInitialize(new FlatFileToLoad(testFile), ThrowImmediatelyDataLoadEventListener.Quiet);
+        source.PreInitialize(null,new FlatFileToLoad(testFile), ThrowImmediatelyDataLoadEventListener.Quiet);
         source.Separator = ",";
 
         source.MaxBatchSize = 10000;
@@ -510,7 +510,7 @@ old"",2001-01-05");
         var testFile = new FileInfo(filename);
 
         var source = new DelimitedFlatFileDataFlowSource();
-        source.PreInitialize(new FlatFileToLoad(testFile), ThrowImmediatelyDataLoadEventListener.Quiet);
+        source.PreInitialize(null,new FlatFileToLoad(testFile), ThrowImmediatelyDataLoadEventListener.Quiet);
         source.Separator = ",";
 
         source.MaxBatchSize = 10000;
@@ -552,7 +552,7 @@ old"",2001-01-05");
         var testFile = new FileInfo(filename);
 
         var source = new DelimitedFlatFileDataFlowSource();
-        source.PreInitialize(new FlatFileToLoad(testFile), ThrowImmediatelyDataLoadEventListener.Quiet);
+        source.PreInitialize(null,new FlatFileToLoad(testFile), ThrowImmediatelyDataLoadEventListener.Quiet);
         source.Separator = ",";
 
         source.MaxBatchSize = 10000;
@@ -612,7 +612,7 @@ old"",2001-01-05");
         var testFile = new FileInfo(filename);
 
         var source = new DelimitedFlatFileDataFlowSource();
-        source.PreInitialize(new FlatFileToLoad(testFile), ThrowImmediatelyDataLoadEventListener.Quiet);
+        source.PreInitialize(null,new FlatFileToLoad(testFile), ThrowImmediatelyDataLoadEventListener.Quiet);
         source.Separator =
             "\\t"; //<-- Important this is the string value SLASH T not an actual escaped tab as C# understands it.  This reflects the user pressing slash and t on his keyboard for the Separator argument in the UI
         source.ForceHeaders = "CHI\tStudyID\tDate";
@@ -652,7 +652,7 @@ old"",2001-01-05");
         var testFile = new FileInfo(filename);
 
         var source = new DelimitedFlatFileDataFlowSource();
-        source.PreInitialize(new FlatFileToLoad(testFile), ThrowImmediatelyDataLoadEventListener.Quiet);
+        source.PreInitialize(null,new FlatFileToLoad(testFile), ThrowImmediatelyDataLoadEventListener.Quiet);
         source.Separator =
             "\\t"; //<-- Important this is the string value SLASH T not an actual escaped tab as C# understands it.  This reflects the user pressing slash and t on his keyboard for the Separator argument in the UI
         source.ForceHeaders = "CHI\tStudyID\tDate\tSomeText";
@@ -716,7 +716,7 @@ old"",2001-01-05");
         File.WriteAllText(f, sb.ToString());
 
         var source = new DelimitedFlatFileDataFlowSource();
-        source.PreInitialize(new FlatFileToLoad(new FileInfo(f)), ThrowImmediatelyDataLoadEventListener.Quiet);
+        source.PreInitialize(null,new FlatFileToLoad(new FileInfo(f)), ThrowImmediatelyDataLoadEventListener.Quiet);
         source.Separator = ",";
         source.MaxBatchSize = DelimitedFlatFileDataFlowSource.MinimumStronglyTypeInputBatchSize;
         source.StronglyTypeInputBatchSize = DelimitedFlatFileDataFlowSource.MinimumStronglyTypeInputBatchSize;
@@ -754,7 +754,7 @@ old"",2001-01-05");
 2,""The Killer""? I've heard of him hes a bad un");
 
         var source = new DelimitedFlatFileDataFlowSource();
-        source.PreInitialize(new FlatFileToLoad(new FileInfo(f)), ThrowImmediatelyDataLoadEventListener.Quiet);
+        source.PreInitialize(null,new FlatFileToLoad(new FileInfo(f)), ThrowImmediatelyDataLoadEventListener.Quiet);
         source.Separator = ",";
         source.MaxBatchSize = DelimitedFlatFileDataFlowSource.MinimumStronglyTypeInputBatchSize;
         source.StronglyTypeInputBatchSize = DelimitedFlatFileDataFlowSource.MinimumStronglyTypeInputBatchSize;

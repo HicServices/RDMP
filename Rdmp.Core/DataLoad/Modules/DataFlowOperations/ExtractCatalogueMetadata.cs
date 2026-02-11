@@ -108,12 +108,12 @@ public class ExtractCatalogueMetadata : IPluginDataFlowComponent<DataTable>, IPi
                     CheckResult.Fail));
     }
 
-    public void PreInitialize(IExtractCommand value, IDataLoadEventListener listener)
+    public void PreInitialize(IBasicActivateItems activator, IExtractCommand value, IDataLoadEventListener listener)
     {
         _request = value;
     }
 
-    public void PreInitialize(IBasicActivateItems value, IDataLoadEventListener listener)
+    public void PreInitialize(IBasicActivateItems activator, IBasicActivateItems value, IDataLoadEventListener listener)
     {
         _activator = value;
     }

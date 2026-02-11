@@ -4,17 +4,18 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Diagnostics;
-using System.Linq;
 using FAnsi.Discovery;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.DataLoad.Triggers;
 using Rdmp.Core.Logging;
 using Rdmp.Core.ReusableLibraryCode.Progress;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Diagnostics;
+using System.Linq;
 
 namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
 
@@ -187,7 +188,7 @@ public class SqlBulkInsertDestination : IDataFlowDestination<DataTable>, IPipeli
         return null;
     }
 
-    public void PreInitialize(ITableLoadInfo value, IDataLoadEventListener listener)
+    public void PreInitialize(IBasicActivateItems activator, ITableLoadInfo value, IDataLoadEventListener listener)
     {
         TableLoadInfo = value;
     }

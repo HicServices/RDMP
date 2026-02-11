@@ -40,7 +40,7 @@ public class ProjectChecksTestsComplex : TestsRequiringAnExtractionConfiguration
 
         //but if the user goes ahead and executes the extraction that should fail too
         var source = new ExecuteDatasetExtractionSource();
-        source.PreInitialize(_request, ThrowImmediatelyDataLoadEventListener.Quiet);
+        source.PreInitialize(new ThrowImmediatelyActivator(RepositoryLocator, null), _request, ThrowImmediatelyDataLoadEventListener.Quiet);
         var exception2 = Assert.Throws<Exception>(() =>
             source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken()));
 

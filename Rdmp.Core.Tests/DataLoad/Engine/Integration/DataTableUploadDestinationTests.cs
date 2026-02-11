@@ -33,7 +33,7 @@ public class DataTableUploadDestinationTests : DatabaseTests
         var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
 
         var destination = new DataTableUploadDestination();
-        destination.PreInitialize(db, toConsole);
+        destination.PreInitialize(null,db, toConsole);
 
         var dt1 = new DataTable();
         dt1.Columns.Add("name", typeof(string));
@@ -133,7 +133,7 @@ public class DataTableUploadDestinationTests : DatabaseTests
 
             //the bulk insert is
             var destination = new DataTableUploadDestination();
-            destination.PreInitialize(db, toConsole);
+            destination.PreInitialize(null,db, toConsole);
 
             //order is inverted where name comes out at the end column (index 2)
             using var dt1 = new DataTable();
@@ -192,7 +192,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
 
         //the bulk insert is
         var destination = new DataTableUploadDestination();
-        destination.PreInitialize(db, ThrowImmediatelyDataLoadEventListener.Quiet);
+        destination.PreInitialize(null,db, ThrowImmediatelyDataLoadEventListener.Quiet);
 
         //order is inverted where name comes out at the end column (index 2)
         using var dt1 = new DataTable();
@@ -227,7 +227,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
 
         var destination = new DataTableUploadDestination();
-        destination.PreInitialize(db, toConsole);
+        destination.PreInitialize(null,db, toConsole);
 
         var dt1 = new DataTable
         {
@@ -248,7 +248,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
 
         var destination = new DataTableUploadDestination();
-        destination.PreInitialize(db, toConsole);
+        destination.PreInitialize(null,db, toConsole);
 
         var dt1 = new DataTable();
         dt1.Columns.Add("GoTeamGo");
@@ -269,7 +269,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         var toMemory = new ToMemoryDataLoadEventListener(true);
 
         var destination = new DataTableUploadDestination();
-        destination.PreInitialize(db, toConsole);
+        destination.PreInitialize(null,db, toConsole);
         destination.AllowResizingColumnsAtUploadTime = true;
 
         var dt1 = new DataTable();
@@ -303,7 +303,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
 
         var destination = new DataTableUploadDestination();
-        destination.PreInitialize(db, toConsole);
+        destination.PreInitialize(null,db, toConsole);
         destination.AllowResizingColumnsAtUploadTime = true;
 
         var dt1 = new DataTable();
@@ -337,7 +337,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
 
         var destination = new DataTableUploadDestination();
-        destination.PreInitialize(db, toConsole);
+        destination.PreInitialize(null,db, toConsole);
         destination.AllowResizingColumnsAtUploadTime = true;
 
         var dt1 = new DataTable();
@@ -374,7 +374,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
 
         var destination = new DataTableUploadDestination();
-        destination.PreInitialize(db, toConsole);
+        destination.PreInitialize(null,db, toConsole);
         destination.AllowResizingColumnsAtUploadTime = true;
 
         var dt1 = new DataTable();
@@ -411,7 +411,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
 
         var destination = new DataTableUploadDestination();
-        destination.PreInitialize(db, toConsole);
+        destination.PreInitialize(null,db, toConsole);
         destination.AllowResizingColumnsAtUploadTime = true;
 
 
@@ -449,7 +449,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         var toMemory = new ToMemoryDataLoadEventListener(true);
 
         var destination = new DataTableUploadDestination();
-        destination.PreInitialize(db, toConsole);
+        destination.PreInitialize(null,db, toConsole);
         destination.AllowResizingColumnsAtUploadTime = true;
 
         var dt1 = new DataTable();
@@ -516,7 +516,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
 
         var destination = new DataTableUploadDestination();
-        destination.PreInitialize(db, toConsole);
+        destination.PreInitialize(null,db, toConsole);
 
         var dt1 = new DataTable();
         dt1.Columns.Add("myCol", typeof(string));
@@ -560,7 +560,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
 
         var destination = new DataTableUploadDestination();
-        destination.PreInitialize(db, toConsole);
+        destination.PreInitialize(null,db, toConsole);
         destination.AllowResizingColumnsAtUploadTime = true;
 
         var dt1 = new DataTable();
@@ -721,7 +721,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         {
             AllowResizingColumnsAtUploadTime = true
         };
-        dest.PreInitialize(db, ThrowImmediatelyDataLoadEventListener.Quiet);
+        dest.PreInitialize(null,db, ThrowImmediatelyDataLoadEventListener.Quiet);
 
         dest.ProcessPipelineData(dt, ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
         dest.ProcessPipelineData(dt2, ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
@@ -749,7 +749,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         {
             AllowResizingColumnsAtUploadTime = true
         };
-        dest.PreInitialize(db, ThrowImmediatelyDataLoadEventListener.Quiet);
+        dest.PreInitialize(null,db, ThrowImmediatelyDataLoadEventListener.Quiet);
         dest.ProcessPipelineData(dt, ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
         dest.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
 
@@ -769,7 +769,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
 
         var destination = new DataTableUploadDestination();
-        destination.PreInitialize(db, toConsole);
+        destination.PreInitialize(null,db, toConsole);
         destination.AllowResizingColumnsAtUploadTime = true;
 
         var dt1 = new DataTable();
@@ -815,7 +815,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         var toMemory = new ToMemoryDataLoadEventListener(true);
 
         var destination = new DataTableUploadDestination();
-        destination.PreInitialize(db, toConsole);
+        destination.PreInitialize(null,db, toConsole);
         destination.AllowResizingColumnsAtUploadTime = true;
 
         var dt1 = new DataTable();
@@ -853,7 +853,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
 
         var destination = new DataTableUploadDestination();
-        destination.PreInitialize(db, toConsole);
+        destination.PreInitialize(null,db, toConsole);
         destination.AllowResizingColumnsAtUploadTime = true;
 
         var dt = new DataTable();
@@ -912,7 +912,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         var toMemory = new ToMemoryDataLoadEventListener(true);
 
         var destination = new DataTableUploadDestination();
-        destination.PreInitialize(db, toConsole);
+        destination.PreInitialize(null,db, toConsole);
         destination.AllowResizingColumnsAtUploadTime = true;
 
         var dt1 = new DataTable();
@@ -994,7 +994,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             var listener = ThrowImmediatelyDataLoadEventListener.Quiet;
 
             //pre initialzie with the database (which must be part of any pipeline use case involving a DataTableUploadDestination)
-            destinationComponent.PreInitialize(db, listener);
+            destinationComponent.PreInitialize(null,db, listener);
 
             //tell the destination component to process the data
             destinationComponent.ProcessPipelineData(dt, listener, new GracefulCancellationToken());
@@ -1019,7 +1019,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             AllowResizingColumnsAtUploadTime = true
         };
 
-        destination.PreInitialize(db, ThrowImmediatelyDataLoadEventListener.Quiet);
+        destination.PreInitialize(null,db, ThrowImmediatelyDataLoadEventListener.Quiet);
 
         var dt1 = new DataTable
         {
@@ -1099,7 +1099,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             var listener = ThrowImmediatelyDataLoadEventListener.Quiet;
 
             //pre initialzie with the database (which must be part of any pipeline use case involving a DataTableUploadDestination)
-            destinationComponent.PreInitialize(db, listener);
+            destinationComponent.PreInitialize(null,db, listener);
 
             //tell the destination component to process the data
             destinationComponent.ProcessPipelineData(dt, listener, new GracefulCancellationToken());
@@ -1123,7 +1123,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         dt.Rows.Add("-4.10235746055587E-05"); //this string is untyped
 
         var dest = new DataTableUploadDestination();
-        dest.PreInitialize(db, ThrowImmediatelyDataLoadEventListener.Quiet);
+        dest.PreInitialize(null,db, ThrowImmediatelyDataLoadEventListener.Quiet);
 
         try
         {
@@ -1172,7 +1172,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         dt.Rows.Add("F", "Def");
 
         var dest = new DataTableUploadDestination();
-        dest.PreInitialize(db, ThrowImmediatelyDataLoadEventListener.Quiet);
+        dest.PreInitialize(null,db, ThrowImmediatelyDataLoadEventListener.Quiet);
         dest.Adjuster = typeof(AdjustColumnDelegater);
 
         AdjustColumnDelegater.AdjusterDelegate = s =>
@@ -1233,7 +1233,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         var toMemory = new ToMemoryDataLoadEventListener(true);
 
         var destination = new DataTableUploadDestination();
-        destination.PreInitialize(db, toConsole);
+        destination.PreInitialize(null,db, toConsole);
         destination.AllowResizingColumnsAtUploadTime = true;
 
         var dt1 = new DataTable();
@@ -1308,7 +1308,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         var toMemory = new ToMemoryDataLoadEventListener(true);
 
         var destination = new DataTableUploadDestination();
-        destination.PreInitialize(db, toConsole);
+        destination.PreInitialize(null,db, toConsole);
         destination.AllowResizingColumnsAtUploadTime = true;
 
         var dt1 = new DataTable();
@@ -1369,7 +1369,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         var toMemory = new ToMemoryDataLoadEventListener(true);
 
         var destination = new DataTableUploadDestination();
-        destination.PreInitialize(db, toConsole);
+        destination.PreInitialize(null,db, toConsole);
         destination.AllowResizingColumnsAtUploadTime = true;
         destination.AddExplicitWriteType("FloatCol", "real");
 
@@ -1417,7 +1417,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             IndexTableName = "CreateIndex_OK",
             UserDefinedIndexes = new List<string>() { "name" }
         };
-        destination.PreInitialize(db, toConsole);
+        destination.PreInitialize(null,db, toConsole);
 
         var dt1 = new DataTable();
         dt1.Columns.Add("name", typeof(string));
@@ -1456,7 +1456,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             IndexTables = true,
             IndexTableName = "CreateIndex_OK"
         };
-        destination.PreInitialize(db, toConsole);
+        destination.PreInitialize(null,db, toConsole);
 
         var dt1 = new DataTable();
         dt1.Columns.Add("name", typeof(string));
@@ -1495,7 +1495,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             IndexTableName = "CreateIndex_OK",
             UserDefinedIndexes = new List<string>() { "name" }
         };
-        destination.PreInitialize(db, toConsole);
+        destination.PreInitialize(null,db, toConsole);
 
         var dt1 = new DataTable();
         dt1.Columns.Add("name", typeof(string));
@@ -1535,7 +1535,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         {
             UseTrigger = true
         };
-        destination.PreInitialize(db, toConsole);
+        destination.PreInitialize(null,db, toConsole);
 
         var dt1 = new DataTable();
         dt1.Columns.Add("name", typeof(string));
@@ -1570,7 +1570,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         {
             UseTrigger = true
         };
-        destination.PreInitialize(db, toConsole);
+        destination.PreInitialize(null,db, toConsole);
 
         var dt1 = new DataTable();
         dt1.Columns.Add("name", typeof(string));
@@ -1609,7 +1609,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             UserDefinedIndexes = new List<string>() { "name" },
             AppendDataIfTableExists = true
         };
-        destination.PreInitialize(db, toConsole);
+        destination.PreInitialize(null,db, toConsole);
 
         var dt1 = new DataTable();
         dt1.Columns.Add("name", typeof(string));
@@ -1656,7 +1656,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             AppendDataIfTableExists = true,
             UseTrigger = true
         };
-        destination.PreInitialize(db, toConsole);
+        destination.PreInitialize(null,db, toConsole);
 
         var dt1 = new DataTable();
         dt1.Columns.Add("name", typeof(string));
@@ -1702,7 +1702,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             UserDefinedIndexes = new List<string>() { "name" },
             AppendDataIfTableExists = true
         };
-        destination.PreInitialize(db, toConsole);
+        destination.PreInitialize(null,db, toConsole);
 
         var dt1 = new DataTable();
         dt1.Columns.Add("name", typeof(string));
@@ -1733,7 +1733,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             UserDefinedIndexes = new List<string>() { "name" },
             AppendDataIfTableExists = true
         };
-        destination.PreInitialize(db, toConsole);
+        destination.PreInitialize(null,db, toConsole);
         Assert.Throws<Exception>(() => destination.ProcessPipelineData(dt1, toConsole, token));
         destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
         var table = db.DiscoverTables(false).First(static t => t.GetRuntimeName() == "DataTableUploadDestinationTests");
@@ -1758,7 +1758,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             AppendDataIfTableExists = true,
             UseTrigger = true
         };
-        destination.PreInitialize(db, toConsole);
+        destination.PreInitialize(null,db, toConsole);
 
         var dt1 = new DataTable();
         dt1.Columns.Add("name", typeof(string));
@@ -1813,7 +1813,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             AppendDataIfTableExists = true,
             UseTrigger = true
         };
-        destination.PreInitialize(db, toConsole);
+        destination.PreInitialize(null,db, toConsole);
 
         var dt1 = new DataTable();
         dt1.Columns.Add("name", typeof(string));

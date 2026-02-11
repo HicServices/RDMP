@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Rdmp.Core.Caching.Layouts;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.ReusableLibraryCode.Progress;
@@ -83,12 +84,12 @@ public class FilesystemCacheDestination : IFileDataFlowDestination, IPipelineReq
         throw new NotImplementedException();
     }
 
-    public void PreInitialize(CacheProgress cacheProgress, IDataLoadEventListener listener)
+    public void PreInitialize(IBasicActivateItems activator, CacheProgress cacheProgress, IDataLoadEventListener listener)
     {
         CacheProgress = cacheProgress;
     }
 
-    public void PreInitialize(DirectoryInfo cacheDirectory, IDataLoadEventListener listener)
+    public void PreInitialize(IBasicActivateItems activator, DirectoryInfo cacheDirectory, IDataLoadEventListener listener)
     {
         CacheDirectory = cacheDirectory;
     }

@@ -25,7 +25,7 @@ public class CohortCompilerTests : CohortIdentificationTests
     [Test]
     public void AddSameTaskTwice_StaysAtOne()
     {
-        var compiler = new CohortCompiler(cohortIdentificationConfiguration);
+        var compiler = new CohortCompiler(new ThrowImmediatelyActivator(RepositoryLocator,null), cohortIdentificationConfiguration);
         container1.AddChild(aggregate1, 0);
         try
         {
@@ -69,7 +69,7 @@ public class CohortCompilerTests : CohortIdentificationTests
     [Test]
     public void AddContainer_StaysAtOne()
     {
-        var compiler = new CohortCompiler(cohortIdentificationConfiguration);
+        var compiler = new CohortCompiler(new ThrowImmediatelyActivator(RepositoryLocator, null), cohortIdentificationConfiguration);
         rootcontainer.AddChild(aggregate1, 1);
 
         compiler.AddTask(rootcontainer, null); //add the root container
@@ -147,7 +147,7 @@ public class CohortCompilerTests : CohortIdentificationTests
 
             //Joinable:aggregate5 (patient index table, the other Aggregates could JOIN to this)
 
-            var compiler = new CohortCompiler(cohortIdentificationConfiguration);
+            var compiler = new CohortCompiler(new ThrowImmediatelyActivator(RepositoryLocator, null), cohortIdentificationConfiguration);
             rootcontainer.AddChild(aggregate1, 1);
             rootcontainer.AddChild(container1);
             container1.Order = 2;
@@ -204,7 +204,7 @@ public class CohortCompilerTests : CohortIdentificationTests
     [Test]
     public void TestCompilerWithInternalCatalogues()
     {
-        var compiler = new CohortCompiler(cohortIdentificationConfiguration);
+        var compiler = new CohortCompiler(new ThrowImmediatelyActivator(RepositoryLocator, null), cohortIdentificationConfiguration);
         testData.catalogue.IsInternalDataset = true;
         testData.catalogue.SaveToDatabase();
 
@@ -225,17 +225,14 @@ public class CohortCompilerTests : CohortIdentificationTests
     [Test]
     public void TestCompilerWithProjectSpecificCatalogues_Fail()
     {
-        var compiler = new CohortCompiler(cohortIdentificationConfiguration);
+        var compiler = new CohortCompiler(new ThrowImmediatelyActivator(RepositoryLocator, null), cohortIdentificationConfiguration);
         
         var proj = new Project(DataExportRepository, "TestCompilerWithProjectSpecificCatalogues_Fail");
         proj.SaveToDatabase();
 
         //having an issue making it project specific
-        ////var cmd = new ExecuteCommandMakeCatalogueProjectSpecific(new ThrowImmediatelyActivator(RepositoryLocator) ,aggregate1.Catalogue, proj, true);
-        ////Assert.DoesNotThrow(()=>cmd.Execute());
-        //var es = new ExtractableDataSet(DataExportRepository, aggregate1.Catalogue);
-        //es.Projects = new List<IProject> { proj };
-        //es.SaveToDatabase();
+        var cmd = new ExecuteCommandMakeCatalogueProjectSpecific(new ThrowImmediatelyActivator(RepositoryLocator), aggregate1.Catalogue, proj, true);
+        Assert.DoesNotThrow(() => cmd.Execute());
         rootcontainer.AddChild(aggregate1, 1);
         rootcontainer.AddChild(container1);
         container1.Order = 2;
@@ -245,8 +242,35 @@ public class CohortCompilerTests : CohortIdentificationTests
         cohortIdentificationConfiguration.SaveToDatabase();
 
         compiler.AddAllTasks(true);
-        Assert.That(compiler.Tasks.Keys.Select(k => k.State).Where(s => s == CompilationState.Crashed).ToList(), Has.Count.EqualTo(3));
-        Assert.That(compiler.Tasks.Keys.Where(s => s.State == CompilationState.Crashed).Select(k => k.CrashMessage).ToList()[1].Message.Contains(" is marked as Internal. Internal Catalogues cannot be used in Cohort Identification Configurations."));
-        Assert.That(compiler.Tasks.Keys.Where(s => s.State == CompilationState.Crashed).Select(k => k.CrashMessage).ToList()[2].Message.Contains(" is marked as Internal. Internal Catalogues cannot be used in Cohort Identification Configurations."));
+        Assert.That(compiler.Tasks.Keys.Select(k => k.State).Where(s => s == CompilationState.Crashed).ToList(), Has.Count.EqualTo(2));
+        Assert.That(compiler.Tasks.Keys.Where(s => s.State == CompilationState.Crashed).Select(k => k.CrashMessage.Message).ToList().Contains("Catalogue BulkData is marked as Project Specific, but this Cohort Identification Configurations is not associated with the same Project."));
+    }
+    [Test]
+    public void TestCompilerWithProjectSpecificCatalogues_Pass()
+    {
+        var compiler = new CohortCompiler(new ThrowImmediatelyActivator(RepositoryLocator, null), cohortIdentificationConfiguration);
+
+        var proj = new Project(DataExportRepository, "TestCompilerWithProjectSpecificCatalogues_Fail");
+        proj.SaveToDatabase();
+
+        //having an issue making it project specific
+        var cmd = new ExecuteCommandMakeCatalogueProjectSpecific(new ThrowImmediatelyActivator(RepositoryLocator), aggregate1.Catalogue, proj, true);
+        Assert.DoesNotThrow(() => cmd.Execute());
+        rootcontainer.AddChild(aggregate1, 1);
+        rootcontainer.AddChild(container1);
+        container1.Order = 2;
+        container1.SaveToDatabase();
+
+        cohortIdentificationConfiguration.RootCohortAggregateContainer_ID = rootcontainer.ID;
+        cohortIdentificationConfiguration.SaveToDatabase();
+
+        var associateCmd = new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(new ThrowImmediatelyActivator(RepositoryLocator));
+        associateCmd.SetTarget(proj);
+        associateCmd.SetTarget(cohortIdentificationConfiguration);
+        Assert.DoesNotThrow(() => associateCmd.Execute());
+
+        compiler.AddAllTasks(true);
+        Assert.That(compiler.Tasks.Keys.Select(k => k.State).Where(s => s == CompilationState.Crashed).ToList(), Has.Count.EqualTo(2));
+        Assert.That(!compiler.Tasks.Keys.Where(s => s.State == CompilationState.Crashed).Select(k => k.CrashMessage.Message).ToList().Contains("Catalogue BulkData is marked as Project Specific, but this Cohort Identification Configurations is not associated with the same Project."));
     }
 }

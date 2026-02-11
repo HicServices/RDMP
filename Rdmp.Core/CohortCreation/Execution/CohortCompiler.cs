@@ -6,6 +6,7 @@
 
 using FAnsi.Discovery;
 using Rdmp.Core.CohortCreation.Execution.Joinables;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
@@ -75,9 +76,11 @@ public class CohortCompiler
 
     public List<Thread> Threads = new();
     private ICoreChildProvider _coreChildProvider;
+    private IBasicActivateItems _activator;
 
-    public CohortCompiler(CohortIdentificationConfiguration cohortIdentificationConfiguration)
+    public CohortCompiler(IBasicActivateItems activator, CohortIdentificationConfiguration cohortIdentificationConfiguration)
     {
+        _activator = activator;
         CohortIdentificationConfiguration = cohortIdentificationConfiguration;
     }
 
@@ -321,20 +324,22 @@ public class CohortCompiler
             task.State = CompilationState.Crashed;
         }
 
-        if(task.Child is CohortAggregateContainer cac)
+        if (task.Child is CohortAggregateContainer cac)
         {
             foreach (var cacac in cac.GetAggregateConfigurations())
             {
-                if (cacac.Catalogue != null )
+                if (cacac.Catalogue != null)
                 {
-                    if (cacac.Catalogue.IsInternalDataset) {
+                    if (cacac.Catalogue.IsInternalDataset)
+                    {
                         task.CrashMessage = new ArgumentException($"Catalogue {cacac.Catalogue.Name} is marked as Internal. Internal Catalogues cannot be used in Cohort Identification Configurations.");
                         task.State = CompilationState.Crashed;
                         break;
                     }
-                    if (cacac.Catalogue.IsProjectSpecific(CohortIdentificationConfiguration.DataExportRepository)) {
-                        var cicAssociatedProjects = CohortIdentificationConfiguration.DataExportRepository.GetAllObjectsWhere<ProjectCohortIdentificationConfigurationAssociation>("CohortIdentificationConfiguration_ID", CohortIdentificationConfiguration.ID).Select(c => c.Project).ToList();
-                        var catalogueAssociatedProjects = CohortIdentificationConfiguration.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", cacac.Catalogue.ID).SelectMany(eds => eds.Projects);
+                    if (_activator is not null && cacac.Catalogue.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository))
+                    {
+                        var cicAssociatedProjects = _activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ProjectCohortIdentificationConfigurationAssociation>("CohortIdentificationConfiguration_ID", CohortIdentificationConfiguration.ID).Select(c => c.Project).ToList();
+                        var catalogueAssociatedProjects = _activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", cacac.Catalogue.ID).SelectMany(eds => eds.Projects);
                         if (!catalogueAssociatedProjects.Intersect(cicAssociatedProjects).Any())
                         {
                             task.CrashMessage = new ArgumentException($"Catalogue {cacac.Catalogue.Name} is marked as Project Specific, but this Cohort Identification Configurations is not associated with the same Project.");
