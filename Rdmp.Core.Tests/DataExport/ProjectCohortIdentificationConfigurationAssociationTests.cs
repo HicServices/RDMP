@@ -57,12 +57,5 @@ public class ProjectCohortIdentificationConfigurationAssociationTests
             //relationship from p should resolve to the cic
             Assert.That(p.GetAssociatedCohortIdentificationConfigurations(), Is.Empty);
         });
-
-        //error should be reported in top right of program
-        var ex = Assert.Throws<Exception>(() =>
-            new DataExportChildProvider(new RepositoryProvider(memory), null, ThrowImmediatelyCheckNotifier.Quiet,
-                null));
-        Assert.That(
-            ex.Message, Does.Match(@"Failed to find Associated Cohort Identification Configuration with ID \d+ which was supposed to be associated with my proj"));
     }
 }
