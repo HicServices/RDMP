@@ -508,9 +508,6 @@
   <data name="AllCohortsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\AllCohortsNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="ProjectCohortIdentificationConfigurationAssociationsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\ProjectCohortIdentificationConfigurationAssociationsNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="ProjectSavedCohortsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\ProjectSavedCohortsNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>

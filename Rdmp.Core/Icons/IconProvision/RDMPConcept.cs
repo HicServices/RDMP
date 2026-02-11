@@ -98,7 +98,6 @@ public enum RDMPConcept
 
     AllCohortsNode,
     ProjectsNode,
-    ProjectCohortIdentificationConfigurationAssociationsNode,
     ProjectSavedCohortsNode,
     ExtractableDataSetsNode,
     ExtractionDirectoryNode,

@@ -64,16 +64,5 @@ public class ProjectCohortIdentificationConfigurationAssociationTests
                 null));
         Assert.That(
             ex.Message, Does.Match(@"Failed to find Associated Cohort Identification Configuration with ID \d+ which was supposed to be associated with my proj"));
-
-        //but UI should still respond
-        var childProvider = new DataExportChildProvider(new RepositoryProvider(memory), null,
-            IgnoreAllErrorsCheckNotifier.Instance, null);
-
-        //the orphan cic should not appear in the tree view under Project=>Cohorts=>Associated Cics
-        var cohorts = childProvider.GetChildren(p).OfType<ProjectCohortsNode>().Single();
-        var cics = childProvider.GetChildren(cohorts).OfType<ProjectCohortIdentificationConfigurationAssociationsNode>()
-            .First();
-
-        Assert.That(childProvider.GetChildren(cics), Is.Empty);
     }
 }

@@ -842,7 +842,7 @@ public class AtomicCommandFactory : CommandFactoryBase
             { OverrideCommandName = "Add New Cohort From Table", Weight = -4.6f }.SetTarget(projCohorts.Project);
         }
 
-        if (Is(o, out ProjectCohortIdentificationConfigurationAssociationsNode pccan))
+        if (Is(o, out CommittedCohortIdentificationNode pccan))
         {
             yield return new ExecuteCommandCreateNewCohortIdentificationConfiguration(_activator)
             { OverrideCommandName = "Add New Cohort Builder Query", Weight = -5.1f }.SetTarget(pccan.Project);
