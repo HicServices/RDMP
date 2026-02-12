@@ -44,16 +44,16 @@ public class ObjectSaverButton
         _btnUndoRedo.Click += btnUndoRedo_Click;
     }
 
-    //private IMapsDirectlyToDatabaseTable _o;
+    private IMapsDirectlyToDatabaseTable _o;
 
     public event Action AfterSave;
 
     /// <summary>
     /// Function to carry out some kind of procedure before the object is saved.  Return true if you want the save to carry on and be applied or false to abandon the save attempt.
     /// </summary>
-    public event Func<DatabaseEntity, bool> BeforeSave;
+    public event Func<IMapsDirectlyToDatabaseTable, bool> BeforeSave;
 
-    private bool _isEnabled;
+    private bool _isEnabled = true;
     private bool _undo = true;
 
     public void SetupFor(IRDMPControl control, IMapsDirectlyToDatabaseTable o, IActivateItems activator)
@@ -67,16 +67,17 @@ public class ObjectSaverButton
         _parent = control;
 
         Enable(false);
+        //Enable(true);
 
         //if it is a fresh instance
-        //if (!ReferenceEquals(_o, o))
-        //{
-        //    //subscribe to property change events
-        //    if (_o != null)
-        //        _o.PropertyChanged -= PropertyChanged;
-        //    _o = o;
-        //    _o.PropertyChanged += PropertyChanged;
-        //}
+        if (!ReferenceEquals(_o, o))
+        {
+            //subscribe to property change events
+            if (_o != null)
+                _o.PropertyChanged -= PropertyChanged; //property change events are not triggering
+            _o = o;
+            _o.PropertyChanged += PropertyChanged;
+        }
 
         //already set up before
         if (_activator != null)
@@ -121,15 +122,15 @@ public class ObjectSaverButton
 
     public void Save()
     {
-        //if (_o == null)
-        //    throw new Exception(
-        //        "Cannot Save because ObjectSaverButton has not been set up yet, call SetupFor first (e.g. in your SetDatabaseObject method) ");
+        if (_o == null)
+            throw new Exception(
+                "Cannot Save because ObjectSaverButton has not been set up yet, call SetupFor first (e.g. in your SetDatabaseObject method) ");
 
         if (BeforeSave != null)
-            if(!BeforeSave(null))
-            //if (!BeforeSave(_o))
+            if (!BeforeSave(_o))
                 return;
 
+        _o.CatalogueDbContext.SaveChanges();
         //_o.SaveToDatabase();
         //_activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_o));
         Enable(false);

@@ -183,7 +183,7 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
         cmd.Execute();
     }
 
-    protected bool BeforeSave_PromptRenameOfExtractionFilterContainer(DatabaseEntity _)
+    protected bool BeforeSave_PromptRenameOfExtractionFilterContainer(IMapsDirectlyToDatabaseTable _)
     {
         if (!ObjectSaverButton1.IsEnabled) return true;
         AggregateFilter af;
@@ -210,7 +210,7 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
     }
 
 
-    protected bool BeforeSave_FinishCommitInProgressIfAny(DatabaseEntity _)
+    protected bool BeforeSave_FinishCommitInProgressIfAny(IMapsDirectlyToDatabaseTable _)
     {
         // control doesn't require commits (most controls don't)
         if (!UseCommitSystem)

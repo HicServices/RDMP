@@ -4,15 +4,11 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.ComponentModel;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Windows.Forms;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.FilterImporting;
 using Rdmp.Core.DataViewing;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.UI.AutoComplete;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.Copying;
@@ -23,6 +19,11 @@ using Rdmp.UI.ScintillaHelper;
 using Rdmp.UI.SimpleControls;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ScintillaNET;
+using System;
+using System.ComponentModel;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 namespace Rdmp.UI.ExtractionUIs.FilterUIs;
 
@@ -103,7 +104,7 @@ public partial class ExtractionFilterUI : ExtractionFilterUI_Design, ILifetimeSu
         _autoCompleteProvider.RegisterForEvents(QueryEditor);
     }
 
-    private bool BeforeSave(DatabaseEntity databaseEntity)
+    private bool BeforeSave(IMapsDirectlyToDatabaseTable databaseEntity)
     {
         SubstituteQueryEditorTextIfContainsLineComments();
         OfferWrappingIfUserIncludesANDOrOR();

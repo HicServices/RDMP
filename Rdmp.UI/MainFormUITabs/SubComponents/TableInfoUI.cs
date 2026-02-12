@@ -11,6 +11,7 @@ using Rdmp.Core;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.FilterImporting;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Sharing.Refactoring;
 using Rdmp.UI.ChecksUI;
 using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs;
@@ -87,7 +88,7 @@ public partial class TableInfoUI : TableInfoUI_Design, ISaveableUI
     }
 
 
-    private bool objectSaverButton1_BeforeSave(DatabaseEntity arg)
+    private bool objectSaverButton1_BeforeSave(IMapsDirectlyToDatabaseTable arg)
     {
         //do not mess with the table name if it is a table valued function
         if (_tableInfo.IsTableValuedFunction)

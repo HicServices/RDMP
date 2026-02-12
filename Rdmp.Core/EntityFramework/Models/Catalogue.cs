@@ -1,15 +1,20 @@
-﻿using Rdmp.Core.Curation.Data;
+﻿using MongoDB.Driver;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
+using Rdmp.Core.ReusableLibraryCode.Annotations;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime.CompilerServices;
 
 namespace Rdmp.Core.Models
 {
     [Table("Catalogue")]
-    public class Catalogue: IHasFolder, IMapsDirectlyToDatabaseTable
+    public class Catalogue : IMapsDirectlyToDatabaseTable, IHasFolder
     {
         [Key]
         public int ID { get; set; }
@@ -25,7 +30,8 @@ namespace Rdmp.Core.Models
         public string Folder { get; set; } = "/";
 
         public string Description { get; set; }
-        public string ShortDescription { get; set; }
+
+        public string ShortDescription { get; set => SetField(ref ShortDescription, value); }
         public string Detail_Page_URL { get; set; }
 
         [Column(TypeName = "nvarchar(max)")]
@@ -40,7 +46,7 @@ namespace Rdmp.Core.Models
         public string Background_summary { get; set; }
         public string Search_keywords { get; set; }
         [Column(TypeName = "nvarchar(50)")]
-        public int?Update_freq { get; set; }
+        public int? Update_freq { get; set; }
         public string Update_sched { get; set; }
         public string Time_coverage { get; set; }
         public DateTime? Last_revision_date { get; set; }
@@ -91,7 +97,22 @@ namespace Rdmp.Core.Models
         [NotMapped]
         public RDMPDbContext CatalogueDbContext { get; set; }
 
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged(object oldValue, object newValue,
+    [CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedExtendedEventArgs(propertyName, oldValue, newValue));
+        }
+
         public override string ToString() => Name;
+
+        private void SetField<T>(ref T field, T value)
+        {
+            OnPropertyChanged(field, value, null);
+            field = value;
+        }
     }
 
 

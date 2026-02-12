@@ -13,6 +13,7 @@ using BrightIdeasSoftware;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Validation;
 using Rdmp.Core.Validation.Constraints;
 using Rdmp.Core.Validation.Constraints.Primary;
@@ -355,7 +356,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
         Publish(_catalogue);
     }
 
-    private bool objectSaverButton1_BeforeSave(DatabaseEntity arg)
+    private bool objectSaverButton1_BeforeSave(IMapsDirectlyToDatabaseTable arg)
     {
         Save();
         return true;

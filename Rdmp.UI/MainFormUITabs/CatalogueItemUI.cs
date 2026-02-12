@@ -4,13 +4,10 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.ComponentModel;
-using System.Linq;
-using System.Windows.Forms;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Rules;
 using Rdmp.UI.ScintillaHelper;
@@ -18,6 +15,10 @@ using Rdmp.UI.SimpleControls;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ScintillaNET;
+using System;
+using System.ComponentModel;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace Rdmp.UI.MainFormUITabs;
 
@@ -44,7 +45,7 @@ public partial class CatalogueItemUI : CatalogueItemUI_Design, ISaveableUI
 
     }
 
-    private bool objectSaverButton1_BeforeSave(DatabaseEntity databaseEntity)
+    private bool objectSaverButton1_BeforeSave(IMapsDirectlyToDatabaseTable databaseEntity)
     {
         //see if we need to display the dialog that lets the user sync up descriptions of multiuse columns e.g. CHI
         var propagate =

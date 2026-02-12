@@ -4,14 +4,11 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.ComponentModel;
-using System.Text.RegularExpressions;
-using System.Windows.Forms;
 using FAnsi.Discovery.QuerySyntax;
 using FAnsi.Implementations.MicrosoftSQL;
 using Rdmp.Core;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.UI.AutoComplete;
 using Rdmp.UI.ChecksUI;
@@ -22,6 +19,10 @@ using Rdmp.UI.ScintillaHelper;
 using Rdmp.UI.SimpleControls;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ScintillaNET;
+using System;
+using System.ComponentModel;
+using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 namespace Rdmp.UI.ExtractionUIs;
 
@@ -91,7 +92,7 @@ public partial class ExtractionInformationUI : ExtractionInformationUI_Design, I
         UseCommitSystem = true;
     }
 
-    private bool BeforeSave(DatabaseEntity arg)
+    private bool BeforeSave(IMapsDirectlyToDatabaseTable arg)
     {
         //alias prefix is ' as ' so make sure user doesn't start a new line with "bobbob\r\nas fish" since this won't be recognised, solve the problem by inserting the original alias
         if (_querySyntaxHelper.AliasPrefix.StartsWith(" ", StringComparison.Ordinal))
@@ -157,7 +158,7 @@ public partial class ExtractionInformationUI : ExtractionInformationUI_Design, I
         _isLoading = false;
     }
 
-    private bool objectSaverButton1OnBeforeSave(DatabaseEntity databaseEntity)
+    private bool objectSaverButton1OnBeforeSave(IMapsDirectlyToDatabaseTable databaseEntity)
     {
         if (_namesMatchedWhenDialogWasLaunched)
         {
