@@ -66,9 +66,9 @@ internal static partial class Program
             {
                 var form = new RDMPMainForm();
                 form.SetRepositoryLocator(locator);
+                form.Icon = Properties.Resources.rdmp;
                 return form;
             });
-
         bootStrapper.Show();
         return 0;
     }
