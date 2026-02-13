@@ -1,8 +1,5 @@
 ﻿using Amazon.S3;
 using Amazon.S3.Model;
-using Minio;
-using Minio.DataModel;
-using Minio.DataModel.Args;
 using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.CommandExecution;
