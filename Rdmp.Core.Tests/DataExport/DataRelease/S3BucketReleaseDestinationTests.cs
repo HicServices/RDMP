@@ -46,7 +46,7 @@ public sealed class S3BucketReleaseDestinationTests : TestsRequiringAnExtraction
         var _credentials = AWSCredentialsHelper.LoadSsoCredentials("minio");
         AmazonS3Config config = new AmazonS3Config()
         {
-            ServiceURL = Endpoint,
+            ServiceURL = "http://127.0.0.1:9000",
             UseHttp = true,
             ForcePathStyle = true,
         };
