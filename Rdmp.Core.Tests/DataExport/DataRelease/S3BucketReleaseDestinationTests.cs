@@ -1,21 +1,25 @@
-﻿using NUnit.Framework;
+﻿using Amazon.S3;
+using Amazon.S3.Model;
 using Minio;
-using Rdmp.Core.ReusableLibraryCode.AWS;
-using Tests.Common.Scenarios;
-using Rdmp.Core.DataFlowPipeline;
-using Rdmp.Core.ReusableLibraryCode.Progress;
-using System;
-using Rdmp.Core.Curation.Data.Pipelines;
-using Rdmp.Core.DataExport.DataRelease;
+using Minio.DataModel;
+using Minio.DataModel.Args;
+using NSubstitute;
+using NUnit.Framework;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.CommandLine.Runners;
-using Rdmp.Core.CommandExecution;
-using Rdmp.Core.ReusableLibraryCode.Checks;
-using System.Linq;
-using Minio.DataModel.Args;
-using System.Collections.Generic;
-using Minio.DataModel;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.Curation.Data.Pipelines;
+using Rdmp.Core.DataExport.DataRelease;
+using Rdmp.Core.DataFlowPipeline;
+using Rdmp.Core.ReusableLibraryCode.AWS;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Progress;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Tests.Common.Scenarios;
 
 namespace Rdmp.Core.Tests.DataExport.DataRelease;
 
@@ -24,7 +28,7 @@ public sealed class S3BucketReleaseDestinationTests : TestsRequiringAnExtraction
     private const string Username = "minioadmin";
     private const string Password = "minioadmin";
     private const string Endpoint = "127.0.0.1:9000";
-    private static IMinioClient _minioClient;
+    private static IAmazonS3 _minioClient;
 
 
     [OneTimeTearDown]
@@ -36,11 +40,12 @@ public sealed class S3BucketReleaseDestinationTests : TestsRequiringAnExtraction
     [OneTimeSetUp]
     public new void OneTimeSetUp()
     {
-        _minioClient = new MinioClient()
-            .WithEndpoint(Endpoint)
-            .WithCredentials(Username, Password)
-            .WithSSL(false)
-            .Build();
+        //_minioClient = new MinioClient()
+        //    .WithEndpoint(Endpoint)
+        //    .WithCredentials(Username, Password)
+        //    .WithSSL(false)
+        //    .Build();
+        _minioClient = Substitute.For<IAmazonS3>();
     }
 
     private void DoExtraction()
@@ -51,23 +56,47 @@ public sealed class S3BucketReleaseDestinationTests : TestsRequiringAnExtraction
 
     private static void MakeBucket(string name)
     {
-        var mbArgs = new MakeBucketArgs()
-            .WithBucket(name);
-        _minioClient.MakeBucketAsync(mbArgs).Wait();
+        var request = new PutBucketRequest
+        {
+            BucketName = name,
+            UseClientRegion = true,
+            ObjectLockEnabledForBucket = false,
+        };
+        _minioClient.PutBucketAsync(request);
     }
 
     private static void DeleteBucket(string name)
     {
-        var rbArgs = new RemoveBucketArgs()
-            .WithBucket(name);
-        _minioClient.RemoveBucketAsync(rbArgs).Wait();
+        //var rbArgs = new RemoveBucketArgs()
+        //    .WithBucket(name);
+        //_minioClient.RemoveBucketAsync(rbArgs).Wait();
+        var request = new DeleteBucketRequest
+        {
+            BucketName = name,
+        };
+        _minioClient.DeleteBucketAsync(request);
     }
 
-    private static List<Minio.DataModel.Item> GetObjects(string bucketName)
+    private static List<S3Object> GetObjects(string bucketName)
     {
-        var loArgs = new ListObjectsArgs().WithBucket(bucketName);
-        var x = _minioClient.ListObjectsEnumAsync(loArgs).ToListAsync();
-        return x.IsCompleted ? x.Result : x.AsTask().Result;
+        //var loArgs = new ListObjectsArgs().WithBucket(bucketName);
+        //var x = _minioClient.ListObjectsEnumAsync(loArgs).ToListAsync();
+        //return x.IsCompleted ? x.Result : x.AsTask().Result;
+        var listObjectsV2Paginator = _minioClient.Paginators.ListObjectsV2(new ListObjectsV2Request
+        {
+            BucketName = bucketName,
+        });
+        var t = Task.Run(async () =>
+        {
+            var objects = new List<S3Object>() { };
+            await foreach (var response in listObjectsV2Paginator.Responses)
+            {
+                objects.AddRange(response.S3Objects);
+            }
+            return objects;
+        });
+        return t.Result;
+     
     }
 
     private static void SetArgs(IArgument[] args, Dictionary<string, object> values)
