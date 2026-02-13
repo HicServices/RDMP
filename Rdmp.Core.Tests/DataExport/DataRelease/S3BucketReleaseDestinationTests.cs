@@ -15,6 +15,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Tests.Common.Scenarios;
 
@@ -25,7 +26,7 @@ public sealed class S3BucketReleaseDestinationTests : TestsRequiringAnExtraction
     private const string Username = "minioadmin";
     private const string Password = "minioadmin";
     private const string Endpoint = "127.0.0.1:9000";
-    private static IAmazonS3 _minioClient;
+    private static AmazonS3Client _minioClient;
 
 
     [OneTimeTearDown]
@@ -42,7 +43,14 @@ public sealed class S3BucketReleaseDestinationTests : TestsRequiringAnExtraction
         //    .WithCredentials(Username, Password)
         //    .WithSSL(false)
         //    .Build();
-        _minioClient = Substitute.For<IAmazonS3>();
+        var _credentials = AWSCredentialsHelper.LoadSsoCredentials("minio");
+        AmazonS3Config config = new AmazonS3Config()
+        {
+            ServiceURL = Endpoint,
+            UseHttp = true,
+            ForcePathStyle = true,
+        };
+        _minioClient = new AmazonS3Client(_credentials, config);
     }
 
     private void DoExtraction()
