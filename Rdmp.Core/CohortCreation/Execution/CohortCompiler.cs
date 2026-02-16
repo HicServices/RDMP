@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using FAnsi.Discovery;
+using Org.BouncyCastle.Crypto.Macs;
 using Rdmp.Core.CohortCreation.Execution.Joinables;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
@@ -357,6 +358,16 @@ public class CohortCompiler
             {
                 task.CrashMessage = new ArgumentException($"Catalogue {ac.Catalogue.Name} is marked as Internal. Internal Catalogues cannot be used in Cohort Identification Configurations.");
                 task.State = CompilationState.Crashed;
+            }
+            if (_activator is not null && ac.Catalogue.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository))
+            {
+                var cicAssociatedProjects = _activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ProjectCohortIdentificationConfigurationAssociation>("CohortIdentificationConfiguration_ID", CohortIdentificationConfiguration.ID).Select(c => c.Project).ToList();
+                var catalogueAssociatedProjects = _activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", ac.Catalogue.ID).SelectMany(eds => eds.Projects);
+                if (!catalogueAssociatedProjects.Intersect(cicAssociatedProjects).Any())
+                {
+                    task.CrashMessage = new ArgumentException($"Catalogue {ac.Catalogue.Name} is marked as Project Specific, but this Cohort Identification Configurations is not associated with the same Project.");
+                    task.State = CompilationState.Crashed;
+                }
             }
         }
 
