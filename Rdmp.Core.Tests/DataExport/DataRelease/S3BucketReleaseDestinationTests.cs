@@ -72,9 +72,6 @@ public sealed class S3BucketReleaseDestinationTests : TestsRequiringAnExtraction
 
     private static void DeleteBucket(string name)
     {
-        //var rbArgs = new RemoveBucketArgs()
-        //    .WithBucket(name);
-        //_minioClient.RemoveBucketAsync(rbArgs).Wait();
         var request = new DeleteBucketRequest
         {
             BucketName = name,
@@ -84,9 +81,6 @@ public sealed class S3BucketReleaseDestinationTests : TestsRequiringAnExtraction
 
     private static List<S3Object> GetObjects(string bucketName)
     {
-        //var loArgs = new ListObjectsArgs().WithBucket(bucketName);
-        //var x = _minioClient.ListObjectsEnumAsync(loArgs).ToListAsync();
-        //return x.IsCompleted ? x.Result : x.AsTask().Result;
         var listObjectsV2Paginator = _minioClient.Paginators.ListObjectsV2(new ListObjectsV2Request
         {
             BucketName = bucketName,
@@ -156,6 +150,11 @@ public sealed class S3BucketReleaseDestinationTests : TestsRequiringAnExtraction
         var runner = new ReleaseRunner(new ThrowImmediatelyActivator(RepositoryLocator), optsRelease);
         Assert.DoesNotThrow(() => runner.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, ThrowImmediatelyCheckNotifier.Quiet, new GracefulCancellationToken()));
         var foundObjects = GetObjects("releasetoawsbasictest");
+        foreach (var obj in foundObjects)
+        {
+            Console.WriteLine($"Found object {obj.Key} in bucket {obj.BucketName}");
+            //_minioClient.DeleteObjectAsync(obj.BucketName, obj.Key);
+        }
         Assert.That(foundObjects, Has.Count.EqualTo(1));
     }
 
