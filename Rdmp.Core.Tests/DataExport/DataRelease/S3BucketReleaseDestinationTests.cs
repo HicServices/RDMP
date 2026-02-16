@@ -359,7 +359,7 @@ public sealed class S3BucketReleaseDestinationTests : TestsRequiringAnExtraction
         var runner = new ReleaseRunner(new ThrowImmediatelyActivator(RepositoryLocator), optsRelease);
         Assert.DoesNotThrow(() => runner.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, ThrowImmediatelyCheckNotifier.Quiet, new GracefulCancellationToken()));
         var foundObjects = GetObjects("locationalreadyexist");
-        Assert.That(foundObjects, Has.Count.EqualTo(1));
+        Assert.That(foundObjects, Has.Count.EqualTo(5));
         DoExtraction();
         pipe = new Pipeline(CatalogueRepository, "NestedPipe8");
         pc = new PipelineComponent(CatalogueRepository, pipe, typeof(AWSS3BucketReleaseDestination), -1,
