@@ -31,7 +31,7 @@ namespace Rdmp.Core.Models
 
         public string Description { get; set; }
 
-        public string ShortDescription { get; set => SetField(ref ShortDescription, value); }
+        public string ShortDescription { get; set => SetField(ref field, value); }
         public string Detail_Page_URL { get; set; }
 
         [Column(TypeName = "nvarchar(max)")]

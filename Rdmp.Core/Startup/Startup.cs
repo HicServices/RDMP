@@ -88,29 +88,29 @@ public class Startup
                 new PlatformDatabaseFoundEventArgs(null, cataloguePatcher, RDMPPlatformDatabaseStatus.Broken, e));
         }
 
-        if (foundCatalogue)
-            try
-            {
-                //setup connection string keywords
-                foreach (var keyword in RepositoryLocator.CatalogueDbContext.GetAllObjects<ConnectionStringKeyword>())
-                {
-                    var tomem = new ToMemoryCheckNotifier(notifier);
-                    keyword.Check(tomem);
+        //if (foundCatalogue)
+        //    try
+        //    {
+        //        //setup connection string keywords
+        //        foreach (var keyword in RepositoryLocator.CatalogueDbContext.GetAllObjects<ConnectionStringKeyword>())
+        //        {
+        //            var tomem = new ToMemoryCheckNotifier(notifier);
+        //            keyword.Check(tomem);
 
-                    //don't add broken keywords!
-                    if (tomem.GetWorst() >= CheckResult.Fail)
-                        continue;
+        //            //don't add broken keywords!
+        //            if (tomem.GetWorst() >= CheckResult.Fail)
+        //                continue;
 
-                    //pass it into the system wide static keyword collection for use with all databases of this type all the time (that includes Microsoft Sql Server btw which means those options will happen for DataExport too!)
-                    DiscoveredServerHelper.AddConnectionStringKeyword(keyword.DatabaseType, keyword.Name, keyword.Value,
-                        ConnectionStringKeywordPriority.SystemDefaultMedium);
-                }
-            }
-            catch (Exception ex)
-            {
-                notifier.OnCheckPerformed(new CheckEventArgs("Could not apply ConnectionStringKeywords",
-                    CheckResult.Fail, ex));
-            }
+        //            //pass it into the system wide static keyword collection for use with all databases of this type all the time (that includes Microsoft Sql Server btw which means those options will happen for DataExport too!)
+        //            DiscoveredServerHelper.AddConnectionStringKeyword(keyword.DatabaseType, keyword.Name, keyword.Value,
+        //                ConnectionStringKeywordPriority.SystemDefaultMedium);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        notifier.OnCheckPerformed(new CheckEventArgs("Could not apply ConnectionStringKeywords",
+        //            CheckResult.Fail, ex));
+        //    }
 
 
         //only load data export manager if catalogue worked
@@ -211,23 +211,23 @@ public class Startup
 
     private void FindWithPatcher(IPatcher patcher, ICheckNotifier notifier)
     {
-        var dbs = RepositoryLocator.CatalogueDbContext.GetAllObjects<ExternalDatabaseServer>()
-            .Where(eds => eds.WasCreatedBy(patcher));
+        //var dbs = RepositoryLocator.CatalogueDbContext.GetAllObjects<ExternalDatabaseServer>()
+        //    .Where(eds => eds.WasCreatedBy(patcher));
 
-        foreach (IExternalDatabaseServer server in dbs)
-            try
-            {
-                var builder = DataAccessPortal
-                    .ExpectServer(server, DataAccessContext.InternalDataProcessing)
-                    .Builder;
+        //foreach (IExternalDatabaseServer server in dbs)
+        //    try
+        //    {
+        //        var builder = DataAccessPortal
+        //            .ExpectServer(server, DataAccessContext.InternalDataProcessing)
+        //            .Builder;
 
-                //Find(new RDMPDbContext(builder), patcher, notifier);
-            }
-            catch (Exception e)
-            {
-                notifier.OnCheckPerformed(new CheckEventArgs($"Could not resolve ExternalDatabaseServer '{server}'",
-                    CheckResult.Warning, e));
-            }
+        //        //Find(new RDMPDbContext(builder), patcher, notifier);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        notifier.OnCheckPerformed(new CheckEventArgs($"Could not resolve ExternalDatabaseServer '{server}'",
+        //            CheckResult.Warning, e));
+        //    }
     }
 
     #endregion

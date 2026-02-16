@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using MongoDB.Driver;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport;
 using Rdmp.Core.EntityFramework;
@@ -33,29 +34,32 @@ public class LinkedRepositoryProvider : RepositoryProvider
 
     public LinkedRepositoryProvider(string catalogueConnectionString, string dataExportConnectionString)
     {
-        //try
-        //{
-        //    RDMPDbContext = string.IsNullOrWhiteSpace(catalogueConnectionString)
-        //        ? null
-        //        : new RDMPDbContext(new DbContextOptions());// { new SqlConnectionStringBuilder(catalogueConnectionString));
-        //}
-        //catch (SourceCodeNotFoundException ex)
-        //{
-        //    throw new Exception("There was a problem with the Catalogue connection string", ex);
-        //}
+        var optionsBuilder = new DbContextOptionsBuilder<RDMPDbContext>();
+        optionsBuilder.UseSqlServer(catalogueConnectionString);
+        var catalogueDbContext = new RDMPDbContext(optionsBuilder.Options);
+        try
+        {
+          
+            CatalogueDbContext = string.IsNullOrWhiteSpace(catalogueConnectionString)
+                ? null
+                : catalogueDbContext;// { new SqlConnectionStringBuilder(catalogueConnectionString));
+        }
+        catch (SourceCodeNotFoundException ex)
+        {
+            throw new Exception("There was a problem with the Catalogue connection string", ex);
+        }
 
-        //try
-        //{
-        //    DataExportRepository = string.IsNullOrWhiteSpace(dataExportConnectionString)
-        //        ? null
-        //        : new DataExportRepository(new SqlConnectionStringBuilder(dataExportConnectionString),
-        //            RDMPDbContext);
-        //}
-        //catch (Exception)
-        //{
-        //    DataExportRepository = null;
-        //    throw;
-        //}
+        try
+        {
+            DataExportRepository = string.IsNullOrWhiteSpace(dataExportConnectionString)
+                ? null
+                : new DataExportRepository(new SqlConnectionStringBuilder(dataExportConnectionString), catalogueDbContext);
+        }
+        catch (Exception)
+        {
+            DataExportRepository = null;
+            throw;
+        }
 
         if (CatalogueDbContext != null)
             ConfigureObscureDependencies();

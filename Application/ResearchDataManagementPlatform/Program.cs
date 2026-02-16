@@ -63,14 +63,14 @@ internal static partial class Program
             arg.Dir = UserSettings.LocalFileSystemLocation;
         }
 
-        var optionsBuilder = new DbContextOptionsBuilder<RDMPDbContext>();
-        optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=RDMP_Catalogue;Integrated Security=True;Trust Server Certificate=True; MultipleActiveResultSets=true");
-        var catalogueDbContext = new RDMPDbContext(optionsBuilder.Options);
+        //var optionsBuilder = new DbContextOptionsBuilder<RDMPDbContext>();
+        //optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=RDMP_Catalogue;Integrated Security=True;Trust Server Certificate=True; MultipleActiveResultSets=true");
+        //var catalogueDbContext = new RDMPDbContext(optionsBuilder.Options);
         var bootStrapper =
             new RDMPBootStrapper(arg, locator =>
             {
                 var form = new RDMPMainForm();
-                locator.CatalogueDbContext = catalogueDbContext;
+                //locator.CatalogueDbContext = catalogueDbContext;
                 form.SetRepositoryLocator(locator);
                 return form;
             });

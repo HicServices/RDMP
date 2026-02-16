@@ -81,10 +81,10 @@ public class UserSettingsRepositoryFinder : IRDMPPlatformRepositoryServiceLocato
         //    commentStore = _linkedRepositoryProvider.CatalogueDbContext.CommentStore;
 
         //user must have a Catalogue
-        var catalogueString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=RDMP_Catalogue;Integrated Security=True;Trust Server Certificate=True; MultipleActiveResultSets=true";// UserSettings.CatalogueConnectionString;
+        var catalogueString = UserSettings.CatalogueConnectionString;
 
         //user may have a DataExportManager
-        var dataExportManagerConnectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=RDMP_DataExport;Integrated Security=True;Trust Server Certificate=True; MultipleActiveResultSets=true";// UserSettings.DataExportConnectionString;
+        var dataExportManagerConnectionString = UserSettings.DataExportConnectionString;
 
         LinkedRepositoryProvider newrepo;
 
