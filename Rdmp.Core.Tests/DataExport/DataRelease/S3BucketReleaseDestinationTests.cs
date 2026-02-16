@@ -1,5 +1,7 @@
 ﻿using Amazon.S3;
 using Amazon.S3.Model;
+using MathNet.Numerics.Statistics;
+using NPOI.SS.Formula.Functions;
 using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.CommandExecution;
@@ -150,12 +152,11 @@ public sealed class S3BucketReleaseDestinationTests : TestsRequiringAnExtraction
         var runner = new ReleaseRunner(new ThrowImmediatelyActivator(RepositoryLocator), optsRelease);
         Assert.DoesNotThrow(() => runner.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, ThrowImmediatelyCheckNotifier.Quiet, new GracefulCancellationToken()));
         var foundObjects = GetObjects("releasetoawsbasictest");
-        foreach (var obj in foundObjects)
-        {
-            Console.WriteLine($"Found object {obj.Key} in bucket {obj.BucketName}");
-            //_minioClient.DeleteObjectAsync(obj.BucketName, obj.Key);
-        }
-        Assert.That(foundObjects, Has.Count.EqualTo(1));
+        Assert.That(foundObjects, Has.Count.EqualTo(5));
+        //Found object release/ New ExtractionConfiguration5b3e1346 - f054 - 4e66 - b3e6 - 3a60eaf10eca_105 / ReleaseDocument_New ExtractionConfiguration5b3e1346 - f054 - 4e66 - b3e6 - 3a60eaf10eca_105.docx in bucket releasetoawsbasictest
+        //Found object release/ New ExtractionConfiguration5b3e1346 - f054 - 4e66 - b3e6 - 3a60eaf10eca_105 / TestTable / TestTable.csv in bucket releasetoawsbasictest
+        //Found object release/ New ExtractionConfiguration5b3e1346 - f054 - 4e66 - b3e6 - 3a60eaf10eca_105 / TestTable / TestTable.docx in bucket releasetoawsbasictest
+        //Found object release/ New ExtractionConfiguration5b3e1346 - f054 - 4e66 - b3e6 - 3a60eaf10eca_105 / TestTable / TestTableVariables.csv in bucket releasetoawsbasictest
     }
 
     [Test]
@@ -388,6 +389,6 @@ public sealed class S3BucketReleaseDestinationTests : TestsRequiringAnExtraction
         runner = new ReleaseRunner(new ThrowImmediatelyActivator(RepositoryLocator), optsRelease);
         Assert.Throws<AggregateException>(() => runner.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, ThrowImmediatelyCheckNotifier.Quiet, new GracefulCancellationToken()));
         foundObjects = GetObjects("locationalreadyexist");
-        Assert.That(foundObjects, Has.Count.EqualTo(1));
+        Assert.That(foundObjects, Has.Count.EqualTo(5));
     }
 }
