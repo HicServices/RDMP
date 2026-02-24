@@ -29,6 +29,8 @@ using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Datasets;
+using Rdmp.Core.Curation.Data.Datasets.Jira;
+using Rdmp.Core.Curation.Data.Datasets.Jira.JiraDatasetObjects;
 using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Pipelines;
@@ -622,7 +624,11 @@ public class UnitTests
         {
             return (T)(object)new DatasetProviderConfiguration(repository.CatalogueRepository, "","","",WhenIHaveA<DataAccessCredentials>(repository).ID,"");
         }
-        if(typeof(T) == typeof(ExtractableDataSetProject))
+        if(typeof(T) == typeof(JiraDataset))
+        {
+            return (T)(object)new JiraDataset(repository.CatalogueRepository,"Jira Dataset");
+	}
+	if(typeof(T) == typeof(ExtractableDataSetProject))
         {
             return (T)(object)new ExtractableDataSetProject(repository, WhenIHaveA<ExtractableDataSet>(repository), WhenIHaveA<Project>(repository));
         }
