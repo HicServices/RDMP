@@ -21,8 +21,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution, IAtomicCommand
 {
-    private readonly Catalogue _catalogue;
-    private readonly ColumnInfo[] _columnInfos;
+    private readonly Models.Catalogue _catalogue;
+    private readonly Models.ColumnInfo[] _columnInfos;
     private readonly HashSet<int> _existingColumnInfos;
     private readonly IBasicActivateItems _activator;
 
@@ -32,15 +32,15 @@ public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution, IAtomicC
     /// </summary>
     public ExtractionCategory? Category { get; set; } = ExtractionCategory.Core;
 
-    public ExecuteCommandAddNewCatalogueItem(IBasicActivateItems activator, Catalogue catalogue,
+    public ExecuteCommandAddNewCatalogueItem(IBasicActivateItems activator, Models.Catalogue catalogue,
         ColumnInfoCombineable colInfo) : this(activator, catalogue, colInfo.ColumnInfos)
     {
         _activator = activator;
     }
 
     [UseWithObjectConstructor]
-    public ExecuteCommandAddNewCatalogueItem(IBasicActivateItems activator, Catalogue catalogue,
-        params ColumnInfo[] columnInfos) : base(activator)
+    public ExecuteCommandAddNewCatalogueItem(IBasicActivateItems activator, Models.Catalogue catalogue,
+        params Models.ColumnInfo[] columnInfos) : base(activator)
     {
         _activator = activator;
         _catalogue = catalogue;
@@ -52,7 +52,7 @@ public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution, IAtomicC
             SetImpossible("ColumnInfo(s) are already in Catalogue");
     }
 
-    private HashSet<int> GetColumnInfos(ICatalogue catalogue)
+    private HashSet<int> GetColumnInfos(Models.Catalogue catalogue)
     {
         return catalogue == null
             ? null
@@ -78,7 +78,7 @@ public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution, IAtomicC
             {
                 WindowTitle = "Add CatalogueItem",
                 TaskDescription = "Select which Catalogue you want to add the CatalogueItem to."
-            }, BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Catalogue>(), out var selected))
+            }, BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Models.Catalogue>(), out var selected))
                 // user cancelled selecting a Catalogue
                 return;
 
@@ -103,20 +103,20 @@ public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution, IAtomicC
             if (!TypeText("Name", "Type a name for the new CatalogueItem", 500, columnInfo?.GetRuntimeName(),
                     out var text)) return;
 
-            var ci = new CatalogueItem(BasicActivator.RepositoryLocator.CatalogueDbContext, c,
-                $"New CatalogueItem {Guid.NewGuid()}")
-            {
-                Name = text
-            };
+            //var ci = new Models.CatalogueItem(BasicActivator.RepositoryLocator.CatalogueDbContext, c,
+            //    $"New CatalogueItem {Guid.NewGuid()}")
+            //{
+            //    Name = text
+            //};
 
-            //set the associated column if they did pick it
-            ci.SetColumnInfo(columnInfo);
-            CreateExtractionInformation(repo, ci, columnInfo);
+            ////set the associated column if they did pick it
+            //ci.SetColumnInfo(columnInfo);
+            //CreateExtractionInformation(repo, ci, columnInfo);
 
-            ci.SaveToDatabase();
+            //ci.SaveToDatabase();
 
             Publish(c);
-            Emphasise(ci, int.MaxValue);
+            //Emphasise(ci, int.MaxValue);
         }
         else
         {
@@ -125,12 +125,12 @@ public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution, IAtomicC
                 if (AlreadyInCatalogue(columnInfo, existingColumnInfos))
                     continue;
 
-                var ci = new CatalogueItem(repo, c, columnInfo.GetRuntimeName());
-                ci.SetColumnInfo(columnInfo);
-                ci.SaveToDatabase();
+                //var ci = new CatalogueItem(repo, c, columnInfo.GetRuntimeName());
+                //ci.SetColumnInfo(columnInfo);
+                //ci.SaveToDatabase();
 
-                // also make extractable
-                CreateExtractionInformation(repo, ci, columnInfo);
+                //// also make extractable
+                //CreateExtractionInformation(repo, ci, columnInfo);
             }
 
             Publish(c);
@@ -149,7 +149,7 @@ public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution, IAtomicC
         ei.SaveToDatabase();
     }
 
-    private static bool AlreadyInCatalogue(ColumnInfo candidate, IReadOnlySet<int> existingColumnInfos) =>
+    private static bool AlreadyInCatalogue(Models.ColumnInfo candidate, IReadOnlySet<int> existingColumnInfos) =>
         existingColumnInfos.Contains(candidate.ID);
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>

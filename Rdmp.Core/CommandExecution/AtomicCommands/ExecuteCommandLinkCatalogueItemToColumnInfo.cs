@@ -45,7 +45,7 @@ public class ExecuteCommandLinkCatalogueItemToColumnInfo : BasicCommandExecution
             return;
         }
 
-        _columnInfo = cmd.ColumnInfos[0];
+        //_columnInfo = cmd.ColumnInfos[0];
     }
 
     public override void Execute()

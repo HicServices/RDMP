@@ -7,6 +7,7 @@ using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Models;
 using Rdmp.Core.Providers;
+using Rdmp.Core.Providers.Nodes;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -28,11 +29,13 @@ namespace Rdmp.Core.EntityFramework
         public DbSet<Models.CatalogueItem> CatalogueItems { get; set; }
         public DbSet<Models.ColumnInfo> ColumnInfos { get; set; }
 
-        public T[] GetAllObjects<T>() { 
+        public T[] GetAllObjects<T>()
+        {
             return null;//todo
         }
 
-        public IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjects(Type t){
+        public IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjects(Type t)
+        {
             return null;//todo
         }
 
@@ -40,7 +43,7 @@ namespace Rdmp.Core.EntityFramework
         {
             throw new NotImplementedException();
         }
-        public T[] GetAllObjectsWithParent<T>(object o ){ return null; }
+        public T[] GetAllObjectsWithParent<T>(object o) { return null; }
 
         public T[] GetReferencesTo<T>(object o) { return null; }//todo
 
@@ -69,23 +72,23 @@ namespace Rdmp.Core.EntityFramework
                 entity.HasIndex(e => e.Name);
                 entity.HasIndex(e => e.Acronym);
                 entity.HasIndex(e => e.IsDeprecated);
-       //         entity.Property(e => e.Type).HasConversion(v => v.ToString(),
-       //     v => (CatalogueType)Enum.Parse(typeof(CatalogueType), v));
+                //         entity.Property(e => e.Type).HasConversion(v => v.ToString(),
+                //     v => (CatalogueType)Enum.Parse(typeof(CatalogueType), v));
 
-       //         entity.Property(e => e.Purpose).HasConversion(v => v.ToString(),
-       //     v => (DatasetPurpose)Enum.Parse(typeof(DatasetPurpose), v));
+                //         entity.Property(e => e.Purpose).HasConversion(v => v.ToString(),
+                //     v => (DatasetPurpose)Enum.Parse(typeof(DatasetPurpose), v));
 
-       //         entity.Property(e => e.Periodicity).HasConversion(v => v.ToString(),
-       // v => (CataloguePeriodicity)Enum.Parse(typeof(CataloguePeriodicity), v));
+                //         entity.Property(e => e.Periodicity).HasConversion(v => v.ToString(),
+                // v => (CataloguePeriodicity)Enum.Parse(typeof(CataloguePeriodicity), v));
 
-       //         entity.Property(e => e.Granularity).HasConversion(v => v.ToString(),
-       // v => (CatalogueGranularity)Enum.Parse(typeof(CatalogueGranularity), v));
+                //         entity.Property(e => e.Granularity).HasConversion(v => v.ToString(),
+                // v => (CatalogueGranularity)Enum.Parse(typeof(CatalogueGranularity), v));
 
-       //         entity.Property(e => e.Update_freq).HasConversion(v => v.ToString(),
-       // v => (UpdateFrequencies)Enum.Parse(typeof(UpdateFrequencies), v));
+                //         entity.Property(e => e.Update_freq).HasConversion(v => v.ToString(),
+                // v => (UpdateFrequencies)Enum.Parse(typeof(UpdateFrequencies), v));
 
-       //         entity.Property(e => e.UpdateLag).HasConversion(v => v.ToString(),
-       //v => (UpdateLagTimes)Enum.Parse(typeof(UpdateLagTimes), v));
+                //         entity.Property(e => e.UpdateLag).HasConversion(v => v.ToString(),
+                //v => (UpdateLagTimes)Enum.Parse(typeof(UpdateLagTimes), v));
 
             });
         }
@@ -140,7 +143,7 @@ namespace Rdmp.Core.EntityFramework
             throw new NotImplementedException();
         }
 
-        public  IEnumerable<ExtendedProperty> GetExtendedProperties(string replacedBy)
+        public IEnumerable<ExtendedProperty> GetExtendedProperties(string replacedBy)
         {
             throw new NotImplementedException();
         }
@@ -167,16 +170,29 @@ namespace Rdmp.Core.EntityFramework
 
         public IEnumerable<object> GetChildren(object obj)
         {
-            if(obj is FolderNode<Core.Models.Catalogue> fnc)
+            if (obj is FolderNode<Core.Models.Catalogue> fnc)
             {
-                return Catalogues.Where(c => c.Folder == fnc.FullName);
+                return fnc.ChildFolders.Cast<object>().Union(fnc.ChildObjects);//Catalogues.Where(c => c.Folder == fnc.FullName);
             }
-            if(obj is Models.Catalogue catalogue)
+            if (obj is Models.Catalogue catalogue)
             {
-                return CatalogueItems.Where(ci => ci.Catalogue.ID == catalogue.ID);
+                var catalogueItems = CatalogueItems.Where(ci => ci.Catalogue.ID == catalogue.ID).ToList();
+                List<object> children = new();
+                children.Add(new CatalogueItemsNode(catalogue, catalogueItems, ExtractionCategory.Core));
+                children.Add(new CatalogueItemsNode(catalogue, catalogueItems, ExtractionCategory.Supplemental));
+                children.Add(new CatalogueItemsNode(catalogue, catalogueItems, ExtractionCategory.SpecialApprovalRequired));
+                children.Add(new CatalogueItemsNode(catalogue, catalogueItems, ExtractionCategory.Internal));
+                children.Add(new CatalogueItemsNode(catalogue, catalogueItems, ExtractionCategory.Deprecated));
+                children.Add(new CatalogueItemsNode(catalogue, catalogueItems, null));
+                return children;
             }
-            if(obj is Models.CatalogueItem catalogueItem)
+            if(obj is CatalogueItemsNode cin)
             {
+                return cin.CatalogueItems;
+            }
+            if (obj is Models.CatalogueItem catalogueItem)
+            {
+
                 return ColumnInfos.Where(ci => ci.CatalogueItems.Select(ci => ci.ID).Contains(catalogueItem.ID));
             }
 

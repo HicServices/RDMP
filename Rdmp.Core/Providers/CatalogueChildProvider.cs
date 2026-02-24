@@ -1071,97 +1071,97 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     protected void AddChildren(Catalogue c, DescendancyList descendancy)
     {
-        var childObjects = new List<object>();
+        //var childObjects = new List<object>();
 
-        var catalogueAggregates = AllAggregateConfigurations.Where(a => a.Catalogue_ID == c.ID).ToArray();
-        var cohortAggregates = catalogueAggregates.Where(a => a.IsCohortIdentificationAggregate).ToArray();
-        var regularAggregates = catalogueAggregates.Except(cohortAggregates).ToArray();
+        //var catalogueAggregates = AllAggregateConfigurations.Where(a => a.Catalogue_ID == c.ID).ToArray();
+        //var cohortAggregates = catalogueAggregates.Where(a => a.IsCohortIdentificationAggregate).ToArray();
+        //var regularAggregates = catalogueAggregates.Except(cohortAggregates).ToArray();
 
-        //get all the CatalogueItems for this Catalogue (TryGet because Catalogue may not have any items
-        var cis = _catalogueToCatalogueItems.TryGetValue(c.ID, out var result)
-            ? result.ToArray()
-            : Array.Empty<CatalogueItem>();
+        ////get all the CatalogueItems for this Catalogue (TryGet because Catalogue may not have any items
+        //var cis = _catalogueToCatalogueItems.TryGetValue(c.ID, out var result)
+        //    ? result.ToArray()
+        //    : Array.Empty<CatalogueItem>();
 
-        //tell the CatalogueItems that we are are their parent
-        foreach (var ci in cis)
-            ci.InjectKnown(c);
+        ////tell the CatalogueItems that we are are their parent
+        //foreach (var ci in cis)
+        //    ci.InjectKnown(c);
 
-        // core includes project specific which basically means the same thing
-        var core = new CatalogueItemsNode(c,
-            cis.Where(ci => ci.ExtractionInformation?.ExtractionCategory == ExtractionCategory.Core ||
-                            ci.ExtractionInformation?.ExtractionCategory == ExtractionCategory.ProjectSpecific)
-            , ExtractionCategory.Core);
+        //// core includes project specific which basically means the same thing
+        //var core = new CatalogueItemsNode(c,
+        //    cis.Where(ci => ci.ExtractionInformation?.ExtractionCategory == ExtractionCategory.Core ||
+        //                    ci.ExtractionInformation?.ExtractionCategory == ExtractionCategory.ProjectSpecific)
+        //    , ExtractionCategory.Core);
 
-        c.InjectKnown(cis);
+        //c.InjectKnown(cis);
 
-        var deprecated = new CatalogueItemsNode(c,
-            cis.Where(ci => ci.ExtractionInformation?.ExtractionCategory == ExtractionCategory.Deprecated),
-            ExtractionCategory.Deprecated);
-        var special = new CatalogueItemsNode(c,
-            cis.Where(ci => ci.ExtractionInformation?.ExtractionCategory == ExtractionCategory.SpecialApprovalRequired),
-            ExtractionCategory.SpecialApprovalRequired);
-        var intern = new CatalogueItemsNode(c,
-            cis.Where(ci => ci.ExtractionInformation?.ExtractionCategory == ExtractionCategory.Internal),
-            ExtractionCategory.Internal);
-        var supplemental = new CatalogueItemsNode(c,
-            cis.Where(ci => ci.ExtractionInformation?.ExtractionCategory == ExtractionCategory.Supplemental),
-            ExtractionCategory.Supplemental);
-        var notExtractable = new CatalogueItemsNode(c, cis.Where(ci => ci.ExtractionInformation == null), null);
+        //var deprecated = new CatalogueItemsNode(c,
+        //    cis.Where(ci => ci.ExtractionInformation?.ExtractionCategory == ExtractionCategory.Deprecated),
+        //    ExtractionCategory.Deprecated);
+        //var special = new CatalogueItemsNode(c,
+        //    cis.Where(ci => ci.ExtractionInformation?.ExtractionCategory == ExtractionCategory.SpecialApprovalRequired),
+        //    ExtractionCategory.SpecialApprovalRequired);
+        //var intern = new CatalogueItemsNode(c,
+        //    cis.Where(ci => ci.ExtractionInformation?.ExtractionCategory == ExtractionCategory.Internal),
+        //    ExtractionCategory.Internal);
+        //var supplemental = new CatalogueItemsNode(c,
+        //    cis.Where(ci => ci.ExtractionInformation?.ExtractionCategory == ExtractionCategory.Supplemental),
+        //    ExtractionCategory.Supplemental);
+        //var notExtractable = new CatalogueItemsNode(c, cis.Where(ci => ci.ExtractionInformation == null), null);
 
-        AddChildren(core, descendancy.Add(core));
-        childObjects.Add(core);
+        //AddChildren(core, descendancy.Add(core));
+        //childObjects.Add(core);
 
-        foreach (var optional in new[] { deprecated, special, intern, supplemental, notExtractable })
-            if (optional.CatalogueItems.Any())
-            {
-                AddChildren(optional, descendancy.Add(optional));
-                childObjects.Add(optional);
-            }
+        //foreach (var optional in new[] { deprecated, special, intern, supplemental, notExtractable })
+        //    if (optional.CatalogueItems.Any())
+        //    {
+        //        AddChildren(optional, descendancy.Add(optional));
+        //        childObjects.Add(optional);
+        //    }
 
-        //do we have any foreign key fields into this lookup table
-        var lookups = AllLookups.Where(l => c.CatalogueItems.Any(ci => ci.ColumnInfo_ID == l.ForeignKey_ID)).ToArray();
+        ////do we have any foreign key fields into this lookup table
+        //var lookups = AllLookups.Where(l => c.CatalogueItems.Any(ci => ci.ColumnInfo_ID == l.ForeignKey_ID)).ToArray();
 
-        var docs = AllSupportingDocuments.Where(d => d.Catalogue_ID == c.ID).ToArray();
-        var sql = AllSupportingSQL.Where(d => d.Catalogue_ID == c.ID).ToArray();
+        //var docs = AllSupportingDocuments.Where(d => d.Catalogue_ID == c.ID).ToArray();
+        //var sql = AllSupportingSQL.Where(d => d.Catalogue_ID == c.ID).ToArray();
 
-        //if there are supporting documents or supporting sql files then add  documentation node
-        if (docs.Any() || sql.Any())
-        {
-            var documentationNode = new DocumentationNode(c, docs, sql);
+        ////if there are supporting documents or supporting sql files then add  documentation node
+        //if (docs.Any() || sql.Any())
+        //{
+        //    var documentationNode = new DocumentationNode(c, docs, sql);
 
-            //add the documentations node
-            childObjects.Add(documentationNode);
+        //    //add the documentations node
+        //    childObjects.Add(documentationNode);
 
-            //record the children
-            AddToDictionaries(new HashSet<object>(docs.Cast<object>().Union(sql)), descendancy.Add(documentationNode));
-        }
+        //    //record the children
+        //    AddToDictionaries(new HashSet<object>(docs.Cast<object>().Union(sql)), descendancy.Add(documentationNode));
+        //}
 
-        if (lookups.Any())
-        {
-            var lookupsNode = new CatalogueLookupsNode(c, lookups);
-            //add the documentations node
-            childObjects.Add(lookupsNode);
+        //if (lookups.Any())
+        //{
+        //    var lookupsNode = new CatalogueLookupsNode(c, lookups);
+        //    //add the documentations node
+        //    childObjects.Add(lookupsNode);
 
 
-            //record the children
-            AddToDictionaries(new HashSet<object>(lookups.Select(l => new CatalogueLookupUsageNode(c, l))),
-                descendancy.Add(lookupsNode));
-        }
+        //    //record the children
+        //    AddToDictionaries(new HashSet<object>(lookups.Select(l => new CatalogueLookupUsageNode(c, l))),
+        //        descendancy.Add(lookupsNode));
+        //}
 
-        if (regularAggregates.Any())
-        {
-            var aggregatesNode = new AggregatesNode(c, regularAggregates);
-            childObjects.Add(aggregatesNode);
+        //if (regularAggregates.Any())
+        //{
+        //    var aggregatesNode = new AggregatesNode(c, regularAggregates);
+        //    childObjects.Add(aggregatesNode);
 
-            var nodeDescendancy = descendancy.Add(aggregatesNode);
-            AddToDictionaries(new HashSet<object>(regularAggregates), nodeDescendancy);
+        //    var nodeDescendancy = descendancy.Add(aggregatesNode);
+        //    AddToDictionaries(new HashSet<object>(regularAggregates), nodeDescendancy);
 
-            foreach (var regularAggregate in regularAggregates)
-                AddChildren(regularAggregate, nodeDescendancy.Add(regularAggregate));
-        }
+        //    foreach (var regularAggregate in regularAggregates)
+        //        AddChildren(regularAggregate, nodeDescendancy.Add(regularAggregate));
+        //}
 
-        //finalise
-        AddToDictionaries(new HashSet<object>(childObjects), descendancy);
+        ////finalise
+        //AddToDictionaries(new HashSet<object>(childObjects), descendancy);
     }
 
     private void InjectCatalogueItems()
@@ -1177,8 +1177,8 @@ public class CatalogueChildProvider : ICoreChildProvider
     {
         AddToDictionaries(new HashSet<object>(node.CatalogueItems), descendancyList);
 
-        foreach (var ci in node.CatalogueItems)
-            AddChildren(ci, descendancyList.Add(ci));
+        //foreach (var ci in node.CatalogueItems)
+        //    AddChildren(ci, descendancyList.Add(ci));
     }
 
     private void AddChildren(AggregateConfiguration aggregateConfiguration, DescendancyList descendancy)

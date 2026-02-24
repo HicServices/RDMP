@@ -33,9 +33,9 @@ internal class ProposeExecutionWhenTargetIsCatalogueItemsNode : RDMPCommandExecu
             ColumnInfoCombineable colInfo => new ExecuteCommandAddNewCatalogueItem(ItemActivator, target.Catalogue,
                 colInfo)
             { Category = target.Category },
-            TableInfoCombineable tableInfo => new ExecuteCommandAddNewCatalogueItem(ItemActivator, target.Catalogue,
-                tableInfo.TableInfo.ColumnInfos)
-            { Category = target.Category },
+            //TableInfoCombineable tableInfo => new ExecuteCommandAddNewCatalogueItem(ItemActivator, target.Catalogue,
+            //    tableInfo.TableInfo.ColumnInfos)
+            //{ Category = target.Category },
             // when dropping onto Core or Supplemental etc
             CatalogueItemCombineable ciCombine when target.Category != null => new
                 ExecuteCommandChangeExtractionCategory(ItemActivator,

@@ -80,12 +80,12 @@ public class RDMPCombineableFactory : ICombineableFactory
             modelObject as ColumnInfo; //ColumnInfo is not an IColumn btw because it does not have column order or other extraction rule stuff (alias, hash etc)
         var linkedColumnInfo = modelObject as LinkedColumnInfoNode;
 
-        if (columnInfo != null || linkedColumnInfo != null)
-            return new ColumnInfoCombineable(columnInfo ?? linkedColumnInfo.ColumnInfo);
+        //if (columnInfo != null || linkedColumnInfo != null)
+        //    return new ColumnInfoCombineable(columnInfo ?? linkedColumnInfo.ColumnInfo);
 
-        var columnInfoArray = IsArrayOf<ColumnInfo>(modelObject);
-        if (columnInfoArray != null)
-            return new ColumnInfoCombineable(columnInfoArray);
+        //var columnInfoArray = IsArrayOf<ColumnInfo>(modelObject);
+        //if (columnInfoArray != null)
+        //    return new ColumnInfoCombineable(columnInfoArray);
 
         if (modelObject is TableInfo tableInfo)
             return new TableInfoCombineable(tableInfo);

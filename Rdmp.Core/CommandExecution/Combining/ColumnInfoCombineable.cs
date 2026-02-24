@@ -15,14 +15,14 @@ namespace Rdmp.Core.CommandExecution.Combining;
 /// </summary>
 public class ColumnInfoCombineable : ICombineToMakeCommand
 {
-    public ColumnInfo[] ColumnInfos { get; private set; }
+    public Models.ColumnInfo[] ColumnInfos { get; private set; }
 
-    public ColumnInfoCombineable(ColumnInfo columnInfo)
+    public ColumnInfoCombineable(Models.ColumnInfo columnInfo)
     {
         ColumnInfos = new[] { columnInfo };
     }
 
-    public ColumnInfoCombineable(ColumnInfo[] columnInfos)
+    public ColumnInfoCombineable(Models.ColumnInfo[] columnInfos)
     {
         ColumnInfos = columnInfos;
     }

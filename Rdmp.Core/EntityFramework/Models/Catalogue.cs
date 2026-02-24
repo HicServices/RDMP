@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using System.Runtime.CompilerServices;
 
 namespace Rdmp.Core.Models
@@ -112,6 +113,32 @@ namespace Rdmp.Core.Models
         {
             OnPropertyChanged(field, value, null);
             field = value;
+        }
+
+        public List<CatalogueItem> GetCatalogueItemsForExtractionCategory(ExtractionCategory extractionCategory)
+        {
+            //todo need to add the extraction cetegory to the db model
+            switch (extractionCategory)
+            {
+                case ExtractionCategory.Core:
+                    return CatalogueItems.ToList();//.Where(ci => ci.ex)
+                case ExtractionCategory.Supplemental:
+                    return CatalogueItems.ToList();//.Where(ci => ci.ex)
+                case ExtractionCategory.Deprecated:
+                    return CatalogueItems.ToList();//.Where(ci => ci.ex)
+                case ExtractionCategory.Internal:
+                    return CatalogueItems.ToList();//.Where(ci => ci.ex)
+                case ExtractionCategory.SpecialApprovalRequired:
+                    return CatalogueItems.ToList();//.Where(ci => ci.ex)
+                case ExtractionCategory.ProjectSpecific:
+                    return CatalogueItems.ToList();//.Where(ci => ci.ex)
+                case ExtractionCategory.Any:
+                    return CatalogueItems.ToList();//.Where(ci => ci.ex)
+                case ExtractionCategory.NotExtractable:
+                    return CatalogueItems.ToList();//.Where(ci => ci.ex)
+                default:
+                    return CatalogueItems.ToList();
+            }
         }
     }
 

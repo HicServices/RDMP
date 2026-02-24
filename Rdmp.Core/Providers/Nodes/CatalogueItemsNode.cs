@@ -16,8 +16,8 @@ namespace Rdmp.Core.Providers.Nodes;
 /// </summary>
 public class CatalogueItemsNode : Node, IOrderable
 {
-    public Catalogue Catalogue { get; }
-    public CatalogueItem[] CatalogueItems { get; }
+    public Models.Catalogue Catalogue { get; }
+    public Models.CatalogueItem[] CatalogueItems { get; }
 
     public ExtractionCategory? Category { get; }
 
@@ -27,7 +27,7 @@ public class CatalogueItemsNode : Node, IOrderable
         set { } // no setter, we are orderable to enforce specific order in tree
     }
 
-    public CatalogueItemsNode(Catalogue catalogue, IEnumerable<CatalogueItem> cis, ExtractionCategory? category)
+    public CatalogueItemsNode(Models.Catalogue catalogue, IEnumerable<Models.CatalogueItem> cis, ExtractionCategory? category)
     {
         Catalogue = catalogue;
         CatalogueItems = cis.ToArray();
