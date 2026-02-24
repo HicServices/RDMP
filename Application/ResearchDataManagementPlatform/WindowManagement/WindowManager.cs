@@ -179,7 +179,7 @@ public class WindowManager
         var content =
             _windowFactory.Create(ActivateItems, control, label, image,
                 collection); //these are collections so are not tracked with a window tracker.
-        content.Closed += (s, e) => content_Closed(collection);
+        content.FormClosed += (s, e) => content_Closed(collection);
 
         _visibleToolboxes.Add(collection, content);
         content.Show(_mainDockPanel, DockState.DockLeft);
@@ -301,7 +301,7 @@ public class WindowManager
 
             _homeContent = _windowFactory.Create(ActivateItems, _home, "Home",
                 Image.Load<Rgba32>(FamFamFamIcons.application_home));
-            _homeContent.Closed += (s, e) => _home = null;
+            _homeContent.FormClosed += (s, e) => _home = null;
             _homeContent.Show(_mainDockPanel, DockState.Document);
         }
         else
