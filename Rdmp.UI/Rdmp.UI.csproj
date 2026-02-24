@@ -53,7 +53,6 @@
 		</PackageReference>
 		<PackageReference Include="ObjectListView.Repack.NET6Plus" />
 		<PackageReference Include="Scintilla.NET" />
-		<PackageReference Include="System.Resources.Extensions" />
 		<PackageReference Include="VPKSoft.ScintillaLexers.NET" />
 		<PackageReference Include="WeCantSpell.Hunspell" />
 	</ItemGroup>
