@@ -25,9 +25,7 @@ namespace Rdmp.Core.Tests.DataExport.DataRelease;
 
 public sealed class S3BucketReleaseDestinationTests : TestsRequiringAnExtractionConfiguration
 {
-    private const string Username = "minioadmin";
-    private const string Password = "minioadmin";
-    private const string Endpoint = "127.0.0.1:9000";
+
     private static AmazonS3Client _minioClient;
 
 
@@ -40,11 +38,6 @@ public sealed class S3BucketReleaseDestinationTests : TestsRequiringAnExtraction
     [OneTimeSetUp]
     public new void OneTimeSetUp()
     {
-        //_minioClient = new MinioClient()
-        //    .WithEndpoint(Endpoint)
-        //    .WithCredentials(Username, Password)
-        //    .WithSSL(false)
-        //    .Build();
         var _credentials = AWSCredentialsHelper.LoadSsoCredentials("minio");
         AmazonS3Config config = new AmazonS3Config()
         {
