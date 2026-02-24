@@ -4,11 +4,12 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.ComponentModel;
-using System.Windows.Forms;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleControls;
+using System;
+using System.ComponentModel;
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
 
 namespace Rdmp.UI.TestsAndSetup.ServicePropogation;
@@ -34,6 +35,8 @@ public class RDMPForm : Form, IRDMPControl
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public RDMPControlCommonFunctionality CommonFunctionality { get; private set; }
+
+    //refresh taskbar to prevent blank (default) exe icon
 
     /// <summary>
     /// Constructs the form without initializing the activator.  If you use this method you must call SetItemActivator manually later
