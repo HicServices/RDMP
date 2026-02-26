@@ -6,11 +6,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [9.2.0] - Unreleased
 - Add ability to delete records based on delta etxractio ninformation in MSSQL destinations
+- Add Internal Note to Catalogue
+- Fix issue where project associations were not copied when a CIC was cloned
+- Fix issue with using Internal Catalogues in Cohort Identification Configurations
+- Fix bug with copying project specific Catalogues between Projects when committing a Cohort
+- Remove Tree filters from UI
 
 ## [9.1.2] - Unreleased
 - Automatically fetch user settings from previous versions of RDMP when installing the latest version
 - Allow new columns to be added to archive extractions
 - Simplify use of Extraction Progress
+- Update CHI validation to allow mod10 CHIs
+- Hardened Confluence export functionality
 
 ## [9.1.1] - 2025-12-02
 - Allow Atlassian service workers to write to Confluence from RDMP

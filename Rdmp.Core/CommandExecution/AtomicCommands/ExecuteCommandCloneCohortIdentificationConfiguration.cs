@@ -98,7 +98,7 @@ public class ExecuteCommandCloneCohortIdentificationConfiguration : BasicCommand
         if (!_autoConfirm && BasicActivator.IsInteractive && !YesNo(
                 "This will create a 100% copy of the entire CohortIdentificationConfiguration including all datasets, filters, parameters and set operations. Are you sure this is what you want?",
                 "Confirm Cloning")) return;
-        CloneCreatedIfAny = _cic.CreateClone(ThrowImmediatelyCheckNotifier.Quiet);
+        CloneCreatedIfAny = _cic.CreateClone(ThrowImmediatelyCheckNotifier.Quiet, BasicActivator.RepositoryLocator.DataExportRepository);
         if (CloneCreatedIfAny != null && _version is not null)
         {
             CloneCreatedIfAny.Version = _version;
