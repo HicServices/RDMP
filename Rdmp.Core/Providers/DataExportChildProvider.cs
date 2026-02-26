@@ -13,6 +13,7 @@ using Org.BouncyCastle.Crypto.Signers;
 using Rdmp.Core.Caching.Pipeline;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline;
@@ -238,6 +239,22 @@ public class DataExportChildProvider : CatalogueChildProvider
         );
     }
 
+    private void AddChildren(FolderNode<CohortIdentificationConfiguration> folder, DescendancyList descendancy)
+    {
+        foreach (var child in folder.ChildFolders)
+            //add subfolder children
+            AddChildren(child, descendancy.Add(child));
+
+        //add catalogues in folder
+        foreach (var cic in folder.ChildObjects) AddToDictionaries(new HashSet<object>() { cic }, descendancy.SetBetterRouteExists());
+
+        // Children are the folders + objects
+        AddToDictionaries(new HashSet<object>(
+                folder.ChildFolders.Cast<object>()
+                    .Union(folder.ChildObjects)), descendancy
+        );
+    }
+
     private void BuildSelectedDatasets()
     {
         _selectedDataSetsWithNoIsExtractionIdentifier =
@@ -347,7 +364,9 @@ public class DataExportChildProvider : CatalogueChildProvider
         children.Add(savedCohortsNode);
         AddChildren(savedCohortsNode, descendancy.Add(savedCohortsNode));
 
-        var associatedCohortConfigurations = new CommittedCohortIdentificationNode(projectCohortsNode.Project);
+        var associatedCohortConfigurations = FolderHelper.BuildFolderTree(projectCohortsNode.Project.GetAssociatedCohortIdentificationConfigurations());
+        associatedCohortConfigurations.Name = "Associated Cohort Configurations";
+        associatedCohortConfigurations.Parent = new FolderNode<CohortIdentificationConfiguration>($"\\{projectCohortsNode.Project}\\{projectCohortsNode}");
         children.Add(associatedCohortConfigurations);
         AddChildren(associatedCohortConfigurations, descendancy.Add(associatedCohortConfigurations));
 
@@ -363,18 +382,6 @@ public class DataExportChildProvider : CatalogueChildProvider
     {
         var children = new HashSet<object>();
         var associatedCohorts = associatedCohortIdentificationTemplatesNode.Project.GetAssociatedTemplateCohortIdentificationConfigurations();
-        foreach (var cohort in associatedCohorts)
-        {
-            children.Add(cohort);
-        }
-
-        AddToDictionaries(children, descendancy);
-    }
-
-    private void AddChildren(CommittedCohortIdentificationNode associatedCohortConfigurations, DescendancyList descendancy)
-    {
-        var children = new HashSet<object>();
-        var associatedCohorts = associatedCohortConfigurations.Project.GetAssociatedCohortIdentificationConfigurations();
         foreach (var cohort in associatedCohorts)
         {
             children.Add(cohort);

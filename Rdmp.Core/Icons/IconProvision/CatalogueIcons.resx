@@ -514,9 +514,6 @@
   <data name="ProjectSavedCohortsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\ProjectSavedCohortsNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="CommittedCohortIdentificationNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\CommittedCohortIdentificationNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="collapseAllNodes" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\collapseAllNodes.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
