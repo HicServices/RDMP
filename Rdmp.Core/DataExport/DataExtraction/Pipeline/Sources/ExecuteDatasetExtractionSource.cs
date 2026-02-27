@@ -505,11 +505,13 @@ DistinctByDestinationPKs - Performs a GROUP BY on each batch of records to ensur
                 {
                     try
                     {
-                        blankDT.Rows.Add(row);
+                        blankDT.Rows.Add(row.ItemArray);
                     }
-                    catch (Exception)
+                    catch (Exception e)
                     {
                         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, $"Unable to add [{string.Join(',', row.ItemArray)}]"));
+                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, e.Message));
+                        Console.WriteLine(e.Message);
                         throw;
                     }
                 }
