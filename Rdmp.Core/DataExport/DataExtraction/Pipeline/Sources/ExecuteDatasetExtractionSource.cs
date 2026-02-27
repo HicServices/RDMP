@@ -459,8 +459,63 @@ DistinctByDestinationPKs - Performs a GROUP BY on each batch of records to ensur
 
         _timeSpentCalculatingDISTINCT.Stop();
         pks.AddRange(Request.ColumnsToExtract.Where(static c => ((ExtractableColumn)c).CatalogueExtractionInformation.IsPrimaryKey).Select(static column => ((ExtractableColumn)column).CatalogueExtractionInformation.ToString()).Select(name => chunk.Columns[name]));
-        chunk.PrimaryKey = pks.ToArray();
-
+        try
+        {
+            chunk.PrimaryKey = pks.ToArray();
+        }catch(Exception)
+        {
+            var pksOnly = chunk.DefaultView.ToTable(false, pks.Select(pk => pk.ColumnName).ToArray());
+            var pksOnly_noDuped = chunk.DefaultView.ToTable(true, pks.Select(pk => pk.ColumnName).ToArray());
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, $"There are {pksOnly.Rows.Count}, but {pksOnly_noDuped.Rows.Count} rows when we ask c# to distinct them"));
+            if(pksOnly.Rows.Count == pksOnly_noDuped.Rows.Count)
+            {
+                //the duplication did nothing
+                try
+                {
+                    pksOnly.PrimaryKey = pks.ToArray();
+                }
+                catch (Exception)
+                {
+                    //unable to pk just the PK column
+                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Unable to pk the PK the PKDT"));
+                    var blankDT = pksOnly.Clone();
+                    var pkDupes = Request.ColumnsToExtract.Where(static c => ((ExtractableColumn)c).CatalogueExtractionInformation.IsPrimaryKey).Select(static column => ((ExtractableColumn)column).CatalogueExtractionInformation.ToString()).Select(name => blankDT.Columns[name]);
+                    blankDT.PrimaryKey = pkDupes.ToArray(); foreach (DataRow row in pksOnly.Rows)
+                    {
+                        try
+                        {
+                            blankDT.Rows.Add(row);
+                        }
+                        catch (Exception)
+                        {
+                            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, $"Unable to add [{string.Join(',',row.ItemArray)}]"));
+                            throw;
+                        }
+                    }
+                    return blankDT;
+                }
+            }
+            else
+            {
+                //tell me what items are not distinct
+                var blankDT = pksOnly.Clone();
+                var pkDupes = Request.ColumnsToExtract.Where(static c => ((ExtractableColumn)c).CatalogueExtractionInformation.IsPrimaryKey).Select(static column => ((ExtractableColumn)column).CatalogueExtractionInformation.ToString()).Select(name => blankDT.Columns[name]);
+                blankDT.PrimaryKey = pkDupes.ToArray();
+                foreach (DataRow row in pksOnly.Rows)
+                {
+                    try
+                    {
+                        blankDT.Rows.Add(row);
+                    }
+                    catch (Exception)
+                    {
+                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, $"Unable to add [{string.Join(',', row.ItemArray)}]"));
+                        throw;
+                    }
+                }
+                return blankDT;
+            }
+        }
         return chunk;
     }
 
