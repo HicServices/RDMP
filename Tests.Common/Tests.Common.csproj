@@ -42,5 +42,6 @@
         <PackageReference Include="NSubstitute" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" />
         <PackageReference Include="NUnit" />
+    <PackageReference Include="System.Resources.Extensions" VersionOverride="10.0.2" />
     </ItemGroup>
 </Project>
