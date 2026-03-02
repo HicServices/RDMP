@@ -10,6 +10,6 @@ using System.Reflection;
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
-[assembly: AssemblyVersion("9.1.1")]
-[assembly: AssemblyFileVersion("9.1.1")]
-[assembly: AssemblyInformationalVersion("9.1.1")]
+[assembly: AssemblyVersion("9.1.2")]
+[assembly: AssemblyFileVersion("9.1.2")]
+[assembly: AssemblyInformationalVersion("9.1.2-SQL-MERGE")]
