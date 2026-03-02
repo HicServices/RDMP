@@ -283,7 +283,7 @@ public class RDMPControlCommonFunctionality
                 "Control is not in a container.  HelpIcon cannot be added to top level controls");
 
         title ??= propertyName;
-        var body = _activator.CommentStore.GetDocumentationIfExists(propertyName, false, true);
+        string body = null;// _activator.CommentStore.GetDocumentationIfExists(propertyName, false, true);
 
         if (body == null)
             return;

@@ -32,6 +32,7 @@ namespace Rdmp.Core.EntityFramework
         public DbSet<Models.ExtractionInformation> ExtractionInformation { get; set; }
 
         public DbSet<Models.Dataset> Datasets { get; set; }
+        public DbSet<Models.TableInfo> TableInfos{ get; set; }
 
         public T[] GetAllObjects<T>()
         {
@@ -75,6 +76,12 @@ namespace Rdmp.Core.EntityFramework
             });
 
             modelBuilder.Entity<Models.Dataset>(entity =>
+            {
+                entity.HasKey(e => e.ID);
+                entity.Property(e => e.Name).IsRequired();
+                //entity.HasIndex(e => e.CatalogueItem);
+            });
+            modelBuilder.Entity<Models.TableInfo>(entity =>
             {
                 entity.HasKey(e => e.ID);
                 entity.Property(e => e.Name).IsRequired();

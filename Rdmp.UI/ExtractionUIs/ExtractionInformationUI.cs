@@ -8,6 +8,7 @@ using FAnsi.Discovery.QuerySyntax;
 using FAnsi.Implementations.MicrosoftSQL;
 using Rdmp.Core;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.UI.AutoComplete;
@@ -55,7 +56,7 @@ namespace Rdmp.UI.ExtractionUIs;
 public partial class ExtractionInformationUI : ExtractionInformationUI_Design, ISaveableUI
 {
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-    public ExtractionInformation ExtractionInformation { get; private set; }
+    public Core.EntityFramework.Models.ExtractionInformation ExtractionInformation { get; private set; }
 
     //Editor that user can type into
     private Scintilla QueryEditor;
@@ -124,8 +125,8 @@ public partial class ExtractionInformationUI : ExtractionInformationUI_Design, I
             ExtractionInformation.SelectSQL = sql;
             ExtractionInformation.Alias = alias;
 
-            ExtractionInformation.Check(ThrowImmediatelyCheckNotifier.Quiet);
-            ExtractionInformation.GetRuntimeName();
+            //ExtractionInformation.Check(ThrowImmediatelyCheckNotifier.Quiet);
+            //ExtractionInformation.GetRuntimeName();
             ragSmiley1.Reset();
         }
         catch (Exception e)
@@ -134,7 +135,7 @@ public partial class ExtractionInformationUI : ExtractionInformationUI_Design, I
         }
     }
 
-    public override void SetDatabaseObject(IActivateItems activator, ExtractionInformation databaseObject)
+    public override void SetDatabaseObject(IActivateItems activator, Core.EntityFramework.Models.ExtractionInformation databaseObject)
     {
         _isLoading = true;
         ExtractionInformation = databaseObject;
@@ -174,7 +175,7 @@ public partial class ExtractionInformationUI : ExtractionInformationUI_Design, I
                             "Update CatalogueItem name?"))
                     {
                         cataItem.Name = ExtractionInformation.GetRuntimeName();
-                        cataItem.SaveToDatabase();
+                        cataItem.CatalogueDbContext.SaveChanges();
                     }
             }
             catch (RuntimeNameException)
@@ -187,7 +188,7 @@ public partial class ExtractionInformationUI : ExtractionInformationUI_Design, I
         return true;
     }
 
-    protected override void SetBindings(BinderWithErrorProviderFactory rules, ExtractionInformation databaseObject)
+    protected override void SetBindings(BinderWithErrorProviderFactory rules, Core.EntityFramework.Models.ExtractionInformation databaseObject)
     {
         base.SetBindings(rules, databaseObject);
 
@@ -202,7 +203,7 @@ public partial class ExtractionInformationUI : ExtractionInformationUI_Design, I
         Bind(ddExtractionCategory, "SelectedItem", "ExtractionCategory", ei => ei.ExtractionCategory);
     }
 
-    private void Setup(ExtractionInformation extractionInformation)
+    private void Setup(Core.EntityFramework.Models.ExtractionInformation extractionInformation)
     {
         ExtractionInformation = extractionInformation;
 
@@ -219,19 +220,19 @@ public partial class ExtractionInformationUI : ExtractionInformationUI_Design, I
             QueryEditor.TextChanged += QueryEditorOnTextChanged;
 
             var autoComplete = new AutoCompleteProviderWin(_querySyntaxHelper);
-            autoComplete.Add(ExtractionInformation.CatalogueItem.Catalogue);
+            //autoComplete.Add(ExtractionInformation.CatalogueItem.ColumnInfo.TableInfo);
 
             autoComplete.RegisterForEvents(QueryEditor);
             isFirstTimeSetupCalled = false;
         }
 
-        var colInfo = ExtractionInformation.ColumnInfo;
+        var colInfo = ExtractionInformation.CatalogueItem.ColumnInfo;
 
         //deal with empty values in database (shouldn't be any but could be)
         if (string.IsNullOrWhiteSpace(ExtractionInformation.SelectSQL) && colInfo != null)
         {
             ExtractionInformation.SelectSQL = colInfo.Name.Trim();
-            ExtractionInformation.SaveToDatabase();
+            ExtractionInformation.CatalogueDbContext.SaveChanges();
         }
 
         QueryEditor.Text = ExtractionInformation.SelectSQL + (!string.IsNullOrWhiteSpace(ExtractionInformation.Alias)
@@ -311,6 +312,6 @@ public partial class ExtractionInformationUI : ExtractionInformationUI_Design, I
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ExtractionInformationUI_Design, UserControl>))]
-public abstract class ExtractionInformationUI_Design : RDMPSingleDatabaseObjectControl<ExtractionInformation>
+public abstract class ExtractionInformationUI_Design : RDMPSingleDatabaseObjectControl<Core.EntityFramework.Models.ExtractionInformation>
 {
 }
