@@ -1,15 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using Rdmp.Core.EntityFramework.Helpers;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Rdmp.Core.Models
+namespace Rdmp.Core.EntityFramework.Models
 {
     [Table("ColumnInfo")]
-    public class ColumnInfo
+    public class ColumnInfo: DatabaseObject
     {
-        [Key]
-        public int ID { get; set; }
 
         [Required]
         [MaxLength(500)]
@@ -27,6 +26,10 @@ namespace Rdmp.Core.Models
         public virtual TableInfo TableInfo { get; set; }
 
         public virtual ICollection<CatalogueItem> CatalogueItems { get; set; }
+
+
+        [ForeignKey("Dataset_ID")]
+        public virtual Dataset Dataset{ get; set; }
 
         public override string ToString() => Name;
 

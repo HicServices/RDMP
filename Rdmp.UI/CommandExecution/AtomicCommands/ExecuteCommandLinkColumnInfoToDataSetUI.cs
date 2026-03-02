@@ -19,7 +19,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands;
 public sealed class ExecuteCommandLinkColumnInfoToDataSetUI : BasicUICommandExecution
 {
     private readonly ColumnInfo _columnInfo;
-    private Dataset _selectedDataset;
+    //private Dataset _selectedDataset;
     private readonly IActivateItems _activateItems;
 
     public ExecuteCommandLinkColumnInfoToDataSetUI(IActivateItems activator, ColumnInfo columnInfo) : base(activator)
@@ -42,10 +42,10 @@ public sealed class ExecuteCommandLinkColumnInfoToDataSetUI : BasicUICommandExec
             TaskDescription =
              "Select the Dataset that this column information came from"
         };
-        _selectedDataset = SelectOne(da, datasets);
+        //_selectedDataset = SelectOne(da, datasets);
         var backfill = YesNo("Link all other columns that match the source table?","Do you want to link this dataset to all other columns that reference the same table as this column?");
-        var cmd = new ExecuteCommandLinkColumnInfoToDataset(_activateItems,_columnInfo, _selectedDataset,backfill);
-        cmd.Execute();
+        //var cmd = new ExecuteCommandLinkColumnInfoToDataset(_activateItems,_columnInfo, _selectedDataset,backfill);
+        //cmd.Execute();
 
     }
 

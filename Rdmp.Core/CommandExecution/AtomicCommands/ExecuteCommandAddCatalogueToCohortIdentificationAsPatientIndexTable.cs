@@ -45,11 +45,11 @@ public class ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable
 
         if (_catalogue == null)
         {
-            if (!SelectOne(BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Catalogue>(),
-                    out var cata))
-                return;
+            //if (!SelectOne(BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Catalogue>(),
+            //        out var cata))
+            //    return;
 
-            _catalogue = new CatalogueCombineable(cata);
+            //_catalogue = new CatalogueCombineable(cata);
         }
 
         var aggregateCommand = _catalogue.GenerateAggregateConfigurationFor(BasicActivator, _configuration);

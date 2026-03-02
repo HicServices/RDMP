@@ -5,7 +5,7 @@ using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
-using Rdmp.Core.Models;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Providers.Nodes;
 using System;
@@ -28,6 +28,10 @@ namespace Rdmp.Core.EntityFramework
         public DbSet<Models.Catalogue> Catalogues { get; set; }
         public DbSet<Models.CatalogueItem> CatalogueItems { get; set; }
         public DbSet<Models.ColumnInfo> ColumnInfos { get; set; }
+
+        public DbSet<Models.ExtractionInformation> ExtractionInformation { get; set; }
+
+        public DbSet<Models.Dataset> Datasets { get; set; }
 
         public T[] GetAllObjects<T>()
         {
@@ -61,6 +65,19 @@ namespace Rdmp.Core.EntityFramework
                 entity.HasKey(e => e.ID);
                 entity.Property(e => e.Name).IsRequired().HasMaxLength(500);
                 entity.HasIndex(e => e.Name);
+                //entity.HasIndex(e => e.CatalogueItem);
+            });
+            modelBuilder.Entity<Models.ExtractionInformation>(entity =>
+            {
+                entity.HasKey(e => e.ID);
+                entity.Property(e => e.SelectSQL).IsRequired();
+                //entity.HasIndex(e => e.CatalogueItem);
+            });
+
+            modelBuilder.Entity<Models.Dataset>(entity =>
+            {
+                entity.HasKey(e => e.ID);
+                entity.Property(e => e.Name).IsRequired();
                 //entity.HasIndex(e => e.CatalogueItem);
             });
 
@@ -170,7 +187,7 @@ namespace Rdmp.Core.EntityFramework
 
         public IEnumerable<object> GetChildren(object obj)
         {
-            if (obj is FolderNode<Core.Models.Catalogue> fnc)
+            if (obj is FolderNode<Core.EntityFramework.Models.Catalogue> fnc)
             {
                 return fnc.ChildFolders.Cast<object>().Union(fnc.ChildObjects);//Catalogues.Where(c => c.Folder == fnc.FullName);
             }
@@ -192,8 +209,8 @@ namespace Rdmp.Core.EntityFramework
             }
             if (obj is Models.CatalogueItem catalogueItem)
             {
-
-                return ColumnInfos.Where(ci => ci.CatalogueItems.Select(ci => ci.ID).Contains(catalogueItem.ID));
+                var extractionInformations = ExtractionInformation.Where(ei => ei.CatalogueItem_ID == catalogueItem.ID).ToList();
+                return [..ColumnInfos.Where(ci => ci.CatalogueItems.Select(ci => ci.ID).Contains(catalogueItem.ID)),..extractionInformations];
             }
 
             return new List<string>() { };

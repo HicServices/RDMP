@@ -100,18 +100,18 @@ public class ExecuteCommandAddDatasetsToConfiguration : BasicCommandExecution
 
         if (_userMustPick)
         {
-            if (!SelectMany(new DialogArgs
-            {
-                WindowTitle = "Select Datasets",
-                TaskDescription =
-                        "Select the Datasets you would like to be exported as part of your Extraction Configuration."
-            }, _toadd.Cast<ExtractableDataSet>().ToArray(), out var selected))
-                return;
+            //if (!SelectMany(new DialogArgs
+            //{
+            //    WindowTitle = "Select Datasets",
+            //    TaskDescription =
+            //            "Select the Datasets you would like to be exported as part of your Extraction Configuration."
+            //}, _toadd.Cast<ExtractableDataSet>().ToArray(), out var selected))
+            //    return;
 
-            foreach (var ds in selected.Where(ds => !ds.Catalogue.IsDeprecated || (BasicActivator.IsInteractive && ds.Catalogue.IsDeprecated && YesNo($"{ds.Catalogue.Name} is deprecated. Are you sure you wish to extract it?", "Confirm use of Deprecated Catalogue"))))
-            {
-                _targetExtractionConfiguration.AddDatasetToConfiguration(ds);
-            }
+            //foreach (var ds in selected.Where(ds => !ds.Catalogue.IsDeprecated || (BasicActivator.IsInteractive && ds.Catalogue.IsDeprecated && YesNo($"{ds.Catalogue.Name} is deprecated. Are you sure you wish to extract it?", "Confirm use of Deprecated Catalogue"))))
+            //{
+            //    _targetExtractionConfiguration.AddDatasetToConfiguration(ds);
+            //}
         }
         else
         {

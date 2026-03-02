@@ -30,7 +30,7 @@ namespace Rdmp.UI.Overview;
 /// </summary>
 public partial class ViewCatalogueOverviewUI : ViewCatalogueOverviewUI_Design
 {
-    private Core.Models.Catalogue _catalogue;
+    private Core.EntityFramework.Models.Catalogue _catalogue;
     private OverviewModel _overview;
     private List<CatalogueItem> _dateColumns;
     private static readonly string[] frequencies = new[] { "Day", "Month", "Year" };
@@ -166,7 +166,7 @@ public partial class ViewCatalogueOverviewUI : ViewCatalogueOverviewUI_Design
 
     private void btnSettings_Click(object sender, EventArgs e)
     {
-        Activator.Activate<CatalogueUI, Core.Models.Catalogue>(_catalogue);
+        Activator.Activate<CatalogueUI, Core.EntityFramework.Models.Catalogue>(_catalogue);
     }
 
     private void button1_Click(object sender, EventArgs e)

@@ -1,13 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Rdmp.Core.EntityFramework.Helpers;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Rdmp.Core.Models
+namespace Rdmp.Core.EntityFramework.Models
 {
     [Table("ExtractionInformation")]
-    public class ExtractionInformation
+    public class ExtractionInformation: DatabaseObject
     {
-        [Key]
-        public int ID { get; set; }
 
         [Required]
         public int CatalogueItem_ID { get; set; }
@@ -23,5 +22,7 @@ namespace Rdmp.Core.Models
 
         [ForeignKey("CatalogueItem_ID")]
         public virtual CatalogueItem CatalogueItem { get; set; }
+
+        public override string ToString() => SelectSQL;
     }
 }

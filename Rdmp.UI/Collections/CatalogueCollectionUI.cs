@@ -44,7 +44,7 @@ namespace Rdmp.UI.Collections;
 /// </summary>
 public partial class CatalogueCollectionUI : RDMPCollectionUI
 {
-    private Core.Models.Catalogue[] _allCatalogues;
+    private Core.EntityFramework.Models.Catalogue[] _allCatalogues;
     private const string NewMenu = "New...";
     //constructor
 
@@ -96,7 +96,7 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
 
     public void RefreshUIFromDatabase(object oRefreshFrom)
     {
-        var rootFolder = FolderHelper.BuildFolderTree<Core.Models.Catalogue>(Activator.RepositoryLocator.CatalogueDbContext.Catalogues.ToArray());
+        var rootFolder = FolderHelper.BuildFolderTree<Core.EntityFramework.Models.Catalogue>(Activator.RepositoryLocator.CatalogueDbContext.Catalogues.ToArray());
 
         //if (tlvCatalogues.ModelFilter is CatalogueCollectionFilter f)
         //    f.ChildProvider = Activator.RepositoryLocator.CatalogueDbContext;
@@ -201,7 +201,7 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
         if (UserSettings.ShowFlatLists && !_renderingFlatFiew)
         {
             //reset to flat view
-            tlvCatalogues.RemoveObject(FolderHelper.BuildFolderTree<Core.Models.Catalogue>(Activator.RepositoryLocator.CatalogueDbContext.Catalogues.ToArray()));
+            tlvCatalogues.RemoveObject(FolderHelper.BuildFolderTree<Core.EntityFramework.Models.Catalogue>(Activator.RepositoryLocator.CatalogueDbContext.Catalogues.ToArray()));
             tlvCatalogues.AddObjects(Activator.RepositoryLocator.CatalogueDbContext.Catalogues.ToArray());
             _renderingFlatFiew = true;
         }
@@ -209,8 +209,8 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
         {
             //reset to folder view
             tlvCatalogues.RemoveObjects(Activator.RepositoryLocator.CatalogueDbContext.Catalogues.ToArray());
-            tlvCatalogues.AddObject(FolderHelper.BuildFolderTree<Core.Models.Catalogue>(Activator.RepositoryLocator.CatalogueDbContext.Catalogues.ToArray()));
-            tlvCatalogues.RefreshObject(FolderHelper.BuildFolderTree<Core.Models.Catalogue>(Activator.RepositoryLocator.CatalogueDbContext.Catalogues.ToArray()));
+            tlvCatalogues.AddObject(FolderHelper.BuildFolderTree<Core.EntityFramework.Models.Catalogue>(Activator.RepositoryLocator.CatalogueDbContext.Catalogues.ToArray()));
+            tlvCatalogues.RefreshObject(FolderHelper.BuildFolderTree<Core.EntityFramework.Models.Catalogue>(Activator.RepositoryLocator.CatalogueDbContext.Catalogues.ToArray()));
             _renderingFlatFiew = false;
         }
     }
@@ -286,7 +286,7 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
         };
 
         Activator.RefreshBus.EstablishLifetimeSubscription(this);
-        var rootFolder = FolderHelper.BuildFolderTree<Core.Models.Catalogue>(activator.RepositoryLocator.CatalogueDbContext.Catalogues.ToArray());
+        var rootFolder = FolderHelper.BuildFolderTree<Core.EntityFramework.Models.Catalogue>(activator.RepositoryLocator.CatalogueDbContext.Catalogues.ToArray());
 
         tlvCatalogues.AddObject(new AllGovernanceNode());
         if (UserSettings.ShowFlatLists)

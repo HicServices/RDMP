@@ -41,7 +41,7 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
 {
     internal Scintilla _scintillaDescription;
 
-    private Core.Models.Catalogue _catalogue;
+    private Core.EntityFramework.Models.Catalogue _catalogue;
 
     public CatalogueUI()
     {
@@ -93,7 +93,7 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
     }
 
 
-    public override void SetDatabaseObject(IActivateItems activator, Core.Models.Catalogue databaseObject)
+    public override void SetDatabaseObject(IActivateItems activator, Core.EntityFramework.Models.Catalogue databaseObject)
     {
         if (_scintillaDescription == null)
         {
@@ -122,7 +122,7 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
 
     }
 
-    protected override void SetBindings(BinderWithErrorProviderFactory rules, Core.Models.Catalogue databaseObject)
+    protected override void SetBindings(BinderWithErrorProviderFactory rules, Core.EntityFramework.Models.Catalogue databaseObject)
     {
         base.SetBindings(rules, databaseObject);
         Bind(cbDeprecated, "Checked", "IsDeprecated", c => c.IsDeprecated);
@@ -532,6 +532,6 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<CatalogueUI_Design, UserControl>))]
-public abstract class CatalogueUI_Design : RDMPSingleDatabaseObjectControl<Core.Models.Catalogue>
+public abstract class CatalogueUI_Design : RDMPSingleDatabaseObjectControl<Core.EntityFramework.Models.Catalogue>
 {
 }

@@ -46,7 +46,7 @@ public class ExecuteCommandImportAlreadyExistingCohort : BasicCommandExecution, 
         if (ect == null)
         {
             var available = BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllObjects<ExternalCohortTable>();
-            if (!SelectOne(available, out ect, null, true)) return;
+            //if (!SelectOne(available, out ect, null, true)) return;
         }
 
         var newId = _explicitOriginIDToImport ?? GetWhichCohortToImport(ect);

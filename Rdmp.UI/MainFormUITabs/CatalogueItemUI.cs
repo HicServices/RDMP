@@ -6,7 +6,7 @@
 
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution.AtomicCommands;
-using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Rules;
@@ -65,7 +65,7 @@ public partial class CatalogueItemUI : CatalogueItemUI_Design, ISaveableUI
         _catalogueItem = databaseObject;
         if (_catalogueItem != null)
         {
-            var columnInfoDatasetValue  = _catalogueItem?.ColumnInfo?.Dataset_ID;
+            var columnInfoDatasetValue  = _catalogueItem?.ColumnInfo?.Dataset?.ID;
             if (columnInfoDatasetValue != null)
             {
                 lbDatasetValue.Visible = true;

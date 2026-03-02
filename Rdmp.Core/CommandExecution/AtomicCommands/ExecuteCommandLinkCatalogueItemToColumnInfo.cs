@@ -5,8 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.CommandExecution.Combining;
-using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
@@ -57,15 +57,16 @@ public class ExecuteCommandLinkCatalogueItemToColumnInfo : BasicCommandExecution
 
         if (_columnInfo == null)
             return;
-
-        _catalogueItem.SetColumnInfo(_columnInfo);
+        _catalogueItem.ColumnInfo_ID = _columnInfo.ID;
+        //_catalogueItem.SetColumnInfo(_columnInfo);
 
         //if it did not have a name before
         if (_catalogueItem.Name.StartsWith("New CatalogueItem"))
         {
             //give it one
-            _catalogueItem.Name = _columnInfo.GetRuntimeName();
-            _catalogueItem.SaveToDatabase();
+            _catalogueItem.Name = _columnInfo.Name;//_columnInfo.GetRuntimeName();
+            //_catalogueItem.SaveToDatabase();
+            _catalogueItem.CatalogueDbContext.SaveChanges();
         }
 
         //Either way refresh the catalogue item

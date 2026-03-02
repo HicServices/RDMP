@@ -37,13 +37,13 @@ public class ExecuteCommandImportCatalogueItemDescription : BasicCommandExecutio
         if (available.Any(a => a.Name.Equals(_toPopulate.Name, StringComparison.CurrentCultureIgnoreCase)))
             initialSearchText = _toPopulate.Name;
 
-        if (SelectOne(available, out var selected, initialSearchText, false))
-        {
-            CopyNonIDValuesAcross(selected, _toPopulate, true);
-            _toPopulate.SaveToDatabase();
+        //if (SelectOne(available, out var selected, initialSearchText, false))
+        //{
+        //    CopyNonIDValuesAcross(selected, _toPopulate, true);
+        //    _toPopulate.SaveToDatabase();
 
-            Publish(_toPopulate);
-        }
+        //    Publish(_toPopulate);
+        //}
 
         base.Execute();
     }

@@ -77,10 +77,10 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
 
         //do we know where it's going to end up?
         if (ect == null)
-            if (!SelectOne(
-                    GetChooseCohortDialogArgs(),
-                    BasicActivator.RepositoryLocator.CatalogueDbContext,
-                    out ect)) //not yet, get user to pick one
+            //if (!SelectOne(
+            //        GetChooseCohortDialogArgs(),
+            //        BasicActivator.RepositoryLocator.CatalogueDbContext,
+            //        out ect)) //not yet, get user to pick one
                 return null; //user didn't select one and cancelled dialog
 
 

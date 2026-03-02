@@ -57,7 +57,7 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
                 Show($"No valid catalogues found to make project specific.");
                 return;
             }
-            SetCatalogue(SelectOne(catalogues));
+            //SetCatalogue(SelectOne(catalogues));
         }
         if (!_hasRanCatalogueValidation)
         {
@@ -72,7 +72,7 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
             Show($"No valid projects found to make {_catalogue.Name} project specific.");
             return;
         }
-        _project ??= SelectOne<Project>(GetListOfValidProjects());
+       // _project ??= SelectOne<Project>(GetListOfValidProjects());
 
         if (_project == null || _catalogue == null)
             return;

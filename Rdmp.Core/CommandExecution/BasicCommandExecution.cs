@@ -15,6 +15,7 @@ using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Interactive.Picking;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.EntityFramework;
+using Rdmp.Core.EntityFramework.Helpers;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.ReusableLibraryCode;
@@ -270,7 +271,7 @@ public abstract class BasicCommandExecution : IAtomicCommand
     /// <param name="allowAutoSelect">True to silently auto select the object if there are only 1 <paramref name="availableObjects"/></param>
     /// <returns></returns>
     protected T SelectOne<T>(IList<T> availableObjects, string initialSearchText = null, bool allowAutoSelect = false)
-        where T : DatabaseEntity =>
+        where T : DatabaseObject =>
         SelectOne(new DialogArgs
         {
             InitialSearchText = initialSearchText,
@@ -286,7 +287,7 @@ public abstract class BasicCommandExecution : IAtomicCommand
     /// <param name="args"></param>
     /// <param name="availableObjects"></param>
     /// <returns></returns>
-    protected T SelectOne<T>(DialogArgs args, IList<T> availableObjects) where T : DatabaseEntity =>
+    protected T SelectOne<T>(DialogArgs args, IList<T> availableObjects) where T : DatabaseObject =>
         SelectOne(args, availableObjects, out var selected) ? selected : null;
 
     /// <summary>
@@ -298,7 +299,7 @@ public abstract class BasicCommandExecution : IAtomicCommand
     /// <param name="allowAutoSelect">True to silently auto select the object if there are only 1 compatible object in the <paramref name="catalogueDbContext"/></param>
     /// <returns></returns>
     protected T SelectOne<T>(RDMPDbContext catalogueDbContext, string initialSearchText = null, bool allowAutoSelect = false)
-        where T : DatabaseEntity =>
+        where T : DatabaseObject =>
         SelectOne(new DialogArgs
         {
             InitialSearchText = initialSearchText,
@@ -317,7 +318,7 @@ public abstract class BasicCommandExecution : IAtomicCommand
     /// <param name="allowAutoSelect">True to silently auto select the object if there are only 1 compatible object in the <paramref name="catalogueDbContext"/></param>
     /// <returns></returns>
     protected bool SelectOne<T>(RDMPDbContext catalogueDbContext, out T selected, string initialSearchText = null,
-        bool allowAutoSelect = false) where T : DatabaseEntity =>
+        bool allowAutoSelect = false) where T : DatabaseObject =>
         SelectOne(new DialogArgs
         {
             InitialSearchText = initialSearchText,
@@ -334,7 +335,7 @@ public abstract class BasicCommandExecution : IAtomicCommand
     /// <param name="allowAutoSelect">True to silently auto select the object if there are only 1 <paramref name="availableObjects"/></param>
     /// <returns></returns>
     protected bool SelectOne<T>(IList<T> availableObjects, out T selected, string initialSearchText = null,
-        bool allowAutoSelect = false) where T : DatabaseEntity =>
+        bool allowAutoSelect = false) where T : DatabaseObject =>
         SelectOne(new DialogArgs
         {
             InitialSearchText = initialSearchText,
@@ -349,7 +350,7 @@ public abstract class BasicCommandExecution : IAtomicCommand
     /// <param name="availableObjects"></param>
     /// <param name="selected"></param>
     /// <returns></returns>
-    protected bool SelectOne<T>(DialogArgs args, IList<T> availableObjects, out T selected) where T : DatabaseEntity
+    protected bool SelectOne<T>(DialogArgs args, IList<T> availableObjects, out T selected) where T : DatabaseObject
     {
         selected = (T)BasicActivator.SelectOne(args, availableObjects.ToArray());
         return selected != null;
@@ -363,7 +364,7 @@ public abstract class BasicCommandExecution : IAtomicCommand
     /// <param name="catalogueDbContext"></param>
     /// <param name="selected"></param>
     /// <returns></returns>
-    protected bool SelectOne<T>(DialogArgs args, RDMPDbContext catalogueDbContext, out T selected) where T : DatabaseEntity
+    protected bool SelectOne<T>(DialogArgs args, RDMPDbContext catalogueDbContext, out T selected) where T : DatabaseObject
     {
         selected = (T)BasicActivator.SelectOne(args, catalogueDbContext.GetAllObjects<T>().ToArray());
         return selected != null;
@@ -377,7 +378,7 @@ public abstract class BasicCommandExecution : IAtomicCommand
         return selected != null && selected.Any();
     }
 
-    protected bool SelectMany<T>(DialogArgs dialogArgs, T[] available, out T[] selected) where T : DatabaseEntity
+    protected bool SelectMany<T>(DialogArgs dialogArgs, T[] available, out T[] selected) where T : DatabaseObject
     {
         selected = BasicActivator.SelectMany(dialogArgs, typeof(T), available)?.Cast<T>()?.ToArray();
         return selected != null && (dialogArgs.AllowSelectingNull || selected.Any());

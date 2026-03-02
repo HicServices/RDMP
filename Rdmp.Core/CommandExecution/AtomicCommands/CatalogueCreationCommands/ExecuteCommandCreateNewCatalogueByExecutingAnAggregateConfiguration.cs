@@ -39,8 +39,8 @@ public class ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration
     {
         base.Execute();
 
-        _aggregateConfiguration ??=
-            SelectOne<AggregateConfiguration>(BasicActivator.RepositoryLocator.CatalogueDbContext);
+        //_aggregateConfiguration ??=
+        //    SelectOne<AggregateConfiguration>(BasicActivator.RepositoryLocator.CatalogueDbContext);
 
         if (_aggregateConfiguration == null)
             return;
@@ -53,7 +53,7 @@ public class ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration
 
             if (chosen)
             {
-                _cohort = SelectOne<ExtractableCohort>(BasicActivator.RepositoryLocator.CatalogueDbContext);
+                //_cohort = SelectOne<ExtractableCohort>(BasicActivator.RepositoryLocator.CatalogueDbContext);
 
                 if (_cohort == null)
                     return;

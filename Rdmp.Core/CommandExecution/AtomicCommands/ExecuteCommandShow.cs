@@ -127,7 +127,7 @@ public class ExecuteCommandShow : BasicCommandExecution, IAtomicCommand
 
         if (show == null && _objectsToPickFrom != null)
         {
-            show = SelectOne(_objectsToPickFrom.Cast<DatabaseEntity>().ToList());
+            //show = SelectOne(_objectsToPickFrom.Cast<DatabaseEntity>().ToList());
 
             if (show == null)
                 return;

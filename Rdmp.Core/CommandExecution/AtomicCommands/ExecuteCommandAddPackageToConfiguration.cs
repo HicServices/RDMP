@@ -45,9 +45,9 @@ public sealed class ExecuteCommandAddPackageToConfiguration : BasicCommandExecut
     {
         base.Execute();
 
-        if (SelectOne(_packages, out var package))
-            new ExecuteCommandAddDatasetsToConfiguration(BasicActivator, new ExtractableDataSetCombineable(package),
-                _extractionConfiguration).Execute();
+        //if (SelectOne(_packages, out var package))
+        //    new ExecuteCommandAddDatasetsToConfiguration(BasicActivator, new ExtractableDataSetCombineable(package),
+        //        _extractionConfiguration).Execute();
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>

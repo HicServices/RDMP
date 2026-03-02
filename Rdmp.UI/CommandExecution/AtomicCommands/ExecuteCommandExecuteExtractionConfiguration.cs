@@ -79,8 +79,8 @@ public class ExecuteCommandExecuteExtractionConfiguration : BasicUICommandExecut
             var available = _project.ExtractionConfigurations.Where(c => c.IsExtractable(out _))
                 .Cast<ExtractionConfiguration>().ToArray();
 
-            if (available.Any())
-                _extractionConfiguration = SelectOne(available);
+            //if (available.Any())
+            //    _extractionConfiguration = SelectOne(available);
 
             if (_extractionConfiguration == null)
                 return;

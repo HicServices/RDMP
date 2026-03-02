@@ -21,8 +21,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution, IAtomicCommand
 {
-    private readonly Models.Catalogue _catalogue;
-    private readonly Models.ColumnInfo[] _columnInfos;
+    private readonly EntityFramework.Models.Catalogue _catalogue;
+    private readonly EntityFramework.Models.ColumnInfo[] _columnInfos;
     private readonly HashSet<int> _existingColumnInfos;
     private readonly IBasicActivateItems _activator;
 
@@ -32,15 +32,15 @@ public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution, IAtomicC
     /// </summary>
     public ExtractionCategory? Category { get; set; } = ExtractionCategory.Core;
 
-    public ExecuteCommandAddNewCatalogueItem(IBasicActivateItems activator, Models.Catalogue catalogue,
+    public ExecuteCommandAddNewCatalogueItem(IBasicActivateItems activator, EntityFramework.Models.Catalogue catalogue,
         ColumnInfoCombineable colInfo) : this(activator, catalogue, colInfo.ColumnInfos)
     {
         _activator = activator;
     }
 
     [UseWithObjectConstructor]
-    public ExecuteCommandAddNewCatalogueItem(IBasicActivateItems activator, Models.Catalogue catalogue,
-        params Models.ColumnInfo[] columnInfos) : base(activator)
+    public ExecuteCommandAddNewCatalogueItem(IBasicActivateItems activator, EntityFramework.Models.Catalogue catalogue,
+        params EntityFramework.Models.ColumnInfo[] columnInfos) : base(activator)
     {
         _activator = activator;
         _catalogue = catalogue;
@@ -52,7 +52,7 @@ public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution, IAtomicC
             SetImpossible("ColumnInfo(s) are already in Catalogue");
     }
 
-    private HashSet<int> GetColumnInfos(Models.Catalogue catalogue)
+    private HashSet<int> GetColumnInfos(EntityFramework.Models.Catalogue catalogue)
     {
         return catalogue == null
             ? null
@@ -78,7 +78,7 @@ public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution, IAtomicC
             {
                 WindowTitle = "Add CatalogueItem",
                 TaskDescription = "Select which Catalogue you want to add the CatalogueItem to."
-            }, BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Models.Catalogue>(), out var selected))
+            }, BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllObjects<EntityFramework.Models.Catalogue>(), out var selected))
                 // user cancelled selecting a Catalogue
                 return;
 
@@ -149,7 +149,7 @@ public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution, IAtomicC
         ei.SaveToDatabase();
     }
 
-    private static bool AlreadyInCatalogue(Models.ColumnInfo candidate, IReadOnlySet<int> existingColumnInfos) =>
+    private static bool AlreadyInCatalogue(EntityFramework.Models.ColumnInfo candidate, IReadOnlySet<int> existingColumnInfos) =>
         existingColumnInfos.Contains(candidate.ID);
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>

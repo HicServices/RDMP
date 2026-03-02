@@ -6,12 +6,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.DirectoryServices.Protocols;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.UI.Collections;
 using Rdmp.UI.ItemActivation;
@@ -40,6 +41,9 @@ namespace Rdmp.UI.SimpleDialogs;
 /// </summary>
 public partial class PropagateCatalogueItemChangesToSimilarNamedUI : RDMPForm
 {
+
+    //TODO this class has been borked during the ef update
+
     private readonly CatalogueItem _catalogueItemBeingSaved;
     private Scintilla previewOldValue;
     private Scintilla previewNewValue;
@@ -147,16 +151,17 @@ public partial class PropagateCatalogueItemChangesToSimilarNamedUI : RDMPForm
 
     public static List<PropertyInfo> DetermineChangedProperties(CatalogueItem newVersionInMemory)
     {
-        return newVersionInMemory.HasLocalChanges().Differences.Select(d => d.Property).ToList();
+        return new();//return newVersionInMemory.HasLocalChanges().Differences.Select(d => d.Property).ToList();
     }
 
     private CatalogueItem[] GetAllCatalogueItemsSharingNameWith(CatalogueItem catalogueItemBeingSaved)
     {
-        return Activator.CoreChildProvider.AllCatalogueItems
-            .Where(ci =>
-                ci.Name.Equals(catalogueItemBeingSaved.Name, StringComparison.CurrentCultureIgnoreCase)
-                && ci.ID != catalogueItemBeingSaved.ID)
-            .ToArray();
+        //return Activator.CoreChildProvider.AllCatalogueItems
+        //    .Where(ci =>
+        //        ci.Name.Equals(catalogueItemBeingSaved.Name, StringComparison.CurrentCultureIgnoreCase)
+        //        && ci.ID != catalogueItemBeingSaved.ID)
+        //    .ToArray();
+        return Array.Empty<CatalogueItem>();
     }
 
     private void clbCatalogues_SelectedIndexChanged(object sender, EventArgs e)
@@ -233,7 +238,7 @@ public partial class PropagateCatalogueItemChangesToSimilarNamedUI : RDMPForm
             foreach (PropertyInfo p in olvProperties.CheckedObjects)
                 p.SetValue(ci, p.GetValue(_catalogueItemBeingSaved, null), null);
 
-            ci.SaveToDatabase();
+            //ci.SaveToDatabase();
         }
 
         Close();

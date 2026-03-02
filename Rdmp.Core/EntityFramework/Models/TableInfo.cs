@@ -1,9 +1,9 @@
-﻿using Rdmp.Core.Models;
+﻿using Rdmp.Core.EntityFramework.Models;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Rdmp.Core.Models
+namespace Rdmp.Core.EntityFramework.Models
 {
     [Table("TableInfo")]
     public class TableInfo

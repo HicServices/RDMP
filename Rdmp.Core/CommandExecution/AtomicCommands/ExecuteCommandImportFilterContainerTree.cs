@@ -156,17 +156,17 @@ public class ExecuteCommandImportFilterContainerTree : BasicCommandExecution
                 return;
             }
 
-            if (SelectOne(fromConfiguration, out var selected))
-            {
-                if (selected is ExtractionConfiguration ec) Import(GetEligibleChild(ec).RootFilterContainer);
-                if (selected is CohortIdentificationConfiguration cic)
-                {
-                    var chosen = SelectOne(GetEligibleChildren(cic).ToList(), null, true);
+            //if (SelectOne(fromConfiguration, out var selected))
+            //{
+            //    if (selected is ExtractionConfiguration ec) Import(GetEligibleChild(ec).RootFilterContainer);
+            //    if (selected is CohortIdentificationConfiguration cic)
+            //    {
+            //        var chosen = SelectOne(GetEligibleChildren(cic).ToList(), null, true);
 
-                    if (chosen != null)
-                        Import(chosen.RootFilterContainer);
-                }
-            }
+            //        if (chosen != null)
+            //            Import(chosen.RootFilterContainer);
+            //    }
+            //}
         }
 
         Publish((DatabaseEntity)_into ?? (DatabaseEntity)_intoSubContainer);

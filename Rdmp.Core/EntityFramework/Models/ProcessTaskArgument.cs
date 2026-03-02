@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Rdmp.Core.Models
+namespace Rdmp.Core.EntityFramework.Models
 {
     [Table("ProcessTaskArgument")]
     public class ProcessTaskArgument

@@ -238,24 +238,24 @@ public class AtomicCommandFactory : CommandFactoryBase
                     p.GetType().GetProperty(nameof(ISqlParameter.ParameterSQL)));
         }
 
-        if (Is(o, out CatalogueItem ci))
+        if (Is(o, out Rdmp.Core.EntityFramework.Models.CatalogueItem ci))
         {
-            yield return new ExecuteCommandCreateNewFilter(_activator, ci) { OverrideCommandName = "Add New Filter" };
-            yield return new ExecuteCommandLinkCatalogueItemToColumnInfo(_activator, ci);
-            yield return new ExecuteCommandMakeCatalogueItemExtractable(_activator, ci);
-            yield return new ExecuteCommandChangeExtractionCategory(_activator, new[] { ci.ExtractionInformation });
-            yield return new ExecuteCommandImportCatalogueItemDescription(_activator, ci)
-            { SuggestedShortcut = "I", Ctrl = true };
-            var ciExtractionInfo = ci.ExtractionInformation;
-            if (ciExtractionInfo != null)
-            {
-                yield return new ExecuteCommandViewData(_activator, ViewType.TOP_100, ciExtractionInfo)
-                { SuggestedCategory = View };
-                yield return new ExecuteCommandViewData(_activator, ViewType.Aggregate, ciExtractionInfo)
-                { SuggestedCategory = View };
-                yield return new ExecuteCommandViewData(_activator, ViewType.Distribution, ciExtractionInfo)
-                { SuggestedCategory = View };
-            }
+            //yield return new ExecuteCommandCreateNewFilter(_activator, ci) { OverrideCommandName = "Add New Filter" };
+            //yield return new ExecuteCommandLinkCatalogueItemToColumnInfo(_activator, ci);
+            //yield return new ExecuteCommandMakeCatalogueItemExtractable(_activator, ci);
+            //yield return new ExecuteCommandChangeExtractionCategory(_activator, new[] { ci.ExtractionInformation });
+            //yield return new ExecuteCommandImportCatalogueItemDescription(_activator, ci)
+            //{ SuggestedShortcut = "I", Ctrl = true };
+            //var ciExtractionInfo = ci.ExtractionInformation;
+            //if (ciExtractionInfo != null)
+            //{
+            //    yield return new ExecuteCommandViewData(_activator, ViewType.TOP_100, ciExtractionInfo)
+            //    { SuggestedCategory = View };
+            //    yield return new ExecuteCommandViewData(_activator, ViewType.Aggregate, ciExtractionInfo)
+            //    { SuggestedCategory = View };
+            //    yield return new ExecuteCommandViewData(_activator, ViewType.Distribution, ciExtractionInfo)
+            //    { SuggestedCategory = View };
+            //}
         }
 
         if (Is(o, out SupportingSQLTable sqlTable))

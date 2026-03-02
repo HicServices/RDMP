@@ -19,7 +19,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands;
 public sealed class ExecuteCommandLinkCatalogueToDatasetUI : BasicUICommandExecution, IAtomicCommand
 {
     private readonly Catalogue _catalogue;
-    private Dataset _selectedDataset;
+    //private Dataset _selectedDataset;
     private readonly IActivateItems _activateItems;
 
     public ExecuteCommandLinkCatalogueToDatasetUI(IActivateItems activator, Catalogue catalogue) : base(activator)
@@ -41,12 +41,12 @@ public sealed class ExecuteCommandLinkCatalogueToDatasetUI : BasicUICommandExecu
             TaskDescription =
              "Select the Dataset that this catalogue information came from"
         };
-        _selectedDataset = SelectOne(da, datasets);
-        if (_selectedDataset is null) return;
+        //_selectedDataset = SelectOne(da, datasets);
+        //if (_selectedDataset is null) return;
 
-        var backfill = YesNo("Link all other columns that match the source table?", "Do you want to link this dataset to all other columns that reference the same table as this column?");
-        var cmd = new ExecuteCommandLinkCatalogueToDataset(_activateItems, _catalogue, _selectedDataset, backfill);
-        cmd.Execute();
+        //var backfill = YesNo("Link all other columns that match the source table?", "Do you want to link this dataset to all other columns that reference the same table as this column?");
+        //var cmd = new ExecuteCommandLinkCatalogueToDataset(_activateItems, _catalogue, _selectedDataset, backfill);
+        //cmd.Execute();
     }
 
     public override Image<Rgba32> GetImage([NotNull] IIconProvider iconProvider) =>

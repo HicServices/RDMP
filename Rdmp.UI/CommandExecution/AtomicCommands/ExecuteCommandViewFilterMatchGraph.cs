@@ -55,7 +55,7 @@ internal class ExecuteCommandViewFilterMatchGraph : BasicUICommandExecution, IAt
     {
         base.Execute();
 
-        var selected = SelectOne(_compatibleGraphs);
+        AggregateConfiguration selected = null;// SelectOne(_compatibleGraphs);
 
         if (selected == null)
             return;

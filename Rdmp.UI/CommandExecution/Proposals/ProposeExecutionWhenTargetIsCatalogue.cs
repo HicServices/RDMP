@@ -14,20 +14,20 @@ using Rdmp.UI.MainFormUITabs;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsCatalogue : RDMPCommandExecutionProposal<Core.Models.Catalogue>
+internal class ProposeExecutionWhenTargetIsCatalogue : RDMPCommandExecutionProposal<Core.EntityFramework.Models.Catalogue>
 {
     public ProposeExecutionWhenTargetIsCatalogue(IActivateItems itemActivator) : base(itemActivator)
     {
     }
 
-    public override bool CanActivate(Core.Models.Catalogue target) => true;
+    public override bool CanActivate(Core.EntityFramework.Models.Catalogue target) => true;
 
-    public override void Activate(Core.Models.Catalogue c)
+    public override void Activate(Core.EntityFramework.Models.Catalogue c)
     {
-        ItemActivator.Activate<CatalogueUI, Core.Models.Catalogue>(c);
+        ItemActivator.Activate<CatalogueUI, Core.EntityFramework.Models.Catalogue>(c);
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Core.Models.Catalogue targetCatalogue,
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Core.EntityFramework.Models.Catalogue targetCatalogue,
         InsertOption insertOption = InsertOption.Default)
     {
         //if (cmd is FileCollectionCombineable sourceFileCollection)

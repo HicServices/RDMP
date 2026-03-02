@@ -46,7 +46,7 @@ public class ExecuteCommandRunDQEOnCatalogue : BasicUICommandExecution, IAtomicC
     {
         base.Execute();
 
-        var c = _catalogue ?? SelectOne<Catalogue>(BasicActivator.RepositoryLocator.CatalogueDbContext);
+        var c = _catalogue;//?? SelectOne<Catalogue>(BasicActivator.RepositoryLocator.CatalogueDbContext);
 
         if (c == null)
             return;

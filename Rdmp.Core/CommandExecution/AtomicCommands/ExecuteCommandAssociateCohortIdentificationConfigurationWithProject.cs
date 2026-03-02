@@ -51,10 +51,10 @@ public sealed class ExecuteCommandAssociateCohortIdentificationConfigurationWith
                         !_existingAssociations.Any(
                             a => a.CohortIdentificationConfiguration_ID == _cic.ID && v.ID == a.Project_ID)).ToArray();
 
-            if (SelectOne(valid, out var p))
-                SetTarget(p);
-            else
-                return;
+            //if (SelectOne(valid, out var p))
+            //    SetTarget(p);
+            //else
+            return;
         }
 
         if (_cic == null)
@@ -70,10 +70,10 @@ public sealed class ExecuteCommandAssociateCohortIdentificationConfigurationWith
                         a => a.Project_ID == _project.ID && v.ID == a.CohortIdentificationConfiguration_ID)).ToArray();
 
 
-            if (SelectOne(valid, out var cic))
-                SetTarget(cic);
-            else
-                return;
+            //if (SelectOne(valid, out var cic))
+            //    SetTarget(cic);
+            //else
+            return;
         }
 
         //command might be impossible

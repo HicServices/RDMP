@@ -33,9 +33,9 @@ public sealed class ExecuteCommandSetQueryCachingDatabase : BasicCommandExecutio
     {
         base.Execute();
 
-        if (!SelectOne(_caches.ToList(), out var selected)) return;
+        //if (!SelectOne(_caches.ToList(), out var selected)) return;
 
-        _cic.QueryCachingServer_ID = selected?.ID;
+        //_cic.QueryCachingServer_ID = selected?.ID;
         _cic.SaveToDatabase();
         Publish(_cic);
     }

@@ -94,13 +94,13 @@ public class ExecuteCommandCreateNewExtractionConfigurationForProject : BasicCom
 
         var p = _project;
 
-        if (p == null)
-            if (!SelectOne(new DialogArgs
-            {
-                WindowTitle = "Select Project",
-                TaskDescription = GetTaskDescription()
-            }, GetProjects(CohortIfAny).ToList(), out p))
-                return;
+        //if (p == null)
+        //    if (!SelectOne(new DialogArgs
+        //    {
+        //        WindowTitle = "Select Project",
+        //        TaskDescription = GetTaskDescription()
+        //    }, GetProjects(CohortIfAny).ToList(), out p))
+        //        return;
         if (p == null)
             return;
 

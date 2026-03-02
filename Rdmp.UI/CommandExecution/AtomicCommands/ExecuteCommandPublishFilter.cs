@@ -54,35 +54,35 @@ public class ExecuteCommandPublishFilter : BasicUICommandExecution, IAtomicComma
     {
         base.Execute();
 
-        _catalogue ??= SelectOne<Catalogue>(Activator.RepositoryLocator.CatalogueDbContext);
+        //_catalogue ??= SelectOne<Catalogue>(Activator.RepositoryLocator.CatalogueDbContext);
 
-        var toAddTo = SelectOne(new DialogArgs
-        {
-            WindowTitle = "Associated Column",
-            TaskDescription =
-                "All filters must be associated with a single column.  Pick which column to associate this filter with."
-        }, _allExtractionInformations);
+        //var toAddTo = SelectOne(new DialogArgs
+        //{
+        //    WindowTitle = "Associated Column",
+        //    TaskDescription =
+        //        "All filters must be associated with a single column.  Pick which column to associate this filter with."
+        //}, _allExtractionInformations);
 
-        if (toAddTo != null)
-        {
-            //see if there is one with the same name that for some reason we are not known to be a child of already
-            var duplicate = toAddTo.ExtractionFilters.FirstOrDefault(f => f.Name.Equals(_filter.Name));
+        //if (toAddTo != null)
+        //{
+        //    //see if there is one with the same name that for some reason we are not known to be a child of already
+        //    var duplicate = toAddTo.ExtractionFilters.FirstOrDefault(f => f.Name.Equals(_filter.Name));
 
-            if (duplicate != null)
-            {
-                if (YesNo(
-                        $"There is already a filter called {_filter.Name} in ExtractionInformation {toAddTo} do you want to mark this filter as a child of that master filter?",
-                        "Duplicate, mark these as the same?"))
-                {
-                    _filter.ClonedFromExtractionFilter_ID = duplicate.ID;
-                    _filter.SaveToDatabase();
-                }
+        //    if (duplicate != null)
+        //    {
+        //        if (YesNo(
+        //                $"There is already a filter called {_filter.Name} in ExtractionInformation {toAddTo} do you want to mark this filter as a child of that master filter?",
+        //                "Duplicate, mark these as the same?"))
+        //        {
+        //            _filter.ClonedFromExtractionFilter_ID = duplicate.ID;
+        //            _filter.SaveToDatabase();
+        //        }
 
-                return;
-            }
+        //        return;
+        //    }
 
-            new FilterImporter(new ExtractionFilterFactory(toAddTo), null).ImportFilter(null, _filter, null);
-            MessageBox.Show("Publish successful");
-        }
+        //    new FilterImporter(new ExtractionFilterFactory(toAddTo), null).ImportFilter(null, _filter, null);
+        //    MessageBox.Show("Publish successful");
+        //}
     }
 }

@@ -16,8 +16,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandCreateNewLoadMetadata : BasicCommandExecution, IAtomicCommandWithTarget
 {
-    private Core.Models.Catalogue[] _availableCatalogues;
-    //private Core.Models.Catalogue _catalogue;
+    private Core.EntityFramework.Models.Catalogue[] _availableCatalogues;
+    //private Core.EntityFramework.Models.Catalogue _catalogue;
 
     /// <summary>
     /// The folder to put the new <see cref="LoadMetadata"/> in.  Defaults to <see cref="FolderHelper.Root"/>

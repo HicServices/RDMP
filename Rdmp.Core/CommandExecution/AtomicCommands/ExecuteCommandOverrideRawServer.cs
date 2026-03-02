@@ -37,9 +37,9 @@ public class ExecuteCommandOverrideRawServer : BasicCommandExecution, IAtomicCom
 
         if (_server == null)
         {
-            if (SelectOne(_available, out var selected))
-                _server = selected;
-            else
+            //if (SelectOne(_available, out var selected))
+            //    _server = selected;
+            //else
                 return;
         }
 

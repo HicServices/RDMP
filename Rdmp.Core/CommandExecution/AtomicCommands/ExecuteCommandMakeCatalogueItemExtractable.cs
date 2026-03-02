@@ -4,7 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
@@ -14,6 +14,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandMakeCatalogueItemExtractable : BasicCommandExecution, IAtomicCommand
 {
+    //TODO borked in the name of EF
     private readonly CatalogueItem _catalogueItem;
 
     public ExecuteCommandMakeCatalogueItemExtractable(IBasicActivateItems activator, CatalogueItem catalogueItem) :
@@ -35,18 +36,18 @@ public class ExecuteCommandMakeCatalogueItemExtractable : BasicCommandExecution,
         base.Execute();
 
         //Create a new ExtractionInformation (contains the transform sql / column name)
-        var newExtractionInformation = new ExtractionInformation(BasicActivator.RepositoryLocator.CatalogueDbContext,
-            _catalogueItem, _catalogueItem.ColumnInfo, _catalogueItem.ColumnInfo.Name);
+        //var newExtractionInformation = new ExtractionInformation(BasicActivator.RepositoryLocator.CatalogueDbContext,
+        //    _catalogueItem, _catalogueItem.ColumnInfo, _catalogueItem.ColumnInfo.Name);
 
-        //it will be Core but if the Catalogue is ProjectSpecific then instead we should make our new ExtractionInformation ExtractionCategory.ProjectSpecific
-        if (_catalogueItem.Catalogue.IsProjectSpecific(BasicActivator.RepositoryLocator.CatalogueDbContext))
-        {
-            newExtractionInformation.ExtractionCategory = ExtractionCategory.ProjectSpecific;
-            newExtractionInformation.SaveToDatabase();
-        }
+        ////it will be Core but if the Catalogue is ProjectSpecific then instead we should make our new ExtractionInformation ExtractionCategory.ProjectSpecific
+        //if (_catalogueItem.Catalogue.IsProjectSpecific(BasicActivator.RepositoryLocator.CatalogueDbContext))
+        //{
+        //    newExtractionInformation.ExtractionCategory = ExtractionCategory.ProjectSpecific;
+        //    newExtractionInformation.SaveToDatabase();
+        //}
 
-        Publish(_catalogueItem);
-        Activate(newExtractionInformation);
+        //Publish(_catalogueItem);
+        //Activate(newExtractionInformation);
     }
 
     public override string GetCommandName() => "Make Extractable";
