@@ -7,6 +7,7 @@ using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Providers;
 using Rdmp.UI.ItemActivation;
+using Rdmp.UI.ProjectUI;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using System;
 using System.Collections.Generic;
@@ -122,6 +123,15 @@ namespace Rdmp.UI.SimpleDialogs.Cohorts
             if (selected != null)
             {
                 Result = selected as Project;
+                if (_currentProject != null)
+                {
+                    var projectSpecificCatalogues = _currentProject.GetAllProjectCatalogues().Where(p => p.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository));
+                    foreach (var psc in projectSpecificCatalogues)
+                    {
+                        var cmd = new ExecuteCommandMakeCatalogueProjectSpecific(_activator, psc, Result, true);
+                        cmd.Execute();
+                    }
+                }
                 DialogResult = DialogResult.OK;
                 Close();
             }

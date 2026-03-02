@@ -208,7 +208,6 @@ public enum RDMPConcept
     LoadMetadataCatalogueLinkage,
     Setting,
     TicketingSystemReleaseStatus,
-    CommittedCohortIdentificationNode,
     AllDatasetsNode,
     RegexRedaction,
     RegexRedactionConfiguration,
