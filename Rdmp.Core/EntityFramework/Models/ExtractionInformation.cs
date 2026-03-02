@@ -7,6 +7,11 @@ namespace Rdmp.Core.EntityFramework.Models
     [Table("ExtractionInformation")]
     public class ExtractionInformation: DatabaseObject
     {
+        [Key]
+        public override int ID { get; set; }
+
+        [NotMapped]
+        public override RDMPDbContext CatalogueDbContext { get; set; }
 
         [Required]
         public int CatalogueItem_ID { get; set; }

@@ -43,7 +43,7 @@ public class MemoryRepository : IRepository
         where T : IMapsDirectlyToDatabaseTable
     {
         NextObjectId++;
-        toCreate.ID = NextObjectId;
+        //toCreate.ID = NextObjectId;
 
         foreach (var kvp in constructorParameters)
         {

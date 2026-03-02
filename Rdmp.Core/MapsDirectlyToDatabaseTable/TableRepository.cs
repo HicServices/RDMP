@@ -661,7 +661,7 @@ public abstract class TableRepository : ITableRepository
         foreach (var prop in GetPropertyInfos(typeof(T)))
             prop.SetValue(toCreate, prop.GetValue(actual));
 
-        toCreate.CatalogueDbContext = actual.CatalogueDbContext;
+        //toCreate.CatalogueDbContext = actual.CatalogueDbContext;
 
         NewObjectPool.Add(toCreate);
 

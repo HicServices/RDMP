@@ -34,7 +34,7 @@ namespace Rdmp.Core.Curation.Data;
 /// 
 /// </summary>
 public interface ICatalogue : IHasDependencies, IHasQuerySyntaxHelper, INamed, IMightBeDeprecated, IInjectKnown,
-    ICheckable, IHasFolder
+    ICheckable, IHasFolder, IMapsDirectlyToDatabaseTable
 {
     ///// <summary>
     ///// Returns where the object exists (e.g. database) as <see cref="RDMPDbContext"/> or null if the object does not exist in a catalogue repository.

@@ -9,7 +9,11 @@ namespace Rdmp.Core.EntityFramework.Models
     [Table("ColumnInfo")]
     public class ColumnInfo: DatabaseObject
     {
+        [Key]
+        public override  int ID { get; set; }
 
+        [NotMapped]
+        public override RDMPDbContext CatalogueDbContext { get; set; }
         [Required]
         [MaxLength(500)]
         public string Name { get; set; }

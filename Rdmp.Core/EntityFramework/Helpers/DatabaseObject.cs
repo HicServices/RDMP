@@ -15,11 +15,9 @@ namespace Rdmp.Core.EntityFramework.Helpers
 {
     public  class DatabaseObject: IMapsDirectlyToDatabaseTable
     {
-        [Key]
-        public int ID { get; set; }
+        public virtual int ID { get; set; }
 
-        [NotMapped]
-        public virtual RDMPDbContext CatalogueDbContext { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public virtual RDMPDbContext CatalogueDbContext { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 

@@ -64,7 +64,7 @@ public sealed class CachingPipelineUseCase : PipelineUseCase
         if (_pipeline == null && throwIfNoPipeline)
             throw new Exception($"CacheProgress {_cacheProgress} does not have a Pipeline configured on it");
 
-        AddInitializationObject(_cacheProgress.CatalogueDbContext);
+        AddInitializationObject(_cacheProgress);
 
         // Get the LoadDirectory for the engine initialization
         var lmd = _cacheProgress.LoadProgress.LoadMetadata;

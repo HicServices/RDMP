@@ -24,13 +24,11 @@ public interface IMapsDirectlyToDatabaseTable : INotifyPropertyChanged//IDeletea
     /// Every database table that stores an <see cref="IMapsDirectlyToDatabaseTable"/> must have an identity column called ID which must be the primary key.
     /// Therefore for a given <see cref="IRepository"/> this uniquely identifies a given object.
     /// </summary>
-    [Key]
-    int ID { get; set; }
+    /// 
 
 
-    [NoMappingToDatabase]
-    RDMPDbContext CatalogueDbContext { get; set; }
-
+    public int ID { get; }
+    public RDMPDbContext CatalogueDbContext { get; }
 
     //void SetReadOnly();
 

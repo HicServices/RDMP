@@ -18,7 +18,11 @@ namespace Rdmp.Core.EntityFramework.Models
     [Table("Catalogue")]
     public class Catalogue : DatabaseObject, IHasFolder
     {
+        [Key]
+        public override int ID { get; set; }
 
+        [NotMapped]
+        public override RDMPDbContext CatalogueDbContext { get; set; }
         [MaxLength(100)]
         public string Acronym { get; set => SetField(ref field, value); }
 
