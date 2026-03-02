@@ -6,8 +6,10 @@ using Rdmp.Core.DataExport.DataExtraction.Commands;
 using Rdmp.Core.DataExport.DataRelease.Pipeline;
 using Rdmp.Core.DataExport.DataRelease.Potential;
 using Rdmp.Core.DataFlowPipeline;
+using Rdmp.Core.DataLoad.Triggers;
 using Rdmp.Core.DataLoad.Triggers.Exceptions;
 using Rdmp.Core.DataLoad.Triggers.Implementations;
+using Rdmp.Core.Logging;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
@@ -132,6 +134,32 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
 
             if (UseArchiveTrigger)
             {
+
+                var listeners = ((ForkDataLoadEventListener)job).GetToLoggingDatabaseDataLoadEventListenersIfany();
+                foreach (var dleListener in listeners)
+                {
+                    IDataLoadInfo dataLoadInfo = dleListener.DataLoadInfo;
+                    DataColumn newColumn = new(SpecialFieldNames.DataLoadRunID, typeof(int))
+                    {
+                        DefaultValue = dataLoadInfo.ID
+                    };
+                    try
+                    {
+                        destinationTable.DiscoverColumn(SpecialFieldNames.DataLoadRunID);
+                    }
+                    catch (Exception)
+                    {
+                        destinationTable.AddColumn(SpecialFieldNames.DataLoadRunID, new DatabaseTypeRequest(typeof(int)), true, 30000);
+
+                    }
+                    if (!toProcess.Columns.Contains(SpecialFieldNames.DataLoadRunID))
+                        toProcess.Columns.Add(newColumn);
+                    foreach (DataRow dr in toProcess.Rows)
+                        dr[SpecialFieldNames.DataLoadRunID] = dataLoadInfo.ID;
+
+                }
+
+
                 TriggerImplementerFactory triggerFactory = new TriggerImplementerFactory(FAnsi.DatabaseType.MicrosoftSQLServer);
                 var implementor = triggerFactory.Create(destinationTable);
                 bool present;
@@ -152,8 +180,10 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
             var pkColumns = toProcess.PrimaryKey;
             var nonPkColumns = toProcess.Columns.Cast<DataColumn>().Where(dc => !pkColumns.Contains(dc)).ToArray();
             //merge
-            var tmpTbl = db.CreateTable(out Dictionary<string, Guesser> _dataTypeDictionary, $"{(DeleteMergeTempTable ? "##" : "")}mergeTempTable_{toProcess.TableName}_{DateTime.Now}", toProcess, null,
-                     true, null);
+            var tmpTbl = db.CreateTable(
+                out Dictionary<string, Guesser> _dataTypeDictionary,
+                $"{(DeleteMergeTempTable ? "##" : "")}mergeTempTable_{toProcess.TableName}_{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff",CultureInfo.InvariantCulture).Replace('.','-')}",
+                toProcess, null,true, null);
             var _managedConnection = tmpTbl.Database.Server.GetManagedConnection();
             var _bulkcopy = tmpTbl.BeginBulkInsert(CultureInfo.CurrentCulture, _managedConnection.ManagedTransaction);
             _bulkcopy.Upload(toProcess);
