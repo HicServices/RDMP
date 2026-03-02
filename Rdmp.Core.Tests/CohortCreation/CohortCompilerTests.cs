@@ -242,7 +242,7 @@ public class CohortCompilerTests : CohortIdentificationTests
         cohortIdentificationConfiguration.SaveToDatabase();
 
         compiler.AddAllTasks(true);
-        Assert.That(compiler.Tasks.Keys.Select(k => k.State).Where(s => s == CompilationState.Crashed).ToList(), Has.Count.EqualTo(2));
+        Assert.That(compiler.Tasks.Keys.Select(k => k.State).Where(s => s == CompilationState.Crashed).ToList(), Has.Count.EqualTo(3));
         Assert.That(compiler.Tasks.Keys.Where(s => s.State == CompilationState.Crashed).Select(k => k.CrashMessage.Message).ToList().Contains("Catalogue BulkData is marked as Project Specific, but this Cohort Identification Configurations is not associated with the same Project."));
     }
     [Test]
