@@ -29,6 +29,9 @@ using TypeGuesser;
 
 namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
 {
+    /// <summary>
+    /// Use for simple merges int oa sql db
+    /// </summary>
     public class MSSqlMergeDestination : ExtractionDestination
     {
         [DemandsInitialization(
