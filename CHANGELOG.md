@@ -8,12 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add Internal Note to Catalogue
 - Fix issue where project associations were not copied when a CIC was cloned
 - Fix issue with using Internal Catalogues in Cohort Identification Configurations
+- Simplify Project Cohorts tree
 - Fix bug with copying project specific Catalogues between Projects when committing a Cohort
 - Remove Tree filters from UI
 - Fix issue with Web File Downloader not releasing files after download complete
 - Fix Extraction primary Key case sensitivity issue
-
-## [9.1.2] - Unreleased
 - Automatically fetch user settings from previous versions of RDMP when installing the latest version
 - Allow new columns to be added to archive extractions
 - Simplify use of Extraction Progress
