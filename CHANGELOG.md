@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Simplify Project Cohorts tree
 - Fix bug with copying project specific Catalogues between Projects when committing a Cohort
 - Remove Tree filters from UI
+- Fix issue with Web File Downloader not releasing files after download complete
+- Fix Extraction primary Key case sensitivity issue
 - Automatically fetch user settings from previous versions of RDMP when installing the latest version
 - Allow new columns to be added to archive extractions
 - Simplify use of Extraction Progress
