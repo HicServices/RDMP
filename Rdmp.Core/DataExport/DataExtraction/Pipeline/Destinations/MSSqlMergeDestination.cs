@@ -74,15 +74,15 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
         private string GetTableName(string suffix, DataTable dt)
         {
             string tblName;
-            if (!string.IsNullOrWhiteSpace(dt.TableName))
-            {
-                tblName = SanitizeNameForDatabase(dt.TableName);
+            //if (!string.IsNullOrWhiteSpace(dt.TableName))
+            //{
+            //    tblName = SanitizeNameForDatabase(dt.TableName);
 
-                if (!string.IsNullOrWhiteSpace(suffix))
-                    tblName += $"_{suffix}";
+            //    if (!string.IsNullOrWhiteSpace(suffix))
+            //        tblName += $"_{suffix}";
 
-                return tblName;
-            }
+            //    //return tblName;
+            //}
 
             tblName = TableNamingPattern;
             var project = _request.Configuration.Project;
