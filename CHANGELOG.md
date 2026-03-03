@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix issue with using Internal Catalogues in Cohort Identification Configurations
 - Fix bug with copying project specific Catalogues between Projects when committing a Cohort
 - Remove Tree filters from UI
-- Fix issue with Web File Downloader not releasing files after download
+- Fix issue with Web File Downloader not releasing files after download complete
 - Fix Extraction primary Key case sensitivity issue
 
 ## [9.1.2] - Unreleased
