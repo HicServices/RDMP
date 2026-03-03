@@ -93,9 +93,9 @@ public class ExecuteCommandViewFilterMatchData : ExecuteCommandViewDataBase, IAt
             SetImpossible("Filter has no Catalogue");
             return null;
         }
-
-        return catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Select(e => e.ColumnInfo)
-            .Where(c => c != null).Distinct().ToArray();
+        return null;
+        //return catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Select(e => e.ColumnInfo)
+        //    .Where(c => c != null).Distinct().ToArray();
     }
 
     protected ExecuteCommandViewFilterMatchData(IBasicActivateItems activator, ViewType viewType, FileInfo toFile) :

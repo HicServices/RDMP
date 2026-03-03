@@ -534,7 +534,8 @@ public class MemoryRDMPDbContext : MemoryRepository, ICatalogueRepository, ITabl
                     break;
                 }
             case CatalogueItem catalogueItem:
-                catalogueItem.ExtractionInformation?.DeleteInDatabase();
+                catalogueItem.ExtractionInformation?.CatalogueDbContext.Remove(catalogueItem.ExtractionInformation);
+                catalogueItem.ExtractionInformation?.CatalogueDbContext.SaveChanges();
                 break;
         }
     }

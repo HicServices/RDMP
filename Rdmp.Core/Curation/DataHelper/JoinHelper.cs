@@ -22,11 +22,11 @@ public class JoinHelper
     /// <returns></returns>
     public static string GetJoinSQL(IJoin join)
     {
-        TableInfo fkTable = null;
+        EntityFramework.Models.TableInfo fkTable = null;
         if (join.ForeignKey != null)
             fkTable = join.ForeignKey.TableInfo;
 
-        TableInfo pkTable = null;
+        EntityFramework.Models.TableInfo pkTable = null;
         if (join.PrimaryKey != null)
             pkTable = join.PrimaryKey.TableInfo;
 
@@ -83,11 +83,11 @@ public class JoinHelper
     /// <returns></returns>
     public static string GetJoinSQLForeignKeySideOnly(IJoin join)
     {
-        TableInfo fkTable = null;
+        EntityFramework.Models.TableInfo fkTable = null;
         if (join.ForeignKey != null)
             fkTable = join.ForeignKey.TableInfo;
 
-        TableInfo pkTable = null;
+        EntityFramework.Models.TableInfo pkTable = null;
         if (join.PrimaryKey != null)
             pkTable = join.PrimaryKey.TableInfo;
 
@@ -124,11 +124,11 @@ public class JoinHelper
     /// <returns></returns>
     public static string GetJoinSQLPrimaryKeySideOnly(IJoin join, int aliasNumber = -1)
     {
-        TableInfo fkTable = null;
+        EntityFramework.Models.TableInfo fkTable = null;
         if (join.ForeignKey != null)
             fkTable = join.ForeignKey.TableInfo;
 
-        TableInfo pkTable = null;
+        EntityFramework.Models.TableInfo pkTable = null;
         if (join.PrimaryKey != null)
             pkTable = join.PrimaryKey.TableInfo;
 

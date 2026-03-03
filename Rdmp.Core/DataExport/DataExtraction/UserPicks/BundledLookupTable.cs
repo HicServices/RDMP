@@ -88,7 +88,7 @@ public class BundledLookupTable : IBundledLookupTable
     /// </summary>
     /// <param name="arg"></param>
     /// <returns></returns>
-    private bool IsLookupOnlyCatalogue(Catalogue arg)
+    private bool IsLookupOnlyCatalogue(EntityFramework.Models.Catalogue arg)
     {
         var tables = arg.GetTableInfoList(true);
         return tables.Length == 1 && tables[0].ID == TableInfo.ID;

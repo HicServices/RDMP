@@ -155,7 +155,7 @@ public class ExecuteCommandCreateNewCatalogueByImportingFile : CatalogueCreation
                 $"Destination of engine claimed to have created {tbl.GetFullyQualifiedName()} but it did not exist");
 
         var importer = new TableInfoImporter(BasicActivator.RepositoryLocator.CatalogueDbContext, tbl);
-        importer.DoImport(out var ti, out _);
+        importer.DoImport(out var ti, out EntityFramework.Models.ColumnInfo[] _);
         var extractionIdentifiers = _extractionIdentifier is null ? null : ti.ColumnInfos.Where(t => t.Name == _extractionIdentifier).ToArray();
         var cata = BasicActivator.CreateAndConfigureCatalogue(ti, extractionIdentifiers,
             $"Import of file '{File.FullName}' by {Environment.UserName} on {DateTime.Now}", ProjectSpecific,

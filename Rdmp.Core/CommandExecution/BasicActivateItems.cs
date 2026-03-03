@@ -689,7 +689,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
 
     /// <inheritdoc/>
     public virtual ICatalogue CreateAndConfigureCatalogue(ITableInfo tableInfo,
-        ColumnInfo[] extractionIdentifierColumns, string initialDescription, IProject projectSpecific,
+        EntityFramework.Models.ColumnInfo[] extractionIdentifierColumns, string initialDescription, IProject projectSpecific,
         string catalogueFolder)
     {
         // Create a new Catalogue based on the table info

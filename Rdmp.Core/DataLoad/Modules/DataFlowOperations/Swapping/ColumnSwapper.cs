@@ -43,11 +43,11 @@ internal class ColumnSwapper : IPluginDataFlowComponent<DataTable>, IPipelineOpt
 
     [DemandsInitialization("The column in your database which stores the input values you want mapped",
         Mandatory = true)]
-    public ColumnInfo MappingFromColumn { get; set; }
+    public EntityFramework.Models.ColumnInfo MappingFromColumn { get; set; }
 
     [DemandsInitialization("The column in your database which stores the output values you want emitted",
         Mandatory = true)]
-    public ColumnInfo MappingToColumn { get; set; }
+    public EntityFramework.Models.ColumnInfo MappingToColumn { get; set; }
 
     [DemandsInitialization(@"Optional text to add when generating the mapping table. Should not start with WHERE.
 

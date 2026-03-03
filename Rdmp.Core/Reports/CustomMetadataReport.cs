@@ -133,26 +133,26 @@ public partial class CustomMetadataReport
     private void AddDQEReplacements()
     {
         // Catalogue level shortcuts
-        Replacements.Add("$DQE_StartDate",
-            c => GetStartDate(c)?.ToString());
-        Replacements.Add("$DQE_EndDate",
-            c => GetEndDate(c)?.ToString());
+        //Replacements.Add("$DQE_StartDate",
+        //    c => GetStartDate(c)?.ToString());
+        //Replacements.Add("$DQE_EndDate",
+        //    c => GetEndDate(c)?.ToString());
         Replacements.Add("$DQE_DateRange",
             c => TimespanCalculator?.GetHumanReadableTimespanIfKnownOf(c, true, out _));
 
-        Replacements.Add("$DQE_StartYear",
-            c => GetStartDate(c)?.ToString("yyyy"));
-        Replacements.Add("$DQE_StartMonth",
-            c => GetStartDate(c)?.ToString("MM"));
-        Replacements.Add("$DQE_StartDay",
-            c => GetStartDate(c)?.ToString("dd"));
+        //Replacements.Add("$DQE_StartYear",
+        //    c => GetStartDate(c)?.ToString("yyyy"));
+        //Replacements.Add("$DQE_StartMonth",
+        //    c => GetStartDate(c)?.ToString("MM"));
+        //Replacements.Add("$DQE_StartDay",
+        //    c => GetStartDate(c)?.ToString("dd"));
 
-        Replacements.Add("$DQE_EndYear",
-            c => GetEndDate(c)?.ToString("yyyy"));
-        Replacements.Add("$DQE_EndMonth",
-            c => GetEndDate(c)?.ToString("MM"));
-        Replacements.Add("$DQE_EndDay",
-            c => GetEndDate(c)?.ToString("dd"));
+        //Replacements.Add("$DQE_EndYear",
+        //    c => GetEndDate(c)?.ToString("yyyy"));
+        //Replacements.Add("$DQE_EndMonth",
+        //    c => GetEndDate(c)?.ToString("MM"));
+        //Replacements.Add("$DQE_EndDay",
+        //    c => GetEndDate(c)?.ToString("dd"));
 
         Replacements.Add("$DQE_DateOfEvaluation",
             c => GetFromEvaluation(c, static e => e.DateOfEvaluation));
@@ -206,7 +206,7 @@ public partial class CustomMetadataReport
         return total == 0 ? null : $"{(int)(columnStats.CountDBNull / (double)total * 100)}%";
     }
 
-    private Evaluation GetEvaluation(CatalogueItem ci) => GetEvaluation(ci.Catalogue);
+    private Evaluation GetEvaluation(CatalogueItem ci) => null;// GetEvaluation(ci.Catalogue);
 
     private Evaluation GetEvaluation(Catalogue c)
     {
@@ -219,10 +219,10 @@ public partial class CustomMetadataReport
         return evaluation;
     }
 
-    private DateTime? GetStartDate(Catalogue c) =>
+    private DateTime? GetStartDate(Core.EntityFramework.Models.Catalogue c) =>
         TimespanCalculator?.GetMachineReadableTimespanIfKnownOf(c, true, out _)?.Item1;
 
-    private DateTime? GetEndDate(Catalogue c) =>
+    private DateTime? GetEndDate(Core.EntityFramework.Models.Catalogue c) =>
         TimespanCalculator?.GetMachineReadableTimespanIfKnownOf(c, true, out _)?.Item2;
 
     /// <summary>

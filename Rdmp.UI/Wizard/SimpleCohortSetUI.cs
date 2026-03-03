@@ -131,8 +131,8 @@ public partial class SimpleCohortSetUI : UserControl
             UnlockIdentifier(null);
         }
 
-        var allFilters = allColumns.SelectMany(c => c.ExtractionFilters).ToArray();
-        ddAvailableFilters.DataSource = allFilters;
+        //var allFilters = allColumns.SelectMany(c => c.ExtractionFilters).ToArray();
+        //ddAvailableFilters.DataSource = allFilters;
 
         _lastCatalogue = cata;
     }
@@ -144,7 +144,7 @@ public partial class SimpleCohortSetUI : UserControl
         ddAndOr.Enabled = false;
     }
 
-    private void LockIdentifier(ExtractionInformation extractionInformation)
+    private void LockIdentifier(Core.EntityFramework.Models.ExtractionInformation extractionInformation)
     {
         cbxColumns.Enabled = false;
         cbxColumns.SelectedItem = extractionInformation;
@@ -154,7 +154,7 @@ public partial class SimpleCohortSetUI : UserControl
         if (!extractionInformation.IsExtractionIdentifier)
         {
             extractionInformation.IsExtractionIdentifier = true;
-            extractionInformation.SaveToDatabase();
+            extractionInformation.CatalogueDbContext.SaveChanges();
         }
 
         lockIn = false;
@@ -179,7 +179,7 @@ public partial class SimpleCohortSetUI : UserControl
     private void btnLockExtractionIdentifier_Click(object sender, EventArgs e)
     {
         if (lockIn)
-            LockIdentifier(cbxColumns.SelectedItem as ExtractionInformation);
+            LockIdentifier(cbxColumns.SelectedItem as Core.EntityFramework.Models.ExtractionInformation);
         else
             UnlockIdentifier(cbxColumns.SelectedItem as ExtractionInformation);
     }

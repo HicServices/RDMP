@@ -67,9 +67,9 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
             
             if (_discoveredPKColumns.Length != 0)
             {
-                _cataloguePKs = _catalogue.CatalogueItems.Where(c => c.ColumnInfo.IsPrimaryKey).ToList();
+                _cataloguePKs = new List<CatalogueItem>();//_catalogue.CatalogueItems.Where(c => c.ColumnInfo.IsPrimaryKey).ToList();
                 var qb = new QueryBuilder(null, null, null);
-                qb.AddColumn(new ColumnInfoToIColumn(memoryRepo, columnInfo));
+                //qb.AddColumn(new ColumnInfoToIColumn(memoryRepo, columnInfo));
                 foreach (var pk in _discoveredPKColumns)
                 {
                     var cataloguePk = _cataloguePKs.FirstOrDefault(c => c.ColumnInfo.GetRuntimeName() == pk.GetRuntimeName());
@@ -96,10 +96,11 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
                 
                 redactionUpdates = dt.Clone();
                 redactionUpdates.BeginLoadData();
-                foreach (DataRow row in dt.Rows)
-                {
-                    RegexRedactionHelper.Redact(columnInfo, row, _cataloguePKs, _redactionConfiguration, redactionsToSaveTable, pksToSave, redactionUpdates);
-                }
+                //TODO fix
+                //foreach (DataRow row in dt.Rows)
+                //{
+                //    RegexRedactionHelper.Redact(columnInfo, row, _cataloguePKs, _redactionConfiguration, redactionsToSaveTable, pksToSave, redactionUpdates);
+                //}
                 redactionUpdates.EndLoadData();
                 if(pksToSave.Rows.Count == 0)
                 {
@@ -126,10 +127,12 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
                 RegexRedactionHelper.SaveRedactions(_activator.RepositoryLocator.CatalogueDbContext, t1, t2, _server);
                 t1.Drop();
                 t2.Drop();
-                if (dt.Rows.Count > 0)
-                {
-                    RegexRedactionHelper.DoJoinUpdate(columnInfo, _discoveredTable, _server, redactionUpdates, _discoveredPKColumns);
-                }
+
+                //TODO fix
+                //if (dt.Rows.Count > 0)
+                //{
+                //    RegexRedactionHelper.DoJoinUpdate(columnInfo, _discoveredTable, _server, redactionUpdates, _discoveredPKColumns);
+                //}
                 dt.Dispose();
             }
             else

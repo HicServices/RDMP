@@ -127,6 +127,12 @@ public class JoinInfo : DatabaseEntity, IJoin, IHasDependencies
     [NoMappingToDatabase]
     public ColumnInfo PrimaryKey => _primaryKey ??= CatalogueDbContext.GetObjectByID<ColumnInfo>(PrimaryKey_ID);
 
+    EntityFramework.Models.ColumnInfo IJoin.ForeignKey => throw new NotImplementedException();
+
+    EntityFramework.Models.ColumnInfo IJoin.PrimaryKey => throw new NotImplementedException();
+
+    int IJoin.ExtractionJoinType => throw new NotImplementedException();
+
     #endregion
 
     public JoinInfo()
@@ -194,12 +200,13 @@ public class JoinInfo : DatabaseEntity, IJoin, IHasDependencies
     public IEnumerable<ISupplementalJoin> GetSupplementalJoins()
     {
         //Supplemental Joins are not currently supported by JoinInfo, only Lookups
-        return _queryTimeComboJoins.Select(j => new QueryTimeComboJoin
-        {
-            Collation = j.Collation,
-            PrimaryKey = j.PrimaryKey,
-            ForeignKey = j.ForeignKey
-        });
+        //return _queryTimeComboJoins.Select(j => new QueryTimeComboJoin
+        //{
+        //    Collation = j.Collation,
+        //    PrimaryKey = j.PrimaryKey,
+        //    ForeignKey = j.ForeignKey
+        //});
+        return new List<ISupplementalJoin>();
     }
 
     /// <inheritdoc/>
@@ -213,17 +220,17 @@ public class JoinInfo : DatabaseEntity, IJoin, IHasDependencies
         };
     }
 
-    private class QueryTimeComboJoin : ISupplementalJoin
-    {
-        /// <inheritdoc cref="IJoin.ForeignKey"/>
-        public ColumnInfo ForeignKey { get; set; }
+    //private class QueryTimeComboJoin : ISupplementalJoin
+    //{
+    //    /// <inheritdoc cref="IJoin.ForeignKey"/>
+    //    public ColumnInfo ForeignKey { get; set; }
 
-        /// <inheritdoc cref="IJoin.PrimaryKey"/>
-        public ColumnInfo PrimaryKey { get; set; }
+    //    /// <inheritdoc cref="IJoin.PrimaryKey"/>
+    //    public ColumnInfo PrimaryKey { get; set; }
 
-        /// <inheritdoc cref="IJoin.Collation"/>
-        public string Collation { get; set; }
-    }
+    //    /// <inheritdoc cref="IJoin.Collation"/>
+    //    public string Collation { get; set; }
+    //}
 
 
     /// <summary>

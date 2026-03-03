@@ -7,6 +7,7 @@
 using System.Collections.Generic;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.QueryBuilding.Parameters;
 
 namespace Rdmp.Core.QueryBuilding;
@@ -75,7 +76,7 @@ public interface ISqlQueryBuilder
     bool CheckSyntax { get; set; }
 
     /// <summary>
-    /// The single <see cref="TableInfo"/> amongst <see cref="TablesUsedInQuery"/> that was <see cref="TableInfo.IsPrimaryExtractionTable"/>
+    /// The single <see cref="ITableInfo"/> amongst <see cref="TablesUsedInQuery"/> that was <see cref="EntityFramework.Models.TableInfo.IsPrimaryExtractionTable"/>
     /// </summary>
     ITableInfo PrimaryExtractionTable { get; }
 
@@ -106,12 +107,12 @@ public interface ISqlQueryBuilder
     void RegenerateSQL();
 
     /// <summary>
-    /// Returns all the <see cref="Lookup"/> classes found and used in the query.
+    /// Returns all the <see cref="EntityFramework.Models.Lookup"/> classes found and used in the query.
     /// 
-    /// <para>This only happens if you have a <see cref="Lookup"/> configured and your query has both the code column and the description column in its SELECT columns</para>
+    /// <para>This only happens if you have a <see cref="EntityFramework.Models.Lookup"/> configured and your query has both the code column and the description column in its SELECT columns</para>
     /// </summary>
     /// <returns></returns>
-    IEnumerable<Lookup> GetDistinctRequiredLookups();
+    IEnumerable<EntityFramework.Models.Lookup> GetDistinctRequiredLookups();
 
     /// <summary>
     /// List of all added CustomLines so far, use <see cref="AddCustomLine"/> to add new ones.

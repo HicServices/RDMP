@@ -1,10 +1,19 @@
-﻿using MongoDB.Driver;
+﻿using FAnsi;
+using FAnsi.Discovery;
+using FAnsi.Discovery.QuerySyntax;
+using MongoDB.Driver;
+using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.EntityFramework;
 using Rdmp.Core.EntityFramework.Helpers;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
+using Rdmp.Core.Providers;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Annotations;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,7 +25,7 @@ using System.Runtime.CompilerServices;
 namespace Rdmp.Core.EntityFramework.Models
 {
     [Table("Catalogue")]
-    public class Catalogue : DatabaseObject, IHasFolder
+    public class Catalogue : DatabaseObject, IHasFolder,ICatalogue
     {
         [Key]
         public override int ID { get; set; }
@@ -97,6 +106,22 @@ namespace Rdmp.Core.EntityFramework.Models
 
         public virtual ICollection<CatalogueItem> CatalogueItems { get; set; }
         public virtual ICollection<LoadMetadata> LoadMetadatas { get; set; }
+        public string LoggingDataTask { get; set; }
+        public int? LiveLoggingServer_ID { get; set; }
+        public string ValidatorXML { get; set; }
+        public int? TimeCoverage_ExtractionInformation_ID { get; set; }
+        public int? PivotCategory_ExtractionInformation_ID { get; set; }
+        Curation.Data.Catalogue.CataloguePeriodicity ICatalogue.Periodicity { get; set; }
+
+        public Curation.Data.ExtractionInformation TimeCoverage_ExtractionInformation => throw new NotImplementedException();
+
+        public Curation.Data.ExtractionInformation PivotCategory_ExtractionInformation => throw new NotImplementedException();
+
+        public AggregateConfiguration[] AggregateConfigurations => Array.Empty<AggregateConfiguration>();
+
+        public Curation.Data.ExternalDatabaseServer LiveLoggingServer => throw new NotImplementedException();
+
+        CatalogueItem[] ICatalogue.CatalogueItems => this.CatalogueItems.ToArray();
 
         public override string ToString() => Name;
 
@@ -124,6 +149,152 @@ namespace Rdmp.Core.EntityFramework.Models
                 default:
                     return CatalogueItems.ToList();
             }
+        }
+
+        public IEnumerable<ExtractionInformation> GetAllExtractionInformation(ExtractionCategory category)
+        {
+            return CatalogueItems.Select(ci => ci.ExtractionInformation).Where(ei => ei.GetExtractionCategory() == category);
+        }
+
+        public ITableInfo[] GetTableInfoList(bool includeLookupTables)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ITableInfo[] GetLookupTableInfoList()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void GetTableInfos(out List<ITableInfo> normalTables, out List<ITableInfo> lookupTables)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void GetTableInfos(ICoreChildProvider provider, out List<ITableInfo> normalTables, out List<ITableInfo> lookupTables)
+        {
+            throw new NotImplementedException();
+        }
+
+        public DiscoveredServer GetDistinctLiveDatabaseServer(DataAccessContext context, bool setInitialDatabase, out IDataAccessPoint distinctAccessPoint)
+        {
+            throw new NotImplementedException();
+        }
+
+        public DiscoveredServer GetDistinctLiveDatabaseServer(DataAccessContext context, bool setInitialDatabase)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ITableInfo[] GetTableInfosIdeallyJustFromMainTables()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Curation.Data.SupportingSQLTable[] GetAllSupportingSQLTablesForCatalogue(FetchOptions fetch)
+        {
+            throw new NotImplementedException();
+        }
+
+        Curation.Data.ExtractionInformation[] ICatalogue.GetAllExtractionInformation(ExtractionCategory category)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Curation.Data.ExtractionInformation[] GetAllExtractionInformation()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Curation.Data.SupportingDocument[] GetAllSupportingDocuments(FetchOptions fetch)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ExtractionFilter[] GetAllMandatoryFilters()
+        {
+            throw new NotImplementedException();
+        }
+
+        public ExtractionFilter[] GetAllFilters()
+        {
+            throw new NotImplementedException();
+        }
+
+        public DatabaseType? GetDistinctLiveDatabaseServerType()
+        {
+            throw new NotImplementedException();
+        }
+
+        public CatalogueExtractabilityStatus GetExtractabilityStatus(RDMPDbContext catalogueDbContext)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ICatalogue ShallowClone()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool IsApiCall()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool IsApiCall(out IPluginCohortCompiler plugin)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool IsProjectSpecific(RDMPDbContext catalogueDbContext)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IHasDependencies[] GetObjectsThisDependsOn()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IHasDependencies[] GetObjectsDependingOnThis()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IQuerySyntaxHelper GetQuerySyntaxHelper()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RevertToDatabaseState()
+        {
+            throw new NotImplementedException();
+        }
+
+        public RevertableObjectReport HasLocalChanges()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Exists()
+        {
+            return true;
+            //throw new NotImplementedException();
+        }
+
+        public void SaveToDatabase()
+        {
+            //throw new NotImplementedException();
+        }
+
+        public void ClearAllInjections()
+        {
+            //throw new NotImplementedException();
+        }
+
+        public void Check(ICheckNotifier notifier)
+        {
+            //throw new NotImplementedException();
         }
 
 

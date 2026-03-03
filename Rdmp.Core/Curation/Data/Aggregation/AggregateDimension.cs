@@ -144,6 +144,8 @@ public class AggregateDimension : DatabaseEntity, ISaveable, IDeleteable, IColum
     [NoMappingToDatabase]
     public AggregateConfiguration AggregateConfiguration => _knownAggregateConfiguration.Value;
 
+    EntityFramework.Models.ColumnInfo IColumn.ColumnInfo => throw new NotImplementedException();
+
     #endregion
 
     public AggregateDimension()

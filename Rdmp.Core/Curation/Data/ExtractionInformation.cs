@@ -196,7 +196,7 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
     /// <inheritdoc/>
     public void ClearAllInjections()
     {
-        _knownColumninfo = new Lazy<ColumnInfo>(() => CatalogueItem.ColumnInfo);
+        //_knownColumninfo = new Lazy<ColumnInfo>(() => CatalogueItem.ColumnInfo);
         _knownCatalogueItem = new Lazy<CatalogueItem>(() => CatalogueDbContext.GetObjectByID<CatalogueItem>(CatalogueItem_ID));
     }
 

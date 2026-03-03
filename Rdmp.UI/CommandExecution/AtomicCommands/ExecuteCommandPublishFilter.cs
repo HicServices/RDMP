@@ -19,7 +19,7 @@ public class ExecuteCommandPublishFilter : BasicUICommandExecution, IAtomicComma
 {
     private readonly IFilter _filter;
     private Catalogue _catalogue;
-    private ExtractionInformation[] _allExtractionInformations;
+    private Core.EntityFramework.Models.ExtractionInformation[] _allExtractionInformations;
 
     public ExecuteCommandPublishFilter(IActivateItems activator, IFilter filter, Catalogue targetCatalogue) :
         base(activator)

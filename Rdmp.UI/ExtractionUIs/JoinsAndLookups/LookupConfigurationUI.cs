@@ -49,7 +49,7 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
     private Catalogue _catalogue;
     private ToolTip toolTip = new();
     private string _errorMessage = null;
-    private List<ExtractionInformation> _allExtractionInformationFromCatalogue = new();
+    private List<Core.EntityFramework.Models.ExtractionInformation> _allExtractionInformationFromCatalogue = new();
 
     //constructor
     public LookupConfigurationUI()
@@ -75,7 +75,7 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
             cbSelectLookupTable.Items.Add(tb);
         }
         _allExtractionInformationFromCatalogue =
-           new List<ExtractionInformation>(_catalogue.GetAllExtractionInformation(ExtractionCategory.Any));
+           new List<Core.EntityFramework.Models.ExtractionInformation>(_catalogue.GetAllExtractionInformation(ExtractionCategory.Any));
         _allExtractionInformationFromCatalogue.Sort();
         AddRelationOption();
         AddDescriptionOption();
@@ -313,8 +313,8 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
                   Activator.YesNo(
                       $"Also create a virtual extractable column(s) in '{_catalogue}' called '<Column>_Desc'",
                       "Create Extractable Column?");
-            var keyPairs = FKRelations.Where(d => d.SelectedItem != null).Zip(PKRelations.Where(d => d.SelectedItem != null), (x, y) => new Tuple<ColumnInfo, ColumnInfo>((ColumnInfo)x.SelectedItem, (ColumnInfo)y.SelectedItem)).ToList();
-            var descs = Descriptions.Select(d => (ColumnInfo)d.SelectedItem).ToArray();
+            var keyPairs = FKRelations.Where(d => d.SelectedItem != null).Zip(PKRelations.Where(d => d.SelectedItem != null), (x, y) => new Tuple<Core.EntityFramework.Models.ColumnInfo, Core.EntityFramework.Models.ColumnInfo>((Core.EntityFramework.Models.ColumnInfo)x.SelectedItem, (Core.EntityFramework.Models.ColumnInfo)y.SelectedItem)).ToList();
+            var descs = Descriptions.Select(d => (Core.EntityFramework.Models.ColumnInfo)d.SelectedItem).ToArray();
             var foreignKeyExtractionInformation =
                _allExtractionInformationFromCatalogue.SingleOrDefault(e =>
                    e.ColumnInfo != null && e.ColumnInfo.Equals((ColumnInfo)FKRelations[0].SelectedItem)) ??

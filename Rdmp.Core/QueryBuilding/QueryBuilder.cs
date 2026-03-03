@@ -329,7 +329,7 @@ public class QueryBuilder : ISqlQueryBuilder
     }
 
     /// <inheritdoc/>
-    public IEnumerable<Lookup> GetDistinctRequiredLookups() => SqlQueryBuilderHelper.GetDistinctRequiredLookups(this);
+    public IEnumerable<Lookup> GetDistinctRequiredLookups() => new List<Lookup>();//SqlQueryBuilderHelper.GetDistinctRequiredLookups(this);
 
     /// <summary>
     /// Generates Sql to comment, declare and set the initial value for the supplied <see cref="ISqlParameter"/>.
@@ -358,4 +358,9 @@ public class QueryBuilder : ISqlQueryBuilder
 
     public static string GetParameterDeclarationSQL(IEnumerable<ISqlParameter> sqlParameters) =>
         string.Join("", sqlParameters.Select(GetParameterDeclarationSQL));
+
+    IEnumerable<EntityFramework.Models.Lookup> ISqlQueryBuilder.GetDistinctRequiredLookups()
+    {
+        throw new NotImplementedException();
+    }
 }

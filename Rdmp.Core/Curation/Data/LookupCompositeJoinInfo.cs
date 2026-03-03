@@ -70,6 +70,10 @@ public class LookupCompositeJoinInfo : DatabaseEntity, ISupplementalJoin
     [NoMappingToDatabase]
     public ColumnInfo PrimaryKey => CatalogueDbContext.GetObjectByID<ColumnInfo>(PrimaryKey_ID);
 
+    EntityFramework.Models.ColumnInfo ISupplementalJoin.ForeignKey => throw new NotImplementedException();
+
+    EntityFramework.Models.ColumnInfo ISupplementalJoin.PrimaryKey => throw new NotImplementedException();
+
     #endregion
 
     public LookupCompositeJoinInfo()

@@ -127,9 +127,9 @@ public partial class ViewExtractionSqlUI : ViewExtractionSql_Design
         }
     }
 
-    private void SetupAvailableFilters(List<ExtractionInformation> extractionInformations)
+    private void SetupAvailableFilters(List<Core.EntityFramework.Models.ExtractionInformation> extractionInformations)
     {
-        var filters = extractionInformations.SelectMany(ei => ei.ExtractionFilters).ToArray();
+        var filters = Array.Empty<ExtractionFilter>();// extractionInformations.SelectMany(ei => ei.ExtractionFilters).ToArray();
 
         //remove deleted ones
         if (olvFilters.Objects != null)
@@ -142,9 +142,9 @@ public partial class ViewExtractionSqlUI : ViewExtractionSql_Design
                 olvFilters.AddObject(f);
     }
 
-    private List<ExtractionInformation> GetSelectedExtractionInformations()
+    private List<Core.EntityFramework.Models.ExtractionInformation> GetSelectedExtractionInformations()
     {
-        var extractionInformations = new List<ExtractionInformation>();
+        var extractionInformations = new List<Core.EntityFramework.Models.ExtractionInformation>();
 
         if (rbInternal.Checked)
         {
@@ -175,7 +175,7 @@ public partial class ViewExtractionSqlUI : ViewExtractionSql_Design
         return extractionInformations;
     }
 
-    private ViewCatalogueDataCollection GetCollection(List<ExtractionInformation> extractionInformations)
+    private ViewCatalogueDataCollection GetCollection(List<Core.EntityFramework.Models.ExtractionInformation> extractionInformations)
     {
         var collection = new ViewCatalogueDataCollection(_catalogue);
         collection.DatabaseObjects.AddRange(olvFilters.CheckedObjects.OfType<IFilter>());

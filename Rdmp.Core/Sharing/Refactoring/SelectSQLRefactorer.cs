@@ -204,8 +204,9 @@ public class SelectSQLRefactorer
         }
 
         //Rename all ColumnInfos that belong to this TableInfo
-        foreach (var columnInfo in tableInfo.ColumnInfos)
-            updatesMade += RefactorTableName(columnInfo, oldFullyQualifiedTableName, newFullyQualifiedTableName);
+        //TODO fix this - see github, it's borked
+        //foreach (var columnInfo in tableInfo.ColumnInfos)
+        //    updatesMade += RefactorTableName(columnInfo, oldFullyQualifiedTableName, newFullyQualifiedTableName);
 
         return updatesMade;
     }

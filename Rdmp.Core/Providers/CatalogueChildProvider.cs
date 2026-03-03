@@ -1166,11 +1166,11 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     private void InjectCatalogueItems()
     {
-        foreach (var ci in AllCatalogueItems)
-            if (_extractionInformationsByCatalogueItem.TryGetValue(ci.ID, out var ei))
-                ci.InjectKnown(ei);
-            else
-                ci.InjectKnown((ExtractionInformation)null);
+        //foreach (var ci in AllCatalogueItems)
+        //    if (_extractionInformationsByCatalogueItem.TryGetValue(ci.ID, out var ei))
+        //        ci.InjectKnown(ei);
+        //    else
+        //        ci.InjectKnown((ExtractionInformation)null);
     }
 
     private void AddChildren(CatalogueItemsNode node, DescendancyList descendancyList)
@@ -1249,24 +1249,24 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     private void AddChildren(CatalogueItem ci, DescendancyList descendancy)
     {
-        var childObjects = new List<object>();
+        //var childObjects = new List<object>();
 
-        var ei = ci.ExtractionInformation;
-        if (ei != null)
-        {
-            childObjects.Add(ei);
-            AddChildren(ei, descendancy.Add(ei));
-        }
-        else
-        {
-            ci.InjectKnown(
-                (ExtractionInformation)null); // we know the CatalogueItem has no ExtractionInformation child because it's not in the dictionary
-        }
+        //var ei = ci.ExtractionInformation;
+        //if (ei != null)
+        //{
+        //    childObjects.Add(ei);
+        //    AddChildren(ei, descendancy.Add(ei));
+        //}
+        //else
+        //{
+        //    ci.InjectKnown(
+        //        (ExtractionInformation)null); // we know the CatalogueItem has no ExtractionInformation child because it's not in the dictionary
+        //}
 
-        if (ci.ColumnInfo_ID.HasValue && _allColumnInfos.TryGetValue(ci.ColumnInfo_ID.Value, out var col))
-            childObjects.Add(new LinkedColumnInfoNode(ci, col));
+        //if (ci.ColumnInfo_ID.HasValue && _allColumnInfos.TryGetValue(ci.ColumnInfo_ID.Value, out var col))
+        //    childObjects.Add(new LinkedColumnInfoNode(ci, col));
 
-        AddToDictionaries(new HashSet<object>(childObjects), descendancy);
+        //AddToDictionaries(new HashSet<object>(childObjects), descendancy);
     }
 
     private void AddChildren(ExtractionInformation extractionInformation, DescendancyList descendancy)
@@ -1888,33 +1888,33 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         FetchCatalogueItems();
         FetchExtractionInformations();
-        AddChildren(ci.Catalogue, descendancy.Add(ci.Catalogue));
+        //AddChildren(ci.Catalogue, descendancy.Add(ci.Catalogue));
         return true;
     }
 
     public bool SelectiveRefresh(ExtractionInformation ei)
     {
-        var descendancy = GetDescendancyListIfAnyFor(ei);
-        var cata = descendancy?.Parents.OfType<Catalogue>().LastOrDefault() ?? ei.CatalogueItem.Catalogue;
+        //var descendancy = GetDescendancyListIfAnyFor(ei);
+        //var cata = descendancy?.Parents.OfType<Catalogue>().LastOrDefault() ?? ei.CatalogueItem.Catalogue;
 
-        if (cata == null)
+        //if (cata == null)
+        //    return false;
+
+        //var cataDescendancy = GetDescendancyListIfAnyFor(cata);
+
+        //if (cataDescendancy == null)
             return false;
 
-        var cataDescendancy = GetDescendancyListIfAnyFor(cata);
+        //FetchCatalogueItems();
 
-        if (cataDescendancy == null)
-            return false;
+        //foreach (var ci in AllCatalogueItems.Where(ci => ci.ID == ei.CatalogueItem_ID)) ci.ClearAllInjections();
 
-        FetchCatalogueItems();
+        //// property changes or deleting the ExtractionInformation
+        //FetchExtractionInformations();
 
-        foreach (var ci in AllCatalogueItems.Where(ci => ci.ID == ei.CatalogueItem_ID)) ci.ClearAllInjections();
-
-        // property changes or deleting the ExtractionInformation
-        FetchExtractionInformations();
-
-        // refresh the Catalogue
-        AddChildren(cata, cataDescendancy.Add(cata));
-        return true;
+        //// refresh the Catalogue
+        //AddChildren(cata, cataDescendancy.Add(cata));
+        //return true;
     }
 
     public bool SelectiveRefresh(CohortAggregateContainer container)

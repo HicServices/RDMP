@@ -40,7 +40,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             var server = catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.InternalDataProcessing, false);
             DiscoveredTable discoveredTable = columnInfo.TableInfo.Discover(DataAccessContext.InternalDataProcessing);
             var qb = new QueryBuilder(null, null, null);
-            qb.AddColumn(new ColumnInfoToIColumn(memoryRepo, columnInfo));
+            //qb.AddColumn(new ColumnInfoToIColumn(memoryRepo, columnInfo));
             foreach (var rk in _redaction.RedactionKeys)
             {
                 var pkColumnInfo = _activator.RepositoryLocator.CatalogueDbContext.GetObjectByID<ColumnInfo>(rk.ColumnInfo_ID);

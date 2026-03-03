@@ -82,7 +82,7 @@ public class WordDataWriter : DocXHelper
             var rowCount = _destination.GeneratesFiles ? 10 : 5;
 
             var foundDatasets = Executer.Source.Request.ColumnsToExtract.Select(static col => col.ColumnInfo)
-                .Where(static ci => ci.Dataset_ID > 0).Select(static ci => ci.Dataset_ID.Value).Distinct().ToList();
+                .Where(static ci => ci.Dataset.ID > 0).Select(static ci => ci.Dataset).Distinct().ToList();
             if (foundDatasets.Count > 0)
             {
                 rowCount++;
@@ -167,7 +167,7 @@ public class WordDataWriter : DocXHelper
 
                 var datasetString = string.Join(", ",
                     foundDatasets
-                        .Select(ds => datasets.FirstOrDefault(d => d.ID == ds))
+                        .Select(ds => datasets.FirstOrDefault(d => d.ID == ds.ID))
                         .Where(static d => d != null)
                         .Select(static fullDataset => $"{fullDataset.Name}{GetDoi(fullDataset)}"));
 

@@ -118,6 +118,9 @@ public class PreLoadDiscardedColumn : DatabaseEntity, IPreLoadDiscardedColumn, I
     [NoMappingToDatabase]
     public string Data_type => SqlDataType;
 
+    [NoMappingToDatabase]
+    public string DataType => SqlDataType;
+
     public PreLoadDiscardedColumn()
     {
         ClearAllInjections();

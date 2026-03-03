@@ -25,10 +25,10 @@ public class ExecuteCommandMergeCohortIdentificationConfigurations : BasicComman
 
         var toMerge = ToMerge;
 
-        if (toMerge is not { Length: > 1 } &&
-            !SelectMany(
-                BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllObjects<CohortIdentificationConfiguration>(),
-                out toMerge)) return;
+        //if (toMerge is not { Length: > 1 } &&
+        //    !SelectMany(
+        //        BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllObjects<EntityFramework.Models.CohortIdentificationConfiguration>(),
+        //        out toMerge)) return;
 
         if (toMerge is not { Length: > 1 })
         {

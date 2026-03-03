@@ -371,7 +371,7 @@ public abstract class BasicCommandExecution : IAtomicCommand
     }
 
     protected bool SelectMany<T>(T[] available, out T[] selected, string initialSearchText = null)
-        where T : DatabaseEntity
+        where T : DatabaseObject
     {
         selected = BasicActivator.SelectMany("Select Objects", typeof(T), available, initialSearchText)?.Cast<T>()
             ?.ToArray();

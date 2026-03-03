@@ -4,9 +4,9 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using Rdmp.Core.EntityFramework.Models;
 using System.Collections.Generic;
 
-namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
 /// Describes how to join two tables together.  This is used to during Query Building (See JoinHelper) to build the JOIN section of the query once all required tables
@@ -35,7 +35,7 @@ public interface IJoin
     /// <summary>
     /// Which SQL join keyword to use when linking the <see cref="PrimaryKey"/> and <see cref="ForeignKey"/>.
     /// </summary>
-    ExtractionJoinType ExtractionJoinType { get; }
+    int ExtractionJoinType { get; }
 
     /// <summary>
     /// If it is necessary to join on more than one column, use this method to indicate the additional fk / pk pairs (they must belong to the same TableInfos as the
@@ -51,7 +51,7 @@ public interface IJoin
     /// but you might instead want to throw NotSupportedException if you are expecting a specific direction (See Lookup)
     /// </summary>
     /// <returns></returns>
-    ExtractionJoinType GetInvertedJoinType();
+    Rdmp.Core.Curation.Data.ExtractionJoinType GetInvertedJoinType();
 
     /// <summary>
     /// If you want to override the 'ON SQL' when using this join return the custom SQL here.  Normally SQL will be something like "table1.A = table2.A".  Use this method

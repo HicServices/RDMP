@@ -106,7 +106,7 @@ public class TableInfoImporter : ITableInfoImporter
     #endregion
 
     /// <inheritdoc/>
-    public void DoImport(out ITableInfo tableInfoCreated, out ColumnInfo[] columnInfosCreated)
+    public void DoImport(out ITableInfo tableInfoCreated, out EntityFramework.Models.ColumnInfo[] columnInfosCreated)
     {
         try
         {
@@ -160,29 +160,40 @@ public class TableInfoImporter : ITableInfoImporter
     }
 
     /// <inheritdoc/>
-    public ColumnInfo CreateNewColumnInfo(ITableInfo parent, DiscoveredColumn discoveredColumn)
+    public EntityFramework.Models.ColumnInfo CreateNewColumnInfo(ITableInfo parent, DiscoveredColumn discoveredColumn)
     {
-        var col = new ColumnInfo(parent.CatalogueDbContext, discoveredColumn.GetFullyQualifiedName(),
-            discoveredColumn.DataType.SQLType, parent)
-        {
-            //if it has an explicitly specified format (Collation)
-            Format = discoveredColumn.Format,
-            //if it is a primary key
-            IsPrimaryKey = discoveredColumn.IsPrimaryKey,
-            IsAutoIncrement = discoveredColumn.IsAutoIncrement,
-            Collation = discoveredColumn.Collation
-        };
+        //var col = new EntityFramework.Models.ColumnInfo(parent.CatalogueDbContext, discoveredColumn.GetFullyQualifiedName(),
+        //    discoveredColumn.DataType.SQLType, parent)
+        //{
+        //    //if it has an explicitly specified format (Collation)
+        //    Format = discoveredColumn.Format,
+        //    //if it is a primary key
+        //    IsPrimaryKey = discoveredColumn.IsPrimaryKey,
+        //    IsAutoIncrement = discoveredColumn.IsAutoIncrement,
+        //    Collation = discoveredColumn.Collation
+        //};
 
-        col.SaveToDatabase();
+        //col.SaveToDatabase();
+        var col = new EntityFramework.Models.ColumnInfo();//TODO
 
 
         return col;
     }
 
-    /// <inheritdoc cref="DoImport(out ITableInfo,out ColumnInfo[])"/>
+    /// <inheritdoc cref="DoImport(out ITableInfo,out EntityFramework.Models.ColumnInfo[])"/>
     public void DoImport()
     {
-        DoImport(out _, out _);
+        //DoImport(out _, out _);
+    }
+
+    public void DoImport(out ITableInfo tableInfoCreated, out ColumnInfo[] columnInfosCreated)
+    {
+        throw new NotImplementedException();
+    }
+
+    EntityFramework.Models.ColumnInfo ITableInfoImporter.CreateNewColumnInfo(ITableInfo parent, DiscoveredColumn discoveredColumn)
+    {
+        throw new NotImplementedException();
     }
 
     private static readonly string[] ProhibitedNames =

@@ -123,11 +123,11 @@ public partial class BulkProcessCatalogueItemsUI : BulkProcessCatalogueItems_Des
                 DialogResult.Yes)
                 return;
 
-        ColumnInfo[] guessPoolColumnInfo = null;
+        Core.EntityFramework.Models.ColumnInfo[] guessPoolColumnInfo = null;
 
         if (rbGuessNewAssociatedColumns.Checked)
         {
-            if (cbTableInfos.SelectedItem is not TableInfo tableInfo)
+            if (cbTableInfos.SelectedItem is not Core.EntityFramework.Models.TableInfo tableInfo)
             {
                 MessageBox.Show("You must select a TableInfo from the dropdown first");
                 return;
@@ -163,7 +163,8 @@ public partial class BulkProcessCatalogueItemsUI : BulkProcessCatalogueItems_Des
                 if (rbDeleteExtrctionInformation.Checked)
                     if (catalogueItem.ExtractionInformation != null)
                     {
-                        catalogueItem.ExtractionInformation.DeleteInDatabase();
+                        catalogueItem.ExtractionInformation.CatalogueDbContext.Remove(catalogueItem.ExtractionInformation);
+                        catalogueItem.ExtractionInformation.CatalogueDbContext.SaveChanges();
                         deleteCount++;
                     }
 
@@ -209,8 +210,8 @@ public partial class BulkProcessCatalogueItemsUI : BulkProcessCatalogueItems_Des
                         if (cbRecategorise.Checked)
                         {
                             var ei = catalogueItem.ExtractionInformation;
-                            ei.ExtractionCategory = (ExtractionCategory)ddExtractionCategory.SelectedItem;
-                            ei.SaveToDatabase();
+                            ei.ExtractionCategory = ((ExtractionCategory)ddExtractionCategory.SelectedItem).ToString();
+                            ei.CatalogueDbContext.SaveChanges();
                         }
 
                         continue;

@@ -326,7 +326,8 @@ public partial class ExampleDatasetsCreation
         };
         ci.SaveToDatabase();
 
-        return new ExtractionInformation(_repos.CatalogueDbContext, ci, col, selectSQL);
+        //TODO fix
+        return new ExtractionInformation();//new ExtractionInformation(_repos.CatalogueDbContext, ci, col, selectSQL);
     }
 
     private ExtractionConfiguration CreateExtractionConfiguration(Project project, ExtractableCohort cohort,
@@ -629,7 +630,7 @@ public partial class ExampleDatasetsCreation
     private ITableInfo ImportTableInfo(DiscoveredTable tbl)
     {
         var importer = new TableInfoImporter(_repos.CatalogueDbContext, tbl);
-        importer.DoImport(out var ti, out _);
+        importer.DoImport(out var ti, out EntityFramework.Models.ColumnInfo[] _);
 
         return ti;
     }
@@ -653,7 +654,7 @@ public partial class ExampleDatasetsCreation
                 if (ciDescription != null)
                 {
                     ci.Description = ciDescription;
-                    ci.SaveToDatabase();
+                    ci.CatalogueDbContext.SaveChanges();
                 }
             }
         }

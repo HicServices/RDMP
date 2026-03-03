@@ -434,7 +434,7 @@ DistinctByDestinationPKs - Performs a GROUP BY on each batch of records to ensur
             foreach (var idx in _extractionIdentifiersidx.Distinct().ToList())
             {
                 var sub = Request.ReleaseIdentifierSubstitutions.FirstOrDefault(s => s.Alias == chunk.Columns[idx].ColumnName);
-                if (sub?.ColumnInfo.ExtractionInformations.FirstOrDefault()?.IsPrimaryKey == true)
+                if (sub?.ColumnInfo.CatalogueItems.Select(ci => ci.ExtractionInformation).FirstOrDefault()?.IsPrimaryKey == true)
                 {
                     pks.Add(chunk.Columns[idx]);
                 }

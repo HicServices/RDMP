@@ -113,6 +113,12 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
     [NoMappingToDatabase]
     public ColumnInfo PrimaryKey => _primaryKey ??= CatalogueDbContext.GetObjectByID<ColumnInfo>(PrimaryKey_ID);
 
+    EntityFramework.Models.ColumnInfo IJoin.ForeignKey => throw new NotImplementedException();
+
+    EntityFramework.Models.ColumnInfo IJoin.PrimaryKey => throw new NotImplementedException();
+
+    int IJoin.ExtractionJoinType => throw new NotImplementedException();
+
     #endregion
 
     public Lookup()

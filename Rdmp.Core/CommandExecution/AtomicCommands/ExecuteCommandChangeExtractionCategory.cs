@@ -17,15 +17,15 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 public sealed class ExecuteCommandChangeExtractionCategory : BasicCommandExecution
 {
-    private readonly ExtractionInformation[] _extractionInformations;
+    private readonly Core.EntityFramework.Models.ExtractionInformation[] _extractionInformations;
     private readonly bool _isProjectSpecific;
     private readonly ExtractionCategory? _category;
 
     [UseWithObjectConstructor]
-    public ExecuteCommandChangeExtractionCategory(IBasicActivateItems activator, ExtractionInformation[] eis,
+    public ExecuteCommandChangeExtractionCategory(IBasicActivateItems activator, Core.EntityFramework.Models.ExtractionInformation[] eis,
         ExtractionCategory? category = null) : base(activator)
     {
-        eis = eis?.Where(static e => e != null).ToArray() ?? Array.Empty<ExtractionInformation>();
+        eis = eis?.Where(static e => e != null).ToArray() ?? Array.Empty<Core.EntityFramework.Models.ExtractionInformation>();
 
         if (eis.Length == 0)
             SetImpossible("No ExtractionInformations found");
@@ -81,12 +81,13 @@ public sealed class ExecuteCommandChangeExtractionCategory : BasicCommandExecuti
         {
             if (category == ExtractionCategory.NotExtractable)
             {
-                ei.DeleteInDatabase();
+                ei.CatalogueDbContext.Remove(ei);
+                ei.CatalogueDbContext.SaveChanges();
             }
             else
             {
-                ei.ExtractionCategory = category;
-                ei.SaveToDatabase();
+                ei.ExtractionCategory = category.ToString();
+                ei.CatalogueDbContext.SaveChanges();
             }
         }
     }

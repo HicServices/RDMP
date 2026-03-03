@@ -109,4 +109,9 @@ public class DatasetTimespanCalculator : IDetermineDatasetTimespan
 
         return (int)(nonZeroAverage / 1000);
     }
+
+    public Tuple<DateTime?, DateTime?> GetMachineReadableTimespanIfKnownOf(EntityFramework.Models.Catalogue catalogue, bool discardOutliers, out DateTime? accurateAsOf)
+    {
+        throw new NotImplementedException();
+    }
 }

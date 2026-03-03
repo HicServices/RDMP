@@ -21,9 +21,9 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation;
 internal class IdentifierDumperSynchronizer
 {
     private readonly IdentifierDumper _parent;
-    private readonly ExternalDatabaseServer _dump;
+    private readonly EntityFramework.Models.ExternalDatabaseServer _dump;
 
-    public IdentifierDumperSynchronizer(IdentifierDumper dumper, ExternalDatabaseServer dump)
+    public IdentifierDumperSynchronizer(IdentifierDumper dumper, EntityFramework.Models.ExternalDatabaseServer dump)
     {
         _parent = dumper;
         _dump = dump;

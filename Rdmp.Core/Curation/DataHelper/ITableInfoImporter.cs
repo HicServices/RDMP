@@ -20,7 +20,7 @@ public interface ITableInfoImporter
     /// </summary>
     /// <param name="tableInfoCreated"></param>
     /// <param name="columnInfosCreated"></param>
-    void DoImport(out ITableInfo tableInfoCreated, out ColumnInfo[] columnInfosCreated);
+    void DoImport(out ITableInfo tableInfoCreated, out EntityFramework.Models.ColumnInfo[] columnInfosCreated);
 
     /// <summary>
     /// For when a <paramref name="discoveredColumn"/> is not currently documented by an existing <see cref="ColumnInfo"/>
@@ -29,5 +29,5 @@ public interface ITableInfoImporter
     /// <param name="parent"></param>
     /// <param name="discoveredColumn"></param>
     /// <returns></returns>
-    ColumnInfo CreateNewColumnInfo(ITableInfo parent, DiscoveredColumn discoveredColumn);
+    EntityFramework.Models.ColumnInfo CreateNewColumnInfo(ITableInfo parent, DiscoveredColumn discoveredColumn);
 }

@@ -98,7 +98,7 @@ public class ViewTableInfoExtractUICollection : PersistableObjectCollection, IVi
         autoComplete.Add(TableInfo);
     }
 
-    public TableInfo TableInfo => DatabaseObjects.OfType<TableInfo>().SingleOrDefault();
+    public EntityFramework.Models.TableInfo TableInfo => null;// DatabaseObjects.OfType<TableInfo>().SingleOrDefault();
 
     public IQuerySyntaxHelper GetQuerySyntaxHelper()
     {

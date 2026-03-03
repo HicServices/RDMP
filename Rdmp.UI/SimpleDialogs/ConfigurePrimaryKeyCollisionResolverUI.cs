@@ -99,7 +99,7 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
             {
                 //set one up
                 resolvers[i].DuplicateRecordResolutionOrder = i;
-                resolvers[i].SaveToDatabase();
+                //resolvers[i].SaveToDatabase();
             }
 
 
@@ -110,7 +110,7 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
                 //do not use it for duplication resolution
                 resolver.DuplicateRecordResolutionOrder = null;
                 resolver.DuplicateRecordResolutionIsAscending = false; //default to descending
-                resolver.SaveToDatabase();
+                //resolver.SaveToDatabase();
                 resolvers.Remove(resolver);
             }
 
@@ -213,7 +213,7 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
         {
             var extractionInformation = (IResolveDuplication)lbConflictResolutionColumns.Items[i];
             extractionInformation.DuplicateRecordResolutionOrder = i;
-            extractionInformation.SaveToDatabase();
+            //extractionInformation.SaveToDatabase();
         }
 
         RefreshUIFromDatabase();
@@ -250,7 +250,7 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
                         resolver.DuplicateRecordResolutionIsAscending =
                             !resolver.DuplicateRecordResolutionIsAscending;
                         //save it to database
-                        resolver.SaveToDatabase();
+                        //resolver.SaveToDatabase();
                         //refresh UI
                         RefreshUIFromDatabase();
                     });
@@ -328,7 +328,7 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
         foreach (IResolveDuplication item in lbConflictResolutionColumns.Items)
         {
             item.DuplicateRecordResolutionIsAscending = true;
-            item.SaveToDatabase();
+            //item.SaveToDatabase();
         }
 
         RefreshUIFromDatabase();
@@ -345,7 +345,7 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
         foreach (IResolveDuplication item in lbConflictResolutionColumns.Items)
         {
             item.DuplicateRecordResolutionIsAscending = false;
-            item.SaveToDatabase();
+            //item.SaveToDatabase();
         }
 
         RefreshUIFromDatabase();

@@ -319,7 +319,7 @@ public class SelectedDataSetsChecker : ICheckable
         if (arg.ColumnInfo == null)
             return false;
 
-        var type = arg.ColumnInfo.Data_type;
+        var type = arg.ColumnInfo.DataType;
 
         if (string.IsNullOrEmpty(type))
             return false;

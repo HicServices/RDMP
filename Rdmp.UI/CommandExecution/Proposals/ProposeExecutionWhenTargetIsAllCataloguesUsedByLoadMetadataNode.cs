@@ -34,10 +34,10 @@ internal class
     {
         return cmd switch
         {
-            CatalogueCombineable cata => new ExecuteCommandAssociateCatalogueWithLoadMetadata(ItemActivator,
-                target.LoadMetadata).SetTarget(new[] { cata.Catalogue }),
-            ManyCataloguesCombineable manyCata => new ExecuteCommandAssociateCatalogueWithLoadMetadata(ItemActivator,
-                target.LoadMetadata).SetTarget(manyCata.Catalogues),
+            //CatalogueCombineable cata => new ExecuteCommandAssociateCatalogueWithLoadMetadata(ItemActivator,
+            //    target.LoadMetadata).SetTarget(new[] { cata.Catalogue }),
+            //ManyCataloguesCombineable manyCata => new ExecuteCommandAssociateCatalogueWithLoadMetadata(ItemActivator,
+            //    target.LoadMetadata).SetTarget(manyCata.Catalogues),
             _ => null
         };
     }

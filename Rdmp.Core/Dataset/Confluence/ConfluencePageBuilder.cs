@@ -92,7 +92,7 @@ namespace Rdmp.Core.Dataset.Confluence
             return $"""
                 <tr>
                     <td>{catalogueItem.Name}</td>
-                    <td>{catalogueItem.ColumnInfo.Data_type}</td>
+                    <td>{catalogueItem.ColumnInfo.DataType}</td>
                     <td>{catalogueItem.ExtractionInformation.IsPrimaryKey}</td>
                     <td>{catalogueItem.Description}</td>
                     <td>{catalogueItem.ExtractionInformation.IsExtractionIdentifier}</td>

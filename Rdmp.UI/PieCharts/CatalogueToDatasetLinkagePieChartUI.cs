@@ -131,7 +131,7 @@ public partial class CatalogueToDatasetLinkagePieChartUI : RDMPUserControl, IDas
             var countPopulated = 0;
             var countNotPopulated = 0;
             foreach (var ci in catalogueItems)
-                if (ci.ColumnInfo.Dataset_ID is null)
+                if (ci.ColumnInfo.Dataset is null)
                     countNotPopulated++;
                 else
                     countPopulated++;

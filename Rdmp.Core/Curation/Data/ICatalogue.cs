@@ -124,7 +124,7 @@ public interface ICatalogue : IHasDependencies, IHasQuerySyntaxHelper, INamed, I
     ExtractionInformation PivotCategory_ExtractionInformation { get; }
 
     /// <inheritdoc cref="CatalogueItem"/>
-    CatalogueItem[] CatalogueItems { get; }
+    EntityFramework.Models.CatalogueItem[] CatalogueItems { get; }
 
     /// <summary>
     /// Returns all <see cref="AggregateConfiguration"/> that are associated with the Catalogue.  This includes both summary graphs, patient index tables and all

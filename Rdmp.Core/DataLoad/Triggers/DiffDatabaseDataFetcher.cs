@@ -34,8 +34,8 @@ public class DiffDatabaseDataFetcher
     public DataTable Updates_New { get; private set; }
     public DataTable Updates_Replaced { get; private set; }
 
-    public ColumnInfo[] _pks;
-    private ColumnInfo[] _sharedColumns;
+    public EntityFramework.Models.ColumnInfo[] _pks;
+    private EntityFramework.Models.ColumnInfo[] _sharedColumns;
 
     public DiffDatabaseDataFetcher(int batchSize, ITableInfo tableInfo, int dataLoadRunID, int timeout)
     {

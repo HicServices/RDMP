@@ -32,7 +32,10 @@ namespace Rdmp.Core.EntityFramework
         public DbSet<Models.ExtractionInformation> ExtractionInformation { get; set; }
 
         public DbSet<Models.Dataset> Datasets { get; set; }
-        public DbSet<Models.TableInfo> TableInfos{ get; set; }
+        public DbSet<Models.TableInfo> TableInfos { get; set; }
+        public DbSet<Models.Lookup> Lookups{ get; set; }
+        public DbSet<Models.LookupCompositeJoinInfo> LookupCompositeJoinInfos { get; set; }
+        public DbSet<ANOTable> ANOTables{ get; set; }
 
         public T[] GetAllObjects<T>()
         {

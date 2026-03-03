@@ -55,7 +55,7 @@ public interface ITableInfo : IComparable, IHasRuntimeName, IDataAccessPoint, IH
     int? IdentifierDumpServer_ID { get; set; }
 
     /// <inheritdoc cref="IdentifierDumpServer_ID"/>
-    ExternalDatabaseServer IdentifierDumpServer { get; }
+    EntityFramework.Models.ExternalDatabaseServer IdentifierDumpServer { get; }
 
     /// <summary>
     /// Gets the name of the table in the given RAW=>STAGING=>LIVE section of a DLE run using the provided <paramref name="tableNamingScheme"/>
@@ -72,7 +72,7 @@ public interface ITableInfo : IComparable, IHasRuntimeName, IDataAccessPoint, IH
     /// Fetches all the ColumnInfos associated with this TableInfo (This is refreshed every time you call this property)
     /// </summary>
     [NoMappingToDatabase]
-    ColumnInfo[] ColumnInfos { get; }
+    EntityFramework.Models.ColumnInfo[] ColumnInfos { get; }
 
     /// <summary>
     /// Gets all the <see cref="PreLoadDiscardedColumn"/> declared against this table reference.  These are virtual columns which
@@ -143,5 +143,5 @@ public interface ITableInfo : IComparable, IHasRuntimeName, IDataAccessPoint, IH
     /// behaviour though for a regular data table with one catalogue used for extraction would be for a single Catalogue to get returned.
     /// </summary>
     /// <returns></returns>
-    Catalogue[] GetAllRelatedCatalogues();
+    EntityFramework.Models.Catalogue[] GetAllRelatedCatalogues();
 }

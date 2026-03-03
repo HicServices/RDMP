@@ -73,7 +73,7 @@ namespace Rdmp.Core.Reports.ExtractionTime
             var lookups = _catalogue.CatalogueDbContext.GetAllObjectsWhere<Lookup>("ForeignKey_ID", column.ID);
             var lookupString = "";
            // if (lookups.Length != 0) lookupString = string.Join(';', lookups.Select(l => LookupStringGenerator(l)));
-            sb.AppendLine($"\"{releaseIdentifierSubstitution.Alias}\",\"{column.Data_type}\",{false},\"{catalogueItem.Description}\",{releaseIdentifierSubstitution.IsExtractionIdentifier},{lookups.Any()},{lookupString}");
+            sb.AppendLine($"\"{releaseIdentifierSubstitution.Alias}\",\"{column.DataType}\",{false},\"{catalogueItem.Description}\",{releaseIdentifierSubstitution.IsExtractionIdentifier},{lookups.Any()},{lookupString}");
 
         }
 

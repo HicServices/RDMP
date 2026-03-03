@@ -96,7 +96,7 @@ public class ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration
             throw new Exception($"Pipeline execute successfully but the expected table '{_table}' did not exist");
 
         var importer = new TableInfoImporter(BasicActivator.RepositoryLocator.CatalogueDbContext, _table);
-        importer.DoImport(out var ti, out _);
+        importer.DoImport(out var ti, out EntityFramework.Models.ColumnInfo[] _);
 
         BasicActivator.CreateAndConfigureCatalogue(ti, null,
             $"Execution of '{_aggregateConfiguration}' (AggregateConfiguration ID ={_aggregateConfiguration.ID})",

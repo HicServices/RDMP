@@ -582,6 +582,8 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
             ? null
             : CatalogueDbContext.GetObjectByID<ExtractionInformation>(PivotCategory_ExtractionInformation_ID.Value);
 
+    EntityFramework.Models.CatalogueItem[] ICatalogue.CatalogueItems => throw new NotImplementedException();
+
     #endregion
 
     #region Enums
@@ -1303,23 +1305,26 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
 
     private IEnumerable<ColumnInfo> GetColumnInfos()
     {
-        return CatalogueItems.All(ci => ci.IsColumnInfoCached())
-            ? CatalogueItems.Select(ci => ci.ColumnInfo).Where(col => col != null)
-            : CatalogueDbContext.GetAllObjectsInIDList<ColumnInfo>(CatalogueItems.Where(ci => ci.ColumnInfo_ID.HasValue)
-                .Select(ci => ci.ColumnInfo_ID.Value).Distinct().ToList());
+        return new List<ColumnInfo>();
+        //return CatalogueItems.All(ci => ci.IsColumnInfoCached())
+        //    ? CatalogueItems.Select(ci => ci.ColumnInfo).Where(col => col != null)
+        //    : CatalogueDbContext.GetAllObjectsInIDList<ColumnInfo>(CatalogueItems.Where(ci => ci.ColumnInfo_ID.HasValue)
+        //        .Select(ci => ci.ColumnInfo_ID.Value).Distinct().ToList());
     }
 
     /// <inheritdoc/>
     public ExtractionFilter[] GetAllMandatoryFilters()
     {
-        return GetAllExtractionInformation(ExtractionCategory.Any).SelectMany(f => f.ExtractionFilters)
-            .Where(f => f.IsMandatory).ToArray();
+        //return GetAllExtractionInformation(ExtractionCategory.Any).SelectMany(f => f.ExtractionFilters)
+        //    .Where(f => f.IsMandatory).ToArray();
+        return Array.Empty<ExtractionFilter>();
     }
 
     /// <inheritdoc/>
     public ExtractionFilter[] GetAllFilters()
     {
-        return GetAllExtractionInformation(ExtractionCategory.Any).SelectMany(f => f.ExtractionFilters).ToArray();
+        //return GetAllExtractionInformation(ExtractionCategory.Any).SelectMany(f => f.ExtractionFilters).ToArray();
+        return Array.Empty<ExtractionFilter>();
     }
 
     /// <inheritdoc/>
@@ -1444,15 +1449,15 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
     }
 
     /// <inheritdoc/>
-    public ExtractionInformation[] GetAllExtractionInformation() => GetAllExtractionInformation(ExtractionCategory.Any);
+    public EntityFramework.Models.ExtractionInformation[] GetAllExtractionInformation() => GetAllExtractionInformation(ExtractionCategory.Any);
 
     /// <inheritdoc/>
-    public ExtractionInformation[] GetAllExtractionInformation(ExtractionCategory category)
+    public EntityFramework.Models.ExtractionInformation[] GetAllExtractionInformation(ExtractionCategory category)
     {
         return
             CatalogueItems.Select(ci => ci.ExtractionInformation)
                 .Where(e => e != null &&
-                            (e.ExtractionCategory == category || category == ExtractionCategory.Any))
+                            (e.GetExtractionCategory() == category || category == ExtractionCategory.Any))
                 .ToArray();
     }
 
@@ -1587,5 +1592,15 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
             sb.AppendLine($"Extraction Primary Key(s): {extractionPrimaryKeys.ToBeautifulString()}");
 
         return sb.ToString();
+    }
+
+    ExtractionInformation[] ICatalogue.GetAllExtractionInformation(ExtractionCategory category)
+    {
+        throw new NotImplementedException();
+    }
+
+    ExtractionInformation[] ICatalogue.GetAllExtractionInformation()
+    {
+        throw new NotImplementedException();
     }
 }

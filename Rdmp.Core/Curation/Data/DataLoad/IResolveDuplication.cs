@@ -13,7 +13,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad;
 /// Common interface for columns which can be used in RAW to resolve primary key duplication (See PrimaryKeyCollisionResolver).  This includes both PreLoadDiscardedColumns
 /// and ColumnInfos.
 /// </summary>
-public interface IResolveDuplication : IHasRuntimeName, ISaveable, IHasStageSpecificRuntimeName
+public interface IResolveDuplication : IHasRuntimeName, IHasStageSpecificRuntimeName
 {
     /// <summary>
     /// The preference order for the non primary key column in deleting rows to obtain a unique primary key.  Records will be evaluated on the first column in the order
@@ -31,5 +31,5 @@ public interface IResolveDuplication : IHasRuntimeName, ISaveable, IHasStageSpec
     /// The proprietary SQL datatype of the column in the underlying database table this record points at.
     /// <para>E.g. datetime2 or varchar2 (Oracle) or int etc</para>
     /// </summary>
-    string Data_type { get; }
+    string DataType { get; }
 }

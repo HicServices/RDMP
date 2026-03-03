@@ -217,7 +217,7 @@ public class DataLoadJob : IDataLoadJob
         }
     }
 
-    public ColumnInfo[] GetAllColumns()
+    public EntityFramework.Models.ColumnInfo[] GetAllColumns()
     {
         return RegularTablesToLoad.SelectMany(t => t.ColumnInfos)
             .Union(LookupTablesToLoad.SelectMany(t => t.ColumnInfos)).Distinct().ToArray();

@@ -162,4 +162,14 @@ public class TableValuedFunctionImporter : ITableInfoImporter
 
         return syntaxHelper.GetParameterDeclaration(parameter.ParameterName, parameter.DataType.SQLType);
     }
+
+    public void DoImport(out ITableInfo tableInfoCreated, out EntityFramework.Models.ColumnInfo[] columnInfosCreated)
+    {
+        throw new NotImplementedException();
+    }
+
+    EntityFramework.Models.ColumnInfo ITableInfoImporter.CreateNewColumnInfo(ITableInfo parent, DiscoveredColumn discoveredColumn)
+    {
+        throw new NotImplementedException();
+    }
 }

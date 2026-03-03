@@ -84,7 +84,7 @@ public class OverviewModel
         return _numberOfPeople;
     }
 
-    public Tuple<DateTime, DateTime> GetStartEndDates(ColumnInfo dateColumn, string whereClause)
+    public Tuple<DateTime, DateTime> GetStartEndDates(EntityFramework.Models.ColumnInfo dateColumn, string whereClause)
     {
         using var dt = new DataTable();
 
@@ -133,7 +133,7 @@ public class OverviewModel
     }
 
 
-    public static DataTable GetCountsByDatePeriod(ColumnInfo dateColumn, string datePeriod, string optionalWhere = "")
+    public static DataTable GetCountsByDatePeriod(EntityFramework.Models.ColumnInfo dateColumn, string datePeriod, string optionalWhere = "")
     {
         var dt = new DataTable();
         if (!(new[] { "Day", "Month", "Year" }).Contains(datePeriod))

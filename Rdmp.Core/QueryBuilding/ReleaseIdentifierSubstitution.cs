@@ -7,9 +7,9 @@
 using System;
 using System.Text.RegularExpressions;
 using FAnsi.Discovery.QuerySyntax;
-using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Spontaneous;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.QueryBuilding.SyntaxChecking;
@@ -52,6 +52,8 @@ public class ReleaseIdentifierSubstitution : SpontaneousObject, IColumn
     public bool IsExtractionIdentifier => OriginalDatasetColumn.IsExtractionIdentifier;
     public bool IsPrimaryKey => OriginalDatasetColumn.IsPrimaryKey;
 
+    EntityFramework.Models.ColumnInfo IColumn.ColumnInfo => throw new NotImplementedException();
+
     public ReleaseIdentifierSubstitution(MemoryRepository repo, IColumn extractionIdentifierToSubFor,
         IExtractableCohort extractableCohort, bool isPartOfMultiCHISubstitution,
         IQuerySyntaxHelper querySyntaxHelper) : base(repo)
@@ -84,7 +86,7 @@ public class ReleaseIdentifierSubstitution : SpontaneousObject, IColumn
 
             //only collate if the server types match and if the collations differ
             if (privateCol.Table.Database.Server.DatabaseType ==
-                OriginalDatasetColumn.ColumnInfo.TableInfo.DatabaseType)
+                OriginalDatasetColumn.ColumnInfo.TableInfo.GetDatabaseType())
                 if (!string.IsNullOrWhiteSpace(otherTableCollation) &&
                     !string.Equals(cohortCollation, otherTableCollation))
                     collateStatement = $" collate {cohortCollation}";

@@ -17,11 +17,11 @@ namespace Rdmp.Core.Curation;
 public class ForwardEngineerCatalogue
 {
     private readonly ITableInfo _tableInfo;
-    private readonly ColumnInfo[] _columnInfos;
+    private readonly EntityFramework.Models.ColumnInfo[] _columnInfos;
 
 
     [Obsolete("markAllExtractable is ignored, this constructor is included for API backwards compatibility only.")]
-    public ForwardEngineerCatalogue(ITableInfo tableInfo, ColumnInfo[] columnInfos, bool markAllExtractable)
+    public ForwardEngineerCatalogue(ITableInfo tableInfo, EntityFramework.Models.ColumnInfo[] columnInfos, bool markAllExtractable)
         : this(tableInfo, columnInfos)
     {
     }
@@ -31,7 +31,7 @@ public class ForwardEngineerCatalogue
     /// </summary>
     /// <param name="tableInfo"></param>
     /// <param name="columnInfos"></param>
-    public ForwardEngineerCatalogue(ITableInfo tableInfo, ColumnInfo[] columnInfos)
+    public ForwardEngineerCatalogue(ITableInfo tableInfo, EntityFramework.Models.ColumnInfo[] columnInfos)
     {
         _tableInfo = tableInfo;
         _columnInfos = columnInfos;
@@ -39,7 +39,7 @@ public class ForwardEngineerCatalogue
 
 
     /// <inheritdoc cref="ExecuteForwardEngineering()"/>
-    public void ExecuteForwardEngineering(out ICatalogue catalogue, out CatalogueItem[] items,
+    public void ExecuteForwardEngineering(out ICatalogue catalogue, out Core.EntityFramework.Models.CatalogueItem[] items,
         out ExtractionInformation[] extractionInformations)
     {
         ExecuteForwardEngineering(null, out catalogue, out items, out extractionInformations);
@@ -67,7 +67,7 @@ public class ForwardEngineerCatalogue
 
     /// <inheritdoc cref="ExecuteForwardEngineering()"/>
     public void ExecuteForwardEngineering(ICatalogue intoExistingCatalogue, out ICatalogue catalogue,
-        out CatalogueItem[] catalogueItems, out ExtractionInformation[] extractionInformations)
+        out Core.EntityFramework.Models.CatalogueItem[] catalogueItems, out ExtractionInformation[] extractionInformations)
     {
         //var repo = _tableInfo.RDMPDbContext;
 
@@ -75,7 +75,7 @@ public class ForwardEngineerCatalogue
         //intoExistingCatalogue ??= new Catalogue(repo, _tableInfo.GetRuntimeName());
 
         catalogue = intoExistingCatalogue;
-        var catalogueItemsCreated = new List<CatalogueItem>();
+        var catalogueItemsCreated = new List<Core.EntityFramework.Models.CatalogueItem>();
         var extractionInformationsCreated = new List<ExtractionInformation>();
 
         //var order = 0;

@@ -690,5 +690,5 @@ public class AggregateBuilder : ISqlQueryBuilder
     /// Throws <see cref="NotSupportedException"/> since <see cref="Lookup"/> cannot be part of an aggregate GROUP BY
     /// </summary>
     /// <returns></returns>
-    public IEnumerable<Lookup> GetDistinctRequiredLookups() => throw new NotSupportedException();
+    public IEnumerable<EntityFramework.Models.Lookup> GetDistinctRequiredLookups() => throw new NotSupportedException();
 }

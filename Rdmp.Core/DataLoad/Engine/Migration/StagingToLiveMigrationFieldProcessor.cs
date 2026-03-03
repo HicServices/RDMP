@@ -24,13 +24,13 @@ public class StagingToLiveMigrationFieldProcessor : IMigrationFieldProcessor
 {
     private readonly Regex _updateButDoNotDiffExtended;
     private readonly Regex _ignore;
-    private readonly ColumnInfo[] _alsoIgnore;
+    private readonly EntityFramework.Models.ColumnInfo[] _alsoIgnore;
 
     /// <inheritdoc/>
     public bool NoBackupTrigger { get; set; }
 
     public StagingToLiveMigrationFieldProcessor(Regex updateButDoNotDiff = null, Regex ignore = null,
-        ColumnInfo[] alsoIgnore = null)
+        EntityFramework.Models.ColumnInfo[] alsoIgnore = null)
     {
         _updateButDoNotDiffExtended = updateButDoNotDiff;
         _ignore = ignore;

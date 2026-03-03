@@ -6,6 +6,7 @@
 
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.QueryBuilding;
+using System;
 
 namespace Rdmp.Core.Curation.FilterImporting;
 
@@ -14,7 +15,7 @@ public class ExtractionFilterUIOptions : FilterUIOptions
 {
     private ISqlParameter[] _globals;
     private ITableInfo[] _tables;
-    private IColumn[] _columns;
+    //private IColumn[] _columns;
 
     public ExtractionFilterUIOptions(ExtractionFilter masterCatalogueFilter) : base(masterCatalogueFilter)
     {
@@ -24,12 +25,13 @@ public class ExtractionFilterUIOptions : FilterUIOptions
                       throw new MissingColumnInfoException($"No ColumnInfo found for filter '{masterCatalogueFilter}'");
         _globals = colInfo.TableInfo.GetAllParameters();
         _tables = c.GetTableInfoList(false);
-        _columns = c.GetAllExtractionInformation(ExtractionCategory.Any);
+        //TODO fix
+        //_columns = c.GetAllExtractionInformation(ExtractionCategory.Any);
     }
 
     public override ITableInfo[] GetTableInfos() => _tables;
 
     public override ISqlParameter[] GetGlobalParametersInFilterScope() => _globals;
 
-    public override IColumn[] GetIColumnsInFilterScope() => _columns;
+    public override IColumn[] GetIColumnsInFilterScope() => Array.Empty<IColumn>();// _columns;
 }

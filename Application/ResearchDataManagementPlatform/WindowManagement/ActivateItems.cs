@@ -927,25 +927,25 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         return ui.ShowDialog() == DialogResult.OK ? ui.Result : null;
     }
 
-    public override ICatalogue CreateAndConfigureCatalogue(ITableInfo tableInfo,
-        ColumnInfo[] extractionIdentifierColumns, string initialDescription, IProject projectSpecific, string folder)
-    {
-        if (extractionIdentifierColumns is not null)
-            return base.CreateAndConfigureCatalogue(tableInfo, extractionIdentifierColumns, initialDescription,
-                projectSpecific, folder);
-        // if on wrong Thread
-        if (_mainDockPanel?.InvokeRequired ?? false)
-            return _mainDockPanel.Invoke(() => CreateAndConfigureCatalogue(tableInfo, extractionIdentifierColumns,
-                initialDescription, projectSpecific, folder));
+    //public override ICatalogue CreateAndConfigureCatalogue(ITableInfo tableInfo,
+    //    ColumnInfo[] extractionIdentifierColumns, string initialDescription, IProject projectSpecific, string folder)
+    //{
+    //    if (extractionIdentifierColumns is not null)
+    //        return base.CreateAndConfigureCatalogue(tableInfo, extractionIdentifierColumns, initialDescription,
+    //            projectSpecific, folder);
+    //    // if on wrong Thread
+    //    if (_mainDockPanel?.InvokeRequired ?? false)
+    //        return _mainDockPanel.Invoke(() => CreateAndConfigureCatalogue(tableInfo, extractionIdentifierColumns,
+    //            initialDescription, projectSpecific, folder));
 
-        var ui = new ConfigureCatalogueExtractabilityUI(this, tableInfo, initialDescription, projectSpecific)
-        {
-            TargetFolder = folder
-        };
-        ui.ShowDialog();
+    //    var ui = new ConfigureCatalogueExtractabilityUI(this, tableInfo, initialDescription, projectSpecific)
+    //    {
+    //        TargetFolder = folder
+    //    };
+    //    ui.ShowDialog();
 
-        return ui.CatalogueCreatedIfAny;
-    }
+    //    return ui.CatalogueCreatedIfAny;
+    //}
 
     public override ExternalDatabaseServer CreateNewPlatformDatabase(RDMPDbContext catalogueRepository,
         PermissableDefaults defaultToSet, IPatcher patcher, DiscoveredDatabase db)

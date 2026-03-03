@@ -70,7 +70,7 @@ where    Optional SQL to set for the filter.  If <basedOn> is not null this will
             if (picker[0].HasValueOfType(typeof(ExtractionInformation)))
             {
                 // create a top level Catalogue level filter for reuse later on
-                var ei = (ExtractionInformation)picker[0].GetValueForParameterOfType(typeof(ExtractionInformation));
+                var ei = (EntityFramework.Models.ExtractionInformation)picker[0].GetValueForParameterOfType(typeof(ExtractionInformation));
                 _factory = new ExtractionFilterFactory(ei);
             }
             else if (picker[0].HasValueOfType(typeof(IContainer)))

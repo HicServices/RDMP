@@ -38,7 +38,7 @@ namespace Rdmp.Core.Curation.Data;
 /// <para>Both the above would extract from the same ColumnInfo DateOfBirth</para>
 /// </summary>
 public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDependencies, IRevertable, INamed,
-    IInjectKnown<ExtractionInformation>, IInjectKnown<ColumnInfo>, IInjectKnown<Catalogue>
+    IInjectKnown<EntityFramework.Models.ExtractionInformation>, IInjectKnown<EntityFramework.Models.ColumnInfo>, IInjectKnown<EntityFramework.Models.Catalogue>
 {
     #region Database Properties
 
@@ -54,9 +54,9 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     private int? _columnInfoID;
     private Catalogue.CataloguePeriodicity _periodicity;
 
-    private Lazy<ExtractionInformation> _knownExtractionInformation;
-    private Lazy<ColumnInfo> _knownColumnInfo;
-    private Lazy<Catalogue> _knownCatalogue;
+    private Lazy<EntityFramework.Models.ExtractionInformation> _knownExtractionInformation;
+    private Lazy<EntityFramework.Models.ColumnInfo> _knownColumnInfo;
+    private Lazy<EntityFramework.Models.Catalogue> _knownCatalogue;
 
     /// <summary>
     /// The ID of the parent <see cref="Catalogue"/> (dataset) to which this is a virtual column/column description
@@ -185,18 +185,18 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
 
     /// <inheritdoc cref="Catalogue_ID"/>
     [NoMappingToDatabase]
-    public Catalogue Catalogue => _knownCatalogue.Value;
+    public EntityFramework.Models.Catalogue Catalogue => _knownCatalogue.Value;
 
     /// <summary>
     /// Fetches the <see cref="ExtractionInformation"/> (if any) that specifies how to extract this column.  This can be the underlying column name (fully specified) or a transform.
     /// <para>This will be null if the <see cref="CatalogueItem"/> is not extractable</para>
     /// </summary>
     [NoMappingToDatabase]
-    public ExtractionInformation ExtractionInformation => _knownExtractionInformation.Value;
+    public EntityFramework.Models.ExtractionInformation ExtractionInformation => _knownExtractionInformation.Value;
 
     /// <inheritdoc cref="ColumnInfo_ID"/>
     [NoMappingToDatabase]
-    public ColumnInfo ColumnInfo => _knownColumnInfo.Value;
+    public EntityFramework.Models.ColumnInfo ColumnInfo => _knownColumnInfo.Value;
 
     internal bool IsColumnInfoCached() => _knownColumnInfo.IsValueCreated;
 
@@ -250,15 +250,15 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
 
         //Periodicity - with handling for invalid enum values listed in database
         var periodicity = r["Periodicity"];
-        if (periodicity == null || periodicity == DBNull.Value)
-            Periodicity = Catalogue.CataloguePeriodicity.Unknown;
-        else
-        {
-            if(Enum.TryParse(periodicity.ToString(), true, out Catalogue.CataloguePeriodicity periodicityAsEnum))
-                Periodicity = periodicityAsEnum;
-            else
-                Periodicity = Catalogue.CataloguePeriodicity.Unknown;
-        }
+        //if (periodicity == null || periodicity == DBNull.Value)
+        //    Periodicity = Catalogue.CataloguePeriodicity.Unknown;
+        //else
+        //{
+        //    if(Enum.TryParse(periodicity.ToString(), true, out Catalogue.CataloguePeriodicity periodicityAsEnum))
+        //        Periodicity = periodicityAsEnum;
+        //    else
+        //        Periodicity = Catalogue.CataloguePeriodicity.Unknown;
+        //}
 
         ClearAllInjections();
     }
@@ -269,17 +269,17 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     }
 
     /// <inheritdoc/>
-    public void InjectKnown(Catalogue instance)
+    public void InjectKnown(EntityFramework.Models.Catalogue instance)
     {
-        _knownCatalogue = new Lazy<Catalogue>(instance);
+        _knownCatalogue = new Lazy<EntityFramework.Models.Catalogue>(instance);
     }
 
     /// <inheritdoc/>
     public void ClearAllInjections()
     {
-        _knownColumnInfo = new Lazy<ColumnInfo>(FetchColumnInfoIfAny);
-        _knownExtractionInformation = new Lazy<ExtractionInformation>(FetchExtractionInformationIfAny);
-        _knownCatalogue = new Lazy<Catalogue>(FetchCatalogue);
+        //_knownColumnInfo = new Lazy<EntityFramework.Models.ColumnInfo>(FetchColumnInfoIfAny);
+        //_knownExtractionInformation = new Lazy<EntityFramework.Models.ExtractionInformation>(FetchExtractionInformationIfAny);
+        //_knownCatalogue = new Lazy<EntityFramework.Models.Catalogue>(FetchCatalogue);
     }
 
     private Catalogue FetchCatalogue() => CatalogueDbContext.GetObjectByID<Catalogue>(Catalogue_ID);
@@ -291,15 +291,15 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
         !ColumnInfo_ID.HasValue ? null : CatalogueDbContext.GetObjectByID<ColumnInfo>(ColumnInfo_ID.Value);
 
     /// <inheritdoc/>
-    public void InjectKnown(ExtractionInformation instance)
+    public void InjectKnown(EntityFramework.Models.ExtractionInformation instance)
     {
-        _knownExtractionInformation = new Lazy<ExtractionInformation>(instance);
+        _knownExtractionInformation = new Lazy<EntityFramework.Models.ExtractionInformation>(instance);
     }
 
     /// <inheritdoc/>
-    public void InjectKnown(ColumnInfo instance)
+    public void InjectKnown(EntityFramework.Models.ColumnInfo instance)
     {
-        _knownColumnInfo = new Lazy<ColumnInfo>(instance);
+        _knownColumnInfo = new Lazy<EntityFramework.Models.ColumnInfo>(instance);
     }
 
     /// <inheritdoc/>
@@ -357,7 +357,7 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     /// <param name="guessPool"></param>
     /// <param name="allowPartial">Set to false to avoid last-resort match based on String.Contains</param>
     /// <returns></returns>
-    public IEnumerable<ColumnInfo> GuessAssociatedColumn(ColumnInfo[] guessPool, bool allowPartial = true)
+    public IEnumerable<EntityFramework.Models.ColumnInfo> GuessAssociatedColumn(EntityFramework.Models.ColumnInfo[] guessPool, bool allowPartial = true)
     {
         //exact matches exist so return those
         var Guess = guessPool.Where(col => col.GetRuntimeName().Equals(Name)).ToArray();
@@ -382,7 +382,7 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
                 ||
                 Name.ToLower().Contains(col.GetRuntimeName().ToLower()));
 
-        return Array.Empty<ColumnInfo>();
+        return Array.Empty<EntityFramework.Models.ColumnInfo>();
     }
 
     /// <inheritdoc/>
@@ -393,15 +393,15 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     {
         var dependantObjects = new List<IHasDependencies>();
 
-        var exInfo = ExtractionInformation;
+        //var exInfo = ExtractionInformation;
 
-        if (exInfo != null)
-            dependantObjects.Add(exInfo);
+        //if (exInfo != null)
+        //    dependantObjects.Add(exInfo);
 
-        if (ColumnInfo_ID != null)
-            dependantObjects.Add(ColumnInfo);
+        //if (ColumnInfo_ID != null)
+        //    dependantObjects.Add(ColumnInfo);
 
-        dependantObjects.Add(Catalogue);
+        //dependantObjects.Add(Catalogue);
         return dependantObjects.ToArray();
     }
 
@@ -411,7 +411,7 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     /// <see cref="IColumn.SelectSQL"/>.
     /// </summary>
     /// <param name="columnInfo"></param>
-    public void SetColumnInfo(ColumnInfo columnInfo)
+    public void SetColumnInfo(EntityFramework.Models.ColumnInfo columnInfo)
     {
         ColumnInfo_ID = columnInfo?.ID;
         SaveToDatabase();

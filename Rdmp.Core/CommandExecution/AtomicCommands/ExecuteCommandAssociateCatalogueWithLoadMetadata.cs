@@ -18,13 +18,13 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 public class ExecuteCommandAssociateCatalogueWithLoadMetadata : BasicCommandExecution, IAtomicCommand
 {
     private readonly LoadMetadata _loadMetadata;
-    private readonly Catalogue[] _availableCatalogues;
+    private readonly EntityFramework.Models.Catalogue[] _availableCatalogues;
     private readonly ICatalogue[] _otherCatalogues;
-    private Catalogue[] _chosenCatalogues;
+    private EntityFramework.Models.Catalogue[] _chosenCatalogues;
 
     [UseWithObjectConstructor]
     public ExecuteCommandAssociateCatalogueWithLoadMetadata(IBasicActivateItems activator, LoadMetadata loadMetadata,
-        Catalogue[] toAssociate) : this(activator, loadMetadata)
+        EntityFramework.Models.Catalogue[] toAssociate) : this(activator, loadMetadata)
     {
         //if command is possible, select those that are available for association
         if (!IsImpossible)
@@ -43,7 +43,7 @@ public class ExecuteCommandAssociateCatalogueWithLoadMetadata : BasicCommandExec
         _loadMetadata = loadMetadata;
 
         var cataloguesAlreadyUsedByLoadMetadata = _loadMetadata.CatalogueDbContext.GetAllObjectsWhere<LoadMetadataCatalogueLinkage>("LoadMetadataID", loadMetadata.ID).Select(l => l.CatalogueID);
-        _availableCatalogues = BasicActivator.CoreChildProvider.AllCatalogues.Where(c => !cataloguesAlreadyUsedByLoadMetadata.Contains(c.ID)).ToArray();
+        _availableCatalogues = _loadMetadata.CatalogueDbContext.Catalogues.Where(c => !cataloguesAlreadyUsedByLoadMetadata.Contains(c.ID)).ToArray();//BasicActivator.CoreChildProvider.AllCatalogues.Where(c => !cataloguesAlreadyUsedByLoadMetadata.Contains(c.ID)).ToArray();
         //Ensure logging task is correct
         _otherCatalogues = _loadMetadata.GetAllCatalogues().ToArray();
 
@@ -109,7 +109,7 @@ public class ExecuteCommandAssociateCatalogueWithLoadMetadata : BasicCommandExec
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
         iconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Add);
 
-    public ICommandExecution SetTarget(Catalogue[] catalogues)
+    public ICommandExecution SetTarget(EntityFramework.Models.Catalogue[] catalogues)
     {
         _chosenCatalogues = catalogues;
         if (_otherCatalogues.Any(catalogues.Contains))

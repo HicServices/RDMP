@@ -201,7 +201,7 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
             lblPreviewDataIsFictional.Visible = false;
 
             var qb = new QueryBuilder(null, null, new[] { ColumnInfo.TableInfo });
-            qb.AddColumn(new ColumnInfoToIColumn(new MemoryRepository(), _columnInfo));
+            //qb.AddColumn(new ColumnInfoToIColumn(new MemoryRepository(), _columnInfo));
             qb.TopX = 10;
 
             var rowsRead = false;

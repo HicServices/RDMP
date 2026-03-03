@@ -106,7 +106,7 @@ public partial class RedactCatalogueUI : RedactCatalogueUI_Design
             var columns = new List<ColumnInfo>();
             foreach (object item in checkedListBox1.CheckedItems)
             {
-                columns.Add(((CatalogueItem)item).ColumnInfo);
+                //columns.Add(((CatalogueItem)item).ColumnInfo);
             }
             var cmd = new ExecuteCommandPerformRegexRedactionOnCatalogue(_activator, _catalogue, (RegexRedactionConfiguration)comboBox1.SelectedItem, columns, max);
             Cursor.Current = Cursors.WaitCursor;

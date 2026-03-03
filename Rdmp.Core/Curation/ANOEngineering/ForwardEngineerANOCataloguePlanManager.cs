@@ -242,7 +242,7 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
     private void InitializePlans()
     {
         _allExtractionInformations = Catalogue.GetAllExtractionInformation(ExtractionCategory.Any);
-        _allCatalogueItems = Catalogue.CatalogueItems.Where(ci => ci.ColumnInfo_ID != null).ToArray();
+        _allCatalogueItems = Array.Empty<CatalogueItem>();//Catalogue.CatalogueItems.Where(ci => ci.ColumnInfo_ID != null).ToArray();
         var allColumnInfosSystemWide = Catalogue.CatalogueDbContext.GetAllObjects<ColumnInfo>();
         var joins = GetJoinInfosRequiredCatalogue();
         var lookups = GetLookupsRequiredCatalogue();

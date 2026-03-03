@@ -212,11 +212,12 @@ public class Project : DatabaseEntity, IProject, ICustomSearchString, ICheckable
     /// <inheritdoc/>
     public ExtractionInformation[] GetAllProjectCatalogueColumns(ICoreChildProvider childProvider, ExtractionCategory c)
     {
-        return childProvider is DataExportChildProvider dx
-            ? dx.ExtractableDataSets.Where(eds => eds.Projects.Select(p=>p.ID).Contains(ID))
-                .Select(e => dx.AllCataloguesDictionary[e.Catalogue_ID])
-                .SelectMany(cata => cata.GetAllExtractionInformation(c)).ToArray()
-            : GetAllProjectCatalogueColumns(c);
+        return Array.Empty<ExtractionInformation>();
+        //return childProvider is DataExportChildProvider dx
+        //    ? dx.ExtractableDataSets.Where(eds => eds.Projects.Select(p=>p.ID).Contains(ID))
+        //        .Select(e => dx.AllCataloguesDictionary[e.Catalogue_ID])
+        //        .SelectMany(cata => cata.GetAllExtractionInformation(c)).ToArray()
+        //    : GetAllProjectCatalogueColumns(c);
     }
 
     /// <inheritdoc/>

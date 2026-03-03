@@ -25,14 +25,14 @@ public class AggregateBuilderBasicOptions : IAggregateBuilderOptions
     public IColumn[] GetAvailableSELECTColumns(AggregateConfiguration aggregate)
     {
         var existingDimensions = aggregate.AggregateDimensions.Select(d => d.ExtractionInformation).ToArray();
-
-        return aggregate.Catalogue
-            .GetAllExtractionInformation(ExtractionCategory.Any) //all columns of any extraction category
-            .Except(existingDimensions) //except those that have already been added
-            .Where(e => !e
-                .IsExtractionIdentifier) //don't advertise IsExtractionIdentifier columns for use in basic aggregates
-            .Cast<IColumn>()
-            .ToArray();
+        return Array.Empty<IColumn>(); //TODO fix
+        //return aggregate.Catalogue
+        //    .GetAllExtractionInformation(ExtractionCategory.Any) //all columns of any extraction category
+        //    .Except(existingDimensions) //except those that have already been added
+        //    .Where(e => !e
+        //        .IsExtractionIdentifier) //don't advertise IsExtractionIdentifier columns for use in basic aggregates
+        //    .Cast<IColumn>()
+        //    .ToArray();
     }
 
     /// <inheritdoc/>

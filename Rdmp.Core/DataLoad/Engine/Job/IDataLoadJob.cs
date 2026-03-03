@@ -71,7 +71,7 @@ public interface IDataLoadJob : IDataLoadEventListener, IDisposeAfterDataLoad
     /// Returns all <see cref="ColumnInfo"/> in <see cref="RegularTablesToLoad "/> and <see cref="LookupTablesToLoad"/>
     /// </summary>
     /// <returns></returns>
-    ColumnInfo[] GetAllColumns();
+    EntityFramework.Models.ColumnInfo[] GetAllColumns();
 
     /// <summary>
     /// Call you see that something has gone horribly wrong but want to keep going

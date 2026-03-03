@@ -377,20 +377,20 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
 
     private void cbxTimePeriodColumn_SelectedIndexChanged(object sender, EventArgs e)
     {
-        SetTimePeriod(cbxTimePeriodColumn.SelectedItem as ExtractionInformation);
+        SetTimePeriod(cbxTimePeriodColumn.SelectedItem as Core.EntityFramework.Models.ExtractionInformation);
     }
 
     private void cbxPivotColumn_SelectedIndexChanged(object sender, EventArgs e)
     {
-        SetPivot(cbxPivotColumn.SelectedItem as ExtractionInformation);
+        SetPivot(cbxPivotColumn.SelectedItem as Core.EntityFramework.Models.ExtractionInformation);
     }
 
-    private void SetTimePeriod(ExtractionInformation selected)
+    private void SetTimePeriod(Core.EntityFramework.Models.ExtractionInformation selected)
     {
         _catalogue.TimeCoverage_ExtractionInformation_ID = selected?.ID;
     }
 
-    private void SetPivot(ExtractionInformation selected)
+    private void SetPivot(Core.EntityFramework.Models.ExtractionInformation selected)
     {
         _catalogue.PivotCategory_ExtractionInformation_ID = selected?.ID;
     }

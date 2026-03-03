@@ -353,7 +353,7 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
         tlvTableInfoMigrations.ExpandAll();
 
         ddDateColumn.DataSource = _planManager.TableInfos.SelectMany(t => t.ColumnInfos)
-            .Where(c => c.Data_type != null && c.Data_type.Contains("date")).ToArray();
+            .Where(c => c.DataType != null && c.DataType.Contains("date")).ToArray();
 
         Check();
     }

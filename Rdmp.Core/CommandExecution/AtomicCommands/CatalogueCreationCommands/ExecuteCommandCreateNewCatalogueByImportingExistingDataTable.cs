@@ -52,7 +52,7 @@ public class ExecuteCommandCreateNewCatalogueByImportingExistingDataTable : Cata
             return;
 
         var importer = new TableInfoImporter(BasicActivator.RepositoryLocator.CatalogueDbContext, tbl);
-        importer.DoImport(out var ti, out _);
+        importer.DoImport(out var ti, out EntityFramework.Models.ColumnInfo[] _);
 
         var c = BasicActivator.CreateAndConfigureCatalogue(ti, null, "Existing table", ProjectSpecific, TargetFolder);
 

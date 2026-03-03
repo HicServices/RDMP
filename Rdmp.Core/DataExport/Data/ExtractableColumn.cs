@@ -209,7 +209,7 @@ public class ExtractableColumn : ConcreteColumn, IComparable, IInjectKnown<Catal
     private ColumnInfo FetchColumnInfo()
     {
         var ci = _knownCatalogueItem.Value;
-        return ci?.ColumnInfo_ID == null ? null : ci.ColumnInfo;
+        return null;// ci?.ColumnInfo_ID == null ? null : ci.ColumnInfo;
     }
 
     private CatalogueItem FetchCatalogueItem()

@@ -286,8 +286,8 @@ public class MetadataReport : DocXHelper
 
     private void CreateDescriptionsTable(XWPFDocument document, Catalogue c)
     {
-        var extractionInformations = c.GetAllExtractionInformation(ExtractionCategory.Any).Where(Include).ToList();
-        extractionInformations.Sort(IsExtractionIdentifiersFirstOrder);
+        var extractionInformations = new List<ExtractionInformation>();// c.GetAllExtractionInformation(ExtractionCategory.Any).Where(Include).ToList();
+        //extractionInformations.Sort(IsExtractionIdentifiersFirstOrder);
 
         if (!extractionInformations.Any())
             return;
@@ -360,7 +360,7 @@ public class MetadataReport : DocXHelper
         foreach (var ci in nonExtractableCatalogueItems.OrderBy(ci => ci.Name))
         {
             SetTableCell(table, tableLine, 0, ci.Name, TextFontSize);
-            SetTableCell(table, tableLine, 1, ci.ColumnInfo?.Data_type ?? @"N\A", TextFontSize);
+            SetTableCell(table, tableLine, 1, ci.ColumnInfo?.DataType ?? @"N\A", TextFontSize);
             SetTableCell(table, tableLine, 2, ci.Description, TextFontSize);
             tableLine++;
         }
@@ -445,9 +445,9 @@ public class MetadataReport : DocXHelper
         }
         else
         {
-            tableToQuery =
-                bestExtractionInformation[0].ColumnInfo
-                    .TableInfo; //there is an extraction identifier so use its table to query
+            //tableToQuery =
+            //    bestExtractionInformation[0].ColumnInfo
+            //        .TableInfo; //there is an extraction identifier so use its table to query
         }
 
         var hasExtractionIdentifier = bestExtractionInformation.Any();

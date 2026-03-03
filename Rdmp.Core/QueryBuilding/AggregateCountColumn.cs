@@ -97,6 +97,8 @@ public class AggregateCountColumn : SpontaneousObject, IColumn
     /// <inheritdoc/>
     public bool GroupBy => false;
 
+    EntityFramework.Models.ColumnInfo IColumn.ColumnInfo => throw new System.NotImplementedException();
+
     /// <inheritdoc/>
     public void Check(ICheckNotifier notifier)
     {

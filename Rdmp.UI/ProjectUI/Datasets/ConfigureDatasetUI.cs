@@ -234,9 +234,9 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design, ILifetimeSu
         {
             var ci = Activator.CoreChildProvider.AllCatalogueItemsDictionary[ei.CatalogueItem_ID];
 
-            ei.InjectKnown(ci);
-            if (ci.ColumnInfo_ID != null)
-                ei.InjectKnown(ci.ColumnInfo);
+            //ei.InjectKnown(ci);
+            //if (ci.ColumnInfo_ID != null)
+            //    ei.InjectKnown(ci.ColumnInfo);
         }
 
         olvAvailable.BeginUpdate();

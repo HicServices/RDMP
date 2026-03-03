@@ -211,16 +211,16 @@ public class AtomicCommandFactory : CommandFactoryBase
             };
         }
 
-        if (Is(o, out ExtractionInformation ei))
+        if (Is(o, out EntityFramework.Models.ExtractionInformation ei))
         {
             yield return new ExecuteCommandCreateNewFilter(_activator, new ExtractionFilterFactory(ei))
             { OverrideCommandName = "Add New Filter" };
-            yield return new ExecuteCommandCreateNewCohortFromCatalogue(_activator, ei);
-            yield return new ExecuteCommandChangeExtractionCategory(_activator, new[] { ei });
+            //yield return new ExecuteCommandCreateNewCohortFromCatalogue(_activator, ei);
+            //yield return new ExecuteCommandChangeExtractionCategory(_activator, new[] { ei });
 
-            yield return new ExecuteCommandViewData(_activator, ViewType.TOP_100, ei) { SuggestedCategory = View };
-            yield return new ExecuteCommandViewData(_activator, ViewType.Aggregate, ei) { SuggestedCategory = View };
-            yield return new ExecuteCommandViewData(_activator, ViewType.Distribution, ei) { SuggestedCategory = View };
+            //yield return new ExecuteCommandViewData(_activator, ViewType.TOP_100, ei) { SuggestedCategory = View };
+            //yield return new ExecuteCommandViewData(_activator, ViewType.Aggregate, ei) { SuggestedCategory = View };
+            //yield return new ExecuteCommandViewData(_activator, ViewType.Distribution, ei) { SuggestedCategory = View };
         }
 
         if (Is(o, out ExtractionFilter cataFilter))
@@ -1021,11 +1021,11 @@ public class AtomicCommandFactory : CommandFactoryBase
 
         if (many.Cast<object>().All(t => t is TableInfo))
             yield return new ExecuteCommandScriptTables(_activator, many.Cast<TableInfo>().ToArray(), null, null, null);
-        if (many.Cast<object>().All(t => t is CatalogueItem))
-            yield return new ExecuteCommandChangeExtractionCategory(_activator,
-                many.Cast<CatalogueItem>()
-                    .Select(ci => ci.ExtractionInformation)
-                    .Where(ei => ei != null).ToArray(), null);
+        //if (many.Cast<object>().All(t => t is CatalogueItem))
+        //    yield return new ExecuteCommandChangeExtractionCategory(_activator,
+        //        many.Cast<CatalogueItem>()
+        //            .Select(ci => ci.ExtractionInformation)
+        //            .Where(ei => ei != null).ToArray(), null);
 
         if (many.Cast<object>().All(d => d is IDeleteable))
             yield return new ExecuteCommandDelete(_activator, many.Cast<IDeleteable>().ToArray())

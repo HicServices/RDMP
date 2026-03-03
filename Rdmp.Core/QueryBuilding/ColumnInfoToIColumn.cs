@@ -28,7 +28,7 @@ public class ColumnInfoToIColumn : SpontaneousObject, IColumn
     /// </summary>
     /// <param name="repo"></param>
     /// <param name="column"></param>
-    public ColumnInfoToIColumn(MemoryRepository repo, ColumnInfo column) : base(repo)
+    public ColumnInfoToIColumn(MemoryRepository repo, EntityFramework.Models.ColumnInfo column) : base(repo)
     {
         ColumnInfo = column;
         Order = -1;
@@ -43,7 +43,7 @@ public class ColumnInfoToIColumn : SpontaneousObject, IColumn
     public string GetRuntimeName() => ColumnInfo.GetRuntimeName();
 
     /// <inheritdoc/>
-    public ColumnInfo ColumnInfo { get; private set; }
+    public EntityFramework.Models.ColumnInfo ColumnInfo { get; private set; }
 
     /// <inheritdoc/>
     public int Order { get; set; }
@@ -63,6 +63,8 @@ public class ColumnInfoToIColumn : SpontaneousObject, IColumn
 
     /// <inheritdoc/>
     public bool IsPrimaryKey { get; private set; }
+
+    EntityFramework.Models.ColumnInfo IColumn.ColumnInfo => throw new NotImplementedException();
 
     /// <summary>
     /// Checks the syntax of the column

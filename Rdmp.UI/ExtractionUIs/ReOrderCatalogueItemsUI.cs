@@ -85,7 +85,7 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
     {
         olvExtractionInformations.ClearObjects();
 
-        var info = new List<ExtractionInformation>(_catalogue.GetAllExtractionInformation(ExtractionCategory.Any));
+        var info = new List<Core.EntityFramework.Models.ExtractionInformation>(_catalogue.GetAllExtractionInformation(ExtractionCategory.Any));
         info.Sort();
 
         olvExtractionInformations.AddObjects(info.ToArray());

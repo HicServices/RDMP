@@ -125,8 +125,8 @@ public partial class ExtractionInformationUI : ExtractionInformationUI_Design, I
             ExtractionInformation.SelectSQL = sql;
             ExtractionInformation.Alias = alias;
 
-            //ExtractionInformation.Check(ThrowImmediatelyCheckNotifier.Quiet);
-            //ExtractionInformation.GetRuntimeName();
+            ExtractionInformation.Check(ThrowImmediatelyCheckNotifier.Quiet);
+            ExtractionInformation.GetRuntimeName();
             ragSmiley1.Reset();
         }
         catch (Exception e)

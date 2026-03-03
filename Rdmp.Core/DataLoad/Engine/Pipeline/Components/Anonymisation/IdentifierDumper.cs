@@ -31,7 +31,7 @@ public class IdentifierDumper : IHasRuntimeName, IDisposeAfterDataLoad, ICheckab
 
     public List<PreLoadDiscardedColumn> ColumnsToRouteToSomewhereElse { get; }
 
-    private ExternalDatabaseServer _externalDatabaseServer;
+    private EntityFramework.Models.ExternalDatabaseServer _externalDatabaseServer;
     private DiscoveredDatabase _dumpDatabase;
 
     private const int Timeout = 5000;
@@ -359,7 +359,7 @@ public class IdentifierDumper : IHasRuntimeName, IDisposeAfterDataLoad, ICheckab
 
     public string GetRuntimeName() => $"ID_{TableInfo.GetRuntimeName()}";
 
-    public void CreateIdentifierDumpTable(ColumnInfo[] primaryKeyColumnInfos)
+    public void CreateIdentifierDumpTable(EntityFramework.Models.ColumnInfo[] primaryKeyColumnInfos)
     {
         using var con = (SqlConnection)_dumpDatabase.Server.GetConnection();
         con.Open();

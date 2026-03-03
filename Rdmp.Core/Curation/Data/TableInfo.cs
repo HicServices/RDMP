@@ -174,6 +174,10 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
             ? null
             : CatalogueDbContext.GetObjectByID<ExternalDatabaseServer>((int)IdentifierDumpServer_ID);
 
+    EntityFramework.Models.ExternalDatabaseServer ITableInfo.IdentifierDumpServer => throw new NotImplementedException();
+
+    EntityFramework.Models.ColumnInfo[] ITableInfo.ColumnInfos => throw new NotImplementedException();
+
     #endregion
 
     public TableInfo()
@@ -507,4 +511,9 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
         DatabaseType == discoveredTable.Database.Server.DatabaseType &&
         (!alsoCheckServer ||
          discoveredTable.Database.Server.Name.Equals(Server, StringComparison.CurrentCultureIgnoreCase));
+
+    EntityFramework.Models.Catalogue[] ITableInfo.GetAllRelatedCatalogues()
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -79,10 +79,10 @@ public class ExtractionFilter : ConcreteFilter, IHasDependencies, IInjectKnown<E
     public override ColumnInfo GetColumnInfoIfExists() => ExtractionInformation.ColumnInfo;
 
     /// <inheritdoc/>
-    public override IFilterFactory GetFilterFactory() => new ExtractionFilterFactory(ExtractionInformation);
+    public override IFilterFactory GetFilterFactory() => null;// new ExtractionFilterFactory(ExtractionInformation);
 
     /// <inheritdoc/>
-    public override Catalogue GetCatalogue() => ExtractionInformation.CatalogueItem.Catalogue;
+    public override Catalogue GetCatalogue() => null;//ExtractionInformation.CatalogueItem.Catalogue;
 
     /// <inheritdoc/>
     public override ISqlParameter[] GetAllParameters() => ExtractionFilterParameters.ToArray();

@@ -18,21 +18,21 @@ namespace Rdmp.Core.Curation.FilterImporting.Construction;
 public class ExtractionFilterFactory : IFilterFactory
 {
     private readonly RDMPDbContext _catalogueDbContext;
-    private readonly ExtractionInformation _extractionInformation;
+    private readonly EntityFramework.Models.ExtractionInformation _extractionInformation;
 
     /// <summary>
     /// Prepares to create master extraction filters at <see cref="Catalogue"/> level which can be reused in cohort generation, project extractions etc.  Filters created
     /// will be stored under the specific <paramref name="extractionInformation"/> (extractable column) provided.
     /// </summary>
     /// <param name="extractionInformation"></param>
-    public ExtractionFilterFactory(ExtractionInformation extractionInformation)
+    public ExtractionFilterFactory(EntityFramework.Models.ExtractionInformation extractionInformation)
     {
         _catalogueDbContext = extractionInformation.CatalogueDbContext;
         _extractionInformation = extractionInformation;
     }
 
     /// <inheritdoc/>
-    public IFilter CreateNewFilter(string name) => new ExtractionFilter(_catalogueDbContext, name, _extractionInformation);
+    public IFilter CreateNewFilter(string name) => new ExtractionFilter(_catalogueDbContext, name, null);// _extractionInformation);
 
     /// <inheritdoc/>
     public ISqlParameter CreateNewParameter(IFilter filter, string parameterSQL) =>

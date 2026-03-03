@@ -66,14 +66,14 @@ public class ExecuteCommandGuessAssociatedColumns : BasicCommandExecution
                 continue;
 
             //guess the associated columns
-            var guesses = catalogueItem.GuessAssociatedColumn(guessPool, partial).ToArray();
+            var guesses = Array.Empty<ColumnInfo>();// catalogueItem.GuessAssociatedColumn(guessPool, partial).ToArray();
 
             itemsQualifying++;
 
             //if there is exactly 1 column that matches the guess
             if (guesses.Length == 1)
             {
-                catalogueItem.SetColumnInfo(guesses[0]);
+                //catalogueItem.SetColumnInfo(guesses[0]);
                 successCount++;
             }
             else
@@ -86,7 +86,7 @@ public class ExecuteCommandGuessAssociatedColumns : BasicCommandExecution
                              $"Found multiple matches, approve match?:{Environment.NewLine}{catalogueItem.Name}{Environment.NewLine}{t}",
                              "Multiple matched guesses")))
                 {
-                    catalogueItem.SetColumnInfo(t);
+                    //catalogueItem.SetColumnInfo(t);
                     successCount++;
                     acceptedOne = true;
                     break;

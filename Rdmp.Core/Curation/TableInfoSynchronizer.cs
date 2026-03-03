@@ -29,7 +29,7 @@ public class TableInfoSynchronizer
     private DiscoveredServer _toSyncTo;
     private RDMPDbContext _repository;
 
-    public HashSet<Catalogue> ChangedCatalogues = new();
+    public HashSet<EntityFramework.Models.Catalogue> ChangedCatalogues = new();
 
     /// <summary>
     /// Synchronizes the TableInfo against the underlying database to ensure the Catalogues understanding of what columns exist, what are primary keys,
@@ -139,7 +139,7 @@ public class TableInfoSynchronizer
                 $"The following columns are missing from the TableInfo:{string.Join(",", newColumnsInLive.Select(c => c.GetRuntimeName()))}",
                 CheckResult.Fail, null, "The ColumnInfos will be created and added to the TableInfo"));
 
-            var added = new List<ColumnInfo>();
+            var added = new List<EntityFramework.Models.ColumnInfo>();
 
             if (addMissingColumns)
             {
@@ -170,7 +170,11 @@ public class TableInfoSynchronizer
                     CheckResult.Fail, null,
                     $"Delete ColumnInfo {columnInfo.GetRuntimeName()}"));
                 if (deleteExtraColumnInfos)
-                    columnInfo.DeleteInDatabase();
+                {
+                    columnInfo.CatalogueDbContext.Remove(columnInfo);
+                    columnInfo.CatalogueDbContext.SaveChanges();
+                }
+
                 else
                     IsSynched = false;
             }
@@ -199,7 +203,7 @@ public class TableInfoSynchronizer
     }
 
 
-    private void ForwardEngineerExtractionInformationIfAppropriate(List<ColumnInfo> added, ICheckNotifier notifier)
+    private void ForwardEngineerExtractionInformationIfAppropriate(List<EntityFramework.Models.ColumnInfo> added, ICheckNotifier notifier)
     {
         //Is there one Catalogue behind this dataset?
         var relatedCatalogues = _tableToSync.GetAllRelatedCatalogues();
@@ -242,14 +246,14 @@ public class TableInfoSynchronizer
             var liveState = liveColumns.Single(c => c.GetRuntimeName().Equals(columnInfo.GetRuntimeName()));
 
             //deal with mismatch in type
-            if (!liveState.DataType.SQLType.Equals(columnInfo.Data_type))
+            if (!liveState.DataType.SQLType.Equals(columnInfo.DataType))
                 if (notifier.OnCheckPerformed(new CheckEventArgs(
-                        $"ColumnInfo {{{columnInfo.Name}}} is type {liveState.DataType.SQLType} in the live database but in the Catalogue appears as {columnInfo.Data_type}",
+                        $"ColumnInfo {{{columnInfo.Name}}} is type {liveState.DataType.SQLType} in the live database but in the Catalogue appears as {columnInfo.DataType}",
                         CheckResult.Fail, null,
                         "Update type in Catalogue?")))
                 {
-                    columnInfo.Data_type = liveState.DataType.SQLType;
-                    columnInfo.SaveToDatabase();
+                    columnInfo.DataType = liveState.DataType.SQLType;
+                    columnInfo.CatalogueDbContext.SaveChanges();
                 }
                 else
                 {
@@ -264,7 +268,7 @@ public class TableInfoSynchronizer
                         CheckResult.Fail, null, "Fix collation on ColumnInfo record to match live")))
                 {
                     columnInfo.Format = liveState.Format;
-                    columnInfo.SaveToDatabase();
+                    columnInfo.CatalogueDbContext.SaveChanges();
                 }
                 else
                 {
@@ -275,7 +279,7 @@ public class TableInfoSynchronizer
         return IsSynched;
     }
 
-    private static bool SynchronizeField(DiscoveredColumn[] liveColumns, ColumnInfo[] columnsInCatalogue,
+    private static bool SynchronizeField(DiscoveredColumn[] liveColumns, EntityFramework.Models.ColumnInfo[] columnsInCatalogue,
         ICheckNotifier notifier, string property)
     {
         var IsSynched = true;
@@ -300,7 +304,7 @@ public class TableInfoSynchronizer
                 if (fix)
                 {
                     cataloguePropertyGetter.SetValue(cataColumn, liveValue);
-                    cataColumn.SaveToDatabase();
+                    cataColumn.CatalogueDbContext.SaveChanges();
                 }
                 else
                 {

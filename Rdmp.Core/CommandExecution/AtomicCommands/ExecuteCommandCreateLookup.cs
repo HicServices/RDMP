@@ -21,13 +21,13 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 public class ExecuteCommandCreateLookup : BasicCommandExecution
 {
     private readonly RDMPDbContext _catalogueDbContext;
-    private readonly ExtractionInformation _foreignKeyExtractionInformation;
-    private readonly ColumnInfo[] _lookupDescriptionColumns;
-    private readonly List<Tuple<ColumnInfo, ColumnInfo>> _fkToPkTuples;
+    private readonly EntityFramework.Models.ExtractionInformation _foreignKeyExtractionInformation;
+    private readonly EntityFramework.Models.ColumnInfo[] _lookupDescriptionColumns;
+    private readonly List<Tuple<EntityFramework.Models.ColumnInfo, EntityFramework.Models.ColumnInfo>> _fkToPkTuples;
     private readonly string _collation;
     private readonly bool _alsoCreateExtractionInformations;
-    private readonly Catalogue _catalogue;
-    private readonly ExtractionInformation[] _allExtractionInformations;
+    private readonly EntityFramework.Models.Catalogue _catalogue;
+    private readonly EntityFramework.Models.ExtractionInformation[] _allExtractionInformations;
 
     /// <summary>
     /// Creates a knowledge that one <see cref="TableInfo"/> provides a description for a code in a column of a <see cref="Catalogue"/> (<see cref="ExtractionInformation"/>).
@@ -44,8 +44,8 @@ public class ExecuteCommandCreateLookup : BasicCommandExecution
     /// <param name="alsoCreateExtractionInformations">True to create a new virtual column in the main dataset so that the code description appears inline with the rest of
     /// the column(s) in the dataset (when the SELECT query is built)</param>
     public ExecuteCommandCreateLookup(RDMPDbContext catalogueDbContext,
-        ExtractionInformation foreignKeyExtractionInformation, ColumnInfo[] lookupDescriptionColumns,
-        List<Tuple<ColumnInfo, ColumnInfo>> fkToPkTuples, string collation, bool alsoCreateExtractionInformations)
+        EntityFramework.Models.ExtractionInformation foreignKeyExtractionInformation, EntityFramework.Models.ColumnInfo[] lookupDescriptionColumns,
+        List<Tuple<EntityFramework.Models.ColumnInfo, EntityFramework.Models.ColumnInfo>> fkToPkTuples, string collation, bool alsoCreateExtractionInformations)
     {
         _catalogueDbContext = catalogueDbContext;
         _foreignKeyExtractionInformation = foreignKeyExtractionInformation;
@@ -55,7 +55,7 @@ public class ExecuteCommandCreateLookup : BasicCommandExecution
         _alsoCreateExtractionInformations = alsoCreateExtractionInformations;
 
         _catalogue = _foreignKeyExtractionInformation.CatalogueItem.Catalogue;
-        _allExtractionInformations = _catalogue.GetAllExtractionInformation(ExtractionCategory.Any);
+        _allExtractionInformations = _catalogue.GetAllExtractionInformation(ExtractionCategory.Any).ToArray();
         if (!_fkToPkTuples.Any())
             throw new Exception("You must pass at least 1 pair of keys");
 
@@ -75,10 +75,10 @@ public class ExecuteCommandCreateLookup : BasicCommandExecution
     /// the columns in the dataset (when the SELECT query is built)</param>
     [UseWithObjectConstructor]
     public ExecuteCommandCreateLookup(RDMPDbContext catalogueDbContext,
-        ExtractionInformation foreignKeyExtractionInformation, ColumnInfo lookupDescriptionColumn,
-        ColumnInfo lookupTablePrimaryKey, string collation, bool alsoCreateExtractionInformations)
+        EntityFramework.Models.ExtractionInformation foreignKeyExtractionInformation, EntityFramework.Models.ColumnInfo lookupDescriptionColumn,
+        EntityFramework.Models.ColumnInfo lookupTablePrimaryKey, string collation, bool alsoCreateExtractionInformations)
         : this(catalogueDbContext, foreignKeyExtractionInformation, new[] { lookupDescriptionColumn },
-            new List<Tuple<ColumnInfo, ColumnInfo>>
+            new List<Tuple<EntityFramework.Models.ColumnInfo, EntityFramework.Models.ColumnInfo>>
                 { Tuple.Create(foreignKeyExtractionInformation.ColumnInfo, lookupTablePrimaryKey) }, collation,
             alsoCreateExtractionInformations)
     {
@@ -91,39 +91,40 @@ public class ExecuteCommandCreateLookup : BasicCommandExecution
 
         foreach (var descCol in _lookupDescriptionColumns)
         {
-            var lookup = new Lookup(_catalogueDbContext, descCol, _fkToPkTuples.First().Item1,
-                _fkToPkTuples.First().Item2, ExtractionJoinType.Left, _collation);
+            //TODO fix
+            //var lookup = new Lookup(_catalogueDbContext, descCol, _fkToPkTuples.First().Item1,
+            //    _fkToPkTuples.First().Item2, ExtractionJoinType.Left, _collation);
 
-            foreach (var supplementalKeyPair in _fkToPkTuples.Skip(1))
-                new LookupCompositeJoinInfo(_catalogueDbContext, lookup, supplementalKeyPair.Item1,
-                    supplementalKeyPair.Item2, _collation);
+            //foreach (var supplementalKeyPair in _fkToPkTuples.Skip(1))
+            //    new LookupCompositeJoinInfo(_catalogueDbContext, lookup, supplementalKeyPair.Item1,
+            //        supplementalKeyPair.Item2, _collation);
 
-            if (_alsoCreateExtractionInformations)
-            {
-                var proposedName = _lookupDescriptionColumns.Length == 1
-                    ? $"{_foreignKeyExtractionInformation.GetRuntimeName()}_Desc"
-                    : $"{_foreignKeyExtractionInformation.GetRuntimeName()}_{descCol.GetRuntimeName()}";
+            //if (_alsoCreateExtractionInformations)
+            //{
+            //    var proposedName = _lookupDescriptionColumns.Length == 1
+            //        ? $"{_foreignKeyExtractionInformation.GetRuntimeName()}_Desc"
+            //        : $"{_foreignKeyExtractionInformation.GetRuntimeName()}_{descCol.GetRuntimeName()}";
 
-                var newCatalogueItem = new CatalogueItem(_catalogueDbContext, _catalogue, proposedName);
-                newCatalogueItem.SetColumnInfo(descCol);
+            //    var newCatalogueItem = new CatalogueItem(_catalogueDbContext, _catalogue, proposedName);
+            //    newCatalogueItem.SetColumnInfo(descCol);
 
-                //bump everyone down 1
-                foreach (var toBumpDown in _allExtractionInformations.Where(e =>
-                             e.Order > _foreignKeyExtractionInformation.Order))
-                {
-                    toBumpDown.Order++;
-                    toBumpDown.SaveToDatabase();
-                }
+            //    //bump everyone down 1
+            //    foreach (var toBumpDown in _allExtractionInformations.Where(e =>
+            //                 e.Order > _foreignKeyExtractionInformation.Order))
+            //    {
+            //        toBumpDown.Order++;
+            //        toBumpDown.SaveToDatabase();
+            //    }
 
-                var newExtractionInformation =
-                    new ExtractionInformation(_catalogueDbContext, newCatalogueItem, descCol, descCol.ToString())
-                    {
-                        ExtractionCategory = ExtractionCategory.Supplemental,
-                        Alias = newCatalogueItem.Name,
-                        Order = _foreignKeyExtractionInformation.Order + 1
-                    };
-                newExtractionInformation.SaveToDatabase();
-            }
+            //    var newExtractionInformation =
+            //        new ExtractionInformation(_catalogueDbContext, newCatalogueItem, descCol, descCol.ToString())
+            //        {
+            //            ExtractionCategory = ExtractionCategory.Supplemental,
+            //            Alias = newCatalogueItem.Name,
+            //            Order = _foreignKeyExtractionInformation.Order + 1
+            //        };
+            //    newExtractionInformation.SaveToDatabase();
+            //}
         }
 
         _catalogue.ClearAllInjections();

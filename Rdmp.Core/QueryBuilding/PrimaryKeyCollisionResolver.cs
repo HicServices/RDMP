@@ -51,7 +51,7 @@ WHERE DuplicateCount > 1";
     /// <returns></returns>
     public string GenerateSQL() => GenerateSQL(out _, out _);
 
-    private string GenerateSQL(out ColumnInfo[] pks, out List<IResolveDuplication> resolvers)
+    private string GenerateSQL(out EntityFramework.Models.ColumnInfo[] pks, out List<IResolveDuplication> resolvers)
     {
         var tableNameInRAW = GetTableName();
 
@@ -108,16 +108,16 @@ WHERE DuplicateCount > 1";
         if (SpecialFieldNames.IsHicPrefixed(colname))
             return sql;
 
-        var valueType = GetDataType(col.Data_type);
+        var valueType = GetDataType(col.DataType);
 
         if (valueType == ValueType.CharacterString)
             //character strings are compared first by LENGTH (to prefer longer data)
             //then by alphabetical comparison to prefer things towards the start of the alphabet (because this makes sense?!)
             return
-                $"{sql}LEN(ISNULL({colname},{GetNullSubstituteForComparisonsWithDataType(col.Data_type, true)})){direction},{Environment.NewLine}ISNULL({colname},{GetNullSubstituteForComparisonsWithDataType(col.Data_type, true)}){direction},{Environment.NewLine}";
+                $"{sql}LEN(ISNULL({colname},{GetNullSubstituteForComparisonsWithDataType(col.DataType, true)})){direction},{Environment.NewLine}ISNULL({colname},{GetNullSubstituteForComparisonsWithDataType(col.DataType, true)}){direction},{Environment.NewLine}";
 
         return
-            $"{sql}ISNULL({colname},{GetNullSubstituteForComparisonsWithDataType(col.Data_type, true)}){direction},{Environment.NewLine}";
+            $"{sql}ISNULL({colname},{GetNullSubstituteForComparisonsWithDataType(col.DataType, true)}){direction},{Environment.NewLine}";
     }
 
     /// <summary>

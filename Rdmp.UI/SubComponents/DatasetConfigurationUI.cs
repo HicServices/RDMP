@@ -5,8 +5,8 @@ using System.Linq;
 using System.Windows.Forms;
 using Rdmp.UI.Refreshing;
 using Rdmp.Core.Dataset;
-using Rdmp.Core.Curation.Data;
 using Rdmp.UI.ItemActivation;
+using Rdmp.Core.EntityFramework.Models;
 
 namespace Rdmp.UI.SubComponents;
 public partial class DatasetConfigurationUI : DatsetConfigurationUI_Design, IRefreshBusSubscriber
@@ -26,7 +26,7 @@ public partial class DatasetConfigurationUI : DatsetConfigurationUI_Design, IRef
 
         var catalogues = databaseObject.CatalogueDbContext
             .GetAllObjectsWhere<ColumnInfo>("Dataset_ID", databaseObject.ID).SelectMany(static ci => ci.CatalogueItems)
-            .Select(static ci => ci.CatalogueName).Distinct().ToList();
+            .Select(static ci => ci.Catalogue.Name).Distinct().ToList();
         if(catalogues.Count < 1)
         {
             lblDatasetUsage.Text = "This dataset is not linked to data yet.";

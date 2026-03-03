@@ -62,7 +62,7 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
     private ITableInfo _tableInfo;
     private bool _choicesFinalised;
     private HelpWorkflow _workflow;
-    private CatalogueItem[] _catalogueItems;
+    private Core.EntityFramework.Models.CatalogueItem[] _catalogueItems;
     private bool _ddChangeAllChanged;
     private bool _importedNewTable;
 
@@ -139,10 +139,10 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
                 DataSourceUpdateMode.OnPropertyChanged, c => c.Description);
         }
 
-        //Every CatalogueItem is either mapped to a ColumnInfo (not extractable) or a ExtractionInformation (extractable).  To start out with they are not extractable
-        foreach (var ci in _catalogueItems)
-            olvColumnExtractability.AddObject(new ColPair(ci, cols.Single(col => ci.ColumnInfo_ID == col.ID),
-                eis.SingleOrDefault(e => e.CatalogueItem_ID == ci.ID)));
+        ////Every CatalogueItem is either mapped to a ColumnInfo (not extractable) or a ExtractionInformation (extractable).  To start out with they are not extractable
+        //foreach (var ci in _catalogueItems)
+        //    olvColumnExtractability.AddObject(new ColPair(ci, cols.Single(col => ci.ColumnInfo.ID == col.ID),
+        //        eis.SingleOrDefault(e => e.CatalogueItem_ID == ci.ID)));
 
         _extractionCategories = new object[]
         {

@@ -30,10 +30,10 @@ public sealed class ExecuteCommandLinkCatalogueToDataset : BasicCommandExecution
     {
         base.Execute();
         var items = _catalogue.CatalogueItems.ToList();
-        foreach (var ci in items.Select(static item => item.ColumnInfo).Where(ci => ci?.Dataset_ID != _dataset.ID))
+        foreach (var ci in items.Select(static item => item.ColumnInfo).Where(ci => ci?.Dataset.ID != _dataset.ID))
         {
-            ci.Dataset_ID = _dataset.ID;
-            ci.SaveToDatabase();
+            ci.Dataset.ID = _dataset.ID;
+            ci.CatalogueDbContext.SaveChanges();
             if (!_linkAll) continue;
 
             var databaseName = ci.Name[..ci.Name.LastIndexOf('.')];

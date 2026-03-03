@@ -68,10 +68,10 @@ namespace Rdmp.Core.Curation.DataHelper.RegexRedaction
             return matchValue;
         }
 
-        public static string GetRedactionValue(string value, ColumnInfo column, DataRow m, List<CatalogueItem> _cataloguePKs, RegexRedactionConfiguration _redactionConfiguration, DataTable redactionsToSaveTable, DataTable pksToSave, DataTable redactionUpates)
+        public static string GetRedactionValue(string value, EntityFramework.Models.ColumnInfo column, DataRow m, List<EntityFramework.Models.CatalogueItem> _cataloguePKs, RegexRedactionConfiguration _redactionConfiguration, DataTable redactionsToSaveTable, DataTable pksToSave, DataTable redactionUpates)
         {
 
-            Dictionary<ColumnInfo, string> pkLookup = Enumerable.Range(0, _cataloguePKs.Count).ToDictionary(i => _cataloguePKs[i].ColumnInfo, i => m[i + 1].ToString());
+            Dictionary<EntityFramework.Models.ColumnInfo, string> pkLookup = Enumerable.Range(0, _cataloguePKs.Count).ToDictionary(i => _cataloguePKs[i].ColumnInfo, i => m[i + 1].ToString());
             var matches = Regex.Matches(value, _redactionConfiguration.RegexPattern);
             var offset = 0;
             foreach (var match in matches)
@@ -104,7 +104,7 @@ namespace Rdmp.Core.Curation.DataHelper.RegexRedaction
             return value;
         }
 
-        public static void Redact(ColumnInfo column, DataRow match, List<CatalogueItem> _cataloguePKs, RegexRedactionConfiguration _redactionConfiguration, DataTable redactionsToSaveTable, DataTable pksToSave, DataTable redactionUpates)
+        public static void Redact(EntityFramework.Models.ColumnInfo column, DataRow match, List<EntityFramework.Models.CatalogueItem> _cataloguePKs, RegexRedactionConfiguration _redactionConfiguration, DataTable redactionsToSaveTable, DataTable pksToSave, DataTable redactionUpates)
         {
 
             var redactedValue = GetRedactionValue(match[0].ToString(), column, match, _cataloguePKs, _redactionConfiguration, redactionsToSaveTable, pksToSave, redactionUpates);
@@ -137,7 +137,7 @@ namespace Rdmp.Core.Curation.DataHelper.RegexRedaction
     //            (catalogueRepo as TableRepository).Insert(sql, null, timeout);
         }
 
-        public static void DoJoinUpdate(ColumnInfo column, DiscoveredTable _discoveredTable, DiscoveredServer _server, DataTable redactionUpates, DiscoveredColumn[] _discoveredPKColumns, int timeout = 30000)
+        public static void DoJoinUpdate(EntityFramework.Models.ColumnInfo column, DiscoveredTable _discoveredTable, DiscoveredServer _server, DataTable redactionUpates, DiscoveredColumn[] _discoveredPKColumns, int timeout = 30000)
         {
             var redactionTable = _discoveredTable.Database.CreateTable(nameof(Constants.TEMP_RedactionUpdates), redactionUpates);
             var updateHelper = _server.GetQuerySyntaxHelper().UpdateHelper;

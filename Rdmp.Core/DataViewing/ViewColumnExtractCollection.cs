@@ -147,7 +147,9 @@ public class ViewColumnExtractCollection : PersistableObjectCollection, IViewSQL
     private IColumn GetIColumn()
     {
         if (ExtractionInformation != null) return ExtractionInformation;
-        return ColumnInfo != null ? new ColumnInfoToIColumn(new MemoryRepository(), ColumnInfo) : (IColumn)null;
+        //return ColumnInfo != null ? new ColumnInfoToIColumn(new MemoryRepository(), ColumnInfo) : (IColumn)null;
+        //TODO fix
+        return (IColumn)null;
     }
 
     private void AddDistributionColumns(QueryBuilder qb)

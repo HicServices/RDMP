@@ -20,7 +20,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.Alter;
 /// </summary>
 public class ExecuteCommandAlterTableCreatePrimaryKey : AlterTableCommandExecution
 {
-    private readonly ColumnInfo[] _columnInfos;
+    private readonly EntityFramework.Models.ColumnInfo[] _columnInfos;
 
     [UseWithCommandLine(ParameterHelpList = "<TableInfo> <ColumnInfo1> <ColumnInfo2> etc",
         ParameterHelpBreakdown = @"TableInfo    The table you want to create a primary key on e.g. TableInfo:*Biochem*
@@ -31,9 +31,9 @@ ColumnInfos List of columns that should form the primary key (1 for simple prima
         if (IsImpossible)
             return;
 
-        var pick = new List<ColumnInfo>();
+        var pick = new List<EntityFramework.Models.ColumnInfo>();
         for (var i = 1; i < picker.Length; i++)
-            pick.Add((ColumnInfo)picker[i].GetValueForParameterOfType(typeof(ColumnInfo)));
+            pick.Add((EntityFramework.Models.ColumnInfo)picker[i].GetValueForParameterOfType(typeof(EntityFramework.Models.ColumnInfo)));
 
         _columnInfos = pick.ToArray();
     }

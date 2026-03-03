@@ -5,7 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Icons.IconOverlays;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
@@ -38,22 +38,22 @@ public sealed class CatalogueItemStateBasedIconProvider : IObjectStateBasedIconP
         if (ei.IsPrimaryKey)
             toReturn = IconOverlayProvider.GetOverlay(toReturn, OverlayKind.Key);
 
-        switch (ei.ExtractionCategory)
+        switch (ei.GetExtractionCategory())
         {
-            case ExtractionCategory.ProjectSpecific:
-            case ExtractionCategory.Core:
+            case Curation.Data.ExtractionCategory.ProjectSpecific:
+            case Curation.Data.ExtractionCategory.Core:
                 toReturn = IconOverlayProvider.GetOverlay(toReturn, OverlayKind.Extractable);
                 break;
-            case ExtractionCategory.Supplemental:
+            case Curation.Data.ExtractionCategory.Supplemental:
                 toReturn = IconOverlayProvider.GetOverlay(toReturn, OverlayKind.Extractable_Supplemental);
                 break;
-            case ExtractionCategory.SpecialApprovalRequired:
+            case Curation.Data.ExtractionCategory.SpecialApprovalRequired:
                 toReturn = IconOverlayProvider.GetOverlay(toReturn, OverlayKind.Extractable_SpecialApproval);
                 break;
-            case ExtractionCategory.Internal:
+            case Curation.Data.ExtractionCategory.Internal:
                 toReturn = IconOverlayProvider.GetOverlay(toReturn, OverlayKind.Extractable_Internal);
                 break;
-            case ExtractionCategory.Deprecated:
+            case Curation.Data.ExtractionCategory.Deprecated:
                 toReturn = IconOverlayProvider.GetOverlay(toReturn, OverlayKind.Extractable);
                 toReturn = IconOverlayProvider.GetOverlay(toReturn, OverlayKind.Deprecated);
                 break;

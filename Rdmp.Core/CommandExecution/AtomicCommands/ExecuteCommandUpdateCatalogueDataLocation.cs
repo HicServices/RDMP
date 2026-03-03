@@ -59,9 +59,9 @@ public class ExecuteCommandUpdateCatalogueDataLocation : BasicCommandExecution, 
             var foundColumn = discoveredColumns
                 .AsEnumerable().FirstOrDefault(dc => dc.GetFullyQualifiedName().Contains(newColumn));
             if (foundColumn is null) return $"Unable to find column '{newColumn}' in selected table";
-            if (foundColumn.DataType?.ToString() != item.ColumnInfo.Data_type)
+            if (foundColumn.DataType?.ToString() != item.ColumnInfo.DataType)
                 return
-                    $"The data type of column '{newColumn}' is of type '{foundColumn.DataType}'. This does not match the current type of '{item.ColumnInfo.Data_type}'";
+                    $"The data type of column '{newColumn}' is of type '{foundColumn.DataType}'. This does not match the current type of '{item.ColumnInfo.DataType}'";
         }
 
         _checksPassed = true;
@@ -145,11 +145,11 @@ public class ExecuteCommandUpdateCatalogueDataLocation : BasicCommandExecution, 
             }
 
             selectedCatalogueItem.ColumnInfo.Name = GenerateNewSQLPath(selectedCatalogueItem.ColumnInfo.Name);
-            selectedCatalogueItem.ColumnInfo.SaveToDatabase();
-            foreach (var ei in selectedCatalogueItem.ColumnInfo.ExtractionInformations)
+            selectedCatalogueItem.ColumnInfo.CatalogueDbContext.SaveChanges();
+            foreach (var ei in selectedCatalogueItem.ColumnInfo.CatalogueItems.Select(ci => ci.ExtractionInformation))
             {
                 ei.SelectSQL = GenerateNewSQLPath(selectedCatalogueItem.ExtractionInformation.SelectSQL);
-                ei.SaveToDatabase();
+                ei.CatalogueDbContext.SaveChanges();
             }
         }
     }

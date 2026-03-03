@@ -79,7 +79,7 @@ public sealed class ExecuteCommandBulkImportTableInfos : BasicCommandExecution, 
                      "Generate New Catalogues"))
             generateCatalogues = true;
 
-        var married = new Dictionary<CatalogueItem, ColumnInfo>();
+        var married = new Dictionary<EntityFramework.Models.CatalogueItem, EntityFramework.Models.ColumnInfo>();
 
         ITableInfo anyNewTable = null;
 
@@ -95,7 +95,7 @@ public sealed class ExecuteCommandBulkImportTableInfos : BasicCommandExecution, 
             var importer = new TableInfoImporter(BasicActivator.RepositoryLocator.CatalogueDbContext, discoveredTable);
 
             //import the table
-            importer.DoImport(out var ti, out var cis);
+            importer.DoImport(out var ti, out EntityFramework.Models.ColumnInfo[] cis);
 
             anyNewTable ??= ti;
 
@@ -107,20 +107,20 @@ public sealed class ExecuteCommandBulkImportTableInfos : BasicCommandExecution, 
             if (matchingCatalogues.Length == 1)
             {
                 //we know we want to import all these ColumnInfos
-                var unmatched = new List<ColumnInfo>(cis);
+                var unmatched = new List<EntityFramework.Models.ColumnInfo>(cis);
 
                 //But hopefully most already have orphan CatalogueItems we can hook them together to
                 foreach (var cataItem in matchingCatalogues[0].CatalogueItems)
                     if (cataItem.ColumnInfo_ID == null)
                     {
-                        var matches = cataItem.GuessAssociatedColumn(cis, false).ToArray();
+                        //var matches = cataItem.GuessAssociatedColumn(cis, false).ToArray();
 
-                        if (matches.Length == 1)
-                        {
-                            cataItem.SetColumnInfo(matches[0]);
-                            unmatched.Remove(matches[0]); //we married them together
-                            married.Add(cataItem, matches[0]);
-                        }
+                        //if (matches.Length == 1)
+                        //{
+                        //    cataItem.SetColumnInfo(matches[0]);
+                        //    unmatched.Remove(matches[0]); //we married them together
+                        //    married.Add(cataItem, matches[0]);
+                        //}
                     }
 
                 //is anyone unmarried? i.e. new ColumnInfos that don't have CatalogueItems with the same name
@@ -132,7 +132,7 @@ public sealed class ExecuteCommandBulkImportTableInfos : BasicCommandExecution, 
                         ColumnInfo_ID = columnInfo.ID
                     };
                     cataItem.SaveToDatabase();
-                    married.Add(cataItem, columnInfo);
+                    //married.Add(cataItem, columnInfo);
                 }
             }
             else if (generateCatalogues)
@@ -141,13 +141,13 @@ public sealed class ExecuteCommandBulkImportTableInfos : BasicCommandExecution, 
             }
         }
 
-        if (married.Any() && YesNo($"Found {married.Count} columns, make them all extractable?", "Make Extractable"))
-            foreach (var (catalogueItem, columnInfo) in married)
-                // don't mark it extractable twice
-                if (catalogueItem.ExtractionInformation == null)
-                    //yup that's how we roll, the database is main memory!
-                    _ = new ExtractionInformation(BasicActivator.RepositoryLocator.CatalogueDbContext, catalogueItem,
-                        columnInfo, columnInfo.Name);
+        //if (married.Any() && YesNo($"Found {married.Count} columns, make them all extractable?", "Make Extractable"))
+        //    foreach (var (catalogueItem, columnInfo) in married)
+        //        // don't mark it extractable twice
+        //        if (catalogueItem.ExtractionInformation == null)
+        //            //yup that's how we roll, the database is main memory!
+        //            _ = new ExtractionInformation(BasicActivator.RepositoryLocator.CatalogueDbContext, catalogueItem,
+        //                columnInfo, columnInfo.Name);
 
         if (anyNewTable != null)
         {

@@ -94,6 +94,8 @@ public abstract class ConcreteColumn : DatabaseEntity, IColumn, IOrderable, ICom
     [NoMappingToDatabase]
     public abstract ColumnInfo ColumnInfo { get; }
 
+    EntityFramework.Models.ColumnInfo IColumn.ColumnInfo => throw new NotImplementedException();
+
     #endregion
 
     /// <inheritdoc/>

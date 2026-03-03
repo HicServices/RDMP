@@ -145,7 +145,7 @@ public class ExecutePkSynthesizerDatasetExtractionSource : ExecuteDatasetExtract
             }
     }
 
-    private IEnumerable<ColumnInfo> GetColumnInfoPrimaryKeys()
+    private IEnumerable<EntityFramework.Models.ColumnInfo> GetColumnInfoPrimaryKeys()
     {
         return GetProperTables().SelectMany(static t => t.ColumnInfos).Where(static column => column.IsPrimaryKey);
     }

@@ -174,7 +174,7 @@ public class ParameterManager
         ParametersFoundSoFarInQueryGeneration[ParameterLevel.QueryLevel].Clear();
         ParametersFoundSoFarInQueryGeneration[ParameterLevel.TableInfo].Clear();
         State = ParameterManagerLifecycleState.ParameterDiscovery;
-        //_memoryCatalogueDbContext.Clear();
+        _memoryRepository.Clear();
     }
 
     private static void AddParameterToCollection(ParameterFoundAtLevel toAdd,

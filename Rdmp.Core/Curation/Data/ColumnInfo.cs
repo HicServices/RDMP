@@ -92,6 +92,12 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
         set => SetField(ref _dataType, value);
     }
 
+    public string DataType
+    {
+        get => _dataType;
+        set => SetField(ref _dataType, value);
+    }
+
     /// <summary>
     ///  User specified free text field.  Not used for anything by RDMP.
     /// <para> Use <see cref="Collation"/> instead</para>
@@ -230,7 +236,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     [NoMappingToDatabase]
     public IEnumerable<ExtractionInformation> ExtractionInformations
     {
-        get { return CatalogueItems.Select(e => e.ExtractionInformation).Where(o => o != null); }
+        get { return new List<ExtractionInformation>(); }//{ return CatalogueItems.Select(e => e.ExtractionInformation).Where(o => o != null); }
     }
 
     /// <summary>
