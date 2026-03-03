@@ -53,8 +53,83 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
         [DemandsInitialization("Allow the merge to perform deletes when records are missing from the source.", DefaultValue = false)]
         public bool AllowMergeToPerformDeletes { get; set; }
 
+        [DemandsInitialization(@"How do you want to name datasets, use the following tokens if you need them:   
+         $p - Project Name ('e.g. My Project')
+         $n - Project Number (e.g. 234)
+         $c - Configuration Name (e.g. 'Cases')
+         $d - Dataset name (e.g. 'Prescribing')
+         $a - Dataset acronym (e.g. 'Presc') 
+         $e - Extraction Configuration Id (e.g. 14)
+         You must have either $a or $d
+         ", Mandatory = true, DefaultValue = "$c_$d")]
+        public string TableNamingPattern { get; set; }
+
+
+        private DiscoveredDatabase db;
+
         public MSSqlMergeDestination() : base(false)
         {
+        }
+
+        private string GetTableName(string suffix = null, DataTable dt)
+        {
+            string tblName;
+            if (!string.IsNullOrWhiteSpace(dt.TableName))
+            {
+                tblName = SanitizeNameForDatabase(dt.TableName);
+
+                if (!string.IsNullOrWhiteSpace(suffix))
+                    tblName += $"_{suffix}";
+
+                return tblName;
+            }
+
+            tblName = TableNamingPattern;
+            var project = _request.Configuration.Project;
+
+            tblName = tblName.Replace("$p", project.Name);
+            tblName = tblName.Replace("$n", project.ProjectNumber.ToString());
+            tblName = tblName.Replace("$c", _request.Configuration.Name);
+            tblName = tblName.Replace("$e", _request.Configuration.ID.ToString());
+
+            if (_request is ExtractDatasetCommand extractDatasetCommand)
+            {
+                tblName = tblName.Replace("$d", extractDatasetCommand.DatasetBundle.DataSet.Catalogue.Name);
+                tblName = tblName.Replace("$a", extractDatasetCommand.DatasetBundle.DataSet.Catalogue.Acronym);
+            }
+
+            if (_request is ExtractGlobalsCommand)
+            {
+                tblName = tblName.Replace("$d", ExtractionDirectory.GLOBALS_DATA_NAME);
+                tblName = tblName.Replace("$a", "G");
+            }
+
+            var cachedGetTableNameAnswer = SanitizeNameForDatabase(tblName);
+            if (!string.IsNullOrWhiteSpace(suffix))
+                cachedGetTableNameAnswer += $"_{suffix}";
+
+            return cachedGetTableNameAnswer;
+        }
+
+        private string SanitizeNameForDatabase(string tblName)
+        {
+            if (db == null)
+                throw new Exception(
+                    "Cannot pick a TableName until we know what type of server it is going to, _server is null");
+
+            //get rid of brackets and dots
+            tblName = Regex.Replace(tblName, "[.()]", "_");
+
+            var syntax = db.Server.GetQuerySyntaxHelper();
+            syntax.ValidateTableName(tblName);
+
+            //otherwise, fetch and cache answer
+            var cachedGetTableNameAnswer = syntax.GetSensibleEntityNameFromString(tblName);
+
+            return string.IsNullOrWhiteSpace(cachedGetTableNameAnswer)
+                ? throw new Exception(
+                    $"TableNamingPattern '{TableNamingPattern}' resulted in an empty string for request '{_request}'")
+                : cachedGetTableNameAnswer;
         }
 
         public override void Abort(IDataLoadEventListener listener)
@@ -110,18 +185,20 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
                 .Replace("$e", _request.Configuration.ID.ToString());
 
             //make sure the db exist
-            var db = discoveredServer.ExpectDatabase(dbName);
+            db = discoveredServer.ExpectDatabase(dbName);
             if (!db.Exists())
                 db.Create();
 
-            var destinationTable = db.ExpectTable(toProcess.TableName);
+
+            var tableName = GetTableName(toProcess);
+            var destinationTable = db.ExpectTable(tableName);
 
             //ensure there are some pks
             bool hasPrimaryKeys = toProcess.PrimaryKey != null && toProcess.PrimaryKey.Length > 0;
             if (!destinationTable.Exists())
             {
                 //create
-                destinationTable = db.CreateTable(out _, toProcess.TableName, toProcess, null,
+                destinationTable = db.CreateTable(out _, tableName, toProcess, null,
                          true, null);
             }
             else
@@ -185,7 +262,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
             //merge
             var tmpTbl = db.CreateTable(
                 out Dictionary<string, Guesser> _dataTypeDictionary,
-                $"{(DeleteMergeTempTable ? "##" : "")}mergeTempTable_{toProcess.TableName}_{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff",CultureInfo.InvariantCulture).Replace('.','-')}",
+                $"{(DeleteMergeTempTable ? "##" : "")}mergeTempTable_{tableName}_{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff",CultureInfo.InvariantCulture).Replace('.','-')}",
                 toProcess, null,true, null);
             var _managedConnection = tmpTbl.Database.Server.GetManagedConnection();
             var _bulkcopy = tmpTbl.BeginBulkInsert(CultureInfo.CurrentCulture, _managedConnection.ManagedTransaction);
