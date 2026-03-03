@@ -71,7 +71,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
         {
         }
 
-        private string GetTableName(string suffix = null, DataTable dt)
+        private string GetTableName(string suffix, DataTable dt)
         {
             string tblName;
             if (!string.IsNullOrWhiteSpace(dt.TableName))
@@ -190,7 +190,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
                 db.Create();
 
 
-            var tableName = GetTableName(toProcess);
+            var tableName = GetTableName(null,toProcess);
             var destinationTable = db.ExpectTable(tableName);
 
             //ensure there are some pks
