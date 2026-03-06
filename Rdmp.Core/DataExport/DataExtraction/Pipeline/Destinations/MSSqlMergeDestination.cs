@@ -142,7 +142,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
 
         public override GlobalReleasePotential GetGlobalReleasabilityEvaluator(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISupplementalExtractionResults globalResult, IMapsDirectlyToDatabaseTable globalToCheck)
         {
-            throw new NotImplementedException();
+            return new MsSqlGlobalsReleasePotential(repositoryLocator, globalResult, globalToCheck);
         }
 
         public override ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISelectedDataSets selectedDataSet)
