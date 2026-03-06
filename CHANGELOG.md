@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Simplify use of Extraction Progress
 - Update CHI validation to allow mod10 CHIs
 - Hardened Confluence export functionality
+- Add new SQL merge extraction component
 
 ## [9.1.1] - 2025-12-02
 - Allow Atlassian service workers to write to Confluence from RDMP

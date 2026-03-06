@@ -151,7 +151,7 @@ public class FlatFileColumnCollection
                 _headers[i] = _headers[i].Trim();
 
         //throw away trailing null headers e.g. the header line "Name,Date,,,"
-        var trailingNullHeaders = _headers.AsEnumerable<string>().Reverse().TakeWhile(s => s.IsBasicallyNull()).Count();
+        var trailingNullHeaders = _headers.AsEnumerable().Reverse().TakeWhile(s => s.IsBasicallyNull()).Count();
 
         if (trailingNullHeaders > 0)
             _headers = _headers.Take(_headers.Length - trailingNullHeaders).ToArray();
