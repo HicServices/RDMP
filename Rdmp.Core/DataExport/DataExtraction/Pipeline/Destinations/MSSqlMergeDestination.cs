@@ -123,12 +123,10 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
 
         public override void Abort(IDataLoadEventListener listener)
         {
-            //throw new NotImplementedException();
         }
 
         public override void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
         {
-            //throw new NotImplementedException();
         }
 
         public override string GetDestinationDescription()

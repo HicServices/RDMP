@@ -332,7 +332,6 @@
 		<PackageReference Include="HIC.FAnsiSql" />
 		<PackageReference Include="LibArchive.Net" />
 		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" />
-		<PackageReference Include="Microsoft.Extensions.DependencyModel" />
 		<PackageReference Include="Microsoft.SourceLink.GitHub">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
