@@ -49,6 +49,8 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
         [DemandsInitialization("Ensure the destination table has an archive trigger", DefaultValue = true)]
         public bool UseArchiveTrigger { get; set; }
 
+        [DemandsInitialization("Update destination column types to allow new data to be inserted",DefaultValue =false)]
+        public bool AdjustColumnsAsRequired { get; set; }
 
         [DemandsInitialization("Allow the merge to perform deletes when records are missing from the source.", DefaultValue = false)]
         public bool AllowMergeToPerformDeletes { get; set; }
@@ -66,6 +68,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
 
 
         private DiscoveredDatabase db;
+        private DataTable _toProcess;
 
         public MSSqlMergeDestination() : base(false)
         {
@@ -73,24 +76,13 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
 
         private string GetTableName(string suffix, DataTable dt)
         {
-            string tblName;
-            //if (!string.IsNullOrWhiteSpace(dt.TableName))
-            //{
-            //    tblName = SanitizeNameForDatabase(dt.TableName);
+            string tblName = TableNamingPattern;
+            var project = _request?.Configuration.Project;
 
-            //    if (!string.IsNullOrWhiteSpace(suffix))
-            //        tblName += $"_{suffix}";
-
-            //    //return tblName;
-            //}
-
-            tblName = TableNamingPattern;
-            var project = _request.Configuration.Project;
-
-            tblName = tblName.Replace("$p", project.Name);
-            tblName = tblName.Replace("$n", project.ProjectNumber.ToString());
-            tblName = tblName.Replace("$c", _request.Configuration.Name);
-            tblName = tblName.Replace("$e", _request.Configuration.ID.ToString());
+            tblName = tblName.Replace("$p", project?.Name);
+            tblName = tblName.Replace("$n", project?.ProjectNumber.ToString());
+            tblName = tblName.Replace("$c", _request?.Configuration.Name);
+            tblName = tblName.Replace("$e", _request?.Configuration.ID.ToString());
 
             if (_request is ExtractDatasetCommand extractDatasetCommand)
             {
@@ -144,7 +136,13 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
 
         public override string GetDestinationDescription()
         {
-            return "SQL MERGE - TODO";
+            if (_toProcess == null)
+                return _request is ExtractGlobalsCommand
+                    ? "Globals"
+                    : throw new Exception("Could not describe destination because _toProcess was null");
+
+            var tblName = GetTableName(null, _toProcess);
+            return $"{TargetDatabaseServer.ID}|{db.GetRuntimeName()}|{tblName}";
         }
 
         public override GlobalReleasePotential GetGlobalReleasabilityEvaluator(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISupplementalExtractionResults globalResult, IMapsDirectlyToDatabaseTable globalToCheck)
@@ -164,6 +162,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
 
         protected override void Open(DataTable toProcess, IDataLoadEventListener job, GracefulCancellationToken cancellationToken)
         {
+            _toProcess = toProcess;
         }
 
         protected override void PreInitializeImpl(IExtractCommand request, IDataLoadEventListener listener)
@@ -172,17 +171,18 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
 
         protected override void WriteRows(DataTable toProcess, IDataLoadEventListener job, GracefulCancellationToken cancellationToken, Stopwatch stopwatch)
         {
+            _toProcess= toProcess;
             var discoveredServer = DataAccessPortal.ExpectServer(TargetDatabaseServer, DataAccessContext.DataExport, false);
 
             //sort out the naming 
             var dbName = DatabaseNamingPattern;
 
-            dbName = dbName.Replace("$p", _project.Name)
-                .Replace("$n", _project.ProjectNumber.ToString())
-                .Replace("$t", _project.MasterTicket)
-                .Replace("$r", _request.Configuration.RequestTicket)
-                .Replace("$l", _request.Configuration.ReleaseTicket)
-                .Replace("$e", _request.Configuration.ID.ToString());
+            dbName = dbName.Replace("$p", _project?.Name)
+                .Replace("$n", _project?.ProjectNumber.ToString())
+                .Replace("$t", _project?.MasterTicket)
+                .Replace("$r", _request?.Configuration.RequestTicket)
+                .Replace("$l", _request?.Configuration.ReleaseTicket)
+                .Replace("$e", _request?.Configuration.ID.ToString());
 
             //make sure the db exist
             db = discoveredServer.ExpectDatabase(dbName);
@@ -262,7 +262,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
             //merge
             var tmpTbl = db.CreateTable(
                 out Dictionary<string, Guesser> _dataTypeDictionary,
-                $"{(DeleteMergeTempTable ? "##" : "")}mergeTempTable_{tableName}_{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff",CultureInfo.InvariantCulture).Replace('.','-')}",
+                $"mergeTempTable_{tableName}_{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff",CultureInfo.InvariantCulture).Replace('.','-')}",
                 toProcess, null,true, null);
             var _managedConnection = tmpTbl.Database.Server.GetManagedConnection();
             var _bulkcopy = tmpTbl.BeginBulkInsert(CultureInfo.CurrentCulture, _managedConnection.ManagedTransaction);
@@ -276,18 +276,18 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
                     UPDATE SET {string.Join(" , ", nonPkColumns.Select(pkc => $"target.{pkc.ColumnName} = source.{pkc.ColumnName}"))}
                 WHEN NOT MATCHED BY TARGET THEN
                     INSERT ({string.Join(" , ", toProcess.Columns.Cast<DataColumn>().Select(pkc => pkc.ColumnName))})
-                    VALUES ({string.Join(" , ", toProcess.Columns.Cast<DataColumn>().Select(pkc => $"source.{pkc.ColumnName}"))});
+                    VALUES ({string.Join(" , ", toProcess.Columns.Cast<DataColumn>().Select(pkc => $"source.{pkc.ColumnName}"))}){(AllowMergeToPerformDeletes?"":";")}
+                {(AllowMergeToPerformDeletes?"""
+                WHEN NOT MATCHED BY SOURCE THEN
+                    DELETE;
+                """:"")}
                 """;
             job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"{mergeSql}"));
-
             var cmd = new SqlCommand(mergeSql, (SqlConnection)_managedConnection.Connection);
             var rowCount = cmd.ExecuteNonQuery();
             job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Merged {rowCount} rows into {destinationTable.GetFullyQualifiedName()}."));
-
+            if(DeleteMergeTempTable)tmpTbl.Drop();
             _managedConnection.Dispose();
-
-
-
         }
     }
 }
