@@ -40,7 +40,6 @@ public class DescendancyList
             typeof(LoadStageNode),
             typeof(PreLoadDiscardedColumnsNode),
             typeof(ProjectCataloguesNode),
-            typeof(ProjectCohortIdentificationConfigurationAssociationsNode)
         });
 
     /// <summary>

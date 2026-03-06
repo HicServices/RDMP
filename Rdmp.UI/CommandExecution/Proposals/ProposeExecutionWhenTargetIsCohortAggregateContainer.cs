@@ -43,6 +43,7 @@ internal class
             //source is catalogue
             case CatalogueCombineable sourceCatalogueCombineable:
                 {
+                    if (sourceCatalogueCombineable.Catalogue.IsInternalDataset) return null;
                     if (sourceCatalogueCombineable.Catalogue.IsProjectSpecific(ItemActivator.RepositoryLocator.DataExportRepository))
                     {
                         var dx = (DataExportChildProvider)ItemActivator.CoreChildProvider;

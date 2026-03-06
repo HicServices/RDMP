@@ -33,7 +33,6 @@
             olvName = new BrightIdeasSoftware.OLVColumn();
             olvProjectNumber = new BrightIdeasSoftware.OLVColumn();
             olvVersion = new BrightIdeasSoftware.OLVColumn();
-            tbFilter = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)tlvSavedCohorts).BeginInit();
             SuspendLayout();
             // 
@@ -74,26 +73,16 @@
             olvVersion.AspectName = "";
             olvVersion.Text = "Version";
             // 
-            // tbFilter
-            // 
-            tbFilter.Dock = System.Windows.Forms.DockStyle.Bottom;
-            tbFilter.Location = new System.Drawing.Point(0, 724);
-            tbFilter.Name = "tbFilter";
-            tbFilter.Size = new System.Drawing.Size(462, 23);
-            tbFilter.TabIndex = 2;
-            // 
             // SavedCohortsCollectionUI
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            Controls.Add(tbFilter);
             Controls.Add(tlvSavedCohorts);
             Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             Name = "SavedCohortsCollectionUI";
             Size = new System.Drawing.Size(462, 747);
             ((System.ComponentModel.ISupportInitialize)tlvSavedCohorts).EndInit();
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
@@ -102,6 +91,5 @@
         private BrightIdeasSoftware.OLVColumn olvName;
         private BrightIdeasSoftware.OLVColumn olvProjectNumber;
         private BrightIdeasSoftware.OLVColumn olvVersion;
-        private System.Windows.Forms.TextBox tbFilter;
     }
 }

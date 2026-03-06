@@ -1,30 +1,32 @@
-﻿using NUnit.Framework;
-using Minio;
-using Rdmp.Core.ReusableLibraryCode.AWS;
-using Tests.Common.Scenarios;
-using Rdmp.Core.DataFlowPipeline;
-using Rdmp.Core.ReusableLibraryCode.Progress;
-using System;
-using Rdmp.Core.Curation.Data.Pipelines;
-using Rdmp.Core.DataExport.DataRelease;
+﻿using Amazon.S3;
+using Amazon.S3.Model;
+using MathNet.Numerics.Statistics;
+using NPOI.SS.Formula.Functions;
+using NSubstitute;
+using NUnit.Framework;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.CommandLine.Runners;
-using Rdmp.Core.CommandExecution;
-using Rdmp.Core.ReusableLibraryCode.Checks;
-using System.Linq;
-using Minio.DataModel.Args;
-using System.Collections.Generic;
-using Minio.DataModel;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.Curation.Data.Pipelines;
+using Rdmp.Core.DataExport.DataRelease;
+using Rdmp.Core.DataFlowPipeline;
+using Rdmp.Core.ReusableLibraryCode.AWS;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Progress;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
+using Tests.Common.Scenarios;
 
 namespace Rdmp.Core.Tests.DataExport.DataRelease;
 
 public sealed class S3BucketReleaseDestinationTests : TestsRequiringAnExtractionConfiguration
 {
-    private const string Username = "minioadmin";
-    private const string Password = "minioadmin";
-    private const string Endpoint = "127.0.0.1:9000";
-    private static IMinioClient _minioClient;
+
+    private static AmazonS3Client _minioClient;
 
 
     [OneTimeTearDown]
@@ -36,11 +38,14 @@ public sealed class S3BucketReleaseDestinationTests : TestsRequiringAnExtraction
     [OneTimeSetUp]
     public new void OneTimeSetUp()
     {
-        _minioClient = new MinioClient()
-            .WithEndpoint(Endpoint)
-            .WithCredentials(Username, Password)
-            .WithSSL(false)
-            .Build();
+        var _credentials = AWSCredentialsHelper.LoadSsoCredentials("minio");
+        AmazonS3Config config = new AmazonS3Config()
+        {
+            ServiceURL = "http://127.0.0.1:9000",
+            UseHttp = true,
+            ForcePathStyle = true,
+        };
+        _minioClient = new AmazonS3Client(_credentials, config);
     }
 
     private void DoExtraction()
@@ -51,23 +56,41 @@ public sealed class S3BucketReleaseDestinationTests : TestsRequiringAnExtraction
 
     private static void MakeBucket(string name)
     {
-        var mbArgs = new MakeBucketArgs()
-            .WithBucket(name);
-        _minioClient.MakeBucketAsync(mbArgs).Wait();
+        var request = new PutBucketRequest
+        {
+            BucketName = name,
+            UseClientRegion = true,
+            ObjectLockEnabledForBucket = false,
+        };
+        _minioClient.PutBucketAsync(request);
     }
 
     private static void DeleteBucket(string name)
     {
-        var rbArgs = new RemoveBucketArgs()
-            .WithBucket(name);
-        _minioClient.RemoveBucketAsync(rbArgs).Wait();
+        var request = new DeleteBucketRequest
+        {
+            BucketName = name,
+        };
+        _minioClient.DeleteBucketAsync(request);
     }
 
-    private static List<Minio.DataModel.Item> GetObjects(string bucketName)
+    private static List<S3Object> GetObjects(string bucketName)
     {
-        var loArgs = new ListObjectsArgs().WithBucket(bucketName);
-        var x = _minioClient.ListObjectsEnumAsync(loArgs).ToListAsync();
-        return x.IsCompleted ? x.Result : x.AsTask().Result;
+        var listObjectsV2Paginator = _minioClient.Paginators.ListObjectsV2(new ListObjectsV2Request
+        {
+            BucketName = bucketName,
+        });
+        var t = Task.Run(async () =>
+        {
+            var objects = new List<S3Object>() { };
+            await foreach (var response in listObjectsV2Paginator.Responses)
+            {
+                objects.AddRange(response.S3Objects);
+            }
+            return objects;
+        });
+        return t.Result;
+     
     }
 
     private static void SetArgs(IArgument[] args, Dictionary<string, object> values)
@@ -122,7 +145,11 @@ public sealed class S3BucketReleaseDestinationTests : TestsRequiringAnExtraction
         var runner = new ReleaseRunner(new ThrowImmediatelyActivator(RepositoryLocator), optsRelease);
         Assert.DoesNotThrow(() => runner.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, ThrowImmediatelyCheckNotifier.Quiet, new GracefulCancellationToken()));
         var foundObjects = GetObjects("releasetoawsbasictest");
-        Assert.That(foundObjects, Has.Count.EqualTo(1));
+        Assert.That(foundObjects, Has.Count.EqualTo(5));
+        //Found object release/ New ExtractionConfiguration5b3e1346 - f054 - 4e66 - b3e6 - 3a60eaf10eca_105 / ReleaseDocument_New ExtractionConfiguration5b3e1346 - f054 - 4e66 - b3e6 - 3a60eaf10eca_105.docx in bucket releasetoawsbasictest
+        //Found object release/ New ExtractionConfiguration5b3e1346 - f054 - 4e66 - b3e6 - 3a60eaf10eca_105 / TestTable / TestTable.csv in bucket releasetoawsbasictest
+        //Found object release/ New ExtractionConfiguration5b3e1346 - f054 - 4e66 - b3e6 - 3a60eaf10eca_105 / TestTable / TestTable.docx in bucket releasetoawsbasictest
+        //Found object release/ New ExtractionConfiguration5b3e1346 - f054 - 4e66 - b3e6 - 3a60eaf10eca_105 / TestTable / TestTableVariables.csv in bucket releasetoawsbasictest
     }
 
     [Test]
@@ -325,7 +352,7 @@ public sealed class S3BucketReleaseDestinationTests : TestsRequiringAnExtraction
         var runner = new ReleaseRunner(new ThrowImmediatelyActivator(RepositoryLocator), optsRelease);
         Assert.DoesNotThrow(() => runner.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, ThrowImmediatelyCheckNotifier.Quiet, new GracefulCancellationToken()));
         var foundObjects = GetObjects("locationalreadyexist");
-        Assert.That(foundObjects, Has.Count.EqualTo(1));
+        Assert.That(foundObjects, Has.Count.EqualTo(5));
         DoExtraction();
         pipe = new Pipeline(CatalogueRepository, "NestedPipe8");
         pc = new PipelineComponent(CatalogueRepository, pipe, typeof(AWSS3BucketReleaseDestination), -1,
@@ -355,6 +382,6 @@ public sealed class S3BucketReleaseDestinationTests : TestsRequiringAnExtraction
         runner = new ReleaseRunner(new ThrowImmediatelyActivator(RepositoryLocator), optsRelease);
         Assert.Throws<AggregateException>(() => runner.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, ThrowImmediatelyCheckNotifier.Quiet, new GracefulCancellationToken()));
         foundObjects = GetObjects("locationalreadyexist");
-        Assert.That(foundObjects, Has.Count.EqualTo(1));
+        Assert.That(foundObjects, Has.Count.EqualTo(5));
     }
 }

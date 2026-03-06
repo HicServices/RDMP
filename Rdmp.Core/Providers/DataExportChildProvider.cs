@@ -13,6 +13,7 @@ using Org.BouncyCastle.Crypto.Signers;
 using Rdmp.Core.Caching.Pipeline;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline;
@@ -238,6 +239,22 @@ public class DataExportChildProvider : CatalogueChildProvider
         );
     }
 
+    private void AddChildren(FolderNode<CohortIdentificationConfiguration> folder, DescendancyList descendancy)
+    {
+        foreach (var child in folder.ChildFolders)
+            //add subfolder children
+            AddChildren(child, descendancy.Add(child));
+
+        //add catalogues in folder
+        foreach (var cic in folder.ChildObjects) AddToDictionaries(new HashSet<object>() { cic }, descendancy.SetBetterRouteExists());
+
+        // Children are the folders + objects
+        AddToDictionaries(new HashSet<object>(
+                folder.ChildFolders.Cast<object>()
+                    .Union(folder.ChildObjects)), descendancy
+        );
+    }
+
     private void BuildSelectedDatasets()
     {
         _selectedDataSetsWithNoIsExtractionIdentifier =
@@ -339,15 +356,14 @@ public class DataExportChildProvider : CatalogueChildProvider
     private void AddChildren(ProjectCohortsNode projectCohortsNode, DescendancyList descendancy)
     {
         var children = new HashSet<object>();
-        var projectCiCsNode = new ProjectCohortIdentificationConfigurationAssociationsNode(projectCohortsNode.Project);
-        children.Add(projectCiCsNode);
-        AddChildren(projectCiCsNode, descendancy.Add(projectCiCsNode));
 
         var savedCohortsNode = new ProjectSavedCohortsNode(projectCohortsNode.Project);
         children.Add(savedCohortsNode);
         AddChildren(savedCohortsNode, descendancy.Add(savedCohortsNode));
 
-        var associatedCohortConfigurations = new CommittedCohortIdentificationNode(projectCohortsNode.Project);
+        var associatedCohortConfigurations = FolderHelper.BuildFolderTree(projectCohortsNode.Project.GetAssociatedCohortIdentificationConfigurations());
+        associatedCohortConfigurations.Name = "Associated Cohort Configurations";
+        associatedCohortConfigurations.Parent = new FolderNode<CohortIdentificationConfiguration>($"\\{projectCohortsNode.Project}\\{projectCohortsNode}");
         children.Add(associatedCohortConfigurations);
         AddChildren(associatedCohortConfigurations, descendancy.Add(associatedCohortConfigurations));
 
@@ -371,18 +387,6 @@ public class DataExportChildProvider : CatalogueChildProvider
         AddToDictionaries(children, descendancy);
     }
 
-    private void AddChildren(CommittedCohortIdentificationNode associatedCohortConfigurations, DescendancyList descendancy)
-    {
-        var children = new HashSet<object>();
-        var associatedCohorts = associatedCohortConfigurations.Project.GetAssociatedCohortIdentificationConfigurations();
-        foreach (var cohort in associatedCohorts)
-        {
-            children.Add(cohort);
-        }
-
-        AddToDictionaries(children, descendancy);
-    }
-
     private void AddChildren(ProjectSavedCohortsNode savedCohortsNode, DescendancyList descendancy)
     {
         var children = new HashSet<object>();
@@ -393,38 +397,6 @@ public class DataExportChildProvider : CatalogueChildProvider
         {
             AddChildren(cohortSourceUsedByProjectNode, descendancy.Add(cohortSourceUsedByProjectNode));
             children.Add(cohortSourceUsedByProjectNode);
-        }
-
-        AddToDictionaries(children, descendancy);
-    }
-
-    private void AddChildren(ProjectCohortIdentificationConfigurationAssociationsNode projectCiCsNode,
-        DescendancyList descendancy)
-    {
-        //add the associations
-        var children = new HashSet<object>();
-        foreach (var association in AllProjectAssociatedCics.Where(assoc =>
-                     assoc.Project_ID == projectCiCsNode.Project.ID))
-        {
-            var matchingCic = AllCohortIdentificationConfigurations.SingleOrDefault(cic =>
-                cic.ID == association.CohortIdentificationConfiguration_ID) ?? AllTemplateCohortIdentificationConfigurations.SingleOrDefault(cic =>
-                cic.ID == association.CohortIdentificationConfiguration_ID);
-
-            if (matchingCic == null)
-            {
-                _errorsCheckNotifier.OnCheckPerformed(
-                    new CheckEventArgs(
-                        $"Failed to find Associated Cohort Identification Configuration with ID {association.CohortIdentificationConfiguration_ID} which was supposed to be associated with {association.Project}",
-                        CheckResult
-                            .Fail)); //inject knowledge of what the cic is so it doesn't have to be fetched during ToString
-            }
-            else
-            {
-                association.InjectKnown(matchingCic);
-
-                //document that it is a child of the project cics node
-                children.Add(association);
-            }
         }
 
         AddToDictionaries(children, descendancy);
