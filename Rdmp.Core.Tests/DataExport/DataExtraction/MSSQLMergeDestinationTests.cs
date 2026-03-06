@@ -132,45 +132,6 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
             Assert.That(tbl.GetDataTable().Rows[0].ItemArray, Is.EqualTo(new List<object>() { 2, "two" }));
             tbl.Drop();
         }
-        //adjust columns
-        [Test]
-        public void MSSQLMerge_Merge_Update_adjust_Columns()
-        {
-            var destination = new MSSqlMergeDestination_Test();
-
-            var _extractionServer = new ExternalDatabaseServer(CatalogueRepository, "myserver", null)
-            {
-                Server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Name,
-                Username = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExplicitUsernameIfAny,
-                Password = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExplicitPasswordIfAny
-            };
-            _extractionServer.SaveToDatabase();
-            destination.TargetDatabaseServer = _extractionServer;
-            destination.DatabaseNamingPattern = "MSSQLMerge_Creates_Table";
-            destination.TableNamingPattern = "MSSQLMerge_Merge_Update_adjust_Columns";
-            destination.DeleteMergeTempTable = true;
-            destination.AdjustColumnsAsRequired = true;
-            destination.PreInitialize(new Project(RepositoryLocator.DataExportRepository, "test project"), ThrowImmediatelyDataLoadEventListener.Quiet);
-            var dt = new DataTable();
-            dt.Columns.Add("chi");
-            dt.Columns.Add("description");
-            dt.PrimaryKey = new DataColumn[] { dt.Columns["chi"] };
-            dt.Rows.Add("10", "one");
-            destination.Execute(dt);
-            var tbl = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(destination.DatabaseNamingPattern).ExpectTable(destination.TableNamingPattern);
-            Assert.That(tbl.Exists());
-            Assert.That(tbl.GetDataTable().Rows.Count, Is.EqualTo(1));
-            dt.Rows.Remove(dt.Rows[0]);
-            dt.Rows.Add("2", "two");
-            destination.Execute(dt);
-            Assert.That(tbl.GetDataTable().Rows.Count, Is.EqualTo(2));
-            dt.Rows.Add("10", "three");
-            destination.Execute(dt);
-            Assert.That(tbl.GetDataTable().Rows.Count, Is.EqualTo(2));
-            Assert.That(tbl.GetDataTable().Rows[1].ItemArray, Is.EqualTo(new List<object>() { "10", "three" }));
-            Assert.That(tbl.GetDataTable().Rows[0].ItemArray, Is.EqualTo(new List<object>() { "2", "two" }));
-            tbl.Drop();
-        }
         //megre in with perform delete
         [Test]
         public void MSSQLMerge_Merge_Delete()

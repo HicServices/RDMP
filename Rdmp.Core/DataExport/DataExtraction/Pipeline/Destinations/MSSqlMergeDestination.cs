@@ -30,7 +30,7 @@ using TypeGuesser;
 namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
 {
     /// <summary>
-    /// Use for simple merges int oa sql db
+    /// Use for simple merges into a sql db
     /// </summary>
     public class MSSqlMergeDestination : ExtractionDestination
     {
@@ -48,9 +48,6 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
 
         [DemandsInitialization("Ensure the destination table has an archive trigger", DefaultValue = true)]
         public bool UseArchiveTrigger { get; set; }
-
-        [DemandsInitialization("Update destination column types to allow new data to be inserted",DefaultValue =false)]
-        public bool AdjustColumnsAsRequired { get; set; }
 
         [DemandsInitialization("Allow the merge to perform deletes when records are missing from the source.", DefaultValue = false)]
         public bool AllowMergeToPerformDeletes { get; set; }
