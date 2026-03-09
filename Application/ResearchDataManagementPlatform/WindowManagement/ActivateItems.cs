@@ -226,8 +226,8 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
             ? descendancy.Parents.FirstOrDefault()
             : request.ObjectToEmphasise; //assume maybe o is a root object itself?
 
-        if (root is CohortIdentificationConfiguration cic)
-            Activate<CohortIdentificationConfigurationUI, CohortIdentificationConfiguration>(cic);
+        if (root is Rdmp.Core.EntityFramework.Models.CohortIdentificationConfiguration cic)
+            Activate<CohortIdentificationConfigurationUI, Rdmp.Core.EntityFramework.Models.CohortIdentificationConfiguration>(cic);
         else if (root != null)
             _windowManager.ShowCollectionWhichSupportsRootObjectType(root);
 

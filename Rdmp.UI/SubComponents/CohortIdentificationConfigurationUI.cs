@@ -164,22 +164,22 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
             tlvCic.RefreshObjects(tlvCic.Objects.Cast<object>().ToArray());
     }
 
-    public override void SetDatabaseObject(IActivateItems activator, CohortIdentificationConfiguration databaseObject)
+    public override void SetDatabaseObject(IActivateItems activator, Core.EntityFramework.Models.CohortIdentificationConfiguration databaseObject)
     {
-        base.SetDatabaseObject(activator, databaseObject);
-        version.Setup(databaseObject, activator);
-        Common.Configuration = databaseObject;
-        Common.Compiler.CohortIdentificationConfiguration = databaseObject;
+        //base.SetDatabaseObject(activator, databaseObject);
+        //version.Setup(databaseObject, activator);
+        //Common.Configuration = databaseObject;
+        //Common.Compiler.CohortIdentificationConfiguration = databaseObject;
 
-        RebuildClearCacheCommand();
+        //RebuildClearCacheCommand();
 
-        gbCicInfo.Text = $"Name: {databaseObject.Name}";
-        tbDescription.Text = $"Description: {databaseObject.Description}";
-        ticket.TicketText = databaseObject.Ticket;
-        if (databaseObject.IsTemplate)
-        {
-            version.Visible = false;
-        }
+        //gbCicInfo.Text = $"Name: {databaseObject.Name}";
+        //tbDescription.Text = $"Description: {databaseObject.Description}";
+        //ticket.TicketText = databaseObject.Ticket;
+        //if (databaseObject.IsTemplate)
+        //{
+        //    version.Visible = false;
+        //}
         if (_commonFunctionality == null)
         {
             activator.RefreshBus.Subscribe(this);
@@ -203,35 +203,35 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
             tlvCic.SelectedIndex = 0;
         }
 
-        CommonFunctionality.AddToMenu(cbIncludeCumulative);
-        CommonFunctionality.AddToMenu(new ToolStripSeparator());
-        CommonFunctionality.AddToMenu(new ExecuteCommandSetQueryCachingDatabase(Activator, databaseObject));
-        CommonFunctionality.AddToMenu(new ExecuteCommandClearQueryCache(Activator, databaseObject));
-        CommonFunctionality.AddToMenu(new ExecuteCommandCreateNewQueryCacheDatabase(activator, databaseObject));
-        CommonFunctionality.AddToMenu(
-            new ExecuteCommandSet(activator, databaseObject, databaseObject.GetType().GetProperty("Description"))
-            {
-                OverrideIcon =
-                    Activator.CoreIconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Edit)
-            });
-        CommonFunctionality.AddToMenu(new ToolStripSeparator());
-        CommonFunctionality.AddToMenu(
-            new ExecuteCommandShowXmlDoc(activator, "CohortIdentificationConfiguration.QueryCachingServer_ID",
-                "Query Caching"), "Help (What is Query Caching)");
-        if (!databaseObject.IsTemplate)
-        {
-            CommonFunctionality.Add(
-                new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(activator, null).SetTarget(
-                    databaseObject),
-                "Commit Cohort",
-                activator.CoreIconProvider.GetImage(RDMPConcept.ExtractableCohort, OverlayKind.Add));
-        }
-        foreach (var c in _timeoutControls.GetControls())
-            CommonFunctionality.Add(c);
+        //CommonFunctionality.AddToMenu(cbIncludeCumulative);
+        //CommonFunctionality.AddToMenu(new ToolStripSeparator());
+        //CommonFunctionality.AddToMenu(new ExecuteCommandSetQueryCachingDatabase(Activator, databaseObject));
+        //CommonFunctionality.AddToMenu(new ExecuteCommandClearQueryCache(Activator, databaseObject));
+        //CommonFunctionality.AddToMenu(new ExecuteCommandCreateNewQueryCacheDatabase(activator, databaseObject));
+        //CommonFunctionality.AddToMenu(
+        //    new ExecuteCommandSet(activator, databaseObject, databaseObject.GetType().GetProperty("Description"))
+        //    {
+        //        OverrideIcon =
+        //            Activator.CoreIconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Edit)
+        //    });
+        //CommonFunctionality.AddToMenu(new ToolStripSeparator());
+        //CommonFunctionality.AddToMenu(
+        //    new ExecuteCommandShowXmlDoc(activator, "CohortIdentificationConfiguration.QueryCachingServer_ID",
+        //        "Query Caching"), "Help (What is Query Caching)");
+        //if (!databaseObject.IsTemplate)
+        //{
+        //    CommonFunctionality.Add(
+        //        new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(activator, null).SetTarget(
+        //            databaseObject),
+        //        "Commit Cohort",
+        //        activator.CoreIconProvider.GetImage(RDMPConcept.ExtractableCohort, OverlayKind.Add));
+        //}
+        //foreach (var c in _timeoutControls.GetControls())
+        //    CommonFunctionality.Add(c);
 
-        Common.QueryCachingServer = databaseObject.QueryCachingServer;
-        Common.Compiler.CoreChildProvider = activator.CoreChildProvider;
-        Common.RecreateAllTasks();
+        //Common.QueryCachingServer = databaseObject.QueryCachingServer;
+        //Common.Compiler.CoreChildProvider = activator.CoreChildProvider;
+        //Common.RecreateAllTasks();
     }
 
     /// <summary>
@@ -423,6 +423,6 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
 [TypeDescriptionProvider(
     typeof(AbstractControlDescriptionProvider<CohortIdentificationConfigurationUI_Design, UserControl>))]
 public abstract class
-    CohortIdentificationConfigurationUI_Design : RDMPSingleDatabaseObjectControl<CohortIdentificationConfiguration>
+    CohortIdentificationConfigurationUI_Design : RDMPSingleDatabaseObjectControl<Core.EntityFramework.Models.CohortIdentificationConfiguration>
 {
 }

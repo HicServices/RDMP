@@ -56,45 +56,42 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
         );
         CommonTreeFunctionality.AxeChildren = new[]
         {
-            typeof(CohortIdentificationConfiguration), typeof(Core.Curation.Data.Aggregation.AggregateConfiguration)
+            typeof(Core.EntityFramework.Models.CohortIdentificationConfiguration), typeof(Core.Curation.Data.Aggregation.AggregateConfiguration)
         };
 
         CommonTreeFunctionality.MaintainRootObjects = new[]
         {
-            typeof(FolderNode<CohortIdentificationConfiguration>),
+            typeof(FolderNode<Core.EntityFramework.Models.CohortIdentificationConfiguration>),
             typeof(AllTemplateCohortIdentificationConfigurationsNode),
             typeof(AllOrphanAggregateConfigurationsNode),
             typeof(AllTemplateAggregateConfigurationsNode)
         };
-        var rootFolder = new FolderNode<CohortIdentificationConfiguration>("yall");// Activator.CoreChildProvider.CohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations;
-        rootFolder.ChildFolders = new List<FolderNode<CohortIdentificationConfiguration>>();
-        rootFolder.ChildObjects = new List<CohortIdentificationConfiguration>();
+        var rootFolder = FolderHelper.BuildFolderTree<Core.EntityFramework.Models.CohortIdentificationConfiguration>(Activator.RepositoryLocator.CatalogueDbContext.CohortIdentificationConfigurations.Where(cic => !cic.IsTemplate && cic.Version == null).ToArray());
 
         tlvCohortIdentificationConfigurations.AddObject(rootFolder);
-        tlvCohortIdentificationConfigurations.AddObject(Activator.CoreChildProvider.AllTemplateCohortIdentificationConfigurationsNode);
-        tlvCohortIdentificationConfigurations.AddObject(Activator.CoreChildProvider.OrphanAggregateConfigurationsNode);
-        tlvCohortIdentificationConfigurations.AddObject(Activator.CoreChildProvider
-            .TemplateAggregateConfigurationsNode);
+        tlvCohortIdentificationConfigurations.AddObject(new AllTemplateCohortIdentificationConfigurationsNode());
+        tlvCohortIdentificationConfigurations.AddObject(new AllOrphanAggregateConfigurationsNode());
+        tlvCohortIdentificationConfigurations.AddObject(new AllTemplateAggregateConfigurationsNode());
 
 
         tlvCohortIdentificationConfigurations.CanExpandGetter = delegate (object x)
         {
-            if (x is CohortIdentificationConfiguration)
+            if (x is Core.EntityFramework.Models.CohortIdentificationConfiguration)
             {
-                return ((CohortIdentificationConfiguration)x).GetVersions().Count > 0;
+                return ((Core.EntityFramework.Models.CohortIdentificationConfiguration)x).GetVersions().Count > 0;
             }
 
-            return Activator.CoreChildProvider.GetChildren(x).Length > 0;
+            return Activator.RepositoryLocator.CatalogueDbContext.GetChildren(x).Count() > 0;
         };
 
         tlvCohortIdentificationConfigurations.ChildrenGetter = delegate (object x)
         {
-            if (x is CohortIdentificationConfiguration)
+            if (x is Core.EntityFramework.Models.CohortIdentificationConfiguration)
             {
-                CohortIdentificationConfiguration cic = (CohortIdentificationConfiguration)x;
+                Core.EntityFramework.Models.CohortIdentificationConfiguration cic = (Core.EntityFramework.Models.CohortIdentificationConfiguration)x;
                 return cic.GetVersions();
             }
-            return Activator.CoreChildProvider.GetChildren(x);
+            return Activator.RepositoryLocator.CatalogueDbContext.GetChildren(x);
         };
 
         CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = a => new IAtomicCommand[]

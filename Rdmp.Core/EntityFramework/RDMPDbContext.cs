@@ -4,10 +4,11 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Defaults;
-using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.EntityFramework.Models;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Providers.Nodes;
+using Rdmp.Core.Providers.Nodes.CohortNodes;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -35,7 +36,8 @@ namespace Rdmp.Core.EntityFramework
         public DbSet<Models.TableInfo> TableInfos { get; set; }
         public DbSet<Models.Lookup> Lookups{ get; set; }
         public DbSet<Models.LookupCompositeJoinInfo> LookupCompositeJoinInfos { get; set; }
-        public DbSet<ANOTable> ANOTables{ get; set; }
+        public DbSet<ANOTable> ANOTables { get; set; }
+        public DbSet<Models.CohortIdentificationConfiguration> CohortIdentificationConfigurations { get; set; }
 
         public T[] GetAllObjects<T>()
         {
@@ -90,7 +92,11 @@ namespace Rdmp.Core.EntityFramework
                 entity.Property(e => e.Name).IsRequired();
                 //entity.HasIndex(e => e.CatalogueItem);
             });
-
+            modelBuilder.Entity<Models.CohortIdentificationConfiguration>(entity =>
+            {
+                entity.HasKey(e => e.ID);
+                entity.Property(e => e.Name).IsRequired().HasMaxLength(500);
+            });
             modelBuilder.Entity<Models.Catalogue>(entity =>
             {
                 entity.HasKey(e => e.ID);
@@ -99,24 +105,6 @@ namespace Rdmp.Core.EntityFramework
                 entity.HasIndex(e => e.Name);
                 entity.HasIndex(e => e.Acronym);
                 entity.HasIndex(e => e.IsDeprecated);
-                //         entity.Property(e => e.Type).HasConversion(v => v.ToString(),
-                //     v => (CatalogueType)Enum.Parse(typeof(CatalogueType), v));
-
-                //         entity.Property(e => e.Purpose).HasConversion(v => v.ToString(),
-                //     v => (DatasetPurpose)Enum.Parse(typeof(DatasetPurpose), v));
-
-                //         entity.Property(e => e.Periodicity).HasConversion(v => v.ToString(),
-                // v => (CataloguePeriodicity)Enum.Parse(typeof(CataloguePeriodicity), v));
-
-                //         entity.Property(e => e.Granularity).HasConversion(v => v.ToString(),
-                // v => (CatalogueGranularity)Enum.Parse(typeof(CatalogueGranularity), v));
-
-                //         entity.Property(e => e.Update_freq).HasConversion(v => v.ToString(),
-                // v => (UpdateFrequencies)Enum.Parse(typeof(UpdateFrequencies), v));
-
-                //         entity.Property(e => e.UpdateLag).HasConversion(v => v.ToString(),
-                //v => (UpdateLagTimes)Enum.Parse(typeof(UpdateLagTimes), v));
-
             });
         }
 
@@ -222,7 +210,22 @@ namespace Rdmp.Core.EntityFramework
                 var extractionInformations = ExtractionInformation.Where(ei => ei.CatalogueItem_ID == catalogueItem.ID).ToList();
                 return [..ColumnInfos.Where(ci => ci.CatalogueItems.Select(ci => ci.ID).Contains(catalogueItem.ID)),..extractionInformations];
             }
-
+            if (obj is FolderNode<Core.EntityFramework.Models.CohortIdentificationConfiguration> fcic)
+            {
+                return fcic.ChildFolders.Cast<object>().Union(fcic.ChildObjects);//Catalogues.Where(c => c.Folder == fnc.FullName);
+            }
+            if(obj is AllTemplateCohortIdentificationConfigurationsNode atcicn)
+            {
+                return CohortIdentificationConfigurations.Where(cic => cic.IsTemplate).ToList();
+            }
+            if (obj is AllOrphanAggregateConfigurationsNode aocicn)
+            {
+                return new List<string>() { }; ;// CohortIdentificationConfigurations.Where(cic => cic.IsTemplate).ToList();
+            }
+            if (obj is AllTemplateAggregateConfigurationsNode atacicn)
+            {
+                return new List<string>() { }; ;// CohortIdentificationConfigurations.Where(cic => cic.IsTemplate).ToList();
+            }
             return new List<string>() { };
         }
     }
