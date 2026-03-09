@@ -243,6 +243,7 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
             ArchivalDataLoadInfo[] results;
             try
             {
+                var x = Collection.RootObject.GetDistinctLoggingTask();
                 _logManager = new LogManager(Collection.RootObject.GetDistinctLoggingDatabase());
                 var unfilteredResults = _logManager.GetArchivalDataLoadInfos(
                     Collection.RootObject.GetDistinctLoggingTask(), _populateLoadHistoryCancel.Token, null, _toFetch);
@@ -253,7 +254,7 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
                 results = Array.Empty<ArchivalDataLoadInfo>();
             }
 
-            _populateLoadHistoryResults = results;
+            _populateLoadHistoryResults =results;
         }
         catch (Exception exception)
         {

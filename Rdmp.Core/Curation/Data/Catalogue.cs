@@ -446,7 +446,7 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
 
     /// <inheritdoc/>
     [DoNotExtractProperty]
-    [NotMapped]
+    [NoMappingToDatabase]
     public List<ILoadMetadataCatalogueLinkage> LoggingDataTasks
     {
         get => Repository.GetAllObjectsWhere<LoadMetadataCatalogueLinkage>("CatalogueID", this.ID).Select(lmcl => (ILoadMetadataCatalogueLinkage)lmcl).ToList();
