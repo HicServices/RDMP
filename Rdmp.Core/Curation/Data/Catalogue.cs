@@ -444,13 +444,6 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
         set => SetField(ref _ticket, value);
     }
 
-    /// <inheritdoc/>
-    [DoNotExtractProperty]
-    [NoMappingToDatabase]
-    public List<ILoadMetadataCatalogueLinkage> LoggingDataTasks
-    {
-        get => Repository.GetAllObjectsWhere<LoadMetadataCatalogueLinkage>("CatalogueID", this.ID).Select(lmcl => (ILoadMetadataCatalogueLinkage)lmcl).ToList();
-    }
 
     /// <inheritdoc/>
     [DoNotExtractProperty]
@@ -555,6 +548,15 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
     /// <inheritdoc/>
     [NoMappingToDatabase]
     public CatalogueItem[] CatalogueItems => _knownCatalogueItems.Value;
+
+
+    /// <inheritdoc/>
+    [DoNotExtractProperty]
+    [NoMappingToDatabase]
+    public List<ILoadMetadataCatalogueLinkage> LoggingDataTasks
+    {
+        get => Repository.GetAllObjectsWhere<LoadMetadataCatalogueLinkage>("CatalogueID", this.ID).Select(lmcl => (ILoadMetadataCatalogueLinkage)lmcl).ToList();
+    }
 
     /// <inheritdoc/>
     public LoadMetadata[] LoadMetadatas()
