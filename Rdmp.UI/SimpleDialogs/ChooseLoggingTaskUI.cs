@@ -87,8 +87,8 @@ public partial class ChooseLoggingTaskUI : RDMPUserControl, ICheckNotifier
             MessageBox.Show($"Problem getting the list of DataTasks from the new logging architecture:{ex.Message}");
         }
 
-        if (!string.IsNullOrWhiteSpace(_catalogue.LoggingDataTask))
-            cbxDataLoadTasks.Text = _catalogue.LoggingDataTask;
+        //if (!string.IsNullOrWhiteSpace(_catalogue.LoggingDataTask))
+        //    cbxDataLoadTasks.Text = _catalogue.LoggingDataTask;
 
         CheckNameExists();
     }
@@ -137,8 +137,8 @@ public partial class ChooseLoggingTaskUI : RDMPUserControl, ICheckNotifier
 
     private void cbxDataLoadTasks_SelectedIndexChanged(object sender, EventArgs e)
     {
-        _catalogue.LoggingDataTask = (string)cbxDataLoadTasks.SelectedItem;
-        _catalogue.SaveToDatabase();
+        //_catalogue.LoggingDataTask = (string)cbxDataLoadTasks.SelectedItem;
+        //_catalogue.SaveToDatabase();
     }
 
     private void label1_Click(object sender, EventArgs e)
@@ -164,7 +164,7 @@ public partial class ChooseLoggingTaskUI : RDMPUserControl, ICheckNotifier
         if (_catalogue == null)
             return;
 
-        _catalogue.LoggingDataTask = cbxDataLoadTasks.Text;
+        //_catalogue.LoggingDataTask = cbxDataLoadTasks.Text;
         _catalogue.SaveToDatabase();
     }
 

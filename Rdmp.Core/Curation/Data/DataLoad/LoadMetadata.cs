@@ -390,7 +390,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     }
 
     /// <summary>
-    /// Returns the unique value of <see cref="Catalogue.LoggingDataTask"/> amongst all catalogues loaded by the <see cref="LoadMetadata"/>
+    /// Returns the unique value of <see cref="Catalogue.LoggingDataTasks"/> amongst all catalogues loaded by the <see cref="LoadMetadata"/>
     /// </summary>
     /// <returns></returns>
     public string GetDistinctLoggingTask()
@@ -401,17 +401,17 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
             throw new Exception($"There are no Catalogues associated with load metadata (ID={ID})");
 
         var cataloguesWithoutLoggingTasks =
-            catalogueMetadatas.Where(c => string.IsNullOrWhiteSpace(c.LoggingDataTask)).ToArray();
+            catalogueMetadatas.Where(c => c.LoggingDataTasks.Count ==0).ToArray();
 
         if (cataloguesWithoutLoggingTasks.Any())
             throw new Exception(
                 $"The following Catalogues do not have a LoggingDataTask specified:{cataloguesWithoutLoggingTasks.Aggregate("", (s, n) => $"{s}{n}(ID={n.ID}),")}");
 
-        var distinctLoggingTasks = catalogueMetadatas.Select(c => c.LoggingDataTask).Distinct().ToArray();
-        return distinctLoggingTasks.Length >= 2
-            ? throw new Exception(
-                $"There are {distinctLoggingTasks.Length} logging tasks in Catalogues belonging to this metadata (ID={ID})")
-            : distinctLoggingTasks[0];
+        var distinctLoggingTasks = catalogueMetadatas.SelectMany(c => c.LoggingDataTasks);
+        return distinctLoggingTasks.Count() >= 2 ?
+            throw new Exception(
+                $"There are {distinctLoggingTasks.Count()} logging tasks in Catalogues belonging to this metadata (ID={ID})")
+            : distinctLoggingTasks.First().Name;
     }
 
     /// <summary>
@@ -487,14 +487,14 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         }
 
         //if there's no logging task yet and there's a logging server
-        if (string.IsNullOrWhiteSpace(catalogue.LoggingDataTask))
+        if (!catalogue.LoggingDataTasks.Any())
         {
             var lm = new LogManager(loggingServer);
             var loggingTaskName = Name;
 
             lm.CreateNewLoggingTaskIfNotExists(loggingTaskName);
-            catalogue.LoggingDataTask = loggingTaskName;
-            catalogue.SaveToDatabase();
+            var loadMetadataCatalogueLinkage = new LoadMetadataCatalogueLinkage(CatalogueRepository, this, catalogue);
+            loadMetadataCatalogueLinkage.SaveToDatabase();
         }
     }
 

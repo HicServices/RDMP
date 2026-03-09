@@ -4,7 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Icons.IconProvision;
@@ -12,6 +11,8 @@ using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
@@ -66,14 +67,14 @@ public class ExecuteCommandAssociateCatalogueWithLoadMetadata : BasicCommandExec
             //if there are other catalogues
             if (_otherCatalogues.Any())
             {
-                var tasks = _otherCatalogues.Select(c => c.LoggingDataTask).Distinct().ToArray();
+                var tasks = _otherCatalogues.SelectMany(c => c.LoggingDataTasks).Distinct().ToArray();
                 //if the other catalogues have an agreed logging task
                 if (tasks.Length == 1)
                 {
                     var task = tasks.Single();
 
                     //and that logging task is not blank!, and differs from this Catalogue
-                    if (!string.IsNullOrWhiteSpace(task) && !task.Equals(cata.LoggingDataTask))
+                    if ( !cata.LoggingDataTasks.Select(ldt => ldt.Name).Contains(task.Name))
                     {
                         var liveServers = _otherCatalogues.Where(c => c.LiveLoggingServer_ID != null)
                             .Select(c => c.LiveLoggingServer_ID).Distinct().ToArray();
@@ -81,21 +82,26 @@ public class ExecuteCommandAssociateCatalogueWithLoadMetadata : BasicCommandExec
                         //AND if there is agreement on what logging server to use!
                         if (liveServers.Length <= 1)
                             //if there is no current logging task for the Catalogue
-                            if (string.IsNullOrWhiteSpace(cata.LoggingDataTask)
+                            if (!cata.LoggingDataTasks.Any()
                                 //or if the user wants to switch to the new one
                                 || YesNo(
-                                    $"Do you want to set Catalogue '{cata.Name}' to use shared logging task '{task}' instead of its current Logging Task '{cata.LoggingDataTask}' (All Catalogues in a load must share the same task and logging servers)?",
+                                    //$"Do you want to set Catalogue '{cata.Name}' to use shared logging task '{task}' instead of its current Logging Task '{cata.LoggingDataTask}' (All Catalogues in a load must share the same task and logging servers)?",
+                                    $"Do you want to set Catalogue '{cata.Name}' to use shared logging task '{task}' instead of its current Logging Task 'TODO' (All Catalogues in a load must share the same task and logging servers)?",
                                     "Synchronise Logging Tasks"))
                             {
                                 //switch Catalogue to use that logging task (including servers)
-                                cata.LoggingDataTask = task;
+                                //cata.LoggingDataTask = task;
+                                var lmdcl = new LoadMetadataCatalogueLinkage(cata.CatalogueRepository, _loadMetadata, cata,task.Name);
+                                lmdcl.SaveToDatabase();
                                 cata.LiveLoggingServer_ID = liveServers.SingleOrDefault();
                             }
                     }
                 }
                 else if (tasks.Length == 0)
                 {
-                    cata.LoggingDataTask = $"Loading {_loadMetadata.Name}";
+                    var lmdcl = new LoadMetadataCatalogueLinkage(cata.CatalogueRepository, _loadMetadata, cata);
+                    lmdcl.SaveToDatabase();
+                    //cata.LoggingDataTask = $"Loading {_loadMetadata.Name}";
                 }
             }
             cata.SaveToDatabase();

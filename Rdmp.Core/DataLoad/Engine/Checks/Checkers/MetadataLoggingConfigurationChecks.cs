@@ -30,7 +30,7 @@ internal class MetadataLoggingConfigurationChecks : ICheckable
         var catalogues = _loadMetadata.GetAllCatalogues().ToArray();
 
         //if there are no logging tasks defined on any Catalogues
-        if (catalogues.Any() && catalogues.All(c => string.IsNullOrWhiteSpace(c.LoggingDataTask)))
+        if (catalogues.Any() && catalogues.All(c => c.LoggingDataTasks.Count() ==0 ))
         {
             string proposedName;
 
@@ -63,8 +63,8 @@ internal class MetadataLoggingConfigurationChecks : ICheckable
 
         #region Fix missing LoggingDataTask
 
-        var missingTasks = catalogues.Where(c => string.IsNullOrWhiteSpace(c.LoggingDataTask)).ToArray();
-        var potentialTasks = catalogues.Except(missingTasks).Select(c => c.LoggingDataTask).Distinct().ToArray();
+        var missingTasks = catalogues.Where(c => c.LoggingDataTasks.Count() ==0).ToArray();
+        var potentialTasks = catalogues.Except(missingTasks).SelectMany(c => c.LoggingDataTasks).Distinct().ToArray();
 
         //If any Catalogues are missing tasks
         if (missingTasks.Any())
@@ -77,8 +77,9 @@ internal class MetadataLoggingConfigurationChecks : ICheckable
                 if (fix)
                     foreach (var cata in missingTasks)
                     {
-                        cata.LoggingDataTask = potentialTasks.Single();
-                        cata.SaveToDatabase();
+                        throw new Exception("Is this ever hit?");
+                        //cata.LoggingDataTask = potentialTasks.Single();
+                        //cata.SaveToDatabase();
                     }
             }
 
@@ -207,8 +208,10 @@ internal class MetadataLoggingConfigurationChecks : ICheckable
         foreach (var catalogue in catalogues.Cast<Catalogue>())
         {
             catalogue.LiveLoggingServer_ID = loggingServer.ID;
-            catalogue.LoggingDataTask = proposedName;
-            catalogue.SaveToDatabase();
+            var lmdcl = new LoadMetadataCatalogueLinkage(catarepo,_loadMetadata, catalogue, proposedName);
+            lmdcl.SaveToDatabase(); 
+            //catalogue.LoggingDataTask = proposedName;
+            //catalogue.SaveToDatabase();
         }
     }
 }

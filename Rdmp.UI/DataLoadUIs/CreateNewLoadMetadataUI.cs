@@ -45,11 +45,11 @@ public partial class CreateNewLoadMetadataUI : RDMPForm
 
     private void btnCreate_Click(object sender, EventArgs e)
     {
-        if (string.IsNullOrWhiteSpace(_catalogue.LoggingDataTask))
-        {
-            MessageBox.Show("You must configure a logging task first");
-            return;
-        }
+        //if (string.IsNullOrWhiteSpace(_catalogue.LoggingDataTask))
+        //{
+        //    MessageBox.Show("You must configure a logging task first");
+        //    return;
+        //}
 
         LoadMetadataCreatedIfAny = new LoadMetadata(Activator.RepositoryLocator.CatalogueRepository,
             tbLoadMetadataNameToCreate.Text);
