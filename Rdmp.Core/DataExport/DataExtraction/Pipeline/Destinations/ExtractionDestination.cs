@@ -4,12 +4,9 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Data;
-using System.Diagnostics;
-using System.IO;
 using FAnsi.Discovery;
 using Microsoft.Data.SqlClient;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
@@ -25,6 +22,10 @@ using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.Core.ReusableLibraryCode.Progress;
+using System;
+using System.Data;
+using System.Diagnostics;
+using System.IO;
 
 namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
 
@@ -85,7 +86,7 @@ e.g. /$i/$a")]
 
     #region PreInitialize
 
-    public void PreInitialize(IExtractCommand request, IDataLoadEventListener listener)
+    public void PreInitialize(IBasicActivateItems activator, IExtractCommand request, IDataLoadEventListener listener)
     {
         _request = request;
 
@@ -101,18 +102,18 @@ e.g. /$i/$a")]
 
         DirectoryPopulated = request.GetExtractionDirectory();
 
-        PreInitializeImpl(request, listener);
+        PreInitializeImpl(activator,request, listener);
     }
 
-    protected abstract void PreInitializeImpl(IExtractCommand request, IDataLoadEventListener listener);
+    protected abstract void PreInitializeImpl(IBasicActivateItems activator, IExtractCommand request, IDataLoadEventListener listener);
 
 
-    public virtual void PreInitialize(DataLoadInfo value, IDataLoadEventListener listener)
+    public virtual void PreInitialize(IBasicActivateItems activator, DataLoadInfo value, IDataLoadEventListener listener)
     {
         _dataLoadInfo = value;
     }
 
-    public virtual void PreInitialize(IProject value, IDataLoadEventListener listener)
+    public virtual void PreInitialize(IBasicActivateItems activator, IProject value, IDataLoadEventListener listener)
     {
         _project = value;
     }

@@ -4,13 +4,14 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Linq;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.ReusableLibraryCode.Progress;
+using System;
+using System.Linq;
 
 namespace Rdmp.Core.CohortCommitting.Pipeline.Sources;
 
@@ -61,14 +62,14 @@ public class PatientIndexTableSource : AggregateConfigurationTableSource, IPipel
             $"{sql[..insertionPoint]}{Environment.NewLine}{impromptuSql}{Environment.NewLine}{sql[insertionPoint..]}";
     }
 
-    public void PreInitialize(ExtractableCohort value, IDataLoadEventListener listener)
+    public void PreInitialize(IBasicActivateItems activator, ExtractableCohort value, IDataLoadEventListener listener)
     {
         _extractableCohort = value;
     }
 
-    public override void PreInitialize(AggregateConfiguration value, IDataLoadEventListener listener)
+    public override void PreInitialize(IBasicActivateItems activator, AggregateConfiguration value, IDataLoadEventListener listener)
     {
-        base.PreInitialize(value, listener);
+        base.PreInitialize(activator,value, listener);
 
         if (CohortIdentificationConfigurationIfAny == null)
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,

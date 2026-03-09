@@ -54,7 +54,7 @@ public abstract class DelimitedFileSourceTestsBase
     protected static DataTable RunGetChunk(FlatFileToLoad file, Action<DelimitedFlatFileDataFlowSource> adjust = null)
     {
         var source = new DelimitedFlatFileDataFlowSource();
-        source.PreInitialize(file, ThrowImmediatelyDataLoadEventListener.Quiet);
+        source.PreInitialize(null,file, ThrowImmediatelyDataLoadEventListener.Quiet);
         source.Separator = ",";
         source.StronglyTypeInput = true; //makes the source interpret the file types properly
         source.StronglyTypeInputBatchSize = 100;

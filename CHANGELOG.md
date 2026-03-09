@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add Internal Note to Catalogue
 - Fix issue where project associations were not copied when a CIC was cloned
 - Fix issue with using Internal Catalogues in Cohort Identification Configurations
+- Fix issue with using Project Specific Catalogues in Cohort Identification Configurations when not associated to project
+- Fix bug with copying project specific Catalogues between Projects when committing a Cohort
+- Remove Tree filters from UI
+
 - Simplify Project Cohorts tree
 - Fix bug with copying project specific Catalogues between Projects when committing a Cohort
 - Remove Tree filters from UI
@@ -18,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Simplify use of Extraction Progress
 - Update CHI validation to allow mod10 CHIs
 - Hardened Confluence export functionality
+- Fix issue with using Internal Catalogues in Cohort Identification Configurations
 - Add new SQL merge extraction component
 
 ## [9.1.1] - 2025-12-02
