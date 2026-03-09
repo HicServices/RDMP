@@ -41,7 +41,7 @@ internal class ExecuteCommandConfirmLogsTests : DatabaseTests
         var lmd = new LoadMetadata(CatalogueRepository, "MyLmd");
         var cata = new Catalogue(CatalogueRepository, "myCata");
         cata.SaveToDatabase();
-        lmd.LinkToCatalogue(cata);
+        lmd.LinkToCatalogue(cata,"FFF");
         var lm = new LogManager(lmd.GetDistinctLoggingDatabase());
         lm.CreateNewLoggingTaskIfNotExists("FFF");
         var logEntry = lm.CreateDataLoadInfo("FFF", "pack o' cards", "going down gambling", null, true);
@@ -62,7 +62,7 @@ internal class ExecuteCommandConfirmLogsTests : DatabaseTests
         var lmd = new LoadMetadata(CatalogueRepository, "MyLmd");
         var cata = new Catalogue(CatalogueRepository, "myCata");
         cata.SaveToDatabase();
-        lmd.LinkToCatalogue(cata);
+        lmd.LinkToCatalogue(cata,"FFF");
         var lm = new LogManager(lmd.GetDistinctLoggingDatabase());
         lm.CreateNewLoggingTaskIfNotExists("FFF");
 
@@ -81,7 +81,7 @@ internal class ExecuteCommandConfirmLogsTests : DatabaseTests
         var lmd = new LoadMetadata(CatalogueRepository, "MyLmd");
         var cata = new Catalogue(CatalogueRepository, "myCata");
         cata.SaveToDatabase();
-        lmd.LinkToCatalogue(cata);
+        lmd.LinkToCatalogue(cata,"FFF");
         var lm = new LogManager(lmd.GetDistinctLoggingDatabase());
         lm.CreateNewLoggingTaskIfNotExists("FFF");
         var logEntry = lm.CreateDataLoadInfo("FFF", "pack o' cards", "going down gambling", null, true);
@@ -100,7 +100,7 @@ internal class ExecuteCommandConfirmLogsTests : DatabaseTests
         var lmd = new LoadMetadata(CatalogueRepository, "MyLmd");
         var cata = new Catalogue(CatalogueRepository, "myCata");
         cata.SaveToDatabase();
-        lmd.LinkToCatalogue(cata);
+        lmd.LinkToCatalogue(cata,"FFF");
         var lm = new LogManager(lmd.GetDistinctLoggingDatabase());
         lm.CreateNewLoggingTaskIfNotExists("FFF");
         var logEntry = lm.CreateDataLoadInfo("FFF", "pack o' cards", "going down gambling", null, true);

@@ -66,23 +66,6 @@ internal class MetadataLoggingConfigurationChecks : ICheckable
         var missingTasks = catalogues.Where(c => c.LoggingDataTasks.Count() ==0).ToArray();
         var potentialTasks = catalogues.Except(missingTasks).SelectMany(c => c.LoggingDataTasks).Distinct().ToArray();
 
-        //If any Catalogues are missing tasks
-        if (missingTasks.Any())
-            //but there is consensus for those that are not missing tasks
-            if (potentialTasks.Length == 1)
-            {
-                var fix = notifier.OnCheckPerformed(new CheckEventArgs("Some catalogues have NULL LoggingDataTasks",
-                    CheckResult.Fail, null, $"Set task to {potentialTasks.Single()}"));
-
-                if (fix)
-                    foreach (var cata in missingTasks)
-                    {
-                        throw new Exception("Is this ever hit?");
-                        //cata.LoggingDataTask = potentialTasks.Single();
-                        //cata.SaveToDatabase();
-                    }
-            }
-
         #endregion
 
         #region Fix missing LiveLoggingServer_ID
@@ -172,7 +155,7 @@ internal class MetadataLoggingConfigurationChecks : ICheckable
         }
         catch (Exception e)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs("Could reach default logging server", CheckResult.Fail, e));
+            notifier.OnCheckPerformed(new CheckEventArgs("Could not reach default logging server", CheckResult.Fail, e));
         }
     }
 

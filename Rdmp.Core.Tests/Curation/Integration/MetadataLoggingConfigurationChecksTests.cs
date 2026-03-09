@@ -34,24 +34,6 @@ public class MetadataLoggingConfigurationChecksTests : UnitTests
     }
 
     [Test]
-    public void Test_MismatchedLoggingTask()
-    {
-        var lmd = WhenIHaveA<LoadMetadata>();
-        var cata1 = lmd.GetAllCatalogues().Single();
-        var cata2 = WhenIHaveA<Catalogue>();
-        lmd.LinkToCatalogue(cata2);
-        //cata1.LoggingDataTask = "OMG YEAGH";
-
-        Assert.That(lmd.GetAllCatalogues().Count(), Is.EqualTo(2));
-
-        var checks = new MetadataLoggingConfigurationChecks(lmd);
-        var toMem = new ToMemoryCheckNotifier();
-        checks.Check(toMem);
-
-        AssertFailWithFix("Some catalogues have NULL LoggingDataTasks", "Set task to OMG YEAGH", toMem);
-    }
-
-    [Test]
     public void Test_MissingLoggingServer()
     {
         var lmd = WhenIHaveA<LoadMetadata>();
