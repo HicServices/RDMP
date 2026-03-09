@@ -22,10 +22,7 @@ internal class ExecuteCommandConfirmLogsTests : DatabaseTests
     public void ConfirmLogs_NoEntries_Throws()
     {
         var lmd = new LoadMetadata(CatalogueRepository, "MyLmd");
-        var cata = new Catalogue(CatalogueRepository, "myCata")
-        {
-            LoggingDataTask = "GGG"
-        };
+        var cata = new Catalogue(CatalogueRepository, "myCata");
         cata.SaveToDatabase();
         lmd.LinkToCatalogue(cata);
         var lm = new LogManager(lmd.GetDistinctLoggingDatabase());
@@ -42,10 +39,7 @@ internal class ExecuteCommandConfirmLogsTests : DatabaseTests
     public void ConfirmLogs_HappyEntries_Passes(bool withinTime)
     {
         var lmd = new LoadMetadata(CatalogueRepository, "MyLmd");
-        var cata = new Catalogue(CatalogueRepository, "myCata")
-        {
-            LoggingDataTask = "FFF"
-        };
+        var cata = new Catalogue(CatalogueRepository, "myCata");
         cata.SaveToDatabase();
         lmd.LinkToCatalogue(cata);
         var lm = new LogManager(lmd.GetDistinctLoggingDatabase());
@@ -66,10 +60,7 @@ internal class ExecuteCommandConfirmLogsTests : DatabaseTests
     public void ConfirmLogs_SadEntry_BecauseNeverEnded_Throws()
     {
         var lmd = new LoadMetadata(CatalogueRepository, "MyLmd");
-        var cata = new Catalogue(CatalogueRepository, "myCata")
-        {
-            LoggingDataTask = "FFF"
-        };
+        var cata = new Catalogue(CatalogueRepository, "myCata");
         cata.SaveToDatabase();
         lmd.LinkToCatalogue(cata);
         var lm = new LogManager(lmd.GetDistinctLoggingDatabase());
@@ -88,10 +79,7 @@ internal class ExecuteCommandConfirmLogsTests : DatabaseTests
     public void ConfirmLogs_SadEntryWithEx_Throws()
     {
         var lmd = new LoadMetadata(CatalogueRepository, "MyLmd");
-        var cata = new Catalogue(CatalogueRepository, "myCata")
-        {
-            LoggingDataTask = "FFF"
-        };
+        var cata = new Catalogue(CatalogueRepository, "myCata");
         cata.SaveToDatabase();
         lmd.LinkToCatalogue(cata);
         var lm = new LogManager(lmd.GetDistinctLoggingDatabase());
@@ -110,10 +98,7 @@ internal class ExecuteCommandConfirmLogsTests : DatabaseTests
     public void ConfirmLogs_NotWithinTime_Throws()
     {
         var lmd = new LoadMetadata(CatalogueRepository, "MyLmd");
-        var cata = new Catalogue(CatalogueRepository, "myCata")
-        {
-            LoggingDataTask = "FFF"
-        };
+        var cata = new Catalogue(CatalogueRepository, "myCata");
         cata.SaveToDatabase();
         lmd.LinkToCatalogue(cata);
         var lm = new LogManager(lmd.GetDistinctLoggingDatabase());
@@ -137,17 +122,11 @@ ex.Message, Does.Match("Latest logged activity for MyLmd is .*.  This is older t
     public void ConfirmLogs_With2CacheProgress_Throws()
     {
         var lmd1 = new LoadMetadata(CatalogueRepository, "MyLmd");
-        var cata = new Catalogue(CatalogueRepository, "myCata")
-        {
-            LoggingDataTask = "B"
-        };
+        var cata = new Catalogue(CatalogueRepository, "myCata");
         cata.SaveToDatabase();
         lmd1.LinkToCatalogue(cata);
         var lmd2 = new LoadMetadata(CatalogueRepository, "MyLmd");
-        var cata2 = new Catalogue(CatalogueRepository, "myCata")
-        {
-            LoggingDataTask = "A"
-        };
+        var cata2 = new Catalogue(CatalogueRepository, "myCata");
         cata2.SaveToDatabase();
         var linkage2 = new LoadMetadataCatalogueLinkage(CatalogueRepository, lmd2, cata2);
         linkage2.SaveToDatabase();

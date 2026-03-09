@@ -45,7 +45,7 @@ public class PayloadTest : DatabaseTests
 
         MEF.AddTypeToCatalogForTesting(typeof(TestPayloadAttacher));
 
-        b.catalogue.LoggingDataTask = "TestPayloadInjection";
+        //b.catalogue.LoggingDataTask = "TestPayloadInjection";
         b.catalogue.SaveToDatabase();
         lmd.LinkToCatalogue(b.catalogue);
         var lm = new LogManager(CatalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID));

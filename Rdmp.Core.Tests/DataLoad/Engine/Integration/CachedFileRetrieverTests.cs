@@ -175,7 +175,7 @@ public class CachedFileRetrieverTests : DatabaseTests
         var catalogue = Substitute.For<ICatalogue>();
         catalogue.GetTableInfoList(false).Returns(Array.Empty<TableInfo>());
         catalogue.GetLookupTableInfoList().Returns(Array.Empty<TableInfo>());
-        catalogue.LoggingDataTask.Returns("TestLogging");
+        //catalogue.LoggingDataTask.Returns("TestLogging");
 
         var logManager = Substitute.For<ILogManager>();
         var loadMetadata = Substitute.For<ILoadMetadata>();

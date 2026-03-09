@@ -28,7 +28,7 @@ public class DataLoadProgressUpdateInfoTests : DatabaseTests
     public DataLoadProgressUpdateInfoTests()
     {
         var cata = Substitute.For<ICatalogue>();
-        cata.LoggingDataTask.Returns("NothingTask");
+        //cata.LoggingDataTask.Returns("NothingTask");
         cata.GetTableInfoList(false).Returns(Array.Empty<TableInfo>());
         cata.GetLookupTableInfoList().Returns(Array.Empty<TableInfo>());
 

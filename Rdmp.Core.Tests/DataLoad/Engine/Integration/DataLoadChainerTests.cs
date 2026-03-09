@@ -98,7 +98,7 @@ if not exists (select * from sysobjects where name='DLCTest' and xtype='U')
             var loggingServer = CatalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
             var logManager = new LogManager(loggingServer);
             logManager.CreateNewLoggingTaskIfNotExists(lmd.Name);
-            cata.LoggingDataTask = lmd.Name;
+            //cata.LoggingDataTask = lmd.Name;
             cata.SaveToDatabase();
             lmd.LinkToCatalogue(cata2);
             var pc = new ProcessTask(CatalogueRepository, lmd, LoadStage.PostLoad);
