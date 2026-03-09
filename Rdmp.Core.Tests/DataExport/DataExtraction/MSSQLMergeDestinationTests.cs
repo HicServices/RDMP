@@ -50,7 +50,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
             destination.DatabaseNamingPattern = "MSSQLMerge_Creates_Table";
             destination.TableNamingPattern = "MSSQLMerge_Creates_Table";
             destination.DeleteMergeTempTable = true;
-            destination.PreInitialize(new Project(RepositoryLocator.DataExportRepository, "test project"), ThrowImmediatelyDataLoadEventListener.Quiet);
+            destination.PreInitialize(null,new Project(RepositoryLocator.DataExportRepository, "test project"), ThrowImmediatelyDataLoadEventListener.Quiet);
             var dt = new DataTable();
             dt.Columns.Add("chi");
             dt.Columns.Add("description");
@@ -78,7 +78,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
             destination.DatabaseNamingPattern = "MSSQLMerge_Creates_Table";
             destination.TableNamingPattern = "MSSQLMerge_Merge_Data";
             destination.DeleteMergeTempTable = true;
-            destination.PreInitialize(new Project(RepositoryLocator.DataExportRepository, "test project"), ThrowImmediatelyDataLoadEventListener.Quiet);
+            destination.PreInitialize(null,new Project(RepositoryLocator.DataExportRepository, "test project"), ThrowImmediatelyDataLoadEventListener.Quiet);
             var dt = new DataTable();
             dt.Columns.Add("chi");
             dt.Columns.Add("description");
@@ -111,7 +111,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
             destination.DatabaseNamingPattern = "MSSQLMerge_Creates_Table";
             destination.TableNamingPattern = "MSSQLMerge_Merge_Update";
             destination.DeleteMergeTempTable= true;
-            destination.PreInitialize(new Project(RepositoryLocator.DataExportRepository, "test project"), ThrowImmediatelyDataLoadEventListener.Quiet);
+            destination.PreInitialize(null,new Project(RepositoryLocator.DataExportRepository, "test project"), ThrowImmediatelyDataLoadEventListener.Quiet);
             var dt = new DataTable();
             dt.Columns.Add("chi");
             dt.Columns.Add("description");
@@ -150,7 +150,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
             destination.TableNamingPattern = "MSSQLMerge_Merge_Delete";
             destination.DeleteMergeTempTable = true;
             destination.AllowMergeToPerformDeletes = true;
-            destination.PreInitialize(new Project(RepositoryLocator.DataExportRepository, "test project"), ThrowImmediatelyDataLoadEventListener.Quiet);
+            destination.PreInitialize(null,new Project(RepositoryLocator.DataExportRepository, "test project"), ThrowImmediatelyDataLoadEventListener.Quiet);
             var dt = new DataTable();
             dt.Columns.Add("chi");
             dt.Columns.Add("description");
