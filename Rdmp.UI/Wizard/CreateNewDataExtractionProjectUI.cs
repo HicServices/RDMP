@@ -263,7 +263,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
                 {
                     Timeout = 5
                 };
-                source.PreInitialize(cic, ThrowImmediatelyDataLoadEventListener.Quiet);
+                source.PreInitialize(null,cic, ThrowImmediatelyDataLoadEventListener.Quiet);
                 source.Check(ragCic);
 
                 ClearFile();

@@ -73,13 +73,13 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
 
     private ExecuteCommandClearQueryCache _clearCacheCommand;
 
-    private CohortIdentificationConfigurationUICommon Common = new();
+    private CohortIdentificationConfigurationUICommon Common = new(null);
 
     public CohortIdentificationConfigurationUI()
     {
         InitializeComponent();
 
-        Common = new CohortIdentificationConfigurationUICommon();
+        Common = new CohortIdentificationConfigurationUICommon(Activator);
 
         olvExecute.IsButton = true;
         olvExecute.ButtonSizing = OLVColumn.ButtonSizingMode.CellBounds;
@@ -169,6 +169,7 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
         base.SetDatabaseObject(activator, databaseObject);
         version.Setup(databaseObject, activator);
         Common.Configuration = databaseObject;
+        Common.Activator = activator;
         Common.Compiler.CohortIdentificationConfiguration = databaseObject;
 
         RebuildClearCacheCommand();

@@ -88,7 +88,7 @@ public class ExcelToCSVFilesConverter : IPluginDataProvider
         try
         {
             var source = new ExcelDataFlowSource();
-            source.PreInitialize(new FlatFileToLoad(fileInfo), job);
+            source.PreInitialize(null,new FlatFileToLoad(fileInfo), job);
 
             for (var i = 0; i < wb.NumberOfSheets; i++)
             {

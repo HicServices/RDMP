@@ -1,5 +1,6 @@
 ﻿using FAnsi.Discovery;
 using Microsoft.Data.SqlClient;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.Commands;
@@ -160,10 +161,6 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
             _toProcess = toProcess;
         }
 
-        protected override void PreInitializeImpl(IExtractCommand request, IDataLoadEventListener listener)
-        {
-        }
-
         protected override void WriteRows(DataTable toProcess, IDataLoadEventListener job, GracefulCancellationToken cancellationToken, Stopwatch stopwatch)
         {
             _toProcess= toProcess;
@@ -283,6 +280,10 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
             job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Merged {rowCount} rows into {destinationTable.GetFullyQualifiedName()}."));
             if(DeleteMergeTempTable)tmpTbl.Drop();
             _managedConnection.Dispose();
+        }
+
+        protected override void PreInitializeImpl(IBasicActivateItems activator, IExtractCommand request, IDataLoadEventListener listener)
+        {
         }
     }
 }

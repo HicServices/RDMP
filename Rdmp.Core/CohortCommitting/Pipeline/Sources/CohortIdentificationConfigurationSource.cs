@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading;
 using Rdmp.Core.CohortCreation;
 using Rdmp.Core.CohortCreation.Execution;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataFlowPipeline;
@@ -40,6 +41,8 @@ public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<Dat
 
     private bool haveSentData;
     private readonly CancellationTokenSource _cancelGlobalOperations = new();
+
+    private IBasicActivateItems _activator;
 
     /// <summary>
     /// If you are refreshing a cohort or running a cic which was run and cached a long time ago you might want to clear out the cache.  This will mean that
@@ -86,7 +89,7 @@ public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<Dat
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,
                 $"CohortIdentificationConfiguration '{_cohortIdentificationConfiguration}' has no RootCohortAggregateContainer_ID, is it empty?"));
 
-        var cohortCompiler = new CohortCompiler(_cohortIdentificationConfiguration);
+        var cohortCompiler = new CohortCompiler(_activator,_cohortIdentificationConfiguration);
 
         var rootContainerTask =
             //no caching set up so no point in running CohortCompilerRunner
@@ -234,8 +237,9 @@ public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<Dat
     }
 
 
-    public void PreInitialize(CohortIdentificationConfiguration value, IDataLoadEventListener listener)
+    public void PreInitialize(IBasicActivateItems activator, CohortIdentificationConfiguration value, IDataLoadEventListener listener)
     {
+        _activator = activator;
         _cohortIdentificationConfiguration = value;
     }
 }
