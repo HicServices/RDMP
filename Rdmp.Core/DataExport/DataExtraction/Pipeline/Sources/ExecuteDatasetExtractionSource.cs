@@ -460,8 +460,8 @@ DistinctByDestinationPKs - Performs a GROUP BY on each batch of records to ensur
 
         _timeSpentCalculatingDISTINCT.Stop();
         pks.AddRange(Request.ColumnsToExtract.Where(static c => ((ExtractableColumn)c).CatalogueExtractionInformation.IsPrimaryKey).Select(static column => ((ExtractableColumn)column).CatalogueExtractionInformation.ToString()).Select(name => chunk.Columns[name]));
+        chunk.CaseSensitive = true;
         chunk.PrimaryKey = pks.ToArray();
-
         return chunk;
     }
 
