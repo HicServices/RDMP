@@ -28,13 +28,17 @@ public class DataLoadProgressUpdateInfoTests : DatabaseTests
     public DataLoadProgressUpdateInfoTests()
     {
         var cata = Substitute.For<ICatalogue>();
-        //cata.LoggingDataTask.Returns("NothingTask");
+
         cata.GetTableInfoList(false).Returns(Array.Empty<TableInfo>());
         cata.GetLookupTableInfoList().Returns(Array.Empty<TableInfo>());
 
         var lmd = Substitute.For<ILoadMetadata>();
         lmd.GetAllCatalogues().Returns(new[] { cata });
-
+        var link = Substitute.For<ILoadMetadataCatalogueLinkage>();
+        link.CatalogueID.Returns(cata.ID);
+        link.LoadMetadataID.Returns(lmd.ID);
+        link.Name.Returns("fish");
+        cata.LoggingDataTasks.Returns(new List<ILoadMetadataCatalogueLinkage>() { link });
         _job = new ScheduledDataLoadJob(null, "fish", Substitute.For<ILogManager>(), lmd, null,
             new ThrowImmediatelyDataLoadJob(), null);
     }

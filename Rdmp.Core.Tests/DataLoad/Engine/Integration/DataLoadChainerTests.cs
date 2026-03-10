@@ -100,7 +100,8 @@ if not exists (select * from sysobjects where name='DLCTest' and xtype='U')
             logManager.CreateNewLoggingTaskIfNotExists(lmd.Name);
             //cata.LoggingDataTask = lmd.Name;
             cata.SaveToDatabase();
-            lmd.LinkToCatalogue(cata2);
+            lmd.LinkToCatalogue(cata, lmd.Name);
+            lmd.LinkToCatalogue(cata2, lmd.Name);
             var pc = new ProcessTask(CatalogueRepository, lmd, LoadStage.PostLoad);
             pc.ProcessTaskType = ProcessTaskType.DataProvider;
             pc.Path = "Rdmp.Core.DataLoad.Modules.DataProvider.DataLoadChainer";
