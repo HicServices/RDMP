@@ -76,10 +76,10 @@ public class DataLoadJob : IDataLoadJob
 
     private string GetLoggingTask(IEnumerable<ICatalogue> cataloguesToLoad)
     {
-        var distinctLoggingTasks = cataloguesToLoad.SelectMany(catalogue => catalogue.LoggingDataTasks).Distinct().ToList();
+        var distinctLoggingTasks = cataloguesToLoad.SelectMany(catalogue => catalogue.LoggingDataTasks).DistinctBy(l => l.Name ).ToList();
         if (distinctLoggingTasks.Count > 1)
             throw new Exception(
-                $"The catalogues to be loaded do not share the same logging task: {string.Join(", ", distinctLoggingTasks)}");
+                $"The catalogues to be loaded do not share the same logging task: {string.Join(", ", distinctLoggingTasks.Select(l => l.Name))}");
 
         _loggingTask = distinctLoggingTasks.First().Name;
         return string.IsNullOrWhiteSpace(_loggingTask)

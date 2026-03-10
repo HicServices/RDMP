@@ -175,11 +175,15 @@ public class CachedFileRetrieverTests : DatabaseTests
         var catalogue = Substitute.For<ICatalogue>();
         catalogue.GetTableInfoList(false).Returns(Array.Empty<TableInfo>());
         catalogue.GetLookupTableInfoList().Returns(Array.Empty<TableInfo>());
-        //catalogue.LoggingDataTask.Returns("TestLogging");
 
         var logManager = Substitute.For<ILogManager>();
         var loadMetadata = Substitute.For<ILoadMetadata>();
         loadMetadata.GetAllCatalogues().Returns(new[] { catalogue });
+        var link = Substitute.For<ILoadMetadataCatalogueLinkage>();
+        link.CatalogueID.Returns(catalogue.ID);
+        link.LoadMetadataID.Returns(loadMetadata.ID);
+        link.Name.Returns("Test linkage");
+        catalogue.LoggingDataTasks.Returns(new List<ILoadMetadataCatalogueLinkage>() { link });
 
         var j = new ScheduledDataLoadJob(RepositoryLocator, "Test job", logManager, loadMetadata, directory,
             ThrowImmediatelyDataLoadEventListener.Quiet, null)
