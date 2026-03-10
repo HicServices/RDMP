@@ -280,7 +280,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
                 """;
             job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"{mergeSql}"));
             var cmd = new SqlCommand(mergeSql, (SqlConnection)_managedConnection.Connection);
-            cmd.CommandTimeout = SLQMergeTimeout;
+            cmd.CommandTimeout = SQLMergeTimeout;
             var rowCount = cmd.ExecuteNonQuery();
             job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Merged {rowCount} rows into {destinationTable.GetFullyQualifiedName()}."));
             if (DeleteMergeTempTable) tmpTbl.Drop();
