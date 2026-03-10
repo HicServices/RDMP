@@ -65,7 +65,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
         public string TableNamingPattern { get; set; }
 
         [DemandsInitialization("How long should the merge command be allowed to run before timing out, in seconds", DefaultValue = 30000)]
-        public int SLQMergeTimeout { get; set; }
+        public int SQLMergeTimeout { get; set; }
 
 
         private DiscoveredDatabase db;
@@ -261,7 +261,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
                 toProcess, null, true, null);
             var _managedConnection = tmpTbl.Database.Server.GetManagedConnection();
             var _bulkcopy = tmpTbl.BeginBulkInsert(CultureInfo.CurrentCulture, _managedConnection.ManagedTransaction);
-            _bulkcopy.Timeout = SLQMergeTimeout;
+            _bulkcopy.Timeout = SQLMergeTimeout;
             _bulkcopy.Upload(toProcess);
             _bulkcopy.Dispose();
             var mergeSql = $"""
