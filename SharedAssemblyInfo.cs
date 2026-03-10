@@ -12,4 +12,4 @@ using System.Reflection;
 
 [assembly: AssemblyVersion("9.1.1")]
 [assembly: AssemblyFileVersion("9.1.1")]
-[assembly: AssemblyInformationalVersion("9.1.1")]
+[assembly: AssemblyInformationalVersion("9.1.1-mgd-merge-timeout")]
