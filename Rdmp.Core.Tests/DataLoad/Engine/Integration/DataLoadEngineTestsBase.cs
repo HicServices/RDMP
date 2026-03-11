@@ -80,7 +80,7 @@ internal class DataLoadEngineTestsBase : DatabaseTests
 
     protected ITableInfo Import(DiscoveredTable tbl, LoadMetadata lmd, LogManager logManager)
     {
-        logManager.CreateNewLoggingTaskIfNotExists(lmd.Name);
+        logManager.CreateNewLoggingTaskIfNotExists($"Loading {lmd.Name}({lmd.ID})");
 
         //import TableInfos
         var importer = new TableInfoImporter(CatalogueRepository, tbl);
