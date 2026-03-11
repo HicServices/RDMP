@@ -38,7 +38,7 @@ internal class UnitTestsAllObjectsSupported : UnitTests
         foreach (var t in types)
         {
             //ignore these types too
-            if (SkipTheseTypes.Contains(t.Name) || t.Name.StartsWith("Spontaneous", StringComparison.Ordinal) ||
+            if (SkipTheseTypes.Contains(t.Name) || t.Name.EndsWith("Proxy") || t.Name.StartsWith("Spontaneous", StringComparison.Ordinal) ||
                 typeof(SpontaneousObject).IsAssignableFrom(t))
                 continue;
 

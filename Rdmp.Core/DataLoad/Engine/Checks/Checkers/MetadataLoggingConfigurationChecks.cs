@@ -193,8 +193,6 @@ internal class MetadataLoggingConfigurationChecks : ICheckable
             catalogue.LiveLoggingServer_ID = loggingServer.ID;
             var lmdcl = new LoadMetadataCatalogueLinkage(catarepo,_loadMetadata, catalogue, proposedName);
             lmdcl.SaveToDatabase(); 
-            //catalogue.LoggingDataTask = proposedName;
-            //catalogue.SaveToDatabase();
         }
     }
 }

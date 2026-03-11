@@ -70,12 +70,6 @@ public class LoadProgressUnitTests : UnitTests
         var dir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.WorkDirectory),
             "LoadProgress_JobFactory_NoDates", true, (LoadMetadata)lmd);
 
-        //foreach (var cata in lmd.GetAllCatalogues())
-        //{
-        //    cata.LoggingDataTask = "ff";
-        //    cata.SaveToDatabase();
-        //}
-
         lmd.SaveToDatabase();
 
         var jobFactory = new SingleScheduledJobFactory(lp, strat, 999, lp.LoadMetadata, null);

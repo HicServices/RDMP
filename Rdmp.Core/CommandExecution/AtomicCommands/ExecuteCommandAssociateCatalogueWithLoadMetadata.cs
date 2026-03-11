@@ -90,7 +90,6 @@ public class ExecuteCommandAssociateCatalogueWithLoadMetadata : BasicCommandExec
                                     "Synchronise Logging Tasks"))
                             {
                                 //switch Catalogue to use that logging task (including servers)
-                                //cata.LoggingDataTask = task;
                                 var lmdcl = new LoadMetadataCatalogueLinkage(cata.CatalogueRepository, _loadMetadata, cata,task.Name);
                                 lmdcl.SaveToDatabase();
                                 cata.LiveLoggingServer_ID = liveServers.SingleOrDefault();
@@ -101,7 +100,6 @@ public class ExecuteCommandAssociateCatalogueWithLoadMetadata : BasicCommandExec
                 {
                     var lmdcl = new LoadMetadataCatalogueLinkage(cata.CatalogueRepository, _loadMetadata, cata);
                     lmdcl.SaveToDatabase();
-                    //cata.LoggingDataTask = $"Loading {_loadMetadata.Name}";
                 }
             }
             cata.SaveToDatabase();

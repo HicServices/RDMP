@@ -1,7 +1,6 @@
 ﻿using FAnsi;
 using FAnsi.Discovery;
 using NUnit.Framework;
-using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.DataHelper.RegexRedaction;

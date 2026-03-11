@@ -406,23 +406,6 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         {
             throw new Exception($"There are {names.Length} distinct logging tasks associated with this LoadMetadata (ID={ID}) - not allowed");
         }
-        //var catalogueMetadatas = GetAllCatalogues().ToArray();
-
-        //if (!catalogueMetadatas.Any())
-        //    throw new Exception($"There are no Catalogues associated with load metadata (ID={ID})");
-
-        //var cataloguesWithoutLoggingTasks =
-        //    catalogueMetadatas.Where(c => c.LoggingDataTasks.Count == 0).ToArray();
-
-        //if (cataloguesWithoutLoggingTasks.Any())
-        //    throw new Exception(
-        //        $"The following Catalogues do not have a LoggingDataTask specified:{cataloguesWithoutLoggingTasks.Aggregate("", (s, n) => $"{s}{n}(ID={n.ID}),")}");
-
-        //var distinctLoggingTasks = catalogueMetadatas.SelectMany(c => c.LoggingDataTasks);
-        //return distinctLoggingTasks.Count() >= 2 ?
-        //    throw new Exception(
-        //        $"There are {distinctLoggingTasks.Count()} logging tasks in Catalogues belonging to this metadata (ID={ID})")
-        //    : distinctLoggingTasks.First().Name;
     }
 
     /// <summary>
