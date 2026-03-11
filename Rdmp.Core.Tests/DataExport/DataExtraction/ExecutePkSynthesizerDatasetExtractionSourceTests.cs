@@ -45,7 +45,7 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
             SetupExtractDatasetCommand("ExtractionInformationPrimaryKey_IsRespected", new[] { "DateOfBirth" });
 
         var source = new ExecutePkSynthesizerDatasetExtractionSource();
-        source.PreInitialize(request, ThrowImmediatelyDataLoadEventListener.Quiet);
+        source.PreInitialize(null,request, ThrowImmediatelyDataLoadEventListener.Quiet);
         var chunk = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
         Assert.Multiple(() =>
@@ -65,7 +65,7 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
             new[] { "PrivateID", "DateOfBirth" });
 
         var source = new ExecutePkSynthesizerDatasetExtractionSource();
-        source.PreInitialize(request, ThrowImmediatelyDataLoadEventListener.Quiet);
+        source.PreInitialize(null,request, ThrowImmediatelyDataLoadEventListener.Quiet);
         var chunk = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
         Assert.Multiple(() =>
@@ -84,7 +84,7 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
             new[] { "DateOfBirth" });
 
         var source = new ExecutePkSynthesizerDatasetExtractionSource();
-        source.PreInitialize(request, ThrowImmediatelyDataLoadEventListener.Quiet);
+        source.PreInitialize(null,request, ThrowImmediatelyDataLoadEventListener.Quiet);
         var chunk = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
         Assert.Multiple(() =>
@@ -107,7 +107,7 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
             new[] { "DateOfBirth" }, true, true);
 
         var source = new ExecutePkSynthesizerDatasetExtractionSource();
-        source.PreInitialize(request, ThrowImmediatelyDataLoadEventListener.Quiet);
+        source.PreInitialize(null,request, ThrowImmediatelyDataLoadEventListener.Quiet);
         var chunk = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
         Assert.Multiple(() =>
@@ -133,7 +133,7 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
             new[] { "DateOfBirth" }, true);
 
         var source = new ExecutePkSynthesizerDatasetExtractionSource();
-        source.PreInitialize(request, ThrowImmediatelyDataLoadEventListener.Quiet);
+        source.PreInitialize(null,request, ThrowImmediatelyDataLoadEventListener.Quiet);
         var chunk = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
         Assert.Multiple(() =>

@@ -117,7 +117,7 @@ WHERE
             {
                 TemporaryDatabaseName = "tempdb"
             };
-            s.PreInitialize(_request, ThrowImmediatelyDataLoadEventListener.Quiet);
+            s.PreInitialize(null,_request, ThrowImmediatelyDataLoadEventListener.Quiet);
             var hacked = s.HackExtractionSQL(_request.QueryBuilder.SQL,
                 ThrowImmediatelyDataLoadEventListener.QuietPicky);
 

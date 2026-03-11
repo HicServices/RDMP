@@ -4,18 +4,15 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using FAnsi.Discovery;
+using Org.BouncyCastle.Crypto.Macs;
 using Rdmp.Core.CohortCreation.Execution.Joinables;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Providers;
 using Rdmp.Core.QueryBuilding;
@@ -23,6 +20,12 @@ using Rdmp.Core.QueryCaching.Aggregation;
 using Rdmp.Core.ReusableLibraryCode.Annotations;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Rdmp.Core.CohortCreation.Execution;
 
@@ -74,9 +77,11 @@ public class CohortCompiler
 
     public List<Thread> Threads = new();
     private ICoreChildProvider _coreChildProvider;
+    private IBasicActivateItems _activator;
 
-    public CohortCompiler(CohortIdentificationConfiguration cohortIdentificationConfiguration)
+    public CohortCompiler(IBasicActivateItems activator, CohortIdentificationConfiguration cohortIdentificationConfiguration)
     {
+        _activator = activator;
         CohortIdentificationConfiguration = cohortIdentificationConfiguration;
     }
 
@@ -318,6 +323,52 @@ public class CohortCompiler
             //it was not possible to generate valid SQL for the task
             task.CrashMessage = e;
             task.State = CompilationState.Crashed;
+        }
+
+        if (task.Child is CohortAggregateContainer cac)
+        {
+            foreach (var cacac in cac.GetAggregateConfigurations())
+            {
+                if (cacac.Catalogue != null)
+                {
+                    if (cacac.Catalogue.IsInternalDataset)
+                    {
+                        task.CrashMessage = new ArgumentException($"Catalogue {cacac.Catalogue.Name} is marked as Internal. Internal Catalogues cannot be used in Cohort Identification Configurations.");
+                        task.State = CompilationState.Crashed;
+                        break;
+                    }
+                    if (_activator is not null && cacac.Catalogue.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository))
+                    {
+                        var cicAssociatedProjects = _activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ProjectCohortIdentificationConfigurationAssociation>("CohortIdentificationConfiguration_ID", CohortIdentificationConfiguration.ID).Select(c => c.Project).ToList();
+                        var catalogueAssociatedProjects = _activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", cacac.Catalogue.ID).SelectMany(eds => eds.Projects);
+                        if (!catalogueAssociatedProjects.Intersect(cicAssociatedProjects).Any())
+                        {
+                            task.CrashMessage = new ArgumentException($"Catalogue {cacac.Catalogue.Name} is marked as Project Specific, but this Cohort Identification Configurations is not associated with the same Project.");
+                            task.State = CompilationState.Crashed;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (task.Child is AggregateConfiguration ac)
+        {
+            if (ac.Catalogue != null && ac.Catalogue.IsInternalDataset)
+            {
+                task.CrashMessage = new ArgumentException($"Catalogue {ac.Catalogue.Name} is marked as Internal. Internal Catalogues cannot be used in Cohort Identification Configurations.");
+                task.State = CompilationState.Crashed;
+            }
+            if (_activator is not null && ac.Catalogue.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository))
+            {
+                var cicAssociatedProjects = _activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ProjectCohortIdentificationConfigurationAssociation>("CohortIdentificationConfiguration_ID", CohortIdentificationConfiguration.ID).Select(c => c.Project).ToList();
+                var catalogueAssociatedProjects = _activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", ac.Catalogue.ID).SelectMany(eds => eds.Projects);
+                if (!catalogueAssociatedProjects.Intersect(cicAssociatedProjects).Any())
+                {
+                    task.CrashMessage = new ArgumentException($"Catalogue {ac.Catalogue.Name} is marked as Project Specific, but this Cohort Identification Configurations is not associated with the same Project.");
+                    task.State = CompilationState.Crashed;
+                }
+            }
         }
 
         task.Log = queryBuilder?.Results?.Log;

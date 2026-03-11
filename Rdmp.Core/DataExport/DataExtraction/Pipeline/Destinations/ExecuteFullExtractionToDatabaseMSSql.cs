@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using FAnsi.Discovery;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.Commands;
@@ -122,6 +123,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
     private bool _tableDidNotExistAtStartOfLoad;
     private bool _isTableAlreadyNamed;
     private DataTable _toProcess;
+    private IBasicActivateItems _activator;
 
     public ExecuteFullExtractionToDatabaseMSSql() : base(false)
     {
@@ -216,6 +218,38 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                     {
                         present = false;
                     }
+                    //check the columns are correct, we might have added some
+                    var existingColumns = existing.DiscoverColumns();
+                    var existingColumnNames = existingColumns.Select(ec => ec.GetRuntimeName());
+                    var toProcessColumnNames = toProcess.Columns.Cast<DataColumn>().Select(col => col.ColumnName);
+                    var newColumns = toProcessColumnNames.Where(c => !existingColumnNames.Contains(c));
+                    if (newColumns.Any())
+                    {
+                        var archiveTable = _destinationDatabase.ExpectTable(tblName+"_Archive");
+                        if (archiveTable.Exists())
+                        {
+                            foreach (var column in newColumns)
+                            {
+                                existing.AddColumn(column, new TypeGuesser.DatabaseTypeRequest(toProcess.Columns[column].DataType), true, 30000);
+                                archiveTable.AddColumn(column, new TypeGuesser.DatabaseTypeRequest(toProcess.Columns[column].DataType), true,30000);
+                            }
+                            if (present)
+                            {
+                                string triggerProblems = "";
+                                string triggerOK = "";
+                                implementor.DropTrigger(out triggerProblems, out triggerOK);
+                                if(triggerProblems != "")
+                                {
+                                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, triggerProblems));   
+                                }
+
+                                existing = _destinationDatabase.ExpectTable(tblName);
+                                implementor = triggerFactory.Create(existing);
+                                present = false;
+                            }
+                        }
+                    }
+
                     if (!present)
                     {
                         implementor.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
@@ -255,7 +289,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         _destination.IndexTableName = GetIndexName();
         if (UserDefinedIndex is not null)
             _destination.UserDefinedIndexes = UserDefinedIndex.Split(',').Select(i => i.Trim()).ToList();
-        _destination.PreInitialize(_destinationDatabase, listener);
+        _destination.PreInitialize(_activator,_destinationDatabase, listener);
 
 
         return _destination;
@@ -496,8 +530,9 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         _destination?.Abort(listener);
     }
 
-    protected override void PreInitializeImpl(IExtractCommand value, IDataLoadEventListener listener)
+    protected override void PreInitializeImpl(IBasicActivateItems activator, IExtractCommand value, IDataLoadEventListener listener)
     {
+        _activator = activator;
     }
 
 

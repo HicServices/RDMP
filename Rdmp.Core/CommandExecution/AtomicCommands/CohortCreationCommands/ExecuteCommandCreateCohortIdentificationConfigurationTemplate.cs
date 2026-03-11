@@ -32,7 +32,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands
             var associations = _activator.RepositoryLocator.DataExportRepository.GetAllObjects<ProjectCohortIdentificationConfigurationAssociation>();
             var projectAssociations = associations.Where(a => a.CohortIdentificationConfiguration_ID == _cic.ID).ToList();
             base.Execute();
-            var clone = _cic.CreateClone(ThrowImmediatelyCheckNotifier.Quiet);
+            var clone = _cic.CreateClone(ThrowImmediatelyCheckNotifier.Quiet, _activator.RepositoryLocator.DataExportRepository);
             clone.IsTemplate = true;
             clone.Freeze();
             clone.Name = GenerateTemplateName(clone.Name);

@@ -509,6 +509,8 @@ public class AtomicCommandFactory : CommandFactoryBase
             //associate with project
             yield return new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(_activator)
             { Weight = -50.3f, OverrideCommandName = "Associate with Project" }.SetTarget(cic);
+            yield return new ExecuteCommandRemoveCohortIdentificationConfigurationProjectAssociation(_activator)
+            { Weight = -50.2f, OverrideCommandName = "Remove Association with Project" }.SetTarget(pcic != null?pcic:cic);
 
         }
 
@@ -840,15 +842,6 @@ public class AtomicCommandFactory : CommandFactoryBase
                 .SetTarget(projCohorts.Project);
             yield return new ExecuteCommandCreateNewCohortFromTable(_activator, null)
             { OverrideCommandName = "Add New Cohort From Table", Weight = -4.6f }.SetTarget(projCohorts.Project);
-        }
-
-        if (Is(o, out ProjectCohortIdentificationConfigurationAssociationsNode pccan))
-        {
-            yield return new ExecuteCommandCreateNewCohortIdentificationConfiguration(_activator)
-            { OverrideCommandName = "Add New Cohort Builder Query", Weight = -5.1f }.SetTarget(pccan.Project);
-            yield return new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(_activator)
-            { OverrideCommandName = "Add Existing Cohort Builder Query (link to)", Weight = -5f }
-                .SetTarget(pccan.Project);
         }
 
         if (Is(o, out ProjectSavedCohortsNode savedCohortsNode))

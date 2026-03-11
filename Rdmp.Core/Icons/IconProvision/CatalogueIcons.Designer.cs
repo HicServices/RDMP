@@ -2011,18 +2011,6 @@ namespace Rdmp.Core.Icons.IconProvision
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] ProjectCohortIdentificationConfigurationAssociationsNode
-        {
-            get
-            {
-                object obj = ResourceManager.GetObject("ProjectCohortIdentificationConfigurationAssociationsNode", resourceCulture);
-                return ((Byte[])(obj));
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized resource of type Image.
-        /// </summary>
         public static Byte[] ProjectCohortsNode
         {
             get
@@ -2040,18 +2028,6 @@ namespace Rdmp.Core.Icons.IconProvision
             get
             {
                 object obj = ResourceManager.GetObject("ProjectSavedCohortsNode", resourceCulture);
-                return ((Byte[])(obj));
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized resource of type Image.
-        /// </summary>
-        public static Byte[] CommittedCohortIdentificationNode
-        {
-            get
-            {
-                object obj = ResourceManager.GetObject("CommittedCohortIdentificationNode", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
