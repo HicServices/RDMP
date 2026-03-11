@@ -386,7 +386,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         return !catalogue.Any()
             ? throw new NotSupportedException(
                 $"LoadMetaData '{ToString()} (ID={ID}) does not have any Catalogues associated with it so it is not possible to fetch its LoggingDatabaseSettings")
-            : (IDataAccessPoint[])catalogue.Select(c => c.LiveLoggingServer).ToArray();
+            : (IDataAccessPoint[])catalogue.Select(c => c.LiveLoggingServer).Where(lls => lls != null).ToArray();
     }
 
     /// <summary>
