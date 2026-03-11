@@ -62,10 +62,12 @@ public class RdmpMockFactory
         lmd.GetDistinctLiveDatabaseServer().Returns(server);
         lmd.GetAllCatalogues().Returns(new[] { cata });
         lmd.GetDistinctLoggingTask().Returns(TestLoggingTask);
-
+        var link = Substitute.For<LoadMetadataCatalogueLinkage>();
+        link.CatalogueID.Returns(cata.ID);
+        link.LoadMetadataID.Returns(lmd.ID);
+        link.Name = TestLoggingTask;
+        cata.LoggingDataTasks.Returns(new List<ILoadMetadataCatalogueLinkage>() { link});
         cata.GetTableInfoList(Arg.Any<bool>()).Returns(new[] { tableInfo });
-        //cata.LoggingDataTasks.Returns(new List<LoadMetadataCatalogueLinkage>() { });
-        //cata.LoggingDataTasks.Returns(new List<LoadMetadataCatalogueLinkage>() { new LoadMetadataCatalogueLinkage() { CatalogueID = cata.ID, LoadMetadataID = lmd.ID, Name = TestLoggingTask } });
         return lmd;
     }
 
