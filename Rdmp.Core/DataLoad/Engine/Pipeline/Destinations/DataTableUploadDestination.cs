@@ -9,6 +9,7 @@ using FAnsi.Connections;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using FAnsi.Discovery.TableCreation;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataFlowPipeline;
@@ -704,7 +705,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
         }
     }
 
-    public void PreInitialize(DiscoveredDatabase value, IDataLoadEventListener listener)
+    public void PreInitialize(IBasicActivateItems activator, DiscoveredDatabase value, IDataLoadEventListener listener)
     {
         _database = value;
         _server = value.Server;

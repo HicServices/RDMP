@@ -4,19 +4,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [9.2.0] - Unreleased
+## [9.2.0] - 2026-03-10
 - Add Internal Note to Catalogue
 - Fix issue where project associations were not copied when a CIC was cloned
 - Fix issue with using Internal Catalogues in Cohort Identification Configurations
+- Fix issue with using Project Specific Catalogues in Cohort Identification Configurations when not associated to project
 - Fix bug with copying project specific Catalogues between Projects when committing a Cohort
 - Remove Tree filters from UI
 
-## [9.1.2] - Unreleased
+- Simplify Project Cohorts tree
+- Fix bug with copying project specific Catalogues between Projects when committing a Cohort
+- Remove Tree filters from UI
+- Fix issue with Web File Downloader not releasing files after download complete
+- Fix Extraction primary Key case sensitivity issue
 - Automatically fetch user settings from previous versions of RDMP when installing the latest version
 - Allow new columns to be added to archive extractions
 - Simplify use of Extraction Progress
 - Update CHI validation to allow mod10 CHIs
 - Hardened Confluence export functionality
+- Fix issue with using Internal Catalogues in Cohort Identification Configurations
+- Add new SQL merge extraction component
 
 ## [9.1.1] - 2025-12-02
 - Allow Atlassian service workers to write to Confluence from RDMP

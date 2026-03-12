@@ -6,19 +6,20 @@
 
 using NUnit.Framework;
 using Rdmp.Core.CohortCreation.Execution;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.Databases;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
+using Rdmp.Core.QueryCaching.Aggregation;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using System;
 using System.Data;
 using System.Linq;
-using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 using Tests.Common.Scenarios;
-using Rdmp.Core.QueryCaching.Aggregation;
-using Rdmp.Core.ReusableLibraryCode.Checks;
 using static Rdmp.Core.CohortCreation.Execution.CohortCompilerRunner;
 
 namespace Rdmp.Core.Tests.CohortCreation.QueryTests;
@@ -113,7 +114,7 @@ internal class CohortCompilerCacheJoinableTest : FromToDatabaseTests
             Assert.That(acPatIndex.IsJoinablePatientIndexTable());
         });
 
-        var compiler = new CohortCompiler(cic);
+        var compiler = new CohortCompiler(new ThrowImmediatelyActivator(RepositoryLocator, null), cic);
 
         var runner = new CohortCompilerRunner(compiler, 50);
 

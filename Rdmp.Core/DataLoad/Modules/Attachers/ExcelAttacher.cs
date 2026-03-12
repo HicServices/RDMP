@@ -78,7 +78,7 @@ public class ExcelAttacher : FlatFileAttacher
             AddFilenameColumnNamed = AddFilenameColumnNamed
         };
 
-        _hostedSource.PreInitialize(new FlatFileToLoad(fileToLoad), listener);
+        _hostedSource.PreInitialize(null,new FlatFileToLoad(fileToLoad), listener);
         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
             $"About to start processing {fileToLoad.FullName}"));
 

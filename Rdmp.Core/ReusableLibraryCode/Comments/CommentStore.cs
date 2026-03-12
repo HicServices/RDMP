@@ -142,7 +142,7 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
 
         return matches.Length < partsToGet
             ? memberName
-            : string.Join(".", matches.AsEnumerable<string>().Reverse().Take(partsToGet).Reverse());
+            : string.Join(".", matches.AsEnumerable().Reverse().Take(partsToGet).Reverse());
     }
 
     private static string GetLastTokens(string memberName)

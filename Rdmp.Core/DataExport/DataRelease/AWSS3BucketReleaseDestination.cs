@@ -216,12 +216,12 @@ IPipelineRequirement<Project>, IPipelineRequirement<ReleaseData>, IInteractiveCh
         }
     }
 
-    public void PreInitialize(Project value, IDataLoadEventListener listener)
+    public void PreInitialize(IBasicActivateItems activator, Project value, IDataLoadEventListener listener)
     {
         _project = value;
     }
 
-    public void PreInitialize(ReleaseData value, IDataLoadEventListener listener)
+    public void PreInitialize(IBasicActivateItems activator, ReleaseData value, IDataLoadEventListener listener)
     {
         _releaseData = value;
     }
