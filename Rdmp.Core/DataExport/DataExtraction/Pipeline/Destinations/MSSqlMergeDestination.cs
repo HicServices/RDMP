@@ -255,10 +255,16 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
             var pkColumns = toProcess.PrimaryKey;
             var nonPkColumns = toProcess.Columns.Cast<DataColumn>().Where(dc => !pkColumns.Contains(dc)).ToArray();
             //merge
+            List<DatabaseColumnRequest> columnTypes = new List<DatabaseColumnRequest>() { };
+            foreach (var column in destinationTable.DiscoverColumns())
+            {
+                columnTypes.Add(new DatabaseColumnRequest(column.GetRuntimeName(), column.DataType.ToString(), column.AllowNulls));
+            }
+
             var tmpTbl = db.CreateTable(
                 out Dictionary<string, Guesser> _dataTypeDictionary,
                 $"mergeTempTable_{tableName}_{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture).Replace('.', '-')}",
-                toProcess, null, true, null);
+                toProcess, columnTypes.ToArray(), true, null);
             var _managedConnection = tmpTbl.Database.Server.GetManagedConnection();
             var _bulkcopy = tmpTbl.BeginBulkInsert(CultureInfo.CurrentCulture, _managedConnection.ManagedTransaction);
             _bulkcopy.Timeout = SQLMergeTimeout;
