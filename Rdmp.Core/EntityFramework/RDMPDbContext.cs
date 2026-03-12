@@ -108,7 +108,7 @@ namespace Rdmp.Core.EntityFramework
             });
         }
 
-        public CohortAggregateContainer GetParent(AggregateConfiguration aggregateConfiguration)
+        public Curation.Data.Cohort.CohortAggregateContainer GetParent(AggregateConfiguration aggregateConfiguration)
         {
             throw new NotImplementedException();
         }
