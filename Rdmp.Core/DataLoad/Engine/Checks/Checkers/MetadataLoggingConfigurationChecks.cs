@@ -30,7 +30,7 @@ internal class MetadataLoggingConfigurationChecks : ICheckable
         var catalogues = _loadMetadata.GetAllCatalogues().ToArray();
 
         //if there are no logging tasks defined on any Catalogues
-        if (catalogues.Any() && catalogues.All(c => string.IsNullOrWhiteSpace(c.LoggingDataTask)))
+        if (catalogues.Any() && catalogues.All(c => c.LoggingDataTasks.Count() ==0 ))
         {
             string proposedName;
 
@@ -63,24 +63,8 @@ internal class MetadataLoggingConfigurationChecks : ICheckable
 
         #region Fix missing LoggingDataTask
 
-        var missingTasks = catalogues.Where(c => string.IsNullOrWhiteSpace(c.LoggingDataTask)).ToArray();
-        var potentialTasks = catalogues.Except(missingTasks).Select(c => c.LoggingDataTask).Distinct().ToArray();
-
-        //If any Catalogues are missing tasks
-        if (missingTasks.Any())
-            //but there is consensus for those that are not missing tasks
-            if (potentialTasks.Length == 1)
-            {
-                var fix = notifier.OnCheckPerformed(new CheckEventArgs("Some catalogues have NULL LoggingDataTasks",
-                    CheckResult.Fail, null, $"Set task to {potentialTasks.Single()}"));
-
-                if (fix)
-                    foreach (var cata in missingTasks)
-                    {
-                        cata.LoggingDataTask = potentialTasks.Single();
-                        cata.SaveToDatabase();
-                    }
-            }
+        var missingTasks = catalogues.Where(c => c.LoggingDataTasks.Count() ==0).ToArray();
+        var potentialTasks = catalogues.Except(missingTasks).SelectMany(c => c.LoggingDataTasks).Distinct().ToArray();
 
         #endregion
 
@@ -171,7 +155,7 @@ internal class MetadataLoggingConfigurationChecks : ICheckable
         }
         catch (Exception e)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs("Could reach default logging server", CheckResult.Fail, e));
+            notifier.OnCheckPerformed(new CheckEventArgs("Could not reach default logging server", CheckResult.Fail, e));
         }
     }
 
@@ -207,8 +191,8 @@ internal class MetadataLoggingConfigurationChecks : ICheckable
         foreach (var catalogue in catalogues.Cast<Catalogue>())
         {
             catalogue.LiveLoggingServer_ID = loggingServer.ID;
-            catalogue.LoggingDataTask = proposedName;
-            catalogue.SaveToDatabase();
+            var lmdcl = new LoadMetadataCatalogueLinkage(catarepo,_loadMetadata, catalogue, proposedName);
+            lmdcl.SaveToDatabase(); 
         }
     }
 }

@@ -82,7 +82,7 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
         _btnApplyFilter.Click += (s, e) => ApplyFilter(_tbFilterBox.Text);
         _tbToFetch.TextChanged += TbToFetchTextChanged;
         _btnFetch.Click += (s, e) => PopulateLoadHistory();
-        _btnFlat.Click += (s,e) => ToggleView();
+        _btnFlat.Click += (s, e) => ToggleView();
         RDMPCollectionCommonFunctionality.SetupColumnTracking(treeView1, olvDescription,
             new Guid("6b09f39c-2b88-41ed-a396-42a2d2288952"));
         RDMPCollectionCommonFunctionality.SetupColumnTracking(treeView1, olvDate,
@@ -218,7 +218,8 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
 
     public void AddObjects(ArchivalDataLoadInfo[] archivalDataLoadInfos)
     {
-        if (_flatView) {
+        if (_flatView)
+        {
             treeView1.AddObjects(archivalDataLoadInfos.SelectMany(adli => adli.TableLoadInfos).ToList());
             treeView1.AddObjects(archivalDataLoadInfos.SelectMany(adli => adli.Errors).ToList());
             treeView1.AddObjects(archivalDataLoadInfos.SelectMany(adli => adli.Progress).ToList());
@@ -264,7 +265,7 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
     private void ToggleView()
     {
         _flatView = !_flatView;
-        _btnFlat.Text = _flatView ?"Nested View": "Flat View";
+        _btnFlat.Text = _flatView ? "Nested View" : "Flat View";
         PopulateLoadHistory();
     }
 

@@ -80,7 +80,7 @@ internal class DataLoadEngineTestsBase : DatabaseTests
 
     protected ITableInfo Import(DiscoveredTable tbl, LoadMetadata lmd, LogManager logManager)
     {
-        logManager.CreateNewLoggingTaskIfNotExists(lmd.Name);
+        logManager.CreateNewLoggingTaskIfNotExists($"Loading {lmd.Name}({lmd.ID})");
 
         //import TableInfos
         var importer = new TableInfoImporter(CatalogueRepository, tbl);
@@ -90,8 +90,6 @@ internal class DataLoadEngineTestsBase : DatabaseTests
         var forwardEngineer = new ForwardEngineerCatalogue(ti, cis);
         forwardEngineer.ExecuteForwardEngineering(out var cata, out var cataItems, out var eis);
 
-        //make the catalogue use the load configuration
-        cata.LoggingDataTask = lmd.Name;
         Assert.That(cata.LiveLoggingServer_ID, Is.Not.Null); //catalogue should have one of these because of system defaults
         cata.SaveToDatabase();
         lmd.LinkToCatalogue(cata);

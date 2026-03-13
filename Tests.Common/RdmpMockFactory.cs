@@ -10,6 +10,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.EntityNaming;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
+using System.Collections.Generic;
 
 
 namespace Tests.Common;
@@ -61,9 +62,12 @@ public class RdmpMockFactory
         lmd.GetDistinctLiveDatabaseServer().Returns(server);
         lmd.GetAllCatalogues().Returns(new[] { cata });
         lmd.GetDistinctLoggingTask().Returns(TestLoggingTask);
-
+        var link = Substitute.For<LoadMetadataCatalogueLinkage>();
+        link.CatalogueID.Returns(cata.ID);
+        link.LoadMetadataID.Returns(lmd.ID);
+        link.Name = TestLoggingTask;
+        cata.LoggingDataTasks.Returns(new List<ILoadMetadataCatalogueLinkage>() { link});
         cata.GetTableInfoList(Arg.Any<bool>()).Returns(new[] { tableInfo });
-        cata.LoggingDataTask.Returns(TestLoggingTask);
         return lmd;
     }
 

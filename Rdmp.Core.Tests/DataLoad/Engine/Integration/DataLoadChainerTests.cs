@@ -98,9 +98,9 @@ if not exists (select * from sysobjects where name='DLCTest' and xtype='U')
             var loggingServer = CatalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
             var logManager = new LogManager(loggingServer);
             logManager.CreateNewLoggingTaskIfNotExists(lmd.Name);
-            cata.LoggingDataTask = lmd.Name;
             cata.SaveToDatabase();
-            lmd.LinkToCatalogue(cata2);
+            lmd.LinkToCatalogue(cata, "MyLoad");
+            lmd.LinkToCatalogue(cata2, "MyLoad");
             var pc = new ProcessTask(CatalogueRepository, lmd, LoadStage.PostLoad);
             pc.ProcessTaskType = ProcessTaskType.DataProvider;
             pc.Path = "Rdmp.Core.DataLoad.Modules.DataProvider.DataLoadChainer";
@@ -126,7 +126,7 @@ if not exists (select * from sysobjects where name='DLCTest' and xtype='U')
             lmd2.LocationOfExecutablesDirectory = Path.GetTempPath();
             lmd2.LocationOfCacheDirectory = Path.GetTempPath();
             lmd2.SaveToDatabase();
-            lmd2.LinkToCatalogue(cata2);
+            lmd2.LinkToCatalogue(cata2, "MyLoad");
             pc = new ProcessTask(CatalogueRepository, lmd2, LoadStage.GetFiles);
             pc.ProcessTaskType = ProcessTaskType.DataProvider;
             pc.Path = "Rdmp.Core.DataLoad.Modules.DataProvider.DoNothingDataProvider";

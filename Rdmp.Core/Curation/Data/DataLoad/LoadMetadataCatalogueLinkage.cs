@@ -7,9 +7,9 @@
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Serialization;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.ReusableLibraryCode.Annotations;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Rdmp.Core.Curation.Data.DataLoad;
 
@@ -19,7 +19,7 @@ public class LoadMetadataCatalogueLinkage : DatabaseEntity, ILoadMetadataCatalog
 
     private int _LoadMetadataID;
     private int _CatalogueID;
-
+    private string _name;
 
     [NotNull]
     public int LoadMetadataID
@@ -35,6 +35,13 @@ public class LoadMetadataCatalogueLinkage : DatabaseEntity, ILoadMetadataCatalog
         set => SetField(ref _CatalogueID, value);
     }
 
+    [NotNull]
+    public string Name
+    {
+        get => _name;
+        set => SetField(ref _name, value);
+    }
+
     public LoadMetadataCatalogueLinkage() { }
 
     /// <summary>
@@ -43,12 +50,14 @@ public class LoadMetadataCatalogueLinkage : DatabaseEntity, ILoadMetadataCatalog
     /// <param name="repository"></param>
     /// <param name="loadMetadata"></param>
     /// <param name="catalogue"></param>
-    public LoadMetadataCatalogueLinkage(ICatalogueRepository repository, ILoadMetadata loadMetadata, ICatalogue catalogue)
+    /// <param name="name"></param>
+    public LoadMetadataCatalogueLinkage(ICatalogueRepository repository, ILoadMetadata loadMetadata, ICatalogue catalogue,string name=null)
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
             {"LoadMetadataID",  loadMetadata.ID},
-            {"CatalogueID",  catalogue.ID }
+            {"CatalogueID",  catalogue.ID },
+            {"Name",name??$"Loading {loadMetadata.Name}({loadMetadata.ID})" }
         });
     }
 
@@ -57,6 +66,7 @@ public class LoadMetadataCatalogueLinkage : DatabaseEntity, ILoadMetadataCatalog
     {
         LoadMetadataID = int.Parse(r["LoadMetadataID"].ToString());
         CatalogueID = int.Parse(r["CatalogueID"].ToString());
+        Name = r["Name"].ToString();
     }
 
     internal LoadMetadataCatalogueLinkage(ShareManager shareManager, ShareDefinition shareDefinition)

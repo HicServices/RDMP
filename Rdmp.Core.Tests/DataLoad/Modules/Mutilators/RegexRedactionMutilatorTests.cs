@@ -65,6 +65,7 @@ internal class RegexRedactionMutilatorTests : DataLoadEngineTestsBase
 
         lmd.IgnoreTrigger = true;
         lmd.SaveToDatabase();
+
         var ti = Import(tbl, lmd, logManager);
 
         var projectDirectory = SetupLoadDirectory(lmd);

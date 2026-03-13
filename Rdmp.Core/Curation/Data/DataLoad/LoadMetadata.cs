@@ -308,9 +308,9 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         shareManager.UpsertAndHydrate(this, shareDefinition);
     }
 
-    public void LinkToCatalogue(ICatalogue catalogue)
+    public void LinkToCatalogue(ICatalogue catalogue,string linkageName=null)
     {
-        var linkage = new LoadMetadataCatalogueLinkage(CatalogueRepository, this, catalogue);
+        var linkage = new LoadMetadataCatalogueLinkage(CatalogueRepository, this, catalogue, linkageName);
         linkage.SaveToDatabase();
     }
 
@@ -386,32 +386,26 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         return !catalogue.Any()
             ? throw new NotSupportedException(
                 $"LoadMetaData '{ToString()} (ID={ID}) does not have any Catalogues associated with it so it is not possible to fetch its LoggingDatabaseSettings")
-            : (IDataAccessPoint[])catalogue.Select(c => c.LiveLoggingServer).ToArray();
+            : (IDataAccessPoint[])catalogue.Select(c => c.LiveLoggingServer).Where(lls => lls != null).ToArray();
     }
 
     /// <summary>
-    /// Returns the unique value of <see cref="Catalogue.LoggingDataTask"/> amongst all catalogues loaded by the <see cref="LoadMetadata"/>
+    /// Returns the unique value of <see cref="Catalogue.LoggingDataTasks"/> amongst all catalogues loaded by the <see cref="LoadMetadata"/>
     /// </summary>
     /// <returns></returns>
     public string GetDistinctLoggingTask()
     {
-        var catalogueMetadatas = GetAllCatalogues().ToArray();
-
-        if (!catalogueMetadatas.Any())
-            throw new Exception($"There are no Catalogues associated with load metadata (ID={ID})");
-
-        var cataloguesWithoutLoggingTasks =
-            catalogueMetadatas.Where(c => string.IsNullOrWhiteSpace(c.LoggingDataTask)).ToArray();
-
-        if (cataloguesWithoutLoggingTasks.Any())
-            throw new Exception(
-                $"The following Catalogues do not have a LoggingDataTask specified:{cataloguesWithoutLoggingTasks.Aggregate("", (s, n) => $"{s}{n}(ID={n.ID}),")}");
-
-        var distinctLoggingTasks = catalogueMetadatas.Select(c => c.LoggingDataTask).Distinct().ToArray();
-        return distinctLoggingTasks.Length >= 2
-            ? throw new Exception(
-                $"There are {distinctLoggingTasks.Length} logging tasks in Catalogues belonging to this metadata (ID={ID})")
-            : distinctLoggingTasks[0];
+        var tasks = Repository.GetAllObjectsWhere<LoadMetadataCatalogueLinkage>("LoadMetadataID", ID);
+        var names = tasks.Select(t => t.Name).Distinct().ToArray();
+        if (!tasks.Any())
+            throw new Exception($"This LoadMetadata () is not associated with any logging tasks");
+        if (names.Length == 1)
+        {
+            return names[0];
+        } else
+        {
+            throw new Exception($"There are {names.Length} distinct logging tasks associated with this LoadMetadata (ID={ID}) - not allowed");
+        }
     }
 
     /// <summary>
@@ -487,14 +481,14 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         }
 
         //if there's no logging task yet and there's a logging server
-        if (string.IsNullOrWhiteSpace(catalogue.LoggingDataTask))
+        if (!catalogue.LoggingDataTasks.Any())
         {
             var lm = new LogManager(loggingServer);
             var loggingTaskName = Name;
 
             lm.CreateNewLoggingTaskIfNotExists(loggingTaskName);
-            catalogue.LoggingDataTask = loggingTaskName;
-            catalogue.SaveToDatabase();
+            var loadMetadataCatalogueLinkage = new LoadMetadataCatalogueLinkage(CatalogueRepository, this, catalogue);
+            loadMetadataCatalogueLinkage.SaveToDatabase();
         }
     }
 

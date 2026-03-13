@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Common;
 using System.IO;
 using System.Linq;
@@ -80,7 +81,6 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
     private string _sourceOfDataCollection;
     private string _ticket;
     private DateTime? _datasetStartDate;
-    private string _loggingDataTask;
     private string _validatorXml;
     private int? _timeCoverageExtractionInformationID;
     private int? _pivotCategoryExtractionInformationID;
@@ -444,13 +444,6 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
         set => SetField(ref _ticket, value);
     }
 
-    /// <inheritdoc/>
-    [DoNotExtractProperty]
-    public string LoggingDataTask
-    {
-        get => _loggingDataTask;
-        set => SetField(ref _loggingDataTask, value);
-    }
 
     /// <inheritdoc/>
     [DoNotExtractProperty]
@@ -555,6 +548,15 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
     /// <inheritdoc/>
     [NoMappingToDatabase]
     public CatalogueItem[] CatalogueItems => _knownCatalogueItems.Value;
+
+
+    /// <inheritdoc/>
+    [DoNotExtractProperty]
+    [NoMappingToDatabase]
+    public List<ILoadMetadataCatalogueLinkage> LoggingDataTasks
+    {
+        get => Repository.GetAllObjectsWhere<LoadMetadataCatalogueLinkage>("CatalogueID", this.ID).Select(lmcl => (ILoadMetadataCatalogueLinkage)lmcl).ToList();
+    }
 
     /// <inheritdoc/>
     public LoadMetadata[] LoadMetadatas()
@@ -976,8 +978,6 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
 
         //detailed info url with support for invalid urls
         Detail_Page_URL = ParseUrl(r, "Detail_Page_URL");
-
-        LoggingDataTask = r["LoggingDataTask"] as string;
 
         if (r["LiveLoggingServer_ID"] == DBNull.Value)
             LiveLoggingServer_ID = null;
