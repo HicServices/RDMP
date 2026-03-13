@@ -56,19 +56,19 @@ namespace Rdmp.Core.EntityFramework.Models
 
         public IEnumerable<IArgument> GetAllArguments()
         {
-            throw new NotImplementedException();
+            return Arguments;
         }
 
         public Type GetClassAsSystemType() => MEF.GetType(Class);
 
         public string GetClassNameLastPart()
         {
-            throw new NotImplementedException();
+            return string.IsNullOrWhiteSpace(Class) ? Class : Class[(Class.LastIndexOf('.') + 1)..];
         }
 
         public string GetClassNameWhoArgumentsAreFor()
         {
-            throw new NotImplementedException();
+            return Class;
         }
 
         public IHasDependencies[] GetObjectsDependingOnThis()

@@ -42,7 +42,7 @@ namespace Rdmp.Core.EntityFramework.Models
 
         public void ClearAllInjections()
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         public Curation.Data.Pipelines.Pipeline Clone()
@@ -64,12 +64,12 @@ namespace Rdmp.Core.EntityFramework.Models
 
         public void RevertToDatabaseState()
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         public void SaveToDatabase()
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
     }
 }

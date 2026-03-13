@@ -232,7 +232,7 @@ public partial class PipelineDiagramUI : UserControl
     //by ID overload
     private void AddPipelineComponent(int componentID, PipelineComponentRole role, RDMPDbContext repository)
     {
-        AddPipelineComponent(repository.GetObjectByID<PipelineComponent>(componentID), role);
+        AddPipelineComponent(repository.PipelineComponents.FirstOrDefault(c => c.ID == componentID), role);
     }
 
     private void AddPipelineComponent(IPipelineComponent toRealize, PipelineComponentRole role)
