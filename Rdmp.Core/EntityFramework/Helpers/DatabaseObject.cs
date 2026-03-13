@@ -13,13 +13,20 @@ using System.Threading.Tasks;
 
 namespace Rdmp.Core.EntityFramework.Helpers
 {
-    public  class DatabaseObject: IMapsDirectlyToDatabaseTable
+    public  class DatabaseObject: IMapsDirectlyToDatabaseTable, IDeleteable
     {
         public virtual int ID { get; set; }
 
         public virtual RDMPDbContext CatalogueDbContext { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public void DeleteInDatabase()
+        {
+            CatalogueDbContext.Remove(this);
+            CatalogueDbContext.SaveChanges();
+            //throw new NotImplementedException();
+        }
 
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged(object oldValue, object newValue,
