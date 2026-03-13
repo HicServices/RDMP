@@ -4,16 +4,17 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using Microsoft.Data.SqlClient;
-using System.IO;
 using FAnsi.Discovery;
+using Microsoft.Data.SqlClient;
 using NUnit.Framework;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.DataLoad.Modules.DataFlowSources;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
+using System;
+using System.IO;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataExport;
@@ -48,7 +49,7 @@ public class ImportFileTests : DatabaseTests
                 StronglyTypeInput = true
             };
 
-            source.PreInitialize(new FlatFileToLoad(new FileInfo(file)),
+            source.PreInitialize(new ThrowImmediatelyActivator(RepositoryLocator, null), new FlatFileToLoad(new FileInfo(file)),
                 ThrowImmediatelyDataLoadEventListener.Quiet); //this is the file we want to load
             source.Check(ThrowImmediatelyCheckNotifier.Quiet);
 

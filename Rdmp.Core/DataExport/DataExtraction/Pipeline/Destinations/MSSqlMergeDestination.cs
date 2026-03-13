@@ -1,5 +1,6 @@
 ﻿using FAnsi.Discovery;
 using Microsoft.Data.SqlClient;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.Commands;
@@ -62,6 +63,9 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
          You must have either $a or $d
          ", Mandatory = true, DefaultValue = "$c_$d")]
         public string TableNamingPattern { get; set; }
+
+        [DemandsInitialization("How long should the merge command be allowed to run before timing out, in seconds", DefaultValue = 30000)]
+        public int SQLMergeTimeout { get; set; }
 
 
         private DiscoveredDatabase db;
@@ -160,13 +164,9 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
             _toProcess = toProcess;
         }
 
-        protected override void PreInitializeImpl(IExtractCommand request, IDataLoadEventListener listener)
-        {
-        }
-
         protected override void WriteRows(DataTable toProcess, IDataLoadEventListener job, GracefulCancellationToken cancellationToken, Stopwatch stopwatch)
         {
-            _toProcess= toProcess;
+            _toProcess = toProcess;
             var discoveredServer = DataAccessPortal.ExpectServer(TargetDatabaseServer, DataAccessContext.DataExport, false);
 
             //sort out the naming 
@@ -185,7 +185,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
                 db.Create();
 
 
-            var tableName = GetTableName(null,toProcess);
+            var tableName = GetTableName(null, toProcess);
             var destinationTable = db.ExpectTable(tableName);
 
             //ensure there are some pks
@@ -255,12 +255,19 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
             var pkColumns = toProcess.PrimaryKey;
             var nonPkColumns = toProcess.Columns.Cast<DataColumn>().Where(dc => !pkColumns.Contains(dc)).ToArray();
             //merge
+            List<DatabaseColumnRequest> columnTypes = new List<DatabaseColumnRequest>() { };
+            foreach (var column in destinationTable.DiscoverColumns())
+            {
+                columnTypes.Add(new DatabaseColumnRequest(column.GetRuntimeName(), column.DataType.ToString(), column.AllowNulls));
+            }
+
             var tmpTbl = db.CreateTable(
                 out Dictionary<string, Guesser> _dataTypeDictionary,
-                $"mergeTempTable_{tableName}_{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff",CultureInfo.InvariantCulture).Replace('.','-')}",
-                toProcess, null,true, null);
+                $"mergeTempTable_{tableName}_{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture).Replace('.', '-')}",
+                toProcess, columnTypes.ToArray(), true, null);
             var _managedConnection = tmpTbl.Database.Server.GetManagedConnection();
             var _bulkcopy = tmpTbl.BeginBulkInsert(CultureInfo.CurrentCulture, _managedConnection.ManagedTransaction);
+            _bulkcopy.Timeout = SQLMergeTimeout;
             _bulkcopy.Upload(toProcess);
             _bulkcopy.Dispose();
             var mergeSql = $"""
@@ -271,18 +278,23 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
                     UPDATE SET {string.Join(" , ", nonPkColumns.Select(pkc => $"target.{pkc.ColumnName} = source.{pkc.ColumnName}"))}
                 WHEN NOT MATCHED BY TARGET THEN
                     INSERT ({string.Join(" , ", toProcess.Columns.Cast<DataColumn>().Select(pkc => pkc.ColumnName))})
-                    VALUES ({string.Join(" , ", toProcess.Columns.Cast<DataColumn>().Select(pkc => $"source.{pkc.ColumnName}"))}){(AllowMergeToPerformDeletes?"":";")}
-                {(AllowMergeToPerformDeletes?"""
+                    VALUES ({string.Join(" , ", toProcess.Columns.Cast<DataColumn>().Select(pkc => $"source.{pkc.ColumnName}"))}){(AllowMergeToPerformDeletes ? "" : ";")}
+                {(AllowMergeToPerformDeletes ? """
                 WHEN NOT MATCHED BY SOURCE THEN
                     DELETE;
-                """:"")}
+                """ : "")}
                 """;
             job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"{mergeSql}"));
             var cmd = new SqlCommand(mergeSql, (SqlConnection)_managedConnection.Connection);
+            cmd.CommandTimeout = SQLMergeTimeout;
             var rowCount = cmd.ExecuteNonQuery();
             job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Merged {rowCount} rows into {destinationTable.GetFullyQualifiedName()}."));
-            if(DeleteMergeTempTable)tmpTbl.Drop();
+            if (DeleteMergeTempTable) tmpTbl.Drop();
             _managedConnection.Dispose();
+        }
+
+        protected override void PreInitializeImpl(IBasicActivateItems activator, IExtractCommand request, IDataLoadEventListener listener)
+        {
         }
     }
 }

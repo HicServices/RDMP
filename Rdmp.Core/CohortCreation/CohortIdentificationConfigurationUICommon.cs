@@ -8,6 +8,7 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using MongoDB.Driver;
 using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.CohortCreation.Execution.Joinables;
 using Rdmp.Core.CommandExecution;
@@ -33,22 +34,23 @@ public class CohortIdentificationConfigurationUICommon
     private CancellationTokenSource _cancelGlobalOperations;
     private ISqlParameter[] _globals;
     public CohortCompilerRunner Runner;
-
+    private IBasicActivateItems _activator;
     /// <summary>
     /// User interface layer for modal dialogs, showing Exceptions etc
     /// </summary>
-    public IBasicActivateItems Activator;
+    public IBasicActivateItems Activator { get => _activator; set { _activator = value; Compiler = new CohortCompiler(value, null); } }
 
     /// <summary>
     /// Duration in seconds to allow tasks to run for before cancelling
     /// </summary>
     public int Timeout = 3000;
 
-    public CohortCompiler Compiler { get; }
+    public CohortCompiler Compiler { get; private set; }
 
-    public CohortIdentificationConfigurationUICommon()
+    public CohortIdentificationConfigurationUICommon(IBasicActivateItems activator)
     {
-        Compiler = new CohortCompiler(null);
+        Activator = activator;
+        Compiler = new CohortCompiler(Activator, null);
     }
 
     public object Working_AspectGetter(object rowobject) => GetKey(rowobject)?.State;

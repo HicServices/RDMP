@@ -18,6 +18,7 @@ using FAnsi.Discovery;
 using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
@@ -409,7 +410,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
         return dt;
     }
 
-    public void PreInitialize(FlatFileToLoad value, IDataLoadEventListener listener)
+    public void PreInitialize(IBasicActivateItems activator, FlatFileToLoad value, IDataLoadEventListener listener)
     {
         _fileToLoad = value;
     }

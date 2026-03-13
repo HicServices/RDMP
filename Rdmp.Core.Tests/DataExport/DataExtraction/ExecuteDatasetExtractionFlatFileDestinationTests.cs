@@ -6,14 +6,15 @@
 
 using FAnsi.Discovery;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Logging;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 using System;
 using System.Data;
 using System.IO;
-using NUnit.Framework.Legacy;
-using Rdmp.Core.ReusableLibraryCode.Progress;
 using Tests.Common.Scenarios;
 
 namespace Rdmp.Core.Tests.DataExport.DataExtraction;
@@ -40,9 +41,9 @@ internal class ExecuteDatasetExtractionFlatFileDestinationTests : TestsRequiring
         if (_request.QueryBuilder == null) _request.GenerateQueryBuilder();
         dest.RoundFloatsTo = lotsOfDecimalPlaces ? 10 : 2;
 
-        dest.PreInitialize(_request, ThrowImmediatelyDataLoadEventListener.Quiet);
-        dest.PreInitialize(_project, ThrowImmediatelyDataLoadEventListener.Quiet);
-        dest.PreInitialize((DataLoadInfo)dli, ThrowImmediatelyDataLoadEventListener.Quiet);
+        dest.PreInitialize(new ThrowImmediatelyActivator(RepositoryLocator, null), _request, ThrowImmediatelyDataLoadEventListener.Quiet);
+        dest.PreInitialize(new ThrowImmediatelyActivator(RepositoryLocator, null), _project, ThrowImmediatelyDataLoadEventListener.Quiet);
+        dest.PreInitialize(new ThrowImmediatelyActivator(RepositoryLocator, null), (DataLoadInfo)dli, ThrowImmediatelyDataLoadEventListener.Quiet);
 
         dest.ProcessPipelineData(dt, ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
         dest.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);

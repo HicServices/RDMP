@@ -12,6 +12,7 @@ using System.Linq;
 using CsvHelper;
 using CsvHelper.Configuration;
 using FAnsi.Discovery;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
@@ -494,7 +495,7 @@ This will not help you avoid bad data as the full file structure must still be r
     }
 
 
-    public void PreInitialize(FlatFileToLoad value, IDataLoadEventListener listener)
+    public void PreInitialize(IBasicActivateItems activator, FlatFileToLoad value, IDataLoadEventListener listener)
     {
         //we have been given a new file we no longer know the headers.
         Headers = null;

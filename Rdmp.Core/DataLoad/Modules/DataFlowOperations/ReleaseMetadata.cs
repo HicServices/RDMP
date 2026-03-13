@@ -70,7 +70,7 @@ public class ReleaseMetadata : IPluginDataFlowComponent<ReleaseAudit>, IPipeline
     {
     }
 
-    public void PreInitialize(ReleaseData value, IDataLoadEventListener listener)
+    public void PreInitialize(IBasicActivateItems activator, ReleaseData value, IDataLoadEventListener listener)
     {
         _releaseData = value;
     }
@@ -80,7 +80,7 @@ public class ReleaseMetadata : IPluginDataFlowComponent<ReleaseAudit>, IPipeline
         notifier.OnCheckPerformed(new CheckEventArgs("No checking needed", CheckResult.Success));
     }
 
-    public void PreInitialize(IBasicActivateItems value, IDataLoadEventListener listener)
+    public void PreInitialize(IBasicActivateItems activator, IBasicActivateItems value, IDataLoadEventListener listener)
     {
         _activator = value;
     }
