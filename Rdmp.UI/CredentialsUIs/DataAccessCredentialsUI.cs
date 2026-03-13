@@ -27,7 +27,7 @@ public partial class DataAccessCredentialsUI : DataAccessCredentialsUI_Design, I
         AssociatedCollection = RDMPCollection.Tables;
     }
 
-    protected override void SetBindings(BinderWithErrorProviderFactory rules, DataAccessCredentials databaseObject)
+    protected override void SetBindings(BinderWithErrorProviderFactory rules, Core.EntityFramework.Models.DataAccessCredentials databaseObject)
     {
         base.SetBindings(rules, databaseObject);
 
@@ -38,6 +38,6 @@ public partial class DataAccessCredentialsUI : DataAccessCredentialsUI_Design, I
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<DataAccessCredentialsUI_Design, UserControl>))]
-public abstract class DataAccessCredentialsUI_Design : RDMPSingleDatabaseObjectControl<DataAccessCredentials>
+public abstract class DataAccessCredentialsUI_Design : RDMPSingleDatabaseObjectControl<Core.EntityFramework.Models.DataAccessCredentials>
 {
 }

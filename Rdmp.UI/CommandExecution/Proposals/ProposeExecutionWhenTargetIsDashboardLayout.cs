@@ -11,19 +11,19 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsDashboardLayout : RDMPCommandExecutionProposal<DashboardLayout>
+internal class ProposeExecutionWhenTargetIsDashboardLayout : RDMPCommandExecutionProposal<Core.EntityFramework.Models.DashboardLayout>
 {
     public ProposeExecutionWhenTargetIsDashboardLayout(IActivateItems itemActivator) : base(itemActivator)
     {
     }
 
-    public override bool CanActivate(DashboardLayout target) => true;
+    public override bool CanActivate(Core.EntityFramework.Models.DashboardLayout target) => true;
 
-    public override void Activate(DashboardLayout target)
+    public override void Activate(Core.EntityFramework.Models.DashboardLayout target)
     {
-        ItemActivator.Activate<DashboardLayoutUI, DashboardLayout>(target);
+        ItemActivator.Activate<DashboardLayoutUI, Core.EntityFramework.Models.DashboardLayout>(target);
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, DashboardLayout target,
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Core.EntityFramework.Models.DashboardLayout target,
         InsertOption insertOption = InsertOption.Default) => null;
 }

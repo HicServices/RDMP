@@ -26,7 +26,7 @@ namespace Rdmp.UI.ANOEngineeringUIs;
 /// </summary>
 public partial class ANOTableUI : ANOTableUI_Design
 {
-    private ANOTable _anoTable;
+    private Core.EntityFramework.Models.ANOTable _anoTable;
     private readonly ErrorProvider _serverErrorProvider = new();
 
     public ANOTableUI()
@@ -35,7 +35,7 @@ public partial class ANOTableUI : ANOTableUI_Design
         AssociatedCollection = RDMPCollection.Catalogue;
     }
 
-    public override void SetDatabaseObject(IActivateItems activator, ANOTable databaseObject)
+    public override void SetDatabaseObject(IActivateItems activator, Core.EntityFramework.Models.ANOTable databaseObject)
     {
         _anoTable = databaseObject;
         base.SetDatabaseObject(activator, databaseObject);
@@ -60,7 +60,7 @@ public partial class ANOTableUI : ANOTableUI_Design
             _serverErrorProvider.Clear();
     }
 
-    protected override void SetBindings(BinderWithErrorProviderFactory rules, ANOTable databaseObject)
+    protected override void SetBindings(BinderWithErrorProviderFactory rules, Core.EntityFramework.Models.ANOTable databaseObject)
     {
         base.SetBindings(rules, databaseObject);
 
@@ -150,6 +150,6 @@ public partial class ANOTableUI : ANOTableUI_Design
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ANOTableUI_Design, UserControl>))]
-public abstract class ANOTableUI_Design : RDMPSingleDatabaseObjectControl<ANOTable>
+public abstract class ANOTableUI_Design : RDMPSingleDatabaseObjectControl<Core.EntityFramework.Models.ANOTable>
 {
 }

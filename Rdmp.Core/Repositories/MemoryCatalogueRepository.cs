@@ -191,25 +191,25 @@ public class MemoryRDMPDbContext : MemoryRepository, ICatalogueRepository, ITabl
     /// <summary>
     /// records which credentials can be used to access the table under which contexts
     /// </summary>
-    protected Dictionary<ITableInfo, Dictionary<DataAccessContext, DataAccessCredentials>> CredentialsDictionary
+    protected Dictionary<ITableInfo, Dictionary<DataAccessContext, Core.EntityFramework.Models.DataAccessCredentials>> CredentialsDictionary
     {
         get;
         set;
     } =
         new();
 
-    public virtual void CreateLinkBetween(DataAccessCredentials credentials, ITableInfo tableInfo,
+    public virtual void CreateLinkBetween(Core.EntityFramework.Models.DataAccessCredentials credentials, ITableInfo tableInfo,
         DataAccessContext context)
     {
         if (!CredentialsDictionary.ContainsKey(tableInfo))
-            CredentialsDictionary.Add(tableInfo, new Dictionary<DataAccessContext, DataAccessCredentials>());
+            CredentialsDictionary.Add(tableInfo, new Dictionary<DataAccessContext, Core.EntityFramework.Models.DataAccessCredentials>());
 
         CredentialsDictionary[tableInfo].Add(context, credentials);
 
         tableInfo.ClearAllInjections();
     }
 
-    public virtual void BreakLinkBetween(DataAccessCredentials credentials, ITableInfo tableInfo,
+    public virtual void BreakLinkBetween(Core.EntityFramework.Models.DataAccessCredentials credentials, ITableInfo tableInfo,
         DataAccessContext context)
     {
         if (!CredentialsDictionary.TryGetValue(tableInfo, out var credentialsMap))
@@ -220,7 +220,7 @@ public class MemoryRDMPDbContext : MemoryRepository, ICatalogueRepository, ITabl
         tableInfo.ClearAllInjections();
     }
 
-    public virtual void BreakAllLinksBetween(DataAccessCredentials credentials, ITableInfo tableInfo)
+    public virtual void BreakAllLinksBetween(Core.EntityFramework.Models.DataAccessCredentials credentials, ITableInfo tableInfo)
     {
         if (!CredentialsDictionary.TryGetValue(tableInfo, out var credentialsMap))
             return;
@@ -232,7 +232,7 @@ public class MemoryRDMPDbContext : MemoryRepository, ICatalogueRepository, ITabl
             credentialsMap.Remove(context);
     }
 
-    public DataAccessCredentials GetCredentialsIfExistsFor(ITableInfo tableInfo, DataAccessContext context)
+    public Core.EntityFramework.Models.DataAccessCredentials GetCredentialsIfExistsFor(ITableInfo tableInfo, DataAccessContext context)
     {
         if (!CredentialsDictionary.TryGetValue(tableInfo, out var credentialsList)) return null;
         if (credentialsList.TryGetValue(context, out var credentials))
@@ -240,7 +240,7 @@ public class MemoryRDMPDbContext : MemoryRepository, ICatalogueRepository, ITabl
         return credentialsList.TryGetValue(DataAccessContext.Any, out credentials) ? credentials : null;
     }
 
-    public Dictionary<DataAccessContext, DataAccessCredentials> GetCredentialsIfExistsFor(ITableInfo tableInfo) =>
+    public Dictionary<DataAccessContext, Core.EntityFramework.Models.DataAccessCredentials> GetCredentialsIfExistsFor(ITableInfo tableInfo) =>
         CredentialsDictionary.GetValueOrDefault(tableInfo);
 
     public Dictionary<ITableInfo, List<DataAccessCredentialUsageNode>> GetAllCredentialUsagesBy(
@@ -558,5 +558,30 @@ public class MemoryRDMPDbContext : MemoryRepository, ICatalogueRepository, ITabl
         return GetAllObjectsWhere<ExtendedProperty>("ReferencedObjectID", obj.ID)
             // Second pass make sure the object/repo match
             .Where(r => r.IsReferenceTo(obj));
+    }
+
+    public void CreateLinkBetween(DataAccessCredentials credentials, ITableInfo tableInfo, DataAccessContext context)
+    {
+        throw new NotImplementedException();
+    }
+
+    DataAccessCredentials ITableInfoCredentialsManager.GetCredentialsIfExistsFor(ITableInfo tableInfo, DataAccessContext context)
+    {
+        throw new NotImplementedException();
+    }
+
+    Dictionary<DataAccessContext, DataAccessCredentials> ITableInfoCredentialsManager.GetCredentialsIfExistsFor(ITableInfo tableInfo)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void BreakLinkBetween(DataAccessCredentials credentials, ITableInfo tableInfo, DataAccessContext context)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void BreakAllLinksBetween(DataAccessCredentials credentials, ITableInfo tableInfo)
+    {
+        throw new NotImplementedException();
     }
 }

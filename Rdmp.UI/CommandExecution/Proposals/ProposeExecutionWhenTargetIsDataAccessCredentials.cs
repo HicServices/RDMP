@@ -11,20 +11,20 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsDataAccessCredentials : RDMPCommandExecutionProposal<DataAccessCredentials>
+internal class ProposeExecutionWhenTargetIsDataAccessCredentials : RDMPCommandExecutionProposal<Core.EntityFramework.Models.DataAccessCredentials>
 {
     public ProposeExecutionWhenTargetIsDataAccessCredentials(IActivateItems itemActivator)
         : base(itemActivator)
     {
     }
 
-    public override bool CanActivate(DataAccessCredentials target) => true;
+    public override bool CanActivate(Core.EntityFramework.Models.DataAccessCredentials target) => true;
 
-    public override void Activate(DataAccessCredentials target)
+    public override void Activate(Core.EntityFramework.Models.DataAccessCredentials target)
     {
-        ItemActivator.Activate<DataAccessCredentialsUI, DataAccessCredentials>(target);
+        ItemActivator.Activate<DataAccessCredentialsUI, Core.EntityFramework.Models.DataAccessCredentials>(target);
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, DataAccessCredentials target,
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Core.EntityFramework.Models.DataAccessCredentials target,
         InsertOption insertOption = InsertOption.Default) => null;
 }

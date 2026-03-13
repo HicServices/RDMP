@@ -12,20 +12,20 @@ using Rdmp.UI.MainFormUITabs;
 namespace Rdmp.UI.CommandExecution.Proposals;
 
 internal class
-    ProposeExecutionWhenTargetIsConnectionStringKeyword : RDMPCommandExecutionProposal<ConnectionStringKeyword>
+    ProposeExecutionWhenTargetIsConnectionStringKeyword : RDMPCommandExecutionProposal<Core.EntityFramework.Models.ConnectionStringKeyword>
 {
     public ProposeExecutionWhenTargetIsConnectionStringKeyword(IActivateItems itemActivator) : base(itemActivator)
     {
     }
 
-    public override bool CanActivate(ConnectionStringKeyword target) => true;
+    public override bool CanActivate(Core.EntityFramework.Models.ConnectionStringKeyword target) => true;
 
-    public override void Activate(ConnectionStringKeyword target)
+    public override void Activate(Core.EntityFramework.Models.ConnectionStringKeyword target)
     {
-        ItemActivator.Activate<ConnectionStringKeywordUI, ConnectionStringKeyword>(target);
+        ItemActivator.Activate<ConnectionStringKeywordUI, Core.EntityFramework.Models.ConnectionStringKeyword>(target);
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ConnectionStringKeyword target,
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Core.EntityFramework.Models.ConnectionStringKeyword target,
         InsertOption insertOption = InsertOption.Default) =>
         //no drag and drop
         null;

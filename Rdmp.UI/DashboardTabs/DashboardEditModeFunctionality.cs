@@ -93,7 +93,7 @@ public class DashboardEditModeFunctionality
                     kvp.Key.Height = _actionUnderwayOnControl.Height;
                     kvp.Key.X = _actionUnderwayOnControl.Location.X;
                     kvp.Key.Y = _actionUnderwayOnControl.Location.Y;
-                    kvp.Key.SaveToDatabase();
+                    kvp.Key.CatalogueDbContext.SaveChanges();
                 }
         }
 

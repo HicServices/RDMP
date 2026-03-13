@@ -24,7 +24,7 @@ public class
 
     public override void Activate(DataAccessCredentialUsageNode target)
     {
-        ItemActivator.Activate<DataAccessCredentialsUI, DataAccessCredentials>(target.Credentials);
+        ItemActivator.Activate<DataAccessCredentialsUI, Core.EntityFramework.Models.DataAccessCredentials>(target.Credentials);
     }
 
     public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, DataAccessCredentialUsageNode target,

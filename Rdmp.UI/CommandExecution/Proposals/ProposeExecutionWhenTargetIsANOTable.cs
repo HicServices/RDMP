@@ -11,20 +11,20 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsANOTable : RDMPCommandExecutionProposal<ANOTable>
+internal class ProposeExecutionWhenTargetIsANOTable : RDMPCommandExecutionProposal<Core.EntityFramework.Models.ANOTable>
 {
     public ProposeExecutionWhenTargetIsANOTable(IActivateItems itemActivator) : base(itemActivator)
     {
     }
 
-    public override bool CanActivate(ANOTable target) => true;
+    public override bool CanActivate(Core.EntityFramework.Models.ANOTable target) => true;
 
-    public override void Activate(ANOTable target)
+    public override void Activate(Core.EntityFramework.Models.ANOTable target)
     {
-        ItemActivator.Activate<ANOTableUI, ANOTable>(target);
+        ItemActivator.Activate<ANOTableUI, Core.EntityFramework.Models.ANOTable>(target);
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ANOTable target,
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Core.EntityFramework.Models.ANOTable target,
         InsertOption insertOption = InsertOption.Default) =>
         //no drag and drop support
         null;

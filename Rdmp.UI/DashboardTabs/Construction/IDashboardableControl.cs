@@ -40,5 +40,5 @@ public interface IDashboardableControl : IObjectCollectionControl, INotifyMeOfEd
     /// unlike regular Dashboardable controls
     /// </summary>
     /// <returns></returns>
-    IPersistableObjectCollection ConstructEmptyCollection(DashboardControl databaseRecord);
+    IPersistableObjectCollection ConstructEmptyCollection(Core.EntityFramework.Models.DashboardControl databaseRecord);
 }

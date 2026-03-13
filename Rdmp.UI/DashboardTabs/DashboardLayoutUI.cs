@@ -29,11 +29,11 @@ namespace Rdmp.UI.DashboardTabs;
 /// </summary>
 public partial class DashboardLayoutUI : DashboardLayoutUI_Design
 {
-    private DashboardLayout _layout;
+    private Core.EntityFramework.Models.DashboardLayout _layout;
     private DashboardControlFactory _controlFactory;
     private readonly DashboardEditModeFunctionality _editModeFunctionality;
 
-    public Dictionary<DashboardControl, DashboardableControlHostPanel> ControlDictionary = new();
+    public Dictionary<Core.EntityFramework.Models.DashboardControl, DashboardableControlHostPanel> ControlDictionary = new();
 
     public DashboardLayoutUI()
     {
@@ -48,7 +48,7 @@ public partial class DashboardLayoutUI : DashboardLayoutUI_Design
         _editModeFunctionality.EditMode = btnEditMode.Checked;
     }
 
-    public override void SetDatabaseObject(IActivateItems activator, DashboardLayout databaseObject)
+    public override void SetDatabaseObject(IActivateItems activator, Core.EntityFramework.Models.DashboardLayout databaseObject)
     {
         base.SetDatabaseObject(activator, databaseObject);
 
@@ -88,12 +88,14 @@ public partial class DashboardLayoutUI : DashboardLayoutUI_Design
                         $"Error Hydrating Control '{c}', Do you want to delete the control? (No will attempt to clear the control state but leave it on the Dashboard).  Exception was:{Environment.NewLine}{e.Message}",
                         "Delete Broken Control?"))
                 {
-                    c.DeleteInDatabase();
+                    //c.DeleteInDatabase();
+                    c.CatalogueDbContext.Remove(c);
+                    c.CatalogueDbContext.SaveChanges();
                     continue;
                 }
 
                 c.PersistenceString = "";
-                c.SaveToDatabase();
+                c.CatalogueDbContext.SaveChanges();
                 MessageBox.Show("Control state cleared, we will now try to reload it");
                 instance = _controlFactory.Create(c);
             }
@@ -121,7 +123,8 @@ public partial class DashboardLayoutUI : DashboardLayoutUI_Design
             return;
 
         _layout.Name = tbDashboardName.Text;
-        _layout.SaveToDatabase();
+        //_layout.SaveToDatabase();
+        _layout.CatalogueDbContext.SaveChanges();
 
         Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_layout));
     }
@@ -143,6 +146,6 @@ public partial class DashboardLayoutUI : DashboardLayoutUI_Design
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<DashboardLayoutUI_Design, UserControl>))]
-public abstract class DashboardLayoutUI_Design : RDMPSingleDatabaseObjectControl<DashboardLayout>
+public abstract class DashboardLayoutUI_Design : RDMPSingleDatabaseObjectControl<Core.EntityFramework.Models.DashboardLayout>
 {
 }

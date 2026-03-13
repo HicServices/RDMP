@@ -403,7 +403,7 @@ public class YamlRepository : MemoryDataExportRepository
             if (ids == null)
                 return;
 
-            CredentialsDictionary = new Dictionary<ITableInfo, Dictionary<DataAccessContext, DataAccessCredentials>>();
+            CredentialsDictionary = new Dictionary<ITableInfo, Dictionary<DataAccessContext, Core.EntityFramework.Models.DataAccessCredentials>>();
 
             foreach (var tableToCredentialUsage in ids)
             {
@@ -413,13 +413,13 @@ public class YamlRepository : MemoryDataExportRepository
                 if (table == null)
                     continue;
 
-                var valDictionary = new Dictionary<DataAccessContext, DataAccessCredentials>();
+                var valDictionary = new Dictionary<DataAccessContext, Core.EntityFramework.Models.DataAccessCredentials>();
                 foreach (var (usage, value) in tableToCredentialUsage.Value)
                 {
-                    var credential = GetObjectByIDIfExists<DataAccessCredentials>(value);
+                    //var credential = null;// GetObjectByIDIfExists<Core.EntityFramework.Models.DataAccessCredentials>(value);
 
                     // Credentials can be deleted on the sly
-                    if (credential != null) valDictionary.Add(usage, credential);
+                    //if (credential != null) valDictionary.Add(usage, credential);
                 }
 
                 CredentialsDictionary.Add(table, valDictionary);
@@ -440,21 +440,21 @@ public class YamlRepository : MemoryDataExportRepository
         File.WriteAllText(GetCredentialsDictionaryFile(), serializer.Serialize(ids));
     }
 
-    public override void BreakAllLinksBetween(DataAccessCredentials credentials, ITableInfo tableInfo)
+    public override void BreakAllLinksBetween(Core.EntityFramework.Models.DataAccessCredentials credentials, ITableInfo tableInfo)
     {
         base.BreakAllLinksBetween(credentials, tableInfo);
 
         SaveCredentialsDictionary();
     }
 
-    public override void BreakLinkBetween(DataAccessCredentials credentials, ITableInfo tableInfo,
+    public override void BreakLinkBetween(Core.EntityFramework.Models.DataAccessCredentials credentials, ITableInfo tableInfo,
         DataAccessContext context)
     {
         base.BreakLinkBetween(credentials, tableInfo, context);
         SaveCredentialsDictionary();
     }
 
-    public override void CreateLinkBetween(DataAccessCredentials credentials, ITableInfo tableInfo,
+    public override void CreateLinkBetween(Core.EntityFramework.Models.DataAccessCredentials credentials, ITableInfo tableInfo,
         DataAccessContext context)
     {
         base.CreateLinkBetween(credentials, tableInfo, context);

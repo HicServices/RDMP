@@ -24,7 +24,7 @@ namespace Rdmp.UI.DashboardTabs;
 [TechnicalUI]
 public partial class DashboardableControlHostPanel : RDMPUserControl
 {
-    private readonly DashboardControl _databaseRecord;
+    private readonly Core.EntityFramework.Models.DashboardControl _databaseRecord;
     private bool _editMode;
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -32,7 +32,7 @@ public partial class DashboardableControlHostPanel : RDMPUserControl
 
     private const float BorderWidth = 5;
 
-    public DashboardableControlHostPanel(IActivateItems activator, DashboardControl databaseRecord,
+    public DashboardableControlHostPanel(IActivateItems activator, Core.EntityFramework.Models.DashboardControl databaseRecord,
         IDashboardableControl hostedControl)
     {
         SetItemActivator(activator);

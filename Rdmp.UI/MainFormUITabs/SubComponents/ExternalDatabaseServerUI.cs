@@ -29,7 +29,7 @@ namespace Rdmp.UI.MainFormUITabs.SubComponents;
 /// </summary>
 public partial class ExternalDatabaseServerUI : ExternalDatabaseServerUI_Design, ISaveableUI
 {
-    private ExternalDatabaseServer _server;
+    private Core.EntityFramework.Models.ExternalDatabaseServer _server;
     private bool bloading;
 
     public ExternalDatabaseServerUI()
@@ -40,7 +40,7 @@ public partial class ExternalDatabaseServerUI : ExternalDatabaseServerUI_Design,
         ddDatabaseType.DataSource = Enum.GetValues(typeof(DatabaseType));
     }
 
-    public override void SetDatabaseObject(IActivateItems activator, ExternalDatabaseServer databaseObject)
+    public override void SetDatabaseObject(IActivateItems activator, Core.EntityFramework.Models.ExternalDatabaseServer databaseObject)
     {
         base.SetDatabaseObject(activator, databaseObject);
         _server = databaseObject;
@@ -65,7 +65,7 @@ public partial class ExternalDatabaseServerUI : ExternalDatabaseServerUI_Design,
         }
     }
 
-    protected override void SetBindings(BinderWithErrorProviderFactory rules, ExternalDatabaseServer databaseObject)
+    protected override void SetBindings(BinderWithErrorProviderFactory rules, Core.EntityFramework.Models.ExternalDatabaseServer databaseObject)
     {
         base.SetBindings(rules, databaseObject);
 
@@ -109,12 +109,12 @@ public partial class ExternalDatabaseServerUI : ExternalDatabaseServerUI_Design,
             return;
 
         var type = (DatabaseType)ddDatabaseType.SelectedValue;
-        _server.DatabaseType = type;
+        _server.DatabaseType = type.ToString();
         pbDatabaseProvider.Image = Activator.CoreIconProvider.GetImage(type).ImageToBitmap();
     }
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ExternalDatabaseServerUI_Design, UserControl>))]
-public abstract class ExternalDatabaseServerUI_Design : RDMPSingleDatabaseObjectControl<ExternalDatabaseServer>
+public abstract class ExternalDatabaseServerUI_Design : RDMPSingleDatabaseObjectControl<Core.EntityFramework.Models.ExternalDatabaseServer>
 {
 }

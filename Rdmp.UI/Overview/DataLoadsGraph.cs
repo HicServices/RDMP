@@ -279,6 +279,6 @@ public partial class DataLoadsGraph : RDMPUserControl, IDashboardableControl
     {
     }
 
-    public IPersistableObjectCollection ConstructEmptyCollection(DashboardControl databaseRecord) =>
+    public IPersistableObjectCollection ConstructEmptyCollection(Core.EntityFramework.Models.DashboardControl databaseRecord) =>
         new DataLoadsGraphObjectCollection();
 }

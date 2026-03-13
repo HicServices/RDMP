@@ -98,7 +98,7 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
         _flagOptions.Add(btn);
     }
 
-    private DashboardControl _dashboardControlDatabaseRecord;
+    private Core.EntityFramework.Models.DashboardControl _dashboardControlDatabaseRecord;
     private GoodBadCataloguePieChartObjectCollection _collection;
 
     private void GenerateChart()
@@ -216,7 +216,7 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
 
     public string GetTabToolTip() => null;
 
-    public IPersistableObjectCollection ConstructEmptyCollection(DashboardControl databaseRecord)
+    public IPersistableObjectCollection ConstructEmptyCollection(Core.EntityFramework.Models.DashboardControl databaseRecord)
     {
         _dashboardControlDatabaseRecord = databaseRecord;
 
@@ -276,7 +276,7 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
         if (_bLoading)
             return;
 
-        _dashboardControlDatabaseRecord.SaveCollectionState(_collection);
+        //_dashboardControlDatabaseRecord.SaveCollectionState(_collection);//todo
     }
 
     private void btnShowLabels_CheckStateChanged(object sender, EventArgs e)

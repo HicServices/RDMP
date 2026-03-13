@@ -69,7 +69,7 @@ public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
         _respectRowCounts = CatalogueIcons.RowCounts_Respect.ImageToBitmap();
     }
 
-    private DashboardControl _dashboardControlDatabaseRecord;
+    private Core.EntityFramework.Models.DashboardControl _dashboardControlDatabaseRecord;
     private DatasetRacewayObjectCollection _collection;
     private IActivateItems _activator;
     private bool _isEditmodeOn;
@@ -207,7 +207,7 @@ public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
 
     public string GetTabToolTip() => null;
 
-    public IPersistableObjectCollection ConstructEmptyCollection(DashboardControl databaseRecord)
+    public IPersistableObjectCollection ConstructEmptyCollection(Core.EntityFramework.Models.DashboardControl databaseRecord)
     {
         _dashboardControlDatabaseRecord = databaseRecord;
 
@@ -244,7 +244,7 @@ public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
 
     private void SaveCollectionChanges()
     {
-        _dashboardControlDatabaseRecord.SaveCollectionState(_collection);
+        //_dashboardControlDatabaseRecord.SaveCollectionState(_collection);//todo
     }
 
     private void btnRemoveAll_Click(object sender, EventArgs e)

@@ -20,5 +20,6 @@ namespace Rdmp.Core.EntityFramework.Models
         public DateTime Created { get; set; }
         public override string ToString() => Name;
 
+        public virtual List<DashboardControl> Controls { get; set; }
     }
 }

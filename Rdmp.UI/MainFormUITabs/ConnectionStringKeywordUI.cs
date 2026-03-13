@@ -23,7 +23,7 @@ namespace Rdmp.UI.MainFormUITabs;
 /// </summary>
 public partial class ConnectionStringKeywordUI : ConnectionStringKeywordUI_Design, ISaveableUI
 {
-    private ConnectionStringKeyword _keyword;
+    private Core.EntityFramework.Models.ConnectionStringKeyword _keyword;
 
     public ConnectionStringKeywordUI()
     {
@@ -33,7 +33,7 @@ public partial class ConnectionStringKeywordUI : ConnectionStringKeywordUI_Desig
         ddDatabaseType.DataSource = Enum.GetValues(typeof(DatabaseType));
     }
 
-    public override void SetDatabaseObject(IActivateItems activator, ConnectionStringKeyword databaseObject)
+    public override void SetDatabaseObject(IActivateItems activator, Core.EntityFramework.Models.ConnectionStringKeyword databaseObject)
     {
         base.SetDatabaseObject(activator, databaseObject);
         _keyword = databaseObject;
@@ -51,7 +51,7 @@ public partial class ConnectionStringKeywordUI : ConnectionStringKeywordUI_Desig
         CommonFunctionality.StartChecking();
     }
 
-    protected override void SetBindings(BinderWithErrorProviderFactory rules, ConnectionStringKeyword databaseObject)
+    protected override void SetBindings(BinderWithErrorProviderFactory rules, Core.EntityFramework.Models.ConnectionStringKeyword databaseObject)
     {
         base.SetBindings(rules, databaseObject);
 
@@ -72,6 +72,6 @@ public partial class ConnectionStringKeywordUI : ConnectionStringKeywordUI_Desig
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ConnectionStringKeywordUI_Design, UserControl>))]
-public abstract class ConnectionStringKeywordUI_Design : RDMPSingleDatabaseObjectControl<ConnectionStringKeyword>
+public abstract class ConnectionStringKeywordUI_Design : RDMPSingleDatabaseObjectControl<Core.EntityFramework.Models.ConnectionStringKeyword>
 {
 }

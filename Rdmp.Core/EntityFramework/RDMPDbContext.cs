@@ -37,8 +37,9 @@ namespace Rdmp.Core.EntityFramework
         { }
 
         public DbSet<Models.Catalogue> Catalogues { get; set; }
+        public DbSet<Models.DashboardControl> DashboardControls { get; set; }
         public DbSet<Models.Pipeline> Pipelines { get; set; }
-        public DbSet<Models.ConnectionStringKeyword> ConnectionStringKeywords{ get; set; }
+        public DbSet<Models.ConnectionStringKeyword> ConnectionStringKeywords { get; set; }
         public DbSet<Models.CatalogueItem> CatalogueItems { get; set; }
         public DbSet<Models.ColumnInfo> ColumnInfos { get; set; }
         public DbSet<Models.PipelineComponentArgument> PipelineComponentArguments { get; set; }
@@ -51,11 +52,11 @@ namespace Rdmp.Core.EntityFramework
         public DbSet<Models.PipelineComponent> PipelineComponents { get; set; }
         public DbSet<Models.LookupCompositeJoinInfo> LookupCompositeJoinInfos { get; set; }
         public DbSet<ANOTable> ANOTables { get; set; }
-        public DbSet<Models.StandardRegex> StandardRegexes{ get; set; }
+        public DbSet<Models.StandardRegex> StandardRegexes { get; set; }
         public DbSet<RemoteRDMP> RemoteRDMPs { get; set; }
         public DbSet<Models.CohortIdentificationConfiguration> CohortIdentificationConfigurations { get; set; }
         public DbSet<Models.DashboardLayout> DashboardLayouts { get; set; }
-        public DbSet<Models.DataAccessCredentials> DataAccessCredentials{ get; set; }
+        public DbSet<Models.DataAccessCredentials> DataAccessCredentials { get; set; }
         public DbSet<Models.ExternalDatabaseServer> ExternalDatabaseServers { get; set; }
 
         public T[] GetAllObjects<T>()
@@ -83,34 +84,30 @@ namespace Rdmp.Core.EntityFramework
                 entity.HasKey(e => e.ID);
                 entity.Property(e => e.Name).IsRequired().HasMaxLength(500);
                 entity.HasIndex(e => e.Name);
-                //entity.(e => e.Catalogue);
             });
             modelBuilder.Entity<Models.ColumnInfo>(entity =>
             {
                 entity.HasKey(e => e.ID);
                 entity.Property(e => e.Name).IsRequired().HasMaxLength(500);
                 entity.HasIndex(e => e.Name);
-                //entity.HasIndex(e => e.CatalogueItem);
             });
             modelBuilder.Entity<Models.ExtractionInformation>(entity =>
             {
                 entity.HasKey(e => e.ID);
                 entity.Property(e => e.SelectSQL).IsRequired();
-                //entity.HasIndex(e => e.CatalogueItem);
             });
 
             modelBuilder.Entity<Models.Dataset>(entity =>
             {
                 entity.HasKey(e => e.ID);
                 entity.Property(e => e.Name).IsRequired();
-                //entity.HasIndex(e => e.CatalogueItem);
             });
             modelBuilder.Entity<Models.TableInfo>(entity =>
             {
                 entity.HasKey(e => e.ID);
                 entity.Property(e => e.Name).IsRequired();
-                //entity.HasIndex(e => e.CatalogueItem);
             });
+            
             modelBuilder.Entity<Models.CohortIdentificationConfiguration>(entity =>
             {
                 entity.HasKey(e => e.ID);
@@ -119,6 +116,12 @@ namespace Rdmp.Core.EntityFramework
             modelBuilder.Entity<Models.DashboardLayout>(entity =>
             {
                 entity.HasKey(e => e.ID);
+                entity.HasMany(e => e.Controls).WithOne(e => e.ParentLayout).HasForeignKey(e => e.DashboardLayout_ID);
+            });
+            modelBuilder.Entity<Models.DashboardControl>(entity =>
+            {
+                entity.HasKey(e => e.ID);
+                entity.HasOne(e => e.ParentLayout).WithMany(e => e.Controls).HasForeignKey(e => e.DashboardLayout_ID);
             });
             modelBuilder.Entity<Models.RemoteRDMP>(entity =>
             {
@@ -148,12 +151,12 @@ namespace Rdmp.Core.EntityFramework
                 entity.HasKey(e => e.ID);
                 entity.HasMany(e => e.Arguments).WithOne();
                 entity.HasOne(e => e.Pipeline).WithMany(e => e.PipelineComponents).HasForeignKey(e => e.Pipeline_ID);
-                entity.HasMany(e => e.Arguments);
+                //entity.HasMany(e => e.Arguments).WithOne(e => e.PipelineComponent).HasForeignKey(e => e.PipelineComponent_ID);
             });
             modelBuilder.Entity<Models.PipelineComponentArgument>(entity =>
             {
                 entity.HasKey(e => e.ID);
-                entity.HasOne(e => e.PipelineComponent).WithMany().HasForeignKey(e => e.PipelineComponent_ID);
+                entity.HasOne(e => e.PipelineComponent).WithMany(e => e.Arguments).HasForeignKey(e => e.PipelineComponent_ID);
             });
             modelBuilder.Entity<Models.Catalogue>(entity =>
             {
@@ -305,7 +308,8 @@ namespace Rdmp.Core.EntityFramework
                 return ANOTables.ToList();
             }
             if (obj is AllObjectSharingNode aosn) { }
-            if (obj is AllPipelinesNode apn) {
+            if (obj is AllPipelinesNode apn)
+            {
                 return new List<StandardPipelineUseCaseNode>() {
                     new StandardPipelineUseCaseNode("Aggregate Committing", CreateTableFromAggregateUseCase.DesignTime(null), null),
 
@@ -315,7 +319,7 @@ namespace Rdmp.Core.EntityFramework
                     new StandardPipelineUseCaseNode("Cohort Creation",CohortCreationRequest.DesignTime(),null),
                 };
             }
-            if(obj is StandardPipelineUseCaseNode splucn)
+            if (obj is StandardPipelineUseCaseNode splucn)
             {
                 return splucn.GetCompatiblePipelines(Pipelines.ToList()).Select(pipeline => new PipelineCompatibleWithUseCaseNode(null, pipeline, splucn.UseCase)).ToList();
             }
@@ -323,20 +327,24 @@ namespace Rdmp.Core.EntityFramework
             {
                 return pcwucn.Pipeline.PipelineComponents.ToList();
             }
-            if(obj is Models.PipelineComponent pc)
+            if (obj is Models.PipelineComponent pc)
             {
-                return pc.Arguments.ToList();
+                return PipelineComponentArguments.ToList().Where(PipelineComponentArgument => PipelineComponentArgument.PipelineComponent_ID == pc.ID).ToList();//pc.Arguments.ToList();
             }
-            if (obj is AllExternalServersNode aesn) {
+            if (obj is AllExternalServersNode aesn)
+            {
                 return ExternalDatabaseServers.ToList();
             }
-            if (obj is AllDataAccessCredentialsNode adacn) {
-                return [..DataAccessCredentials.ToList(),new DecryptionPrivateKeyNode(true)];
+            if (obj is AllDataAccessCredentialsNode adacn)
+            {
+                return [.. DataAccessCredentials.ToList(), new DecryptionPrivateKeyNode(true)];
             }
-            if (obj is AllServersNode asn) {
-                    //todo
+            if (obj is AllServersNode asn)
+            {
+                //todo
             }
-            if (obj is AllStandardRegexesNode asrn) {
+            if (obj is AllStandardRegexesNode asrn)
+            {
                 return StandardRegexes.ToList();
             }
             return new List<string>() { };

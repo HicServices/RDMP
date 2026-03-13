@@ -15,6 +15,8 @@ namespace Rdmp.Core.EntityFramework.Models
     {
         [Key]
         public override int ID { get; set; }
+
+        [Column("PipelineComponent_ID")]
         public int PipelineComponent_ID { get; set; }
         public string Name { get; set; }
         public string Value { get; set; }

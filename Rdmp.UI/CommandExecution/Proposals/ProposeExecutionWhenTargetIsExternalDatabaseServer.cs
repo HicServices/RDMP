@@ -11,20 +11,20 @@ using Rdmp.UI.MainFormUITabs.SubComponents;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsExternalDatabaseServer : RDMPCommandExecutionProposal<ExternalDatabaseServer>
+internal class ProposeExecutionWhenTargetIsExternalDatabaseServer : RDMPCommandExecutionProposal<Core.EntityFramework.Models.ExternalDatabaseServer>
 {
     public ProposeExecutionWhenTargetIsExternalDatabaseServer(IActivateItems itemActivator)
         : base(itemActivator)
     {
     }
 
-    public override bool CanActivate(ExternalDatabaseServer target) => true;
+    public override bool CanActivate(Core.EntityFramework.Models.ExternalDatabaseServer target) => true;
 
-    public override void Activate(ExternalDatabaseServer target)
+    public override void Activate(Core.EntityFramework.Models.ExternalDatabaseServer target)
     {
-        ItemActivator.Activate<ExternalDatabaseServerUI, ExternalDatabaseServer>(target);
+        ItemActivator.Activate<ExternalDatabaseServerUI, Core.EntityFramework.Models.ExternalDatabaseServer>(target);
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ExternalDatabaseServer target,
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Core.EntityFramework.Models.ExternalDatabaseServer target,
         InsertOption insertOption = InsertOption.Default) => null;
 }

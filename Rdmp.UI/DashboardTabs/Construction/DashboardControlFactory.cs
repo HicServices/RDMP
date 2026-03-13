@@ -39,7 +39,7 @@ public class DashboardControlFactory
     /// </summary>
     /// <param name="toCreate"></param>
     /// <returns></returns>
-    public DashboardableControlHostPanel Create(DashboardControl toCreate)
+    public DashboardableControlHostPanel Create(Core.EntityFramework.Models.DashboardControl toCreate)
     {
         var controlType = Core.Repositories.MEF.GetType(toCreate.ControlType);
 
@@ -56,7 +56,7 @@ public class DashboardControlFactory
     /// <param name="t"></param>
     /// <param name="theControlCreated"></param>
     /// <returns></returns>
-    public DashboardControl Create(DashboardLayout forLayout, Type t,
+    public Core.EntityFramework.Models.DashboardControl Create(Core.EntityFramework.Models.DashboardLayout forLayout, Type t,
         out DashboardableControlHostPanel theControlCreated)
     {
         var instance = CreateControl(t);
@@ -65,14 +65,24 @@ public class DashboardControlFactory
         var w = instance.Width;
         var h = instance.Height;
 
-        var dbRecord = new DashboardControl(_activator.RepositoryLocator.CatalogueDbContext, forLayout, t,
-            _startLocationForNewControls.X, _startLocationForNewControls.Y, w, h, "");
+        //var dbRecord = new DashboardControl(_activator.RepositoryLocator.CatalogueDbContext, forLayout, t,
+        //    _startLocationForNewControls.X, _startLocationForNewControls.Y, w, h, "");
+        var dbRecord = new Core.EntityFramework.Models.DashboardControl
+        {
+            DashboardLayout_ID = forLayout.ID,
+            ControlType = t.AssemblyQualifiedName,
+            X = _startLocationForNewControls.X,
+            Y = _startLocationForNewControls.Y,
+            Width = w,
+            Height = h,
+            PersistenceString = ""
+        };
         theControlCreated = Hydrate((IDashboardableControl)instance, dbRecord);
 
         return dbRecord;
     }
 
-    private DashboardableControlHostPanel Hydrate(IDashboardableControl theControlCreated, DashboardControl dbRecord)
+    private DashboardableControlHostPanel Hydrate(IDashboardableControl theControlCreated, Core.EntityFramework.Models.DashboardControl dbRecord)
     {
         var emptyCollection = theControlCreated.ConstructEmptyCollection(dbRecord);
 
