@@ -24,6 +24,8 @@ namespace Rdmp.Core.EntityFramework.Models
         public string DatabaseType { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
+        public override string ToString() => Name;
+
 
         [NotMapped]
         DatabaseType IDataAccessPoint.DatabaseType { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }

@@ -13,10 +13,10 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
 internal class ExecuteCommandEditPipelineWithUseCase : BasicUICommandExecution, IAtomicCommand
 {
-    private readonly Pipeline _pipeline;
+    private readonly IPipeline _pipeline;
     private readonly PipelineUseCase _useCase;
 
-    public ExecuteCommandEditPipelineWithUseCase(IActivateItems itemActivator, Pipeline pipeline,
+    public ExecuteCommandEditPipelineWithUseCase(IActivateItems itemActivator, IPipeline pipeline,
         PipelineUseCase useCase) : base(itemActivator)
     {
         _pipeline = pipeline;

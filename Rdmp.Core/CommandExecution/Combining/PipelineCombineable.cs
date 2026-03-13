@@ -13,10 +13,10 @@ namespace Rdmp.Core.CommandExecution.Combining;
 /// </summary>
 public class PipelineCombineable : ICombineToMakeCommand
 {
-    public Pipeline Pipeline { get; private set; }
+    public IPipeline Pipeline { get; private set; }
     public bool IsEmpty { get; private set; }
 
-    public PipelineCombineable(Pipeline pipeline)
+    public PipelineCombineable(IPipeline pipeline)
     {
         Pipeline = pipeline;
 

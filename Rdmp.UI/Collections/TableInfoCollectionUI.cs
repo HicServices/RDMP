@@ -114,17 +114,27 @@ public partial class TableInfoCollectionUI : RDMPCollectionUI, ILifetimeSubscrib
         Activator.RefreshBus.EstablishLifetimeSubscription(this);
 
 
-        tlvTableInfos.AddObject(Activator.CoreChildProvider.AllDashboardsNode);
-        tlvTableInfos.AddObject(Activator.CoreChildProvider.AllRDMPRemotesNode);
-        tlvTableInfos.AddObject(Activator.CoreChildProvider.AllObjectSharingNode);
-        tlvTableInfos.AddObject(Activator.CoreChildProvider.AllPipelinesNode);
-        tlvTableInfos.AddObject(Activator.CoreChildProvider.AllExternalServersNode);
-        tlvTableInfos.AddObject(Activator.CoreChildProvider.AllDataAccessCredentialsNode);
-        tlvTableInfos.AddObject(Activator.CoreChildProvider.AllANOTablesNode);
-        tlvTableInfos.AddObject(Activator.CoreChildProvider.AllServersNode);
-        tlvTableInfos.AddObject(Activator.CoreChildProvider.AllConnectionStringKeywordsNode);
-        tlvTableInfos.AddObject(Activator.CoreChildProvider.AllStandardRegexesNode);
-        tlvTableInfos.AddObject(Activator.CoreChildProvider.AllPluginsNode);
+        tlvTableInfos.AddObject(new AllDashboardsNode());
+        tlvTableInfos.AddObject(new AllRDMPRemotesNode());
+        tlvTableInfos.AddObject(new AllObjectSharingNode());//todo
+        tlvTableInfos.AddObject(new AllPipelinesNode());
+        tlvTableInfos.AddObject(new AllExternalServersNode());
+        tlvTableInfos.AddObject(new AllDataAccessCredentialsNode());
+        tlvTableInfos.AddObject(new AllANOTablesNode());
+        tlvTableInfos.AddObject(new AllServersNode());
+        tlvTableInfos.AddObject(new AllConnectionStringKeywordsNode());
+        tlvTableInfos.AddObject(new AllStandardRegexesNode());
+        tlvTableInfos.AddObject(new AllPluginsNode());
+        //tlvTableInfos.AddObject(Activator.CoreChildProvider.AllRDMPRemotesNode);
+        //tlvTableInfos.AddObject(Activator.CoreChildProvider.AllObjectSharingNode);
+        //tlvTableInfos.AddObject(Activator.CoreChildProvider.AllPipelinesNode);
+        //tlvTableInfos.AddObject(Activator.CoreChildProvider.AllExternalServersNode);
+        //tlvTableInfos.AddObject(Activator.CoreChildProvider.AllDataAccessCredentialsNode);
+        //tlvTableInfos.AddObject(Activator.CoreChildProvider.AllANOTablesNode);
+        //tlvTableInfos.AddObject(Activator.CoreChildProvider.AllServersNode);
+        //tlvTableInfos.AddObject(Activator.CoreChildProvider.AllConnectionStringKeywordsNode);
+        //tlvTableInfos.AddObject(Activator.CoreChildProvider.AllStandardRegexesNode);
+        //tlvTableInfos.AddObject(Activator.CoreChildProvider.AllPluginsNode);
     }
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)

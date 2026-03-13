@@ -20,11 +20,11 @@ namespace Rdmp.Core.Providers.Nodes.PipelineNodes;
 /// </summary>
 public class PipelineCompatibleWithUseCaseNode : SpontaneousObject, IMasqueradeAs
 {
-    public Pipeline Pipeline { get; }
+    public EntityFramework.Models.Pipeline Pipeline { get; }
     public PipelineUseCase UseCase { get; }
     private readonly Type _useCaseType;
 
-    public PipelineCompatibleWithUseCaseNode(MemoryRepository repo, Pipeline pipeline, PipelineUseCase useCase) :
+    public PipelineCompatibleWithUseCaseNode(MemoryRepository repo, EntityFramework.Models.Pipeline pipeline, PipelineUseCase useCase) :
         base(null)
     {
         Pipeline = pipeline;
@@ -39,7 +39,9 @@ public class PipelineCompatibleWithUseCaseNode : SpontaneousObject, IMasqueradeA
 
     public override void DeleteInDatabase()
     {
-        Pipeline.DeleteInDatabase();
+        Pipeline.CatalogueDbContext.Remove(Pipeline);
+        Pipeline.CatalogueDbContext.SaveChanges();
+        //Pipeline.DeleteInDatabase();
     }
 
     public override bool Exists() => Pipeline.Exists();

@@ -197,8 +197,8 @@ public partial class ExampleDatasetsCreation
 
         //Find the pipeline for committing cohorts
         var cohortCreationPipeline =
-            _repos.CatalogueDbContext.GetAllObjects<Pipeline>().FirstOrDefault(p =>
-                p?.Source?.Class == typeof(CohortIdentificationConfigurationSource).FullName) ??
+            _repos.CatalogueDbContext.Pipelines.FirstOrDefault( p =>
+                p.Source.Class == typeof(CohortIdentificationConfigurationSource).FullName) ??
             throw new Exception("Could not find a cohort committing pipeline");
 
         //A cohort creation query
@@ -379,7 +379,7 @@ public partial class ExampleDatasetsCreation
     }
 
     private ExtractableCohort CommitCohortToNewProject(CohortIdentificationConfiguration cic,
-        ExternalCohortTable externalCohortTable, IPipeline cohortCreationPipeline, string projectName,
+        ExternalCohortTable externalCohortTable, EntityFramework.Models.Pipeline cohortCreationPipeline, string projectName,
         string cohortName, int projectNumber, out Project project)
     {
         //create a new data extraction Project

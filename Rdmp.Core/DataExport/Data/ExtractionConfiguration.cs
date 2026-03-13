@@ -233,11 +233,11 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
 
     /// <inheritdoc cref="CohortRefreshPipeline_ID"/>
     [NoMappingToDatabase]
-    public IPipeline CohortRefreshPipeline =>
-        CohortRefreshPipeline_ID == null
-            ? null
-            : (IPipeline)CatalogueDbContext.GetObjectByID<Pipeline>(
-                CohortRefreshPipeline_ID.Value);
+    public EntityFramework.Models.Pipeline CohortRefreshPipeline => null;
+        //CohortRefreshPipeline_ID == null
+        //    ? null
+        //    : (IPipeline)CatalogueDbContext.GetObjectByID<Pipeline>(
+        //        CohortRefreshPipeline_ID.Value);
 
     /// <summary>
     /// Returns a name suitable for describing the extraction of a dataset(s) from this configuration (in a <see cref="DataLoadInfo"/>)

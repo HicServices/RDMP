@@ -31,7 +31,7 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
 
     protected ExternalCohortTable ExternalCohortTable;
     protected IProject Project;
-    protected readonly IPipeline Pipeline;
+    protected readonly EntityFramework.Models.Pipeline Pipeline;
     private readonly string _explicitCohortName;
 
     /// <summary>
@@ -52,7 +52,7 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
     /// <param name="project"></param>
     /// <param name="pipeline"></param>
     protected CohortCreationCommandExecution(IBasicActivateItems activator, ExternalCohortTable externalCohortTable,
-        string cohortName, Project project, IPipeline pipeline) : base(activator)
+        string cohortName, Project project, EntityFramework.Models.Pipeline pipeline) : base(activator)
     {
         //May be null
         _explicitCohortName = cohortName;

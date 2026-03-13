@@ -30,7 +30,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
 public class ExecuteCommandCreateNewCatalogueByImportingFile : CatalogueCreationCommandExecution
 {
     private readonly DiscoveredDatabase _targetDatabase;
-    private IPipeline _pipeline;
+    private EntityFramework.Models.Pipeline _pipeline;
     private readonly string _extractionIdentifier;
     private readonly string _initialDescription;
 
@@ -62,7 +62,7 @@ public class ExecuteCommandCreateNewCatalogueByImportingFile : CatalogueCreation
         DiscoveredDatabase targetDatabase,
         [DemandsInitialization(
             "Pipeline for reading the source file, applying any transforms and writing to the database")]
-        Pipeline pipeline,
+        EntityFramework.Models.Pipeline pipeline,
         [DemandsInitialization(Desc_ProjectSpecificParameter)]
         Project projectSpecific,
         string initialDescription=null) : base(activator, projectSpecific, null)
@@ -99,11 +99,11 @@ public class ExecuteCommandCreateNewCatalogueByImportingFile : CatalogueCreation
 
         if (_pipeline == null)
         {
-            var pipelines = BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Pipeline>();
+            var pipelines = BasicActivator.RepositoryLocator.CatalogueDbContext.Pipelines;
 
             var compatible = UploadFileUseCase.DesignTime().FilterCompatiblePipelines(pipelines).ToArray();
 
-            _pipeline = (IPipeline)BasicActivator.SelectOne("File Upload Pipeline", compatible);
+            _pipeline = (EntityFramework.Models.Pipeline)BasicActivator.SelectOne("File Upload Pipeline", compatible);
 
             if (_pipeline == null)
                 throw new Exception("No pipeline selected for upload");

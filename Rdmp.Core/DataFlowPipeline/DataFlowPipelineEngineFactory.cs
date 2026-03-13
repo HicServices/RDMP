@@ -257,7 +257,7 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
     /// <param name="pipeline">The blueprint to attempt to generate</param>
     /// <param name="checkNotifier">The event notifier to record how it went</param>
     /// <param name="initizationObjects">The objects available for fulfilling IPipelineRequirements</param>
-    public void Check(IPipeline pipeline, ICheckNotifier checkNotifier, object[] initizationObjects)
+    public void Check(EntityFramework.Models.Pipeline pipeline, ICheckNotifier checkNotifier, object[] initizationObjects)
     {
         //Try to construct the pipeline into an in memory Engine based on the in Catalogue blueprint (Pipeline)
         IDataFlowPipelineEngine dataFlowPipelineEngine = null;

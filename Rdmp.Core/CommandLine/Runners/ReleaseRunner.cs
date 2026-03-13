@@ -34,7 +34,7 @@ public class ReleaseRunner : ManyRunner
 {
     private readonly ReleaseOptions _options;
     private readonly IBasicActivateItems _activator;
-    private Pipeline _pipeline;
+    private EntityFramework.Models.Pipeline _pipeline;
     private IProject _project;
     private IExtractionConfiguration[] _configurations;
     private ISelectedDataSets[] _selectedDatasets;
@@ -47,7 +47,7 @@ public class ReleaseRunner : ManyRunner
 
     protected override void Initialize()
     {
-        _pipeline = GetObjectFromCommandLineString<Pipeline>(RepositoryLocator, _options.Pipeline);
+        _pipeline = GetObjectFromCommandLineString<EntityFramework.Models.Pipeline>(RepositoryLocator, _options.Pipeline);
 
         //get all configurations user has picked
         _configurations =

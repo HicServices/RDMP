@@ -32,7 +32,7 @@ namespace Rdmp.Core.DataExport.Checks;
 public class SelectedDataSetsChecker : ICheckable
 {
     private readonly bool _checkGlobals;
-    private readonly IPipeline _alsoCheckPipeline;
+    private readonly EntityFramework.Models.Pipeline _alsoCheckPipeline;
     private readonly IBasicActivateItems _activator;
 
     /// <summary>
@@ -48,7 +48,7 @@ public class SelectedDataSetsChecker : ICheckable
     /// <param name="checkGlobals"></param>
     /// <param name="alsoCheckPipeline"></param>
     public SelectedDataSetsChecker(IBasicActivateItems activator, ISelectedDataSets selectedDataSet,
-        bool checkGlobals = false, IPipeline alsoCheckPipeline = null)
+        bool checkGlobals = false, EntityFramework.Models.Pipeline alsoCheckPipeline = null)
     {
         _checkGlobals = checkGlobals;
         _alsoCheckPipeline = alsoCheckPipeline;

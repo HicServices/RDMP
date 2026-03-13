@@ -750,20 +750,21 @@ public class CatalogueChildProvider : ICoreChildProvider
         //support plugin use cases in this hierarchy
 
         //find compatible pipelines useCase.Value
-        foreach (var compatiblePipeline in AllPipelines.Where(node.UseCase.GetContext().IsAllowable))
-        {
-            var useCaseNode = new PipelineCompatibleWithUseCaseNode(repo, compatiblePipeline, node.UseCase);
+        //foreach (var compatiblePipeline in AllPipelines.Where(node.UseCase.GetContext().IsAllowable))
+        //{
+        //    var useCaseNode = new PipelineCompatibleWithUseCaseNode(repo, compatiblePipeline, node.UseCase);
 
-            AddChildren(useCaseNode, descendancy.Add(useCaseNode));
+        //    AddChildren(useCaseNode, descendancy.Add(useCaseNode));
 
-            node.Pipelines.Add(compatiblePipeline);
-            children.Add(useCaseNode);
-        }
+        //    node.Pipelines.Add(compatiblePipeline);
+        //    children.Add(useCaseNode);
+        //}
 
-        //it is the first standard use case
-        AddToDictionaries(children, descendancy);
+        ////it is the first standard use case
+        //AddToDictionaries(children, descendancy);
+        return new List<Pipeline>() { };
 
-        return children.Cast<PipelineCompatibleWithUseCaseNode>().Select(u => u.Pipeline);
+        //return children.Cast<PipelineCompatibleWithUseCaseNode>().Select(u => u.Pipeline);
     }
 
     private void AddChildren(PipelineCompatibleWithUseCaseNode pipelineNode, DescendancyList descendancy)

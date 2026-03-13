@@ -81,11 +81,11 @@ public class FavouriteColumnProvider
         }
     }
 
-    private Bitmap FavouriteImageGetter(object rowobject) => rowobject is DatabaseEntity o
-        ? _activator.FavouritesProvider.IsFavourite(o) ? _starFull : _starHollow
-        : null;
+    private Bitmap FavouriteImageGetter(object rowobject) => null;// rowobject is DatabaseEntity o
+        //? _activator.FavouritesProvider.IsFavourite(o) ? _starFull : _starHollow
+        //: null;
 
-    private object FavouriteAspectGetter(object rowobject) => rowobject is DatabaseEntity o
-        ? _activator.FavouritesProvider.IsFavourite(o) ? 1 : 0
-        : (object)null;
+    private object FavouriteAspectGetter(object rowobject) => null;// rowobject is DatabaseEntity o
+        //? _activator.FavouritesProvider.IsFavourite(o) ? 1 : 0
+        //: (object)null;
 }

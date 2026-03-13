@@ -32,7 +32,7 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers;
 public class KVPAttacher : FlatFileAttacher, IDemandToUseAPipeline, IDataFlowDestination<DataTable>
 {
     [DemandsInitialization("Pipeline for reading from the flat file", Mandatory = true)]
-    public Pipeline PipelineForReadingFromFlatFile { get; set; }
+    public EntityFramework.Models.Pipeline PipelineForReadingFromFlatFile { get; set; }
 
     private List<DataTable> BatchesReadyForProcessing = new();
 

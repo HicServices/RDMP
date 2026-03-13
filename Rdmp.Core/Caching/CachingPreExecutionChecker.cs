@@ -34,7 +34,7 @@ public class CachingPreExecutionChecker : ICheckable
             if (_cacheProgress.Pipeline_ID == null)
                 throw new Exception($"CacheProgress {_cacheProgress.ID} doesn't have a caching pipeline!");
 
-            IPipeline pipeline = null;
+            EntityFramework.Models.Pipeline pipeline = null;
             try
             {
                 pipeline = _cacheProgress.Pipeline;

@@ -82,7 +82,7 @@ public abstract class PipelineUseCase : IPipelineUseCase
     }
 
     /// <inheritdoc/>
-    public virtual IEnumerable<Pipeline> FilterCompatiblePipelines(IEnumerable<Pipeline> pipelines) =>
+    public virtual IEnumerable<IPipeline> FilterCompatiblePipelines(IEnumerable<IPipeline> pipelines) =>
         pipelines.Where(IsAllowable);
 
     /// <inheritdoc/>
@@ -104,7 +104,7 @@ public abstract class PipelineUseCase : IPipelineUseCase
             InitializationObjects.Add(o);
     }
 
-    public bool IsAllowable(Pipeline pipeline)
+    public bool IsAllowable(IPipeline pipeline)
     {
         // Pipeline is not compatible with the execution context of the pipeline use case
         if (!_context.IsAllowable(pipeline)) return false;

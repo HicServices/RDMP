@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Comments;
@@ -19,13 +20,18 @@ public class StandardPipelineUseCaseNode : SingletonNode, IKnowWhatIAm
 {
     private readonly CommentStore _commentStore;
     public PipelineUseCase UseCase { get; set; }
-    public List<Pipeline> Pipelines { get; } = new();
+    public List<EntityFramework.Models.Pipeline> Pipelines { get;  } = new();
 
     public StandardPipelineUseCaseNode(string caption, PipelineUseCase useCase, CommentStore commentStore) :
         base(caption)
     {
         _commentStore = commentStore;
         UseCase = useCase;
+    }
+
+    public List<EntityFramework.Models.Pipeline> GetCompatiblePipelines(List<EntityFramework.Models.Pipeline> pipelines)
+    {
+        return pipelines.Where(p => UseCase.GetContext().IsAllowable(p)).ToList();
     }
 
     public string WhatIsThis()

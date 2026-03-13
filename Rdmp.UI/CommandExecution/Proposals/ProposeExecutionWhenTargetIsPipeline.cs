@@ -12,13 +12,13 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsPipeline : RDMPCommandExecutionProposal<Pipeline>
+internal class ProposeExecutionWhenTargetIsPipeline : RDMPCommandExecutionProposal<Core.EntityFramework.Models.Pipeline>
 {
     public ProposeExecutionWhenTargetIsPipeline(IActivateItems itemActivator) : base(itemActivator)
     {
     }
 
-    public override void Activate(Pipeline target)
+    public override void Activate(Core.EntityFramework.Models.Pipeline target)
     {
         if (ItemActivator.SelectObject(new DialogArgs
         {
@@ -31,8 +31,8 @@ internal class ProposeExecutionWhenTargetIsPipeline : RDMPCommandExecutionPropos
         }
     }
 
-    public override bool CanActivate(Pipeline target) => true;
+    public override bool CanActivate(Core.EntityFramework.Models.Pipeline target) => true;
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Pipeline target,
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Core.EntityFramework.Models.Pipeline target,
         InsertOption insertOption = InsertOption.Default) => null;
 }

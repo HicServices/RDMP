@@ -90,12 +90,12 @@ public class CatalogueProblemProvider : ProblemProvider
             ISqlParameter p => DescribeProblem(p),
             CohortAggregateContainer container => DescribeProblem(container),
             PipelineCompatibleWithUseCaseNode pipelineUseCaseNode => DescribeProblem(pipelineUseCaseNode),
-            PipelineComponent pipelineComponent => DescibeProblem(pipelineComponent),
+            EntityFramework.Models.PipelineComponent pipelineComponent => DescibeProblem(pipelineComponent),
             _ => null
         };
     }
 
-    public string DescibeProblem(IPipelineComponent pipelineComponent)
+    public string DescibeProblem(EntityFramework.Models.PipelineComponent pipelineComponent)
     {
         var value = DataFlowPipelineEngineFactory.TryCreateComponent(pipelineComponent, out var exConstruction);
         if (exConstruction is not null)

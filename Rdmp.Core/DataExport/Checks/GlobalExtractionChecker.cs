@@ -26,7 +26,7 @@ public class GlobalExtractionChecker : ICheckable
 {
     private readonly ExtractionConfiguration _configuration;
     private readonly ExtractGlobalsCommand _command;
-    private readonly IPipeline _alsoCheckPipeline;
+    private readonly EntityFramework.Models.Pipeline _alsoCheckPipeline;
     private readonly IBasicActivateItems _activator;
 
     /// <summary>
@@ -42,7 +42,7 @@ public class GlobalExtractionChecker : ICheckable
 
     /// <inheritdoc cref="GlobalExtractionChecker(IBasicActivateItems,ExtractionConfiguration)"/>
     public GlobalExtractionChecker(IBasicActivateItems activator, ExtractionConfiguration configuration,
-        ExtractGlobalsCommand command, IPipeline alsoCheckPipeline)
+        ExtractGlobalsCommand command, EntityFramework.Models.Pipeline alsoCheckPipeline)
     {
         _configuration = configuration;
         _command = command;

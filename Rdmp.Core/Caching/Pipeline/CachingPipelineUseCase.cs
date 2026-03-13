@@ -32,7 +32,7 @@ namespace Rdmp.Core.Caching.Pipeline;
 public sealed class CachingPipelineUseCase : PipelineUseCase
 {
     private readonly ICacheProgress _cacheProgress;
-    private readonly IPipeline _pipeline;
+    private readonly EntityFramework.Models.Pipeline _pipeline;
 
     /// <summary>
     /// Class for helping you to construct a caching pipeline engine instance with the correct context and initialization objects

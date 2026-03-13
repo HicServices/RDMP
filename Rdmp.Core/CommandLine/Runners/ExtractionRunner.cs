@@ -41,7 +41,7 @@ public class ExtractionRunner : ManyRunner
     private IProject _project;
 
     private ExtractGlobalsCommand _globalsCommand;
-    private Pipeline _pipeline;
+    private EntityFramework.Models.Pipeline _pipeline;
     private LogManager _logManager;
     private object _oLock = new();
     public Dictionary<ISelectedDataSets, ExtractCommand> ExtractCommands { get; private set; }
@@ -59,7 +59,7 @@ public class ExtractionRunner : ManyRunner
             GetObjectFromCommandLineString<ExtractionConfiguration>(RepositoryLocator,
                 _options.ExtractionConfiguration);
         _project = _configuration.Project;
-        _pipeline = GetObjectFromCommandLineString<Pipeline>(RepositoryLocator, _options.Pipeline);
+        _pipeline = GetObjectFromCommandLineString<EntityFramework.Models.Pipeline>(RepositoryLocator, _options.Pipeline);
 
         if (HasConfigurationPreviouslyBeenReleased())
             throw new Exception("Extraction Configuration has already been released");

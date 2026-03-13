@@ -29,7 +29,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline;
 /// </summary>
 public sealed class ExtractionPipelineUseCase : PipelineUseCase
 {
-    private readonly IPipeline _pipeline;
+    private readonly EntityFramework.Models.Pipeline _pipeline;
     private readonly DataLoadInfo _dataLoadInfo;
 
     public IExtractCommand ExtractCommand { get; set; }
@@ -44,7 +44,7 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
     public IExecuteDatasetExtractionDestination Destination { get; private set; }
 
     public ExtractionPipelineUseCase(IBasicActivateItems activator, IProject project, IExtractCommand extractCommand,
-        IPipeline pipeline, DataLoadInfo dataLoadInfo)
+        EntityFramework.Models.Pipeline pipeline, DataLoadInfo dataLoadInfo)
     {
         _dataLoadInfo = dataLoadInfo;
         ExtractCommand = extractCommand;

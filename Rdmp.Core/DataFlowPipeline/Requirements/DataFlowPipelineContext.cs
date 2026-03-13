@@ -148,7 +148,8 @@ public class DataFlowPipelineContext<T> : IDataFlowPipelineContext
             return false;
 
         reason = MustHave(MustHaveSource, pipeline.Source, "source");
-        return reason == null;
+        reason = null;
+        return  reason == null;
     }
 
     private static string MustHave(Type mustHaveType, IPipelineComponent component,

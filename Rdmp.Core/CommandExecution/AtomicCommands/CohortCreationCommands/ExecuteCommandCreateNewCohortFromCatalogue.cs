@@ -58,7 +58,7 @@ public class ExecuteCommandCreateNewCohortFromCatalogue : CohortCreationCommandE
         Project project,
         [DemandsInitialization(
             "Pipeline for executing the query, performing any required transforms on the output list and allocating release identifiers")]
-        IPipeline pipeline) : base(activator, ect, cohortName, project, pipeline)
+        EntityFramework.Models.Pipeline pipeline) : base(activator, ect, cohortName, project, pipeline)
     {
         UseTripleDotSuffix = true;
 

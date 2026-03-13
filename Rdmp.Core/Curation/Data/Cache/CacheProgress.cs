@@ -111,7 +111,7 @@ public class CacheProgress : DatabaseEntity, ICacheProgress
 
     /// <inheritdoc cref="ICacheProgress.Pipeline_ID"/>
     [NoMappingToDatabase]
-    public IPipeline Pipeline => Pipeline_ID == null ? null : CatalogueDbContext.GetObjectByID<Pipeline>((int)Pipeline_ID);
+    public EntityFramework.Models.Pipeline Pipeline => null;// Pipeline_ID == null ? null : CatalogueDbContext.GetObjectByID<Pipeline>((int)Pipeline_ID);
 
     /// <inheritdoc cref="ICacheProgress.PermissionWindow_ID"/>
     [NoMappingToDatabase]

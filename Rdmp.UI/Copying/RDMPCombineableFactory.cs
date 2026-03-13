@@ -63,7 +63,7 @@ public class RDMPCombineableFactory : ICombineableFactory
         if (modelObject is IColumn icolumn)
             return new ColumnCombineable(icolumn);
 
-        if (modelObject is Pipeline pipeline)
+        if (modelObject is IPipeline pipeline)
             return new PipelineCombineable(pipeline);
 
         if (modelObject is ExtractionFilterParameterSet efps)

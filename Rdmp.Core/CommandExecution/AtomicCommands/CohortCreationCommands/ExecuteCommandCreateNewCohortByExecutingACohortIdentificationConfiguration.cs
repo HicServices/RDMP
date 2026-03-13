@@ -51,7 +51,7 @@ public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfig
         Project project,
         [DemandsInitialization(
             "Pipeline for executing the query, performing any required transforms on the output list and allocating release identifiers")]
-        IPipeline pipeline) :
+        EntityFramework.Models.Pipeline pipeline) :
         base(activator, ect, cohortName, project, pipeline)
     {
         _cic = cic;

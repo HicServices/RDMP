@@ -992,13 +992,13 @@ public class AtomicCommandFactory : CommandFactoryBase
         if (Is(o, out INamed n))
             yield return new ExecuteCommandRename(_activator, n) { SuggestedShortcut = "F2" };
 
-        if (Is(o, out PipelineCompatibleWithUseCaseNode pcu))
-        {
-            yield return new ExecuteCommandNewObject(_activator, typeof(Pipeline))
-            { OverrideCommandName = "New Pipeline" };
-            yield return new ExecuteCommandClonePipeline(_activator, pcu.Pipeline);
-            yield return new ExecuteCommandAddPipelineComponent(_activator, pcu.Pipeline, pcu.UseCase);
-        }
+        //if (Is(o, out PipelineCompatibleWithUseCaseNode pcu))
+        //{
+        //    yield return new ExecuteCommandNewObject(_activator, typeof(Pipeline))
+        //    { OverrideCommandName = "New Pipeline" };
+        //    yield return new ExecuteCommandClonePipeline(_activator, pcu.Pipeline);
+        //    yield return new ExecuteCommandAddPipelineComponent(_activator, pcu.Pipeline, pcu.UseCase);
+        //}
         else if (Is(o, out Pipeline pipeline))
         {
             yield return new ExecuteCommandNewObject(_activator, typeof(Pipeline))

@@ -14,13 +14,13 @@ namespace Rdmp.Core.Curation.Checks;
 /// </summary>
 public class PipelineChecker : ICheckable
 {
-    private readonly IPipeline _pipeline;
+    private readonly EntityFramework.Models.Pipeline _pipeline;
 
     /// <summary>
     /// Sets up the checker to check the supplied pipeline
     /// </summary>
     /// <param name="pipeline"></param>
-    public PipelineChecker(IPipeline pipeline)
+    public PipelineChecker(EntityFramework.Models.Pipeline pipeline)
     {
         _pipeline = pipeline;
     }
@@ -38,7 +38,8 @@ public class PipelineChecker : ICheckable
             var mefChecker = new MEFChecker(component.Class, delegate (string s)
             {
                 copy.Class = s;
-                copy.SaveToDatabase();
+                //copy.SaveToDatabase();
+                copy.CatalogueDbContext.SaveChanges();
             });
             mefChecker.Check(notifier);
         }

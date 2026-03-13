@@ -48,7 +48,7 @@ public class ExecuteCommandCreateNewCohortFromFile : CohortCreationCommandExecut
         [DemandsInitialization(Desc_ProjectParameter)]
         Project project,
         [DemandsInitialization("Pipeline for reading from the file and allocating release identifiers")]
-        IPipeline pipeline)
+        EntityFramework.Models.Pipeline pipeline)
         : base(activator, externalCohortTable, cohortName, project, pipeline)
     {
         _file = file;

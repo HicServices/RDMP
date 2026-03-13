@@ -33,13 +33,13 @@ public interface IPipelineUseCase : IHasDesignTimeMode
     /// </summary>
     /// <param name="pipelines"></param>
     /// <returns></returns>
-    IEnumerable<Pipeline> FilterCompatiblePipelines(IEnumerable<Pipeline> pipelines);
+    IEnumerable<IPipeline> FilterCompatiblePipelines(IEnumerable<IPipeline> pipelines);
 
     /// <summary>
     /// Returns true if the <paramref name="pipeline"/> is compatible with the use case
     /// </summary>
     /// <returns></returns>
-    bool IsAllowable(Pipeline pipeline);
+    bool IsAllowable(IPipeline pipeline);
 
     /// <summary>
     /// Returns an object describing which <see cref="Pipeline"/>s can be used to undertake the activity described by this use case (e.g. loading a flat file into the

@@ -57,7 +57,7 @@ public interface ICacheProgress : INamed, ILoggedActivityRootObject
     int? Pipeline_ID { get; set; }
 
     /// <inheritdoc cref="Pipeline_ID"/>
-    IPipeline Pipeline { get; }
+    EntityFramework.Models.Pipeline Pipeline { get; }
 
     /// <inheritdoc cref="ICacheProgress.PermissionWindow_ID"/>
     IPermissionWindow PermissionWindow { get; }
