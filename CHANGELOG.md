@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [9.2.1] - Unreleased
 - Update Sql Merge component to force destination column types
+- Fix issue with flickering tooltips
 
 ## [9.2.0] - 2026-03-10
 - Add Internal Note to Catalogue
