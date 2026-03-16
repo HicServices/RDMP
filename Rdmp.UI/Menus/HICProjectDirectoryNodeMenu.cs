@@ -18,6 +18,6 @@ internal class LoadDirectoryNodeMenu : RDMPContextMenuStrip
         args.SkipCommand<ExecuteCommandCreateNewDataLoadDirectory>();
 
         ReBrandActivateAs("Open In Explorer", RDMPConcept.CatalogueFolder);
-        Add(new ExecuteCommandChooseLoadDirectory(_activator, node.LoadMetadata));
+        //Add(new ExecuteCommandChooseLoadDirectory(_activator, node.LoadMetadata));
     }
 }

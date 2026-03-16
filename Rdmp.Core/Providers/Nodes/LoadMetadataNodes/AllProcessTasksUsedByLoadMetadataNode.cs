@@ -11,9 +11,9 @@ namespace Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 
 public class AllProcessTasksUsedByLoadMetadataNode : Node, IOrderable
 {
-    public LoadMetadata LoadMetadata { get; }
+    public EntityFramework.Models.LoadMetadata LoadMetadata { get; }
 
-    public AllProcessTasksUsedByLoadMetadataNode(LoadMetadata loadMetadata)
+    public AllProcessTasksUsedByLoadMetadataNode(EntityFramework.Models.LoadMetadata loadMetadata)
     {
         LoadMetadata = loadMetadata;
     }

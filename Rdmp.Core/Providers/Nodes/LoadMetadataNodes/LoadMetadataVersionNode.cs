@@ -18,7 +18,7 @@ namespace Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 /// </summary>
 public class LoadMetadataVersionNode : Node, IOrderable
 {
-    public LoadMetadata LoadMetadata { get; }
+    public EntityFramework.Models.LoadMetadata LoadMetadata { get; }
 
     public int Order
     {
@@ -26,9 +26,9 @@ public class LoadMetadataVersionNode : Node, IOrderable
         set { }
     }
 
-    public List<LoadMetadata> LoadMetadataVersions { get; set; }
+    public List<EntityFramework.Models.LoadMetadata> LoadMetadataVersions { get; set; }
 
-    public LoadMetadataVersionNode(LoadMetadata lmd)
+    public LoadMetadataVersionNode(EntityFramework.Models.LoadMetadata lmd)
     {
         LoadMetadata = lmd;
     }

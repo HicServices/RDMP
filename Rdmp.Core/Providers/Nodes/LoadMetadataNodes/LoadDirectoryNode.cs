@@ -12,9 +12,9 @@ namespace Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 
 public class LoadDirectoryNode : Node, IDirectoryInfoNode, IOrderable
 {
-    public LoadMetadata LoadMetadata { get; }
+    public EntityFramework.Models.LoadMetadata LoadMetadata { get; }
 
-    public LoadDirectoryNode(LoadMetadata loadMetadata)
+    public LoadDirectoryNode(EntityFramework.Models.LoadMetadata loadMetadata)
     {
         LoadMetadata = loadMetadata;
     }

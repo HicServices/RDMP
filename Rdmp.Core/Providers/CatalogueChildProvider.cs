@@ -929,32 +929,32 @@ public class CatalogueChildProvider : ICoreChildProvider
             var usage = new OverrideRawServerNode(lmd, server);
             childObjects.Add(usage);
         }
-        if (includeSchedule)
-        {
-            var allSchedulesNode = new LoadMetadataScheduleNode(lmd);
-            AddChildren(allSchedulesNode, descendancy.Add(allSchedulesNode));
-            childObjects.Add(allSchedulesNode);
-        }
+        //if (includeSchedule)
+        //{
+        //    var allSchedulesNode = new LoadMetadataScheduleNode(lmd);
+        //    AddChildren(allSchedulesNode, descendancy.Add(allSchedulesNode));
+        //    childObjects.Add(allSchedulesNode);
+        //}
 
-        if (includeCatalogues)
-        {
-            var allCataloguesNode = new AllCataloguesUsedByLoadMetadataNode(lmd);
-            AddChildren(allCataloguesNode, descendancy.Add(allCataloguesNode));
-            childObjects.Add(allCataloguesNode);
-        }
+        //if (includeCatalogues)
+        //{
+        //    var allCataloguesNode = new AllCataloguesUsedByLoadMetadataNode(lmd);
+        //    AddChildren(allCataloguesNode, descendancy.Add(allCataloguesNode));
+        //    childObjects.Add(allCataloguesNode);
+        //}
 
-        var processTasksNode = new AllProcessTasksUsedByLoadMetadataNode(lmd);
-        AddChildren(processTasksNode, descendancy.Add(processTasksNode));
-        childObjects.Add(processTasksNode);
+        //var processTasksNode = new AllProcessTasksUsedByLoadMetadataNode(lmd);
+        //AddChildren(processTasksNode, descendancy.Add(processTasksNode));
+        //childObjects.Add(processTasksNode);
 
-        if (includeVersions)
-        {
-            var versionsNode = new LoadMetadataVersionNode(lmd);
-            AddChildren(versionsNode, descendancy.Add(versionsNode));
-            childObjects.Add(versionsNode);
-        }
+        //if (includeVersions)
+        //{
+        //    var versionsNode = new LoadMetadataVersionNode(lmd);
+        //    AddChildren(versionsNode, descendancy.Add(versionsNode));
+        //    childObjects.Add(versionsNode);
+        //}
 
-        childObjects.Add(new LoadDirectoryNode(lmd));
+        //childObjects.Add(new LoadDirectoryNode(lmd));
 
         AddToDictionaries(new HashSet<object>(childObjects), descendancy);
     }
@@ -1008,11 +1008,11 @@ public class CatalogueChildProvider : ICoreChildProvider
         var childObjects = new HashSet<object>();
 
         var lmd = allProcessTasksUsedByLoadMetadataNode.LoadMetadata;
-        childObjects.Add(new LoadStageNode(lmd, LoadStage.GetFiles));
-        childObjects.Add(new LoadStageNode(lmd, LoadStage.Mounting));
-        childObjects.Add(new LoadStageNode(lmd, LoadStage.AdjustRaw));
-        childObjects.Add(new LoadStageNode(lmd, LoadStage.AdjustStaging));
-        childObjects.Add(new LoadStageNode(lmd, LoadStage.PostLoad));
+        //childObjects.Add(new LoadStageNode(lmd, LoadStage.GetFiles));
+        //childObjects.Add(new LoadStageNode(lmd, LoadStage.Mounting));
+        //childObjects.Add(new LoadStageNode(lmd, LoadStage.AdjustRaw));
+        //childObjects.Add(new LoadStageNode(lmd, LoadStage.AdjustStaging));
+        //childObjects.Add(new LoadStageNode(lmd, LoadStage.PostLoad));
 
         foreach (LoadStageNode node in childObjects)
             AddChildren(node, descendancy.Add(node));
@@ -1044,15 +1044,15 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     private void AddChildren(LoadMetadataVersionNode LoadMetadataVersionNode, DescendancyList descendancy)
     {
-        LoadMetadataVersionNode.LoadMetadataVersions = AllLoadMetadatas.Where(lmd => lmd.RootLoadMetadata_ID == LoadMetadataVersionNode.LoadMetadata.ID).ToList();
-        var childObjects = new List<object>();
+        //LoadMetadataVersionNode.LoadMetadataVersions = AllLoadMetadatas.Where(lmd => lmd.RootLoadMetadata_ID == LoadMetadataVersionNode.LoadMetadata.ID).ToList();
+        //var childObjects = new List<object>();
 
-        foreach (var lmd in LoadMetadataVersionNode.LoadMetadataVersions)
-        {
-            AddChildren(lmd, descendancy.Add(lmd), false, false, false);
-            childObjects.Add(lmd);
-        }
-        AddToDictionaries(new HashSet<object>(childObjects), descendancy);
+        //foreach (var lmd in LoadMetadataVersionNode.LoadMetadataVersions)
+        //{
+        //    AddChildren(lmd, descendancy.Add(lmd), false, false, false);
+        //    childObjects.Add(lmd);
+        //}
+        //AddToDictionaries(new HashSet<object>(childObjects), descendancy);
 
     }
 
@@ -1063,9 +1063,9 @@ public class CatalogueChildProvider : ICoreChildProvider
         var linkedCatalogueIDs = AllLoadMetadataLinkage.Where(link => link.LoadMetadataID == loadMetadataId).Select(static link => link.CatalogueID);
         var usedCatalogues = linkedCatalogueIDs.Select(catalogueId => AllCatalogues.FirstOrDefault(c => c.ID == catalogueId)).Where(static foundCatalogue => foundCatalogue is not null).ToList();
         allCataloguesUsedByLoadMetadataNode.UsedCatalogues = usedCatalogues;
-        var childObjects = usedCatalogues.Select(foundCatalogue => new CatalogueUsedByLoadMetadataNode(allCataloguesUsedByLoadMetadataNode.LoadMetadata, foundCatalogue)).Cast<object>().ToHashSet();
+        //var childObjects = usedCatalogues.Select(foundCatalogue => new CatalogueUsedByLoadMetadataNode(allCataloguesUsedByLoadMetadataNode.LoadMetadata, foundCatalogue)).Cast<object>().ToHashSet();
 
-        AddToDictionaries(childObjects, descendancy);
+        //AddToDictionaries(childObjects, descendancy);
     }
 
     #endregion

@@ -364,8 +364,8 @@ public class AtomicCommandFactory : CommandFactoryBase
             yield return new ExecuteCommandExportObjectsToFile(_activator, _activator.CoreChildProvider.AllANOTables);
         }
 
-        if (Is(o, out AllCataloguesUsedByLoadMetadataNode aculmd))
-            yield return new ExecuteCommandAssociateCatalogueWithLoadMetadata(_activator, aculmd.LoadMetadata);
+        //if (Is(o, out AllCataloguesUsedByLoadMetadataNode aculmd))
+        //    yield return new ExecuteCommandAssociateCatalogueWithLoadMetadata(_activator, aculmd.LoadMetadata);
 
         if (Is(o, out AllDataAccessCredentialsNode _))
             //yield return new ExecuteCommandNewObject(_activator,
@@ -583,8 +583,8 @@ public class AtomicCommandFactory : CommandFactoryBase
             }
         }
 
-        if (Is(o, out LoadMetadataScheduleNode scheduleNode))
-            yield return new ExecuteCommandCreateNewLoadProgress(_activator, scheduleNode.LoadMetadata);
+        //if (Is(o, out LoadMetadataScheduleNode scheduleNode))
+        //    yield return new ExecuteCommandCreateNewLoadProgress(_activator, scheduleNode.LoadMetadata);
 
         if (Is(o, out LoadProgress loadProgress))
             yield return new ExecuteCommandCreateNewCacheProgress(_activator, loadProgress);
@@ -601,10 +601,10 @@ public class AtomicCommandFactory : CommandFactoryBase
                 lsn.LoadMetadata, lsn.LoadStage);
         }
 
-        if (Is(o, out LoadDirectoryNode ldn))
-        {
-            yield return new ExecuteCommandCreateNewDataLoadDirectory(_activator, ldn.LoadMetadata, null);
-        }
+        //if (Is(o, out LoadDirectoryNode ldn))
+        //{
+        //    yield return new ExecuteCommandCreateNewDataLoadDirectory(_activator, ldn.LoadMetadata, null);
+        //}
 
         if (Is(o, out AllObjectImportsNode _))
             yield return new ExecuteCommandImportShareDefinitionList(_activator);

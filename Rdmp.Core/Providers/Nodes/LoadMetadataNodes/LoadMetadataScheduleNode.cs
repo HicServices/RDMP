@@ -11,9 +11,9 @@ namespace Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 
 public class LoadMetadataScheduleNode : Node, IOrderable
 {
-    public LoadMetadata LoadMetadata { get; }
+    public EntityFramework.Models.LoadMetadata LoadMetadata { get; }
 
-    public LoadMetadataScheduleNode(LoadMetadata loadMetadata)
+    public LoadMetadataScheduleNode(EntityFramework.Models.LoadMetadata loadMetadata)
     {
         LoadMetadata = loadMetadata;
     }

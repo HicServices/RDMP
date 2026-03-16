@@ -15,6 +15,7 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Providers.Nodes.CohortNodes;
+using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 using Rdmp.Core.Providers.Nodes.PipelineNodes;
 using Rdmp.Core.Providers.Nodes.SharingNodes;
 using Rdmp.Core.Repositories;
@@ -49,6 +50,7 @@ namespace Rdmp.Core.EntityFramework
         public DbSet<Models.Dataset> Datasets { get; set; }
         public DbSet<Models.TableInfo> TableInfos { get; set; }
         public DbSet<Models.Lookup> Lookups { get; set; }
+        public DbSet<Models.LoadMetadata> LoadMetadatas{ get; set; }
         public DbSet<Models.PipelineComponent> PipelineComponents { get; set; }
         public DbSet<Models.LookupCompositeJoinInfo> LookupCompositeJoinInfos { get; set; }
         public DbSet<ANOTable> ANOTables { get; set; }
@@ -58,6 +60,7 @@ namespace Rdmp.Core.EntityFramework
         public DbSet<Models.DashboardLayout> DashboardLayouts { get; set; }
         public DbSet<Models.DataAccessCredentials> DataAccessCredentials { get; set; }
         public DbSet<Models.ExternalDatabaseServer> ExternalDatabaseServers { get; set; }
+        public DbSet<Models.LoadMetadataCatalogueLinkage> LoadMetadataCatalogueLinkages{ get; set; }
 
         public T[] GetAllObjects<T>()
         {
@@ -135,6 +138,16 @@ namespace Rdmp.Core.EntityFramework
             {
                 entity.HasKey(e => e.ID);
             });
+            modelBuilder.Entity<Models.LoadMetadata>(entity =>
+            {
+                entity.HasKey(e => e.ID);
+                entity.HasMany(e => e.LoadMetadataCatalogueLinkages).WithOne(e => e.LoadMetadata).HasForeignKey(e => e.LoadMetadataID);
+            });
+            modelBuilder.Entity<Models.LoadMetadataCatalogueLinkage>(entity =>
+            {
+                entity.HasKey(e => e.ID);
+                entity.HasOne(e => e.LoadMetadata).WithMany(e => e.LoadMetadataCatalogueLinkages).HasForeignKey(e => e.LoadMetadataID);
+            });
             modelBuilder.Entity<Models.DataAccessCredentials>(entity =>
             {
                 entity.HasKey(e => e.ID);
@@ -166,6 +179,7 @@ namespace Rdmp.Core.EntityFramework
                 entity.HasIndex(e => e.Name);
                 entity.HasIndex(e => e.Acronym);
                 entity.HasIndex(e => e.IsDeprecated);
+                entity.HasMany(e => e.LoadMetadataCatalogueLinkages).WithOne(e => e.Catalogue).HasForeignKey(e => e.LoadMetadataID);
             });
         }
 
@@ -346,6 +360,40 @@ namespace Rdmp.Core.EntityFramework
             if (obj is AllStandardRegexesNode asrn)
             {
                 return StandardRegexes.ToList();
+            }
+            if(obj is FolderNode<Models.LoadMetadata> lmdf){
+                return lmdf.ChildFolders.Cast<object>().Union(lmdf.ChildObjects);
+            }
+            if(obj is LoadMetadata lmd)
+            {
+                return new List<object>()
+                {
+                    new LoadMetadataScheduleNode(lmd),
+                    new AllCataloguesUsedByLoadMetadataNode(lmd),
+                    new LoadMetadataVersionNode(lmd),
+                    new AllProcessTasksUsedByLoadMetadataNode(lmd),
+                    new LoadDirectoryNode(lmd)
+                };
+            }
+            if(obj is LoadMetadataScheduleNode lmdsn)
+            {
+                //todo
+            }
+            if(obj is AllCataloguesUsedByLoadMetadataNode acublmdn)
+            {
+                return LoadMetadataCatalogueLinkages.Where(link => link.LoadMetadataID == acublmdn.LoadMetadata.ID).Select(lmcl => lmcl.Catalogue).ToList();
+            }
+            if(obj is LoadMetadataVersionNode lmdvn)
+            {
+
+            }
+            if(obj is AllProcessTasksUsedByLoadMetadataNode aptublnmd)
+            {
+
+            }
+            if(obj is LoadDirectoryNode ldn)
+            {
+
             }
             return new List<string>() { };
         }

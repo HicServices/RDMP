@@ -18,7 +18,7 @@ namespace Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 /// </summary>
 public class AllCataloguesUsedByLoadMetadataNode : Node, IOrderable
 {
-    public LoadMetadata LoadMetadata { get; }
+    public EntityFramework.Models.LoadMetadata LoadMetadata { get; }
 
     public int Order
     {
@@ -28,7 +28,7 @@ public class AllCataloguesUsedByLoadMetadataNode : Node, IOrderable
 
     public List<Catalogue> UsedCatalogues { get; set; }
 
-    public AllCataloguesUsedByLoadMetadataNode(LoadMetadata lmd)
+    public AllCataloguesUsedByLoadMetadataNode(EntityFramework.Models.LoadMetadata lmd)
     {
         LoadMetadata = lmd;
     }

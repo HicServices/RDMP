@@ -123,6 +123,9 @@ namespace Rdmp.Core.EntityFramework.Models
 
         CatalogueItem[] ICatalogue.CatalogueItems => this.CatalogueItems.ToArray();
 
+
+        public virtual List<LoadMetadataCatalogueLinkage> LoadMetadataCatalogueLinkages { get; set; }
+
         public override string ToString() => Name;
 
         public List<CatalogueItem> GetCatalogueItemsForExtractionCategory(ExtractionCategory extractionCategory)
