@@ -18,9 +18,9 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations;
 /// <inheritdoc/>
 internal class MySqlTriggerImplementer : TriggerImplementer
 {
-    /// <inheritdoc cref="TriggerImplementer(DiscoveredTable,bool)"/>
-    public MySqlTriggerImplementer(DiscoveredTable table, bool createDataLoadRunIDAlso = true) : base(table,
-        createDataLoadRunIDAlso)
+    /// <inheritdoc cref="TriggerImplementer(DiscoveredTable,bool,bool)"/>
+    public MySqlTriggerImplementer(DiscoveredTable table, bool createDataLoadRunIDAlso = true, bool dontAddDataLoadrunID=false) : base(table,
+        createDataLoadRunIDAlso, dontAddDataLoadrunID)
     {
     }
 

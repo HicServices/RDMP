@@ -22,14 +22,14 @@ public class TriggerImplementerFactory
         _databaseType = databaseType;
     }
 
-    public ITriggerImplementer Create(DiscoveredTable table, bool createDataLoadRunIDAlso = true)
+    public ITriggerImplementer Create(DiscoveredTable table, bool createDataLoadRunIDAlso = true,bool dontAddDataLoadrunID = false)
     {
         return _databaseType switch
         {
-            DatabaseType.MicrosoftSQLServer => new MicrosoftSQLTriggerImplementer(table, createDataLoadRunIDAlso),
-            DatabaseType.MySql => new MySqlTriggerImplementer(table, createDataLoadRunIDAlso),
-            DatabaseType.Oracle => new OracleTriggerImplementer(table, createDataLoadRunIDAlso),
-            DatabaseType.PostgreSql => new PostgreSqlTriggerImplementer(table, createDataLoadRunIDAlso),
+            DatabaseType.MicrosoftSQLServer => new MicrosoftSQLTriggerImplementer(table, createDataLoadRunIDAlso, dontAddDataLoadrunID),
+            DatabaseType.MySql => new MySqlTriggerImplementer(table, createDataLoadRunIDAlso, dontAddDataLoadrunID),
+            DatabaseType.Oracle => new OracleTriggerImplementer(table, createDataLoadRunIDAlso, dontAddDataLoadrunID),
+            DatabaseType.PostgreSql => new PostgreSqlTriggerImplementer(table, createDataLoadRunIDAlso, dontAddDataLoadrunID),
             _ => throw new ArgumentOutOfRangeException(nameof(_databaseType))
         };
     }

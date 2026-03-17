@@ -24,9 +24,9 @@ public class PostgreSqlTriggerImplementer : TriggerImplementer
     private string _procedureNameFullyQualified;
     private string _procedureRuntimeName;
 
-    /// <inheritdoc cref="TriggerImplementer(DiscoveredTable,bool)"/>
-    public PostgreSqlTriggerImplementer(DiscoveredTable table, bool createDataLoadRunIDAlso) : base(table,
-        createDataLoadRunIDAlso)
+    /// <inheritdoc cref="TriggerImplementer(DiscoveredTable,bool,bool)"/>
+    public PostgreSqlTriggerImplementer(DiscoveredTable table, bool createDataLoadRunIDAlso, bool dontAddDataLoadrunID=false) : base(table,
+        createDataLoadRunIDAlso, dontAddDataLoadrunID)
     {
         var schema = string.IsNullOrWhiteSpace(_table.Schema)
             ? table.GetQuerySyntaxHelper().GetDefaultSchemaIfAny()
