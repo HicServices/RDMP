@@ -210,32 +210,6 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
 
             if (UseArchiveTrigger)
             {
-
-                //var listeners = ((ForkDataLoadEventListener)job).GetToLoggingDatabaseDataLoadEventListenersIfany();
-                //foreach (var dleListener in listeners)
-                //{
-                //    IDataLoadInfo dataLoadInfo = dleListener.DataLoadInfo;
-                //    DataColumn newColumn = new(SpecialFieldNames.DataLoadRunID, typeof(int))
-                //    {
-                //        DefaultValue = dataLoadInfo.ID
-                //    };
-                //    try
-                //    {
-                //        destinationTable.DiscoverColumn(SpecialFieldNames.DataLoadRunID);
-                //    }
-                //    catch (Exception)
-                //    {
-                //        destinationTable.AddColumn(SpecialFieldNames.DataLoadRunID, new DatabaseTypeRequest(typeof(int)), true, 30000);
-
-                //    }
-                //    if (!toProcess.Columns.Contains(SpecialFieldNames.DataLoadRunID))
-                //        toProcess.Columns.Add(newColumn);
-                //    foreach (DataRow dr in toProcess.Rows)
-                //        dr[SpecialFieldNames.DataLoadRunID] = dataLoadInfo.ID;
-
-                //}
-
-
                 TriggerImplementerFactory triggerFactory = new TriggerImplementerFactory(FAnsi.DatabaseType.MicrosoftSQLServer);
                 var implementor = triggerFactory.Create(destinationTable,false,true);
                 bool present;

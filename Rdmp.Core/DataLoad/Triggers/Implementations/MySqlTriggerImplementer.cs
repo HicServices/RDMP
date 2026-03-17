@@ -106,7 +106,7 @@ internal class MySqlTriggerImplementer : TriggerImplementer
         var syntax = _server.GetQuerySyntaxHelper();
 
         return $@"BEGIN
-    INSERT INTO {_archiveTable.GetFullyQualifiedName()} SET {string.Join(",", _columns.Select(c =>
+    INSERT INTO {_archiveTable.GetFullyQualifiedName()} SET {string.Join(",", _columns.Where(c => _dontAddDataLoadRunId ? c.GetRuntimeName() != SpecialFieldNames.DataLoadRunID : true).Select(c =>
         $"{syntax.EnsureWrapped(c.GetRuntimeName())}=OLD.{syntax.EnsureWrapped(c.GetRuntimeName())}"))},hic_validTo=now(),hic_userID=CURRENT_USER(),hic_status='U';
 
 	SET NEW.{syntax.EnsureWrapped(SpecialFieldNames.ValidFrom)} = now();

@@ -144,7 +144,7 @@ LANGUAGE 'plpgsql';";
 
         return
             $@"BEGIN
-            INSERT INTO {_archiveTable.GetFullyQualifiedName()}({string.Join(",", _columns.Select(c => syntax.EnsureWrapped(c.GetRuntimeName())))},""hic_validTo"",""hic_userID"",hic_status)
+            INSERT INTO {_archiveTable.GetFullyQualifiedName()}({string.Join(",", _columns.Where(c => _dontAddDataLoadRunId ? c.GetRuntimeName() != SpecialFieldNames.DataLoadRunID : true).Select(c => syntax.EnsureWrapped(c.GetRuntimeName())))},""hic_validTo"",""hic_userID"",hic_status)
             VALUES({string.Join(",", _columns.Select(c => $"OLD.{syntax.EnsureWrapped(c.GetRuntimeName())}"))},now(),current_user,'U');
 
             NEW.{syntax.EnsureWrapped(SpecialFieldNames.ValidFrom)} := NOW();

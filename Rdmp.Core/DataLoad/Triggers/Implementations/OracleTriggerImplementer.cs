@@ -50,7 +50,7 @@ internal class OracleTriggerImplementer : MySqlTriggerImplementer
         var syntax = _table.GetQuerySyntaxHelper();
 
         return $@"BEGIN
-    INSERT INTO {_archiveTable.GetFullyQualifiedName()} ({string.Join(",", _columns.Select(c => syntax.EnsureWrapped(c.GetRuntimeName())))},hic_validTo,hic_userID,hic_status) VALUES ({string.Join(",", _columns.Select(c => $":old.{syntax.EnsureWrapped(c.GetRuntimeName())}"))},CURRENT_DATE,USER,'U');
+    INSERT INTO {_archiveTable.GetFullyQualifiedName()} ({string.Join(",", _columns.Where(c => _dontAddDataLoadRunId?c.GetRuntimeName() != SpecialFieldNames.DataLoadRunID:true).Select(c => syntax.EnsureWrapped(c.GetRuntimeName())))},hic_validTo,hic_userID,hic_status) VALUES ({string.Join(",", _columns.Select(c => $":old.{syntax.EnsureWrapped(c.GetRuntimeName())}"))},CURRENT_DATE,USER,'U');
 
   :new.{syntax.EnsureWrapped(SpecialFieldNames.ValidFrom)} := sysdate;
 
