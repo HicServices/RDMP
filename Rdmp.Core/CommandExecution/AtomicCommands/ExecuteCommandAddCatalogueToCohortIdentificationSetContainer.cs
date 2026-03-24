@@ -122,7 +122,7 @@ public class ExecuteCommandAddCatalogueToCohortIdentificationSetContainer : Basi
             var cic = _targetCohortAggregateContainer.GetCohortIdentificationConfiguration();
             List<int> associatedProjectCataloguesIDs= new();
             var pcica = BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjects<ProjectCohortIdentificationConfigurationAssociation>().Where(pcica => pcica.CohortIdentificationConfiguration_ID == cic.ID).FirstOrDefault();
-            if(pcica is not null)
+            if(pcica is not null && pcica.Project is not null)
             {
                 associatedProjectCataloguesIDs = pcica.Project.GetAllProjectCatalogues().Select(c => c.ID).ToList();
             }
