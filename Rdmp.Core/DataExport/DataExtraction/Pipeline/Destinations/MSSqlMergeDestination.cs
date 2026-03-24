@@ -1,4 +1,5 @@
 ﻿using FAnsi.Discovery;
+using FAnsi.Discovery.QuerySyntax;
 using Microsoft.Data.SqlClient;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
@@ -209,34 +210,8 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
 
             if (UseArchiveTrigger)
             {
-
-                var listeners = ((ForkDataLoadEventListener)job).GetToLoggingDatabaseDataLoadEventListenersIfany();
-                foreach (var dleListener in listeners)
-                {
-                    IDataLoadInfo dataLoadInfo = dleListener.DataLoadInfo;
-                    DataColumn newColumn = new(SpecialFieldNames.DataLoadRunID, typeof(int))
-                    {
-                        DefaultValue = dataLoadInfo.ID
-                    };
-                    try
-                    {
-                        destinationTable.DiscoverColumn(SpecialFieldNames.DataLoadRunID);
-                    }
-                    catch (Exception)
-                    {
-                        destinationTable.AddColumn(SpecialFieldNames.DataLoadRunID, new DatabaseTypeRequest(typeof(int)), true, 30000);
-
-                    }
-                    if (!toProcess.Columns.Contains(SpecialFieldNames.DataLoadRunID))
-                        toProcess.Columns.Add(newColumn);
-                    foreach (DataRow dr in toProcess.Rows)
-                        dr[SpecialFieldNames.DataLoadRunID] = dataLoadInfo.ID;
-
-                }
-
-
                 TriggerImplementerFactory triggerFactory = new TriggerImplementerFactory(FAnsi.DatabaseType.MicrosoftSQLServer);
-                var implementor = triggerFactory.Create(destinationTable);
+                var implementor = triggerFactory.Create(destinationTable,false,true);
                 bool present;
                 try
                 {
@@ -253,7 +228,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
             }
 
             var pkColumns = toProcess.PrimaryKey;
-            var nonPkColumns = toProcess.Columns.Cast<DataColumn>().Where(dc => !pkColumns.Contains(dc)).ToArray();
+            var nonPkColumns = toProcess.Columns.Cast<DataColumn>().Where(dc => !pkColumns.Contains(dc) && !dc.ColumnName.StartsWith("hic_")).ToArray();
             //merge
             List<DatabaseColumnRequest> columnTypes = new List<DatabaseColumnRequest>() { };
             foreach (var column in destinationTable.DiscoverColumns())
@@ -274,7 +249,10 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
                 MERGE INTO {destinationTable.GetFullyQualifiedName()} WITH (HOLDLOCK) AS target
                 USING {tmpTbl.GetFullyQualifiedName()} AS source
                     ON {string.Join(" AND ", pkColumns.Select(pkc => $"target.{pkc.ColumnName} = source.{pkc.ColumnName}"))}
-                WHEN MATCHED THEN 
+                WHEN MATCHED AND(
+                {string.Join(" OR ", nonPkColumns.Select(c => GetORLine(c,db.Server.GetQuerySyntaxHelper())))}
+                )
+                THEN 
                     UPDATE SET {string.Join(" , ", nonPkColumns.Select(pkc => $"target.{pkc.ColumnName} = source.{pkc.ColumnName}"))}
                 WHEN NOT MATCHED BY TARGET THEN
                     INSERT ({string.Join(" , ", toProcess.Columns.Cast<DataColumn>().Select(pkc => pkc.ColumnName))})
@@ -293,6 +271,12 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
             _managedConnection.Dispose();
         }
 
+        private static string GetORLine(DataColumn c, IQuerySyntaxHelper syntax)
+        {
+            return string.Format(
+                "(target.{0} <> source.{0} OR (target.{0} is null AND source.{0} is not null) OR (target.{0} is null AND source.{0} is not null))",
+                syntax.EnsureWrapped(c.ColumnName));
+        }
         protected override void PreInitializeImpl(IBasicActivateItems activator, IExtractCommand request, IDataLoadEventListener listener)
         {
         }

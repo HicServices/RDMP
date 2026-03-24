@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [9.2.1] - Unreleased
 - Update Sql Merge component to force destination column types
+- Update Sql merge to correctly match updates
+- Update archive trigger to ignore hic_DataLoadRunID on extractions
 - Fix issue with flickering tooltips
 
 ## [9.2.0] - 2026-03-10
