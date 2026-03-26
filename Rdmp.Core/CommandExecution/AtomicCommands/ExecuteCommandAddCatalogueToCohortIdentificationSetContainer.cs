@@ -61,7 +61,7 @@ public class ExecuteCommandAddCatalogueToCohortIdentificationSetContainer : Basi
         {
             _catalogueCombineable = new CatalogueCombineable(catalogue);
 
-            if(catalogue.IsInternalDataset)
+            if (catalogue.IsInternalDataset)
             {
                 SetImpossible($"Catalogue '{catalogue}' is an Internal dataset and cannot be added to a Cohort Identification Set Container");
                 return;
@@ -69,9 +69,10 @@ public class ExecuteCommandAddCatalogueToCohortIdentificationSetContainer : Basi
             if (catalogue.IsProjectSpecific(_catalogueCombineable.Catalogue.DataExportRepository))
             {
                 var cic = _targetCohortAggregateContainer.GetCohortIdentificationConfiguration();
-                var associatedCICProjects =  _activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ProjectCohortIdentificationConfigurationAssociation>("CohortIdentificationConfiguration_ID", cic.ID);
+                var associatedCICProjects = _activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ProjectCohortIdentificationConfigurationAssociation>("CohortIdentificationConfiguration_ID", cic.ID);
                 var associatedCatalogueProjects = _activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", catalogue.ID).SelectMany(eds => eds.Projects);
-                if(!associatedCICProjects.Any(x => associatedCatalogueProjects.Any(y => y.ID == x.Project.ID))){
+                if (!associatedCICProjects.Any(x => associatedCatalogueProjects.Any(y => y.ID == x.Project.ID)))
+                {
                     SetImpossible("Catalogue is project specific. Associate the CIC with the project to use this Catalogue here.");
                     return;
                 }
@@ -134,29 +135,32 @@ public class ExecuteCommandAddCatalogueToCohortIdentificationSetContainer : Basi
         if (_catalogueCombineable == null)
         {
             var cic = _targetCohortAggregateContainer.GetCohortIdentificationConfiguration();
-            List<int> associatedProjectCataloguesIDs= new();
+            List<int> associatedProjectCataloguesIDs = new();
             var pcica = BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjects<ProjectCohortIdentificationConfigurationAssociation>().Where(pcica => pcica.CohortIdentificationConfiguration_ID == cic.ID).FirstOrDefault();
-            if(pcica is not null && pcica.Project is not null)
+            if (pcica is not null && pcica.Project is not null)
             {
                 try
                 {
                     associatedProjectCataloguesIDs = pcica.Project.GetAllProjectCatalogues().Select(c => c.ID).ToList();
                 }
-                catch (Exception) { }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
             }
             if (!BasicActivator.SelectObjects(new DialogArgs
             {
                 WindowTitle = "Add Catalogue(s) to Container",
                 TaskDescription =
                         $"Choose which Catalogues to add to the cohort container '{_targetCohortAggregateContainer.Name}'.  Catalogues must have at least one IsExtractionIdentifier column."
-            }, BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>().Where(c => !c.IsInternalDataset &&(!c.IsProjectSpecific(BasicActivator.RepositoryLocator.DataExportRepository) || associatedProjectCataloguesIDs.Contains(c.ID))).ToArray(), out var selected))
+            }, BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>().Where(c => !c.IsInternalDataset && (!c.IsProjectSpecific(BasicActivator.RepositoryLocator.DataExportRepository) || associatedProjectCataloguesIDs.Contains(c.ID))).ToArray(), out var selected))
                 // user didn't pick one
                 return;
 
             // for each catalogue they picked
             foreach (var catalogue in selected)
             {
-                if(BasicActivator.IsInteractive && catalogue.IsDeprecated)
+                if (BasicActivator.IsInteractive && catalogue.IsDeprecated)
                 {
                     var confirmDeprecatedUser = BasicActivator.YesNo($"{catalogue.Name} is marked as deprecated. Are you sure you wish to use it?", "Confirm use of Deprecated Catalogue");
                     if (!confirmDeprecatedUser)
