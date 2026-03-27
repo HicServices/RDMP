@@ -1387,7 +1387,7 @@ $ID
 $IsDeprecated
 $IsInternalDataset
 $Last_revision_date
-$LoggingDataTask
+$LoggingDataTasks
 $Name
 $Periodicity
 $PivotCategory_ExtractionInformation_ID

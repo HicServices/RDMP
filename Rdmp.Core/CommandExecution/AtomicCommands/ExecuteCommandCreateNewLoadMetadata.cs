@@ -60,8 +60,6 @@ public class ExecuteCommandCreateNewLoadMetadata : BasicCommandExecution, IAtomi
 
             lmd.EnsureLoggingWorksFor(_catalogue);
 
-            _catalogue.SaveToDatabase();
-
             lmd.Folder = Folder;
             lmd.SaveToDatabase();
 

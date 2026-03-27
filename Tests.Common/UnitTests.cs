@@ -609,7 +609,6 @@ public class UnitTests
             return (T)(object)new ExtractableDataSetProject(repository, WhenIHaveA<ExtractableDataSet>(repository), WhenIHaveA<Project>(repository));
         }
 
-
         throw new TestCaseNotWrittenYetException(typeof(T));
     }
 

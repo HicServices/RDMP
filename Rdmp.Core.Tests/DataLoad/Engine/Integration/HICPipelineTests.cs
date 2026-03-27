@@ -79,10 +79,7 @@ public class HICPipelineTests : DatabaseTests
             LoadMetadata.LocationOfCacheDirectory = Path.Combine(directory.RootPath.FullName, LoadMetadata.DefaultCachePath);
             LoadMetadata.SaveToDatabase();
 
-            Catalogue = new Catalogue(repository, "HICLoadPipelineTests")
-            {
-                LoggingDataTask = "Test",
-            };
+            Catalogue = new Catalogue(repository, "HICLoadPipelineTests");
             Catalogue.SaveToDatabase();
             LoadMetadata.LinkToCatalogue(Catalogue);
             var catalogueItem = new CatalogueItem(repository, Catalogue, "Test");

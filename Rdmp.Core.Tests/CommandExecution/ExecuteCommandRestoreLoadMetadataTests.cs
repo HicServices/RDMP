@@ -19,7 +19,6 @@ namespace Rdmp.Core.Tests.CommandExecution
             lmd1.Description = "Desc!";
             var cata = new Catalogue(CatalogueRepository, "myCata")
             {
-                LoggingDataTask = "B"
             };
             cata.SaveToDatabase();
             lmd1.LinkToCatalogue(cata);

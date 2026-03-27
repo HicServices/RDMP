@@ -15,10 +15,7 @@ namespace Rdmp.Core.Tests.CommandExecution
         {
             var lmd1 = new LoadMetadata(CatalogueRepository, "MyLmd");
             lmd1.Description = "Desc!";
-            var cata = new Catalogue(CatalogueRepository, "myCata")
-            {
-                LoggingDataTask = "B"
-            };
+            var cata = new Catalogue(CatalogueRepository, "myCata");
             cata.SaveToDatabase();
             lmd1.LinkToCatalogue(cata);
             var pt1 = new ProcessTask(CatalogueRepository, lmd1, LoadStage.Mounting)

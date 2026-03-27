@@ -20,5 +20,5 @@ public interface ILoadMetadataCatalogueLinkage: IMapsDirectlyToDatabaseTable
 
     int LoadMetadataID{ get; }
     int CatalogueID { get; }
-
+    string Name { get; }
 }

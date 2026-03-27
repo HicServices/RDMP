@@ -17,39 +17,6 @@ namespace Rdmp.Core.Tests.Curation.Integration;
 
 public class MetadataLoggingConfigurationChecksTests : UnitTests
 {
-    [Test]
-    public void Test_NoLoggingTask()
-    {
-        var lmd = WhenIHaveA<LoadMetadata>();
-        var cata = WhenIHaveA<Catalogue>();
-        lmd.LinkToCatalogue(cata);
-        Assert.That(lmd.GetAllCatalogues().Count(), Is.EqualTo(2));
-
-        var checks = new MetadataLoggingConfigurationChecks(lmd);
-        var toMem = new ToMemoryCheckNotifier();
-        checks.Check(toMem);
-
-        AssertFailWithFix("Catalogues Mycata,Mycata do not have a logging task specified",
-            "Create a new Logging Task called 'MyLoad'?", toMem);
-    }
-
-    [Test]
-    public void Test_MismatchedLoggingTask()
-    {
-        var lmd = WhenIHaveA<LoadMetadata>();
-        var cata1 = lmd.GetAllCatalogues().Single();
-        var cata2 = WhenIHaveA<Catalogue>();
-        lmd.LinkToCatalogue(cata2);
-        cata1.LoggingDataTask = "OMG YEAGH";
-
-        Assert.That(lmd.GetAllCatalogues().Count(), Is.EqualTo(2));
-
-        var checks = new MetadataLoggingConfigurationChecks(lmd);
-        var toMem = new ToMemoryCheckNotifier();
-        checks.Check(toMem);
-
-        AssertFailWithFix("Some catalogues have NULL LoggingDataTasks", "Set task to OMG YEAGH", toMem);
-    }
 
     [Test]
     public void Test_MissingLoggingServer()
@@ -58,9 +25,7 @@ public class MetadataLoggingConfigurationChecksTests : UnitTests
         var cata1 = lmd.GetAllCatalogues().Single();
         var cata2 = WhenIHaveA<Catalogue>();
         lmd.LinkToCatalogue(cata2);
-        cata1.LoggingDataTask = "OMG YEAGH";
         cata1.LiveLoggingServer_ID = 2;
-        cata2.LoggingDataTask = "OMG YEAGH";
         cata2.LiveLoggingServer_ID = null;
 
         Assert.That(lmd.GetAllCatalogues().Count(), Is.EqualTo(2));
@@ -84,9 +49,7 @@ public class MetadataLoggingConfigurationChecksTests : UnitTests
         eds.SaveToDatabase();
 
         lmd.LinkToCatalogue(cata2);
-        cata1.LoggingDataTask = "OMG YEAGH";
         cata1.LiveLoggingServer_ID = null;
-        cata2.LoggingDataTask = "OMG YEAGH";
         cata2.LiveLoggingServer_ID = null;
 
         var defaults = RepositoryLocator.CatalogueRepository;
