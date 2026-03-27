@@ -13,9 +13,9 @@ namespace Rdmp.Core.CommandExecution.Combining;
 /// </summary>
 public class ProcessTaskCombineable : ICombineToMakeCommand
 {
-    public ProcessTask ProcessTask { get; set; }
+    public EntityFramework.Models.ProcessTask ProcessTask { get; set; }
 
-    public ProcessTaskCombineable(ProcessTask processTask)
+    public ProcessTaskCombineable(EntityFramework.Models.ProcessTask processTask)
     {
         ProcessTask = processTask;
     }

@@ -793,34 +793,34 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     private void BuildServerNodes()
     {
-        //add a root node for all the servers to be children of
-        AllServersNode = new AllServersNode();
+        ////add a root node for all the servers to be children of
+        //AllServersNode = new AllServersNode();
 
-        var descendancy = new DescendancyList(AllServersNode);
-        var allServers = new List<TableInfoServerNode>();
+        //var descendancy = new DescendancyList(AllServersNode);
+        //var allServers = new List<TableInfoServerNode>();
 
-        foreach (var typeGroup in AllTableInfos.GroupBy(t => t.DatabaseType))
-        {
-            var dbType = typeGroup.Key;
-            IEnumerable<TableInfo> tables = typeGroup;
+        //foreach (var typeGroup in AllTableInfos.GroupBy(t => t.DatabaseType))
+        //{
+        //    var dbType = typeGroup.Key;
+        //    IEnumerable<Core.EntityFramework.Models.TableInfo> tables = typeGroup;
 
-            var serversByName = tables
-                .GroupBy(c => c.Server ?? TableInfoServerNode.NullServerNode, StringComparer.CurrentCultureIgnoreCase)
-                .Select(s => new TableInfoServerNode(s.Key, dbType, s));
+        //    var serversByName = tables
+        //        .GroupBy(c => c.Server ?? TableInfoServerNode.NullServerNode, StringComparer.CurrentCultureIgnoreCase)
+        //        .Select(s => new TableInfoServerNode(s.Key, dbType, s));
 
 
-            foreach (var server in serversByName)
-            {
-                allServers.Add(server);
-                AddChildren(server, descendancy.Add(server));
-            }
-        }
+        //    foreach (var server in serversByName)
+        //    {
+        //        allServers.Add(server);
+        //        AddChildren(server, descendancy.Add(server));
+        //    }
+        //}
 
-        //create the server nodes
-        AllServers = allServers.ToArray();
+        ////create the server nodes
+        //AllServers = allServers.ToArray();
 
-        //record the fact that all the servers are children of the all servers node
-        AddToDictionaries(new HashSet<object>(AllServers), descendancy);
+        ////record the fact that all the servers are children of the all servers node
+        //AddToDictionaries(new HashSet<object>(AllServers), descendancy);
     }
 
 
@@ -1448,7 +1448,7 @@ public class CatalogueChildProvider : ICoreChildProvider
             children.Add(t);
 
             //the all servers node=>the TableInfoServerNode => the t
-            AddChildren(t, descendancy.Add(t));
+            //AddChildren(t, descendancy.Add(t));
         }
 
         //now we have recorded all the children add them with descendancy

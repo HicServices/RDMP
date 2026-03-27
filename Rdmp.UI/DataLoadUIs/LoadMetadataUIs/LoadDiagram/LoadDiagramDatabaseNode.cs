@@ -35,7 +35,7 @@ public class LoadDiagramDatabaseNode : Node, IHasLoadDiagramState, IKnowWhatIAm
     public List<UnplannedTable> _unplannedChildren = new();
 
 
-    public LoadDiagramDatabaseNode(LoadBubble bubble, DiscoveredDatabase database, TableInfo[] loadTables,
+    public LoadDiagramDatabaseNode(LoadBubble bubble, DiscoveredDatabase database, Core.EntityFramework.Models.TableInfo[] loadTables,
         HICDatabaseConfiguration config)
     {
         _bubble = bubble;

@@ -11,7 +11,7 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsProcessTaskArgument : RDMPCommandExecutionProposal<ProcessTaskArgument>
+internal class ProposeExecutionWhenTargetIsProcessTaskArgument : RDMPCommandExecutionProposal<Core.EntityFramework.Models.ProcessTaskArgument>
 {
     private IActivateItems _activator;
 
@@ -20,14 +20,14 @@ internal class ProposeExecutionWhenTargetIsProcessTaskArgument : RDMPCommandExec
         _activator = itemActivator;
     }
 
-    public override bool CanActivate(ProcessTaskArgument target) => true;
+    public override bool CanActivate(Core.EntityFramework.Models.ProcessTaskArgument target) => true;
 
-    public override void Activate(ProcessTaskArgument processTaskArgument)
+    public override void Activate(Core.EntityFramework.Models.ProcessTaskArgument processTaskArgument)
     {
         var setArgumentCommand = new ExecuteCommandSetArgument(_activator, processTaskArgument);
         setArgumentCommand.Execute();
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ProcessTaskArgument target,
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Core.EntityFramework.Models.ProcessTaskArgument target,
         InsertOption insertOption = InsertOption.Default) => null;
 }

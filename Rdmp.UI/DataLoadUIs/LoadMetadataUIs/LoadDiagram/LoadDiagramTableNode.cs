@@ -26,7 +26,7 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram;
 public class LoadDiagramTableNode : Node, ICombineableSource, IHasLoadDiagramState, IMasqueradeAs, IKnowWhatIAm
 {
     private readonly LoadDiagramDatabaseNode _databaseNode;
-    public readonly TableInfo TableInfo;
+    public readonly Core.EntityFramework.Models.TableInfo TableInfo;
     public readonly LoadBubble Bubble;
     private readonly HICDatabaseConfiguration _config;
 
@@ -37,7 +37,7 @@ public class LoadDiagramTableNode : Node, ICombineableSource, IHasLoadDiagramSta
     private List<LoadDiagramColumnNode> _anticipatedChildren = new();
     private List<DiscoveredColumn> _unplannedChildren = new();
 
-    public LoadDiagramTableNode(LoadDiagramDatabaseNode databaseNode, TableInfo tableInfo, LoadBubble bubble,
+    public LoadDiagramTableNode(LoadDiagramDatabaseNode databaseNode, Core.EntityFramework.Models.TableInfo tableInfo, LoadBubble bubble,
         HICDatabaseConfiguration config)
     {
         _databaseNode = databaseNode;

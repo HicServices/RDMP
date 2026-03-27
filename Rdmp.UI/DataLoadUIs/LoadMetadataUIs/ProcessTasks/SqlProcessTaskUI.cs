@@ -34,7 +34,7 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.ProcessTasks;
 public partial class SqlProcessTaskUI : SqlProcessTaskUI_Design, ISaveableUI
 {
     private Scintilla _scintilla;
-    private ProcessTask _processTask;
+    private Core.EntityFramework.Models.ProcessTask _processTask;
     private AutoCompleteProviderWin _autoComplete;
 
     public SqlProcessTaskUI()
@@ -43,20 +43,20 @@ public partial class SqlProcessTaskUI : SqlProcessTaskUI_Design, ISaveableUI
         AssociatedCollection = RDMPCollection.DataLoad;
     }
 
-    public override void SetDatabaseObject(IActivateItems activator, ProcessTask databaseObject)
+    public override void SetDatabaseObject(IActivateItems activator, Core.EntityFramework.Models.ProcessTask databaseObject)
     {
         base.SetDatabaseObject(activator, databaseObject);
         _processTask = databaseObject;
 
         LoadFile();
 
-        loadStageIconUI1.Setup(activator.CoreIconProvider, _processTask.LoadStage);
+        loadStageIconUI1.Setup(activator.CoreIconProvider, (LoadStage)_processTask.LoadStage);
         loadStageIconUI1.Left = tbID.Right + 2;
 
         CommonFunctionality.AddChecks(_processTask);
     }
 
-    protected override void SetBindings(BinderWithErrorProviderFactory rules, ProcessTask databaseObject)
+    protected override void SetBindings(BinderWithErrorProviderFactory rules, Core.EntityFramework.Models.ProcessTask databaseObject)
     {
         base.SetBindings(rules, databaseObject);
 
@@ -69,7 +69,7 @@ public partial class SqlProcessTaskUI : SqlProcessTaskUI_Design, ISaveableUI
 
     private void LoadFile()
     {
-        if (_processTask.ProcessTaskType == ProcessTaskType.SQLBakFile)
+        if ((ProcessTaskType)_processTask.ProcessTaskType == ProcessTaskType.SQLBakFile)
         {
             return;
         }
@@ -113,7 +113,7 @@ public partial class SqlProcessTaskUI : SqlProcessTaskUI_Design, ISaveableUI
             _autoComplete.Clear();
 
         foreach (var table in _processTask.LoadMetadata.GetDistinctTableInfoList(false))
-            _autoComplete.Add(table, _processTask.LoadStage);
+            _autoComplete.Add(table, (LoadStage)_processTask.LoadStage);
 
         _autoComplete.RegisterForEvents(_scintilla);
     }
@@ -138,7 +138,7 @@ public partial class SqlProcessTaskUI : SqlProcessTaskUI_Design, ISaveableUI
     {
         var ofd = new OpenFileDialog
         {
-            Filter = _processTask.ProcessTaskType == ProcessTaskType.SQLBakFile ? "BAK Files |*.bak" : "Sql Files|*.sql",
+            Filter = (ProcessTaskType)_processTask.ProcessTaskType == ProcessTaskType.SQLBakFile ? "BAK Files |*.bak" : "Sql Files|*.sql",
             CheckFileExists = true
         };
 
@@ -169,6 +169,6 @@ public partial class SqlProcessTaskUI : SqlProcessTaskUI_Design, ISaveableUI
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<SqlProcessTaskUI_Design, UserControl>))]
-public abstract class SqlProcessTaskUI_Design : RDMPSingleDatabaseObjectControl<ProcessTask>
+public abstract class SqlProcessTaskUI_Design : RDMPSingleDatabaseObjectControl<Core.EntityFramework.Models.ProcessTask>
 {
 }

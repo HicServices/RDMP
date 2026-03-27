@@ -30,7 +30,7 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.ProcessTasks;
 /// </summary>
 public partial class ExeProcessTaskUI : ExeProcessTaskUI_Design
 {
-    private ProcessTask _processTask;
+    private Core.EntityFramework.Models.ProcessTask _processTask;
     private ExecutableRuntimeTask _runtimeTask;
     private Task _runTask;
 
@@ -42,7 +42,7 @@ public partial class ExeProcessTaskUI : ExeProcessTaskUI_Design
         AssociatedCollection = RDMPCollection.DataLoad;
     }
 
-    public override void SetDatabaseObject(IActivateItems activator, ProcessTask databaseObject)
+    public override void SetDatabaseObject(IActivateItems activator, Core.EntityFramework.Models.ProcessTask databaseObject)
     {
         base.SetDatabaseObject(activator, databaseObject);
 
@@ -66,7 +66,7 @@ public partial class ExeProcessTaskUI : ExeProcessTaskUI_Design
 
         tbID.Text = _processTask.ID.ToString();
 
-        loadStageIconUI1.Setup(Activator.CoreIconProvider, _processTask.LoadStage);
+        loadStageIconUI1.Setup(Activator.CoreIconProvider, (LoadStage)_processTask.LoadStage);
         loadStageIconUI1.Left = tbID.Right + 2;
     }
 
@@ -78,7 +78,7 @@ public partial class ExeProcessTaskUI : ExeProcessTaskUI_Design
         //populate the UI with the args
         _runtimeTask =
             (ExecutableRuntimeTask)RuntimeTaskFactory.Create(_processTask,
-                argsDictionary.LoadArgs[_processTask.LoadStage]);
+                argsDictionary.LoadArgs[(LoadStage)_processTask.LoadStage]);
         tbExeCommand.Text = $"{_runtimeTask.ExeFilepath} {_runtimeTask.CreateArgString()}";
 
         return _runtimeTask;
@@ -146,6 +146,6 @@ public partial class ExeProcessTaskUI : ExeProcessTaskUI_Design
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ExeProcessTaskUI_Design, UserControl>))]
-public abstract class ExeProcessTaskUI_Design : RDMPSingleDatabaseObjectControl<ProcessTask>
+public abstract class ExeProcessTaskUI_Design : RDMPSingleDatabaseObjectControl<Core.EntityFramework.Models.ProcessTask>
 {
 }

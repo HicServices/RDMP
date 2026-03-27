@@ -17,12 +17,12 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandCreateNewClassBasedProcessTask : BasicCommandExecution
 {
-    private readonly LoadMetadata _loadMetadata;
+    private readonly EntityFramework.Models.LoadMetadata _loadMetadata;
     private readonly LoadStage _loadStage;
     private Type _type;
     private ProcessTaskType _processTaskType;
 
-    public ExecuteCommandCreateNewClassBasedProcessTask(IBasicActivateItems activator, LoadMetadata loadMetadata,
+    public ExecuteCommandCreateNewClassBasedProcessTask(IBasicActivateItems activator, EntityFramework.Models.LoadMetadata loadMetadata,
         LoadStage loadStage,
         [DemandsInitialization("Class to execute, must be an attacher, mutilater etc",
             TypeOf = typeof(IDisposeAfterDataLoad))]
@@ -72,17 +72,27 @@ public class ExecuteCommandCreateNewClassBasedProcessTask : BasicCommandExecutio
             else
                 return;
         }
-        var newTask = new ProcessTask(BasicActivator.RepositoryLocator.CatalogueDbContext, _loadMetadata, _loadStage)
+        var newTask = new EntityFramework.Models.ProcessTask()
         {
             Path = _type.FullName,
-            ProcessTaskType = _processTaskType,
-            Name = _type.Name
+            ProcessTaskType = (int)_processTaskType,
+            Name = _type.Name,
+            LoadMetadata = _loadMetadata,
+            LoadStage = (int)_loadStage
         };
-        newTask.SaveToDatabase();
+        BasicActivator.RepositoryLocator.CatalogueDbContext.Add(newTask);
+        BasicActivator.RepositoryLocator.CatalogueDbContext.SaveChanges();
+        //var newTask = new ProcessTask(BasicActivator.RepositoryLocator.CatalogueDbContext, _loadMetadata, _loadStage)
+        //{
+        //    Path = _type.FullName,
+        //    ProcessTaskType = _processTaskType,
+        //    Name = _type.Name
+        //};
+        //newTask.SaveToDatabase();
 
         newTask.CreateArgumentsForClassIfNotExists(_type);
 
         Publish(_loadMetadata);
-        Activate(newTask);
+        //Activate(newTask);
     }
 }

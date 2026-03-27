@@ -11,20 +11,20 @@ using Rdmp.UI.LoadExecutionUIs;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsLoadMetadata : RDMPCommandExecutionProposal<LoadMetadata>
+internal class ProposeExecutionWhenTargetIsLoadMetadata : RDMPCommandExecutionProposal<Core.EntityFramework.Models.LoadMetadata>
 {
     public ProposeExecutionWhenTargetIsLoadMetadata(IActivateItems itemActivator) : base(itemActivator)
     {
     }
 
-    public override bool CanActivate(LoadMetadata target) => true;
+    public override bool CanActivate(Core.EntityFramework.Models.LoadMetadata target) => true;
 
-    public override void Activate(LoadMetadata target)
+    public override void Activate(Core.EntityFramework.Models.LoadMetadata target)
     {
-        ItemActivator.Activate<ExecuteLoadMetadataUI, LoadMetadata>(target);
+        ItemActivator.Activate<ExecuteLoadMetadataUI, Core.EntityFramework.Models.LoadMetadata>(target);
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, LoadMetadata target,
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Core.EntityFramework.Models.LoadMetadata target,
         InsertOption insertOption = InsertOption.Default) =>
         //nothing can be dropped on Load Metadatas
         null;

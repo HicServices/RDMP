@@ -13,11 +13,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandChangeLoadStage : BasicCommandExecution
 {
-    private readonly ProcessTask _sourceProcessTask;
+    private readonly EntityFramework.Models.ProcessTask _sourceProcessTask;
     private readonly LoadStageNode _targetStage;
 
     [UseWithObjectConstructor]
-    public ExecuteCommandChangeLoadStage(IBasicActivateItems activator, ProcessTask processTask, LoadStage stage) :
+    public ExecuteCommandChangeLoadStage(IBasicActivateItems activator, EntityFramework.Models.ProcessTask processTask, LoadStage stage) :
         this(activator, new ProcessTaskCombineable(processTask), new LoadStageNode(processTask.LoadMetadata, stage))
     {
     }
@@ -31,7 +31,7 @@ public class ExecuteCommandChangeLoadStage : BasicCommandExecution
         if (sourceProcessTaskCombineable.ProcessTask.LoadMetadata_ID != targetStage.LoadMetadata.ID)
             SetImpossible("ProcessTask belongs to a different LoadMetadata");
 
-        if (!ProcessTask.IsCompatibleStage(_sourceProcessTask.ProcessTaskType, _targetStage.LoadStage))
+        if (!ProcessTask.IsCompatibleStage((ProcessTaskType)_sourceProcessTask.ProcessTaskType, _targetStage.LoadStage))
             SetImpossible($"Task type '{_sourceProcessTask.ProcessTaskType}' cannot run in {_targetStage.LoadStage}");
     }
 
@@ -39,8 +39,8 @@ public class ExecuteCommandChangeLoadStage : BasicCommandExecution
     {
         base.Execute();
 
-        _sourceProcessTask.LoadStage = _targetStage.LoadStage;
-        _sourceProcessTask.SaveToDatabase();
+        _sourceProcessTask.LoadStage = (int)_targetStage.LoadStage;
+        _sourceProcessTask.CatalogueDbContext.SaveChanges();
         Publish(_sourceProcessTask.LoadMetadata);
     }
 }

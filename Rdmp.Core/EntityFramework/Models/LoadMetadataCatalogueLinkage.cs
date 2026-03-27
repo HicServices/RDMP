@@ -18,10 +18,17 @@ namespace Rdmp.Core.EntityFramework.Models
         public int LoadMetadataID { get; set; }
         public int CatalogueID { get; set; }
 
+        public string Name { get; set; }
+
         [ForeignKey("CatalogueID")]
         public virtual Catalogue Catalogue{ get; set; }
 
         [ForeignKey("LoadMetadataID")]
         public virtual LoadMetadata LoadMetadata{ get; set; }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }

@@ -14,7 +14,7 @@ namespace Rdmp.UI.Menus;
 [System.ComponentModel.DesignerCategory("")]
 internal class LoadMetadataMenu : RDMPContextMenuStrip
 {
-    public LoadMetadataMenu(RDMPContextMenuStripArgs args, LoadMetadata loadMetadata) : base(args, loadMetadata)
+    public LoadMetadataMenu(RDMPContextMenuStripArgs args, Core.EntityFramework.Models.LoadMetadata loadMetadata) : base(args, loadMetadata)
     {
         Add(new ExecuteCommandEditLoadMetadataDescription(_activator, loadMetadata));
         Add(new ExecuteCommandViewLoadDiagram(_activator, loadMetadata));

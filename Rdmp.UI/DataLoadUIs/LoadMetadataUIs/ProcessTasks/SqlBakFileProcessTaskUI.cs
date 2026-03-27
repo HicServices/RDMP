@@ -29,7 +29,7 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.ProcessTasks;
 /// </summary>
 public partial class SqlBakFileProcessTaskUI : SqlBakFileProcessTask_Design, ISaveableUI
 {
-    private ProcessTask _processTask;
+    private Core.EntityFramework.Models.ProcessTask _processTask;
 
     public SqlBakFileProcessTaskUI()
     {
@@ -37,12 +37,12 @@ public partial class SqlBakFileProcessTaskUI : SqlBakFileProcessTask_Design, ISa
         AssociatedCollection = RDMPCollection.DataLoad;
     }
 
-    public override void SetDatabaseObject(IActivateItems activator, ProcessTask databaseObject)
+    public override void SetDatabaseObject(IActivateItems activator, Core.EntityFramework.Models.ProcessTask databaseObject)
     {
         base.SetDatabaseObject(activator, databaseObject);
         _processTask = databaseObject;
 
-        loadStageIconUI1.Setup(activator.CoreIconProvider, _processTask.LoadStage);
+        loadStageIconUI1.Setup(activator.CoreIconProvider, (LoadStage)_processTask.LoadStage);
         loadStageIconUI1.Left = tbID.Right + 2;
         if (!string.IsNullOrWhiteSpace(databaseObject.SerialisableConfiguration))
         {
@@ -57,7 +57,7 @@ public partial class SqlBakFileProcessTaskUI : SqlBakFileProcessTask_Design, ISa
         CommonFunctionality.AddChecks(_processTask);
     }
 
-    protected override void SetBindings(BinderWithErrorProviderFactory rules, ProcessTask databaseObject)
+    protected override void SetBindings(BinderWithErrorProviderFactory rules, Core.EntityFramework.Models.ProcessTask databaseObject)
     {
         base.SetBindings(rules, databaseObject);
 
@@ -123,6 +123,6 @@ public partial class SqlBakFileProcessTaskUI : SqlBakFileProcessTask_Design, ISa
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<SqlBakFileProcessTask_Design, UserControl>))]
-public abstract class SqlBakFileProcessTask_Design : RDMPSingleDatabaseObjectControl<ProcessTask>
+public abstract class SqlBakFileProcessTask_Design : RDMPSingleDatabaseObjectControl<Core.EntityFramework.Models.ProcessTask>
 {
 }

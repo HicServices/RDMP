@@ -11,7 +11,7 @@ namespace Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 
 public class LoadStageNode : Node, IOrderable
 {
-    public LoadMetadata LoadMetadata { get; }
+    public EntityFramework.Models.LoadMetadata LoadMetadata { get; }
     public LoadStage LoadStage { get; }
 
     //prevent reordering
@@ -21,7 +21,7 @@ public class LoadStageNode : Node, IOrderable
         set { }
     }
 
-    public LoadStageNode(LoadMetadata loadMetadata, LoadStage loadStage)
+    public LoadStageNode(EntityFramework.Models.LoadMetadata loadMetadata, LoadStage loadStage)
     {
         LoadMetadata = loadMetadata;
         LoadStage = loadStage;

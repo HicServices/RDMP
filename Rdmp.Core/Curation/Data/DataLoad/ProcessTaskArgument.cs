@@ -24,7 +24,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad;
 /// 
 /// <para>This all happens transparently by reflection and is handled at design time through PluginProcessTaskUI seamlessly</para>
 /// </summary>
-public sealed class ProcessTaskArgument : Argument
+public sealed class ProcessTaskArgument : Argument, IArgument
 {
     #region Database Properties
 

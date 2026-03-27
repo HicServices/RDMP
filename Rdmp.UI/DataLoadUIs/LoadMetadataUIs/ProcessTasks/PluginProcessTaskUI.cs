@@ -44,7 +44,7 @@ public partial class PluginProcessTaskUI : PluginProcessTaskUI_Design, ISaveable
 {
     private ArgumentCollectionUI _argumentCollection;
     private Type _underlyingType;
-    private ProcessTask _processTask;
+    private Core.EntityFramework.Models.ProcessTask _processTask;
     private readonly RAGSmileyToolStrip _ragSmiley;
 
     public PluginProcessTaskUI()
@@ -55,7 +55,7 @@ public partial class PluginProcessTaskUI : PluginProcessTaskUI_Design, ISaveable
         _ragSmiley = new RAGSmileyToolStrip();
     }
 
-    public override void SetDatabaseObject(IActivateItems activator, ProcessTask databaseObject)
+    public override void SetDatabaseObject(IActivateItems activator, Core.EntityFramework.Models.ProcessTask databaseObject)
     {
         _processTask = databaseObject;
         base.SetDatabaseObject(activator, databaseObject);
@@ -101,13 +101,13 @@ public partial class PluginProcessTaskUI : PluginProcessTaskUI_Design, ISaveable
 
         CheckComponent();
 
-        loadStageIconUI1.Setup(Activator.CoreIconProvider, _processTask.LoadStage);
+        loadStageIconUI1.Setup(Activator.CoreIconProvider, (LoadStage)_processTask.LoadStage);
 
         CommonFunctionality.Add(new ToolStripButton("Check", FamFamFamIcons.arrow_refresh.ImageToBitmap(),
             (s, e) => CheckComponent()));
     }
 
-    protected override void SetBindings(BinderWithErrorProviderFactory rules, ProcessTask databaseObject)
+    protected override void SetBindings(BinderWithErrorProviderFactory rules, Core.EntityFramework.Models.ProcessTask databaseObject)
     {
         base.SetBindings(rules, databaseObject);
 
@@ -125,7 +125,7 @@ public partial class PluginProcessTaskUI : PluginProcessTaskUI_Design, ISaveable
             var argsDictionary = new LoadArgsDictionary(lmd, new HICDatabaseConfiguration(lmd).DeployInfo);
             var mefTask =
                 (IMEFRuntimeTask)RuntimeTaskFactory.Create(_processTask,
-                    argsDictionary.LoadArgs[_processTask.LoadStage]);
+                    argsDictionary.LoadArgs[(LoadStage)_processTask.LoadStage]);
 
             _ragSmiley.StartChecking(mefTask.MEFPluginClassInstance);
         }
@@ -148,6 +148,6 @@ public partial class PluginProcessTaskUI : PluginProcessTaskUI_Design, ISaveable
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<PluginProcessTaskUI_Design, UserControl>))]
-public abstract class PluginProcessTaskUI_Design : RDMPSingleDatabaseObjectControl<ProcessTask>
+public abstract class PluginProcessTaskUI_Design : RDMPSingleDatabaseObjectControl<Core.EntityFramework.Models.ProcessTask>
 {
 }

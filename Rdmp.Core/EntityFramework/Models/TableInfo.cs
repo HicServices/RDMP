@@ -1,6 +1,7 @@
 ﻿using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.DataLoad.Extensions;
@@ -23,6 +24,7 @@ namespace Rdmp.Core.EntityFramework.Models
     [Table("TableInfo")]
     public class TableInfo : DatabaseObject, ITableInfo
     {
+
         [Key]
         public override int ID { get; set; }
 

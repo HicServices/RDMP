@@ -50,7 +50,7 @@ namespace Rdmp.Core.EntityFramework
         public DbSet<Models.Dataset> Datasets { get; set; }
         public DbSet<Models.TableInfo> TableInfos { get; set; }
         public DbSet<Models.Lookup> Lookups { get; set; }
-        public DbSet<Models.LoadMetadata> LoadMetadatas{ get; set; }
+        public DbSet<Models.LoadMetadata> LoadMetadatas { get; set; }
         public DbSet<Models.PipelineComponent> PipelineComponents { get; set; }
         public DbSet<Models.LookupCompositeJoinInfo> LookupCompositeJoinInfos { get; set; }
         public DbSet<ANOTable> ANOTables { get; set; }
@@ -60,7 +60,11 @@ namespace Rdmp.Core.EntityFramework
         public DbSet<Models.DashboardLayout> DashboardLayouts { get; set; }
         public DbSet<Models.DataAccessCredentials> DataAccessCredentials { get; set; }
         public DbSet<Models.ExternalDatabaseServer> ExternalDatabaseServers { get; set; }
-        public DbSet<Models.LoadMetadataCatalogueLinkage> LoadMetadataCatalogueLinkages{ get; set; }
+        public DbSet<Models.LoadMetadataCatalogueLinkage> LoadMetadataCatalogueLinkages { get; set; }
+        public DbSet<Models.ProcessTask> ProcessTasks { get; set; }
+        public DbSet<Models.ProcessTaskArgument> ProcessTaskArguments { get; set; }
+        public DbSet<Models.LoadProgress> LoadProgresses { get; set; }
+        public DbSet<Models.Setting> Settings{ get; set; }
 
         public T[] GetAllObjects<T>()
         {
@@ -110,7 +114,11 @@ namespace Rdmp.Core.EntityFramework
                 entity.HasKey(e => e.ID);
                 entity.Property(e => e.Name).IsRequired();
             });
-            
+            modelBuilder.Entity<Models.Setting>(entity =>
+            {
+                entity.HasKey(e => e.ID);
+            });
+
             modelBuilder.Entity<Models.CohortIdentificationConfiguration>(entity =>
             {
                 entity.HasKey(e => e.ID);
@@ -142,11 +150,14 @@ namespace Rdmp.Core.EntityFramework
             {
                 entity.HasKey(e => e.ID);
                 entity.HasMany(e => e.LoadMetadataCatalogueLinkages).WithOne(e => e.LoadMetadata).HasForeignKey(e => e.LoadMetadataID);
+                entity.HasMany(e => e.ProcessTasks).WithOne(e => e.LoadMetadata).HasForeignKey(e => e.LoadMetadata_ID);
+                entity.HasMany(e => e.LoadProgresses).WithOne(e => e.LoadMetadata).HasForeignKey(e => e.LoadMetadata_ID);
             });
             modelBuilder.Entity<Models.LoadMetadataCatalogueLinkage>(entity =>
             {
                 entity.HasKey(e => e.ID);
-                entity.HasOne(e => e.LoadMetadata).WithMany(e => e.LoadMetadataCatalogueLinkages).HasForeignKey(e => e.LoadMetadataID);
+                //entity.HasOne(e => e.LoadMetadata).WithMany(e => e.LoadMetadataCatalogueLinkages).HasForeignKey(e => e.LoadMetadataID);
+                //entity.HasOne(e => e.Catalogue).WithMany(e => e.LoadMetadataCatalogueLinkages).HasForeignKey(e => e.Catalogue);
             });
             modelBuilder.Entity<Models.DataAccessCredentials>(entity =>
             {
@@ -179,7 +190,23 @@ namespace Rdmp.Core.EntityFramework
                 entity.HasIndex(e => e.Name);
                 entity.HasIndex(e => e.Acronym);
                 entity.HasIndex(e => e.IsDeprecated);
-                entity.HasMany(e => e.LoadMetadataCatalogueLinkages).WithOne(e => e.Catalogue).HasForeignKey(e => e.LoadMetadataID);
+                entity.HasMany(e => e.LoadMetadataCatalogueLinkages).WithOne(e => e.Catalogue).HasForeignKey(e => e.CatalogueID);
+            });
+            modelBuilder.Entity<Models.ProcessTask>(entity =>
+            {
+                entity.HasKey(e => e.ID);
+                entity.HasOne(e => e.LoadMetadata).WithMany(e => e.ProcessTasks).HasForeignKey(e => e.LoadMetadata_ID);
+                entity.HasMany(e => e.ProcessTaskArguments).WithOne(e => e.ProcessTask);
+            });
+            modelBuilder.Entity<Models.ProcessTaskArgument>(entity =>
+            {
+                entity.HasKey(e => e.ID);
+                entity.HasOne(e => e.ProcessTask).WithMany(e => e.ProcessTaskArguments).HasForeignKey(e => e.ProcessTask_ID);
+            });
+            modelBuilder.Entity<Models.LoadProgress>(entity =>
+            {
+                entity.HasKey(e => e.ID);
+                entity.HasOne(e => e.LoadMetadata).WithMany(e => e.LoadProgresses).HasForeignKey(e => e.LoadMetadata_ID);
             });
         }
 
@@ -361,10 +388,11 @@ namespace Rdmp.Core.EntityFramework
             {
                 return StandardRegexes.ToList();
             }
-            if(obj is FolderNode<Models.LoadMetadata> lmdf){
+            if (obj is FolderNode<Models.LoadMetadata> lmdf)
+            {
                 return lmdf.ChildFolders.Cast<object>().Union(lmdf.ChildObjects);
             }
-            if(obj is LoadMetadata lmd)
+            if (obj is LoadMetadata lmd)
             {
                 return new List<object>()
                 {
@@ -375,25 +403,40 @@ namespace Rdmp.Core.EntityFramework
                     new LoadDirectoryNode(lmd)
                 };
             }
-            if(obj is LoadMetadataScheduleNode lmdsn)
+            if (obj is LoadMetadataScheduleNode lmdsn)
             {
                 //todo
             }
-            if(obj is AllCataloguesUsedByLoadMetadataNode acublmdn)
+            if (obj is AllCataloguesUsedByLoadMetadataNode acublmdn)
             {
                 return LoadMetadataCatalogueLinkages.Where(link => link.LoadMetadataID == acublmdn.LoadMetadata.ID).Select(lmcl => lmcl.Catalogue).ToList();
             }
-            if(obj is LoadMetadataVersionNode lmdvn)
+            if (obj is LoadMetadataVersionNode lmdvn)
             {
 
             }
-            if(obj is AllProcessTasksUsedByLoadMetadataNode aptublnmd)
+            if (obj is AllProcessTasksUsedByLoadMetadataNode aptublnmd)
             {
+                return new List<LoadStageNode>()
+                {
+                    new LoadStageNode(aptublnmd.LoadMetadata,Curation.Data.DataLoad.LoadStage.GetFiles),
+                    new LoadStageNode(aptublnmd.LoadMetadata,Curation.Data.DataLoad.LoadStage.Mounting),
+                    new LoadStageNode(aptublnmd.LoadMetadata,Curation.Data.DataLoad.LoadStage.AdjustStaging),
+                    new LoadStageNode(aptublnmd.LoadMetadata,Curation.Data.DataLoad.LoadStage.AdjustStaging),
+                    new LoadStageNode(aptublnmd.LoadMetadata,Curation.Data.DataLoad.LoadStage.PostLoad)
+                };
+            }
+            if (obj is LoadStageNode lsn)
+            {
+                return ProcessTasks.Where(task => task.LoadMetadata_ID == lsn.LoadMetadata.ID && (Curation.Data.DataLoad.LoadStage)task.LoadStage == lsn.LoadStage).ToList();
 
             }
-            if(obj is LoadDirectoryNode ldn)
+            if (obj is ProcessTask pt)
             {
-
+                return ProcessTaskArguments.Where(pta => pta.ProcessTask_ID == pt.ID).ToList();
+            }
+            if (obj is LoadDirectoryNode ldn)
+            {
             }
             return new List<string>() { };
         }

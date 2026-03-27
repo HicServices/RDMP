@@ -21,13 +21,13 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 public class ExecuteCommandCreateNewFileBasedProcessTask : BasicCommandExecution
 {
     private readonly ProcessTaskType _taskType;
-    private readonly LoadMetadata _loadMetadata;
+    private readonly EntityFramework.Models.LoadMetadata _loadMetadata;
     private readonly LoadStage _loadStage;
     private readonly LoadDirectory _loadDirectory;
     private FileInfo _file;
 
     public ExecuteCommandCreateNewFileBasedProcessTask(IBasicActivateItems activator, ProcessTaskType taskType,
-        LoadMetadata loadMetadata, LoadStage loadStage, FileInfo file = null) : base(activator)
+        EntityFramework.Models.LoadMetadata loadMetadata, LoadStage loadStage, FileInfo file = null) : base(activator)
     {
         _taskType = taskType;
         _loadMetadata = loadMetadata;
@@ -96,12 +96,12 @@ public class ExecuteCommandCreateNewFileBasedProcessTask : BasicCommandExecution
                 throw new ArgumentOutOfRangeException($"Unexpected _taskType:{_taskType}");
             }
         }
-        var task = new ProcessTask(_loadMetadata.CatalogueDbContext, _loadMetadata, _loadStage)
-        {
-            ProcessTaskType = _taskType,
-            Path = _file.FullName
-        };
-        SaveAndShow(task);
+        //var task = new ProcessTask(_loadMetadata.CatalogueDbContext, _loadMetadata, _loadStage)
+        //{
+        //    ProcessTaskType = _taskType,
+        //    Path = _file.FullName
+        //};
+        //SaveAndShow(task);
     }
 
     private void SaveAndShow(ProcessTask task)

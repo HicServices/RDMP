@@ -18,9 +18,9 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
 internal class ExecuteCommandViewLoadDiagram : BasicUICommandExecution, IAtomicCommand
 {
-    private readonly LoadMetadata _loadMetadata;
+    private readonly Core.EntityFramework.Models.LoadMetadata _loadMetadata;
 
-    public ExecuteCommandViewLoadDiagram(IActivateItems activator, LoadMetadata loadMetadata) : base(activator)
+    public ExecuteCommandViewLoadDiagram(IActivateItems activator, Core.EntityFramework.Models.LoadMetadata loadMetadata) : base(activator)
     {
         _loadMetadata = loadMetadata;
 
@@ -34,6 +34,6 @@ internal class ExecuteCommandViewLoadDiagram : BasicUICommandExecution, IAtomicC
     {
         base.Execute();
 
-        Activator.Activate<LoadDiagramUI, LoadMetadata>(_loadMetadata);
+        Activator.Activate<LoadDiagramUI, Core.EntityFramework.Models.LoadMetadata>(_loadMetadata);
     }
 }

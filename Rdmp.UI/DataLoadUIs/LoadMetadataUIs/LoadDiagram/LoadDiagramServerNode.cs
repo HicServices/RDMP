@@ -27,11 +27,11 @@ public class LoadDiagramServerNode : TableInfoServerNode, IKnowWhatIAm, IOrderab
 
     public string ErrorDescription { get; private set; }
 
-    private Dictionary<DiscoveredDatabase, TableInfo[]> _liveDatabaseDictionary;
+    private Dictionary<DiscoveredDatabase, Core.EntityFramework.Models.TableInfo[]> _liveDatabaseDictionary;
 
     public readonly List<LoadDiagramDatabaseNode> Children = new();
 
-    public LoadDiagramServerNode(LoadBubble bubble, DiscoveredDatabase database, TableInfo[] loadTables,
+    public LoadDiagramServerNode(LoadBubble bubble, DiscoveredDatabase database, Core.EntityFramework.Models.TableInfo[] loadTables,
         HICDatabaseConfiguration config)
         : base(database.Server.Name, database.Server.DatabaseType, loadTables)
     {
@@ -61,7 +61,7 @@ public class LoadDiagramServerNode : TableInfoServerNode, IKnowWhatIAm, IOrderab
 
             var databases = loadTables.Select(t => t.GetDatabaseRuntimeName()).Distinct().ToArray();
 
-            _liveDatabaseDictionary = new Dictionary<DiscoveredDatabase, TableInfo[]>();
+            _liveDatabaseDictionary = new Dictionary<DiscoveredDatabase, Core.EntityFramework.Models.TableInfo[]>();
 
             foreach (var dbname in databases)
                 _liveDatabaseDictionary.Add(_database.Server.ExpectDatabase(dbname),

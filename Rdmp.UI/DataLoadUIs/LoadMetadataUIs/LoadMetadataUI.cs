@@ -26,7 +26,7 @@ public partial class LoadMetadataUI : LoadMetadataUI_Design, ISaveableUI
         AssociatedCollection = RDMPCollection.DataLoad;
     }
 
-    protected override void SetBindings(BinderWithErrorProviderFactory rules, LoadMetadata databaseObject)
+    protected override void SetBindings(BinderWithErrorProviderFactory rules, Core.EntityFramework.Models.LoadMetadata databaseObject)
     {
         base.SetBindings(rules, databaseObject);
 
@@ -37,6 +37,6 @@ public partial class LoadMetadataUI : LoadMetadataUI_Design, ISaveableUI
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<LoadMetadataUI_Design, UserControl>))]
-public abstract class LoadMetadataUI_Design : RDMPSingleDatabaseObjectControl<LoadMetadata>
+public abstract class LoadMetadataUI_Design : RDMPSingleDatabaseObjectControl<Core.EntityFramework.Models.LoadMetadata>
 {
 }

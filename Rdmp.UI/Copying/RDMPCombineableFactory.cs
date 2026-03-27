@@ -134,8 +134,8 @@ public class RDMPCombineableFactory : ICombineableFactory
         if (modelObject is DataAccessCredentials dataAccessCredentials)
             return new DataAccessCredentialsCombineable(dataAccessCredentials);
 
-        if (modelObject is ProcessTask processTask)
-            return new ProcessTaskCombineable(processTask);
+        //if (modelObject is ProcessTask processTask)
+        //    return new ProcessTaskCombineable(processTask);
 
         if (modelObject is CacheProgress cacheProgress)
             return new CacheProgressCombineable(cacheProgress);

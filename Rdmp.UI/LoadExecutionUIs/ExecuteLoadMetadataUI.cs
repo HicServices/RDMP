@@ -34,7 +34,7 @@ namespace Rdmp.UI.LoadExecutionUIs;
 /// </summary>
 public partial class ExecuteLoadMetadataUI : DatasetLoadControl_Design
 {
-    private LoadMetadata _loadMetadata;
+    private Core.EntityFramework.Models.LoadMetadata _loadMetadata;
     private ILoadProgress[] _allLoadProgresses;
 
     private ToolStripComboBox dd_DebugOptions = new();
@@ -66,7 +66,7 @@ public partial class ExecuteLoadMetadataUI : DatasetLoadControl_Design
         dd_DebugOptions.ComboBox.DataSource = Enum.GetValues(typeof(DebugOptions));
     }
 
-    public override void SetDatabaseObject(IActivateItems activator, LoadMetadata databaseObject)
+    public override void SetDatabaseObject(IActivateItems activator, Core.EntityFramework.Models.LoadMetadata databaseObject)
     {
         base.SetDatabaseObject(activator, databaseObject);
         _loadMetadata = databaseObject;
@@ -78,7 +78,7 @@ public partial class ExecuteLoadMetadataUI : DatasetLoadControl_Design
         if (activator.IsInteractive)
         {
             var showYestoAllNotoAlldataloadcheck = false;
-            var showYestoAllNotoAlldataloadcheckSetting = activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Setting>().FirstOrDefault(static s => s.Key == "ToggleYestoAllNotoAlldataloadcheck");
+            var showYestoAllNotoAlldataloadcheckSetting = activator.RepositoryLocator.CatalogueDbContext.Settings.FirstOrDefault(static s => s.Key == "ToggleYestoAllNotoAlldataloadcheck");
             if (showYestoAllNotoAlldataloadcheckSetting is not null) showYestoAllNotoAlldataloadcheck = Convert.ToBoolean(showYestoAllNotoAlldataloadcheckSetting.Value);
             checkAndExecuteUI1.AllowsYesNoToAll = showYestoAllNotoAlldataloadcheck;
         }
@@ -92,14 +92,14 @@ public partial class ExecuteLoadMetadataUI : DatasetLoadControl_Design
 
         CommonFunctionality.AddToMenu(new ExecuteCommandEditLoadMetadataDescription(activator, _loadMetadata));
 
-        CommonFunctionality.Add(new ExecuteCommandViewLogs(activator, (LoadMetadata)databaseObject));
+        CommonFunctionality.Add(new ExecuteCommandViewLogs(activator, databaseObject));
 
         CommonFunctionality.Add(dd_DebugOptions);
     }
 
     private void SetLoadProgressGroupBoxState()
     {
-        _allLoadProgresses = _loadMetadata.LoadProgresses;
+        _allLoadProgresses = _loadMetadata.LoadProgresses.ToArray();
 
         if (_allLoadProgresses.Any())
         {
@@ -203,6 +203,6 @@ public partial class ExecuteLoadMetadataUI : DatasetLoadControl_Design
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<DatasetLoadControl_Design, UserControl>))]
-public abstract class DatasetLoadControl_Design : RDMPSingleDatabaseObjectControl<LoadMetadata>
+public abstract class DatasetLoadControl_Design : RDMPSingleDatabaseObjectControl<Core.EntityFramework.Models.LoadMetadata>
 {
 }

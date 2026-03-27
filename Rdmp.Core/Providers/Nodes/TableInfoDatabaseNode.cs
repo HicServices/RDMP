@@ -15,11 +15,11 @@ public class TableInfoDatabaseNode : Node
 {
     public TableInfoServerNode Server { get; }
     public string DatabaseName { get; }
-    public TableInfo[] Tables { get; }
+    public Core.EntityFramework.Models.TableInfo[] Tables { get; }
 
     public const string NullDatabaseNode = "Null Database";
 
-    public TableInfoDatabaseNode(string databaseName, TableInfoServerNode server, IEnumerable<TableInfo> tables)
+    public TableInfoDatabaseNode(string databaseName, TableInfoServerNode server, IEnumerable<Core.EntityFramework.Models.TableInfo> tables)
     {
         Server = server;
         Tables = tables.ToArray();

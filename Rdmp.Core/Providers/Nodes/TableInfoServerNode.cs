@@ -16,11 +16,11 @@ public class TableInfoServerNode : Node
 {
     public readonly DatabaseType DatabaseType;
     public string ServerName { get; }
-    public TableInfo[] Tables { get; }
+    public Core.EntityFramework.Models.TableInfo[] Tables { get; }
 
     public const string NullServerNode = "Null Server";
 
-    public TableInfoServerNode(string serverName, DatabaseType databaseType, IEnumerable<TableInfo> tables)
+    public TableInfoServerNode(string serverName, DatabaseType databaseType, IEnumerable<Core.EntityFramework.Models.TableInfo> tables)
     {
         DatabaseType = databaseType;
         ServerName = serverName ?? NullServerNode;

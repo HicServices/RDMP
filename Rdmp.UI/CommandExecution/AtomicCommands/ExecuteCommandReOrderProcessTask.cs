@@ -14,7 +14,7 @@ internal class ExecuteCommandReOrderProcessTask : BasicUICommandExecution
 {
     private readonly ProcessTask _targetProcessTask;
     private readonly InsertOption _insertOption;
-    private ProcessTask _sourceProcessTask;
+    private Core.EntityFramework.Models.ProcessTask _sourceProcessTask;
 
     public ExecuteCommandReOrderProcessTask(IActivateItems activator,
         ProcessTaskCombineable sourceProcessTaskCombineable, ProcessTask targetProcessTask,
@@ -26,7 +26,7 @@ internal class ExecuteCommandReOrderProcessTask : BasicUICommandExecution
 
         if (_sourceProcessTask.LoadMetadata_ID != targetProcessTask.LoadMetadata_ID)
             SetImpossible("ProcessTasks must belong to the same Load");
-        else if (_sourceProcessTask.LoadStage != targetProcessTask.LoadStage)
+        else if ((LoadStage)_sourceProcessTask.LoadStage != targetProcessTask.LoadStage)
             SetImpossible("ProcessTasks must belong in the same LoadStage to be ReOrdered");
         else if (_insertOption == InsertOption.Default)
             SetImpossible("Drag above or below to ReOrder");

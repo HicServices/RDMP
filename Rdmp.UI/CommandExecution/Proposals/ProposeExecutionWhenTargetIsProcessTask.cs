@@ -11,33 +11,33 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsProcessTask : RDMPCommandExecutionProposal<ProcessTask>
+internal class ProposeExecutionWhenTargetIsProcessTask : RDMPCommandExecutionProposal<Core.EntityFramework.Models.ProcessTask>
 {
     public ProposeExecutionWhenTargetIsProcessTask(IActivateItems itemActivator) : base(itemActivator)
     {
     }
 
-    public override bool CanActivate(ProcessTask target) => true;
+    public override bool CanActivate(Core.EntityFramework.Models.ProcessTask target) => true;
 
-    public override void Activate(ProcessTask processTask)
+    public override void Activate(Core.EntityFramework.Models.ProcessTask processTask)
     {
         if (processTask.IsPluginType())
-            ItemActivator.Activate<PluginProcessTaskUI, ProcessTask>(processTask);
+            ItemActivator.Activate<PluginProcessTaskUI, Core.EntityFramework.Models.ProcessTask>(processTask);
 
-        switch (processTask.ProcessTaskType)
+        switch ((ProcessTaskType)processTask.ProcessTaskType)
         {
             case ProcessTaskType.Executable:
-                ItemActivator.Activate<ExeProcessTaskUI, ProcessTask>(processTask);
+                ItemActivator.Activate<ExeProcessTaskUI, Core.EntityFramework.Models.ProcessTask>(processTask);
                 break;
             case ProcessTaskType.SQLFile:
-                ItemActivator.Activate<SqlProcessTaskUI, ProcessTask>(processTask);
+                ItemActivator.Activate<SqlProcessTaskUI, Core.EntityFramework.Models.ProcessTask>(processTask);
                 break;
             case ProcessTaskType.SQLBakFile:
-                ItemActivator.Activate<SqlBakFileProcessTaskUI, ProcessTask>(processTask);
+                ItemActivator.Activate<SqlBakFileProcessTaskUI, Core.EntityFramework.Models.ProcessTask>(processTask);
                 break;
         }
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ProcessTask target,
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Core.EntityFramework.Models.ProcessTask target,
         InsertOption insertOption = InsertOption.Default) => null;
 }

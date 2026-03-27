@@ -51,7 +51,7 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram;
 /// </summary>
 public partial class LoadDiagramUI : LoadDiagram_Design
 {
-    private LoadMetadata _loadMetadata;
+    private Core.EntityFramework.Models.LoadMetadata _loadMetadata;
     private DragDropProvider _dragDropProvider;
     private LoadDiagramServerNode _raw;
     private readonly RDMPCollectionCommonFunctionality _collectionCommonFunctionality = new();
@@ -209,7 +209,7 @@ public partial class LoadDiagramUI : LoadDiagram_Design
         if (_loadMetadata == null)
             return;
 
-        TableInfo[] allTables;
+        Core.EntityFramework.Models.TableInfo[] allTables;
         HICDatabaseConfiguration config;
 
         try
@@ -262,7 +262,7 @@ public partial class LoadDiagramUI : LoadDiagram_Design
         tlvLoadedTables.RebuildAll(true);
     }
 
-    public override void SetDatabaseObject(IActivateItems activator, LoadMetadata databaseObject)
+    public override void SetDatabaseObject(IActivateItems activator, Core.EntityFramework.Models.LoadMetadata databaseObject)
     {
         base.SetDatabaseObject(activator, databaseObject);
 
@@ -352,6 +352,6 @@ public partial class LoadDiagramUI : LoadDiagram_Design
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<LoadDiagram_Design, UserControl>))]
-public abstract class LoadDiagram_Design : RDMPSingleDatabaseObjectControl<LoadMetadata>
+public abstract class LoadDiagram_Design : RDMPSingleDatabaseObjectControl<Core.EntityFramework.Models.LoadMetadata>
 {
 }
