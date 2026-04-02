@@ -10,6 +10,7 @@ using System.Linq;
 using System.Reflection;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.EntityFramework.Helpers;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
 using Terminal.Gui;
@@ -34,34 +35,34 @@ internal class ConsoleGuiEdit : Window
         //    TableCatalogueDbContext.GetPropertyInfos(DatabaseObject.GetType())
         //        .Select(p => new PropertyInListView(p, DatabaseObject)).ToList();
 
-        //list = new ListView(collection)
-        //{
-        //    X = 0,
-        //    Y = 0,
-        //    Width = Dim.Fill(2),
-        //    Height = Dim.Fill(2)
-        //};
-        //list.KeyPress += List_KeyPress;
+        list = new ListView(new List<DatabaseObject>() { })// collection)
+        {
+            X = 0,
+            Y = 0,
+            Width = Dim.Fill(2),
+            Height = Dim.Fill(2)
+        };
+        list.KeyPress += List_KeyPress;
 
-        //var btnSet = new Button("Set")
-        //{
-        //    X = 0,
-        //    Y = Pos.Bottom(list),
-        //    IsDefault = true
-        //};
+        var btnSet = new Button("Set")
+        {
+            X = 0,
+            Y = Pos.Bottom(list),
+            IsDefault = true
+        };
 
-        //btnSet.Clicked += () => { SetProperty(false); };
+        btnSet.Clicked += () => { SetProperty(false); };
 
-        //var btnClose = new Button("Close")
-        //{
-        //    X = Pos.Right(btnSet),
-        //    Y = Pos.Bottom(list)
-        //};
-        //btnClose.Clicked += () => Application.RequestStop();
+        var btnClose = new Button("Close")
+        {
+            X = Pos.Right(btnSet),
+            Y = Pos.Bottom(list)
+        };
+        btnClose.Clicked += () => Application.RequestStop();
 
-        //Add(list);
-        //Add(btnSet);
-        //Add(btnClose);
+        Add(list);
+        Add(btnSet);
+        Add(btnClose);
     }
 
     private void SetProperty(bool setNull)
