@@ -167,22 +167,22 @@ internal class Program
 
         start.DatabaseFound += (s, e) =>
         {
-            var db = e.CatalogueDbContext.DiscoveredServer.GetCurrentDatabase();
+            //var db = e.CatalogueDbContext.DiscoveredServer.GetCurrentDatabase();
 
-            switch (e.Status)
-            {
-                case Startup.Events.RDMPPlatformDatabaseStatus.RequiresPatching:
-                    {
-                        var mds = new MasterDatabaseScriptExecutor(db);
-                        mds.PatchDatabase(e.Patcher, checker, p => true, () => opts.BackupDatabase);
-                        break;
-                    }
-                case <= Startup.Events.RDMPPlatformDatabaseStatus.Broken:
-                    checker.OnCheckPerformed(new CheckEventArgs($"Database {db} had status {e.Status}",
-                        CheckResult.Fail));
-                    badTimes = true;
-                    break;
-            }
+            //switch (e.Status)
+            //{
+            //    case Startup.Events.RDMPPlatformDatabaseStatus.RequiresPatching:
+            //        {
+            //            var mds = new MasterDatabaseScriptExecutor(db);
+            //            mds.PatchDatabase(e.Patcher, checker, p => true, () => opts.BackupDatabase);
+            //            break;
+            //        }
+            //    case <= Startup.Events.RDMPPlatformDatabaseStatus.Broken:
+            //        checker.OnCheckPerformed(new CheckEventArgs($"Database {db} had status {e.Status}",
+            //            CheckResult.Fail));
+            //        badTimes = true;
+            //        break;
+            //}
         };
 
         start.DoStartup(IgnoreAllErrorsCheckNotifier.Instance);

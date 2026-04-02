@@ -38,7 +38,7 @@ internal class ConsoleGuiActivator : BasicActivateItems
     public event Action<IMapsDirectlyToDatabaseTable> Published;
 
     public ConsoleGuiActivator(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
-        ICheckNotifier globalErrorCheckNotifier) : base(repositoryLocator, globalErrorCheckNotifier)
+        ICheckNotifier globalErrorCheckNotifier) : base(repositoryLocator.CatalogueDbContext,repositoryLocator.DataExportDbContext, globalErrorCheckNotifier)
     {
         InteractiveDeletes = true;
     }
