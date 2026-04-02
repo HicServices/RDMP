@@ -43,7 +43,7 @@ public class PersistableSingleDatabaseObjectDockContent : RDMPSingleControlTab
         TabText = "Loading...";
 
         control.UnSavedChanges += OnUnSavedChanges;
-        Closing += (s, e) => control.UnSavedChanges -= OnUnSavedChanges;
+        FormClosing += (s, e) => control.UnSavedChanges -= OnUnSavedChanges;
     }
 
     private void OnUnSavedChanges(object sender, bool unsavedChanges)

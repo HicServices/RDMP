@@ -59,12 +59,12 @@ public partial class PopupChecksUI : Form, ICheckNotifier
         return checksUI1.OnCheckPerformed(args);
     }
 
-    protected override void OnClosed(EventArgs e)
+    protected override void OnFormClosed(FormClosedEventArgs e)
     {
         if (_haveDemandedVisibility)
             checksUI1.TerminateWithExtremePrejudice();
 
-        base.OnClosed(e);
+        base.OnFormClosed(e);
     }
 
     public void Check(ICheckable checkable)
