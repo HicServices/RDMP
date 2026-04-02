@@ -89,7 +89,7 @@ internal partial class CreateNewCohortDatabaseWizardUI : RDMPUserControl
         }
 
         Wizard = new CreateNewCohortDatabaseWizard(db, Activator.RepositoryLocator.CatalogueDbContext,
-            Activator.RepositoryLocator.DataExportRepository, cbAllowNullReleaseIdentifiers.Checked);
+            Activator.RepositoryLocator.DataExportDbContext, cbAllowNullReleaseIdentifiers.Checked);
 
         var popup = new PopupChecksUI("Creating Cohort Table", false);
         ExternalCohortTableCreatedIfAny = Wizard.CreateDatabase(PrivateIdentifierPrototype, popup);

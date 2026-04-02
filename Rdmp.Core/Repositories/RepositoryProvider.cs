@@ -21,7 +21,7 @@ public class RepositoryProvider : IRDMPPlatformRepositoryServiceLocator
 {
     public IDataExportRepository DataExportRepository { get; protected init; }
     public RDMPDbContext CatalogueDbContext { get; set; }
-    public RDMPDbContext DataExportDbContext { get; set; }
+    public DataExportDbContext DataExportDbContext { get; set; }
     RDMPDbContext RDMPDbContextServiceLocator.DataExportRepository { get; set; }
 
     /// <summary>
@@ -31,13 +31,14 @@ public class RepositoryProvider : IRDMPPlatformRepositoryServiceLocator
     /// 
     /// </summary>
     /// <param name="catalogueDbContext"></param>
-    public RepositoryProvider(RDMPDbContext catalogueDbContext)
+    /// <param name="dataExportContext"></param>
+    public RepositoryProvider(RDMPDbContext catalogueDbContext, DataExportDbContext dataExportContext)
     {
         CatalogueDbContext = catalogueDbContext;
-        DataExportDbContext = catalogueDbContext;//dataExportRepository;
-        var b = new SqlConnectionStringBuilder();
-        b.ConnectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=RDMP_DataExport;Integrated Security=True;Trust Server Certificate=True; MultipleActiveResultSets=true";
-        DataExportRepository = new DataExportRepository(b,catalogueDbContext);
+        DataExportDbContext = dataExportContext;
+        //var b = new SqlConnectionStringBuilder();
+        //b.ConnectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=RDMP_DataExport;Integrated Security=True;Trust Server Certificate=True; MultipleActiveResultSets=true";
+        //DataExportRepository = new DataExportRepository(b,catalogueDbContext);
         Console.WriteLine("Initialized RepositoryProvider with CatalogueDbContext and DataExportRepository");
     }
 

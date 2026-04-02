@@ -120,7 +120,7 @@ public class WindowManager
                 break;
 
             case RDMPCollection.DataExport:
-                if (RepositoryLocator.DataExportRepository == null)
+                if (RepositoryLocator.DataExportDbContext == null)
                 {
                     WideMessageBox.Show("Data export database unavailable",
                         "Cannot create DataExport Toolbox because DataExportRepository has not been set/created yet");

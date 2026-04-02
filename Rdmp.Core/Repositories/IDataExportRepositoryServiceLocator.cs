@@ -14,5 +14,5 @@ namespace Rdmp.Core.Repositories;
 public interface IDataExportRepositoryServiceLocator
 {
     //IDataExportRepository DataExportRepository { get; }
-    RDMPDbContext DataExportDbContext { get; set; }
+    DataExportDbContext DataExportDbContext { get; set; }
 }

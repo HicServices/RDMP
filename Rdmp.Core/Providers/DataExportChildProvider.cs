@@ -295,24 +295,24 @@ public class DataExportChildProvider : CatalogueChildProvider
 
     private void AddChildren(Project project, DescendancyList descendancy)
     {
-        var children = new HashSet<object>();
+        //var children = new HashSet<object>();
 
-        var projectCohortNode = new ProjectCohortsNode(project);
-        children.Add(projectCohortNode);
-        AddChildren(projectCohortNode, descendancy.Add(projectCohortNode));
+        //var projectCohortNode = new ProjectCohortsNode(project);
+        //children.Add(projectCohortNode);
+        //AddChildren(projectCohortNode, descendancy.Add(projectCohortNode));
 
-        var projectCataloguesNode = new ProjectCataloguesNode(project);
-        children.Add(projectCataloguesNode);
-        AddChildren(projectCataloguesNode, descendancy.Add(projectCataloguesNode).SetNewBestRoute());
+        //var projectCataloguesNode = new ProjectCataloguesNode(project);
+        //children.Add(projectCataloguesNode);
+        //AddChildren(projectCataloguesNode, descendancy.Add(projectCataloguesNode).SetNewBestRoute());
 
-        var extractionConfigurationsNode = new ExtractionConfigurationsNode(project);
-        children.Add(extractionConfigurationsNode);
+        //var extractionConfigurationsNode = new ExtractionConfigurationsNode(project);
+        //children.Add(extractionConfigurationsNode);
 
-        AddChildren(extractionConfigurationsNode, descendancy.Add(extractionConfigurationsNode));
+        //AddChildren(extractionConfigurationsNode, descendancy.Add(extractionConfigurationsNode));
 
-        var folder = new ExtractionDirectoryNode(project);
-        children.Add(folder);
-        AddToDictionaries(children, descendancy);
+        //var folder = new ExtractionDirectoryNode(project);
+        //children.Add(folder);
+        //AddToDictionaries(children, descendancy);
     }
 
     private void AddChildren(ProjectCataloguesNode projectCataloguesNode, DescendancyList descendancy)
@@ -343,25 +343,25 @@ public class DataExportChildProvider : CatalogueChildProvider
 
     private void AddChildren(ProjectCohortsNode projectCohortsNode, DescendancyList descendancy)
     {
-        var children = new HashSet<object>();
-        var projectCiCsNode = new ProjectCohortIdentificationConfigurationAssociationsNode(projectCohortsNode.Project);
-        children.Add(projectCiCsNode);
-        AddChildren(projectCiCsNode, descendancy.Add(projectCiCsNode));
+        //var children = new HashSet<object>();
+        //var projectCiCsNode = new ProjectCohortIdentificationConfigurationAssociationsNode(projectCohortsNode.Project);
+        //children.Add(projectCiCsNode);
+        //AddChildren(projectCiCsNode, descendancy.Add(projectCiCsNode));
 
-        var savedCohortsNode = new ProjectSavedCohortsNode(projectCohortsNode.Project);
-        children.Add(savedCohortsNode);
-        AddChildren(savedCohortsNode, descendancy.Add(savedCohortsNode));
+        //var savedCohortsNode = new ProjectSavedCohortsNode(projectCohortsNode.Project);
+        //children.Add(savedCohortsNode);
+        //AddChildren(savedCohortsNode, descendancy.Add(savedCohortsNode));
 
-        var associatedCohortConfigurations = new CommittedCohortIdentificationNode(projectCohortsNode.Project);
-        children.Add(associatedCohortConfigurations);
-        AddChildren(associatedCohortConfigurations, descendancy.Add(associatedCohortConfigurations));
+        //var associatedCohortConfigurations = new CommittedCohortIdentificationNode(projectCohortsNode.Project);
+        //children.Add(associatedCohortConfigurations);
+        //AddChildren(associatedCohortConfigurations, descendancy.Add(associatedCohortConfigurations));
 
 
-        var associatedTemplatesNode = new AssociatedCohortIdentificationTemplatesNode(projectCohortsNode.Project);
-        children.Add(associatedTemplatesNode);
-        AddChildren(associatedTemplatesNode, descendancy.Add(associatedTemplatesNode));
+        //var associatedTemplatesNode = new AssociatedCohortIdentificationTemplatesNode(projectCohortsNode.Project);
+        //children.Add(associatedTemplatesNode);
+        //AddChildren(associatedTemplatesNode, descendancy.Add(associatedTemplatesNode));
 
-        AddToDictionaries(children, descendancy);
+        //AddToDictionaries(children, descendancy);
     }
 
     private void AddChildren(AssociatedCohortIdentificationTemplatesNode associatedCohortIdentificationTemplatesNode, DescendancyList descendancy)
@@ -440,23 +440,23 @@ public class DataExportChildProvider : CatalogueChildProvider
         var children = new HashSet<object>();
 
         //Create a frozen extraction configurations folder as a subfolder of each ExtractionConfigurationsNode
-        var frozenConfigurationsNode = new FrozenExtractionConfigurationsNode(extractionConfigurationsNode.Project);
+        //var frozenConfigurationsNode = new FrozenExtractionConfigurationsNode(extractionConfigurationsNode.Project);
 
-        //Make the frozen folder appear under the extractionConfigurationsNode
-        children.Add(frozenConfigurationsNode);
+        ////Make the frozen folder appear under the extractionConfigurationsNode
+        //children.Add(frozenConfigurationsNode);
 
-        //Add children to the frozen folder
-        AddChildren(frozenConfigurationsNode, descendancy.Add(frozenConfigurationsNode));
+        ////Add children to the frozen folder
+        //AddChildren(frozenConfigurationsNode, descendancy.Add(frozenConfigurationsNode));
 
-        //Add ExtractionConfigurations which are not released (frozen)
-        if (ExtractionConfigurationsByProject.TryGetValue(extractionConfigurationsNode.Project.ID, out var result))
-            foreach (var config in result.Where(c => !c.IsReleased))
-            {
-                AddChildren(config, descendancy.Add(config));
-                children.Add(config);
-            }
+        ////Add ExtractionConfigurations which are not released (frozen)
+        //if (ExtractionConfigurationsByProject.TryGetValue(extractionConfigurationsNode.Project.ID, out var result))
+        //    foreach (var config in result.Where(c => !c.IsReleased))
+        //    {
+        //        AddChildren(config, descendancy.Add(config));
+        //        children.Add(config);
+        //    }
 
-        AddToDictionaries(children, descendancy);
+        //AddToDictionaries(children, descendancy);
     }
 
     private void AddChildren(FrozenExtractionConfigurationsNode frozenExtractionConfigurationsNode,

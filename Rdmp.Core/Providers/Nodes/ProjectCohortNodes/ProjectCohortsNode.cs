@@ -11,9 +11,9 @@ namespace Rdmp.Core.Providers.Nodes.ProjectCohortNodes;
 
 public class ProjectCohortsNode : Node, IOrderable
 {
-    public Project Project { get; set; }
+    public EntityFramework.Models.DataExport.Project Project { get; set; }
 
-    public ProjectCohortsNode(Project project)
+    public ProjectCohortsNode(EntityFramework.Models.DataExport.Project project)
     {
         Project = project;
     }

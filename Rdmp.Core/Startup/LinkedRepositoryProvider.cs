@@ -48,12 +48,17 @@ public class LinkedRepositoryProvider : RepositoryProvider
         {
             throw new Exception("There was a problem with the Catalogue connection string", ex);
         }
-
+        var exportOptionsBuilder = new DbContextOptionsBuilder<DataExportDbContext>();
+        exportOptionsBuilder.UseSqlServer(dataExportConnectionString);
+        var dataExportDbContext = new DataExportDbContext(exportOptionsBuilder.Options);
         try
         {
-            DataExportRepository = string.IsNullOrWhiteSpace(dataExportConnectionString)
-                ? null
-                : new DataExportRepository(new SqlConnectionStringBuilder(dataExportConnectionString), catalogueDbContext);
+            DataExportDbContext = string.IsNullOrWhiteSpace(dataExportConnectionString)
+                ?null
+                : dataExportDbContext;
+            //DataExportRepository = string.IsNullOrWhiteSpace(dataExportConnectionString)
+            //    ? null
+            //    : new DataExportRepository(new SqlConnectionStringBuilder(dataExportConnectionString), catalogueDbContext);
         }
         catch (Exception)
         {

@@ -23,7 +23,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 /// </summary>
 public class ExecuteCommandCreateNewExtractionConfigurationForProject : BasicCommandExecution, IAtomicCommand
 {
-    private readonly Project _project;
+    private readonly EntityFramework.Models.DataExport.Project _project;
     private readonly string _name;
     private ExtractableCohort cohort;
 
@@ -68,7 +68,7 @@ public class ExecuteCommandCreateNewExtractionConfigurationForProject : BasicCom
     [UseWithObjectConstructor]
     public ExecuteCommandCreateNewExtractionConfigurationForProject(IBasicActivateItems activator,
         [DemandsInitialization("The Project under which to create the new ExtractionConfiguration")]
-        Project project,
+        EntityFramework.Models.DataExport.Project project,
         [DemandsInitialization("The name for the new ExtractionConfiguration")]
         string name = "") : base(activator)
     {

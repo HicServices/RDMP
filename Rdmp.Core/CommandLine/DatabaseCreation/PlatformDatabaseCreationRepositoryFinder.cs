@@ -27,7 +27,7 @@ public class PlatformDatabaseCreationRepositoryFinder : IRDMPPlatformRepositoryS
     public IDataExportRepository DataExportRepository => _linkedRepositoryProvider.DataExportRepository;
 
     public RDMPDbContext CatalogueDbContext { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-    public RDMPDbContext DataExportDbContext { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public DataExportDbContext DataExportDbContext { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     RDMPDbContext RDMPDbContextServiceLocator.DataExportRepository { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
     public IMapsDirectlyToDatabaseTable GetArbitraryDatabaseObject(string repositoryTypeName,

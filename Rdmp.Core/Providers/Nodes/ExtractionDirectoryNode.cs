@@ -18,9 +18,9 @@ namespace Rdmp.Core.Providers.Nodes;
 /// </summary>
 public class ExtractionDirectoryNode : Node, IDirectoryInfoNode, IOrderable
 {
-    public Project Project { get; }
+    public EntityFramework.Models.DataExport.Project Project { get; }
 
-    public ExtractionDirectoryNode(Project project)
+    public ExtractionDirectoryNode(EntityFramework.Models.DataExport.Project project)
     {
         Project = project;
     }

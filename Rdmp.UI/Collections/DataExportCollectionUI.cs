@@ -94,14 +94,16 @@ public partial class DataExportCollectionUI : RDMPCollectionUI, ILifetimeSubscri
         CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = a => GetWhitespaceRightClickMenu();
 
         CommonTreeFunctionality.MaintainRootObjects = new Type[]
-            { typeof(ExtractableDataSetPackage), typeof(FolderNode<Project>) };
+            { typeof(ExtractableDataSetPackage), typeof(FolderNode<Core.EntityFramework.Models.DataExport.Project>) };
 
-        var dataExportChildProvider = activator.CoreChildProvider as DataExportChildProvider;
+        var dataExportChildProvider = activator.RepositoryLocator.DataExportDbContext;//activator.CoreChildProvider as DataExportChildProvider;
+
+        var rootFolder = FolderHelper.BuildFolderTree<Core.EntityFramework.Models.DataExport.Project>(activator.RepositoryLocator.DataExportDbContext.Projects.ToArray());
 
         if (dataExportChildProvider != null)
         {
-            tlvDataExport.AddObjects(dataExportChildProvider.AllPackages);
-            tlvDataExport.AddObject(dataExportChildProvider.ProjectRootFolder);
+            tlvDataExport.AddObjects(dataExportChildProvider.ExtractableDataSetPackages.ToList());
+            tlvDataExport.AddObject(rootFolder);
         }
 
         if (_isFirstTime)
@@ -114,7 +116,7 @@ public partial class DataExportCollectionUI : RDMPCollectionUI, ILifetimeSubscri
             CommonTreeFunctionality.SetupColumnTracking(olvCohortVersion,
                 new Guid("2d0f8d32-090d-4d2b-8cfe-b6d16f5cc419"));
 
-            if (dataExportChildProvider != null) tlvDataExport.Expand(dataExportChildProvider.ProjectRootFolder);
+            if (dataExportChildProvider != null) tlvDataExport.Expand(rootFolder);
 
             _isFirstTime = false;
         }

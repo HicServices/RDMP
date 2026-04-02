@@ -135,7 +135,7 @@ public class RdmpCommandLineBootStrapper
             checker.Worst = LogLevel.Info;
 
         var runner = explicitRunner ??
-                     RunnerFactory.CreateRunner(new ThrowImmediatelyActivator(repositoryLocator.CatalogueDbContext, checker), opts);
+                     RunnerFactory.CreateRunner(new ThrowImmediatelyActivator(repositoryLocator.CatalogueDbContext,repositoryLocator.DataExportDbContext, checker), opts);
 
         // Let's not worry about global errors during the CreateRunner process
         // These are mainly UI/GUI and unrelated to the actual process to run

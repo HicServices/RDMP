@@ -69,10 +69,10 @@ public class DataExportProblemProvider : ProblemProvider
 
     private string DescribeProblem(ExtractionConfigurationsNode extractionConfigurationsNode)
     {
-        if (_exportChildProvider.Projects.Contains(extractionConfigurationsNode.Project))
-            if (!_exportChildProvider.GetConfigurations(extractionConfigurationsNode.Project).Any())
-                return
-                    "Project has no ExtractionConfigurations. Add a new ExtractionConfiguration to define how data is extracted for this Project.";
+        //if (_exportChildProvider.Projects.Contains(extractionConfigurationsNode.Project))
+        //    if (!_exportChildProvider.GetConfigurations(extractionConfigurationsNode.Project).Any())
+        //        return
+        //            "Project has no ExtractionConfigurations. Add a new ExtractionConfiguration to define how data is extracted for this Project.";
 
         return null;
     }

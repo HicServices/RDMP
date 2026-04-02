@@ -25,8 +25,8 @@ namespace Rdmp.Core.CommandExecution;
 /// </summary>
 public class ThrowImmediatelyActivator : BasicActivateItems
 {
-    public ThrowImmediatelyActivator(RDMPDbContext repositoryLocator,
-        ICheckNotifier notifier = null) : base(repositoryLocator, notifier ?? ThrowImmediatelyCheckNotifier.Quiet)
+    public ThrowImmediatelyActivator(RDMPDbContext repositoryLocator, DataExportDbContext dataExportDbContext,
+        ICheckNotifier notifier = null) : base(repositoryLocator, dataExportDbContext, notifier ?? ThrowImmediatelyCheckNotifier.Quiet)
     {
     }
 

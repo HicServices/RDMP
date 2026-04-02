@@ -33,7 +33,7 @@ internal class AllCohortsNodeMenu : RDMPContextMenuStrip
 
     private void AddBlankExternalCohortTable()
     {
-        var newExternalCohortTable = new ExternalCohortTable(RepositoryLocator.DataExportRepository,
+        var newExternalCohortTable = new ExternalCohortTable(RepositoryLocator.DataExportDbContext,
             $"Blank Cohort Source {Guid.NewGuid()}", DatabaseType.MicrosoftSQLServer);
         Publish(newExternalCohortTable);
         Activate(newExternalCohortTable);

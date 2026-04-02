@@ -64,7 +64,7 @@ namespace Rdmp.Core.EntityFramework
         public DbSet<Models.ProcessTask> ProcessTasks { get; set; }
         public DbSet<Models.ProcessTaskArgument> ProcessTaskArguments { get; set; }
         public DbSet<Models.LoadProgress> LoadProgresses { get; set; }
-        public DbSet<Models.Setting> Settings{ get; set; }
+        public DbSet<Models.Setting> Settings { get; set; }
 
         public T[] GetAllObjects<T>()
         {
@@ -439,6 +439,7 @@ namespace Rdmp.Core.EntityFramework
             {
             }
             return new List<string>() { };
+
         }
     }
 

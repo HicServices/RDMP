@@ -14,9 +14,9 @@ namespace Rdmp.Core.Providers.Nodes;
 /// </summary>
 public class ExtractionConfigurationsNode : Node, IOrderable
 {
-    public Project Project { get; }
+    public EntityFramework.Models.DataExport.Project Project { get; }
 
-    public ExtractionConfigurationsNode(Project project)
+    public ExtractionConfigurationsNode(EntityFramework.Models.DataExport.Project project)
     {
         Project = project;
     }

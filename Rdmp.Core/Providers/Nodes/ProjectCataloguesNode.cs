@@ -15,7 +15,7 @@ namespace Rdmp.Core.Providers.Nodes;
 /// </summary>
 public class ProjectCataloguesNode : Node, IOrderable
 {
-    public Project Project { get; }
+    public EntityFramework.Models.DataExport.Project Project { get; }
 
     public int Order
     {
@@ -23,7 +23,7 @@ public class ProjectCataloguesNode : Node, IOrderable
         set { }
     }
 
-    public ProjectCataloguesNode(Project project)
+    public ProjectCataloguesNode(EntityFramework.Models.DataExport.Project project)
     {
         Project = project;
     }

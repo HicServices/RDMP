@@ -122,11 +122,11 @@ public abstract class BasicActivateItems : IBasicActivateItems
 
     public bool IsAbleToLaunchSubprocesses { get; protected set; }
 
-    public BasicActivateItems(RDMPDbContext catalogueDbContext,
+    public BasicActivateItems(RDMPDbContext catalogueDbContext, DataExportDbContext dataExportDbcontext,
         ICheckNotifier globalErrorCheckNotifier)
     {
         this.RepositoryLocator =
-            new RepositoryProvider(catalogueDbContext);
+            new RepositoryProvider(catalogueDbContext, dataExportDbcontext);
         //RepositoryLocator = catalogueDbContext;
         GlobalErrorCheckNotifier = globalErrorCheckNotifier;
 

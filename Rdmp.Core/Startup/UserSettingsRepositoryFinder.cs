@@ -58,11 +58,31 @@ public class UserSettingsRepositoryFinder : IRDMPPlatformRepositoryServiceLocato
                 ? throw new Exception(
                     "RefreshRepositoriesFromUserSettings failed to populate_linkedRepositoryProvider as expected ")
                 : _linkedRepositoryProvider.DataExportRepository;
-        }
+        } 
     }
 
     //public RDMPDbContext CatalogueDbContext { get ; set; }
-    public RDMPDbContext DataExportDbContext { get ; set ; }
+    public DataExportDbContext DataExportDbContext {
+        get
+        {
+            if (_linkedRepositoryProvider == null)
+                RefreshRepositoriesFromUserSettings();
+
+            return _linkedRepositoryProvider == null
+                ? throw new Exception(
+                    "RefreshRepositoriesFromUserSettings failed to populate_linkedRepositoryProvider as expected ")
+                : _linkedRepositoryProvider.DataExportDbContext;
+        }
+        set
+        {
+            if (_linkedRepositoryProvider == null)
+                RefreshRepositoriesFromUserSettings();
+            if (_linkedRepositoryProvider == null)
+                throw new Exception(
+                    "RefreshRepositoriesFromUserSettings failed to populate_linkedRepositoryProvider as expected ");
+            _linkedRepositoryProvider.DataExportDbContext = value;
+        }
+    }
     RDMPDbContext RDMPDbContextServiceLocator.DataExportRepository { get ; set; }
 
     public IMapsDirectlyToDatabaseTable GetArbitraryDatabaseObject(string repositoryTypeName,

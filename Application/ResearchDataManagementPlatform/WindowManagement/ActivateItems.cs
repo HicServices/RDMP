@@ -131,7 +131,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
 
     public ActivateItems(ITheme theme, RefreshBus refreshBus, DockPanel mainDockPanel,
         IRDMPPlatformRepositoryServiceLocator repositoryLocator, WindowFactory windowFactory,
-        WindowManager windowManager, ICheckNotifier globalErrorCheckNotifier) : base(repositoryLocator.CatalogueDbContext,
+        WindowManager windowManager, ICheckNotifier globalErrorCheckNotifier) : base(repositoryLocator.CatalogueDbContext,repositoryLocator.DataExportDbContext,
         globalErrorCheckNotifier)
     {
         Theme = theme;

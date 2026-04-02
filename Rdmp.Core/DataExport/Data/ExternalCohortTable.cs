@@ -144,7 +144,7 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
     /// <param name="dataExportDbContext">Metadata repository in which to create the object</param>
     /// <param name="name"></param>
     /// <param name="databaseType"></param>
-    public ExternalCohortTable(RDMPDbContext dataExportDbContext, string name, DatabaseType databaseType)
+    public ExternalCohortTable(DataExportDbContext dataExportDbContext, string name, DatabaseType databaseType)
     {
         //Repository = repository;
         //SelfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint(repository.RDMPDbContext, databaseType);

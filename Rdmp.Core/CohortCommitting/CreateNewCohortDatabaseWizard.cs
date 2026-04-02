@@ -34,14 +34,14 @@ public class CreateNewCohortDatabaseWizard
 {
     private bool AllowNullReleaseIdentifiers { get; }
     private readonly RDMPDbContext _catalogueDbContext;
-    private readonly RDMPDbContext _dataExportDbcontext;
+    private readonly DataExportDbContext _dataExportDbcontext;
     private readonly DiscoveredDatabase _targetDatabase;
 
     private const string ReleaseIdentifierFieldName = "ReleaseId";
     private const string DefinitionTableForeignKeyField = "cohortDefinition_id";
 
 
-    public CreateNewCohortDatabaseWizard(DiscoveredDatabase targetDatabase, RDMPDbContext catalogueDbContext,RDMPDbContext dataExportDbContext, bool allowNullReleaseIdentifiers)
+    public CreateNewCohortDatabaseWizard(DiscoveredDatabase targetDatabase, RDMPDbContext catalogueDbContext,DataExportDbContext dataExportDbContext, bool allowNullReleaseIdentifiers)
     {
         AllowNullReleaseIdentifiers = allowNullReleaseIdentifiers;
         _catalogueDbContext = catalogueDbContext;

@@ -73,7 +73,7 @@ public partial class RDMPTaskBarUI : UserControl
         //Update task bar buttons enabledness when the user navigates somewhere
         _manager.Navigation.Changed += (s, e) => UpdateForwardBackEnabled();
 
-        btnDataExport.Enabled = manager.RepositoryLocator.DataExportRepository != null;
+        btnDataExport.Enabled = manager.RepositoryLocator.DataExportDbContext != null;
 
         ReCreateDropDowns();
 
