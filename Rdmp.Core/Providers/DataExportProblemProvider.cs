@@ -77,10 +77,10 @@ public class DataExportProblemProvider : ProblemProvider
         return null;
     }
 
-    private string DescribeProblem(ProjectSavedCohortsNode projectSavedCohortsNode) =>
-        _exportChildProvider.ProjectHasNoSavedCohorts(projectSavedCohortsNode.Project)
-            ? "Project has no Cohorts. Commit new Cohort(s) from File/Cohort Query Builder to use with this Project's ExtractionConfigurations"
-            : null;
+    private string DescribeProblem(ProjectSavedCohortsNode projectSavedCohortsNode) => "TODO";
+        //_exportChildProvider.ProjectHasNoSavedCohorts(projectSavedCohortsNode.Project)
+        //    ? "Project has no Cohorts. Commit new Cohort(s) from File/Cohort Query Builder to use with this Project's ExtractionConfigurations"
+        //    : null;
 
 
     private static string DescribeProblem(ExtractionDirectoryNode edn) => edn.GetDirectoryInfoIfAny() == null

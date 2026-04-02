@@ -366,14 +366,14 @@ public class DataExportChildProvider : CatalogueChildProvider
 
     private void AddChildren(AssociatedCohortIdentificationTemplatesNode associatedCohortIdentificationTemplatesNode, DescendancyList descendancy)
     {
-        var children = new HashSet<object>();
-        var associatedCohorts = associatedCohortIdentificationTemplatesNode.Project.GetAssociatedTemplateCohortIdentificationConfigurations();
-        foreach (var cohort in associatedCohorts)
-        {
-            children.Add(cohort);
-        }
+        //var children = new HashSet<object>();
+        //var associatedCohorts = associatedCohortIdentificationTemplatesNode.Project.GetAssociatedTemplateCohortIdentificationConfigurations();
+        //foreach (var cohort in associatedCohorts)
+        //{
+        //    children.Add(cohort);
+        //}
 
-        AddToDictionaries(children, descendancy);
+        //AddToDictionaries(children, descendancy);
     }
 
     private void AddChildren(CommittedCohortIdentificationNode associatedCohortConfigurations, DescendancyList descendancy)
@@ -392,15 +392,15 @@ public class DataExportChildProvider : CatalogueChildProvider
     {
         var children = new HashSet<object>();
 
-        var cohortGroups = GetAllCohortProjectUsageNodesFor(savedCohortsNode.Project);
+        //var cohortGroups = GetAllCohortProjectUsageNodesFor(savedCohortsNode.Project);
 
-        foreach (var cohortSourceUsedByProjectNode in cohortGroups)
-        {
-            AddChildren(cohortSourceUsedByProjectNode, descendancy.Add(cohortSourceUsedByProjectNode));
-            children.Add(cohortSourceUsedByProjectNode);
-        }
+        //foreach (var cohortSourceUsedByProjectNode in cohortGroups)
+        //{
+        //    AddChildren(cohortSourceUsedByProjectNode, descendancy.Add(cohortSourceUsedByProjectNode));
+        //    children.Add(cohortSourceUsedByProjectNode);
+        //}
 
-        AddToDictionaries(children, descendancy);
+        //AddToDictionaries(children, descendancy);
     }
 
     private void AddChildren(ProjectCohortIdentificationConfigurationAssociationsNode projectCiCsNode,

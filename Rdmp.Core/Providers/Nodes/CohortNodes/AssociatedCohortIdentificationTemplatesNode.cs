@@ -10,9 +10,9 @@ namespace Rdmp.Core.Providers.Nodes.CohortNodes
 {
     public class AssociatedCohortIdentificationTemplatesNode:Node, IOrderable
     {
-        public Project Project { get; set; }
+        public EntityFramework.Models.DataExport.Project Project { get; set; }
 
-        public AssociatedCohortIdentificationTemplatesNode(Project project)
+        public AssociatedCohortIdentificationTemplatesNode(EntityFramework.Models.DataExport.Project project)
         {
             Project = project;
         }

@@ -14,9 +14,9 @@ namespace Rdmp.Core.Providers.Nodes;
 /// </summary>
 internal class FrozenExtractionConfigurationsNode : Node, IOrderable
 {
-    public Project Project { get; }
+    public EntityFramework.Models.DataExport.Project Project { get; }
 
-    public FrozenExtractionConfigurationsNode(Project project)
+    public FrozenExtractionConfigurationsNode(EntityFramework.Models.DataExport.Project project)
     {
         Project = project;
     }
