@@ -7,6 +7,7 @@
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.EntityFramework.Helpers;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
@@ -82,7 +83,7 @@ public class ExecuteCommandCreateNewLoadMetadata : BasicCommandExecution, IAtomi
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
         iconProvider.GetImage(RDMPConcept.LoadMetadata, OverlayKind.Add);
 
-    public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
+    public IAtomicCommandWithTarget SetTarget(DatabaseObject target)
     {
         //_catalogue = (Catalogue)target;
         return this;

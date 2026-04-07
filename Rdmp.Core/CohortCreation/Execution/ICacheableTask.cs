@@ -18,7 +18,7 @@ namespace Rdmp.Core.CohortCreation.Execution;
 /// </summary>
 public interface ICacheableTask : ICompileable
 {
-    AggregateConfiguration GetAggregateConfiguration();
+    EntityFramework.Models.AggregateConfiguration GetAggregateConfiguration();
     CacheCommitArguments GetCacheArguments(string sql, DataTable results, DatabaseColumnRequest[] explicitTypes);
     void ClearYourselfFromCache(CachedAggregateConfigurationResultsManager manager);
 

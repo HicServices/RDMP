@@ -4,13 +4,14 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.EntityFramework.Helpers;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
+using System.Linq;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
@@ -52,10 +53,10 @@ public class ExecuteCommandOverrideRawServer : BasicCommandExecution, IAtomicCom
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
         iconProvider.GetImage(RDMPConcept.ExternalDatabaseServer, OverlayKind.Link);
 
-    public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
+    public IAtomicCommandWithTarget SetTarget(DatabaseObject target)
     {
-        if (target is ExternalDatabaseServer candidate && _available.Contains(candidate))
-            _server = candidate;
+        //if (target is ExternalDatabaseServer candidate && _available.Contains(candidate))
+        //    _server = candidate;
 
         return this;
     }

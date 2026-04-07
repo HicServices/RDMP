@@ -23,13 +23,13 @@ namespace Rdmp.Core.CohortCreation.Execution;
 /// </summary>
 public class AggregationTask : CacheableTask
 {
-    public AggregateConfiguration Aggregate { get; private set; }
+    public Core.EntityFramework.Models.AggregateConfiguration Aggregate { get; private set; }
 
     private readonly string _catalogueName;
     private readonly CohortIdentificationConfiguration _cohortIdentificationConfiguration;
-    private readonly List<CohortAggregateContainer> _allParentContainers;
+    private readonly List<EntityFramework.Models.CohortAggregateContainer> _allParentContainers;
 
-    public AggregationTask(AggregateConfiguration aggregate, CohortCompiler compiler) : base(compiler)
+    public AggregationTask(Core.EntityFramework.Models.AggregateConfiguration aggregate, CohortCompiler compiler) : base(compiler)
     {
         Aggregate = aggregate;
         _catalogueName = aggregate.Catalogue.Name;
@@ -67,7 +67,7 @@ public class AggregationTask : CacheableTask
         return !Aggregate.IsDisabled && !_allParentContainers.Any(c => c.IsDisabled);
     }
 
-    public override AggregateConfiguration GetAggregateConfiguration() => Aggregate;
+    public override Core.EntityFramework.Models.AggregateConfiguration GetAggregateConfiguration() => Aggregate;
 
     public override CacheCommitArguments GetCacheArguments(string sql, DataTable results,
         DatabaseColumnRequest[] explicitTypes) =>

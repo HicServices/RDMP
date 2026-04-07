@@ -22,7 +22,7 @@ public class AggregateConfigurationCombineable : ICombineToMakeCommand
     /// <summary>
     /// The object selected for combining
     /// </summary>
-    public AggregateConfiguration Aggregate { get; private set; }
+    public EntityFramework.Models.AggregateConfiguration Aggregate { get; private set; }
 
     /// <summary>
     /// The <see cref="CohortIdentificationConfiguration"/> that the <see cref="Aggregate"/> belongs to if it is part of cohort building

@@ -14,20 +14,20 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsProject : RDMPCommandExecutionProposal<Project>
+internal class ProposeExecutionWhenTargetIsProject : RDMPCommandExecutionProposal<Core.EntityFramework.Models.DataExport.Project>
 {
     public ProposeExecutionWhenTargetIsProject(IActivateItems itemActivator) : base(itemActivator)
     {
     }
 
-    public override bool CanActivate(Project target) => true;
+    public override bool CanActivate(Core.EntityFramework.Models.DataExport.Project target) => true;
 
-    public override void Activate(Project target)
+    public override void Activate(Core.EntityFramework.Models.DataExport.Project target)
     {
-        ItemActivator.Activate<ProjectUI.ProjectUI, Project>(target);
+        ItemActivator.Activate<ProjectUI.ProjectUI, Core.EntityFramework.Models.DataExport.Project>(target);
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Project project,
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Core.EntityFramework.Models.DataExport.Project project,
         InsertOption insertOption = InsertOption.Default)
     {
         return cmd switch

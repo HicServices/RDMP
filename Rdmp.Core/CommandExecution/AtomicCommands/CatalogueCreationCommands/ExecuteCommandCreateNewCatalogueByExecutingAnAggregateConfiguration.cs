@@ -13,6 +13,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataFlowPipeline.Events;
+using Rdmp.Core.EntityFramework.Helpers;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
@@ -22,12 +23,12 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
 
 public class ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration : CatalogueCreationCommandExecution
 {
-    private AggregateConfiguration _aggregateConfiguration;
-    private ExtractableCohort _cohort;
+    private EntityFramework.Models.AggregateConfiguration _aggregateConfiguration;
+    private EntityFramework.Models.DataExport.ExtractableCohort _cohort;
     private DiscoveredTable _table;
 
     public ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration(IBasicActivateItems activator,
-        AggregateConfiguration ac) : base(activator)
+        EntityFramework.Models.AggregateConfiguration ac) : base(activator)
     {
         _aggregateConfiguration = ac;
     }
@@ -107,14 +108,14 @@ public class ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
         iconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Execute);
 
-    public override IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
+    public override IAtomicCommandWithTarget SetTarget(DatabaseObject target)
     {
         base.SetTarget(target);
 
-        if (target is AggregateConfiguration configuration)
+        if (target is EntityFramework.Models.AggregateConfiguration configuration)
             _aggregateConfiguration = configuration;
 
-        if (target is ExtractableCohort cohort)
+        if (target is EntityFramework.Models.DataExport.ExtractableCohort cohort)
             _cohort = cohort;
 
         return this;

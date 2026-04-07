@@ -44,5 +44,5 @@ public interface ICompileable : IOrderable
 
     string GetCachedQueryUseCount();
 
-    void SetKnownContainer(CohortAggregateContainer parent, bool isFirstInContainer);
+    void SetKnownContainer(EntityFramework.Models.CohortAggregateContainer parent, bool isFirstInContainer);
 }

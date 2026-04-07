@@ -18,7 +18,7 @@ public abstract class CacheableTask : Compileable, ICacheableTask
     {
     }
 
-    public abstract AggregateConfiguration GetAggregateConfiguration();
+    public abstract EntityFramework.Models.AggregateConfiguration GetAggregateConfiguration();
 
     public abstract CacheCommitArguments GetCacheArguments(string sql, DataTable results,
         DatabaseColumnRequest[] explicitTypes);

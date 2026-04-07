@@ -643,7 +643,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
         new PipelineRunner(useCase, pipeline);
 
     /// <inheritdoc/>
-    public virtual CohortCreationRequest GetCohortCreationRequest(ExternalCohortTable externalCohortTable,
+    public virtual CohortCreationRequest GetCohortCreationRequest(Core.EntityFramework.Models.DataExport.ExternalCohortTable externalCohortTable,
         IProject project, string cohortInitialDescription)
     {
         int version;

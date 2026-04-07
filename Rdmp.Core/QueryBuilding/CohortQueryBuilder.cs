@@ -53,10 +53,10 @@ public class CohortQueryBuilder
 
     public int TopX { get; set; }
 
-    private CohortAggregateContainer container;
-    private AggregateConfiguration configuration;
+    private EntityFramework.Models.CohortAggregateContainer container;
+    private EntityFramework.Models.AggregateConfiguration configuration;
 
-    public ExternalDatabaseServer CacheServer
+    public EntityFramework.Models.ExternalDatabaseServer CacheServer
     {
         get => _cacheServer;
         set
@@ -87,7 +87,7 @@ public class CohortQueryBuilder
             ParameterManager.AddGlobalParameter(parameter);
     }
 
-    public CohortQueryBuilder(CohortIdentificationConfiguration configuration, ICoreChildProvider childProvider) : this(
+    public CohortQueryBuilder(EntityFramework.Models.CohortIdentificationConfiguration configuration, ICoreChildProvider childProvider) : this(
         configuration.GetAllParameters(), childProvider)
     {
         if (configuration == null)
@@ -106,7 +106,7 @@ public class CohortQueryBuilder
         SetChildProviderIfNull();
     }
 
-    public CohortQueryBuilder(CohortAggregateContainer c, IEnumerable<ISqlParameter> globals,
+    public CohortQueryBuilder(EntityFramework.Models.CohortAggregateContainer c, IEnumerable<ISqlParameter> globals,
         ICoreChildProvider childProvider) : this(globals, childProvider)
     {
         //set ourselves up to run with the root container
@@ -115,7 +115,7 @@ public class CohortQueryBuilder
         SetChildProviderIfNull();
     }
 
-    public CohortQueryBuilder(AggregateConfiguration config, IEnumerable<ISqlParameter> globals,
+    public CohortQueryBuilder(EntityFramework.Models.AggregateConfiguration config, IEnumerable<ISqlParameter> globals,
         ICoreChildProvider childProvider) : this(globals, childProvider)
     {
         //set ourselves up to run with the root container
@@ -221,7 +221,7 @@ public class CohortQueryBuilder
 
     private IOrderable _stopContainerWhenYouReach;
     private bool _doNotWriteOutParameters;
-    private ExternalDatabaseServer _cacheServer;
+    private EntityFramework.Models.ExternalDatabaseServer _cacheServer;
 
 
     public IOrderable StopContainerWhenYouReach

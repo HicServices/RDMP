@@ -174,12 +174,12 @@ public class AggregateBuilder : ISqlQueryBuilder
     private readonly List<IColumn> _skipByUserRequest = new();
 
 
-    /// <inheritdoc cref="AggregateBuilder(string,string,AggregateConfiguration)" />
+    /// <inheritdoc cref="AggregateBuilder(string,string,EntityFramework.Models.AggregateConfiguration)" />
     /// <param name="limitationSQL"></param>
     /// <param name="countSQL"></param>
     /// <param name="aggregateConfigurationIfAny"></param>
     /// <param name="forceJoinsToTheseTables">Tables you definitely want the query to join against in the FROM section (compatible <see cref="JoinInfo"/> must exist if there are multiple)</param>
-    public AggregateBuilder(string limitationSQL, string countSQL, AggregateConfiguration aggregateConfigurationIfAny,
+    public AggregateBuilder(string limitationSQL, string countSQL, EntityFramework.Models.AggregateConfiguration aggregateConfigurationIfAny,
         ITableInfo[] forceJoinsToTheseTables)
         : this(limitationSQL, countSQL, aggregateConfigurationIfAny)
     {
@@ -192,15 +192,15 @@ public class AggregateBuilder : ISqlQueryBuilder
     public bool DoNotWriteOutOrderBy { get; set; }
 
     /// <summary>
-    /// Build a query based on the current <see cref="AggregateConfiguration"/>
+    /// Build a query based on the current <see cref="EntityFramework.Models.AggregateConfiguration"/>
     /// </summary>
     /// <param name="limitationSQL">See <see cref="LimitationSQL"/></param>
     /// <param name="countSQL">
     /// Intended purpose:The line of SELECT Sql that is an 'Aggregate Function' e.g. count(*).
     /// <para>Other purposes: You can use this to ram arbitrary lines of code into SELECT section of the query e.g. see CohortQueryBuilder </para>
     /// </param>
-    /// <param name="aggregateConfigurationIfAny"><see cref="AggregateConfiguration"/> containing columns, filters, parameters etc for the GROUP BY</param>
-    public AggregateBuilder(string limitationSQL, string countSQL, AggregateConfiguration aggregateConfigurationIfAny)
+    /// <param name="aggregateConfigurationIfAny"><see cref="EntityFramework.Models.AggregateConfiguration"/> containing columns, filters, parameters etc for the GROUP BY</param>
+    public AggregateBuilder(string limitationSQL, string countSQL, EntityFramework.Models.AggregateConfiguration aggregateConfigurationIfAny)
     {
         if (limitationSQL != null && limitationSQL.Trim().StartsWith("top", StringComparison.CurrentCultureIgnoreCase))
             throw new Exception("Use AggregateTopX property instead of limitation SQL to achieve this");
@@ -279,7 +279,7 @@ public class AggregateBuilder : ISqlQueryBuilder
     private int _pivotID = -1;
     private bool _doNotWriteOutParameters;
     public IQuerySyntaxHelper QuerySyntaxHelper { get; set; }
-    private readonly AggregateConfiguration _aggregateConfigurationIfAny;
+    private readonly EntityFramework.Models.AggregateConfiguration _aggregateConfigurationIfAny;
 
     /// <summary>
     /// Defines a PIVOT on the values in a given column.  This is only valid for <see cref="AggregateConfiguration"/> which are graphs

@@ -1,6 +1,7 @@
 ﻿using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.EntityFramework.Helpers;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
@@ -77,22 +78,22 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands
             if (_selectedProject != null)
             {
                 var cmd = new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(_activator);
-                cmd.SetTarget(clone);
-                cmd.SetTarget((Project)_selectedProject);
+                //cmd.SetTarget(clone);
+                //cmd.SetTarget((Project)_selectedProject);
                 cmd.Execute();
             }
             Publish(clone);
             Emphasise(clone);
         }
 
-        public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
+        public IAtomicCommandWithTarget SetTarget(DatabaseObject target)
         {
-            if ((target is not CohortIdentificationConfiguration && target is not Project) || (target is CohortIdentificationConfiguration cic &&  !cic.IsTemplate))
-            {
-                throw new Exception("Provided database entity was not a CohortIdentificationConfiguration or a Project.");
-            }
-            if (target is Project p) _selectedProject = p;
-            else if (target is CohortIdentificationConfiguration c) _cic = c;
+            //if ((target is not CohortIdentificationConfiguration && target is not Project) || (target is CohortIdentificationConfiguration cic &&  !cic.IsTemplate))
+            //{
+            //    throw new Exception("Provided database entity was not a CohortIdentificationConfiguration or a Project.");
+            //}
+            //if (target is Project p) _selectedProject = p;
+            //else if (target is CohortIdentificationConfiguration c) _cic = c;
             return this;
         }
     }

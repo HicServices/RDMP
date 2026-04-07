@@ -20,7 +20,7 @@ namespace Rdmp.Core.QueryCaching.Aggregation.Arguments;
 ///</summary>
 public class CacheCommitExtractableAggregate : CacheCommitArguments
 {
-    public CacheCommitExtractableAggregate(AggregateConfiguration configuration, string sql, DataTable results,
+    public CacheCommitExtractableAggregate(EntityFramework.Models.AggregateConfiguration configuration, string sql, DataTable results,
         int timeout)
         : base(AggregateOperation.ExtractableAggregateResults, configuration, sql, results, timeout)
     {

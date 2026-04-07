@@ -171,7 +171,7 @@ public interface IBasicActivateItems
     /// <param name="project">The project the cohort should be associated with</param>
     /// <param name="cohortInitialDescription">Optional initial description for the cohort which may be changed by the user</param>
     /// <returns></returns>
-    CohortCreationRequest GetCohortCreationRequest(ExternalCohortTable externalCohortTable, IProject project,
+    CohortCreationRequest GetCohortCreationRequest(EntityFramework.Models.DataExport.ExternalCohortTable externalCohortTable, IProject project,
         string cohortInitialDescription);
 
     IProject CohortCommitProjectSelect(IProject currentProject, Project[] projects);

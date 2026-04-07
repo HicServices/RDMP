@@ -6,6 +6,7 @@
 
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.EntityFramework.Helpers;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
 
@@ -37,9 +38,9 @@ public abstract class CatalogueCreationCommandExecution : BasicCommandExecution,
         TargetFolder = targetFolder;
     }
 
-    public virtual IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
+    public virtual IAtomicCommandWithTarget SetTarget(DatabaseObject target)
     {
-        if (target is Project project)
+        if (target is EntityFramework.Models.DataExport.Project project)
             ProjectSpecific = project;
 
         return this;

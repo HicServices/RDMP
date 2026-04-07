@@ -20,23 +20,23 @@ namespace Rdmp.Core.CohortCreation.Execution;
 /// </summary>
 public class AggregationContainerTask : Compileable, IOrderable
 {
-    private readonly CohortAggregateContainer[] _parentContainers;
-    public CohortAggregateContainer Container { get; set; }
+    private readonly EntityFramework.Models.CohortAggregateContainer[] _parentContainers;
+    public EntityFramework.Models.CohortAggregateContainer Container { get; set; }
 
-    public CohortAggregateContainer[] SubContainers { get; set; }
-    public AggregateConfiguration[] ContainedConfigurations { get; set; }
+    public EntityFramework.Models.CohortAggregateContainer[] SubContainers { get; set; }
+    public EntityFramework.Models.AggregateConfiguration[] ContainedConfigurations { get; set; }
 
-    public AggregationContainerTask(CohortAggregateContainer container, CohortCompiler compiler) : base(compiler)
+    public AggregationContainerTask(EntityFramework.Models.CohortAggregateContainer container, CohortCompiler compiler) : base(compiler)
     {
         Container = container;
 
-        SubContainers = compiler.CoreChildProvider.GetChildren(Container).OfType<CohortAggregateContainer>().ToArray();
-        ContainedConfigurations =
-            compiler.CoreChildProvider.GetChildren(Container).OfType<AggregateConfiguration>().ToArray();
+        //SubContainers = compiler.CoreChildProvider.GetChildren(Container).OfType<CohortAggregateContainer>().ToArray();
+        //ContainedConfigurations =
+        //    compiler.CoreChildProvider.GetChildren(Container).OfType<AggregateConfiguration>().ToArray();
 
-        var d = compiler.CoreChildProvider.GetDescendancyListIfAnyFor(Container);
-        _parentContainers = d?.Parents?.OfType<CohortAggregateContainer>()?.ToArray() ??
-                            Array.Empty<CohortAggregateContainer>();
+        //var d = compiler.CoreChildProvider.GetDescendancyListIfAnyFor(Container);
+        //_parentContainers = d?.Parents?.OfType<CohortAggregateContainer>()?.ToArray() ??
+        //                    Array.Empty<CohortAggregateContainer>();
     }
 
     public override string GetCatalogueName() => "";
@@ -45,16 +45,16 @@ public class AggregationContainerTask : Compileable, IOrderable
 
     public override IDataAccessPoint[] GetDataAccessPoints()
     {
-        var cataIDs = Container.GetAggregateConfigurations().Select(c => c.Catalogue_ID).Distinct().ToList();
+        var cataIDs = Container.GetAggregateConfigurations().Select(c => 1).ToList();//.Select(c => c.Catalogue_ID).Distinct().ToList();
 
         //if this container does not have any configurations
-        if (!cataIDs.Any()) //try looking at the subcontainers
-        {
-            var subcontainers = Container.GetSubContainers()
-                .FirstOrDefault(subcontainer => subcontainer.GetAggregateConfigurations().Any());
-            if (subcontainers != null)
-                cataIDs = subcontainers.GetAggregateConfigurations().Select(c => c.Catalogue_ID).Distinct().ToList();
-        }
+        //if (!cataIDs.Any()) //try looking at the subcontainers
+        //{
+        //    var subcontainers = Container.GetSubContainers()
+        //        .FirstOrDefault(subcontainer => subcontainer.GetAggregateConfigurations().Any());
+        //    if (subcontainers != null)
+        //        cataIDs = subcontainers.GetAggregateConfigurations().Select(c => c.Catalogue_ID).Distinct().ToList();
+        //}
 
         //none of the subcontainers have any catalogues either!
         if (!cataIDs.Any())

@@ -4,24 +4,26 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.EntityFramework.Helpers;
+using Rdmp.Core.EntityFramework.Models.DataExport;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
+using System.Linq;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 public sealed class ExecuteCommandAssociateCohortIdentificationConfigurationWithProject : BasicCommandExecution,
     IAtomicCommandWithTarget
 {
-    private Project _project;
-    private CohortIdentificationConfiguration _cic;
-    private readonly ProjectCohortIdentificationConfigurationAssociation[] _existingAssociations;
+    private Core.EntityFramework.Models.DataExport.Project _project;
+    private Core.EntityFramework.Models.CohortIdentificationConfiguration _cic;
+    private readonly Core.EntityFramework.Models.DataExport.ProjectCohortIdentificationConfigurationAssociation[] _existingAssociations;
 
     public ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(IBasicActivateItems activator) :
         base(activator)
@@ -29,7 +31,7 @@ public sealed class ExecuteCommandAssociateCohortIdentificationConfigurationWith
         if (!activator.CoreChildProvider.AllCohortIdentificationConfigurations.Any())
             SetImpossible("There are no Cohort Identification Configurations yet");
 
-        _existingAssociations = ((DataExportChildProvider)activator.CoreChildProvider).AllProjectAssociatedCics;
+        _existingAssociations = activator.RepositoryLocator.DataExportDbContext.ProjectCohortIdentificationConfigurationAssociations.ToArray(); //((DataExportChildProvider)activator.CoreChildProvider).AllProjectAssociatedCics;
     }
 
     public override string GetCommandHelp() =>
@@ -40,7 +42,7 @@ public sealed class ExecuteCommandAssociateCohortIdentificationConfigurationWith
         if (_project == null)
         {
             //project is not known so get all projects
-            var valid = BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Project>();
+            var valid = BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Core.EntityFramework.Models.DataExport.Project>();
 
             //except if the cic is the launch point
             if (_cic != null)
@@ -81,12 +83,16 @@ public sealed class ExecuteCommandAssociateCohortIdentificationConfigurationWith
         base.Execute();
 
         //create new relationship in database between the cic and project
-        _ = new ProjectCohortIdentificationConfigurationAssociation(
-            BasicActivator.RepositoryLocator.CatalogueDbContext, _project, _cic);
-
-        Publish(_project);
-        Publish(_cic);
-        Emphasise(_cic);
+        var association = new EntityFramework.Models.DataExport.ProjectCohortIdentificationConfigurationAssociation()
+        {
+            CohortIdentificationConfiguration_ID = _cic.ID,
+            Project_ID = _project.ID
+        };
+        _project.DataExportDbContext.Add(association);
+        _project.DataExportDbContext.SaveChanges();
+        //Publish(_project);
+        //Publish(_cic);
+        //Emphasise(_cic);
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
@@ -97,14 +103,14 @@ public sealed class ExecuteCommandAssociateCohortIdentificationConfigurationWith
             //if we know the _project the context is 'pick a cic'  (or if we don't know either then just use this icon too)
             iconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Link);
 
-    public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
+    public IAtomicCommandWithTarget SetTarget(DatabaseObject target)
     {
         switch (target)
         {
-            case Project project:
+            case Core.EntityFramework.Models.DataExport.Project project:
                 _project = project;
                 break;
-            case CohortIdentificationConfiguration configuration:
+            case Core.EntityFramework.Models.CohortIdentificationConfiguration configuration:
                 _cic = configuration;
                 break;
         }

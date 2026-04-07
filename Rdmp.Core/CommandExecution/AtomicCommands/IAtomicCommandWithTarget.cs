@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework.Helpers;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
@@ -21,5 +22,5 @@ public interface IAtomicCommandWithTarget : IAtomicCommand
     /// </summary>
     /// <param name="target"></param>
     /// <returns></returns>
-    IAtomicCommandWithTarget SetTarget(DatabaseEntity target);
+    IAtomicCommandWithTarget SetTarget(DatabaseObject target);
 }

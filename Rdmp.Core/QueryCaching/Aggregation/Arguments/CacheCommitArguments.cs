@@ -15,12 +15,12 @@ public abstract class CacheCommitArguments
 {
     protected readonly int Timeout;
     public AggregateOperation Operation { get; private set; }
-    public AggregateConfiguration Configuration { get; set; }
+    public EntityFramework.Models.AggregateConfiguration Configuration { get; set; }
     public string SQL { get; private set; }
     public DataTable Results { get; private set; }
     public DatabaseColumnRequest[] ExplicitColumns { get; private set; }
 
-    protected CacheCommitArguments(AggregateOperation operation, AggregateConfiguration configuration, string sql,
+    protected CacheCommitArguments(AggregateOperation operation, EntityFramework.Models.AggregateConfiguration configuration, string sql,
         DataTable results, int timeout, DatabaseColumnRequest[] explicitColumns = null)
     {
         Timeout = timeout;

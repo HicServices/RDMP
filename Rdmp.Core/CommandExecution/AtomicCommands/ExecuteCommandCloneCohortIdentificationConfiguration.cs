@@ -7,6 +7,7 @@
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.EntityFramework.Helpers;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories.Construction;
@@ -53,17 +54,17 @@ public class ExecuteCommandCloneCohortIdentificationConfiguration : BasicCommand
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
         iconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Link);
 
-    public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
+    public IAtomicCommandWithTarget SetTarget(DatabaseObject target)
     {
-        switch (target)
-        {
-            case CohortIdentificationConfiguration configuration:
-                _cic = configuration;
-                break;
-            case Project project:
-                _project = project;
-                break;
-        }
+        //switch (target)
+        //{
+        //    case CohortIdentificationConfiguration configuration:
+        //        _cic = configuration;
+        //        break;
+        //    case Project project:
+        //        _project = project;
+        //        break;
+        //}
 
         return this;
     }

@@ -4,16 +4,17 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.IO;
-using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataViewing;
+using Rdmp.Core.EntityFramework.Helpers;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
+using System.IO;
+using System.Linq;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
@@ -66,20 +67,20 @@ public class ExecuteCommandViewExtractionSql : ExecuteCommandViewDataBase, IAtom
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
         iconProvider.GetImage(RDMPConcept.SQL, OverlayKind.Execute);
 
-    public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
+    public IAtomicCommandWithTarget SetTarget(DatabaseObject target)
     {
-        if (target is SelectedDataSets sets)
-        {
-            _selectedDataSet = sets;
+        //if (target is SelectedDataSets sets)
+        //{
+        //    _selectedDataSet = sets;
 
-            if (_selectedDataSet != null)
-                //must have datasets and have a cohort configured
-                if (_selectedDataSet.ExtractionConfiguration.Cohort_ID == null)
-                    SetImpossible("No cohort has been selected for ExtractionConfiguration");
-        }
+        //    if (_selectedDataSet != null)
+        //        //must have datasets and have a cohort configured
+        //        if (_selectedDataSet.ExtractionConfiguration.Cohort_ID == null)
+        //            SetImpossible("No cohort has been selected for ExtractionConfiguration");
+        //}
 
-        if (target is ExtractionConfiguration configuration)
-            _extractionConfiguration = configuration;
+        //if (target is ExtractionConfiguration configuration)
+        //    _extractionConfiguration = configuration;
 
         return this;
     }

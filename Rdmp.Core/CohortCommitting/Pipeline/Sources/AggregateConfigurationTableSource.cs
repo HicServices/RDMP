@@ -23,10 +23,10 @@ namespace Rdmp.Core.CohortCommitting.Pipeline.Sources;
 /// Pipeline source component which executes an AggregateConfiguration query (e.g. Aggregate Graph / Joinable patient index table)
 /// </summary>
 public class AggregateConfigurationTableSource : IPluginDataFlowSource<DataTable>,
-    IPipelineRequirement<AggregateConfiguration>
+    IPipelineRequirement<EntityFramework.Models.AggregateConfiguration>
 {
-    protected AggregateConfiguration AggregateConfiguration;
-    protected CohortIdentificationConfiguration CohortIdentificationConfigurationIfAny;
+    protected EntityFramework.Models.AggregateConfiguration AggregateConfiguration;
+    protected EntityFramework.Models.CohortIdentificationConfiguration CohortIdentificationConfigurationIfAny;
 
     private bool _haveSentData;
 
@@ -129,7 +129,7 @@ public class AggregateConfigurationTableSource : IPluginDataFlowSource<DataTable
         }
     }
 
-    public virtual void PreInitialize(AggregateConfiguration value, IDataLoadEventListener listener)
+    public virtual void PreInitialize(EntityFramework.Models.AggregateConfiguration value, IDataLoadEventListener listener)
     {
         AggregateConfiguration = value;
 

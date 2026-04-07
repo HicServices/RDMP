@@ -6,6 +6,7 @@
 
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cache;
+using Rdmp.Core.EntityFramework.Helpers;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
@@ -27,9 +28,9 @@ public class ExecuteCommandCreateNewPermissionWindow : BasicCommandExecution, IA
 
     public override string GetCommandHelp() => "Creates a new time window restriction on when loads can occur";
 
-    public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
+    public IAtomicCommandWithTarget SetTarget(DatabaseObject target)
     {
-        _cacheProgressToSetOnIfAny = target as CacheProgress;
+        //_cacheProgressToSetOnIfAny = target as CacheProgress;
         return this;
     }
 
@@ -40,18 +41,18 @@ public class ExecuteCommandCreateNewPermissionWindow : BasicCommandExecution, IA
         if (TypeText("Permission Window Name", "Enter name for the PermissionWindow e.g. 'Nightly Loads'", 1000, null,
                 out var name))
         {
-            var newWindow = new PermissionWindow(BasicActivator.RepositoryLocator.CatalogueDbContext)
-            {
-                Name = name
-            };
-            newWindow.SaveToDatabase();
+            //var newWindow = new PermissionWindow(BasicActivator.RepositoryLocator.CatalogueDbContext)
+            //{
+            //    Name = name
+            //};
+            //newWindow.SaveToDatabase();
 
-            if (_cacheProgressToSetOnIfAny != null)
-                new ExecuteCommandSetPermissionWindow(BasicActivator, _cacheProgressToSetOnIfAny).SetTarget(newWindow)
-                    .Execute();
+            //if (_cacheProgressToSetOnIfAny != null)
+            //    new ExecuteCommandSetPermissionWindow(BasicActivator, _cacheProgressToSetOnIfAny).SetTarget(newWindow)
+            //        .Execute();
 
-            Publish(newWindow);
-            Activate(newWindow);
+            //Publish(newWindow);
+            //Activate(newWindow);
         }
     }
 }

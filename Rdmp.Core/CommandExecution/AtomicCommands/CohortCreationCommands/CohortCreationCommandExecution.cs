@@ -11,6 +11,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.EntityFramework.Helpers;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Logging.Listeners;
 using Rdmp.Core.Providers;
@@ -29,7 +30,7 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
 
     protected const string Desc_ProjectParameter = "Project to associate cohort with, must have a ProjectNumber";
 
-    protected ExternalCohortTable ExternalCohortTable;
+    protected EntityFramework.Models.DataExport.ExternalCohortTable ExternalCohortTable;
     protected IProject Project;
     protected readonly EntityFramework.Models.Pipeline Pipeline;
     private readonly string _explicitCohortName;
@@ -51,7 +52,7 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
     /// <param name="cohortName"></param>
     /// <param name="project"></param>
     /// <param name="pipeline"></param>
-    protected CohortCreationCommandExecution(IBasicActivateItems activator, ExternalCohortTable externalCohortTable,
+    protected CohortCreationCommandExecution(IBasicActivateItems activator, EntityFramework.Models.DataExport.ExternalCohortTable externalCohortTable,
         string cohortName, Project project, EntityFramework.Models.Pipeline pipeline) : base(activator)
     {
         //May be null
@@ -114,7 +115,7 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
         };
 
     private ICohortCreationRequest GenerateCohortCreationRequestFromNameAndProject(string name,
-        string auditLogDescription, ExternalCohortTable ect)
+        string auditLogDescription, EntityFramework.Models.DataExport.ExternalCohortTable ect)
     {
         var existing = ExtractableCohort.GetImportableCohortDefinitions(ect)
             .Where(d => d.Description.Equals(_explicitCohortName)).ToArray();
@@ -128,14 +129,14 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
             BasicActivator.RepositoryLocator.CatalogueDbContext, auditLogDescription);
     }
 
-    public virtual IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
+    public virtual IAtomicCommandWithTarget SetTarget(DatabaseObject target)
     {
         switch (target)
         {
-            case Project project:
+            case EntityFramework.Models.DataExport.Project project:
                 Project = project;
                 break;
-            case ExternalCohortTable externalCohortTable:
+            case EntityFramework.Models.DataExport.ExternalCohortTable externalCohortTable:
                 ExternalCohortTable = externalCohortTable;
                 break;
         }

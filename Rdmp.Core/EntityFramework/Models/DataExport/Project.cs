@@ -27,6 +27,11 @@ namespace Rdmp.Core.EntityFramework.Models.DataExport
 
         public IProjectCohortIdentificationConfigurationAssociation[] ProjectCohortIdentificationConfigurationAssociations => throw new NotImplementedException();
 
+        public List<CohortIdentificationConfiguration> GetAssociatedCohortIdentificationConfigurations()
+        {
+            return new List<CohortIdentificationConfiguration>() { };//todo
+        }
+
         public string Name { get; set; }
         public string Folder { get; set; }
 

@@ -12,7 +12,7 @@ namespace Rdmp.Core.EntityFramework.Models
 {
     [Table("CohortIdentificationConfiguration")]
 
-    public class CohortIdentificationConfiguration: DatabaseObject, IHasFolder
+    public class CohortIdentificationConfiguration : DatabaseObject, IHasFolder
     {
 
         [Key]
@@ -27,6 +27,15 @@ namespace Rdmp.Core.EntityFramework.Models
         public string FrozenBy { get; set => SetField(ref field, value); }
         public DateTime? FrozenDate { get; set => SetField(ref field, value); }
         public bool IsTemplate { get; set => SetField(ref field, value); }
+        public int? RootCohortAggregateContainer_ID { get; set => SetField(ref field, value); }
+
+        [ForeignKey("RootCohortAggregateContainer_ID")]
+        public virtual CohortAggregateContainer RootCohortAggregateContainer { get; set; }
+
+        public int? QueryCachingServer_ID { get; set => SetField(ref field, value); }
+
+        [ForeignKey("QueryCachingServer_ID")]
+        public virtual ExternalDatabaseServer QueryCachingServer { get; set; }
 
         public override string ToString()
         {
@@ -37,5 +46,7 @@ namespace Rdmp.Core.EntityFramework.Models
         {
             return new List<CohortIdentificationConfiguration>();//TODO
         }
+
+        public List<ISqlParameter> GetAllParameters() => new List<ISqlParameter>();//TODO
     }
 }

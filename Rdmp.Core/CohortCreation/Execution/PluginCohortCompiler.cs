@@ -42,10 +42,10 @@ public abstract class PluginCohortCompiler : IPluginCohortCompiler
     /// <param name="cache">Where to store results.  Note you can use helper method <see cref="SubmitIdentifierList{T}"/> instead
     /// of using this directly</param>
     /// <param name="token">Check this token for cancellation regularly if your API call takes a while to complete</param>
-    public abstract void Run(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache,
+    public abstract void Run(EntityFramework.Models.AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache,
         CancellationToken token);
 
-    public virtual bool ShouldRun(AggregateConfiguration ac) => ShouldRun(ac.Catalogue);
+    public virtual bool ShouldRun(EntityFramework.Models.AggregateConfiguration ac) => ShouldRun(ac.Catalogue);
     public abstract bool ShouldRun(ICatalogue catalogue);
 
 
@@ -59,7 +59,7 @@ public abstract class PluginCohortCompiler : IPluginCohortCompiler
     /// <param name="aggregate"></param>
     /// <param name="cache"></param>
     protected void SubmitIdentifierList<T>(string identifierName, IEnumerable<T> enumerable,
-        AggregateConfiguration aggregate, CachedAggregateConfigurationResultsManager cache)
+        EntityFramework.Models.AggregateConfiguration aggregate, CachedAggregateConfigurationResultsManager cache)
     {
         var g = new Guesser(new DatabaseTypeRequest(typeof(T)));
 
@@ -89,7 +89,7 @@ public abstract class PluginCohortCompiler : IPluginCohortCompiler
     /// <param name="cache"></param>
     /// <param name="knownTypes">If your DataTable is properly Typed (i.e. columns in <paramref name="results"/> have assigned Types)
     /// then pass true.  If everything is a string and you want types to be assigned for these for querying later pass false.</param>
-    protected void SubmitPatientIndexTable(DataTable results, AggregateConfiguration aggregate,
+    protected void SubmitPatientIndexTable(DataTable results, EntityFramework.Models.AggregateConfiguration aggregate,
         CachedAggregateConfigurationResultsManager cache, bool knownTypes)
     {
         // The data table has to go into the database so we need to know max length of strings, decimal precision etc
@@ -120,9 +120,9 @@ public abstract class PluginCohortCompiler : IPluginCohortCompiler
     /// </summary>
     /// <param name="aggregate"></param>
     /// <returns></returns>
-    protected virtual string GetDescription(AggregateConfiguration aggregate) => aggregate.Description ?? "none";
+    protected virtual string GetDescription(EntityFramework.Models.AggregateConfiguration aggregate) => aggregate.Description ?? "none";
 
-    public virtual bool IsStale(AggregateConfiguration aggregate, string oldDescription) =>
+    public virtual bool IsStale(EntityFramework.Models.AggregateConfiguration aggregate, string oldDescription) =>
         !string.Equals(GetDescription(aggregate), oldDescription, StringComparison.CurrentCultureIgnoreCase);
 
     public virtual IHasRuntimeName GetJoinColumnForPatientIndexTable(AggregateConfiguration joinedTo)

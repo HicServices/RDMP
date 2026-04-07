@@ -33,7 +33,7 @@ namespace Rdmp.Core.QueryBuilding;
 /// </summary>
 public class CohortQueryBuilderResult
 {
-    public ExternalDatabaseServer CacheServer { get; }
+    public EntityFramework.Models.ExternalDatabaseServer CacheServer { get; }
     public CachedAggregateConfigurationResultsManager CacheManager { get; }
 
     public bool IsForContainer { get; private set; }
@@ -91,7 +91,7 @@ public class CohortQueryBuilderResult
     /// <param name="helper"></param>
     /// <param name="customise"></param>
     /// <param name="cancellationToken"></param>
-    public CohortQueryBuilderResult(ExternalDatabaseServer cacheServer, ICoreChildProvider childProvider,
+    public CohortQueryBuilderResult(EntityFramework.Models.ExternalDatabaseServer cacheServer, ICoreChildProvider childProvider,
         CohortQueryBuilderHelper helper, QueryBuilderCustomArgs customise, CancellationToken cancellationToken)
     {
         CacheServer = cacheServer;
@@ -116,16 +116,19 @@ public class CohortQueryBuilderResult
     }
 
 
-    public void BuildFor(CohortAggregateContainer container, ParameterManager parameterManager)
+    public void BuildFor(EntityFramework.Models.CohortAggregateContainer container, ParameterManager parameterManager)
     {
         ThrowIfAlreadyBuilt();
         IsForContainer = true;
 
         _log.AppendLine($"Starting Build for {container}");
         //gather dependencies
-        foreach (var cohortSet in ChildProvider.GetAllChildrenRecursively(container).OfType<AggregateConfiguration>()
-                     .Where(IsEnabled).OrderBy(ac => ac.Order))
-            AddDependency(cohortSet);
+        foreach(var cohortset in container.CatalogueDbContext.GetAllChildrenRecursively(container).OfType<EntityFramework.Models.AggregateConfiguration>()
+                         .Where(ac => ac.IsEnabled()).OrderBy(ac => ac.Order))
+            AddDependency(cohortset);
+        //foreach (var cohortSet in ChildProvider.GetAllChildrenRecursively(container).OfType<AggregateConfiguration>()
+        //             .Where(IsEnabled).OrderBy(ac => ac.Order))
+        //    AddDependency(cohortSet);
 
         if (!Dependencies.Any())
             throw new QueryBuildingException(
@@ -140,7 +143,7 @@ public class CohortQueryBuilderResult
         Sql = BuildSql(container, parameterManager);
     }
 
-    public void BuildFor(AggregateConfiguration configuration, ParameterManager parameterManager)
+    public void BuildFor(EntityFramework.Models.AggregateConfiguration configuration, ParameterManager parameterManager)
     {
         ThrowIfAlreadyBuilt();
         IsForContainer = false;
@@ -158,7 +161,7 @@ public class CohortQueryBuilderResult
         Sql = BuildSql(d, parameterManager);
     }
 
-    private string BuildSql(CohortAggregateContainer container, ParameterManager parameterManager)
+    private string BuildSql(EntityFramework.Models.CohortAggregateContainer container, ParameterManager parameterManager)
     {
         Dictionary<CohortQueryBuilderDependency, string> sqlDictionary;
 
@@ -229,14 +232,14 @@ public class CohortQueryBuilderResult
         _log.AppendLine($"Picked TargetServer as {target} because {reason}");
     }
 
-    private string WriteContainers(CohortAggregateContainer container, IQuerySyntaxHelper syntaxHelper,
+    private string WriteContainers(EntityFramework.Models.CohortAggregateContainer container, IQuerySyntaxHelper syntaxHelper,
         Dictionary<CohortQueryBuilderDependency, string> sqlDictionary, int tabs)
     {
         var sql = "";
 
         //Things we need to output
-        var toWriteOut = container.GetOrderedContents().Where(IsEnabled).ToArray();
-
+        //var toWriteOut = container.GetOrderedContents().Where(c => c.IsEnabled()).ToArray();
+        List<object> toWriteOut = new();
         if (toWriteOut.Any())
             sql += Environment.NewLine + TabIn("(", tabs) + Environment.NewLine;
         else
@@ -246,15 +249,17 @@ public class CohortQueryBuilderResult
         foreach (var toWrite in toWriteOut)
         {
             if (firstEntityWritten)
+            {
+                Enum.TryParse(container.Operation, out SetOperation op);
                 sql += Environment.NewLine +
                        TabIn(
-                           GetSetOperationSql(container.Operation, syntaxHelper.DatabaseType) + Environment.NewLine +
+                           GetSetOperationSql(op, syntaxHelper.DatabaseType) + Environment.NewLine +
                            Environment.NewLine, tabs);
-
+            }
             if (toWrite is AggregateConfiguration)
                 sql += TabIn(sqlDictionary.Single(kvp => Equals(kvp.Key.CohortSet, toWrite)).Value, tabs);
 
-            if (toWrite is CohortAggregateContainer sub)
+            if (toWrite is EntityFramework.Models.CohortAggregateContainer sub)
                 sql += WriteContainers(sub, syntaxHelper, sqlDictionary, tabs + 1);
 
             //we have now written the first thing at this level of recursion - all others will need to be separated by the OPERATION e.g. UNION
@@ -362,7 +367,7 @@ public class CohortQueryBuilderResult
     }
 
 
-    private CohortQueryBuilderDependency AddDependency(AggregateConfiguration cohortSet)
+    private CohortQueryBuilderDependency AddDependency(EntityFramework.Models.AggregateConfiguration cohortSet)
     {
         if (cohortSet.Catalogue.IsApiCall())
         {

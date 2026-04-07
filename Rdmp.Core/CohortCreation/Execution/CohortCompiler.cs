@@ -208,8 +208,8 @@ public class CohortCompiler
     /// <returns></returns>
     public ICompileable AddTask(IMapsDirectlyToDatabaseTable runnable, ISqlParameter[] globals)
     {
-        var aggregate = runnable as AggregateConfiguration;
-        var container = runnable as CohortAggregateContainer;
+        var aggregate = runnable as EntityFramework.Models.AggregateConfiguration;
+        var container = runnable as EntityFramework.Models.CohortAggregateContainer;
         var joinable = runnable as JoinableCohortAggregateConfiguration;
         var obj = (aggregate ?? container ?? (IMapsDirectlyToDatabaseTable)joinable) ?? throw new NotSupportedException(
             $"Expected c to be either AggregateConfiguration or CohortAggregateContainer but it was {runnable.GetType().Name}");
@@ -219,7 +219,7 @@ public class CohortCompiler
         //thing that will produce the SQL
         CohortQueryBuilder queryBuilder;
         CohortQueryBuilder cumulativeQueryBuilder = null;
-        CohortAggregateContainer parent;
+        EntityFramework.Models.CohortAggregateContainer parent;
 
         //if it is an aggregate
         if (aggregate != null)
@@ -242,7 +242,7 @@ public class CohortCompiler
         else if (joinable != null)
         {
             task = new JoinableTask(joinable, this);
-            queryBuilder = new CohortQueryBuilder(joinable.AggregateConfiguration, globals, CoreChildProvider);
+            //queryBuilder = new CohortQueryBuilder(joinable.AggregateConfiguration, globals, CoreChildProvider);
             parent = null;
         }
         else
@@ -271,11 +271,11 @@ public class CohortCompiler
         //if the overall owner has a cache configured
         if (CohortIdentificationConfiguration.QueryCachingServer_ID != null)
         {
-            var cacheServer = CohortIdentificationConfiguration.QueryCachingServer;
-            queryBuilder.CacheServer = cacheServer;
+            //var cacheServer = CohortIdentificationConfiguration.QueryCachingServer;
+            //queryBuilder.CacheServer = cacheServer;
 
-            if (cumulativeQueryBuilder != null)
-                cumulativeQueryBuilder.CacheServer = cacheServer;
+            //if (cumulativeQueryBuilder != null)
+            //    cumulativeQueryBuilder.CacheServer = cacheServer;
         }
 
         //setup cancellation
@@ -299,16 +299,16 @@ public class CohortCompiler
             Tasks.Add(task, null);
         }
 
-        var newsql = "";
+        //var newsql = "";
         var cumulativeSql = "";
 
         try
         {
             // build the SQL but respect the cancellation token
-            queryBuilder.RegenerateSQL(source.Token);
+            //queryBuilder.RegenerateSQL(source.Token);
 
             //get the count(*) SQL
-            newsql = queryBuilder.SQL;
+           // newsql = queryBuilder.SQL;
 
             if (cumulativeQueryBuilder != null)
                 cumulativeSql = cumulativeQueryBuilder.SQL;
@@ -320,7 +320,7 @@ public class CohortCompiler
             task.State = CompilationState.Crashed;
         }
 
-        task.Log = queryBuilder?.Results?.Log;
+        //task.Log = queryBuilder?.Results?.Log;
 
 
         var isResultsForRootContainer = container != null &&
@@ -328,20 +328,20 @@ public class CohortCompiler
                                             .RootCohortAggregateContainer_ID;
 
 
-        var taskExecution = new CohortIdentificationTaskExecution(newsql, cumulativeSql, source,
-            queryBuilder?.Results?.CountOfSubQueries ?? -1,
-            queryBuilder?.Results?.CountOfCachedSubQueries ?? -1,
-            isResultsForRootContainer,
-            queryBuilder?.Results?.TargetServer);
+        //var taskExecution = new CohortIdentificationTaskExecution(newsql, cumulativeSql, source,
+        //    queryBuilder?.Results?.CountOfSubQueries ?? -1,
+        //    queryBuilder?.Results?.CountOfCachedSubQueries ?? -1,
+        //    isResultsForRootContainer,
+        //    queryBuilder?.Results?.TargetServer);
 
-        // task is now built but not yet
-        if (task.State != CompilationState.Crashed) task.State = CompilationState.NotScheduled;
+        //// task is now built but not yet
+        //if (task.State != CompilationState.Crashed) task.State = CompilationState.NotScheduled;
 
-        lock (Tasks)
-        {
-            //assign the execution
-            Tasks[task] = taskExecution;
-        }
+        //lock (Tasks)
+        //{
+        //    //assign the execution
+        //    Tasks[task] = taskExecution;
+        //}
 
         return task;
     }

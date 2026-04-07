@@ -20,6 +20,7 @@ namespace Rdmp.Core.EntityFramework.Helpers
         public virtual int ID { get; set; }
 
         public virtual RDMPDbContext CatalogueDbContext { get; set; }
+        public virtual DataExportDbContext DataExportDbContext { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 

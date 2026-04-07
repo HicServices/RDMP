@@ -17,7 +17,7 @@ namespace Rdmp.Core.CommandExecution.Combining;
 public class CatalogueCombineable : ICombineToMakeCommand, IHasFolderCombineable
 {
     public bool ContainsAtLeastOneExtractionIdentifier { get; private set; }
-    public Catalogue Catalogue { get; set; }
+    public EntityFramework.Models.Catalogue Catalogue { get; set; }
 
     public CohortIdentificationConfiguration.ChooseWhichExtractionIdentifierToUseFromManyHandler
         ResolveMultipleExtractionIdentifiers
@@ -25,7 +25,7 @@ public class CatalogueCombineable : ICombineToMakeCommand, IHasFolderCombineable
 
     public IHasFolder Folderable => Catalogue;
 
-    public CatalogueCombineable(Catalogue catalogue)
+    public CatalogueCombineable(EntityFramework.Models.Catalogue catalogue)
     {
         Catalogue = catalogue;
         ContainsAtLeastOneExtractionIdentifier = catalogue.GetAllExtractionInformation(ExtractionCategory.Any)

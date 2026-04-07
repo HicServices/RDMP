@@ -9,6 +9,7 @@ using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.EntityFramework.Helpers;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories.Construction;
@@ -84,22 +85,22 @@ public class ExecuteCommandCreateNewCohortFromCatalogue : CohortCreationCommandE
     }
 
     public ExecuteCommandCreateNewCohortFromCatalogue(IBasicActivateItems activator,
-        ExternalCohortTable externalCohortTable) : this(activator)
+        Core.EntityFramework.Models.DataExport.ExternalCohortTable externalCohortTable) : this(activator)
     {
         ExternalCohortTable = externalCohortTable;
     }
 
-    public override IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
+    public override IAtomicCommandWithTarget SetTarget(DatabaseObject target)
     {
-        switch (target)
-        {
-            case Catalogue cata:
-                SetExtractionIdentifierColumn(GetExtractionInformationFromCatalogue(cata));
-                break;
-            case ExtractionInformation ei:
-                SetExtractionIdentifierColumn(ei);
-                break;
-        }
+        //switch (target)
+        //{
+        //    case Catalogue cata:
+        //        SetExtractionIdentifierColumn(GetExtractionInformationFromCatalogue(cata));
+        //        break;
+        //    case ExtractionInformation ei:
+        //        SetExtractionIdentifierColumn(ei);
+        //        break;
+        //}
 
         return base.SetTarget(target);
     }

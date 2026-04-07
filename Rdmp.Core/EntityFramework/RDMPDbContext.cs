@@ -210,7 +210,7 @@ namespace Rdmp.Core.EntityFramework
             });
         }
 
-        public Curation.Data.Cohort.CohortAggregateContainer GetParent(AggregateConfiguration aggregateConfiguration)
+        public Curation.Data.Cohort.CohortAggregateContainer GetParent(Models.AggregateConfiguration aggregateConfiguration)
         {
             throw new NotImplementedException();
         }
@@ -281,6 +281,11 @@ namespace Rdmp.Core.EntityFramework
         }
 
         public DescendancyList GetDescendancyListIfAnyFor(object modelObject)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<object> GetAllChildrenRecursively(object obj)
         {
             throw new NotImplementedException();
         }

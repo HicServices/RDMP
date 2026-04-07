@@ -55,10 +55,10 @@ public partial class CachedAggregateConfigurationResultsManager
 
     public const string CachingPrefix = "/*Cached:";
 
-    public IHasFullyQualifiedNameToo GetLatestResultsTableUnsafe(AggregateConfiguration configuration,
+    public IHasFullyQualifiedNameToo GetLatestResultsTableUnsafe(EntityFramework.Models.AggregateConfiguration configuration,
         AggregateOperation operation) => GetLatestResultsTableUnsafe(configuration, operation, out _);
 
-    public IHasFullyQualifiedNameToo GetLatestResultsTableUnsafe(AggregateConfiguration configuration,
+    public IHasFullyQualifiedNameToo GetLatestResultsTableUnsafe(EntityFramework.Models.AggregateConfiguration configuration,
         AggregateOperation operation, out string sql)
     {
         var syntax = _database.Server.GetQuerySyntaxHelper();
@@ -95,7 +95,7 @@ AND {syntax.EnsureWrapped("Operation")} = '{operation}'", con);
     /// <param name="operation"></param>
     /// <param name="currentSql"></param>
     /// <returns></returns>
-    public IHasFullyQualifiedNameToo GetLatestResultsTable(AggregateConfiguration configuration,
+    public IHasFullyQualifiedNameToo GetLatestResultsTable(EntityFramework.Models.AggregateConfiguration configuration,
         AggregateOperation operation, string currentSql)
     {
         var syntax = _database.Server.GetQuerySyntaxHelper();
@@ -194,7 +194,7 @@ WHERE
     /// <param name="operation"></param>
     /// <returns>True if a cache entry was found and deleted otherwise false</returns>
     /// <exception cref="Exception"></exception>
-    public bool DeleteCacheEntryIfAny(AggregateConfiguration configuration, AggregateOperation operation)
+    public bool DeleteCacheEntryIfAny(EntityFramework.Models.AggregateConfiguration configuration, AggregateOperation operation)
     {
         var table = GetLatestResultsTableUnsafe(configuration, operation);
         var mgrTable = _database.ExpectTable(ResultsManagerTable);

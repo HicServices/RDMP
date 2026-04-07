@@ -14,11 +14,11 @@ namespace Rdmp.Core.CommandExecution.Combining;
 /// </summary>
 public class CohortIdentificationConfigurationCommand : ICombineToMakeCommand, IHasFolderCombineable
 {
-    public CohortIdentificationConfiguration CohortIdentificationConfiguration { get; set; }
+    public EntityFramework.Models.CohortIdentificationConfiguration CohortIdentificationConfiguration { get; set; }
 
     public IHasFolder Folderable => CohortIdentificationConfiguration;
 
-    public CohortIdentificationConfigurationCommand(CohortIdentificationConfiguration cohortIdentificationConfiguration)
+    public CohortIdentificationConfigurationCommand(EntityFramework.Models.CohortIdentificationConfiguration cohortIdentificationConfiguration)
     {
         CohortIdentificationConfiguration = cohortIdentificationConfiguration;
     }

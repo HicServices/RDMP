@@ -29,9 +29,9 @@ namespace Rdmp.Core.CohortCommitting.Pipeline.Sources;
 /// <para>The purpose of all this is usually to ship a table ('Patient Index Table') which was used to build the researchers cohort into the saved cohorts
 /// database so it can be linked and extracted (as custom data) along with all the normal datasets that make up the researchers extract.</para>
 /// </summary>
-public class PatientIndexTableSource : AggregateConfigurationTableSource, IPipelineRequirement<ExtractableCohort>
+public class PatientIndexTableSource : AggregateConfigurationTableSource, IPipelineRequirement<EntityFramework.Models.DataExport.ExtractableCohort>
 {
-    private ExtractableCohort _extractableCohort;
+    private EntityFramework.Models.DataExport.ExtractableCohort _extractableCohort;
 
     protected override string GetSQL()
     {
@@ -61,12 +61,12 @@ public class PatientIndexTableSource : AggregateConfigurationTableSource, IPipel
             $"{sql[..insertionPoint]}{Environment.NewLine}{impromptuSql}{Environment.NewLine}{sql[insertionPoint..]}";
     }
 
-    public void PreInitialize(ExtractableCohort value, IDataLoadEventListener listener)
+    public void PreInitialize(EntityFramework.Models.DataExport.ExtractableCohort value, IDataLoadEventListener listener)
     {
         _extractableCohort = value;
     }
 
-    public override void PreInitialize(AggregateConfiguration value, IDataLoadEventListener listener)
+    public override void PreInitialize(EntityFramework.Models.AggregateConfiguration value, IDataLoadEventListener listener)
     {
         base.PreInitialize(value, listener);
 

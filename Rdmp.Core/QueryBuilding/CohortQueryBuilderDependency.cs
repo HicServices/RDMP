@@ -34,7 +34,7 @@ public class CohortQueryBuilderDependency
     /// <summary>
     /// The primary table being queried
     /// </summary>
-    public AggregateConfiguration CohortSet { get; }
+    public EntityFramework.Models.AggregateConfiguration CohortSet { get; }
 
     /// <summary>
     /// The relationship object describing the JOIN relationship between <see cref="CohortSet"/> and another optional table
@@ -49,7 +49,7 @@ public class CohortQueryBuilderDependency
     /// <summary>
     /// The aggregate (query) referenced by <see cref="PatientIndexTableIfAny"/>
     /// </summary>
-    public AggregateConfiguration JoinedTo { get; }
+    public EntityFramework.Models.AggregateConfiguration JoinedTo { get; }
 
     /// <summary>
     /// The raw SQL that can be used to join the <see cref="CohortSet"/> and <see cref="PatientIndexTableIfAny"/> (if there is one).  Null if they exist
@@ -80,7 +80,7 @@ public class CohortQueryBuilderDependency
     private static readonly ConcurrentDictionary<int, object> AggregateLocks = new();
 
 
-    public CohortQueryBuilderDependency(AggregateConfiguration cohortSet,
+    public CohortQueryBuilderDependency(EntityFramework.Models.AggregateConfiguration cohortSet,
         JoinableCohortAggregateConfigurationUse patientIndexTableIfAny, ICoreChildProvider childProvider,
         IReadOnlyCollection<IPluginCohortCompiler> pluginCohortCompilers)
     {
@@ -101,8 +101,8 @@ public class CohortQueryBuilderDependency
             var join = childProvider1.AllJoinables.SingleOrDefault(j =>
                            j.ID == PatientIndexTableIfAny.JoinableCohortAggregateConfiguration_ID) ??
                        throw new Exception("ICoreChildProvider did not know about the provided patient index table");
-            JoinedTo = childProvider1.AllAggregateConfigurations.SingleOrDefault(ac =>
-                ac.ID == join.AggregateConfiguration_ID);
+            //JoinedTo = childProvider1.AllAggregateConfigurations.SingleOrDefault(ac =>
+            //    ac.ID == join.AggregateConfiguration_ID);
 
             if (JoinedTo == null)
                 throw new Exception(
@@ -224,7 +224,7 @@ public class CohortQueryBuilderDependency
     }
 
     private CohortQueryBuilderDependencySql GetCacheFetchSqlIfPossible(CohortQueryBuilderResult parent,
-        AggregateConfiguration aggregate,
+        EntityFramework.Models.AggregateConfiguration aggregate,
         CohortQueryBuilderDependencySql sql, bool isPatientIndexTable, IPluginCohortCompiler pluginCohortCompiler,
         CancellationToken cancellationToken)
     {

@@ -496,17 +496,18 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
 
         var limitationSQLIfAny = topX == null ? null : $"TOP {topX.Value}";
 
-        var builder = allForcedJoins.Any()
-            ? new AggregateBuilder(limitationSQLIfAny, CountSQL, this, allForcedJoins)
-            : new AggregateBuilder(limitationSQLIfAny, CountSQL, this);
+        //var builder = allForcedJoins.Any()
+        //    ? new AggregateBuilder(limitationSQLIfAny, CountSQL, this, allForcedJoins)
+        //    : new AggregateBuilder(limitationSQLIfAny, CountSQL, this);
 
-        builder.AddColumnRange(AggregateDimensions.ToArray());
-        builder.RootFilterContainer = RootFilterContainer;
+        //builder.AddColumnRange(AggregateDimensions.ToArray());
+        //builder.RootFilterContainer = RootFilterContainer;
 
-        if (PivotOnDimensionID != null)
-            builder.SetPivotToDimensionID(PivotDimension);
+        //if (PivotOnDimensionID != null)
+        //    builder.SetPivotToDimensionID(PivotDimension);
 
-        return builder;
+        //return builder;
+        return null;
     }
 
     /// <summary>
@@ -607,7 +608,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     /// </summary>
     /// <returns></returns>
     public CohortAggregateContainer GetCohortAggregateContainerIfAny() =>
-        CatalogueDbContext.GetParent(this);
+        CatalogueDbContext.GetParent(null);//this);
 
     /// <summary>
     /// All AggregateConfigurations have the potential a'Joinable Patient Index Table' (see AggregateConfiguration class documentation).  This method returns

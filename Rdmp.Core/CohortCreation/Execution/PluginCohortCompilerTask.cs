@@ -13,7 +13,7 @@ internal class PluginCohortCompilerTask : AggregationTask
 {
     public IPluginCohortCompiler PluginCompiler { get; }
 
-    public PluginCohortCompilerTask(AggregateConfiguration ac, CohortCompiler mainCompiler,
+    public PluginCohortCompilerTask(EntityFramework.Models.AggregateConfiguration ac, CohortCompiler mainCompiler,
         IPluginCohortCompiler pluginCompiler) : base(ac, mainCompiler)
     {
         PluginCompiler = pluginCompiler;

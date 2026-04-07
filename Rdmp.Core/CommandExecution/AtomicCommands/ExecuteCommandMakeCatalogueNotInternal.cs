@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework.Helpers;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
@@ -47,16 +48,16 @@ public class ExecuteCommandMakeCatalogueNotInternal : BasicCommandExecution, IAt
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
         Image.Load<Rgba32>(CatalogueIcons.Catalogue);
 
-    public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
+    public IAtomicCommandWithTarget SetTarget(DatabaseObject target)
     {
-        switch (target)
-        {
-            case Catalogue catalogue:
-                SetCatalogue(catalogue);
-                break;
-            default:
-                break;
-        }
+        //switch (target)
+        //{
+        //    case Catalogue catalogue:
+        //        SetCatalogue(catalogue);
+        //        break;
+        //    default:
+        //        break;
+        //}
 
         return this;
     }

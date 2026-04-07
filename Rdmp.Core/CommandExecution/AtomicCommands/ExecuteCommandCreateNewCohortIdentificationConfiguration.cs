@@ -8,6 +8,7 @@ using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.EntityFramework.Helpers;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
@@ -69,9 +70,9 @@ public class ExecuteCommandCreateNewCohortIdentificationConfiguration : BasicCom
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
         iconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Add);
 
-    public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
+    public IAtomicCommandWithTarget SetTarget(DatabaseObject target)
     {
-        _associateWithProject = target as Project;
+        //_associateWithProject = target as Project;
         return this;
     }
 

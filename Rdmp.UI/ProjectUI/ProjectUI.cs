@@ -44,7 +44,7 @@ namespace Rdmp.UI.ProjectUI;
 /// </summary>
 public partial class ProjectUI : ProjectUI_Design, ISaveableUI
 {
-    private Project _project;
+    private Core.EntityFramework.Models.DataExport.Project _project;
 
     private void SetCohorts()
     {
@@ -89,7 +89,7 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
     }
 
 
-    protected override void SetBindings(BinderWithErrorProviderFactory rules, Project databaseObject)
+    protected override void SetBindings(BinderWithErrorProviderFactory rules, Core.EntityFramework.Models.DataExport.Project databaseObject)
     {
         base.SetBindings(rules, databaseObject);
 
@@ -97,7 +97,7 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
         Bind(tbName, "Text", "Name", p => p.Name);
     }
 
-    public override void SetDatabaseObject(IActivateItems activator, Project databaseObject)
+    public override void SetDatabaseObject(IActivateItems activator, Core.EntityFramework.Models.DataExport.Project databaseObject)
     {
         base.SetDatabaseObject(activator, databaseObject);
         //now load the UI form
@@ -119,7 +119,7 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
         tcMasterTicket.SetItemActivator(activator);
     }
 
-    private static DataTable LoadDatagridFor(Project value)
+    private static DataTable LoadDatagridFor(Core.EntityFramework.Models.DataExport.Project value)
     {
         var configurations = value?.ExtractionConfigurations;
 
@@ -367,6 +367,6 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ProjectUI_Design, UserControl>))]
-public abstract class ProjectUI_Design : RDMPSingleDatabaseObjectControl<Project>
+public abstract class ProjectUI_Design : RDMPSingleDatabaseObjectControl<Core.EntityFramework.Models.DataExport.Project>
 {
 }

@@ -343,7 +343,7 @@ where
     /// </summary>
     /// <param name="externalSource"></param>
     /// <returns></returns>
-    public static IEnumerable<CohortDefinition> GetImportableCohortDefinitions(ExternalCohortTable externalSource)
+    public static IEnumerable<CohortDefinition> GetImportableCohortDefinitions(EntityFramework.Models.DataExport.ExternalCohortTable externalSource)
     {
         using var dt = GetImportableCohortDefinitionsTable(externalSource,
             out var displayMemberName,
@@ -369,7 +369,7 @@ where
     /// <param name="versionMemberName"></param>
     /// <param name="projectNumberMemberName"></param>
     /// <returns></returns>
-    public static DataTable GetImportableCohortDefinitionsTable(ExternalCohortTable externalSource,
+    public static DataTable GetImportableCohortDefinitionsTable(EntityFramework.Models.DataExport.ExternalCohortTable externalSource,
         out string displayMemberName, out string valueMemberName, out string versionMemberName,
         out string projectNumberMemberName)
     {

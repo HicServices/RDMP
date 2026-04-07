@@ -27,6 +27,7 @@ namespace Rdmp.Core.EntityFramework
         public DbSet<Models.DataExport.ExtractionConfiguration> ExtractionConfigurations { get; set; }
         public DbSet<Models.DataExport.SelectedDataSet> SelectedDataSets{ get; set; }
 
+        public DbSet<ProjectCohortIdentificationConfigurationAssociation> ProjectCohortIdentificationConfigurationAssociations { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -43,6 +44,10 @@ namespace Rdmp.Core.EntityFramework
                 entity.HasKey(e => e.ID);
             });
             modelBuilder.Entity<Models.DataExport.ExtractionConfiguration>(entity =>
+            {
+                entity.HasKey(e => e.ID);
+            });
+            modelBuilder.Entity<Models.DataExport.ProjectCohortIdentificationConfigurationAssociation>(entity =>
             {
                 entity.HasKey(e => e.ID);
             });

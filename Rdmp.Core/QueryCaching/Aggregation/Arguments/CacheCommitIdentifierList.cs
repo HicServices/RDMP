@@ -22,7 +22,7 @@ public class CacheCommitIdentifierList : CacheCommitArguments
 {
     private DatabaseColumnRequest _identifierColumn;
 
-    public CacheCommitIdentifierList(AggregateConfiguration configuration, string sql, DataTable results,
+    public CacheCommitIdentifierList(EntityFramework.Models.AggregateConfiguration configuration, string sql, DataTable results,
         DatabaseColumnRequest identifierColumn, int timeout)
         : base(AggregateOperation.IndexedExtractionIdentifierList, configuration, sql, results, timeout,
             new[] { identifierColumn })

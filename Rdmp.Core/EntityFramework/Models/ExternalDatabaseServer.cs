@@ -1,6 +1,9 @@
 ﻿using FAnsi;
+using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.EntityFramework.Helpers;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
@@ -10,7 +13,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Rdmp.Core.EntityFramework.Models
 {
     [Table("ExternalDatabaseServer")]
-    public class ExternalDatabaseServer : DatabaseObject, IDataAccessPoint, ICheckable
+    public class ExternalDatabaseServer : DatabaseObject, IDataAccessPoint, ICheckable, IExternalDatabaseServer
     {
         [Key]
         public override int ID { get; set; }
@@ -58,6 +61,31 @@ namespace Rdmp.Core.EntityFramework.Models
                                                patcher.LegacyName == CreatedByAssembly);
 
         public void Check(ICheckNotifier notifier)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public DiscoveredDatabase Discover(DataAccessContext context)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void RevertToDatabaseState()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public RevertableObjectReport HasLocalChanges()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public bool Exists()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void SaveToDatabase()
         {
             throw new System.NotImplementedException();
         }

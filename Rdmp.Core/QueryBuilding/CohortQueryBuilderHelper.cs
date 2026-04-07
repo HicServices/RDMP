@@ -32,7 +32,7 @@ public class CohortQueryBuilderHelper
     /// <param name="aggregate"></param>
     /// <param name="args"></param>
     /// <returns></returns>
-    public static CohortQueryBuilderDependencySql GetSQLForAggregate(AggregateConfiguration aggregate,
+    public static CohortQueryBuilderDependencySql GetSQLForAggregate(EntityFramework.Models.AggregateConfiguration aggregate,
         QueryBuilderArgs args)
     {
         var isJoinAggregate = aggregate.IsCohortIdentificationAggregate;
@@ -137,7 +137,7 @@ public class CohortQueryBuilderHelper
         return toReturn;
     }
 
-    public static void AddJoinToBuilder(AggregateConfiguration user, IColumn usersExtractionIdentifier,
+    public static void AddJoinToBuilder(EntityFramework.Models.AggregateConfiguration user, IColumn usersExtractionIdentifier,
         AggregateBuilder builder, QueryBuilderArgs args)
     {
         var joinableTableAlias = args.JoinIfAny.GetJoinTableAlias();

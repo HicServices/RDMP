@@ -24,7 +24,7 @@ public interface IPluginCohortCompiler
     /// </summary>
     /// <param name="ac"></param>
     /// <returns></returns>
-    bool ShouldRun(AggregateConfiguration ac);
+    bool ShouldRun(EntityFramework.Models.AggregateConfiguration ac);
 
     /// <summary>
     /// Return true if the <paramref name="catalogue"/> is of a type that should be handled by your class
@@ -42,7 +42,7 @@ public interface IPluginCohortCompiler
     /// <param name="ac"></param>
     /// <param name="cache"></param>
     /// <param name="cancellationToken"></param>
-    void Run(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache,
+    void Run(EntityFramework.Models.AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache,
         CancellationToken cancellationToken);
 
     /// <summary>
@@ -52,7 +52,7 @@ public interface IPluginCohortCompiler
     /// <param name="aggregate"></param>
     /// <param name="oldDescription"></param>
     /// <returns></returns>
-    bool IsStale(AggregateConfiguration aggregate, string oldDescription);
+    bool IsStale(EntityFramework.Models.AggregateConfiguration aggregate, string oldDescription);
 
     /// <summary>
     /// When the API is used as described in <paramref name="joinedTo"/> as a patient index table

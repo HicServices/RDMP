@@ -33,8 +33,8 @@ public sealed class CreateTableFromAggregateUseCase : PipelineUseCase
     /// in which the patient id appears in the cohort</param>
     /// <param name="table">The destination table in which to put the matched records.
     /// <para> (table does not have to exist yet, you can use <see cref="DiscoveredDatabase.ExpectTable"/> to obtain a reference to a non existent table)</para></param>
-    public CreateTableFromAggregateUseCase(AggregateConfiguration aggregateConfiguration,
-        ExtractableCohort constrainByCohort, DiscoveredTable table)
+    public CreateTableFromAggregateUseCase(EntityFramework.Models.AggregateConfiguration aggregateConfiguration,
+        EntityFramework.Models.DataExport.ExtractableCohort constrainByCohort, DiscoveredTable table)
     {
         if (constrainByCohort == null)
         {

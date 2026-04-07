@@ -126,6 +126,8 @@ namespace Rdmp.Core.EntityFramework.Models
 
         public virtual List<LoadMetadataCatalogueLinkage> LoadMetadataCatalogueLinkages { get; set; }
 
+        Curation.Data.Aggregation.AggregateConfiguration[] ICatalogue.AggregateConfigurations => throw new NotImplementedException();
+
         public override string ToString() => Name;
 
         public List<CatalogueItem> GetCatalogueItemsForExtractionCategory(ExtractionCategory extractionCategory)

@@ -26,7 +26,7 @@ public class ExamplePluginCohortCompiler : PluginCohortCompiler
 {
     public const string ExampleAPIName = $"{ApiPrefix}GenerateRandomChisExample";
 
-    public override void Run(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache,
+    public override void Run(Core.EntityFramework.Models.AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache,
         CancellationToken token)
     {
         token.ThrowIfCancellationRequested();
@@ -40,7 +40,7 @@ public class ExamplePluginCohortCompiler : PluginCohortCompiler
             RunAsIdentifierList(ac, cache, token);
     }
 
-    private void RunAsPatientIndexTable(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache,
+    private void RunAsPatientIndexTable(Core.EntityFramework.Models.AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache,
         CancellationToken token)
     {
         using var dt = new DataTable();
@@ -57,7 +57,7 @@ public class ExamplePluginCohortCompiler : PluginCohortCompiler
         SubmitPatientIndexTable(dt, ac, cache, true);
     }
 
-    private void RunAsIdentifierList(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache,
+    private void RunAsIdentifierList(Core.EntityFramework.Models.AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache,
         CancellationToken token)
     {
         var pc = new PersonCollection();
@@ -78,7 +78,7 @@ public class ExamplePluginCohortCompiler : PluginCohortCompiler
         SubmitIdentifierList("chi", set, ac, cache);
     }
 
-    private static int GetNumberToGenerate(AggregateConfiguration ac) =>
+    private static int GetNumberToGenerate(Core.EntityFramework.Models.AggregateConfiguration ac) =>
         // You can persist configuration info about how to query the API any way
         // you want.  Here we just use the Description field
         int.TryParse(ac.Description, out var result) ? result : 5;

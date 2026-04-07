@@ -93,5 +93,9 @@ namespace Rdmp.Core.EntityFramework.Models
         {
             throw new NotImplementedException();
         }
+
+        public List<CohortAggregateContainer> GetAllParentContainers() => new List<CohortAggregateContainer>() { };
+
+        public CohortAggregateContainer GetParentContainerIfAny() => null;
     }
 }

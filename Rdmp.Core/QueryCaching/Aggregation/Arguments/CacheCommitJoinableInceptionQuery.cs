@@ -21,7 +21,7 @@ namespace Rdmp.Core.QueryCaching.Aggregation.Arguments;
 ///</summary>
 public class CacheCommitJoinableInceptionQuery : CacheCommitArguments
 {
-    public CacheCommitJoinableInceptionQuery(AggregateConfiguration configuration, string sql, DataTable results,
+    public CacheCommitJoinableInceptionQuery(EntityFramework.Models.AggregateConfiguration configuration, string sql, DataTable results,
         DatabaseColumnRequest[] explicitTypes, int timeout)
         : base(AggregateOperation.JoinableInceptionQuery, configuration, sql, results, timeout, explicitTypes)
     {
