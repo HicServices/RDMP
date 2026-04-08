@@ -378,7 +378,7 @@ public partial class ExampleDatasetsCreation
         return extractionConfiguration;
     }
 
-    private ExtractableCohort CommitCohortToNewProject(CohortIdentificationConfiguration cic,
+    private ExtractableCohort CommitCohortToNewProject(EntityFramework.Models.CohortIdentificationConfiguration cic,
         ExternalCohortTable externalCohortTable, EntityFramework.Models.Pipeline cohortCreationPipeline, string projectName,
         string cohortName, int projectNumber, out Project project)
     {
@@ -404,10 +404,14 @@ public partial class ExampleDatasetsCreation
         return request.CohortCreatedIfAny;
     }
 
-    private CohortIdentificationConfiguration CreateCohortIdentificationConfiguration(ExtractionFilter inclusionFilter1)
+    private EntityFramework.Models.CohortIdentificationConfiguration CreateCohortIdentificationConfiguration(ExtractionFilter inclusionFilter1)
     {
         //Create the top level configuration object
-        var cic = new CohortIdentificationConfiguration(_repos.CatalogueDbContext, "Tayside Lung Cancer Cohort");
+        var cic = new EntityFramework.Models.CohortIdentificationConfiguration()
+        {
+            Name = "Tayside Lung Cancer Cohort",
+            CatalogueDbContext = _repos.CatalogueDbContext
+        };
 
         //create a UNION container for Inclusion Criteria
         var container = new CohortAggregateContainer(_repos.CatalogueDbContext, SetOperation.UNION)
@@ -417,7 +421,9 @@ public partial class ExampleDatasetsCreation
         container.SaveToDatabase();
 
         cic.RootCohortAggregateContainer_ID = container.ID;
-        cic.SaveToDatabase();
+        //cic.SaveToDatabase();
+        _repos.CatalogueDbContext.Add(cic);
+        _repos.CatalogueDbContext.SaveChanges();
 
         //Create a new cohort set to the 'Inclusion Criteria' based on the filters Catalogue
         var cata = inclusionFilter1.ExtractionInformation.CatalogueItem.Catalogue;

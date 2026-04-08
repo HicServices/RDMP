@@ -39,7 +39,7 @@ namespace Rdmp.UI.ExtractionUIs;
 /// </summary>
 public partial class ViewExtractionSqlUI : ViewExtractionSql_Design
 {
-    private Catalogue _catalogue;
+    private Core.EntityFramework.Models.Catalogue _catalogue;
 
     private ToolStripButton rbCore = new("Core");
     private ToolStripButton rbSupplemental = new("Supplemental") { Checked = true };
@@ -190,7 +190,7 @@ public partial class ViewExtractionSqlUI : ViewExtractionSql_Design
     }
 
 
-    public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
+    public override void SetDatabaseObject(IActivateItems activator, Core.EntityFramework.Models.Catalogue databaseObject)
     {
         base.SetDatabaseObject(activator, databaseObject);
         _catalogue = databaseObject;
@@ -227,6 +227,6 @@ public partial class ViewExtractionSqlUI : ViewExtractionSql_Design
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ViewExtractionSql_Design, UserControl>))]
-public abstract class ViewExtractionSql_Design : RDMPSingleDatabaseObjectControl<Catalogue>
+public abstract class ViewExtractionSql_Design : RDMPSingleDatabaseObjectControl<Core.EntityFramework.Models.Catalogue>
 {
 }

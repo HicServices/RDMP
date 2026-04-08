@@ -19,12 +19,12 @@ public class AggregateBuilderOptionsFactory
     /// </summary>
     /// <param name="config"></param>
     /// <returns></returns>
-    public static IAggregateBuilderOptions Create(AggregateConfiguration config)
+    public static IAggregateBuilderOptions Create(Core.EntityFramework.Models.AggregateConfiguration config)
     {
         var cohortIdentificationConfiguration = config.GetCohortIdentificationConfigurationIfAny();
 
         return cohortIdentificationConfiguration != null
-            ? new AggregateBuilderCohortOptions(cohortIdentificationConfiguration.GetAllParameters())
+            ? new AggregateBuilderCohortOptions(cohortIdentificationConfiguration.GetAllParameters().ToArray())
             : new AggregateBuilderBasicOptions();
     }
 }

@@ -15,10 +15,10 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands
 {
     public class ExecuteCommandUseTemplateCohortIdentificationConfiguration : BasicCommandExecution, IAtomicCommandWithTarget
     {
-        private CohortIdentificationConfiguration _cic;
+        private EntityFramework.Models.CohortIdentificationConfiguration _cic;
         private IMapsDirectlyToDatabaseTable _selectedProject;
         private readonly IBasicActivateItems _activator;
-        public ExecuteCommandUseTemplateCohortIdentificationConfiguration(IBasicActivateItems activator, CohortIdentificationConfiguration cic) : base(activator)
+        public ExecuteCommandUseTemplateCohortIdentificationConfiguration(IBasicActivateItems activator, EntityFramework.Models.CohortIdentificationConfiguration cic) : base(activator)
         {
             _activator = activator;
             _cic = cic;

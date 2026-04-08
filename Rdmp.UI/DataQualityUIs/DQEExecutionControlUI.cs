@@ -27,7 +27,7 @@ namespace Rdmp.UI.DataQualityUIs;
 /// </summary>
 public partial class DQEExecutionControlUI : DQEExecutionControl_Design
 {
-    private Catalogue _catalogue;
+    private Core.EntityFramework.Models.Catalogue _catalogue;
 
     public DQEExecutionControlUI()
     {
@@ -47,7 +47,7 @@ public partial class DQEExecutionControlUI : DQEExecutionControl_Design
     private RDMPCommandLineOptions CommandGetter(CommandLineActivity commandLineActivity) => new DqeOptions
     { Catalogue = _catalogue.ID.ToString(), Command = commandLineActivity };
 
-    public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
+    public override void SetDatabaseObject(IActivateItems activator, Core.EntityFramework.Models.Catalogue databaseObject)
     {
         base.SetDatabaseObject(activator, databaseObject);
         _catalogue = databaseObject;
@@ -69,6 +69,6 @@ public partial class DQEExecutionControlUI : DQEExecutionControl_Design
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<DQEExecutionControl_Design, UserControl>))]
-public abstract class DQEExecutionControl_Design : RDMPSingleDatabaseObjectControl<Catalogue>
+public abstract class DQEExecutionControl_Design : RDMPSingleDatabaseObjectControl<Core.EntityFramework.Models.Catalogue>
 {
 }

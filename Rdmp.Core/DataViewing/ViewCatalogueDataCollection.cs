@@ -10,6 +10,7 @@ using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Curation.Data.Spontaneous;
+using Rdmp.Core.EntityFramework.Helpers;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
@@ -23,7 +24,7 @@ public class ViewCatalogueDataCollection : PersistableObjectCollection, IViewSQL
 {
     private QueryBuilder builder;
 
-    public Catalogue Catalogue => DatabaseObjects.OfType<Catalogue>().FirstOrDefault();
+    public EntityFramework.Models.Catalogue Catalogue => DatabaseObjects.OfType<EntityFramework.Models.Catalogue>().FirstOrDefault();
 
     public IFilter[] Filters => DatabaseObjects.OfType<IFilter>().ToArray();
 
@@ -34,7 +35,7 @@ public class ViewCatalogueDataCollection : PersistableObjectCollection, IViewSQL
     /// </summary>
     public int? TopX { get; set; }
 
-    public ViewCatalogueDataCollection(Catalogue catalogue)
+    public ViewCatalogueDataCollection(Core.EntityFramework.Models.Catalogue catalogue)
     {
         DatabaseObjects.Add(catalogue);
     }
@@ -100,7 +101,7 @@ public class ViewCatalogueDataCollection : PersistableObjectCollection, IViewSQL
 
     public string GetTabName() => Catalogue.Name;
 
-    public IEnumerable<DatabaseEntity> GetToolStripObjects()
+    public IEnumerable<DatabaseObject> GetToolStripObjects()
     {
         yield return Catalogue;
     }

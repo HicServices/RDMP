@@ -66,7 +66,7 @@ public class ExecuteCommandViewData : ExecuteCommandViewDataBase, IAtomicCommand
             case ExtractionInformation ei:
                 _collection = CreateCollection(ei);
                 break;
-            case Catalogue cata:
+            case Core.EntityFramework.Models.Catalogue cata:
                 ThrowIfNotSimpleSelectViewType();
                 _collection = CreateCollection(cata);
                 break;
@@ -78,7 +78,7 @@ public class ExecuteCommandViewData : ExecuteCommandViewDataBase, IAtomicCommand
                 ThrowIfNotSimpleSelectViewType();
                 _collection = CreateCollection(ec);
                 break;
-            case AggregateConfiguration ac:
+            case Core.EntityFramework.Models.AggregateConfiguration ac:
                 ThrowIfNotSimpleSelectViewType();
                 _collection = CreateCollection(ac);
                 break;
@@ -87,7 +87,7 @@ public class ExecuteCommandViewData : ExecuteCommandViewDataBase, IAtomicCommand
         }
     }
 
-    private IViewSQLAndResultsCollection CreateCollection(AggregateConfiguration ac)
+    private IViewSQLAndResultsCollection CreateCollection(Core.EntityFramework.Models.AggregateConfiguration ac)
     {
         var cic = ac.GetCohortIdentificationConfigurationIfAny();
 
@@ -129,7 +129,7 @@ public class ExecuteCommandViewData : ExecuteCommandViewDataBase, IAtomicCommand
                 $"Only '{nameof(ViewType.TOP_100)}' or '{nameof(ViewType.All)}' can be used for this object Type");
     }
 
-    private IViewSQLAndResultsCollection CreateCollection(Catalogue cata) =>
+    private IViewSQLAndResultsCollection CreateCollection(Core.EntityFramework.Models.Catalogue cata) =>
         new ViewCatalogueDataCollection(cata)
         {
             TopX = _viewType == ViewType.All ? null : 100

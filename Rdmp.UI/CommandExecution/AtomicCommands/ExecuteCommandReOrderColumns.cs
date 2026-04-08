@@ -17,9 +17,9 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandReOrderColumns : BasicUICommandExecution, IAtomicCommand
 {
-    private readonly Catalogue _catalogue;
+    private readonly Core.EntityFramework.Models.Catalogue _catalogue;
 
-    public ExecuteCommandReOrderColumns(IActivateItems activator, Catalogue catalogue) : base(activator)
+    public ExecuteCommandReOrderColumns(IActivateItems activator, Core.EntityFramework.Models.Catalogue catalogue) : base(activator)
     {
         _catalogue = catalogue;
     }
@@ -30,6 +30,6 @@ public class ExecuteCommandReOrderColumns : BasicUICommandExecution, IAtomicComm
     {
         base.Execute();
 
-        Activator.Activate<ReOrderCatalogueItemsUI, Catalogue>(_catalogue);
+        Activator.Activate<ReOrderCatalogueItemsUI, Core.EntityFramework.Models.Catalogue>(_catalogue);
     }
 }

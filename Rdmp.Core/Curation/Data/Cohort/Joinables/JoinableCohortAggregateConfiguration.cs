@@ -63,8 +63,8 @@ public class JoinableCohortAggregateConfiguration : DatabaseEntity
 
     /// <inheritdoc cref="AggregateConfiguration_ID"/>
     [NoMappingToDatabase]
-    public AggregateConfiguration AggregateConfiguration =>
-        CatalogueDbContext.GetObjectByID<AggregateConfiguration>(AggregateConfiguration_ID);
+    public EntityFramework.Models.AggregateConfiguration AggregateConfiguration => null;
+        //CatalogueDbContext.GetObjectByID<AggregateConfiguration>(AggregateConfiguration_ID);
 
     #endregion
 

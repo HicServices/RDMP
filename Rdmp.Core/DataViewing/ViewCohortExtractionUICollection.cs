@@ -11,6 +11,7 @@ using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.EntityFramework.Helpers;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.DataViewing;
@@ -56,10 +57,10 @@ public class ViewCohortExtractionUICollection : PersistableObjectCollection, IVi
         _arguments = PersistStringHelper.LoadDictionaryFromString(s);
     }
 
-    public ExtractableCohort Cohort => DatabaseObjects.OfType<ExtractableCohort>().SingleOrDefault();
+    public EntityFramework.Models.DataExport.ExtractableCohort Cohort => DatabaseObjects.OfType<EntityFramework.Models.DataExport.ExtractableCohort>().SingleOrDefault();
 
 
-    public IEnumerable<DatabaseEntity> GetToolStripObjects()
+    public IEnumerable<DatabaseObject> GetToolStripObjects()
     {
         yield return Cohort;
     }

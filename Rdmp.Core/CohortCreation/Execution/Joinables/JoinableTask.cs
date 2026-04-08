@@ -26,8 +26,8 @@ namespace Rdmp.Core.CohortCreation.Execution.Joinables;
 /// </summary>
 public class JoinableTask : CacheableTask
 {
-    private readonly CohortIdentificationConfiguration _cohortIdentificationConfiguration;
-    private readonly AggregateConfiguration _aggregate;
+    private readonly EntityFramework.Models.CohortIdentificationConfiguration _cohortIdentificationConfiguration;
+    private readonly EntityFramework.Models.AggregateConfiguration _aggregate;
     private readonly string _catalogueName;
 
     public JoinableCohortAggregateConfiguration Joinable { get; }
@@ -59,7 +59,7 @@ public class JoinableTask : CacheableTask
         return name.StartsWith(expectedTrimStart, StringComparison.Ordinal) ? name[expectedTrimStart.Length..] : name;
     }
 
-    public override AggregateConfiguration GetAggregateConfiguration() => Joinable.AggregateConfiguration;
+    public override EntityFramework.Models.AggregateConfiguration GetAggregateConfiguration() => Joinable.AggregateConfiguration;
 
     public override CacheCommitArguments
         GetCacheArguments(string sql, DataTable results, DatabaseColumnRequest[] explicitTypes) =>

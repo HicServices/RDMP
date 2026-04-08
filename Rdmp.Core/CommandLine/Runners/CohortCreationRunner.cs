@@ -22,12 +22,12 @@ namespace Rdmp.Core.CommandLine.Runners;
 public class CohortCreationRunner : Runner
 {
     private readonly CohortCreationOptions _options;
-    private ExtractionConfiguration _configuration;
+    private EntityFramework.Models.DataExport.ExtractionConfiguration _configuration;
 
     public CohortCreationRunner(CohortCreationOptions options)
     {
         _options = options;
-        _configuration = GetObjectFromCommandLineString<ExtractionConfiguration>(_options.GetRepositoryLocator(),
+        _configuration = GetObjectFromCommandLineString<EntityFramework.Models.DataExport.ExtractionConfiguration>(_options.GetRepositoryLocator(),
             _options.ExtractionConfiguration);
     }
 

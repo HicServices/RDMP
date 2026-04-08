@@ -66,7 +66,7 @@ public partial class CatalogueDQEResultsUI : CatalogueSummaryScreen_Design
         columnStatesChart1.SelectEvaluation(_lastSelected, category ?? "ALL");
     }
 
-    public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
+    public override void SetDatabaseObject(IActivateItems activator, Core.EntityFramework.Models.Catalogue databaseObject)
     {
         //base.SetDatabaseObject(activator, databaseObject);
         //timePeriodicityChart1.SetItemActivator(activator);
@@ -105,6 +105,6 @@ public partial class CatalogueDQEResultsUI : CatalogueSummaryScreen_Design
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<CatalogueSummaryScreen_Design, UserControl>))]
-public abstract class CatalogueSummaryScreen_Design : RDMPSingleDatabaseObjectControl<Catalogue>
+public abstract class CatalogueSummaryScreen_Design : RDMPSingleDatabaseObjectControl<Core.EntityFramework.Models.Catalogue>
 {
 }

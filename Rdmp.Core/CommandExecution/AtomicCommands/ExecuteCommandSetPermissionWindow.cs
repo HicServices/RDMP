@@ -38,10 +38,10 @@ public class ExecuteCommandSetPermissionWindow : BasicCommandExecution, IAtomicC
 
         //_window ??= SelectOne<PermissionWindow>(BasicActivator.RepositoryLocator.CatalogueDbContext);
 
-        //if (_window == null)
-        //    return;
+        if (_window == null)
+            return;
 
-        //_cacheProgress.PermissionWindow_ID = _window.ID;
+        _cacheProgress.PermissionWindow_ID = _window.ID;
         //_cacheProgress.SaveToDatabase();
 
         //Publish(_cacheProgress);

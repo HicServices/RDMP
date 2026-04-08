@@ -44,7 +44,7 @@ public class CatalogueCombineable : ICombineToMakeCommand, IHasFolderCombineable
     /// <param name="caller"></param>
     /// <returns></returns>
     public AggregateConfigurationCombineable GenerateAggregateConfigurationFor(IBasicActivateItems activator,
-        CohortAggregateContainer cohortAggregateContainer, bool importMandatoryFilters = true,
+        EntityFramework.Models.CohortAggregateContainer cohortAggregateContainer, bool importMandatoryFilters = true,
         [CallerMemberName] string caller = null)
     {
         var cic = cohortAggregateContainer.GetCohortIdentificationConfiguration();
@@ -53,7 +53,7 @@ public class CatalogueCombineable : ICombineToMakeCommand, IHasFolderCombineable
     }
 
     public AggregateConfigurationCombineable GenerateAggregateConfigurationFor(IBasicActivateItems activator,
-        CohortIdentificationConfiguration cic, bool importMandatoryFilters = true,
+        EntityFramework.Models.CohortIdentificationConfiguration cic, bool importMandatoryFilters = true,
         [CallerMemberName] string caller = null)
     {
         var newAggregate = cic.CreateNewEmptyConfigurationForCatalogue(Catalogue,

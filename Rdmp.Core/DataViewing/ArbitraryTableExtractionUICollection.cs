@@ -11,6 +11,7 @@ using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
+using Rdmp.Core.EntityFramework.Helpers;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.DataViewing;
@@ -72,7 +73,7 @@ public class ArbitraryTableExtractionUICollection : PersistableObjectCollection,
         _table = server.ExpectDatabase(Database).ExpectTable(_arguments[TableKey]);
     }
 
-    public IEnumerable<DatabaseEntity> GetToolStripObjects()
+    public IEnumerable<DatabaseObject> GetToolStripObjects()
     {
         yield break;
     }

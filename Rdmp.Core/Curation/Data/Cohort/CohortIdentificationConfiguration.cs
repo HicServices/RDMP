@@ -448,7 +448,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     ///  marked IsExtractionIdentifier</param>
     /// <param name="useTransaction">True to run the import in a transaction</param>
     /// <returns></returns>
-    public AggregateConfiguration ImportAggregateConfigurationAsIdentifierList(AggregateConfiguration toClone,
+    public AggregateConfiguration ImportAggregateConfigurationAsIdentifierList(EntityFramework.Models.AggregateConfiguration toClone,
         ChooseWhichExtractionIdentifierToUseFromManyHandler resolveMultipleExtractionIdentifiers,
         bool useTransaction = true)
     {
@@ -475,7 +475,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
         return CreateCloneOfAggregateConfigurationPrivate(toClone, resolveMultipleExtractionIdentifiers);
     }
 
-    private AggregateConfiguration CreateCloneOfAggregateConfigurationPrivate(AggregateConfiguration toClone,
+    private AggregateConfiguration CreateCloneOfAggregateConfigurationPrivate(EntityFramework.Models.AggregateConfiguration toClone,
         ChooseWhichExtractionIdentifierToUseFromManyHandler resolveMultipleExtractionIdentifiers)
     {
         var cataRepo = CatalogueDbContext;
@@ -493,13 +493,13 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
         newConfiguration.Description = toClone.Description;
 
         //clone parameters
-        foreach (var toCloneParameter in toClone.Parameters)
-            new AnyTableSqlParameter(newConfiguration.CatalogueDbContext, newConfiguration,
-                toCloneParameter.ParameterSQL)
-            {
-                Value = toCloneParameter.Value,
-                Comment = toCloneParameter.Comment
-            }.SaveToDatabase();
+        //foreach (var toCloneParameter in toClone.Parameters)
+        //    new AnyTableSqlParameter(newConfiguration.CatalogueDbContext, newConfiguration,
+        //        toCloneParameter.ParameterSQL)
+        //    {
+        //        Value = toCloneParameter.Value,
+        //        Comment = toCloneParameter.Comment
+        //    }.SaveToDatabase();
 
 
         //now clone its AggregateForcedJoins
@@ -627,7 +627,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     /// <param name="underlyingExtractionInformation"></param>
     /// <param name="resolveMultipleExtractionIdentifiers"></param>
     /// <returns></returns>
-    private static IColumn GetExtractionIdentifierFrom(AggregateConfiguration toClone,
+    private static IColumn GetExtractionIdentifierFrom(EntityFramework.Models.AggregateConfiguration toClone,
         out ExtractionInformation underlyingExtractionInformation,
         ChooseWhichExtractionIdentifierToUseFromManyHandler resolveMultipleExtractionIdentifiers)
     {

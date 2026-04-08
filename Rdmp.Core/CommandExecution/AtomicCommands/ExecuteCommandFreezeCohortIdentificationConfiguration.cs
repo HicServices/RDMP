@@ -14,11 +14,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandFreezeCohortIdentificationConfiguration : BasicCommandExecution
 {
-    private readonly CohortIdentificationConfiguration _cic;
+    private readonly EntityFramework.Models.CohortIdentificationConfiguration _cic;
     private readonly bool _desiredFreezeState;
 
     public ExecuteCommandFreezeCohortIdentificationConfiguration(IBasicActivateItems activator,
-        CohortIdentificationConfiguration cic, bool desiredFreezeState) : base(activator)
+        EntityFramework.Models.CohortIdentificationConfiguration cic, bool desiredFreezeState) : base(activator)
     {
         _cic = cic;
         _desiredFreezeState = desiredFreezeState;

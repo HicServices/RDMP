@@ -11,6 +11,7 @@ using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Curation.Data.Spontaneous;
+using Rdmp.Core.EntityFramework.Helpers;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
@@ -60,10 +61,10 @@ public class ViewTableInfoExtractUICollection : PersistableObjectCollection, IVi
         return (IFilter)DatabaseObjects.SingleOrDefault(o => o is IFilter);
     }
 
-    public IEnumerable<DatabaseEntity> GetToolStripObjects()
+    public IEnumerable<DatabaseObject> GetToolStripObjects()
     {
         if (GetFilterIfAny() is ConcreteFilter filter)
-            yield return filter;
+            yield return null;// filter;
     }
 
     public IDataAccessPoint GetDataAccessPoint() => TableInfo;

@@ -56,7 +56,7 @@ public interface IBasicActivateItems
     /// When implemented should display a graph of the data in <paramref name="aggregate"/>
     /// </summary>
     /// <param name="aggregate"></param>
-    void ShowGraph(AggregateConfiguration aggregate);
+    void ShowGraph(EntityFramework.Models.AggregateConfiguration aggregate);
 
 
     /// <summary>
@@ -70,7 +70,7 @@ public interface IBasicActivateItems
     /// </summary>
     /// <param name="loggingServer">The server to query for logs</param>
     /// <param name="filter"></param>
-    void ShowLogs(ExternalDatabaseServer loggingServer, LogViewerFilter filter);
+    void ShowLogs(EntityFramework.Models.ExternalDatabaseServer loggingServer, LogViewerFilter filter);
 
 
     /// <summary>

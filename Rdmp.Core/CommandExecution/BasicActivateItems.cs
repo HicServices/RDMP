@@ -787,7 +787,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
     /// </summary>
     /// <param name="loggingServer"></param>
     /// <param name="filter"></param>
-    public virtual void ShowLogs(ExternalDatabaseServer loggingServer, LogViewerFilter filter)
+    public virtual void ShowLogs(EntityFramework.Models.ExternalDatabaseServer loggingServer, LogViewerFilter filter)
     {
         ShowData(new ViewLogsCollection(loggingServer, filter));
     }
@@ -807,7 +807,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
     }
 
     /// <inheritdoc/>
-    public abstract void ShowGraph(AggregateConfiguration aggregate);
+    public abstract void ShowGraph(Core.EntityFramework.Models.AggregateConfiguration aggregate);
 
     /// <inheritdoc/>
     public IRepository GetRepositoryFor(Type type)

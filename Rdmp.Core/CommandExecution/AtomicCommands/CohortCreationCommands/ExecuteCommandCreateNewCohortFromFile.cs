@@ -24,7 +24,7 @@ public class ExecuteCommandCreateNewCohortFromFile : CohortCreationCommandExecut
 {
     private readonly FileInfo _file;
 
-    public ExecuteCommandCreateNewCohortFromFile(IBasicActivateItems activator, ExternalCohortTable externalCohortTable)
+    public ExecuteCommandCreateNewCohortFromFile(IBasicActivateItems activator, EntityFramework.Models.DataExport.ExternalCohortTable externalCohortTable)
         :
         base(activator, externalCohortTable, null, null, null)
     {
@@ -32,7 +32,7 @@ public class ExecuteCommandCreateNewCohortFromFile : CohortCreationCommandExecut
     }
 
     public ExecuteCommandCreateNewCohortFromFile(IBasicActivateItems activator, FileInfo file,
-        ExternalCohortTable externalCohortTable)
+        EntityFramework.Models.DataExport.ExternalCohortTable externalCohortTable)
         : this(activator, file, externalCohortTable, null, null, null)
     {
     }
@@ -42,7 +42,7 @@ public class ExecuteCommandCreateNewCohortFromFile : CohortCreationCommandExecut
         [DemandsInitialization("A file containing private cohort identifiers")]
         FileInfo file,
         [DemandsInitialization(Desc_ExternalCohortTableParameter)]
-        ExternalCohortTable externalCohortTable,
+        EntityFramework.Models.DataExport.ExternalCohortTable externalCohortTable,
         [DemandsInitialization(Desc_CohortNameParameter)]
         string cohortName,
         [DemandsInitialization(Desc_ProjectParameter)]

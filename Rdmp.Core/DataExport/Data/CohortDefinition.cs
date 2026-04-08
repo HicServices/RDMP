@@ -65,7 +65,7 @@ public class CohortDefinition : ICohortDefinition
     {
         //if there is an ID
         if (ID != null)
-            if (ExtractableCohort.GetImportableCohortDefinitions((ExternalCohortTable)LocationOfCohort)
+            if (ExtractableCohort.GetImportableCohortDefinitions((EntityFramework.Models.DataExport.ExternalCohortTable)LocationOfCohort)
                 .Any(t => t.ID == ID))
             //the same ID already exists
             {
@@ -78,7 +78,7 @@ public class CohortDefinition : ICohortDefinition
         {
             var foundSimilar = ExtractableCohort
                 .GetImportableCohortDefinitions(
-                    (ExternalCohortTable)LocationOfCohort) //see if there is one with the same name
+                    (EntityFramework.Models.DataExport.ExternalCohortTable)LocationOfCohort) //see if there is one with the same name
                 .Any(t => t.Description.Equals(Description) &&
                           t.Version.Equals(
                               Version)); //and description (it might have a different ID but it is still against the rules)

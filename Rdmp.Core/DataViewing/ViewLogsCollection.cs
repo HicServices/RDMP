@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
+using Rdmp.Core.EntityFramework.Helpers;
 using Rdmp.Core.Logging;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
@@ -18,10 +19,10 @@ namespace Rdmp.Core.DataViewing;
 /// </summary>
 public class ViewLogsCollection : PersistableObjectCollection, IViewSQLAndResultsCollection
 {
-    private ExternalDatabaseServer _loggingServer;
+    private EntityFramework.Models.ExternalDatabaseServer _loggingServer;
     private LogViewerFilter _filter;
 
-    public ViewLogsCollection(ExternalDatabaseServer loggingServer, LogViewerFilter filter)
+    public ViewLogsCollection(EntityFramework.Models.ExternalDatabaseServer loggingServer, LogViewerFilter filter)
     {
         _loggingServer = loggingServer;
         _filter = filter;
@@ -42,7 +43,7 @@ public class ViewLogsCollection : PersistableObjectCollection, IViewSQLAndResult
 
     public string GetTabName() => _filter.ToString();
 
-    public IEnumerable<DatabaseEntity> GetToolStripObjects()
+    public IEnumerable<DatabaseObject> GetToolStripObjects()
     {
         yield return _loggingServer;
     }

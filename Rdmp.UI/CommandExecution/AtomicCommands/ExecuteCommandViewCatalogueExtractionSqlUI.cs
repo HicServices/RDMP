@@ -7,6 +7,7 @@
 using System.Linq;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework.Helpers;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
@@ -19,10 +20,10 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandViewCatalogueExtractionSqlUI : BasicUICommandExecution, IAtomicCommandWithTarget
 {
-    private Catalogue _catalogue;
+    private Core.EntityFramework.Models.Catalogue _catalogue;
 
     [UseWithObjectConstructor]
-    public ExecuteCommandViewCatalogueExtractionSqlUI(IActivateItems activator, Catalogue catalogue) : this(activator)
+    public ExecuteCommandViewCatalogueExtractionSqlUI(IActivateItems activator, Core.EntityFramework.Models.Catalogue catalogue) : this(activator)
     {
         _catalogue = catalogue;
     }
@@ -36,9 +37,9 @@ public class ExecuteCommandViewCatalogueExtractionSqlUI : BasicUICommandExecutio
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) => iconProvider.GetImage(RDMPConcept.SQL);
 
-    public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
+    public IAtomicCommandWithTarget SetTarget(DatabaseObject target)
     {
-        _catalogue = (Catalogue)target;
+        _catalogue = (Core.EntityFramework.Models.Catalogue)target;
 
 
         //if the catalogue has no extractable columns
@@ -50,6 +51,6 @@ public class ExecuteCommandViewCatalogueExtractionSqlUI : BasicUICommandExecutio
 
     public override void Execute()
     {
-        Activator.Activate<ViewExtractionSqlUI, Catalogue>(_catalogue);
+        Activator.Activate<ViewExtractionSqlUI, Core.EntityFramework.Models.Catalogue>(_catalogue);
     }
 }

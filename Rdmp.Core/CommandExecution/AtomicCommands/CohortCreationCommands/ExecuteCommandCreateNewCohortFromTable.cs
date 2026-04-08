@@ -29,7 +29,7 @@ public class ExecuteCommandCreateNewCohortFromTable : CohortCreationCommandExecu
     /// <param name="activator"></param>
     /// <param name="externalCohortTable"></param>
     public ExecuteCommandCreateNewCohortFromTable(IBasicActivateItems activator,
-        ExternalCohortTable externalCohortTable) : base(activator)
+        EntityFramework.Models.DataExport.ExternalCohortTable externalCohortTable) : base(activator)
     {
         UseTripleDotSuffix = true;
         ExternalCohortTable = externalCohortTable;

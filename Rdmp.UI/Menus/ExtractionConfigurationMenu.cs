@@ -21,8 +21,8 @@ internal class ExtractionConfigurationMenu : RDMPContextMenuStrip
         Items.Add("Edit", null,
             (s, e) => _activator.Activate<ExtractionConfigurationUI, ExtractionConfiguration>(extractionConfiguration));
 
-        Add(new ExecuteCommandRelease(_activator) { Weight = -99.5f }.SetTarget(extractionConfiguration));
-        Add(new ExecuteCommandRefreshExtractionConfigurationsCohort(_activator, extractionConfiguration));
+        //Add(new ExecuteCommandRelease(_activator) { Weight = -99.5f }.SetTarget(extractionConfiguration));
+        //Add(new ExecuteCommandRefreshExtractionConfigurationsCohort(_activator, extractionConfiguration));
 
         Add(new ExecuteCommandOpenExtractionDirectory(_activator, extractionConfiguration));
 

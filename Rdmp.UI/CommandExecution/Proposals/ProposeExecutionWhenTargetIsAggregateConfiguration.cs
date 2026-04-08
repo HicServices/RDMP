@@ -14,47 +14,47 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsAggregateConfiguration : RDMPCommandExecutionProposal<AggregateConfiguration>
+internal class ProposeExecutionWhenTargetIsAggregateConfiguration : RDMPCommandExecutionProposal<Core.EntityFramework.Models.AggregateConfiguration>
 {
     public ProposeExecutionWhenTargetIsAggregateConfiguration(IActivateItems itemActivator) : base(itemActivator)
     {
     }
 
-    public override bool CanActivate(AggregateConfiguration target) => true;
+    public override bool CanActivate(Core.EntityFramework.Models.AggregateConfiguration target) => true;
 
-    public override void Activate(AggregateConfiguration target)
+    public override void Activate(Core.EntityFramework.Models.AggregateConfiguration target)
     {
-        ItemActivator.Activate<AggregateEditorUI, AggregateConfiguration>(target);
+        ItemActivator.Activate<AggregateEditorUI, Core.EntityFramework.Models.AggregateConfiguration>(target);
     }
 
     public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd,
-        AggregateConfiguration targetAggregateConfiguration, InsertOption insertOption = InsertOption.Default)
+        Core.EntityFramework.Models.AggregateConfiguration targetAggregateConfiguration, InsertOption insertOption = InsertOption.Default)
     {
         return cmd switch
         {
-            ContainerCombineable cc => new ExecuteCommandImportFilterContainerTree(ItemActivator,
-                targetAggregateConfiguration, cc.Container),
-            //if it is an aggregate being dragged
-            AggregateConfigurationCombineable sourceAggregateCommand =>
-                !sourceAggregateCommand.Aggregate.Equals(targetAggregateConfiguration)
-                    ? sourceAggregateCommand.ContainerIfAny != null && insertOption != InsertOption.Default
-                        ? new ExecuteCommandReOrderAggregate(ItemActivator, sourceAggregateCommand,
-                            targetAggregateConfiguration, insertOption)
-                        : null
-                    : null,
-            CohortAggregateContainerCombineable sourceCohortAggregateContainerCommand =>
-                sourceCohortAggregateContainerCommand.ParentContainerIfAny != null
-                    ? insertOption != InsertOption.Default
-                        ? new ExecuteCommandReOrderAggregateContainer(ItemActivator,
-                            sourceCohortAggregateContainerCommand, targetAggregateConfiguration, insertOption)
-                        : null
-                    : null,
-            ExtractionFilterParameterSetCombineable efps => new ExecuteCommandCreateNewFilter(ItemActivator,
-                targetAggregateConfiguration)
-            {
-                BasedOn = efps.ParameterSet.ExtractionFilter,
-                ParameterSet = efps.ParameterSet
-            },
+            //ContainerCombineable cc => new ExecuteCommandImportFilterContainerTree(ItemActivator,
+            //    targetAggregateConfiguration, cc.Container),
+            ////if it is an aggregate being dragged
+            //AggregateConfigurationCombineable sourceAggregateCommand =>
+            //    !sourceAggregateCommand.Aggregate.Equals(targetAggregateConfiguration)
+            //        ? sourceAggregateCommand.ContainerIfAny != null && insertOption != InsertOption.Default
+            //            ? new ExecuteCommandReOrderAggregate(ItemActivator, sourceAggregateCommand,
+            //                targetAggregateConfiguration, insertOption)
+            //            : null
+            //        : null,
+            //CohortAggregateContainerCombineable sourceCohortAggregateContainerCommand =>
+            //    sourceCohortAggregateContainerCommand.ParentContainerIfAny != null
+            //        ? insertOption != InsertOption.Default
+            //            ? new ExecuteCommandReOrderAggregateContainer(ItemActivator,
+            //                sourceCohortAggregateContainerCommand, targetAggregateConfiguration, insertOption)
+            //            : null
+            //        : null,
+            //ExtractionFilterParameterSetCombineable efps => new ExecuteCommandCreateNewFilter(ItemActivator,
+            //    targetAggregateConfiguration)
+            //{
+            //    BasedOn = efps.ParameterSet.ExtractionFilter,
+            //    ParameterSet = efps.ParameterSet
+            //},
             _ => null
         };
     }

@@ -64,7 +64,7 @@ namespace Rdmp.UI.AggregationUIs.Advanced;
 public partial class AggregateEditorUI : AggregateEditor_Design, ISaveableUI
 {
     private IAggregateBuilderOptions _options;
-    private AggregateConfiguration _aggregate;
+    private Core.EntityFramework.Models.AggregateConfiguration _aggregate;
 
     private List<ITableInfo> _forcedJoins;
 
@@ -189,7 +189,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design, ISaveableUI
         };
     }
 
-    protected override void SetBindings(BinderWithErrorProviderFactory rules, AggregateConfiguration databaseObject)
+    protected override void SetBindings(BinderWithErrorProviderFactory rules, Core.EntityFramework.Models.AggregateConfiguration databaseObject)
     {
         base.SetBindings(rules, databaseObject);
 
@@ -221,13 +221,13 @@ public partial class AggregateEditorUI : AggregateEditor_Design, ISaveableUI
         olvJoin.AddObjects(_forcedJoins);
 
         //available joinables
-        var joinables = _options.GetAvailableJoinables(_aggregate);
+        //var joinables = _options.GetAvailableJoinables(_aggregate);
 
-        if (joinables != null)
-            olvJoin.AddObjects(joinables);
+        //if (joinables != null)
+        //    olvJoin.AddObjects(joinables);
 
         //and patient index tables too
-        olvJoin.AddObjects(_aggregate.PatientIndexJoinablesUsed);
+        olvJoin.AddObjects(_aggregate.PatientIndexJoinablesUsed.ToList());
     }
 
     private void SetNameText()
@@ -301,9 +301,9 @@ public partial class AggregateEditorUI : AggregateEditor_Design, ISaveableUI
         var dimensions = _aggregate.AggregateDimensions;
 
         //if there's an axis
-        if (axisIfAny != null &&
-            !axisIfAny.Equals(pivotIfAny)) //<- if this second thing is the case then the graph is totally messed up!
-            dimensions = dimensions.Except(new[] { axisIfAny }).ToArray(); //don't offer the axis as a pivot dimension!
+        //if (axisIfAny != null &&
+        //    !axisIfAny.Equals(pivotIfAny)) //<- if this second thing is the case then the graph is totally messed up!
+        //    dimensions = dimensions.Except(new[] { axisIfAny }).ToArray(); //don't offer the axis as a pivot dimension!
 
         //don't let them pivot on a date, that's just a bad idea
         ddPivotDimension.Items.AddRange(dimensions.Where(d => !d.IsDate()).ToArray());
@@ -323,7 +323,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design, ISaveableUI
             EnsurePivotHasAlias(dimension);
 
             _aggregate.PivotOnDimensionID = dimension.ID;
-            _aggregate.SaveToDatabase();
+            //_aggregate.SaveToDatabase();
             Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_aggregate));
         }
 
@@ -355,7 +355,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design, ISaveableUI
 
         if (sender != btnClearPivotDimension) return;
 
-        _aggregate.SaveToDatabase();
+        //_aggregate.SaveToDatabase();
         Publish();
     }
 
@@ -417,13 +417,13 @@ public partial class AggregateEditorUI : AggregateEditor_Design, ISaveableUI
         };
 
         //copy over old values of start/end/increment
-        if (existing != null && existing.AggregateDimension_ID != selectedDimension.ID)
-        {
-            axis.StartDate = existing.StartDate;
-            axis.EndDate = existing.EndDate;
-            axis.AxisIncrement = existing.AxisIncrement;
-            existing.DeleteInDatabase();
-        }
+        //if (existing != null && existing.AggregateDimension_ID != selectedDimension.ID)
+        //{
+        //    axis.StartDate = existing.StartDate;
+        //    axis.EndDate = existing.EndDate;
+        //    axis.AxisIncrement = existing.AxisIncrement;
+        //    existing.DeleteInDatabase();
+        //}
 
         axis.SaveToDatabase();
         PublishToSelfOnly();
@@ -433,7 +433,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design, ISaveableUI
     private void btnClearAxis_Click(object sender, EventArgs e)
     {
         var existing = _aggregate.GetAxisIfAny();
-        existing?.DeleteInDatabase();
+        //existing?.DeleteInDatabase();
 
         //also clear the pivot
         btnClearPivotDimension_Click(this, e);
@@ -444,7 +444,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design, ISaveableUI
 
     private bool _isRefreshing;
 
-    public override void SetDatabaseObject(IActivateItems activator, AggregateConfiguration databaseObject)
+    public override void SetDatabaseObject(IActivateItems activator, Core.EntityFramework.Models.AggregateConfiguration databaseObject)
     {
         _aggregate = databaseObject;
 
@@ -544,6 +544,6 @@ public partial class AggregateEditorUI : AggregateEditor_Design, ISaveableUI
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<AggregateEditor_Design, UserControl>))]
-public abstract class AggregateEditor_Design : RDMPSingleDatabaseObjectControl<AggregateConfiguration>
+public abstract class AggregateEditor_Design : RDMPSingleDatabaseObjectControl<Core.EntityFramework.Models.AggregateConfiguration>
 {
 }

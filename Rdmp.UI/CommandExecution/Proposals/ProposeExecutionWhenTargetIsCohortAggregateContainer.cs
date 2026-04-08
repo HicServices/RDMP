@@ -18,15 +18,15 @@ using System.Linq;
 namespace Rdmp.UI.CommandExecution.Proposals;
 
 internal class
-    ProposeExecutionWhenTargetIsCohortAggregateContainer : RDMPCommandExecutionProposal<CohortAggregateContainer>
+    ProposeExecutionWhenTargetIsCohortAggregateContainer : RDMPCommandExecutionProposal<Core.EntityFramework.Models.CohortAggregateContainer>
 {
     public ProposeExecutionWhenTargetIsCohortAggregateContainer(IActivateItems activator) : base(activator)
     {
     }
 
-    public override bool CanActivate(CohortAggregateContainer target) => true;
+    public override bool CanActivate(Core.EntityFramework.Models.CohortAggregateContainer target) => true;
 
-    public override void Activate(CohortAggregateContainer target)
+    public override void Activate(Core.EntityFramework.Models.CohortAggregateContainer target)
     {
         var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator, target, null);
         if (!cmd.IsImpossible)
@@ -34,96 +34,96 @@ internal class
     }
 
     public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd,
-        CohortAggregateContainer targetCohortAggregateContainer, InsertOption insertOption = InsertOption.Default)
+        Core.EntityFramework.Models.CohortAggregateContainer targetCohortAggregateContainer, InsertOption insertOption = InsertOption.Default)
     {
         //Target is a cohort container (UNION / INTERSECT / EXCEPT)
 
-        switch (cmd)
-        {
+        //switch (cmd)
+        //{
             //source is catalogue
-            case CatalogueCombineable sourceCatalogueCombineable:
-                {
-                    if (sourceCatalogueCombineable.Catalogue.IsProjectSpecific(ItemActivator.RepositoryLocator.DataExportRepository))
-                    {
-                        var dx = (DataExportChildProvider)ItemActivator.CoreChildProvider;
-                        var cic = targetCohortAggregateContainer.GetCohortIdentificationConfiguration();
-                        var cicProjAssociations = dx.AllProjectAssociatedCics.Where(c => c.CohortIdentificationConfiguration_ID == cic.ID).ToArray().Select(a => a.Project);
-                        var extractableDatasets = ItemActivator.RepositoryLocator.CatalogueDbContext.GetAllObjectsWithParent<ExtractableDataSet>(sourceCatalogueCombineable.Catalogue).ToList();
-                        var catalogueProjects = extractableDatasets.SelectMany(e => e.Projects);
-                        if (!catalogueProjects.Any(c => cicProjAssociations.Contains(c)))
-                        {
-                            return null;
-                        }
+        //    case CatalogueCombineable sourceCatalogueCombineable:
+        //        {
+        //            if (sourceCatalogueCombineable.Catalogue.IsProjectSpecific(ItemActivator.RepositoryLocator.DataExportRepository))
+        //            {
+        //                var dx = (DataExportChildProvider)ItemActivator.CoreChildProvider;
+        //                var cic = targetCohortAggregateContainer.GetCohortIdentificationConfiguration();
+        //                var cicProjAssociations = dx.AllProjectAssociatedCics.Where(c => c.CohortIdentificationConfiguration_ID == cic.ID).ToArray().Select(a => a.Project);
+        //                var extractableDatasets = ItemActivator.RepositoryLocator.CatalogueDbContext.GetAllObjectsWithParent<ExtractableDataSet>(sourceCatalogueCombineable.Catalogue).ToList();
+        //                var catalogueProjects = extractableDatasets.SelectMany(e => e.Projects);
+        //                if (!catalogueProjects.Any(c => cicProjAssociations.Contains(c)))
+        //                {
+        //                    return null;
+        //                }
 
-                    }
-                    return new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator,
-                        sourceCatalogueCombineable, targetCohortAggregateContainer);
-                }
-            //source is aggregate
-            //if it is not already involved in cohort identification
-            case AggregateConfigurationCombineable sourceAggregateCommand
-                when !sourceAggregateCommand.Aggregate.IsCohortIdentificationAggregate:
-                return new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(ItemActivator,
-                    sourceAggregateCommand, targetCohortAggregateContainer);
-            case AggregateConfigurationCombineable sourceAggregateCommand:
-                {
-                    if (sourceAggregateCommand.Aggregate.Catalogue.IsProjectSpecific(ItemActivator.RepositoryLocator.DataExportRepository))
-                    {
-                        var dx = (DataExportChildProvider)ItemActivator.CoreChildProvider;
-                        var acic = targetCohortAggregateContainer.GetCohortIdentificationConfiguration();
-                        var cicProjAssociations = dx.AllProjectAssociatedCics.Where(c => c.CohortIdentificationConfiguration_ID == acic.ID).ToArray().Select(a => a.Project);
-                        var extractableDatasets = ItemActivator.RepositoryLocator.CatalogueDbContext.GetAllObjectsWithParent<ExtractableDataSet>(sourceAggregateCommand.Aggregate.Catalogue).ToList();
-                        var catalogueProjects = extractableDatasets.SelectMany(e => e.Projects);
-                        if (!catalogueProjects.Any(c => cicProjAssociations.Contains(c)))
-                        {
-                            return null;
-                        }
+        //            }
+        //            return new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator,
+        //                sourceCatalogueCombineable, targetCohortAggregateContainer);
+        //        }
+        //    //source is aggregate
+        //    //if it is not already involved in cohort identification
+        //    case AggregateConfigurationCombineable sourceAggregateCommand
+        //        when !sourceAggregateCommand.Aggregate.IsCohortIdentificationAggregate:
+        //        return new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(ItemActivator,
+        //            sourceAggregateCommand, targetCohortAggregateContainer);
+        //    case AggregateConfigurationCombineable sourceAggregateCommand:
+        //        {
+        //            if (sourceAggregateCommand.Aggregate.Catalogue.IsProjectSpecific(ItemActivator.RepositoryLocator.DataExportRepository))
+        //            {
+        //                var dx = (DataExportChildProvider)ItemActivator.CoreChildProvider;
+        //                var acic = targetCohortAggregateContainer.GetCohortIdentificationConfiguration();
+        //                var cicProjAssociations = dx.AllProjectAssociatedCics.Where(c => c.CohortIdentificationConfiguration_ID == acic.ID).ToArray().Select(a => a.Project);
+        //                var extractableDatasets = ItemActivator.RepositoryLocator.CatalogueDbContext.GetAllObjectsWithParent<ExtractableDataSet>(sourceAggregateCommand.Aggregate.Catalogue).ToList();
+        //                var catalogueProjects = extractableDatasets.SelectMany(e => e.Projects);
+        //                if (!catalogueProjects.Any(c => cicProjAssociations.Contains(c)))
+        //                {
+        //                    return null;
+        //                }
 
-                    }
-                    var cic = sourceAggregateCommand.CohortIdentificationConfigurationIfAny;
+        //            }
+        //            var cic = sourceAggregateCommand.CohortIdentificationConfigurationIfAny;
 
-                    if (cic != null && !cic.Equals(targetCohortAggregateContainer.GetCohortIdentificationConfiguration()))
-                        //its a cic aggregate but it is one outside of our tree so instead offer adding (not moving/reordering)
-                        return new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(ItemActivator,
-                            sourceAggregateCommand, targetCohortAggregateContainer);
-                    //we are dragging around inside our own tree
+        //            if (cic != null && !cic.Equals(targetCohortAggregateContainer.GetCohortIdentificationConfiguration()))
+        //                //its a cic aggregate but it is one outside of our tree so instead offer adding (not moving/reordering)
+        //                return new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(ItemActivator,
+        //                    sourceAggregateCommand, targetCohortAggregateContainer);
+        //            //we are dragging around inside our own tree
 
-                    //it is involved in cohort identification already, presumably it's a reorder?
-                    if (sourceAggregateCommand.ContainerIfAny != null)
-                        return insertOption == InsertOption.Default
-                            ? new ExecuteCommandMoveAggregateIntoContainer(ItemActivator, sourceAggregateCommand,
-                                targetCohortAggregateContainer)
-                            : new ExecuteCommandReOrderAggregate(ItemActivator, sourceAggregateCommand,
-                                targetCohortAggregateContainer, insertOption);
+        //            //it is involved in cohort identification already, presumably it's a reorder?
+        //            if (sourceAggregateCommand.ContainerIfAny != null)
+        //                return insertOption == InsertOption.Default
+        //                    ? new ExecuteCommandMoveAggregateIntoContainer(ItemActivator, sourceAggregateCommand,
+        //                        targetCohortAggregateContainer)
+        //                    : new ExecuteCommandReOrderAggregate(ItemActivator, sourceAggregateCommand,
+        //                        targetCohortAggregateContainer, insertOption);
 
-                    //it's a patient index table
-                    if (sourceAggregateCommand.IsPatientIndexTable)
-                        return new ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationSetAgain(ItemActivator,
-                            sourceAggregateCommand, targetCohortAggregateContainer);
+        //            //it's a patient index table
+        //            if (sourceAggregateCommand.IsPatientIndexTable)
+        //                return new ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationSetAgain(ItemActivator,
+        //                    sourceAggregateCommand, targetCohortAggregateContainer);
 
 
-                    //ok it IS a cic aggregate but it doesn't have any container so it must be an orphan
-                    return new ExecuteCommandMoveAggregateIntoContainer(ItemActivator, sourceAggregateCommand,
-                        targetCohortAggregateContainer);
-                }
-            //source is another container (UNION / INTERSECT / EXCEPT)
-            //can never drag the root container elsewhere
-            case CohortAggregateContainerCombineable { ParentContainerIfAny: null }:
-                return null;
-            //they are trying to drag it onto its current parent
-            case CohortAggregateContainerCombineable sourceCohortAggregateContainerCommand
-                when sourceCohortAggregateContainerCommand.ParentContainerIfAny.Equals(targetCohortAggregateContainer):
-                return null;
-            //it's being dragged into a container (move into new container)
-            case CohortAggregateContainerCombineable sourceCohortAggregateContainerCommand
-                when insertOption == InsertOption.Default:
-                return new ExecuteCommandMoveCohortAggregateContainerIntoSubContainer(ItemActivator,
-                    sourceCohortAggregateContainerCommand, targetCohortAggregateContainer);
-            //it's being dragged above/below a container (reorder)
-            case CohortAggregateContainerCombineable sourceCohortAggregateContainerCommand:
-                return new ExecuteCommandReOrderAggregateContainer(ItemActivator, sourceCohortAggregateContainerCommand,
-                    targetCohortAggregateContainer, insertOption);
-        }
+        //            //ok it IS a cic aggregate but it doesn't have any container so it must be an orphan
+        //            return new ExecuteCommandMoveAggregateIntoContainer(ItemActivator, sourceAggregateCommand,
+        //                targetCohortAggregateContainer);
+        //        }
+        //    //source is another container (UNION / INTERSECT / EXCEPT)
+        //    //can never drag the root container elsewhere
+        //    case CohortAggregateContainerCombineable { ParentContainerIfAny: null }:
+        //        return null;
+        //    //they are trying to drag it onto its current parent
+        //    case CohortAggregateContainerCombineable sourceCohortAggregateContainerCommand
+        //        when sourceCohortAggregateContainerCommand.ParentContainerIfAny.Equals(targetCohortAggregateContainer):
+        //        return null;
+        //    //it's being dragged into a container (move into new container)
+        //    case CohortAggregateContainerCombineable sourceCohortAggregateContainerCommand
+        //        when insertOption == InsertOption.Default:
+        //        return new ExecuteCommandMoveCohortAggregateContainerIntoSubContainer(ItemActivator,
+        //            sourceCohortAggregateContainerCommand, targetCohortAggregateContainer);
+        //    //it's being dragged above/below a container (reorder)
+        //    case CohortAggregateContainerCombineable sourceCohortAggregateContainerCommand:
+        //        return new ExecuteCommandReOrderAggregateContainer(ItemActivator, sourceCohortAggregateContainerCommand,
+        //            targetCohortAggregateContainer, insertOption);
+        //}
 
         return null;
     }

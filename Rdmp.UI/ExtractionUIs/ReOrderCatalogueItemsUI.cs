@@ -39,7 +39,7 @@ namespace Rdmp.UI.ExtractionUIs;
 /// </summary>
 public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
 {
-    private Catalogue _catalogue;
+    private Core.EntityFramework.Models.Catalogue _catalogue;
 
     //the item in the original order that we want to start reordering at
     private int currentOrderStartReorderAtIndex = -1;
@@ -69,7 +69,7 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
         lbDesiredOrder.SelectedIndexChanged += (s, e) => lbDesiredOrder.Refresh();
     }
 
-    public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
+    public override void SetDatabaseObject(IActivateItems activator, Core.EntityFramework.Models.Catalogue databaseObject)
     {
         base.SetDatabaseObject(activator, databaseObject);
 
@@ -375,6 +375,6 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ReOrderCatalogueItems_Design, UserControl>))]
-public abstract class ReOrderCatalogueItems_Design : RDMPSingleDatabaseObjectControl<Catalogue>
+public abstract class ReOrderCatalogueItems_Design : RDMPSingleDatabaseObjectControl<Core.EntityFramework.Models.Catalogue>
 {
 }

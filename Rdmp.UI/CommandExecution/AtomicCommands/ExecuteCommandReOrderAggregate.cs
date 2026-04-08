@@ -73,7 +73,7 @@ internal class ExecuteCommandReOrderAggregate : BasicUICommandExecution
         base.Execute();
 
         var source = _sourceAggregateCommand.Aggregate;
-        _sourceAggregateCommand.ContainerIfAny.RemoveChild(source);
+        //_sourceAggregateCommand.ContainerIfAny.RemoveChild(source);
 
         var targetOrder = _targetOrder.Order;
 

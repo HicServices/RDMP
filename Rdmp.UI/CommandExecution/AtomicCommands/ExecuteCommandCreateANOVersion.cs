@@ -7,6 +7,7 @@
 using System.Linq;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework.Helpers;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
@@ -19,10 +20,10 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandCreateANOVersion : BasicUICommandExecution, IAtomicCommandWithTarget
 {
-    private Catalogue _catalogue;
+    private Core.EntityFramework.Models.Catalogue _catalogue;
 
     [UseWithObjectConstructor]
-    public ExecuteCommandCreateANOVersion(IActivateItems activator, Catalogue catalogue) : this(activator)
+    public ExecuteCommandCreateANOVersion(IActivateItems activator, Core.EntityFramework.Models.Catalogue catalogue) : this(activator)
     {
         SetTarget(catalogue);
     }
@@ -34,9 +35,9 @@ public class ExecuteCommandCreateANOVersion : BasicUICommandExecution, IAtomicCo
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) => iconProvider.GetImage(RDMPConcept.ANOTable);
 
-    public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
+    public IAtomicCommandWithTarget SetTarget(DatabaseObject target)
     {
-        _catalogue = (Catalogue)target;
+        _catalogue = (Core.EntityFramework.Models.Catalogue)target;
 
         if (!_catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Any())
             SetImpossible("Catalogue does not have any Extractable Columns");
@@ -57,6 +58,6 @@ public class ExecuteCommandCreateANOVersion : BasicUICommandExecution, IAtomicCo
 
         base.Execute();
 
-        Activator.Activate<ForwardEngineerANOCatalogueUI, Catalogue>(_catalogue);
+        Activator.Activate<ForwardEngineerANOCatalogueUI, Core.EntityFramework.Models.Catalogue>(_catalogue);
     }
 }

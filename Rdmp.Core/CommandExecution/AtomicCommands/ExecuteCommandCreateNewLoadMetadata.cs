@@ -28,7 +28,7 @@ public class ExecuteCommandCreateNewLoadMetadata : BasicCommandExecution, IAtomi
     public ExecuteCommandCreateNewLoadMetadata(IBasicActivateItems activator,
         [DemandsInitialization(
             "Which Catalogue does this load.")]
-        Catalogue catalogue = null) : base(activator)
+        EntityFramework.Models.Catalogue catalogue = null) : base(activator)
     {
         _availableCatalogues =
             activator.RepositoryLocator.CatalogueDbContext.Catalogues.ToArray();

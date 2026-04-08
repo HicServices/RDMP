@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
+using Rdmp.Core.EntityFramework.Helpers;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.DataViewing;
@@ -17,7 +18,7 @@ namespace Rdmp.Core.DataViewing;
 /// </summary>
 public interface IViewSQLAndResultsCollection : IPersistableObjectCollection, IHasQuerySyntaxHelper
 {
-    IEnumerable<DatabaseEntity> GetToolStripObjects();
+    IEnumerable<DatabaseObject> GetToolStripObjects();
 
     IDataAccessPoint GetDataAccessPoint();
     string GetSql();

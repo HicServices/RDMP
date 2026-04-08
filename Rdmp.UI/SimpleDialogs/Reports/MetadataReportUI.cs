@@ -115,12 +115,12 @@ public partial class MetadataReportUI : RDMPForm
         {
             if (_firstTime)
             {
-                aggregateGraph1.SetDatabaseObject(Activator, aggregate);
+                //aggregateGraph1.SetDatabaseObject(Activator, aggregate);
                 _firstTime = false;
             }
             else
             {
-                aggregateGraph1.SetAggregate(Activator, aggregate);
+                //aggregateGraph1.SetAggregate(Activator, aggregate);
             }
 
             aggregateGraph1.LoadGraphAsync();

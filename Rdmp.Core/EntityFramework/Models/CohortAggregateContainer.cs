@@ -37,22 +37,33 @@ namespace Rdmp.Core.EntityFramework.Models
 
         public override string ToString() => Name;
 
+        [NotMapped]
         public virtual List<CohortaggregateSubContainer> SubContainers { get; set; }
 
+        [NotMapped]
         public virtual CohortIdentificationConfiguration CohortIdentificationConfiguration { get; set; }
 
         public IMapsDirectlyToDatabaseTable Child => throw new NotImplementedException();
-
+        [NotMapped]
         public int Timeout { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        [NotMapped]
         public CancellationToken CancellationToken { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public CancellationTokenSource CancellationTokenSource { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public CompilationState State { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public Exception CrashMessage { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string Log { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public int FinalRowCount { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public int? CumulativeRowCount { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public Stopwatch Stopwatch { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
+        [NotMapped]
+        public CancellationTokenSource CancellationTokenSource { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        [NotMapped]
+        public CompilationState State { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        [NotMapped]
+        public Exception CrashMessage { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        [NotMapped]
+        public string Log { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        [NotMapped]
+        public int FinalRowCount { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        [NotMapped]
+        public int? CumulativeRowCount { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        [NotMapped]
+        public Stopwatch Stopwatch { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        [NotMapped]
         public TimeSpan? ElapsedTime => throw new NotImplementedException();
 
         public List<object> GetOrderedContents()
@@ -97,5 +108,25 @@ namespace Rdmp.Core.EntityFramework.Models
         public List<CohortAggregateContainer> GetAllParentContainers() => new List<CohortAggregateContainer>() { };
 
         public CohortAggregateContainer GetParentContainerIfAny() => null;
+
+        public void SetKnownContainer(CohortAggregateContainer parent, bool isFirstInContainer)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal void RemoveChild(AggregateConfiguration sourceAggregate)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal CohortAggregateContainer GetCohortIdentificationConfiguration()
+        {
+            throw new NotImplementedException();
+        }
+
+        internal bool ShouldBeReadOnly(string name, out string reason)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -21,11 +21,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 public class ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer : BasicCommandExecution
 {
     private readonly AggregateConfigurationCombineable _aggregateConfigurationCombineable;
-    private readonly CohortAggregateContainer _targetCohortAggregateContainer;
+    private readonly EntityFramework.Models.CohortAggregateContainer _targetCohortAggregateContainer;
     private readonly bool _offerCohortAggregates;
-    private readonly AggregateConfiguration[] _available;
+    private readonly EntityFramework.Models.AggregateConfiguration[] _available;
 
-    public AggregateConfiguration AggregateCreatedIfAny { get; private set; }
+    public EntityFramework.Models.AggregateConfiguration AggregateCreatedIfAny { get; private set; }
 
     /// <summary>
     /// True if the <see cref="AggregateConfigurationCombineable"/> passed to the constructor was a newly created one and does
@@ -40,7 +40,7 @@ public class ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetCon
 
 
     private ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(IBasicActivateItems activator,
-        CohortAggregateContainer targetCohortAggregateContainer) : base(activator)
+        EntityFramework.Models.CohortAggregateContainer targetCohortAggregateContainer) : base(activator)
     {
         _targetCohortAggregateContainer = targetCohortAggregateContainer;
 
@@ -53,7 +53,7 @@ public class ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetCon
 
     public ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(IBasicActivateItems activator,
         AggregateConfigurationCombineable aggregateConfigurationCommand,
-        CohortAggregateContainer targetCohortAggregateContainer) : this(activator, targetCohortAggregateContainer)
+        EntityFramework.Models.CohortAggregateContainer targetCohortAggregateContainer) : this(activator, targetCohortAggregateContainer)
     {
         _aggregateConfigurationCombineable = aggregateConfigurationCommand;
 
@@ -62,7 +62,7 @@ public class ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetCon
 
     [UseWithObjectConstructor]
     public ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(IBasicActivateItems activator,
-        AggregateConfiguration aggregateConfiguration, CohortAggregateContainer targetCohortAggregateContainer)
+        EntityFramework.Models.AggregateConfiguration aggregateConfiguration, EntityFramework.Models.CohortAggregateContainer targetCohortAggregateContainer)
         : this(activator, new AggregateConfigurationCombineable(aggregateConfiguration), targetCohortAggregateContainer)
     {
     }
@@ -74,20 +74,20 @@ public class ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetCon
     /// <param name="targetCohortAggregateContainer"></param>
     /// <param name="offerCohortAggregates"></param>
     public ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(IBasicActivateItems basicActivator,
-        CohortAggregateContainer targetCohortAggregateContainer, bool offerCohortAggregates) : this(basicActivator,
+        EntityFramework.Models.CohortAggregateContainer targetCohortAggregateContainer, bool offerCohortAggregates) : this(basicActivator,
         targetCohortAggregateContainer)
     {
         if (offerCohortAggregates)
         {
-            _available = BasicActivator.CoreChildProvider.AllAggregateConfigurations
-                .Where(c => c.IsCohortIdentificationAggregate && !c.IsJoinablePatientIndexTable()).ToArray();
+            _available = BasicActivator.RepositoryLocator.CatalogueDbContext.AggregateConfigurations.ToArray(); //.AggregateConfigurations
+            //    .Where(c => c.IsCohortIdentificationAggregate && !c.IsJoinablePatientIndexTable()).ToArray();
 
             if (_available.Length == 0) SetImpossible("You do not currently have any cohort sets");
         }
         else
         {
-            _available = BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllObjects<AggregateConfiguration>()
-                .Where(c => !c.IsCohortIdentificationAggregate).ToArray();
+            _available = BasicActivator.RepositoryLocator.CatalogueDbContext.AggregateConfigurations.ToArray();
+            //    .Where(c => !c.IsCohortIdentificationAggregate).ToArray();
 
             if (_available.Length == 0)
                 SetImpossible("You do not currently have any non-cohort AggregateConfigurations");
@@ -132,7 +132,7 @@ public class ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetCon
             //    .Select(p => p.GetReferencedObject(BasicActivator.RepositoryLocator))
             //    .OfType<AggregateConfiguration>()
             //    .ToArray();
-            var templates = Array.Empty<AggregateConfiguration>();
+            var templates = Array.Empty<EntityFramework.Models.AggregateConfiguration>();
 
             // yes
             if (templates.Any())
@@ -176,24 +176,25 @@ public class ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetCon
 
     private void Execute(AggregateConfigurationCombineable toAdd, bool publish)
     {
-        var cic = _targetCohortAggregateContainer.GetCohortIdentificationConfiguration();
+        //var cic = _targetCohortAggregateContainer.GetCohortIdentificationConfiguration();
 
-        var child = DoNotClone
-            ? toAdd.Aggregate
-            : cic.ImportAggregateConfigurationAsIdentifierList(toAdd.Aggregate,
-                (a, b) => CohortCombineToCreateCommandHelper.PickOneExtractionIdentifier(BasicActivator, a, b));
+        //var child = DoNotClone
+        //    ? toAdd.Aggregate
+        //    : cic.ImportAggregateConfigurationAsIdentifierList(toAdd.Aggregate,
+        //        (a, b) => CohortCombineToCreateCommandHelper.PickOneExtractionIdentifier(BasicActivator, a, b));
+        var child = toAdd.Aggregate;
 
         //current contents
-        var contents = _targetCohortAggregateContainer.GetOrderedContents().ToArray();
+        //var contents = _targetCohortAggregateContainer.GetOrderedContents().ToArray();
 
         //insert it at the beginning of the contents
-        var minimumOrder = 0;
-        if (contents.Any())
-            minimumOrder = contents.Min(o => o.Order);
+        //var minimumOrder = 0;
+        //if (contents.Any())
+        //    minimumOrder = contents.Min(o => o.Order);
 
-        //bump everyone down to make room
-        _targetCohortAggregateContainer.CreateInsertionPointAtOrder(child, minimumOrder, true);
-        _targetCohortAggregateContainer.AddChild(child, minimumOrder);
+        ////bump everyone down to make room
+        //_targetCohortAggregateContainer.CreateInsertionPointAtOrder(child, minimumOrder, true);
+        //_targetCohortAggregateContainer.AddChild(child, minimumOrder);
 
         if (publish)
             Publish(_targetCohortAggregateContainer);

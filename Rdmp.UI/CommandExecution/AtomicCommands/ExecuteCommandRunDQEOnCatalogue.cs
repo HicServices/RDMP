@@ -6,6 +6,7 @@
 
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework.Helpers;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
@@ -18,10 +19,10 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandRunDQEOnCatalogue : BasicUICommandExecution, IAtomicCommandWithTarget
 {
-    private Catalogue _catalogue;
+    private Core.EntityFramework.Models.Catalogue _catalogue;
 
     [UseWithObjectConstructor]
-    public ExecuteCommandRunDQEOnCatalogue(IActivateItems activator, Catalogue catalogue) : base(activator)
+    public ExecuteCommandRunDQEOnCatalogue(IActivateItems activator, Core.EntityFramework.Models.Catalogue catalogue) : base(activator)
     {
         _catalogue = catalogue;
     }
@@ -36,9 +37,9 @@ public class ExecuteCommandRunDQEOnCatalogue : BasicUICommandExecution, IAtomicC
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
         iconProvider.GetImage(RDMPConcept.DQE, OverlayKind.Execute);
 
-    public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
+    public IAtomicCommandWithTarget SetTarget(DatabaseObject target)
     {
-        _catalogue = (Catalogue)target;
+        _catalogue = (Core.EntityFramework.Models.Catalogue)target;
         return this;
     }
 
@@ -51,7 +52,7 @@ public class ExecuteCommandRunDQEOnCatalogue : BasicUICommandExecution, IAtomicC
         if (c == null)
             return;
 
-        Activator.Activate<DQEExecutionControlUI, Catalogue>(c);
+        Activator.Activate<DQEExecutionControlUI, Core.EntityFramework.Models.Catalogue>(c);
     }
 
     public override string GetCommandName() => "Data Quality Engine";

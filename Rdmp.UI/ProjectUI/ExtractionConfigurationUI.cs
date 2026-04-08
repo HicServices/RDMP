@@ -146,7 +146,7 @@ public partial class ExtractionConfigurationUI : ExtractionConfigurationUI_Desig
         try
         {
             //the use case is extracting a dataset
-            var useCase = new CohortCreationRequest(_extractionConfiguration);
+            var useCase = new CohortCreationRequest(null);// _extractionConfiguration);
 
             //the user is DefaultPipeline_ID field of ExtractionConfiguration
             var user = new PipelineUser(typeof(ExtractionConfiguration).GetProperty("CohortRefreshPipeline_ID"),
@@ -171,15 +171,15 @@ public partial class ExtractionConfigurationUI : ExtractionConfigurationUI_Desig
     private void _cohortRefreshingPipelineSelectionUI_PipelineChanged(object sender, EventArgs e)
     {
         ragSmiley1Refresh.Reset();
-        try
-        {
-            new CohortCreationRequest(_extractionConfiguration).GetEngine(_cohortRefreshingPipelineSelectionUI.Pipeline,
-                ThrowImmediatelyDataLoadEventListener.Quiet);
-        }
-        catch (Exception ex)
-        {
-            ragSmiley1Refresh.Fatal(ex);
-        }
+        //try
+        //{
+        //    new CohortCreationRequest(_extractionConfiguration).GetEngine(_cohortRefreshingPipelineSelectionUI.Pipeline,
+        //        ThrowImmediatelyDataLoadEventListener.Quiet);
+        //}
+        //catch (Exception ex)
+        //{
+        //    ragSmiley1Refresh.Fatal(ex);
+        //}
     }
 
     private void SetupPipelineSelectionExtraction()

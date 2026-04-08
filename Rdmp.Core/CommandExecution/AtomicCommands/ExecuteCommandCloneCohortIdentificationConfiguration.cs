@@ -22,8 +22,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandCloneCohortIdentificationConfiguration : BasicCommandExecution, IAtomicCommandWithTarget
 {
-    private CohortIdentificationConfiguration _cic;
-    private Project _project;
+    private EntityFramework.Models.CohortIdentificationConfiguration _cic;
+    private EntityFramework.Models.DataExport.Project _project;
     private readonly string _name;
     private readonly int? _version;
     private readonly bool _autoConfirm;
@@ -35,7 +35,7 @@ public class ExecuteCommandCloneCohortIdentificationConfiguration : BasicCommand
 
     [UseWithObjectConstructor]
     public ExecuteCommandCloneCohortIdentificationConfiguration(IBasicActivateItems activator,
-        CohortIdentificationConfiguration cic, string name = null, int? version = null, bool autoConfirm = false)
+        EntityFramework.Models.CohortIdentificationConfiguration cic, string name = null, int? version = null, bool autoConfirm = false)
         : base(activator)
     {
         _cic = cic;
@@ -56,15 +56,15 @@ public class ExecuteCommandCloneCohortIdentificationConfiguration : BasicCommand
 
     public IAtomicCommandWithTarget SetTarget(DatabaseObject target)
     {
-        //switch (target)
-        //{
-        //    case CohortIdentificationConfiguration configuration:
-        //        _cic = configuration;
-        //        break;
-        //    case Project project:
-        //        _project = project;
-        //        break;
-        //}
+        switch (target)
+        {
+            case EntityFramework.Models.CohortIdentificationConfiguration configuration:
+                _cic = configuration;
+                break;
+            case EntityFramework.Models.DataExport.Project project:
+                _project = project;
+                break;
+        }
 
         return this;
     }
@@ -111,11 +111,11 @@ public class ExecuteCommandCloneCohortIdentificationConfiguration : BasicCommand
             CloneCreatedIfAny.SaveToDatabase();
         }
 
-        if (_project != null) // clone the association
-            _ = new ProjectCohortIdentificationConfigurationAssociation(
-                BasicActivator.RepositoryLocator.CatalogueDbContext,
-                _project,
-                CloneCreatedIfAny);
+        //if (_project != null) // clone the association
+        //    _ = new ProjectCohortIdentificationConfigurationAssociation(
+        //        BasicActivator.RepositoryLocator.CatalogueDbContext,
+        //        _project,
+        //        CloneCreatedIfAny);
 
         //Load the clone up
         Publish(CloneCreatedIfAny);

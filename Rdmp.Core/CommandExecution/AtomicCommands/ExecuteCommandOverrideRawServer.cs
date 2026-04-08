@@ -17,16 +17,16 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandOverrideRawServer : BasicCommandExecution, IAtomicCommand, IAtomicCommandWithTarget
 {
-    private readonly LoadMetadata _loadMetadata;
-    private ExternalDatabaseServer _server;
-    private ExternalDatabaseServer[] _available;
+    private readonly EntityFramework.Models.LoadMetadata _loadMetadata;
+    private EntityFramework.Models.ExternalDatabaseServer _server;
+    private EntityFramework.Models.ExternalDatabaseServer[] _available;
 
-    public ExecuteCommandOverrideRawServer(IBasicActivateItems activator, LoadMetadata loadMetadata) : base(activator)
+    public ExecuteCommandOverrideRawServer(IBasicActivateItems activator, EntityFramework.Models.LoadMetadata loadMetadata) : base(activator)
     {
         _loadMetadata = loadMetadata;
-        _available =
-            activator.CoreChildProvider.AllExternalServers.Where(s => string.IsNullOrWhiteSpace(s.CreatedByAssembly))
-                .ToArray();
+        _available = activator.RepositoryLocator.CatalogueDbContext.ExternalDatabaseServers.ToArray();
+            //activator.CoreChildProvider.AllExternalServers.Where(s => string.IsNullOrWhiteSpace(s.CreatedByAssembly))
+            //    .ToArray();
 
         if (!_available.Any())
             SetImpossible("There are no compatible servers");
@@ -38,13 +38,13 @@ public class ExecuteCommandOverrideRawServer : BasicCommandExecution, IAtomicCom
 
         if (_server == null)
         {
-            //if (SelectOne(_available, out var selected))
-            //    _server = selected;
-            //else
+            if (SelectOne(_available, out var selected))
+                _server = selected;
+            else
                 return;
         }
 
-        _loadMetadata.OverrideRAWServer_ID = _server?.ID;
+        //_loadMetadata.OverrideRAWServer_ID = _server?.ID;
         _loadMetadata.SaveToDatabase();
 
         Publish(_loadMetadata);
@@ -55,8 +55,8 @@ public class ExecuteCommandOverrideRawServer : BasicCommandExecution, IAtomicCom
 
     public IAtomicCommandWithTarget SetTarget(DatabaseObject target)
     {
-        //if (target is ExternalDatabaseServer candidate && _available.Contains(candidate))
-        //    _server = candidate;
+        if (target is EntityFramework.Models.ExternalDatabaseServer candidate && _available.Contains(candidate))
+            _server = candidate;
 
         return this;
     }

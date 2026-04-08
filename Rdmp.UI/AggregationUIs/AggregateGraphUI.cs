@@ -79,7 +79,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
 
     public event DataTableHandler GraphTableRetrieved;
 
-    private AggregateConfiguration _aggregateConfiguration;
+    private Core.EntityFramework.Models.AggregateConfiguration _aggregateConfiguration;
     private readonly ToolStripMenuItem _miSaveImages = new("Save Image", FamFamFamIcons.disk.ImageToBitmap());
 
     private readonly ToolStripMenuItem _miCopyToClipboard =
@@ -152,7 +152,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
         _btnRefreshData.Enabled = enabled;
     }
 
-    public AggregateConfiguration AggregateConfiguration => _aggregateConfiguration;
+    public Core.EntityFramework.Models.AggregateConfiguration AggregateConfiguration => _aggregateConfiguration;
 
     public void AbortLoadGraph()
     {
@@ -702,7 +702,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
         QueryEditor.ReadOnly = true;
     }
 
-    protected virtual AggregateBuilder GetQueryBuilder(AggregateConfiguration aggregateConfiguration) =>
+    protected virtual AggregateBuilder GetQueryBuilder(Core.EntityFramework.Models.AggregateConfiguration aggregateConfiguration) =>
         aggregateConfiguration.GetQueryBuilder();
 
 
@@ -797,7 +797,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
 
     private bool _ribbonInitialized;
 
-    public override void SetDatabaseObject(IActivateItems activator, AggregateConfiguration databaseObject)
+    public override void SetDatabaseObject(IActivateItems activator, Core.EntityFramework.Models.AggregateConfiguration databaseObject)
     {
         base.SetDatabaseObject(activator, databaseObject);
 
@@ -838,7 +838,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
     /// </summary>
     /// <param name="activator"></param>
     /// <param name="graph"></param>
-    public void SetAggregate(IActivateItems activator, AggregateConfiguration graph)
+    public void SetAggregate(IActivateItems activator, Core.EntityFramework.Models.AggregateConfiguration graph)
     {
         //graphs can't edit so no need to even record refresher/activator
         _aggregateConfiguration = graph;
@@ -974,6 +974,6 @@ public partial class AggregateGraphUI : AggregateGraph_Design
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<AggregateGraph_Design, UserControl>))]
-public abstract class AggregateGraph_Design : RDMPSingleDatabaseObjectControl<AggregateConfiguration>
+public abstract class AggregateGraph_Design : RDMPSingleDatabaseObjectControl<Core.EntityFramework.Models.AggregateConfiguration>
 {
 }

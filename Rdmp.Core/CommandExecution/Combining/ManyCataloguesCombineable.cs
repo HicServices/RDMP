@@ -16,13 +16,13 @@ public class ManyCataloguesCombineable : ICombineToMakeCommand
     /// <summary>
     /// The <see cref="Catalogue"/> that are being selected for combining (e.g. by dragging)
     /// </summary>
-    public Catalogue[] Catalogues { get; set; }
+    public Core.EntityFramework.Models.Catalogue[] Catalogues { get; set; }
 
     /// <summary>
     /// Creates new instance populating <see cref="Catalogues"/>
     /// </summary>
     /// <param name="catalogues"></param>
-    public ManyCataloguesCombineable(Catalogue[] catalogues)
+    public ManyCataloguesCombineable(Core.EntityFramework.Models.Catalogue[] catalogues)
     {
         Catalogues = catalogues;
     }

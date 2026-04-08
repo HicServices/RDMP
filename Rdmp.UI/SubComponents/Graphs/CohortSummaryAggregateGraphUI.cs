@@ -59,7 +59,7 @@ public class CohortSummaryAggregateGraphUI : AggregateGraphUI, IObjectCollection
 
         BuildMenu(activator);
 
-        SetAggregate(activator, _collection.Graph);
+        //SetAggregate(activator, _collection.Graph);
         LoadGraphAsync();
     }
 
@@ -110,7 +110,7 @@ public class CohortSummaryAggregateGraphUI : AggregateGraphUI, IObjectCollection
         };
     }
 
-    protected override AggregateBuilder GetQueryBuilder(AggregateConfiguration summary)
+    protected override AggregateBuilder GetQueryBuilder(Core.EntityFramework.Models.AggregateConfiguration summary)
     {
         var builder = _collection.CohortIfAny != null
             ? new CohortSummaryQueryBuilder(summary, _collection.CohortIfAny, Activator.CoreChildProvider)

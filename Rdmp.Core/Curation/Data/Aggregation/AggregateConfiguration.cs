@@ -712,7 +712,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     {
         var container = GetCohortAggregateContainerIfAny();
 
-        container?.RemoveChild(this);
+        //container?.RemoveChild(this);
 
         var isAJoinable = CatalogueDbContext.GetAllObjectsWithParent<JoinableCohortAggregateConfiguration>(this)
             .SingleOrDefault();

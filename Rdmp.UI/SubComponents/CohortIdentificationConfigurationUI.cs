@@ -245,7 +245,7 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
             return;
         }
 
-        _clearCacheCommand = new ExecuteCommandClearQueryCache(Activator, Common.Configuration);
+        _clearCacheCommand = new ExecuteCommandClearQueryCache(Activator, null);// Common.Configuration);
         btnClearCache.Enabled = !_clearCacheCommand.IsImpossible;
         btnClearCache.Image = _clearCacheCommand.GetImage(Activator.CoreIconProvider).ImageToBitmap();
 

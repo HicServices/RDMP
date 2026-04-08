@@ -23,7 +23,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 /// </summary>
 public class ExecuteCommandCreateNewCohortIdentificationConfiguration : BasicCommandExecution, IAtomicCommandWithTarget
 {
-    private Project _associateWithProject;
+    private EntityFramework.Models.DataExport.Project _associateWithProject;
     private readonly string _name;
 
     /// <summary>
@@ -72,7 +72,7 @@ public class ExecuteCommandCreateNewCohortIdentificationConfiguration : BasicCom
 
     public IAtomicCommandWithTarget SetTarget(DatabaseObject target)
     {
-        //_associateWithProject = target as Project;
+        _associateWithProject = target as EntityFramework.Models.DataExport.Project;
         return this;
     }
 
@@ -84,10 +84,10 @@ public class ExecuteCommandCreateNewCohortIdentificationConfiguration : BasicCom
 
         if (proj == null && BasicActivator.IsInteractive && PromptToPickAProject)
         {
-            var projects = BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Project>();
+            var projects = BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllObjects<EntityFramework.Models.DataExport.Project>();
 
             if (projects.Any())
-                proj = (Project)BasicActivator.SelectOne(new DialogArgs
+                proj = (EntityFramework.Models.DataExport.Project)BasicActivator.SelectOne(new DialogArgs
                 {
                     WindowTitle = "Associate with Project",
                     TaskDescription =

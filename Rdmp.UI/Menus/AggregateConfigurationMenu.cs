@@ -19,7 +19,7 @@ namespace Rdmp.UI.Menus;
 [System.ComponentModel.DesignerCategory("")]
 internal class AggregateConfigurationMenu : RDMPContextMenuStrip
 {
-    public AggregateConfigurationMenu(RDMPContextMenuStripArgs args, AggregateConfiguration aggregate) : base(args,
+    public AggregateConfigurationMenu(RDMPContextMenuStripArgs args, Core.EntityFramework.Models.AggregateConfiguration aggregate) : base(args,
         aggregate)
     {
         if (aggregate.IsCohortIdentificationAggregate)
@@ -41,17 +41,17 @@ internal class AggregateConfigurationMenu : RDMPContextMenuStrip
             {
                 //find other non cohort aggregates (graphs)
                 AggregateConfiguration[] graphsAvailableInCatalogue;
-
-                try
-                {
-                    graphsAvailableInCatalogue =
-                        CohortSummaryQueryBuilder.GetAllCompatibleSummariesForCohort(aggregate);
-                }
-                catch (Exception)
-                {
-                    // Occurs if the AggregateConfiguration is badly set up e.g. has too many extraction identifiers
-                    graphsAvailableInCatalogue = Array.Empty<AggregateConfiguration>();
-                }
+                graphsAvailableInCatalogue = Array.Empty<AggregateConfiguration>();
+                //try
+                //{
+                //    graphsAvailableInCatalogue =
+                //        CohortSummaryQueryBuilder.GetAllCompatibleSummariesForCohort(aggregate);
+                //}
+                //catch (Exception)
+                //{
+                //    // Occurs if the AggregateConfiguration is badly set up e.g. has too many extraction identifiers
+                //    graphsAvailableInCatalogue = Array.Empty<AggregateConfiguration>();
+                //}
 
                 //and offer graph generation for the cohort subsets
                 var matchRecords = new ToolStripMenuItem("Graph Matching Records Only",
@@ -65,21 +65,21 @@ internal class AggregateConfigurationMenu : RDMPContextMenuStrip
                 foreach (var graph in graphsAvailableInCatalogue)
                 {
                     //records in
-                    Add(
-                        new ExecuteCommandViewCohortAggregateGraph(_activator,
-                            new CohortSummaryAggregateGraphObjectCollection(aggregate, graph,
-                                CohortSummaryAdjustment.WhereRecordsIn)),
-                        Keys.None,
-                        matchRecords);
+                    //Add(
+                    //    new ExecuteCommandViewCohortAggregateGraph(_activator,
+                    //        new CohortSummaryAggregateGraphObjectCollection(aggregate, graph,
+                    //            CohortSummaryAdjustment.WhereRecordsIn)),
+                    //    Keys.None,
+                    //    matchRecords);
 
-                    //extraction identifiers in
-                    Add(
-                        new ExecuteCommandViewCohortAggregateGraph(_activator,
-                            new CohortSummaryAggregateGraphObjectCollection(aggregate, graph,
-                                CohortSummaryAdjustment.WhereExtractionIdentifiersIn)),
-                        Keys.None,
-                        matchIdentifiers
-                    );
+                    ////extraction identifiers in
+                    //Add(
+                    //    new ExecuteCommandViewCohortAggregateGraph(_activator,
+                    //        new CohortSummaryAggregateGraphObjectCollection(aggregate, graph,
+                    //            CohortSummaryAdjustment.WhereExtractionIdentifiersIn)),
+                    //    Keys.None,
+                    //    matchIdentifiers
+                    //);
                 }
 
                 //Create new graph menu item

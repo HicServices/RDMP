@@ -1,17 +1,22 @@
-﻿using Rdmp.Core.Curation.Data;
+﻿using FAnsi.Discovery.QuerySyntax;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.EntityFramework.Helpers;
 using Rdmp.Core.QueryBuilding;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.Design.Serialization;
+using System.Data;
 using System.Text;
 
 namespace Rdmp.Core.EntityFramework.Models
 {
-    public class AggregateConfiguration : DatabaseObject, ICollectSqlParameters
+    public class AggregateConfiguration : DatabaseObject, ICollectSqlParameters, IOrderable, IHasQuerySyntaxHelper,ICheckable
     {
         [Key]
         public override int ID { get; set; }
@@ -31,7 +36,8 @@ namespace Rdmp.Core.EntityFramework.Models
         public bool IsDisabled { get; set; }
         public int Order { get; set; } //todo this doesn't exist
 
-        [ForeignKey("RootFilterContainer_ID")]
+        //[ForeignKey("RootFilterContainer_ID")]
+        [NotMapped]
         public virtual IContainer RootFilterContainer { get; set; }//TODO
 
         [ForeignKey("Catalogue_ID")]
@@ -68,7 +74,43 @@ namespace Rdmp.Core.EntityFramework.Models
         }
         public virtual ITableInfo[] ForcedJoins => null;// CatalogueDbContext.AggregateForcedJoinManager.GetAllForcedJoinsFor(this);
 
+        public JoinableCohortAggregateConfiguration JoinableCohortAggregateConfiguration { get; internal set; }
+
+
+        [NotMapped]
+        public IEnumerable<object> PatientIndexJoinablesUsed { get; internal set; }
+        public AggregateDimension PivotDimension { get; set; }
+
         public CohortAggregateContainer GetCohortAggregateContainerIfAny() => null;//TODO
 
+        public IQuerySyntaxHelper GetQuerySyntaxHelper()
+        {
+            throw new NotImplementedException();
+        }
+
+        internal Curation.Data.Aggregation.AggregateConfiguration ShallowClone()
+        {
+            throw new NotImplementedException();
+        }
+
+        internal void ReFetchOrder()
+        {
+            throw new NotImplementedException();
+        }
+
+        public AggregateContinuousDateAxis GetAxisIfAny()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Check(ICheckNotifier notifier)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void AdjustGraphDataTable(DataTable dt)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -22,7 +22,7 @@ public interface ICohortCreationRequest : ICheckable, IHasDesignTimeMode, IPipel
     IProject Project { get; }
     ICohortDefinition NewCohortDefinition { get; set; }
     ExtractionInformation ExtractionIdentifierColumn { get; set; }
-    CohortIdentificationConfiguration CohortIdentificationConfiguration { get; set; }
+    EntityFramework.Models.CohortIdentificationConfiguration CohortIdentificationConfiguration { get; set; }
     ExtractableCohort CohortCreatedIfAny { get; }
     FlatFileToLoad FileToLoad { get; set; }
 

@@ -19,7 +19,7 @@ public class ExecuteCommandConvertAggregateConfigurationToPatientIndexTable : Ba
 
     [UseWithObjectConstructor]
     public ExecuteCommandConvertAggregateConfigurationToPatientIndexTable(IBasicActivateItems activator,
-        AggregateConfiguration aggregate, CohortIdentificationConfiguration cic)
+        EntityFramework.Models.AggregateConfiguration aggregate, CohortIdentificationConfiguration cic)
         : this(activator, new AggregateConfigurationCombineable(aggregate), cic)
     {
     }
@@ -40,7 +40,7 @@ public class ExecuteCommandConvertAggregateConfigurationToPatientIndexTable : Ba
             SetImpossible(
                 $"Aggregate '{_sourceAggregateConfigurationCombineable.Aggregate}'  belongs to a different Cohort Identification Configuration");
 
-        if (cic != null && cic.ShouldBeReadOnly(this.GetType().Name, out var reason))
+        if (cic != null && cic.ShouldBeReadOnly(this.GetType().Name, out string reason))
             SetImpossible(reason);
     }
 
@@ -55,8 +55,8 @@ public class ExecuteCommandConvertAggregateConfigurationToPatientIndexTable : Ba
         parent?.RemoveChild(sourceAggregate);
 
         //create a new patient index table usage allowance for this aggregate
-        new JoinableCohortAggregateConfiguration(BasicActivator.RepositoryLocator.CatalogueDbContext,
-            _cohortIdentificationConfiguration, sourceAggregate);
+        //new JoinableCohortAggregateConfiguration(BasicActivator.RepositoryLocator.CatalogueDbContext,
+        //    _cohortIdentificationConfiguration, sourceAggregate);
 
         Publish(_cohortIdentificationConfiguration);
         Emphasise(sourceAggregate);

@@ -17,7 +17,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandCreateNewPermissionWindow : BasicCommandExecution, IAtomicCommandWithTarget
 {
-    private CacheProgress _cacheProgressToSetOnIfAny;
+    //private CacheProgress _cacheProgressToSetOnIfAny;
 
     public ExecuteCommandCreateNewPermissionWindow(IBasicActivateItems activator) : base(activator)
     {

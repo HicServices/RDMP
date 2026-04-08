@@ -27,17 +27,17 @@ public class AggregateConfigurationCombineable : ICombineToMakeCommand
     /// <summary>
     /// The <see cref="CohortIdentificationConfiguration"/> that the <see cref="Aggregate"/> belongs to if it is part of cohort building
     /// </summary>
-    public CohortIdentificationConfiguration CohortIdentificationConfigurationIfAny { get; private set; }
+    public EntityFramework.Models.CohortIdentificationConfiguration CohortIdentificationConfigurationIfAny { get; private set; }
 
     /// <summary>
     /// The SET container (EXCEPT / UNION / INTERSECT) that the <see cref="Aggregate"/> is in if it is part of a <see cref="CohortIdentificationConfiguration"/>
     /// </summary>
-    public CohortAggregateContainer ContainerIfAny { get; set; }
+    public EntityFramework.Models.CohortAggregateContainer ContainerIfAny { get; set; }
 
     /// <summary>
     /// Comprehensive list of all <see cref="CohortAggregateContainer"/> in the tree hierarchy of the  <see cref="Aggregate"/> <see cref="CohortIdentificationConfigurationIfAny"/>
     /// </summary>
-    public List<CohortAggregateContainer> AllContainersInTreeIfPartOfOne { get; private set; }
+    public List<EntityFramework.Models.CohortAggregateContainer> AllContainersInTreeIfPartOfOne { get; private set; }
 
     /// <summary>
     /// True if the <see cref="Aggregate"/> is <see cref="AggregateConfiguration.IsJoinablePatientIndexTable"/>
@@ -65,7 +65,7 @@ public class AggregateConfigurationCombineable : ICombineToMakeCommand
     /// <see cref="JoinableDeclarationIfAny"/> etc).
     /// </summary>
     /// <param name="aggregate"></param>
-    public AggregateConfigurationCombineable(AggregateConfiguration aggregate)
+    public AggregateConfigurationCombineable(EntityFramework.Models.AggregateConfiguration aggregate)
     {
         Aggregate = aggregate;
 
@@ -93,7 +93,7 @@ public class AggregateConfigurationCombineable : ICombineToMakeCommand
         }
 
         //if so we should find out all the containers in the tree (Containers are INTERSECT\EXCEPT\UNION)
-        AllContainersInTreeIfPartOfOne = new List<CohortAggregateContainer>();
+        AllContainersInTreeIfPartOfOne = new List<EntityFramework.Models.CohortAggregateContainer>();
 
         //if it is part of cohort identification
         if (CohortIdentificationConfigurationIfAny != null)

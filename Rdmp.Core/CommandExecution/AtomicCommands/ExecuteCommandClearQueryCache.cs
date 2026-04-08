@@ -22,7 +22,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 /// </summary>
 public sealed class ExecuteCommandClearQueryCache : BasicCommandExecution
 {
-    private readonly CohortIdentificationConfiguration _cic;
+    private readonly EntityFramework.Models.CohortIdentificationConfiguration _cic;
 
     /// <summary>
     /// Clears all cache entries in the cache used by <paramref name="cic"/>
@@ -31,7 +31,7 @@ public sealed class ExecuteCommandClearQueryCache : BasicCommandExecution
     /// <param name="cic"></param>
     public ExecuteCommandClearQueryCache(IBasicActivateItems activator,
         [DemandsInitialization("The Cohort Builder query for which you want to invalidate all cache entries")]
-        CohortIdentificationConfiguration cic) : base(activator)
+        EntityFramework.Models.CohortIdentificationConfiguration cic) : base(activator)
     {
         _cic = cic;
 

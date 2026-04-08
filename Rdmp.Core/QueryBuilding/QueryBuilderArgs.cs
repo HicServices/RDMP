@@ -18,7 +18,7 @@ namespace Rdmp.Core.QueryBuilding;
 public class QueryBuilderArgs : QueryBuilderCustomArgs
 {
     public JoinableCohortAggregateConfigurationUse JoinIfAny { get; }
-    public AggregateConfiguration JoinedTo { get; }
+    public EntityFramework.Models.AggregateConfiguration JoinedTo { get; }
     public CohortQueryBuilderDependencySql JoinSql { get; }
     public ISqlParameter[] Globals { get; }
 
@@ -39,7 +39,7 @@ public class QueryBuilderArgs : QueryBuilderCustomArgs
     /// <param name="joinSql">The full SQL of the join</param>
     /// <param name="customisations"></param>
     /// <param name="globals"></param>
-    public QueryBuilderArgs(JoinableCohortAggregateConfigurationUse join, AggregateConfiguration joinedTo,
+    public QueryBuilderArgs(JoinableCohortAggregateConfigurationUse join, EntityFramework.Models.AggregateConfiguration joinedTo,
         CohortQueryBuilderDependencySql joinSql, QueryBuilderCustomArgs customisations,
         ISqlParameter[] globals) : this(customisations, globals)
     {

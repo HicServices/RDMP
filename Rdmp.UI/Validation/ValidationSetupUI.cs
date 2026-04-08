@@ -46,7 +46,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
     public Validator Validator { get; private set; }
 
     private bool bSuppressChangeEvents;
-    private Catalogue _catalogue;
+    private Core.EntityFramework.Models.Catalogue _catalogue;
 
     private string ClearSelection = "<<Clear Selection>>";
 
@@ -89,7 +89,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
         olvName.ImageGetter = o => Activator.CoreIconProvider.GetImage(o).ImageToBitmap();
     }
 
-    public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
+    public override void SetDatabaseObject(IActivateItems activator, Core.EntityFramework.Models.Catalogue databaseObject)
     {
         base.SetDatabaseObject(activator, databaseObject);
 
@@ -118,7 +118,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
         ValidateConfiguration();
     }
 
-    private void SetupComboBoxes(Catalogue catalogue)
+    private void SetupComboBoxes(Core.EntityFramework.Models.Catalogue catalogue)
     {
         cbxTimePeriodColumn.Items.Clear();
         cbxPivotColumn.Items.Clear();
@@ -402,7 +402,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
             TaskDescription =
                     "Which date column in the Catalogue should provide the time element of the data when generating graphs, DQE etc?",
             AllowSelectingNull = true
-        }, _catalogue.GetAllExtractionInformation(ExtractionCategory.Any), out var selected))
+        }, _catalogue.GetAllExtractionInformation(ExtractionCategory.Any).ToArray(), out var selected))
         {
             cbxTimePeriodColumn.SelectedItem = selected;
             SetTimePeriod(selected);
@@ -416,7 +416,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
             TaskDescription =
                     "Which column in the Catalogue provides the most useful subdivision of the data when viewing in DQE? The column should have a relatively small number of unique values e.g. healthboard.",
             AllowSelectingNull = true
-        }, _catalogue.GetAllExtractionInformation(ExtractionCategory.Any), out var selected))
+        }, _catalogue.GetAllExtractionInformation(ExtractionCategory.Any).ToArray(), out var selected))
         {
             cbxPivotColumn.SelectedItem = selected;
             SetPivot(selected);
@@ -425,6 +425,6 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ValidationSetupForm_Design, UserControl>))]
-public abstract class ValidationSetupForm_Design : RDMPSingleDatabaseObjectControl<Catalogue>
+public abstract class ValidationSetupForm_Design : RDMPSingleDatabaseObjectControl<Core.EntityFramework.Models.Catalogue>
 {
 }

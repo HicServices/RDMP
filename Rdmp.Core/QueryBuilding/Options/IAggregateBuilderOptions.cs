@@ -28,7 +28,7 @@ public interface IAggregateBuilderOptions
     /// </summary>
     /// <param name="aggregate"></param>
     /// <returns></returns>
-    IColumn[] GetAvailableSELECTColumns(AggregateConfiguration aggregate);
+    IColumn[] GetAvailableSELECTColumns(Core.EntityFramework.Models.AggregateConfiguration aggregate);
 
     /// <summary>
     /// All <see cref="IColumn"/> which could be referenced in <see cref="IFilter"/> SQL of the <see cref="AggregateConfiguration"/>
@@ -45,7 +45,7 @@ public interface IAggregateBuilderOptions
     /// <param name="section">The functionality you want to know if is supported</param>
     /// <param name="aggregate"></param>
     /// <returns></returns>
-    bool ShouldBeEnabled(AggregateEditorSection section, AggregateConfiguration aggregate);
+    bool ShouldBeEnabled(AggregateEditorSection section, Core.EntityFramework.Models.AggregateConfiguration aggregate);
 
     /// <summary>
     /// <see cref="TableInfo"/> which could become <see cref="AggregateForcedJoin"/> and other compatible <see cref="AggregateConfiguration"/> that qualify as Patient Index Tables
@@ -68,7 +68,7 @@ public interface IAggregateBuilderOptions
     /// </summary>
     /// <param name="aggregate"></param>
     /// <returns></returns>
-    CountColumnRequirement GetCountColumnRequirement(AggregateConfiguration aggregate);
+    CountColumnRequirement GetCountColumnRequirement(Core.EntityFramework.Models.AggregateConfiguration aggregate);
 }
 
 /// <summary>

@@ -17,9 +17,9 @@ namespace Rdmp.Core.Providers.Nodes.ProjectCohortNodes;
 /// </summary>
 public class ProjectCohortIdentificationConfigurationAssociationsNode : Node, IOrderable
 {
-    public Project Project { get; set; }
+    public EntityFramework.Models.DataExport.Project Project { get; set; }
 
-    public ProjectCohortIdentificationConfigurationAssociationsNode(Project project)
+    public ProjectCohortIdentificationConfigurationAssociationsNode(EntityFramework.Models.DataExport.Project project)
     {
         Project = project;
     }

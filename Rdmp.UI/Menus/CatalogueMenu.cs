@@ -59,12 +59,12 @@ internal class CatalogueMenu : RDMPContextMenuStrip
             Items.Add(new DQEMenuItem(_activator, catalogue));
 
             //create right click context menu
-            Add(new ExecuteCommandViewCatalogueExtractionSqlUI(_activator)
-            {
-                Weight = -99.001f,
-                OverrideCommandName = "Catalogue Extraction SQL",
-                SuggestedCategory = AtomicCommandFactory.View
-            }.SetTarget(catalogue));
+            //Add(new ExecuteCommandViewCatalogueExtractionSqlUI(_activator)
+            //{
+            //    Weight = -99.001f,
+            //    OverrideCommandName = "Catalogue Extraction SQL",
+            //    SuggestedCategory = AtomicCommandFactory.View
+            //}.SetTarget(catalogue));
         }
 
         ////////////////// UI Commands for the CatalogueItems submenu of the Catalogue context menu ///////////////////
@@ -74,8 +74,8 @@ internal class CatalogueMenu : RDMPContextMenuStrip
         { SuggestedCategory = CatalogueItems, Weight = -99.049f, OverrideCommandName = "Update Catalogue Data Location" });
         Add(new ExecuteCommandPasteClipboardAsNewCatalogueItems(_activator, catalogue, Clipboard.GetText)
         { SuggestedCategory = CatalogueItems, Weight = -99.047f });
-        Add(new ExecuteCommandReOrderColumns(_activator, catalogue)
-        { SuggestedCategory = CatalogueItems, Weight = -99.046f });
+        //Add(new ExecuteCommandReOrderColumns(_activator, catalogue)
+        //{ SuggestedCategory = CatalogueItems, Weight = -99.046f });
         Add(new ExecuteCommandRegexRedaction(_activator, catalogue)
         { SuggestedCategory = CatalogueItems, Weight = -99.046f, OverrideCommandName = "Regex Redactions" });
         Add(new ExecuteCommandGuessAssociatedColumns(_activator, catalogue, null)

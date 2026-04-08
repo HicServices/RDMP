@@ -88,7 +88,7 @@ public class ExamplePluginCohortCompiler : PluginCohortCompiler
         // you can customise how to spot your API calls however you want
         cata.Name.Equals(ExampleAPIName);
 
-    protected override string GetJoinColumnNameFor(AggregateConfiguration joinedTo) =>
+    protected override string GetJoinColumnNameFor(EntityFramework.Models.AggregateConfiguration joinedTo) =>
         // when RunAsPatientIndexTable is being used the column that can be linked
         // to other datasets is called "chi"
         "chi";

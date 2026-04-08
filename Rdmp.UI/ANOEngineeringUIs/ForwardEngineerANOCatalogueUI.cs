@@ -308,7 +308,7 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
         Check();
     }
 
-    public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
+    public override void SetDatabaseObject(IActivateItems activator, Core.EntityFramework.Models.Catalogue databaseObject)
     {
         base.SetDatabaseObject(activator, databaseObject);
 
@@ -602,6 +602,6 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ForwardEngineerANOCatalogueUI_Design, UserControl>))]
-public abstract class ForwardEngineerANOCatalogueUI_Design : RDMPSingleDatabaseObjectControl<Catalogue>
+public abstract class ForwardEngineerANOCatalogueUI_Design : RDMPSingleDatabaseObjectControl<Core.EntityFramework.Models.Catalogue>
 {
 }

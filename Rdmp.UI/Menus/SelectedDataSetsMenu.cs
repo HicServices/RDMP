@@ -22,7 +22,7 @@ internal class SelectedDataSetsMenu : RDMPContextMenuStrip
 
         Add(new ExecuteCommandExecuteExtractionConfiguration(_activator, selectedDataSet) { Weight = 4f });
 
-        Add(new ExecuteCommandRelease(_activator) { Weight = 4.1f }.SetTarget(selectedDataSet));
+        //Add(new ExecuteCommandRelease(_activator) { Weight = 4.1f }.SetTarget(selectedDataSet));
 
 
         Add(new ExecuteCommandViewThenVsNowSql(_activator, selectedDataSet) { Weight = 5.1f });

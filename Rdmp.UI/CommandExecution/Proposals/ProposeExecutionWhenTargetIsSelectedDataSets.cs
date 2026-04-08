@@ -32,9 +32,9 @@ internal class ProposeExecutionWhenTargetIsSelectedDataSets : RDMPCommandExecuti
         return cmd switch
         {
             // if use drops a reusable template aggregate (e.g. from Cohort Builder)
-            AggregateConfigurationCombineable { IsTemplate: true } ac when ac.Aggregate.RootFilterContainer_ID != null
-                => new ExecuteCommandImportFilterContainerTree(ItemActivator, target, ac.Aggregate),
-            ContainerCombineable cc => new ExecuteCommandImportFilterContainerTree(ItemActivator, target, cc.Container),
+            //AggregateConfigurationCombineable { IsTemplate: true } ac when ac.Aggregate.RootFilterContainer_ID != null
+            //    => new ExecuteCommandImportFilterContainerTree(ItemActivator, target, ac.Aggregate),
+            //ContainerCombineable cc => new ExecuteCommandImportFilterContainerTree(ItemActivator, target, cc.Container),
             _ => null
         };
     }

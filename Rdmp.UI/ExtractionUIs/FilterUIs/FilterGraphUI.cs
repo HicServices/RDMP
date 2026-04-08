@@ -30,7 +30,7 @@ public partial class FilterGraphUI : AggregateGraphUI, IObjectCollectionControl
         InitializeComponent();
     }
 
-    protected override AggregateBuilder GetQueryBuilder(AggregateConfiguration aggregateConfiguration)
+    protected override AggregateBuilder GetQueryBuilder(Core.EntityFramework.Models.AggregateConfiguration aggregateConfiguration)
     {
         var basicQueryBuilder = base.GetQueryBuilder(aggregateConfiguration);
 
@@ -59,7 +59,7 @@ public partial class FilterGraphUI : AggregateGraphUI, IObjectCollectionControl
 
         BuildMenu(activator);
 
-        SetAggregate(Activator, _collection.GetGraph());
+        //SetAggregate(Activator, _collection.GetGraph());
         LoadGraphAsync();
     }
 

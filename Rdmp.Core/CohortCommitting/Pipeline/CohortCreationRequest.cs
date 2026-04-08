@@ -35,7 +35,7 @@ public sealed class CohortCreationRequest : PipelineUseCase, ICohortCreationRequ
 
     private FlatFileToLoad _fileToLoad;
     private ExtractionInformation _extractionIdentifierColumn;
-    private CohortIdentificationConfiguration _cohortIdentificationConfiguration;
+    private EntityFramework.Models.CohortIdentificationConfiguration _cohortIdentificationConfiguration;
 
     public FlatFileToLoad FileToLoad
     {
@@ -52,7 +52,7 @@ public sealed class CohortCreationRequest : PipelineUseCase, ICohortCreationRequ
         }
     }
 
-    public CohortIdentificationConfiguration CohortIdentificationConfiguration
+    public EntityFramework.Models.CohortIdentificationConfiguration CohortIdentificationConfiguration
     {
         get => _cohortIdentificationConfiguration;
         set
@@ -115,7 +115,7 @@ public sealed class CohortCreationRequest : PipelineUseCase, ICohortCreationRequ
     /// For refreshing the current extraction configuration CohortIdentificationConfiguration ONLY.  The ExtractionConfiguration must have a cic and a refresh pipeline configured on it.
     /// </summary>
     /// <param name="configuration"></param>
-    public CohortCreationRequest(ExtractionConfiguration configuration)
+    public CohortCreationRequest(EntityFramework.Models.DataExport.ExtractionConfiguration configuration)
     {
         CatalogueDbContext = configuration.CatalogueDbContext;
 

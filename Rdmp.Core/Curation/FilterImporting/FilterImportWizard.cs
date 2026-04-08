@@ -186,13 +186,13 @@ public class FilterImportWizard
             case AggregateFilterContainer aggregatecontainer:
                 {
                     var aggregate = aggregatecontainer.GetAggregate();
-                    var options = AggregateBuilderOptionsFactory.Create(aggregate);
+                    //var options = AggregateBuilderOptionsFactory.Create(aggregate);
 
-                    globals = options.GetAllParameters(aggregate);
-                    var root = aggregate.RootFilterContainer;
-                    otherFilters = root == null
-                        ? Array.Empty<IFilter>()
-                        : GetAllFiltersRecursively(root, new List<IFilter>()).ToArray();
+                    globals = null;// options.GetAllParameters(aggregate);
+                    //var root = aggregate.RootFilterContainer;
+                    otherFilters = Array.Empty<IFilter>();// root == null
+                    //    ? Array.Empty<IFilter>()
+                    //    : GetAllFiltersRecursively(root, new List<IFilter>()).ToArray();
                     return;
                 }
             case FilterContainer filtercontainer:

@@ -29,14 +29,14 @@ public class AggregationContainerTask : Compileable, IOrderable
     public AggregationContainerTask(EntityFramework.Models.CohortAggregateContainer container, CohortCompiler compiler) : base(compiler)
     {
         Container = container;
-
+        SubContainers = Array.Empty< EntityFramework.Models.CohortAggregateContainer>();//container.CatalogueDbContext.GetChildren(container).ToArray();
         //SubContainers = compiler.CoreChildProvider.GetChildren(Container).OfType<CohortAggregateContainer>().ToArray();
         //ContainedConfigurations =
         //    compiler.CoreChildProvider.GetChildren(Container).OfType<AggregateConfiguration>().ToArray();
 
-        //var d = compiler.CoreChildProvider.GetDescendancyListIfAnyFor(Container);
-        //_parentContainers = d?.Parents?.OfType<CohortAggregateContainer>()?.ToArray() ??
-        //                    Array.Empty<CohortAggregateContainer>();
+        var d = compiler.CoreChildProvider.GetDescendancyListIfAnyFor(Container);
+        _parentContainers = d?.Parents?.OfType<EntityFramework.Models.CohortAggregateContainer>()?.ToArray() ??
+                            Array.Empty<EntityFramework.Models.CohortAggregateContainer>();
     }
 
     public override string GetCatalogueName() => "";

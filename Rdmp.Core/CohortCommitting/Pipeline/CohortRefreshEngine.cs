@@ -22,11 +22,11 @@ namespace Rdmp.Core.CohortCommitting.Pipeline;
 public class CohortRefreshEngine
 {
     private readonly IDataLoadEventListener _listener;
-    private readonly ExtractionConfiguration _configuration;
+    private readonly EntityFramework.Models.DataExport.ExtractionConfiguration _configuration;
 
     public CohortCreationRequest Request { get; private set; }
 
-    public CohortRefreshEngine(IDataLoadEventListener listener, ExtractionConfiguration configuration)
+    public CohortRefreshEngine(IDataLoadEventListener listener, EntityFramework.Models.DataExport.ExtractionConfiguration configuration)
     {
         _listener = listener;
         _configuration = configuration;
@@ -49,7 +49,7 @@ public class CohortRefreshEngine
         if (newCohort != null)
         {
             _configuration.Cohort_ID = newCohort.ID;
-            _configuration.SaveToDatabase();
+            //_configuration.SaveToDatabase();
         }
     }
 }

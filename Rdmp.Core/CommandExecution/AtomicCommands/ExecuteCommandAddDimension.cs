@@ -18,12 +18,12 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 /// </summary>
 public sealed class ExecuteCommandAddDimension : BasicCommandExecution
 {
-    private readonly AggregateConfiguration _aggregate;
+    private readonly Core.EntityFramework.Models.AggregateConfiguration _aggregate;
     private readonly string _column;
     private readonly bool _askAtRuntime;
     private const float DefaultWeight = 2.4f;
 
-    public ExecuteCommandAddDimension(IBasicActivateItems basicActivator, AggregateConfiguration aggregate) : base(
+    public ExecuteCommandAddDimension(IBasicActivateItems basicActivator, Core.EntityFramework.Models.AggregateConfiguration aggregate) : base(
         basicActivator)
     {
         Weight = DefaultWeight;
@@ -33,7 +33,7 @@ public sealed class ExecuteCommandAddDimension : BasicCommandExecution
     }
 
     [UseWithObjectConstructor]
-    public ExecuteCommandAddDimension(IBasicActivateItems basicActivator, AggregateConfiguration aggregate,
+    public ExecuteCommandAddDimension(IBasicActivateItems basicActivator, Core.EntityFramework.Models.AggregateConfiguration aggregate,
         string column) : base(basicActivator)
     {
         Weight = DefaultWeight;
@@ -59,7 +59,7 @@ public sealed class ExecuteCommandAddDimension : BasicCommandExecution
         ValidateCanAdd(aggregate);
     }
 
-    private void ValidateCanAdd(AggregateConfiguration aggregate)
+    private void ValidateCanAdd(Core.EntityFramework.Models.AggregateConfiguration aggregate)
     {
         if (aggregate.Catalogue.IsApiCall()) SetImpossible("API calls cannot have AggregateDimensions");
 
@@ -96,8 +96,8 @@ public sealed class ExecuteCommandAddDimension : BasicCommandExecution
                     $"Could not find ExtractionInformation {_column} in as an addable column to {_aggregate}");
         }
 
-        var dim = new AggregateDimension(BasicActivator.RepositoryLocator.CatalogueDbContext, match, _aggregate);
-        dim.SaveToDatabase();
+        //var dim = new AggregateDimension(BasicActivator.RepositoryLocator.CatalogueDbContext, match, _aggregate);
+        //dim.SaveToDatabase();
 
         Publish(_aggregate);
     }

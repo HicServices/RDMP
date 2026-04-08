@@ -1,4 +1,5 @@
-﻿using Rdmp.Core.DataExport.Data;
+﻿using FAnsi.Discovery.QuerySyntax;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.EntityFramework.Helpers;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,7 @@ namespace Rdmp.Core.EntityFramework.Models.DataExport
 
         [ForeignKey("ExternalCohortTable_ID")]
         public virtual ExternalCohortTable ExternalCohortTable { get; set; }
+        public object ExternalVersion { get; internal set; }
 
         public IExternalCohortDefinitionData GetExternalData(int timeoutInSeconds = -1)
         {
@@ -26,5 +28,10 @@ namespace Rdmp.Core.EntityFramework.Models.DataExport
         public string GetPrivateIdentifier(bool runtimeName = false) => "TODO";
 
         public string WhereSQL() => "TODO";
+
+        internal IQuerySyntaxHelper GetQuerySyntaxHelper()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

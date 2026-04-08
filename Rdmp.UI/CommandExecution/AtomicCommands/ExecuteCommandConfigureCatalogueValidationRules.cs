@@ -6,6 +6,7 @@
 
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework.Helpers;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
@@ -17,7 +18,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandConfigureCatalogueValidationRules : BasicUICommandExecution, IAtomicCommandWithTarget
 {
-    private Catalogue _catalogue;
+    private Core.EntityFramework.Models.Catalogue _catalogue;
 
     public ExecuteCommandConfigureCatalogueValidationRules(IActivateItems activator) : base(activator)
     {
@@ -31,9 +32,9 @@ public class ExecuteCommandConfigureCatalogueValidationRules : BasicUICommandExe
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
         iconProvider.GetImage(RDMPConcept.DQE, OverlayKind.Edit);
 
-    public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
+    public IAtomicCommandWithTarget SetTarget(DatabaseObject target)
     {
-        _catalogue = (Catalogue)target;
+        _catalogue = (Core.EntityFramework.Models.Catalogue)target;
         return this;
     }
 
@@ -46,6 +47,6 @@ public class ExecuteCommandConfigureCatalogueValidationRules : BasicUICommandExe
         if (_catalogue == null)
             return;
 
-        Activator.Activate<ValidationSetupUI, Catalogue>(_catalogue);
+        Activator.Activate<ValidationSetupUI, Core.EntityFramework.Models.Catalogue>(_catalogue);
     }
 }

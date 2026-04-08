@@ -210,17 +210,17 @@ public class CohortQueryBuilderDependency
     }
 
     private void ClearCacheForUsersOfPatientIndexTable(CachedAggregateConfigurationResultsManager cacheManager,
-        AggregateConfiguration cohortSet)
+        EntityFramework.Models.AggregateConfiguration cohortSet)
     {
         if (cacheManager == null)
             return;
 
-        var join = CohortSet.JoinableCohortAggregateConfiguration ?? throw new Exception(
-            $"{nameof(AggregateConfiguration.JoinableCohortAggregateConfiguration)} was null for CohortSet {cohortSet} so we were unable to clear the joinable cache users");
+        //var join = CohortSet.JoinableCohortAggregateConfiguration ?? throw new Exception(
+        //    $"{nameof(AggregateConfiguration.JoinableCohortAggregateConfiguration)} was null for CohortSet {cohortSet} so we were unable to clear the joinable cache users");
 
-        // get each Aggregate Configuration that joins using this patient index table
-        foreach (var user in join.Users.Select(j => j.AggregateConfiguration))
-            cacheManager.DeleteCacheEntryIfAny(user, AggregateOperation.IndexedExtractionIdentifierList);
+        //// get each Aggregate Configuration that joins using this patient index table
+        //foreach (var user in join.Users.Select(j => j.AggregateConfiguration))
+        //    cacheManager.DeleteCacheEntryIfAny(user, AggregateOperation.IndexedExtractionIdentifierList);
     }
 
     private CohortQueryBuilderDependencySql GetCacheFetchSqlIfPossible(CohortQueryBuilderResult parent,

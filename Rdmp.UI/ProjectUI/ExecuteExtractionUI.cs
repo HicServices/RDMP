@@ -51,7 +51,7 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
 {
     private IPipelineSelectionUI _pipelineSelectionUI1;
 
-    private ExtractionConfiguration _extractionConfiguration;
+    private Core.EntityFramework.Models.DataExport.ExtractionConfiguration _extractionConfiguration;
 
     private IMapsDirectlyToDatabaseTable[] _globals;
     private ISelectedDataSets[] _datasets;
@@ -245,14 +245,14 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
 
     private bool _isFirstTime = true;
 
-    public override void SetDatabaseObject(IActivateItems activator, ExtractionConfiguration databaseObject)
+    public override void SetDatabaseObject(IActivateItems activator, Core.EntityFramework.Models.DataExport.ExtractionConfiguration databaseObject)
     {
         base.SetDatabaseObject(activator, databaseObject);
 
         _extractionConfiguration = databaseObject;
 
-        _coreDatasetsFolder.Configuration = databaseObject;
-        _projectSpecificDatasetsFolder.Configuration = databaseObject;
+        //_coreDatasetsFolder.Configuration = databaseObject;
+        //_projectSpecificDatasetsFolder.Configuration = databaseObject;
 
 
         if (!_commonFunctionality.IsSetup)
@@ -269,8 +269,8 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
 
         tlvDatasets.ClearObjects();
 
-        _globals = _extractionConfiguration.GetGlobals();
-        _datasets = databaseObject.SelectedDataSets.ToArray();
+        _globals = Array.Empty<IMapsDirectlyToDatabaseTable>(); //_extractionConfiguration.GetGlobals();
+        _datasets = Array.Empty<ISelectedDataSets>();// databaseObject.SelectedDataSets.ToArray();
 
         GetBundledStuff();
 
@@ -405,6 +405,6 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ExecuteExtractionUI_Design, UserControl>))]
-public abstract class ExecuteExtractionUI_Design : RDMPSingleDatabaseObjectControl<ExtractionConfiguration>
+public abstract class ExecuteExtractionUI_Design : RDMPSingleDatabaseObjectControl<Core.EntityFramework.Models.DataExport.ExtractionConfiguration>
 {
 }

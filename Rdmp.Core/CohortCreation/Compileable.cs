@@ -19,7 +19,7 @@ public abstract class Compileable : ICompileable
     protected readonly CohortCompiler _compiler;
     private CompilationState _state;
 
-    public CohortAggregateContainer ParentContainerIfAny { get; set; }
+    public EntityFramework.Models.CohortAggregateContainer ParentContainerIfAny { get; set; }
     public bool? IsFirstInContainer { get; set; }
 
     public string Log { get; set; }
@@ -77,7 +77,7 @@ public abstract class Compileable : ICompileable
 
     public bool AreaAllQueriesCached() => _compiler.AreaAllQueriesCached(this);
 
-    public void SetKnownContainer(CohortAggregateContainer parent, bool isFirstInContainer)
+    public void SetKnownContainer(EntityFramework.Models.CohortAggregateContainer parent, bool isFirstInContainer)
     {
         ParentContainerIfAny = parent;
         IsFirstInContainer = isFirstInContainer;

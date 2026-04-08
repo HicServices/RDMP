@@ -890,7 +890,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         return configureAndExecuteDialog;
     }
 
-    public override CohortCreationRequest GetCohortCreationRequest(ExternalCohortTable externalCohortTable,
+    public override CohortCreationRequest GetCohortCreationRequest(Rdmp.Core.EntityFramework.Models.DataExport.ExternalCohortTable externalCohortTable,
         IProject project, string cohortInitialDescription)
     {
         // if on wrong Thread
@@ -1018,7 +1018,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         Activate<LoadEventsTreeView>(new LoadEventsTreeViewObjectCollection(rootObject));
     }
 
-    public override void ShowLogs(ExternalDatabaseServer loggingServer, LogViewerFilter filter)
+    public override void ShowLogs(Rdmp.Core.EntityFramework.Models.ExternalDatabaseServer loggingServer, LogViewerFilter filter)
     {
         // if on wrong Thread
         if (_mainDockPanel?.InvokeRequired ?? false)
@@ -1028,12 +1028,12 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         }
 
 
-        var loggingTabUI = Activate<LoggingTabUI, ExternalDatabaseServer>(loggingServer);
+        var loggingTabUI = Activate<LoggingTabUI, Rdmp.Core.EntityFramework.Models.ExternalDatabaseServer>(loggingServer);
         if (filter != null)
             loggingTabUI.SetFilter(filter);
     }
 
-    public override void ShowGraph(AggregateConfiguration aggregate)
+    public override void ShowGraph(Rdmp.Core.EntityFramework.Models.AggregateConfiguration aggregate)
     {
         // if on wrong Thread
         if (_mainDockPanel?.InvokeRequired ?? false)
@@ -1042,8 +1042,8 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
             return;
         }
 
-        var graph = Activate<AggregateGraphUI, AggregateConfiguration>(aggregate);
-        graph.LoadGraphAsync();
+        //var graph = Activate<AggregateGraphUI, AggregateConfiguration>(aggregate);
+        //graph.LoadGraphAsync();
     }
 
     public override void LaunchSubprocess(ProcessStartInfo startInfo)

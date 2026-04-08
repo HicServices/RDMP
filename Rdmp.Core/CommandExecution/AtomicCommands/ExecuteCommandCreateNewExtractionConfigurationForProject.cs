@@ -117,7 +117,11 @@ public class ExecuteCommandCreateNewExtractionConfigurationForProject : BasicCom
                 return;
 
         // create the new config
-        var newConfig = new ExtractionConfiguration(BasicActivator.RepositoryLocator.CatalogueDbContext, p, name);
+        var newConfig = new EntityFramework.Models.DataExport.ExtractionConfiguration()
+        {
+            Name = name,
+            Project_ID = p.ID
+        };// BasicActivator.RepositoryLocator.CatalogueDbContext, p, name);
 
         if (CohortIfAny != null)
         {
@@ -142,7 +146,7 @@ public class ExecuteCommandCreateNewExtractionConfigurationForProject : BasicCom
 
         //refresh the project
         Publish(p);
-        Activate(newConfig);
+        //Activate(newConfig);
         Emphasise(newConfig);
     }
 

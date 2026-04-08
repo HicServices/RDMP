@@ -66,7 +66,7 @@ public class ThrowImmediatelyActivator : BasicActivateItems
     {
     }
 
-    public override void ShowGraph(AggregateConfiguration aggregate)
+    public override void ShowGraph(Core.EntityFramework.Models.AggregateConfiguration aggregate)
     {
     }
 

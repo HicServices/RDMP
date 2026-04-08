@@ -18,13 +18,13 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandChooseCohort : BasicCommandExecution, IAtomicCommand
 {
-    private readonly ExtractionConfiguration _extractionConfiguration;
+    private readonly EntityFramework.Models.DataExport.ExtractionConfiguration _extractionConfiguration;
     private readonly List<ExtractableCohort> _compatibleCohorts = new();
     private readonly ExtractableCohort _pick;
 
     public ExecuteCommandChooseCohort(IBasicActivateItems activator,
         [DemandsInitialization("The configuration to change the cohort on")]
-        ExtractionConfiguration extractionConfiguration,
+         EntityFramework.Models.DataExport.ExtractionConfiguration extractionConfiguration,
         [DemandsInitialization("The cohort to pick")]
         ExtractableCohort cohort = null) : base(activator)
     {

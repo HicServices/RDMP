@@ -7,6 +7,7 @@
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Defaults;
+using Rdmp.Core.EntityFramework.Helpers;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
@@ -20,10 +21,10 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandViewDQEResultsForCatalogue : BasicUICommandExecution, IAtomicCommandWithTarget
 {
-    private Catalogue _catalogue;
+    private Core.EntityFramework.Models.Catalogue _catalogue;
 
     [UseWithObjectConstructor]
-    public ExecuteCommandViewDQEResultsForCatalogue(IActivateItems activator, Catalogue catalogue)
+    public ExecuteCommandViewDQEResultsForCatalogue(IActivateItems activator, Core.EntityFramework.Models.Catalogue catalogue)
         : base(activator)
     {
         SetTarget(catalogue);
@@ -38,9 +39,9 @@ public class ExecuteCommandViewDQEResultsForCatalogue : BasicUICommandExecution,
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) => Image.Load<Rgba32>(CatalogueIcons.DQE);
 
-    public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
+    public IAtomicCommandWithTarget SetTarget(DatabaseObject target)
     {
-        _catalogue = (Catalogue)target;
+        _catalogue = (Core.EntityFramework.Models.Catalogue)target;
 
         //must have both of these things to be DQEd
         if (_catalogue.TimeCoverage_ExtractionInformation_ID == null)
@@ -73,9 +74,9 @@ public class ExecuteCommandViewDQEResultsForCatalogue : BasicUICommandExecution,
     {
         base.Execute();
 
-        Activator.Activate<CatalogueDQEResultsUI, Catalogue>(_catalogue);
+        Activator.Activate<CatalogueDQEResultsUI, Core.EntityFramework.Models.Catalogue>(_catalogue);
     }
 
-    private bool ServerHasAtLeastOneEvaluation(Catalogue c) =>
+    private bool ServerHasAtLeastOneEvaluation(Core.EntityFramework.Models.Catalogue c) =>
         new DQERepository(Activator.RepositoryLocator.CatalogueDbContext).HasEvaluations(c);
 }

@@ -22,7 +22,7 @@ namespace Rdmp.Core.QueryBuilding;
 /// </summary>
 public class CohortSummaryQueryBuilder
 {
-    private AggregateConfiguration _summary;
+    private EntityFramework.Models.AggregateConfiguration _summary;
 
     private ISqlParameter[] _globals;
     private IColumn _extractionIdentifierColumn;
@@ -38,7 +38,7 @@ public class CohortSummaryQueryBuilder
     /// <param name="summary">A basic aggregate that you want to restrict by cohort e.g. a pivot on drugs prescribed over time with an axis interval of year</param>
     /// <param name="cohort">A cohort aggregate that has a single AggregateDimension which must be an IsExtractionIdentifier and must follow the correct cohort aggregate naming conventions (See IsCohortIdentificationAggregate)</param>
     /// <param name="childProvider"></param>
-    public CohortSummaryQueryBuilder(AggregateConfiguration summary, AggregateConfiguration cohort,
+    public CohortSummaryQueryBuilder(EntityFramework.Models.AggregateConfiguration summary, AggregateConfiguration cohort,
         ICoreChildProvider childProvider)
     {
         if (cohort == null)
@@ -78,7 +78,7 @@ public class CohortSummaryQueryBuilder
     }
 
 
-    public CohortSummaryQueryBuilder(AggregateConfiguration summary, CohortAggregateContainer cohortAggregateContainer)
+    public CohortSummaryQueryBuilder(EntityFramework.Models.AggregateConfiguration summary, CohortAggregateContainer cohortAggregateContainer)
     {
         ThrowIfNotValidGraph(summary);
 
@@ -218,7 +218,7 @@ public class CohortSummaryQueryBuilder
 
         //work out a filter SQL that will restrict the graph generated only to the cohort
         var cohortQueryBuilder = GetBuilder();
-        cohortQueryBuilder.CacheServer = cachingServer;
+        //cohortQueryBuilder.CacheServer = cachingServer;
 
         //It is coming direct from the cache so we don't need to output any parameters... the only ones that would appear are the globals anyway and those are not needed since cache
         cohortQueryBuilder.DoNotWriteOutParameters = true;
@@ -255,12 +255,13 @@ public class CohortSummaryQueryBuilder
 
     private CohortQueryBuilder GetBuilder()
     {
-        if (_cohort != null)
-            return new CohortQueryBuilder(_cohort, _globals, _childProvider);
+        //if (_cohort != null)
+        //    return new CohortQueryBuilder(_cohort, _globals, _childProvider);
 
-        return _cohortContainer != null
-            ? new CohortQueryBuilder(_cohortContainer, _globals, _childProvider)
-            : throw new NotSupportedException("Expected there to be either a _cohort or a _cohortContainer");
+        //return _cohortContainer != null
+        //    ? new CohortQueryBuilder(_cohortContainer, _globals, _childProvider)
+        //    : throw new NotSupportedException("Expected there to be either a _cohort or a _cohortContainer");
+        return null;
     }
 
     public static AggregateConfiguration[] GetAllCompatibleSummariesForCohort(AggregateConfiguration cohort)
@@ -282,7 +283,7 @@ public class CohortSummaryQueryBuilder
                 $"Expected cohort {cohort} to have exactly 1 column which would be an IsExtractionIdentifier");
     }
 
-    private static void ThrowIfNotValidGraph(AggregateConfiguration summary)
+    private static void ThrowIfNotValidGraph(EntityFramework.Models.AggregateConfiguration summary)
     {
         if (summary == null)
             throw new ArgumentException("summary was null in CohortSummaryQueryBuilder constructor", nameof(summary));

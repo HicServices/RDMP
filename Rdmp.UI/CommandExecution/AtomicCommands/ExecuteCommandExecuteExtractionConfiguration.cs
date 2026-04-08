@@ -8,6 +8,7 @@ using System.Linq;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.EntityFramework.Helpers;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
@@ -20,18 +21,18 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandExecuteExtractionConfiguration : BasicUICommandExecution, IAtomicCommandWithTarget
 {
-    private ExtractionConfiguration _extractionConfiguration;
+    private Core.EntityFramework.Models.DataExport.ExtractionConfiguration _extractionConfiguration;
     private SelectedDataSets _selectedDataSet;
-    private Project _project;
+    private Core.EntityFramework.Models.DataExport.Project _project;
 
     [UseWithObjectConstructor]
     public ExecuteCommandExecuteExtractionConfiguration(IActivateItems activator,
-        ExtractionConfiguration extractionConfiguration) : this(activator)
+        Core.EntityFramework.Models.DataExport.ExtractionConfiguration extractionConfiguration) : this(activator)
     {
         _extractionConfiguration = extractionConfiguration;
     }
 
-    public ExecuteCommandExecuteExtractionConfiguration(IActivateItems activator, Project project) : this(activator)
+    public ExecuteCommandExecuteExtractionConfiguration(IActivateItems activator, Core.EntityFramework.Models.DataExport.Project project) : this(activator)
     {
         SetTarget(project);
     }
@@ -44,7 +45,7 @@ public class ExecuteCommandExecuteExtractionConfiguration : BasicUICommandExecut
     public ExecuteCommandExecuteExtractionConfiguration(IActivateItems activator, SelectedDataSets selectedDataSet) :
         this(activator)
     {
-        _extractionConfiguration = (ExtractionConfiguration)selectedDataSet.ExtractionConfiguration;
+        _extractionConfiguration = (Core.EntityFramework.Models.DataExport.ExtractionConfiguration)selectedDataSet.ExtractionConfiguration;
         _selectedDataSet = selectedDataSet;
     }
 
@@ -54,10 +55,10 @@ public class ExecuteCommandExecuteExtractionConfiguration : BasicUICommandExecut
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
         iconProvider.GetImage(RDMPConcept.ExtractionConfiguration, OverlayKind.Execute);
 
-    public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
+    public IAtomicCommandWithTarget SetTarget(DatabaseObject target)
     {
-        _extractionConfiguration = target as ExtractionConfiguration;
-        _project = target as Project;
+        _extractionConfiguration = target as Core.EntityFramework.Models.DataExport.ExtractionConfiguration;
+        _project = target as Core.EntityFramework.Models.DataExport.Project;
 
         //if target is ExtractionConfiguration
         if (_extractionConfiguration != null && !_extractionConfiguration.IsExtractable(out var reason))
@@ -86,7 +87,7 @@ public class ExecuteCommandExecuteExtractionConfiguration : BasicUICommandExecut
                 return;
         }
 
-        var ui = Activator.Activate<ExecuteExtractionUI, ExtractionConfiguration>(_extractionConfiguration);
+        var ui = Activator.Activate<ExecuteExtractionUI, Core.EntityFramework.Models.DataExport.ExtractionConfiguration>(_extractionConfiguration);
 
         if (_selectedDataSet != null)
             ui.TickAllFor(_selectedDataSet);

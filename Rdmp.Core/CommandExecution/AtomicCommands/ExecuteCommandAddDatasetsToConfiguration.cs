@@ -19,7 +19,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandAddDatasetsToConfiguration : BasicCommandExecution
 {
-    private readonly ExtractionConfiguration _targetExtractionConfiguration;
+    private readonly Core.EntityFramework.Models.DataExport.ExtractionConfiguration _targetExtractionConfiguration;
 
     private IExtractableDataSet[] _toadd;
 
@@ -31,7 +31,7 @@ public class ExecuteCommandAddDatasetsToConfiguration : BasicCommandExecution
 
     public ExecuteCommandAddDatasetsToConfiguration(IBasicActivateItems activator,
         ExtractableDataSetCombineable sourceExtractableDataSetCombineable,
-        ExtractionConfiguration targetExtractionConfiguration)
+        Core.EntityFramework.Models.DataExport.ExtractionConfiguration targetExtractionConfiguration)
         : this(activator, targetExtractionConfiguration)
     {
         SetExtractableDataSets(false, sourceExtractableDataSetCombineable.ExtractableDataSets);
@@ -39,14 +39,14 @@ public class ExecuteCommandAddDatasetsToConfiguration : BasicCommandExecution
 
     [UseWithObjectConstructor]
     public ExecuteCommandAddDatasetsToConfiguration(IBasicActivateItems itemActivator,
-        ExtractableDataSet extractableDataSet, ExtractionConfiguration targetExtractionConfiguration)
+        ExtractableDataSet extractableDataSet, Core.EntityFramework.Models.DataExport.ExtractionConfiguration targetExtractionConfiguration)
         : this(itemActivator, targetExtractionConfiguration)
     {
         SetExtractableDataSets(false, extractableDataSet);
     }
 
     public ExecuteCommandAddDatasetsToConfiguration(IBasicActivateItems itemActivator,
-        ExtractionConfiguration targetExtractionConfiguration) : base(itemActivator)
+        Core.EntityFramework.Models.DataExport.ExtractionConfiguration targetExtractionConfiguration) : base(itemActivator)
     {
         _targetExtractionConfiguration = targetExtractionConfiguration;
 
@@ -58,25 +58,25 @@ public class ExecuteCommandAddDatasetsToConfiguration : BasicCommandExecution
             if (itemActivator.CoreChildProvider is DataExportChildProvider childProvider)
             {
                 //use the ones that are not already in the ExtractionConfiguration
-                var _datasets = childProvider.GetDatasets(targetExtractionConfiguration)
-                    .Select(n => n.ExtractableDataSet).ToArray();
-                var _importableDataSets = childProvider.ExtractableDataSets.Except(_datasets)
+                //var _datasets = childProvider.GetDatasets(targetExtractionConfiguration)
+                //    .Select(n => n.ExtractableDataSet).ToArray();
+                //var _importableDataSets = childProvider.ExtractableDataSets.Except(_datasets)
 
-                    //where it can be used in any Project OR this project only
-                    .Where(ds =>
-                    {
-                        try
-                        {
-                            return (!ds.Projects.Any() || ds.Projects.Select(p => p.ID).Contains(targetExtractionConfiguration.Project_ID)) && !ds.Catalogue.IsInternalDataset;
-                        }
-                        catch (Exception)
-                        { 
-                            return false;
-                        }
-                    })
-                    .ToArray();
+                //    //where it can be used in any Project OR this project only
+                //    .Where(ds =>
+                //    {
+                //        try
+                //        {
+                //            return (!ds.Projects.Any() || ds.Projects.Select(p => p.ID).Contains(targetExtractionConfiguration.Project_ID)) && !ds.Catalogue.IsInternalDataset;
+                //        }
+                //        catch (Exception)
+                //        { 
+                //            return false;
+                //        }
+                //    })
+                //    .ToArray();
 
-                SetExtractableDataSets(true, _importableDataSets);
+                //SetExtractableDataSets(true, _importableDataSets);
             }
             else
             {
@@ -87,9 +87,9 @@ public class ExecuteCommandAddDatasetsToConfiguration : BasicCommandExecution
     private void SetExtractableDataSets(bool userMustPick, params IExtractableDataSet[] toAdd)
     {
         _userMustPick = userMustPick;
-        var alreadyInConfiguration = _targetExtractionConfiguration.GetAllExtractableDataSets().ToArray();
-        _toadd = toAdd.Except(alreadyInConfiguration).ToArray();
-
+        //var alreadyInConfiguration = _targetExtractionConfiguration.GetAllExtractableDataSets().ToArray();
+        //_toadd = toAdd.Except(alreadyInConfiguration).ToArray();
+        _toadd = toAdd.ToArray();
         if (!_toadd.Any())
             SetImpossible("ExtractionConfiguration already contains this dataset(s)");
     }
@@ -113,11 +113,11 @@ public class ExecuteCommandAddDatasetsToConfiguration : BasicCommandExecution
             //    _targetExtractionConfiguration.AddDatasetToConfiguration(ds);
             //}
         }
-        else
-        {
-            foreach (var ds in _toadd)
-                _targetExtractionConfiguration.AddDatasetToConfiguration(ds);
-        }
+        //else
+        //{
+        //    foreach (var ds in _toadd)
+        //        _targetExtractionConfiguration.AddDatasetToConfiguration(ds);
+        //}
 
         Publish(_targetExtractionConfiguration);
     }

@@ -97,7 +97,7 @@ public class RDMPCombineableFactory : ICombineableFactory
             return new ProjectCombineable(p);
 
         //catalogues
-        var catalogues = IsArrayOf<Catalogue>(modelObject);
+        var catalogues = IsArrayOf<Core.EntityFramework.Models.Catalogue>(modelObject);
 
         if (catalogues != null)
             return catalogues.Length == 1
@@ -113,7 +113,7 @@ public class RDMPCombineableFactory : ICombineableFactory
             return new ContainerCombineable(container);
 
         //aggregates
-        if (modelObject is AggregateConfiguration aggregate)
+        if (modelObject is Core.EntityFramework.Models.AggregateConfiguration aggregate)
             return new AggregateConfigurationCombineable(aggregate);
 
         //aggregate containers
@@ -140,8 +140,8 @@ public class RDMPCombineableFactory : ICombineableFactory
         if (modelObject is CacheProgress cacheProgress)
             return new CacheProgressCombineable(cacheProgress);
 
-        var cic = modelObject as CohortIdentificationConfiguration;
-        var cicAssociation = modelObject as ProjectCohortIdentificationConfigurationAssociation;
+        var cic = modelObject as Core.EntityFramework.Models.CohortIdentificationConfiguration;
+        var cicAssociation = modelObject as Core.EntityFramework.Models.DataExport.ProjectCohortIdentificationConfigurationAssociation;
         if (cic != null || cicAssociation != null)
             return new CohortIdentificationConfigurationCommand(cic ??
                                                                 cicAssociation.CohortIdentificationConfiguration);

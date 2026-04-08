@@ -17,10 +17,10 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandExecuteAggregateGraph : BasicCommandExecution, IAtomicCommand
 {
-    private readonly AggregateConfiguration _aggregate;
+    private readonly EntityFramework.Models.AggregateConfiguration _aggregate;
     private readonly FileInfo _toFile;
 
-    public ExecuteCommandExecuteAggregateGraph(IBasicActivateItems activator, AggregateConfiguration aggregate,
+    public ExecuteCommandExecuteAggregateGraph(IBasicActivateItems activator, EntityFramework.Models.AggregateConfiguration aggregate,
         FileInfo toFile = null) : base(activator)
     {
         _aggregate = aggregate;

@@ -12,6 +12,7 @@ using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Curation.Data.Spontaneous;
+using Rdmp.Core.EntityFramework.Helpers;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
@@ -35,7 +36,7 @@ public class ViewColumnExtractCollection : PersistableObjectCollection, IViewSQL
     /// <summary>
     /// The SELECT column (can be null if this instance was constructed using a <see cref="ExtractionInformation"/>)
     /// </summary>
-    public ColumnInfo ColumnInfo => DatabaseObjects.OfType<ColumnInfo>().SingleOrDefault();
+    public EntityFramework.Models.ColumnInfo ColumnInfo => DatabaseObjects.OfType<EntityFramework.Models.ColumnInfo>().SingleOrDefault();
 
 
     #region Constructors
@@ -90,15 +91,15 @@ public class ViewColumnExtractCollection : PersistableObjectCollection, IViewSQL
         ViewType = (ViewType)Enum.Parse(typeof(ViewType), value);
     }
 
-    public IEnumerable<DatabaseEntity> GetToolStripObjects()
+    public IEnumerable<DatabaseObject> GetToolStripObjects()
     {
-        if (GetFilterIfAny() is ConcreteFilter f)
-            yield return f;
+        //if (GetFilterIfAny() is ConcreteFilter f)
+        //    yield return f;
 
-        if (GetContainerIfAny() is ConcreteContainer c)
-            yield return c;
+        //if (GetContainerIfAny() is ConcreteContainer c)
+        //    yield return c;
 
-        yield return GetTableInfo() as TableInfo;
+        yield return GetTableInfo() as EntityFramework.Models.TableInfo;
     }
 
     public IDataAccessPoint GetDataAccessPoint() => GetTableInfo();

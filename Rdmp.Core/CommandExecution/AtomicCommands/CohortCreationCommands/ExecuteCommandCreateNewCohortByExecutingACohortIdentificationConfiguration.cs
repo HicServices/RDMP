@@ -25,10 +25,10 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
 /// </summary>
 public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration : CohortCreationCommandExecution
 {
-    private CohortIdentificationConfiguration _cic;
+    private EntityFramework.Models.CohortIdentificationConfiguration _cic;
 
     public ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(IBasicActivateItems activator,
-        ExternalCohortTable externalCohortTable) :
+        EntityFramework.Models.DataExport.ExternalCohortTable externalCohortTable) :
         this(activator, null, externalCohortTable, null, null, null)
     {
         var allConfigurations = activator.CoreChildProvider.AllCohortIdentificationConfigurations;
@@ -43,9 +43,9 @@ public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfig
     [UseWithObjectConstructor]
     public ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(IBasicActivateItems activator,
         [DemandsInitialization("The cohort builder query that should be executed")]
-        CohortIdentificationConfiguration cic,
+        EntityFramework.Models.CohortIdentificationConfiguration cic,
         [DemandsInitialization(Desc_ExternalCohortTableParameter)]
-        ExternalCohortTable ect,
+        EntityFramework.Models.DataExport.ExternalCohortTable ect,
         [DemandsInitialization(Desc_CohortNameParameter)]
         string cohortName,
         [DemandsInitialization(Desc_ProjectParameter)]
@@ -65,8 +65,8 @@ public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfig
     {
         base.Execute();
 
-        var cic = _cic ?? (CohortIdentificationConfiguration)BasicActivator.SelectOne("Select Cohort Builder Query",
-            BasicActivator.GetAll<CohortIdentificationConfiguration>().ToArray());
+        EntityFramework.Models.CohortIdentificationConfiguration cic = _cic;//?? (EntityFramework.Models.CohortIdentificationConfiguration)BasicActivator.SelectOne("Select Cohort Builder Query",
+            //BasicActivator.GetAll<EntityFramework.Models.CohortIdentificationConfiguration>().ToArray());
         if (cic == null)
             return;
 
@@ -127,11 +127,11 @@ public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfig
         }
     }
 
-    private void OnImportCompletedSuccessfully(CohortIdentificationConfiguration cic)
+    private void OnImportCompletedSuccessfully(EntityFramework.Models.CohortIdentificationConfiguration cic)
     {
         //see if we can associate the cic with the project
         var cmd = new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(BasicActivator)
-            .SetTarget((Project)Project).SetTarget(cic);
+            .SetTarget((EntityFramework.Models.DataExport.Project)Project).SetTarget(cic);
 
         //we can!
         if (!cmd.IsImpossible)

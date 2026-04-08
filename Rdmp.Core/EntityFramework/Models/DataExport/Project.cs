@@ -1,6 +1,7 @@
 ﻿using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.EntityFramework.Helpers;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.Providers;
 using Rdmp.Core.ReusableLibraryCode;
@@ -78,6 +79,11 @@ namespace Rdmp.Core.EntityFramework.Models.DataExport
         }
 
         public void SaveToDatabase()
+        {
+            throw new NotImplementedException();
+        }
+
+        internal IMapsDirectlyToDatabaseTable AssociateWithCohortIdentification(Curation.Data.Cohort.CohortIdentificationConfiguration cic)
         {
             throw new NotImplementedException();
         }

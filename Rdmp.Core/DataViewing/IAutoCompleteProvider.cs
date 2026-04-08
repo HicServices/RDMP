@@ -25,7 +25,7 @@ public interface IAutoCompleteProvider
     /// Add autocomplete strings/controls that represent <paramref name="aggregateConfiguration"/> to the user interface
     /// </summary>
     /// <param name="aggregateConfiguration"></param>
-    void Add(AggregateConfiguration aggregateConfiguration);
+    void Add(EntityFramework.Models.AggregateConfiguration aggregateConfiguration);
 
     /// <summary>
     /// Add autocomplete strings/controls that represent <paramref name="table"/> to the user interface
@@ -37,5 +37,5 @@ public interface IAutoCompleteProvider
     /// Add autocomplete strings/controls that represent <paramref name="columnInfo"/> to the user interface
     /// </summary>
     /// <param name="columnInfo"></param>
-    void Add(ColumnInfo columnInfo);
+    void Add(EntityFramework.Models.ColumnInfo columnInfo);
 }

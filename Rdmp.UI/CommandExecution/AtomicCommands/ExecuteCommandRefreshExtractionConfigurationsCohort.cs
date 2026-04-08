@@ -20,13 +20,13 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandRefreshExtractionConfigurationsCohort : BasicUICommandExecution, IAtomicCommand
 {
-    private readonly ExtractionConfiguration _extractionConfiguration;
+    private readonly Core.EntityFramework.Models.DataExport.ExtractionConfiguration _extractionConfiguration;
 
     public ExecuteCommandRefreshExtractionConfigurationsCohort(IActivateItems activator,
-        ExtractionConfiguration extractionConfiguration) : base(activator)
+        Core.EntityFramework.Models.DataExport.ExtractionConfiguration extractionConfiguration) : base(activator)
     {
         _extractionConfiguration = extractionConfiguration;
-        var project = (Project)_extractionConfiguration.Project;
+        var project = (Core.EntityFramework.Models.DataExport.Project)_extractionConfiguration.Project;
 
         if (extractionConfiguration.Cohort_ID == null)
             SetImpossible("No Cohort Set");

@@ -61,5 +61,5 @@ public interface IPluginCohortCompiler
     /// </summary>
     /// <param name="joinedTo"></param>
     /// <returns></returns>
-    IHasRuntimeName GetJoinColumnForPatientIndexTable(AggregateConfiguration joinedTo);
+    IHasRuntimeName GetJoinColumnForPatientIndexTable(EntityFramework.Models.AggregateConfiguration joinedTo);
 }

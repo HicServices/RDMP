@@ -36,7 +36,7 @@ public class AggregateBuilderCohortOptions : IAggregateBuilderOptions
         : "Cohort Identification Set:";
 
     /// <inheritdoc/>
-    public IColumn[] GetAvailableSELECTColumns(AggregateConfiguration aggregate)
+    public IColumn[] GetAvailableSELECTColumns(Core.EntityFramework.Models.AggregateConfiguration aggregate)
     {
         //get the existing dimensions
         var alreadyExisting = aggregate.AggregateDimensions.ToArray();
@@ -78,7 +78,7 @@ public class AggregateBuilderCohortOptions : IAggregateBuilderOptions
     }
 
     /// <inheritdoc/>
-    public bool ShouldBeEnabled(AggregateEditorSection section, AggregateConfiguration aggregate)
+    public bool ShouldBeEnabled(AggregateEditorSection section, Core.EntityFramework.Models.AggregateConfiguration aggregate)
     {
         return section switch
         {
@@ -135,7 +135,7 @@ public class AggregateBuilderCohortOptions : IAggregateBuilderOptions
     }
 
     /// <inheritdoc/>
-    public CountColumnRequirement GetCountColumnRequirement(AggregateConfiguration aggregate) =>
+    public CountColumnRequirement GetCountColumnRequirement(Core.EntityFramework.Models.AggregateConfiguration aggregate) =>
         aggregate.IsJoinablePatientIndexTable()
             ? CountColumnRequirement.CanOptionallyHaveOne
             : CountColumnRequirement.CannotHaveOne;

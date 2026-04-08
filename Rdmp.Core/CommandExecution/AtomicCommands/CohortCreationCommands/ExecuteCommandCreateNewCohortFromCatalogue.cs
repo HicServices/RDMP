@@ -52,7 +52,7 @@ public class ExecuteCommandCreateNewCohortFromCatalogue : CohortCreationCommandE
             "Either a Catalogue with a single IsExtractionIdentifier column or a specific ExtractionInformation to query")]
         IMapsDirectlyToDatabaseTable toQuery,
         [DemandsInitialization(Desc_ExternalCohortTableParameter)]
-        ExternalCohortTable ect,
+        EntityFramework.Models.DataExport.ExternalCohortTable ect,
         [DemandsInitialization(Desc_CohortNameParameter)]
         string cohortName,
         [DemandsInitialization(Desc_ProjectParameter)]

@@ -68,7 +68,7 @@ public class ParameterCollectionUIOptionsFactory
         return new ParameterCollectionUIOptions(UseCaseParameterValueSet, parameterSet, ParameterLevel.TableInfo, pm);
     }
 
-    public static ParameterCollectionUIOptions Create(AggregateConfiguration aggregateConfiguration,
+    public static ParameterCollectionUIOptions Create(EntityFramework.Models.AggregateConfiguration aggregateConfiguration,
         ICoreChildProvider coreChildProvider)
     {
         ParameterManager pm;
@@ -78,7 +78,7 @@ public class ParameterCollectionUIOptionsFactory
             //Add the globals if it is part of a CohortIdentificationConfiguration
             var cic = aggregateConfiguration.GetCohortIdentificationConfigurationIfAny();
 
-            var globals = cic != null ? cic.GetAllParameters() : Array.Empty<ISqlParameter>();
+            var globals = cic != null ? cic.GetAllParameters().ToArray() : Array.Empty<ISqlParameter>();
 
             var builder = new CohortQueryBuilder(aggregateConfiguration, globals, coreChildProvider);
             pm = builder.ParameterManager;
@@ -133,7 +133,7 @@ public class ParameterCollectionUIOptionsFactory
     }
 
     private static ParameterCollectionUIOptions Create(
-        CohortIdentificationConfiguration cohortIdentificationConfiguration, ICoreChildProvider coreChildProvider)
+        EntityFramework.Models.CohortIdentificationConfiguration cohortIdentificationConfiguration, ICoreChildProvider coreChildProvider)
     {
         var builder = new CohortQueryBuilder(cohortIdentificationConfiguration, coreChildProvider);
         builder.RegenerateSQL();

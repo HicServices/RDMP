@@ -431,7 +431,7 @@ public class ConsoleInputManager : BasicActivateItems
         }
     }
 
-    public override void ShowGraph(AggregateConfiguration aggregate)
+    public override void ShowGraph(Core.EntityFramework.Models.AggregateConfiguration aggregate)
     {
         ShowData(new ViewAggregateExtractUICollection(aggregate));
     }

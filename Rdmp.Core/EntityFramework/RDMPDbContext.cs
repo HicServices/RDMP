@@ -66,6 +66,8 @@ namespace Rdmp.Core.EntityFramework
         public DbSet<Models.LoadProgress> LoadProgresses { get; set; }
         public DbSet<Models.Setting> Settings { get; set; }
 
+        public DbSet<Models.AggregateConfiguration> AggregateConfigurations { get; set; }
+
         public T[] GetAllObjects<T>()
         {
             return null;//todo

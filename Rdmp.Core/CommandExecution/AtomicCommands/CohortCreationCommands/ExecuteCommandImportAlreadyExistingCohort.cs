@@ -17,12 +17,12 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
 
 public class ExecuteCommandImportAlreadyExistingCohort : BasicCommandExecution, IAtomicCommand
 {
-    private readonly ExternalCohortTable _externalCohortTable;
+    private readonly EntityFramework.Models.DataExport.ExternalCohortTable _externalCohortTable;
     private readonly IProject _specificProject;
     private readonly int? _explicitOriginIDToImport;
 
     public ExecuteCommandImportAlreadyExistingCohort(IBasicActivateItems activator,
-        ExternalCohortTable externalCohortTable, IProject specificProject) : base(activator)
+        EntityFramework.Models.DataExport.ExternalCohortTable externalCohortTable, IProject specificProject) : base(activator)
     {
         _externalCohortTable = externalCohortTable;
         _specificProject = specificProject;
@@ -33,7 +33,7 @@ public class ExecuteCommandImportAlreadyExistingCohort : BasicCommandExecution, 
 
     [UseWithObjectConstructor]
     public ExecuteCommandImportAlreadyExistingCohort(IBasicActivateItems activator,
-        ExternalCohortTable externalCohortTable, int originIDToImport) : this(activator, externalCohortTable, null)
+        EntityFramework.Models.DataExport.ExternalCohortTable externalCohortTable, int originIDToImport) : this(activator, externalCohortTable, null)
     {
         _explicitOriginIDToImport = originIDToImport;
     }
@@ -56,7 +56,7 @@ public class ExecuteCommandImportAlreadyExistingCohort : BasicCommandExecution, 
         Publish(ect);
     }
 
-    private int? GetWhichCohortToImport(ExternalCohortTable ect)
+    private int? GetWhichCohortToImport(EntityFramework.Models.DataExport.ExternalCohortTable ect)
     {
         // the cohorts in the database
         var available = ExtractableCohort.GetImportableCohortDefinitions(ect).Where(c => c.ID.HasValue).ToArray();

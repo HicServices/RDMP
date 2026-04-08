@@ -13,12 +13,12 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandCreateVersionOfCohortConfiguration : BasicCommandExecution, IAtomicCommand
 {
-    readonly CohortIdentificationConfiguration _cic;
+    readonly EntityFramework.Models.CohortIdentificationConfiguration _cic;
     readonly IBasicActivateItems _activator;
     readonly string _name;
     readonly string _description;
 
-    public ExecuteCommandCreateVersionOfCohortConfiguration(IBasicActivateItems activator, CohortIdentificationConfiguration cic, string name = null, string description = null) : base(activator)
+    public ExecuteCommandCreateVersionOfCohortConfiguration(IBasicActivateItems activator, EntityFramework.Models.CohortIdentificationConfiguration cic, string name = null, string description = null) : base(activator)
     {
         _cic = cic;
         _activator = activator;

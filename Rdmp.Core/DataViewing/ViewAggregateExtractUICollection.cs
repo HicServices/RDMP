@@ -11,6 +11,7 @@ using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Dashboarding;
+using Rdmp.Core.EntityFramework.Helpers;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
@@ -33,12 +34,12 @@ public class ViewAggregateExtractUICollection : PersistableObjectCollection, IVi
     {
     }
 
-    public ViewAggregateExtractUICollection(AggregateConfiguration config) : this()
+    public ViewAggregateExtractUICollection(EntityFramework.Models.AggregateConfiguration config) : this()
     {
         DatabaseObjects.Add(config);
     }
 
-    public IEnumerable<DatabaseEntity> GetToolStripObjects()
+    public IEnumerable<DatabaseObject> GetToolStripObjects()
     {
         if (!UseQueryCache) yield break;
         var cache = GetCacheServer();
@@ -46,7 +47,7 @@ public class ViewAggregateExtractUICollection : PersistableObjectCollection, IVi
             yield return cache;
     }
 
-    private ExternalDatabaseServer GetCacheServer()
+    private EntityFramework.Models.ExternalDatabaseServer GetCacheServer()
     {
         var cic = AggregateConfiguration.GetCohortIdentificationConfigurationIfAny();
         return cic is { QueryCachingServer_ID: not null } ? cic.QueryCachingServer : null;
@@ -88,8 +89,8 @@ public class ViewAggregateExtractUICollection : PersistableObjectCollection, IVi
             autoComplete.Add(AggregateConfiguration);
     }
 
-    private AggregateConfiguration AggregateConfiguration =>
-        DatabaseObjects.OfType<AggregateConfiguration>().SingleOrDefault();
+    private EntityFramework.Models.AggregateConfiguration AggregateConfiguration =>
+        DatabaseObjects.OfType<EntityFramework.Models.AggregateConfiguration>().SingleOrDefault();
 
     public IQuerySyntaxHelper GetQuerySyntaxHelper() => AggregateConfiguration?.GetQuerySyntaxHelper();
 }

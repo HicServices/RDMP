@@ -52,10 +52,10 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
     private bool _bLoading;
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-    public ExtractionConfiguration ExtractionConfigurationCreatedIfAny { get; private set; }
+    public Core.EntityFramework.Models.DataExport.ExtractionConfiguration ExtractionConfigurationCreatedIfAny { get; private set; }
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-    public Project ProjectCreatedIfAny { get; private set; }
+    public Core.EntityFramework.Models.DataExport.Project ProjectCreatedIfAny { get; private set; }
 
     private void GetNextProjectNumber(IActivateItems activator)
     {
@@ -305,7 +305,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
             ragExecute.Reset();
 
             //create the project
-            ProjectCreatedIfAny ??= new Project(Activator.RepositoryLocator.DataExportRepository, tbProjectName.Text);
+            ProjectCreatedIfAny ??= new Core.EntityFramework.Models.DataExport.Project() { Name=tbProjectName.Text};// Activator.RepositoryLocator.DataExportRepository, tbProjectName.Text);
 
             ProjectCreatedIfAny.ProjectNumber = int.Parse(tbProjectNumber.Text);
             ProjectCreatedIfAny.ExtractionDirectory = tbExtractionDirectory.Text;
@@ -353,7 +353,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
                     {
                         //execute cohort creation from cic
                         cohortRequest.CohortIdentificationConfiguration =
-                            (CohortIdentificationConfiguration)cbxCohort.SelectedItem;
+                            (Core.EntityFramework.Models.CohortIdentificationConfiguration)cbxCohort.SelectedItem;
                         dd = ddCicPipeline;
 
 
@@ -386,7 +386,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
 
             Cursor = Cursors.Default;
 
-            ExtractionConfigurationCreatedIfAny = _configuration;
+            //ExtractionConfigurationCreatedIfAny = _configuration;
 
             DialogResult = DialogResult.OK;
             MessageBox.Show("Project Created Successfully");

@@ -28,20 +28,20 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 public class ExecuteCommandAddCatalogueToCohortIdentificationSetContainer : BasicCommandExecution
 {
     private readonly CatalogueCombineable _catalogueCombineable;
-    private readonly CohortAggregateContainer _targetCohortAggregateContainer;
+    private readonly EntityFramework.Models.CohortAggregateContainer _targetCohortAggregateContainer;
 
     private ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer _postImportCommand;
 
     public bool SkipMandatoryFilterCreation { get; set; }
 
-    public AggregateConfiguration AggregateCreatedIfAny => _postImportCommand?.AggregateCreatedIfAny;
+    public EntityFramework.Models.AggregateConfiguration AggregateCreatedIfAny => _postImportCommand?.AggregateCreatedIfAny;
 
     [UseWithObjectConstructor]
     public ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(IBasicActivateItems activator,
         [DemandsInitialization("The container you want to add the set into")]
-        CohortAggregateContainer targetCohortAggregateContainer,
+        EntityFramework.Models.CohortAggregateContainer targetCohortAggregateContainer,
         [DemandsInitialization("The dataset to add, must have an extraction identifier declared on it")]
-        Catalogue catalogue,
+        EntityFramework.Models.Catalogue catalogue,
         [DemandsInitialization(
             "Typically optional.  But if Catalogue has multiple columns marked IsExtractionIdentifier then you must indicate which to use here.")]
         ExtractionInformation identifierColumn = null
@@ -85,7 +85,7 @@ public class ExecuteCommandAddCatalogueToCohortIdentificationSetContainer : Basi
     }
 
     public ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(IBasicActivateItems activator,
-        CatalogueCombineable catalogueCombineable, CohortAggregateContainer targetCohortAggregateContainer) : this(
+        CatalogueCombineable catalogueCombineable, EntityFramework.Models.CohortAggregateContainer targetCohortAggregateContainer) : this(
         activator, targetCohortAggregateContainer, null)
     {
         _catalogueCombineable = catalogueCombineable;

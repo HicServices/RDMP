@@ -25,7 +25,7 @@ namespace Rdmp.UI.AggregationUIs.Advanced;
 public partial class AggregateTopXUI : RDMPUserControl
 {
     private AggregateTopX _topX;
-    private AggregateConfiguration _aggregate;
+    private Core.EntityFramework.Models.AggregateConfiguration _aggregate;
 
     private const string CountColumn = "Count Column";
 
@@ -40,7 +40,7 @@ public partial class AggregateTopXUI : RDMPUserControl
 
     private bool bLoading;
 
-    public void SetUp(IActivateItems activator, IAggregateBuilderOptions options, AggregateConfiguration aggregate)
+    public void SetUp(IActivateItems activator, IAggregateBuilderOptions options, Core.EntityFramework.Models.AggregateConfiguration aggregate)
     {
         SetItemActivator(activator);
 
@@ -119,16 +119,16 @@ public partial class AggregateTopXUI : RDMPUserControl
         tbTopX.ForeColor = Color.Black;
 
         //there isn't one yet
-        if (_topX == null)
-        {
-            _topX = new AggregateTopX(Activator.RepositoryLocator.CatalogueDbContext, _aggregate, i);
-        }
-        else
-        {
+        //if (_topX == null)
+        //{
+        //    _topX = new AggregateTopX(Activator.RepositoryLocator.CatalogueDbContext, _aggregate, i);
+        //}
+        //else
+        //{
             //there is one so change its topX
             _topX.TopX = i;
             _topX.SaveToDatabase();
-        }
+        //}
 
         Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_aggregate));
     }

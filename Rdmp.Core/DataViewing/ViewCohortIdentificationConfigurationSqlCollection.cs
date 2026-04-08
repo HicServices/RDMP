@@ -10,6 +10,7 @@ using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Dashboarding;
+using Rdmp.Core.EntityFramework.Helpers;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
@@ -30,7 +31,7 @@ internal class ViewCohortIdentificationConfigurationSqlCollection : PersistableO
         DatabaseObjects.Add(config);
     }
 
-    public IEnumerable<DatabaseEntity> GetToolStripObjects()
+    public IEnumerable<DatabaseObject> GetToolStripObjects()
     {
         if (UseQueryCache)
         {
@@ -40,7 +41,7 @@ internal class ViewCohortIdentificationConfigurationSqlCollection : PersistableO
         }
     }
 
-    private ExternalDatabaseServer GetCacheServer() =>
+    private EntityFramework.Models.ExternalDatabaseServer GetCacheServer() =>
         CohortIdentificationConfiguration is { QueryCachingServer_ID: not null }
             ? CohortIdentificationConfiguration.QueryCachingServer
             : null;
@@ -75,8 +76,7 @@ internal class ViewCohortIdentificationConfigurationSqlCollection : PersistableO
     {
     }
 
-    private CohortIdentificationConfiguration CohortIdentificationConfiguration =>
-        DatabaseObjects.OfType<CohortIdentificationConfiguration>().SingleOrDefault();
+    private EntityFramework.Models.CohortIdentificationConfiguration CohortIdentificationConfiguration => DatabaseObjects.OfType<EntityFramework.Models.CohortIdentificationConfiguration>().SingleOrDefault();
 
     public IQuerySyntaxHelper GetQuerySyntaxHelper() => GetDataAccessPoint()?.GetQuerySyntaxHelper();
 }

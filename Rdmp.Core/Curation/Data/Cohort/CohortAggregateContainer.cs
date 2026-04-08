@@ -142,7 +142,7 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable, INamed, IDis
     /// </summary>
     /// <param name="configuration"></param>
     /// <param name="order"></param>
-    public void AddChild(AggregateConfiguration configuration, int order)
+    public void AddChild(EntityFramework.Models.AggregateConfiguration configuration, int order)
     {
         CreateInsertionPointAtOrder(configuration, configuration.Order, true);
         //CatalogueDbContext.CohortContainerManager.Add(this, configuration, order);
@@ -155,7 +155,7 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable, INamed, IDis
     /// <para>Has no effect if if the <see cref="AggregateConfiguration"/> is not an immediate child</para>
     /// </summary>
     /// <param name="configuration"></param>
-    public void RemoveChild(AggregateConfiguration configuration)
+    public void RemoveChild(EntityFramework.Models.AggregateConfiguration configuration)
     {
         //CatalogueDbContext.CohortContainerManager.Remove(this, configuration);
     }
@@ -316,45 +316,45 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable, INamed, IDis
             var order = content.Order;
 
             //its a config, clone the config and add it to the clone container
-            if (content is AggregateConfiguration config)
+            if (content is EntityFramework.Models.AggregateConfiguration config)
             {
                 var configClone = clone.ImportAggregateConfigurationAsIdentifierList(config, null, false);
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     $"Created clone dataset {configClone} with ID {configClone.ID}", CheckResult.Success));
-                cloneContainer.AddChild(configClone, order);
+                //cloneContainer.AddChild(configClone, order);
 
                 //if the original used any joinable patient index tables
-                var usedJoins = config.PatientIndexJoinablesUsed;
+                //var usedJoins = config.PatientIndexJoinablesUsed;
 
                 //our dictionary should have a record of it along with a clone patient index table we should hook our clone up to
-                foreach (var j in usedJoins)
-                {
-                    //for some reason the CohortIdentificationConfiguration didn't properly clone the joinable permission or didn't add it to the dictionary
-                    if (!parentToCloneJoinablesDictionary.TryGetValue(j.JoinableCohortAggregateConfiguration, out var
-                            cloneJoinable))
-                        throw new KeyNotFoundException(
-                            $"Configuration {configClone} uses Patient Index Table {j.AggregateConfiguration} but our dictionary did not have the key, why was that joinable not cloned?");
+                //foreach (var j in usedJoins)
+                //{
+                //    //for some reason the CohortIdentificationConfiguration didn't properly clone the joinable permission or didn't add it to the dictionary
+                //    if (!parentToCloneJoinablesDictionary.TryGetValue(j.JoinableCohortAggregateConfiguration, out var
+                //            cloneJoinable))
+                //        throw new KeyNotFoundException(
+                //            $"Configuration {configClone} uses Patient Index Table {j.AggregateConfiguration} but our dictionary did not have the key, why was that joinable not cloned?");
 
-                    //we do have a clone copy of the joinable permission, set the clone aggregate
-                    var cloneJoinUse = cloneJoinable.AddUser(configClone);
+                //    //we do have a clone copy of the joinable permission, set the clone aggregate
+                //    var cloneJoinUse = cloneJoinable.AddUser(configClone);
 
-                    cloneJoinUse.JoinType = j.JoinType;
-                    cloneJoinUse.SaveToDatabase();
+                //    cloneJoinUse.JoinType = j.JoinType;
+                //    cloneJoinUse.SaveToDatabase();
 
-                    //Now! (brace yourself).  Some the filters in the AggregateConfiguration we just cloned might reference a table called ix2934 or whetever, this
-                    //is the Joinable we need to do a replace to point them at the correct ix number (although if they are good users they will have aliased any
-                    //patient index columns anyway)
-                    if (configClone.RootFilterContainer_ID != null)
-                        foreach (var clonedFilter in SqlQueryBuilderHelper.GetAllFiltersUsedInContainerTreeRecursively(
-                                     configClone.RootFilterContainer))
-                        {
-                            var oldTableAlias = j.GetJoinTableAlias();
-                            var newTableAlias = cloneJoinUse.GetJoinTableAlias();
+                //    //Now! (brace yourself).  Some the filters in the AggregateConfiguration we just cloned might reference a table called ix2934 or whetever, this
+                //    //is the Joinable we need to do a replace to point them at the correct ix number (although if they are good users they will have aliased any
+                //    //patient index columns anyway)
+                //    if (configClone.RootFilterContainer_ID != null)
+                //        foreach (var clonedFilter in SqlQueryBuilderHelper.GetAllFiltersUsedInContainerTreeRecursively(
+                //                     configClone.RootFilterContainer))
+                //        {
+                //            var oldTableAlias = j.GetJoinTableAlias();
+                //            var newTableAlias = cloneJoinUse.GetJoinTableAlias();
 
-                            clonedFilter.WhereSQL = clonedFilter.WhereSQL.Replace(oldTableAlias, newTableAlias);
-                            clonedFilter.SaveToDatabase();
-                        }
-                }
+                //            clonedFilter.WhereSQL = clonedFilter.WhereSQL.Replace(oldTableAlias, newTableAlias);
+                //            clonedFilter.SaveToDatabase();
+                //        }
+                //}
             }
 
             //its another container (a subcontainer), recursively call the clone operation on it and add that subtree to the clone container

@@ -13,7 +13,7 @@ namespace Rdmp.UI.LocationsMenu.Versioning
         /// Required designer variable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
-        private CohortIdentificationConfiguration _cic;
+        private Core.EntityFramework.Models.CohortIdentificationConfiguration _cic;
         private IActivateItems _activator;
         /// <summary> 
         /// Clean up any resources being used.
@@ -93,7 +93,7 @@ namespace Rdmp.UI.LocationsMenu.Versioning
             {
                 if (_activator.YesNo("Are you sure you want to revert the cohort to this version?", "Revert Cohort to this Version"))
                 {
-                    var rootCic = _activator.RepositoryLocator.CatalogueDbContext.GetAllObjectsWhere<CohortIdentificationConfiguration>("ID", (int)_cic.ClonedFrom_ID).FirstOrDefault();
+                    var rootCic = _activator.RepositoryLocator.CatalogueDbContext.GetAllObjectsWhere<Core.EntityFramework.Models.CohortIdentificationConfiguration>("ID", (int)_cic.ClonedFrom_ID).FirstOrDefault();
                     if (rootCic != null)
                     {
                         var revertCmd = new ExecuteCommandRevertToHistoricalCohortVersion(_activator, rootCic, _cic);
@@ -109,7 +109,7 @@ namespace Rdmp.UI.LocationsMenu.Versioning
         }
 
 
-        public void Setup(CohortIdentificationConfiguration databaseObject, IActivateItems activator)
+        public void Setup(Core.EntityFramework.Models.CohortIdentificationConfiguration databaseObject, IActivateItems activator)
         {
             _cic = databaseObject;
             _activator = activator;

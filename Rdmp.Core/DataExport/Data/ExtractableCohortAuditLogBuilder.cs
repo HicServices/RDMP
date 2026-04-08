@@ -40,7 +40,7 @@ public partial class ExtractableCohortAuditLogBuilder
     /// </summary>
     /// <param name="cic"></param>
     /// <returns></returns>
-    public static string GetDescription(CohortIdentificationConfiguration cic) =>
+    public static string GetDescription(EntityFramework.Models.CohortIdentificationConfiguration cic) =>
         $"{InCohortIdentificationConfiguration} '{cic}' (ID={cic.ID})";
 
     /// <summary>

@@ -11,6 +11,7 @@ using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
+using System.Linq;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
@@ -45,19 +46,19 @@ public class ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable
 
         if (_catalogue == null)
         {
-            //if (!SelectOne(BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Catalogue>(),
-            //        out var cata))
-            //    return;
+            if (!SelectOne(BasicActivator.RepositoryLocator.CatalogueDbContext.Catalogues.ToList(),
+                    out var cata))
+                return;
 
-            //_catalogue = new CatalogueCombineable(cata);
+            _catalogue = new CatalogueCombineable(cata);
         }
 
-        var aggregateCommand = _catalogue.GenerateAggregateConfigurationFor(BasicActivator, _configuration);
+        //var aggregateCommand = _catalogue.GenerateAggregateConfigurationFor(BasicActivator, _configuration);
 
-        var joinableCommandExecution =
-            new ExecuteCommandConvertAggregateConfigurationToPatientIndexTable(BasicActivator, aggregateCommand,
-                _configuration);
-        joinableCommandExecution.Execute();
+        //var joinableCommandExecution =
+        //    new ExecuteCommandConvertAggregateConfigurationToPatientIndexTable(BasicActivator, aggregateCommand,
+        //        _configuration);
+        //joinableCommandExecution.Execute();
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>

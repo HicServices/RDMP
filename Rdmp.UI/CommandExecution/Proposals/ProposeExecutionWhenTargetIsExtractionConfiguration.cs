@@ -16,22 +16,22 @@ using Rdmp.UI.ProjectUI;
 namespace Rdmp.UI.CommandExecution.Proposals;
 
 internal class
-    ProposeExecutionWhenTargetIsExtractionConfiguration : RDMPCommandExecutionProposal<ExtractionConfiguration>
+    ProposeExecutionWhenTargetIsExtractionConfiguration : RDMPCommandExecutionProposal<Core.EntityFramework.Models.DataExport.ExtractionConfiguration>
 {
     public ProposeExecutionWhenTargetIsExtractionConfiguration(IActivateItems itemActivator) : base(itemActivator)
     {
     }
 
-    public override bool CanActivate(ExtractionConfiguration target) => !target.IsReleased;
+    public override bool CanActivate(Core.EntityFramework.Models.DataExport.ExtractionConfiguration target) => !target.IsReleased;
 
-    public override void Activate(ExtractionConfiguration target)
+    public override void Activate(Core.EntityFramework.Models.DataExport.ExtractionConfiguration target)
     {
         if (!target.IsReleased)
-            ItemActivator.Activate<ExecuteExtractionUI, ExtractionConfiguration>(target);
+            ItemActivator.Activate<ExecuteExtractionUI, Core.EntityFramework.Models.DataExport.ExtractionConfiguration>(target);
     }
 
     public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd,
-        ExtractionConfiguration targetExtractionConfiguration, InsertOption insertOption = InsertOption.Default)
+        Core.EntityFramework.Models.DataExport.ExtractionConfiguration targetExtractionConfiguration, InsertOption insertOption = InsertOption.Default)
     {
         switch (cmd)
         {
@@ -46,9 +46,9 @@ internal class
                         ? new ImpossibleCommand("Catalogue is not Extractable")
                         : new ExecuteCommandAddDatasetsToConfiguration(ItemActivator, eds, targetExtractionConfiguration);
                 }
-            case ExtractableCohortCombineable sourceExtractableCohortCombineable:
-                return new ExecuteCommandAddCohortToExtractionConfiguration(ItemActivator,
-                    sourceExtractableCohortCombineable, targetExtractionConfiguration);
+            //case ExtractableCohortCombineable sourceExtractableCohortCombineable:
+            //    return new ExecuteCommandAddCohortToExtractionConfiguration(ItemActivator,
+            //        sourceExtractableCohortCombineable, targetExtractionConfiguration);
             //user is trying to add datasets to a configuration
             case ExtractableDataSetCombineable sourceExtractableDataSetCommand:
                 return new ExecuteCommandAddDatasetsToConfiguration(ItemActivator, sourceExtractableDataSetCommand,

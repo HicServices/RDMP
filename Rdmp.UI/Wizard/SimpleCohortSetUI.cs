@@ -226,49 +226,49 @@ public partial class SimpleCohortSetUI : UserControl
 
     public void CreateCohortSet(CohortAggregateContainer targetContainer)
     {
-        if (cbxCatalogues.SelectedItem is not Catalogue cata)
+        if (cbxCatalogues.SelectedItem is not Core.EntityFramework.Models.Catalogue cata)
             return;
 
-        var cataCommand = new CatalogueCombineable(cata)
-        {
-            //use this one
-            ResolveMultipleExtractionIdentifiers = (s, e) => cbxColumns.SelectedItem as ExtractionInformation
-        };
+        //var cataCommand = new CatalogueCombineable(cata)
+        //{
+        //    //use this one
+        //    ResolveMultipleExtractionIdentifiers = (s, e) => cbxColumns.SelectedItem as ExtractionInformation
+        //};
 
-        var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(_activator, cataCommand,
-            targetContainer)
-        {
-            SkipMandatoryFilterCreation = true
-        };
-        cmd.Execute();
+        //var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(_activator, cataCommand,
+        //    targetContainer)
+        //{
+        //    SkipMandatoryFilterCreation = true
+        //};
+        //cmd.Execute();
 
-        var aggregate = cmd.AggregateCreatedIfAny;
+        //var aggregate = cmd.AggregateCreatedIfAny;
 
-        var filterOp = (FilterContainerOperation)ddAndOr.SelectedItem;
+        //var filterOp = (FilterContainerOperation)ddAndOr.SelectedItem;
 
-        IContainer filterContainer;
-        if (aggregate.RootFilterContainer_ID != null)
-        {
-            //this is the case if there are mandatory filters in the dataset
-            filterContainer = aggregate.RootFilterContainer;
-            filterContainer.Operation = filterOp;
-            filterContainer.SaveToDatabase();
-        }
-        else if (_filterUIs.Count > 0)
-        {
-            filterContainer = new AggregateFilterContainer(_activator.RepositoryLocator.CatalogueDbContext, filterOp);
-            aggregate.RevertToDatabaseState();
-            aggregate.RootFilterContainer_ID = filterContainer.ID;
-            aggregate.SaveToDatabase();
+        //IContainer filterContainer;
+        //if (aggregate.RootFilterContainer_ID != null)
+        //{
+        //    //this is the case if there are mandatory filters in the dataset
+        //    filterContainer = aggregate.RootFilterContainer;
+        //    filterContainer.Operation = filterOp;
+        //    filterContainer.SaveToDatabase();
+        //}
+        //else if (_filterUIs.Count > 0)
+        //{
+        //    filterContainer = new AggregateFilterContainer(_activator.RepositoryLocator.CatalogueDbContext, filterOp);
+        //    //aggregate.RevertToDatabaseState();
+        //    aggregate.RootFilterContainer_ID = filterContainer.ID;
+        //    //aggregate.SaveToDatabase();
 
-            var filtersAddedSoFar = new List<IFilter>();
-            foreach (var ui in _filterUIs)
-            {
-                var f = ui.CreateFilter(new AggregateFilterFactory(_activator.RepositoryLocator.CatalogueDbContext),
-                    filterContainer, filtersAddedSoFar.ToArray());
-                filtersAddedSoFar.Add(f);
-            }
-        }
+        //    var filtersAddedSoFar = new List<IFilter>();
+        //    foreach (var ui in _filterUIs)
+        //    {
+        //        var f = ui.CreateFilter(new AggregateFilterFactory(_activator.RepositoryLocator.CatalogueDbContext),
+        //            filterContainer, filtersAddedSoFar.ToArray());
+        //        filtersAddedSoFar.Add(f);
+        //    }
+        //}
     }
 
     private void ddAndOr_SelectedIndexChanged(object sender, EventArgs e)

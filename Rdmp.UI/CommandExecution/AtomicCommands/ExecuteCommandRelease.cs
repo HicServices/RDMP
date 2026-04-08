@@ -8,6 +8,7 @@ using System.Linq;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.EntityFramework.Helpers;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.UI.DataRelease;
@@ -19,8 +20,8 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandRelease : BasicUICommandExecution, IAtomicCommandWithTarget
 {
-    private Project _project;
-    private ExtractionConfiguration _configuration;
+    private Core.EntityFramework.Models.DataExport.Project _project;
+    private Core.EntityFramework.Models.DataExport.ExtractionConfiguration _configuration;
     private ISelectedDataSets _selectedDataSet;
 
     public ExecuteCommandRelease(IActivateItems activator) : base(activator)
@@ -38,10 +39,10 @@ public class ExecuteCommandRelease : BasicUICommandExecution, IAtomicCommandWith
     /// </summary>
     /// <param name="target"></param>
     /// <returns></returns>
-    public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
+    public IAtomicCommandWithTarget SetTarget(DatabaseObject target)
     {
-        _project = target as Project;
-        _configuration = target as ExtractionConfiguration;
+        _project = target as Core.EntityFramework.Models.DataExport.Project;
+        _configuration = target as Core.EntityFramework.Models.DataExport.ExtractionConfiguration;
         _selectedDataSet = target as ISelectedDataSets;
 
         if (_project != null && _project.ExtractionConfigurations.All(ec => ec.IsReleased))
@@ -49,7 +50,7 @@ public class ExecuteCommandRelease : BasicUICommandExecution, IAtomicCommandWith
 
         if (_configuration != null)
         {
-            _project = (Project)_configuration.Project;
+            _project = (Core.EntityFramework.Models.DataExport.Project)_configuration.Project;
 
             if (_configuration.IsReleased)
                 SetImpossible("ExtractionConfiguration has already been Released");
@@ -63,8 +64,8 @@ public class ExecuteCommandRelease : BasicUICommandExecution, IAtomicCommandWith
 
         if (_selectedDataSet != null)
         {
-            _configuration = (ExtractionConfiguration)_selectedDataSet.ExtractionConfiguration;
-            _project = (Project)_configuration.Project;
+            _configuration = (Core.EntityFramework.Models.DataExport.ExtractionConfiguration)_selectedDataSet.ExtractionConfiguration;
+            _project = (Core.EntityFramework.Models.DataExport.Project)_configuration.Project;
 
             if (_selectedDataSet.ExtractionConfiguration.IsReleased)
                 SetImpossible("This dataset is part of an ExtractionConfiguration that has already been Released");

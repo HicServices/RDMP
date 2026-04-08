@@ -9,6 +9,7 @@ using System.Linq;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
+using Rdmp.Core.EntityFramework.Helpers;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.DataViewing;
@@ -45,8 +46,9 @@ internal class ViewSupportingSqlCollection : PersistableObjectCollection, IViewS
 
     public string GetTabName() => SupportingSQLTable.Name;
 
-    public IEnumerable<DatabaseEntity> GetToolStripObjects()
+    public IEnumerable<DatabaseObject> GetToolStripObjects()
     {
-        yield return SupportingSQLTable;
+        //yield return SupportingSQLTable;
+        yield return null;
     }
 }

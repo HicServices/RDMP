@@ -1,5 +1,7 @@
 ﻿using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.EntityFramework.Helpers;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -12,7 +14,7 @@ namespace Rdmp.Core.EntityFramework.Models
 {
     [Table("CohortIdentificationConfiguration")]
 
-    public class CohortIdentificationConfiguration : DatabaseObject, IHasFolder
+    public class CohortIdentificationConfiguration : DatabaseObject, IHasFolder, ICollectSqlParameters
     {
 
         [Key]
@@ -36,6 +38,7 @@ namespace Rdmp.Core.EntityFramework.Models
 
         [ForeignKey("QueryCachingServer_ID")]
         public virtual ExternalDatabaseServer QueryCachingServer { get; set; }
+        public int ClonedFrom_ID { get; set; }
 
         public override string ToString()
         {
@@ -48,5 +51,47 @@ namespace Rdmp.Core.EntityFramework.Models
         }
 
         public List<ISqlParameter> GetAllParameters() => new List<ISqlParameter>();//TODO
+
+        public string GetNamingConventionPrefixForConfigurations() => "CohortIdentificationConfiguration_";//TODO
+
+        public Curation.Data.Cohort.CohortIdentificationConfiguration CreateClone(ThrowImmediatelyCheckNotifier quiet)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<JoinableCohortAggregateConfiguration> GetAllJoinables()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Freeze()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Unfreeze()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool ShouldBeReadOnly(string name, out string reason)
+        {
+            throw new NotImplementedException();
+        }
+
+        public AggregateConfiguration CreateNewEmptyConfigurationForCatalogue(Catalogue catalogue, Curation.Data.Cohort.CohortIdentificationConfiguration.ChooseWhichExtractionIdentifierToUseFromManyHandler chooseWhichExtractionIdentifierToUseFromManyHandler, bool importMandatoryFilters)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void EnsureNamingConvention(AggregateConfiguration ac)
+        {
+            throw new NotImplementedException();
+        }
+
+        ISqlParameter[] ICollectSqlParameters.GetAllParameters()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

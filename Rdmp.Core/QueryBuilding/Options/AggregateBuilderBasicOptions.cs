@@ -22,7 +22,7 @@ public class AggregateBuilderBasicOptions : IAggregateBuilderOptions
         aggregate.IsExtractable ? "Extractable 'Group By' Aggregate:" : "'Group By' Aggregate:";
 
     /// <inheritdoc/>
-    public IColumn[] GetAvailableSELECTColumns(AggregateConfiguration aggregate)
+    public IColumn[] GetAvailableSELECTColumns(Core.EntityFramework.Models.AggregateConfiguration aggregate)
     {
         var existingDimensions = aggregate.AggregateDimensions.Select(d => d.ExtractionInformation).ToArray();
         return Array.Empty<IColumn>(); //TODO fix
@@ -41,7 +41,7 @@ public class AggregateBuilderBasicOptions : IAggregateBuilderOptions
         aggregate.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Cast<IColumn>().ToArray();
 
     /// <inheritdoc/>
-    public bool ShouldBeEnabled(AggregateEditorSection section, AggregateConfiguration aggregate)
+    public bool ShouldBeEnabled(AggregateEditorSection section, Core.EntityFramework.Models.AggregateConfiguration aggregate)
     {
         return section switch
         {
@@ -50,7 +50,7 @@ public class AggregateBuilderBasicOptions : IAggregateBuilderOptions
                 //can only Top X if we have a pivot (top x applies to the selection of the pivot values) or if we have nothing (no axis / pivot).  This rules out axis only queries
                 aggregate.PivotOnDimensionID != null || aggregate.GetAxisIfAny() == null,
             AggregateEditorSection.PIVOT => aggregate.GetAxisIfAny() != null ||
-                                            aggregate.AggregateDimensions.Length ==
+                                            aggregate.AggregateDimensions.Count() ==
                                             2 //can only pivot if there is an axis or exactly 2 dimensions (+ count)
             ,
             AggregateEditorSection.AXIS => true,
@@ -74,13 +74,13 @@ public class AggregateBuilderBasicOptions : IAggregateBuilderOptions
         return availableTables.Except(implicitJoins).Cast<IMapsDirectlyToDatabaseTable>().ToArray();
     }
 
-    private static bool CanMakeExtractable(AggregateConfiguration aggregate)
+    private static bool CanMakeExtractable(Core.EntityFramework.Models.AggregateConfiguration aggregate)
     {
         //if it has any extraction identifiers then it cannot be extractable!
         if (aggregate.AggregateDimensions.Any(d => d.IsExtractionIdentifier))
         {
             aggregate.IsExtractable = false;
-            aggregate.SaveToDatabase();
+            //aggregate.SaveToDatabase();
             return false;
         }
 
@@ -91,6 +91,6 @@ public class AggregateBuilderBasicOptions : IAggregateBuilderOptions
     public ISqlParameter[] GetAllParameters(AggregateConfiguration aggregate) => aggregate.GetAllParameters();
 
     /// <inheritdoc/>
-    public CountColumnRequirement GetCountColumnRequirement(AggregateConfiguration aggregate) =>
+    public CountColumnRequirement GetCountColumnRequirement(Core.EntityFramework.Models.AggregateConfiguration aggregate) =>
         CountColumnRequirement.MustHaveOne;
 }

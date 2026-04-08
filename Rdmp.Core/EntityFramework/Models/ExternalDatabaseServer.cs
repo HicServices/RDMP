@@ -2,11 +2,14 @@
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.EntityFramework.Helpers;
+using Rdmp.Core.Logging.PastEvents;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -86,6 +89,26 @@ namespace Rdmp.Core.EntityFramework.Models
         }
 
         public void SaveToDatabase()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public DiscoveredServer GetDistinctLoggingDatabase()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public DiscoveredServer GetDistinctLoggingDatabase(out IExternalDatabaseServer serverChosen)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public string GetDistinctLoggingTask()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public IEnumerable<ArchivalDataLoadInfo> FilterRuns(IEnumerable<ArchivalDataLoadInfo> runs)
         {
             throw new System.NotImplementedException();
         }

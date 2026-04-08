@@ -13,6 +13,7 @@ using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.Commands;
 using Rdmp.Core.DataExport.DataExtraction.UserPicks;
+using Rdmp.Core.EntityFramework.Helpers;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.DataViewing;
@@ -63,9 +64,9 @@ internal class ViewSelectedDatasetExtractionUICollection : PersistableObjectColl
         return _request?.QueryBuilder?.TablesUsedInQuery?.FirstOrDefault();
     }
 
-    public IEnumerable<DatabaseEntity> GetToolStripObjects()
+    public IEnumerable<DatabaseObject> GetToolStripObjects()
     {
-        yield return (DatabaseEntity)SelectedDataset;
+        yield return (DatabaseObject)SelectedDataset;
     }
 
     public string GetTabName() => $"Extract {SelectedDataset}";

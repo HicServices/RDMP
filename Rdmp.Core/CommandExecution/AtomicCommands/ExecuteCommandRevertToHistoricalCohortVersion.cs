@@ -16,8 +16,8 @@ public class ExecuteCommandRevertToHistoricalCohortVersion : BasicCommandExecuti
 {
 
     private readonly IBasicActivateItems _activator;
-    private readonly CohortIdentificationConfiguration _configuration;
-    private readonly CohortIdentificationConfiguration _historicalConfiguration;
+    private readonly Core.EntityFramework.Models.CohortIdentificationConfiguration _configuration;
+    private readonly Core.EntityFramework.Models.CohortIdentificationConfiguration _historicalConfiguration;
 
     /// <summary>
     /// Set a cohort configuration to match a previously saved version of that cohort
@@ -25,7 +25,7 @@ public class ExecuteCommandRevertToHistoricalCohortVersion : BasicCommandExecuti
     /// <param name="activator"></param>
     /// <param name="cic"></param>
     /// <param name="historicalCic"></param>
-    public ExecuteCommandRevertToHistoricalCohortVersion(IBasicActivateItems activator, CohortIdentificationConfiguration cic, CohortIdentificationConfiguration historicalCic): base(activator)
+    public ExecuteCommandRevertToHistoricalCohortVersion(IBasicActivateItems activator, Core.EntityFramework.Models.CohortIdentificationConfiguration cic, Core.EntityFramework.Models.CohortIdentificationConfiguration historicalCic): base(activator)
     {
         _activator = activator;
         _configuration = cic;
@@ -41,8 +41,8 @@ public class ExecuteCommandRevertToHistoricalCohortVersion : BasicCommandExecuti
         }
 
         base.Execute();
-        var clone = _historicalConfiguration.CloneIntoExistingConfiguration(ThrowImmediatelyCheckNotifier.Quiet, _configuration,false);
-        Publish(clone);
-        Emphasise(clone);
+        //var clone = _historicalConfiguration.CloneIntoExistingConfiguration(ThrowImmediatelyCheckNotifier.Quiet, _configuration,false);
+        //Publish(clone);
+        //Emphasise(clone);
     }
 }

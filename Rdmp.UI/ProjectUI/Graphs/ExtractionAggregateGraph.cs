@@ -41,7 +41,7 @@ public sealed class ExtractionAggregateGraphUI : AggregateGraphUI, IObjectCollec
 
     private ExtractionAggregateGraphObjectCollection _collection;
 
-    protected override AggregateBuilder GetQueryBuilder(AggregateConfiguration aggregateConfiguration)
+    protected override AggregateBuilder GetQueryBuilder(Core.EntityFramework.Models.AggregateConfiguration aggregateConfiguration)
     {
         if (Request == null)
             throw new Exception("Request has not been initialized yet, has SetCollection not yet been called?");
@@ -154,7 +154,7 @@ public sealed class ExtractionAggregateGraphUI : AggregateGraphUI, IObjectCollec
         Request.GenerateQueryBuilder();
         BuildMenu(activator);
 
-        SetAggregate(activator, _collection.Graph);
+        //SetAggregate(activator, _collection.Graph);
         LoadGraphAsync();
     }
 

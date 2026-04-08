@@ -17,11 +17,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 /// </summary>
 public class ExecuteCommandSetPivot : BasicCommandExecution
 {
-    private readonly AggregateConfiguration aggregate;
+    private readonly Core.EntityFramework.Models.AggregateConfiguration aggregate;
     private readonly string column;
     private readonly bool askAtRuntime;
 
-    public ExecuteCommandSetPivot(IBasicActivateItems basicActivator, AggregateConfiguration aggregate) : base(
+    public ExecuteCommandSetPivot(IBasicActivateItems basicActivator, Core.EntityFramework.Models.AggregateConfiguration aggregate) : base(
         basicActivator)
     {
         this.aggregate = aggregate;
@@ -39,7 +39,7 @@ public class ExecuteCommandSetPivot : BasicCommandExecution
 
 
     [UseWithObjectConstructor]
-    public ExecuteCommandSetPivot(IBasicActivateItems basicActivator, AggregateConfiguration aggregate, string column) :
+    public ExecuteCommandSetPivot(IBasicActivateItems basicActivator, Core.EntityFramework.Models.AggregateConfiguration aggregate, string column) :
         base(basicActivator)
     {
         this.aggregate = aggregate;
@@ -107,7 +107,7 @@ public class ExecuteCommandSetPivot : BasicCommandExecution
             aggregate.PivotOnDimensionID = match.ID;
         }
 
-        aggregate.SaveToDatabase();
+        //aggregate.SaveToDatabase();
 
         Publish(aggregate);
     }

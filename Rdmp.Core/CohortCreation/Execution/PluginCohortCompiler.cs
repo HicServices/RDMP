@@ -125,7 +125,7 @@ public abstract class PluginCohortCompiler : IPluginCohortCompiler
     public virtual bool IsStale(EntityFramework.Models.AggregateConfiguration aggregate, string oldDescription) =>
         !string.Equals(GetDescription(aggregate), oldDescription, StringComparison.CurrentCultureIgnoreCase);
 
-    public virtual IHasRuntimeName GetJoinColumnForPatientIndexTable(AggregateConfiguration joinedTo)
+    public virtual IHasRuntimeName GetJoinColumnForPatientIndexTable(EntityFramework.Models.AggregateConfiguration joinedTo)
     {
         var colName = GetJoinColumnNameFor(joinedTo);
         return new SpontaneouslyInventedColumn(new MemoryRepository(), colName, colName);
@@ -138,5 +138,5 @@ public abstract class PluginCohortCompiler : IPluginCohortCompiler
     /// </summary>
     /// <param name="joinedTo"></param>
     /// <returns></returns>
-    protected abstract string GetJoinColumnNameFor(AggregateConfiguration joinedTo);
+    protected abstract string GetJoinColumnNameFor(EntityFramework.Models.AggregateConfiguration joinedTo);
 }

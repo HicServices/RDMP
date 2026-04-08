@@ -19,7 +19,7 @@ public class ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationS
 
     [UseWithObjectConstructor]
     public ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationSetAgain(IBasicActivateItems activator,
-        AggregateConfiguration aggregate, CohortAggregateContainer targetCohortAggregateContainer)
+        EntityFramework.Models.AggregateConfiguration aggregate, CohortAggregateContainer targetCohortAggregateContainer)
         : this(activator, new AggregateConfigurationCombineable(aggregate), targetCohortAggregateContainer)
     {
     }

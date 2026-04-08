@@ -17,11 +17,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 public sealed class ExecuteCommandAddPackageToConfiguration : BasicCommandExecution
 {
-    private readonly ExtractionConfiguration _extractionConfiguration;
+    private readonly Core.EntityFramework.Models.DataExport.ExtractionConfiguration _extractionConfiguration;
     private readonly ExtractableDataSetPackage[] _packages;
 
     public ExecuteCommandAddPackageToConfiguration(IBasicActivateItems activator,
-        ExtractionConfiguration extractionConfiguration) : base(activator)
+        Core.EntityFramework.Models.DataExport.ExtractionConfiguration extractionConfiguration) : base(activator)
     {
         _extractionConfiguration = extractionConfiguration;
 

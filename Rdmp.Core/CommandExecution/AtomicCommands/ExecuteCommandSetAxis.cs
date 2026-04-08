@@ -17,11 +17,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 /// </summary>
 public class ExecuteCommandSetAxis : BasicCommandExecution
 {
-    private readonly AggregateConfiguration aggregate;
+    private readonly Core.EntityFramework.Models.AggregateConfiguration aggregate;
     private readonly string column;
     private readonly bool askAtRuntime;
 
-    public ExecuteCommandSetAxis(IBasicActivateItems basicActivator, AggregateConfiguration aggregate) : base(
+    public ExecuteCommandSetAxis(IBasicActivateItems basicActivator, Core.EntityFramework.Models.AggregateConfiguration aggregate) : base(
         basicActivator)
     {
         this.aggregate = aggregate;
@@ -45,7 +45,7 @@ public class ExecuteCommandSetAxis : BasicCommandExecution
 
 
     [UseWithObjectConstructor]
-    public ExecuteCommandSetAxis(IBasicActivateItems basicActivator, AggregateConfiguration aggregate, string column) :
+    public ExecuteCommandSetAxis(IBasicActivateItems basicActivator, Core.EntityFramework.Models.AggregateConfiguration aggregate, string column) :
         base(basicActivator)
     {
         this.aggregate = aggregate;

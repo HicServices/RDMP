@@ -72,7 +72,7 @@ public partial class AutoCompleteProvider : IAutoCompleteProvider
     }
 
 
-    public void Add(ColumnInfo columnInfo, ITableInfo tableInfo, string databaseName, LoadStage stage,
+    public void Add(EntityFramework.Models.ColumnInfo columnInfo, ITableInfo tableInfo, string databaseName, LoadStage stage,
         IQuerySyntaxHelper syntaxHelper)
     {
         var col = columnInfo.GetRuntimeName(stage);
@@ -85,7 +85,7 @@ public partial class AutoCompleteProvider : IAutoCompleteProvider
         AddUnlessDuplicateImage(fullySpecified, COLUMN_INFO_IDX);
     }
 
-    public void Add(ColumnInfo columnInfo)
+    public void Add(EntityFramework.Models.ColumnInfo columnInfo)
     {
         AddUnlessDuplicate(columnInfo.GetFullyQualifiedName());
         AddUnlessDuplicateImage(columnInfo.GetFullyQualifiedName(), COLUMN_INFO_IDX);
@@ -162,7 +162,7 @@ public partial class AutoCompleteProvider : IAutoCompleteProvider
                 case PreLoadDiscardedColumn preDiscarded:
                     Add(preDiscarded, tableInfo, dbName);
                     break;
-                case ColumnInfo columnInfo:
+                case EntityFramework.Models.ColumnInfo columnInfo:
                     Add(columnInfo, tableInfo, dbName, loadStage, syntaxHelper);
                     break;
                 default:
@@ -211,7 +211,7 @@ public partial class AutoCompleteProvider : IAutoCompleteProvider
         Items.Add(type.Name);
     }
 
-    public void Add(AggregateConfiguration aggregateConfiguration)
+    public void Add(EntityFramework.Models.AggregateConfiguration aggregateConfiguration)
     {
         Add(aggregateConfiguration.Catalogue);
     }

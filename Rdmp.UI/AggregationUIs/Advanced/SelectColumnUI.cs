@@ -45,7 +45,7 @@ namespace Rdmp.UI.AggregationUIs.Advanced;
 public partial class SelectColumnUI : RDMPUserControl
 {
     private IAggregateBuilderOptions _options;
-    private AggregateConfiguration _aggregate;
+    private Core.EntityFramework.Models.AggregateConfiguration _aggregate;
 
     private readonly List<IColumn> _availableColumns;
     private readonly List<IColumn> _includedColumns;
@@ -156,17 +156,17 @@ public partial class SelectColumnUI : RDMPUserControl
                 //regular column added
                 if (importableColumn != null)
                 {
-                    var dimension = new AggregateDimension(Activator.RepositoryLocator.CatalogueDbContext,
-                        importableColumn, _aggregate);
+                    //var dimension = new AggregateDimension(Activator.RepositoryLocator.CatalogueDbContext,
+                    //    importableColumn, _aggregate);
 
-                    _availableColumns.Remove(importableColumn);
-                    _includedColumns.Add(dimension);
+                    //_availableColumns.Remove(importableColumn);
+                    //_includedColumns.Add(dimension);
 
-                    olvSelectColumns.RemoveObject(importableColumn);
-                    olvSelectColumns.AddObject(dimension);
-                    olvSelectColumns.EnsureModelVisible(dimension);
+                    //olvSelectColumns.RemoveObject(importableColumn);
+                    //olvSelectColumns.AddObject(dimension);
+                    //olvSelectColumns.EnsureModelVisible(dimension);
 
-                    Save(dimension);
+                    //Save(dimension);
 
                     //object doesn't exist, that might cause problems
                     return;
@@ -183,7 +183,7 @@ public partial class SelectColumnUI : RDMPUserControl
                         return; //leave it checked - removal is forbidden
 
                     _aggregate.CountSQL = "";
-                    _aggregate.SaveToDatabase();
+                    //_aggregate.SaveToDatabase();
                     _includedColumns.Remove(countColumn);
                     _availableColumns.Add(countColumn);
 
@@ -305,7 +305,7 @@ public partial class SelectColumnUI : RDMPUserControl
         if (col is AggregateCountColumn countCol)
         {
             _aggregate.CountSQL = countCol.GetFullSelectLineStringForSavingIntoAnAggregate();
-            _aggregate.SaveToDatabase();
+            //_aggregate.SaveToDatabase();
             if (!_includedColumns.Contains(countCol))
             {
                 _includedColumns.Add(countCol);
@@ -323,12 +323,12 @@ public partial class SelectColumnUI : RDMPUserControl
         if (col is ISaveable saveable)
             saveable.SaveToDatabase();
 
-        _aggregate.SaveToDatabase();
+        //_aggregate.SaveToDatabase();
         Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_aggregate));
     }
 
 
-    public void SetUp(IActivateItems activator, IAggregateBuilderOptions options, AggregateConfiguration aggregate)
+    public void SetUp(IActivateItems activator, IAggregateBuilderOptions options, Core.EntityFramework.Models.AggregateConfiguration aggregate)
     {
         //record new states so we don't accidentally erase names of stuff
         SetItemActivator(activator);
