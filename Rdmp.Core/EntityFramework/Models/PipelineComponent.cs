@@ -27,12 +27,13 @@ namespace Rdmp.Core.EntityFramework.Models
         public override string ToString() => Name;
         public string Class { get; set; }
 
-        [ForeignKey("Pipeline_ID")]
+        //[ForeignKey("Pipeline_ID")]
+        [NotMapped]
         public virtual Pipeline Pipeline { get; set; }
 
-        public virtual List<PipelineComponentArgument> Arguments { get; set; } = new();
+        public virtual List<PipelineComponentArgument> Arguments { get; set; }
 
-        public IEnumerable<IPipelineComponentArgument> PipelineComponentArguments => throw new NotImplementedException();
+        public IEnumerable<IPipelineComponentArgument> PipelineComponentArguments => Arguments;
 
         public Curation.Data.Pipelines.PipelineComponent Clone(Curation.Data.Pipelines.Pipeline intoTargetPipeline)
         {

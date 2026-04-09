@@ -35,7 +35,7 @@ internal class ConsoleGuiEdit : Window
         //    TableCatalogueDbContext.GetPropertyInfos(DatabaseObject.GetType())
         //        .Select(p => new PropertyInListView(p, DatabaseObject)).ToList();
 
-        list = new ListView(new List<DatabaseObject>() { })// collection)
+        list = new ListView(new List<object>() { })// collection)
         {
             X = 0,
             Y = 0,

@@ -53,7 +53,7 @@ public class ExecuteCommandOverrideRawServer : BasicCommandExecution, IAtomicCom
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
         iconProvider.GetImage(RDMPConcept.ExternalDatabaseServer, OverlayKind.Link);
 
-    public IAtomicCommandWithTarget SetTarget(DatabaseObject target)
+    public IAtomicCommandWithTarget SetTarget(object target)
     {
         if (target is EntityFramework.Models.ExternalDatabaseServer candidate && _available.Contains(candidate))
             _server = candidate;

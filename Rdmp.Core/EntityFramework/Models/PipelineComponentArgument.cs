@@ -1,5 +1,7 @@
 ﻿using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.EntityFramework.Helpers;
+using Rdmp.Core.ReusableLibraryCode;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -11,7 +13,7 @@ using System.Threading.Tasks;
 namespace Rdmp.Core.EntityFramework.Models
 {
     [Table("PipelineComponentArgument")]
-    public class PipelineComponentArgument: DatabaseObject, IArgument
+    public class PipelineComponentArgument: DatabaseObject, IArgument, IPipelineComponentArgument
     {
         [Key]
         public override int ID { get; set; }
@@ -26,7 +28,22 @@ namespace Rdmp.Core.EntityFramework.Models
         [ForeignKey("PipelineComponent_ID")]
         public virtual PipelineComponent PipelineComponent { get; set; }
 
+        public void Clone(Curation.Data.Pipelines.PipelineComponent intoTargetComponent)
+        {
+            throw new NotImplementedException();
+        }
+
         public Type GetConcreteSystemType()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IHasDependencies[] GetObjectsDependingOnThis()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IHasDependencies[] GetObjectsThisDependsOn()
         {
             throw new NotImplementedException();
         }

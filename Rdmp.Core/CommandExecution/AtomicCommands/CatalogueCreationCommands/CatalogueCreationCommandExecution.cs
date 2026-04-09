@@ -38,7 +38,7 @@ public abstract class CatalogueCreationCommandExecution : BasicCommandExecution,
         TargetFolder = targetFolder;
     }
 
-    public virtual IAtomicCommandWithTarget SetTarget(DatabaseObject target)
+    public virtual IAtomicCommandWithTarget SetTarget(object target)
     {
         if (target is EntityFramework.Models.DataExport.Project project)
             ProjectSpecific = project;

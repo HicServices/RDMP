@@ -22,5 +22,5 @@ public interface IAtomicCommandWithTarget : IAtomicCommand
     /// </summary>
     /// <param name="target"></param>
     /// <returns></returns>
-    IAtomicCommandWithTarget SetTarget(DatabaseObject target);
+    IAtomicCommandWithTarget SetTarget(object target);
 }

@@ -22,12 +22,15 @@ namespace Rdmp.Core.EntityFramework
         { }
 
 
-        public DbSet<Models.DataExport.ExtractableDataSetPackage> ExtractableDataSetPackages { get; set; }
-        public DbSet<Models.DataExport.Project> Projects { get; set; }
-        public DbSet<Models.DataExport.ExtractionConfiguration> ExtractionConfigurations { get; set; }
-        public DbSet<Models.DataExport.SelectedDataSet> SelectedDataSets{ get; set; }
+        public DbSet<ExtractableDataSetPackage> ExtractableDataSetPackages { get; set; }
+        public DbSet<Project> Projects { get; set; }
+        public DbSet<ExtractionConfiguration> ExtractionConfigurations { get; set; }
+        public DbSet<SelectedDataSet> SelectedDataSets{ get; set; }
 
         public DbSet<ProjectCohortIdentificationConfigurationAssociation> ProjectCohortIdentificationConfigurationAssociations { get; set; }
+
+        public DbSet<ExtractableDataSet> ExtractableDataSets { get; set; }
+        public DbSet<ReleaseLog> ReleaseLogs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -42,12 +45,24 @@ namespace Rdmp.Core.EntityFramework
             modelBuilder.Entity<Models.DataExport.SelectedDataSet>(entity =>
             {
                 entity.HasKey(e => e.ID);
+                entity.HasOne(e => e.ExtractionConfiguration).WithMany(ec => ec.SelectedDataSets).HasForeignKey(e => e.ExtractionConfiguration_ID);
+                entity.HasOne(e => e.ExtractableDataSet).WithMany().HasForeignKey(e => e.ExtractableDataSet_ID);
             });
             modelBuilder.Entity<Models.DataExport.ExtractionConfiguration>(entity =>
             {
                 entity.HasKey(e => e.ID);
             });
             modelBuilder.Entity<Models.DataExport.ProjectCohortIdentificationConfigurationAssociation>(entity =>
+            {
+                entity.HasKey(e => e.ID);
+            });
+            modelBuilder.Entity<Models.DataExport.ExtractableDataSet>(entity =>
+            {
+                entity.HasKey(e => e.ID);
+                entity.HasOne(e => e.Catalogue).WithMany().HasForeignKey(e => e.Catalogue_ID);
+                entity.HasOne(e => e.Project).WithMany().HasForeignKey(e => e.Project_ID);
+            });
+            modelBuilder.Entity<Models.DataExport.ReleaseLog>(entity =>
             {
                 entity.HasKey(e => e.ID);
             });

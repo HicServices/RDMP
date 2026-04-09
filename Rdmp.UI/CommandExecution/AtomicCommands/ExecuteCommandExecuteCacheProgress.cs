@@ -39,7 +39,7 @@ public class ExecuteCommandExecuteCacheProgress : BasicUICommandExecution, IAtom
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
         iconProvider.GetImage(RDMPConcept.CacheProgress, OverlayKind.Execute);
 
-    public IAtomicCommandWithTarget SetTarget(DatabaseObject target)
+    public IAtomicCommandWithTarget SetTarget(object target)
     {
         //_cp = (CacheProgress)target;
         return this;

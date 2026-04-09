@@ -55,7 +55,7 @@ public class ExecuteCommandExecuteExtractionConfiguration : BasicUICommandExecut
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
         iconProvider.GetImage(RDMPConcept.ExtractionConfiguration, OverlayKind.Execute);
 
-    public IAtomicCommandWithTarget SetTarget(DatabaseObject target)
+    public IAtomicCommandWithTarget SetTarget(object target)
     {
         _extractionConfiguration = target as Core.EntityFramework.Models.DataExport.ExtractionConfiguration;
         _project = target as Core.EntityFramework.Models.DataExport.Project;

@@ -129,7 +129,7 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
             BasicActivator.RepositoryLocator.CatalogueDbContext, auditLogDescription);
     }
 
-    public virtual IAtomicCommandWithTarget SetTarget(DatabaseObject target)
+    public virtual IAtomicCommandWithTarget SetTarget(object target)
     {
         switch (target)
         {

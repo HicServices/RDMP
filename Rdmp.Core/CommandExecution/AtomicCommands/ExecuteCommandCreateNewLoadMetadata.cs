@@ -83,7 +83,7 @@ public class ExecuteCommandCreateNewLoadMetadata : BasicCommandExecution, IAtomi
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
         iconProvider.GetImage(RDMPConcept.LoadMetadata, OverlayKind.Add);
 
-    public IAtomicCommandWithTarget SetTarget(DatabaseObject target)
+    public IAtomicCommandWithTarget SetTarget(object target)
     {
         //_catalogue = (Catalogue)target;
         return this;

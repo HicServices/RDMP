@@ -4,15 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+using FAnsi;
 using FAnsi.Discovery;
 using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
 using Rdmp.Core.Curation;
@@ -25,6 +17,7 @@ using Rdmp.Core.DataLoad.Engine.Pipeline;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
 using Rdmp.Core.DataLoad.Modules.DataFlowSources;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using Rdmp.UI.ItemActivation;
@@ -34,6 +27,16 @@ using Rdmp.UI.SingleControlForms;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using Rdmp.UI.TransparentHelpSystem;
 using Rdmp.UI.Tutorials;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting;
 
@@ -208,15 +211,32 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
 
     private void IdentifyCompatibleServers()
     {
-        var servers = Activator.CoreChildProvider.AllServers;
+        List<TableInfoServerNode> servers = new();
+        foreach (var typeGroup in Activator.RepositoryLocator.CatalogueDbContext.TableInfos.GroupBy(t => t.DatabaseType))
+        {
+            var dbType = Enum.Parse(typeof(DatabaseType),typeGroup.Key);
+            IEnumerable<Core.EntityFramework.Models.TableInfo> tables = typeGroup;
 
-        if (servers.Length == 1)
+            var serversByName = tables
+                .GroupBy(c => c.Server ?? TableInfoServerNode.NullServerNode, StringComparer.CurrentCultureIgnoreCase)
+                .Select(s => new TableInfoServerNode(s.Key, (DatabaseType)dbType, s));
+
+            servers.AddRange(serversByName);
+            //foreach (var server in serversByName)
+            //{
+            //    allServers.Add(server);
+            //    AddChildren(server, descendancy.Add(server));
+            //}
+        }
+
+
+        if (servers.Count == 1)
         {
             var s = servers.Single();
 
 
             var uniqueDatabaseNames =
-                Activator.CoreChildProvider.AllTableInfos.Select(t => t.GetDatabaseRuntimeName())
+                Activator.RepositoryLocator.CatalogueDbContext.TableInfos.Select(t => t.GetDatabaseRuntimeName())
                     .Distinct()
                     .ToArray();
 
@@ -230,7 +250,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
                 serverDatabaseTableSelector1.SetExplicitServer(s.ServerName);
             }
         }
-        else if (servers.Length > 1)
+        else if (servers.Count > 1)
         {
             serverDatabaseTableSelector1.SetDefaultServers(
                 servers.Select(s => s.ServerName).ToArray()
@@ -256,8 +276,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
         else if (_selectedFile.Extension == ".csv" || _selectedFile.Extension == ".txt")
             _context.MustHaveSource = typeof(DelimitedFlatFileDataFlowSource);
         else if (_selectedFile.Extension.StartsWith(".xls")) _context.MustHaveSource = typeof(ExcelDataFlowSource);
-
-        var compatiblePipelines = Activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Pipeline>()
+        var compatiblePipelines = Activator.RepositoryLocator.CatalogueDbContext.Pipelines
             .Where(_context.IsAllowable).ToArray();
 
         if (compatiblePipelines.Length == 0)
@@ -323,7 +342,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
 
     private void btnPreview_Click(object sender, EventArgs e)
     {
-        if (ddPipeline.SelectedItem is not Pipeline p)
+        if (ddPipeline.SelectedItem is not Core.EntityFramework.Models.Pipeline p)
         {
             MessageBox.Show("No Pipeline Selected");
             return;
@@ -352,7 +371,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
 
     private void btnExecute_Click(object sender, EventArgs e)
     {
-        if (ddPipeline.SelectedItem is not Pipeline p)
+        if (ddPipeline.SelectedItem is not Core.EntityFramework.Models.Pipeline p)
         {
             MessageBox.Show("No Pipeline Selected");
             return;

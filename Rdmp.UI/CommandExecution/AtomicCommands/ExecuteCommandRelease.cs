@@ -39,7 +39,7 @@ public class ExecuteCommandRelease : BasicUICommandExecution, IAtomicCommandWith
     /// </summary>
     /// <param name="target"></param>
     /// <returns></returns>
-    public IAtomicCommandWithTarget SetTarget(DatabaseObject target)
+    public IAtomicCommandWithTarget SetTarget(object target)
     {
         _project = target as Core.EntityFramework.Models.DataExport.Project;
         _configuration = target as Core.EntityFramework.Models.DataExport.ExtractionConfiguration;

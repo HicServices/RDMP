@@ -46,7 +46,7 @@ public class ExecuteCommandMakeCatalogueInternal : BasicCommandExecution, IAtomi
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) => BasicActivator.CoreIconProvider.GetImage(_catalogue, OverlayKind.Internal);
 
-    public IAtomicCommandWithTarget SetTarget(DatabaseObject target)
+    public IAtomicCommandWithTarget SetTarget(object target)
     {
         //switch (target)
         //{

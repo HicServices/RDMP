@@ -96,7 +96,7 @@ public partial class CatalogueDQEResultsUI : CatalogueSummaryScreen_Design
         //}
 
         //CommonFunctionality.Add(
-        //    new ExecuteCommandConfigureCatalogueValidationRules(activator).SetTarget(databaseObject));
+        //    new ExecuteCommandConfigureCatalogueValidationRules(activator).SetTarget(object));
         //CommonFunctionality.Add(new ExecuteCommandRunDQEOnCatalogue(activator, databaseObject),
         //    "Run Data Quality Engine...");
     }

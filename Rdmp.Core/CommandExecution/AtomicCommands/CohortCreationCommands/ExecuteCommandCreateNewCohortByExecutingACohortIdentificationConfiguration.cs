@@ -141,7 +141,7 @@ public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfig
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
         iconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Import);
 
-    public override IAtomicCommandWithTarget SetTarget(DatabaseObject target)
+    public override IAtomicCommandWithTarget SetTarget(object target)
     {
         base.SetTarget(target);
 

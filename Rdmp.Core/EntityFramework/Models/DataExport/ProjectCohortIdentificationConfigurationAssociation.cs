@@ -16,7 +16,9 @@ namespace Rdmp.Core.EntityFramework.Models.DataExport
 
         public int Project_ID { get; set; }
         public int CohortIdentificationConfiguration_ID { get; set; }
+        [NotMapped]
         public CohortIdentificationConfiguration CohortIdentificationConfiguration { get; internal set; }
-        public DatabaseObject Project { get; internal set; }
+        [NotMapped]
+        public Project Project { get; internal set; }
     }
 }

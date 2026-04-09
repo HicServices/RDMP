@@ -90,7 +90,7 @@ public class ExecuteCommandCreateNewCohortFromCatalogue : CohortCreationCommandE
         ExternalCohortTable = externalCohortTable;
     }
 
-    public override IAtomicCommandWithTarget SetTarget(DatabaseObject target)
+    public override IAtomicCommandWithTarget SetTarget(object target)
     {
         //switch (target)
         //{

@@ -103,7 +103,7 @@ public sealed class ExecuteCommandAssociateCohortIdentificationConfigurationWith
             //if we know the _project the context is 'pick a cic'  (or if we don't know either then just use this icon too)
             iconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Link);
 
-    public IAtomicCommandWithTarget SetTarget(DatabaseObject target)
+    public IAtomicCommandWithTarget SetTarget(object target)
     {
         switch (target)
         {

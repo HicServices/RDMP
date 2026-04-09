@@ -54,7 +54,7 @@ public class ExecuteCommandCloneCohortIdentificationConfiguration : BasicCommand
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
         iconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Link);
 
-    public IAtomicCommandWithTarget SetTarget(DatabaseObject target)
+    public IAtomicCommandWithTarget SetTarget(object target)
     {
         switch (target)
         {

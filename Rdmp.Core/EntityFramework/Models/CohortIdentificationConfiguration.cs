@@ -23,22 +23,25 @@ namespace Rdmp.Core.EntityFramework.Models
         public int? Version { get; set; }
 
         public string Name { get; set => SetField(ref field, value); }
-        public string Description { get; set => SetField(ref field, value); }
-        public string Folder { get; set => SetField(ref field, value); }
+        #nullable enable
+        public string? Description { get; set => SetField(ref field, value); }
+        public string? Folder { get; set => SetField(ref field, value); }
         public bool Frozen { get; set => SetField(ref field, value); }
-        public string FrozenBy { get; set => SetField(ref field, value); }
+        public string? FrozenBy { get; set => SetField(ref field, value); }
         public DateTime? FrozenDate { get; set => SetField(ref field, value); }
         public bool IsTemplate { get; set => SetField(ref field, value); }
         public int? RootCohortAggregateContainer_ID { get; set => SetField(ref field, value); }
 
         [ForeignKey("RootCohortAggregateContainer_ID")]
-        public virtual CohortAggregateContainer RootCohortAggregateContainer { get; set; }
+        public virtual CohortAggregateContainer? RootCohortAggregateContainer { get; set; }
 
         public int? QueryCachingServer_ID { get; set => SetField(ref field, value); }
 
         [ForeignKey("QueryCachingServer_ID")]
-        public virtual ExternalDatabaseServer QueryCachingServer { get; set; }
-        public int ClonedFrom_ID { get; set; }
+        public virtual ExternalDatabaseServer? QueryCachingServer { get; set; }
+        public int? ClonedFrom_ID { get; set; }
+
+        #nullable disable
 
         public override string ToString()
         {

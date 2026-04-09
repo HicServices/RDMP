@@ -36,48 +36,60 @@ namespace Rdmp.Core.EntityFramework.Models.DataExport
         public virtual CohortIdentificationConfiguration CohortIdentificationConfiguration { get; set; }
 
         //is an fk for cohort_ID
+        [NotMapped]
         public IExtractableCohort Cohort { get; set; }
         public string Name { get; set; }
+        [NotMapped]
+
         public IPipeline CohortRefreshPipeline { get; internal set; }
-        public List<object> ReleaseLog { get; internal set; }
+        
+
+        public virtual List<ReleaseLog> ReleaseLog { get; internal set; }
         public bool IsReleased { get; set; }
-        public List<object> SelectedDataSets { get; set; }
+
+        public virtual List<SelectedDataSet> SelectedDataSets { get; set; }
 
         public int? DefaultPipeline_ID { get; set; }
 
         [ForeignKey("DefaultPipeline_ID")]
         public Pipeline DefaultPipeline { get; set; }
-        public DateTime? dtCreated { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string RequestTicket { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string ReleaseTicket { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public DateTime? dtCreated { get; set; }
+        public string RequestTicket { get; set ; }
+        public string ReleaseTicket { get; set; }
 
-        public string Username => throw new NotImplementedException();
+        public string Username { get; set; }
 
-        public string Separator { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string Description { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public int? ClonedFrom_ID { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public int? CohortRefreshPipeline_ID { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string Separator { get; set; }
+        public string Description { get; set ; }
+        public int? ClonedFrom_ID { get; set ; }
+        public int? CohortRefreshPipeline_ID { get; set; }
+        [NotMapped]
 
         public ISqlParameter[] GlobalExtractionFilterParameters => throw new NotImplementedException();
+        [NotMapped]
 
         public IEnumerable<ICumulativeExtractionResults> CumulativeExtractionResults => throw new NotImplementedException();
+        [NotMapped]
 
         public IEnumerable<ISupplementalExtractionResults> SupplementalExtractionResults => throw new NotImplementedException();
+        [NotMapped]
 
         IProject IExtractionConfiguration.Project => Project;
+        [NotMapped]
 
         IReleaseLog[] IExtractionConfiguration.ReleaseLog => throw new NotImplementedException();
+        [NotMapped]
 
         ISelectedDataSets[] IExtractionConfiguration.SelectedDataSets => throw new NotImplementedException();
 
         public bool Exists()
         {
-            throw new NotImplementedException();
+            return true;// throw new NotImplementedException();
         }
 
         public IEnumerable<ArchivalDataLoadInfo> FilterRuns(IEnumerable<ArchivalDataLoadInfo> runs)
         {
-            throw new NotImplementedException();
+            return runs;// throw new NotImplementedException();
         }
 
         public ExtractableColumn[] GetAllExtractableColumnsFor(IExtractableDataSet dataset)
@@ -102,7 +114,7 @@ namespace Rdmp.Core.EntityFramework.Models.DataExport
 
         public string GetDistinctLoggingTask()
         {
-            throw new NotImplementedException();
+            return "TODO";// throw new NotImplementedException();
         }
 
         public IExtractableCohort GetExtractableCohort()

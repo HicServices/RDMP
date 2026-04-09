@@ -125,6 +125,8 @@ namespace Rdmp.Core.EntityFramework
             {
                 entity.HasKey(e => e.ID);
                 entity.Property(e => e.Name).IsRequired().HasMaxLength(500);
+                entity.HasOne(e => e.RootCohortAggregateContainer).WithOne().HasForeignKey<Models.CohortIdentificationConfiguration>(e => e.RootCohortAggregateContainer_ID);
+                entity.HasOne(e => e.QueryCachingServer).WithMany().HasForeignKey(e => e.QueryCachingServer_ID);
             });
             modelBuilder.Entity<Models.DashboardLayout>(entity =>
             {
@@ -177,12 +179,12 @@ namespace Rdmp.Core.EntityFramework
                 entity.HasKey(e => e.ID);
                 entity.HasMany(e => e.Arguments).WithOne();
                 entity.HasOne(e => e.Pipeline).WithMany(e => e.PipelineComponents).HasForeignKey(e => e.Pipeline_ID);
-                //entity.HasMany(e => e.Arguments).WithOne(e => e.PipelineComponent).HasForeignKey(e => e.PipelineComponent_ID);
+                entity.HasMany(e => e.Arguments).WithOne(e => e.PipelineComponent).HasForeignKey(e => e.PipelineComponent_ID);
             });
             modelBuilder.Entity<Models.PipelineComponentArgument>(entity =>
             {
                 entity.HasKey(e => e.ID);
-                entity.HasOne(e => e.PipelineComponent).WithMany(e => e.Arguments).HasForeignKey(e => e.PipelineComponent_ID);
+                entity.HasOne(e => e.PipelineComponent).WithMany(e => e.Arguments).HasForeignKey(e =>e.PipelineComponent_ID);
             });
             modelBuilder.Entity<Models.Catalogue>(entity =>
             {

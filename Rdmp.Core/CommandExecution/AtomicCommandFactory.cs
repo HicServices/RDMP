@@ -80,14 +80,14 @@ public class AtomicCommandFactory : CommandFactoryBase
     /// <returns></returns>
     public IEnumerable<IAtomicCommand> CreateCommands(object o)
     {
-        //foreach (var cmd in _goto.GetCommands(o))
-        //{
-        //    cmd.SuggestedCategory = GoTo;
-        //    yield return cmd;
-        //}
+        foreach (var cmd in _goto.GetCommands(o))
+        {
+            cmd.SuggestedCategory = GoTo;
+            yield return cmd;
+        }
 
-        //if (_activator.CanActivate(o))
-        //    yield return new ExecuteCommandActivate(_activator, o);
+        if (_activator.CanActivate(o))
+            yield return new ExecuteCommandActivate(_activator, o);
 
         //if (Is(o, out ILoggedActivityRootObject root)) yield return new ExecuteCommandViewLogs(_activator, root);
 
@@ -1011,7 +1011,7 @@ public class AtomicCommandFactory : CommandFactoryBase
         //if (Is(o, out StandardPipelineUseCaseNode psu))
         //    yield return new ExecuteCommandNewObject(_activator, typeof(Pipeline))
         //    { OverrideCommandName = "New Pipeline" };
-        yield return null;
+        //yield return null;
     }
 
     public IEnumerable<IAtomicCommand> CreateManyObjectCommands(ICollection many)

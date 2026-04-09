@@ -37,7 +37,7 @@ public class ExecuteCommandViewCatalogueExtractionSqlUI : BasicUICommandExecutio
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) => iconProvider.GetImage(RDMPConcept.SQL);
 
-    public IAtomicCommandWithTarget SetTarget(DatabaseObject target)
+    public IAtomicCommandWithTarget SetTarget(object target)
     {
         _catalogue = (Core.EntityFramework.Models.Catalogue)target;
 

@@ -70,7 +70,7 @@ public class ExecuteCommandCreateNewCohortIdentificationConfiguration : BasicCom
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
         iconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Add);
 
-    public IAtomicCommandWithTarget SetTarget(DatabaseObject target)
+    public IAtomicCommandWithTarget SetTarget(object target)
     {
         _associateWithProject = target as EntityFramework.Models.DataExport.Project;
         return this;

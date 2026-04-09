@@ -98,7 +98,8 @@ public partial class DataExportCollectionUI : RDMPCollectionUI, ILifetimeSubscri
 
         var dataExportChildProvider = activator.RepositoryLocator.DataExportDbContext;//activator.CoreChildProvider as DataExportChildProvider;
 
-        var rootFolder = FolderHelper.BuildFolderTree<Core.EntityFramework.Models.DataExport.Project>(activator.RepositoryLocator.DataExportDbContext.Projects.ToArray());
+        var rootFolder = FolderHelper.BuildFolderTree<Core.EntityFramework.Models.DataExport.Project>(dataExportChildProvider.Projects.ToArray());
+        //var rootFolder = FolderHelper.BuildFolderTree<Core.EntityFramework.Models.DataExport.Project>(activator.RepositoryLocator.DataExportDbContext.Projects.ToArray());
 
         if (dataExportChildProvider != null)
         {

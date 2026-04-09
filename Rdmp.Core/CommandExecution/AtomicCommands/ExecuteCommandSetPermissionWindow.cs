@@ -50,7 +50,7 @@ public class ExecuteCommandSetPermissionWindow : BasicCommandExecution, IAtomicC
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
         iconProvider.GetImage(RDMPConcept.PermissionWindow, OverlayKind.Link);
 
-    public IAtomicCommandWithTarget SetTarget(DatabaseObject target)
+    public IAtomicCommandWithTarget SetTarget(object target)
     {
         //if (target is PermissionWindow window)
         //    _window = window;

@@ -67,7 +67,7 @@ public class ExecuteCommandViewExtractionSql : ExecuteCommandViewDataBase, IAtom
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
         iconProvider.GetImage(RDMPConcept.SQL, OverlayKind.Execute);
 
-    public IAtomicCommandWithTarget SetTarget(DatabaseObject target)
+    public IAtomicCommandWithTarget SetTarget(object target)
     {
         //if (target is SelectedDataSets sets)
         //{

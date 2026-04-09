@@ -35,7 +35,7 @@ public class ExecuteCommandCreateANOVersion : BasicUICommandExecution, IAtomicCo
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) => iconProvider.GetImage(RDMPConcept.ANOTable);
 
-    public IAtomicCommandWithTarget SetTarget(DatabaseObject target)
+    public IAtomicCommandWithTarget SetTarget(object target)
     {
         _catalogue = (Core.EntityFramework.Models.Catalogue)target;
 

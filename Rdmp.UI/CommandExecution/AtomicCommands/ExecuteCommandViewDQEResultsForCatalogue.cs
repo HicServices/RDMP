@@ -39,7 +39,7 @@ public class ExecuteCommandViewDQEResultsForCatalogue : BasicUICommandExecution,
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) => Image.Load<Rgba32>(CatalogueIcons.DQE);
 
-    public IAtomicCommandWithTarget SetTarget(DatabaseObject target)
+    public IAtomicCommandWithTarget SetTarget(object target)
     {
         _catalogue = (Core.EntityFramework.Models.Catalogue)target;
 

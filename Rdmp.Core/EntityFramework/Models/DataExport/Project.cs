@@ -20,12 +20,23 @@ namespace Rdmp.Core.EntityFramework.Models.DataExport
     {
         [Key]
         public override int ID { get; set; }
-        public string MasterTicket { get; set; }
-        public string ExtractionDirectory { get; set; }
-        public int? ProjectNumber { get; set; }
 
+#nullable enable
+        public string? MasterTicket { get; set; }
+
+        public string? ExtractionDirectory { get; set; }
+        public int? ProjectNumber { get; set; }
+        public string? Folder { get; set; }
+
+#nullable disable
+
+        public string Name { get; set; }
+
+        [NotMapped]
         public IExtractionConfiguration[] ExtractionConfigurations => throw new NotImplementedException();
 
+
+        [NotMapped]
         public IProjectCohortIdentificationConfigurationAssociation[] ProjectCohortIdentificationConfigurationAssociations => throw new NotImplementedException();
 
         public List<CohortIdentificationConfiguration> GetAssociatedCohortIdentificationConfigurations()
@@ -33,8 +44,7 @@ namespace Rdmp.Core.EntityFramework.Models.DataExport
             return new List<CohortIdentificationConfiguration>() { };//todo
         }
 
-        public string Name { get; set; }
-        public string Folder { get; set; }
+
 
         public override string ToString() => Name;
 

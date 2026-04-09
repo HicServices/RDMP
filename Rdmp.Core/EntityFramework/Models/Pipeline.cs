@@ -32,12 +32,14 @@ namespace Rdmp.Core.EntityFramework.Models
         [ForeignKey("DestinationPipelineComponent_ID")]
         public virtual PipelineComponent Destination { get; set; }
 
+        [NotMapped]
         public List<PipelineComponent> PipelineComponents => CatalogueDbContext.PipelineComponents.ToList().Where(component => component.Pipeline_ID == this.ID).ToList();
 
+        [NotMapped]
         IList<IPipelineComponent> IPipeline.PipelineComponents => PipelineComponents.Select( p => (IPipelineComponent)p).ToList();
-
+        [NotMapped]
         IPipelineComponent IPipeline.Destination => Destination;
-
+        [NotMapped]
         IPipelineComponent IPipeline.Source => Source;
 
         public void ClearAllInjections()
@@ -71,5 +73,7 @@ namespace Rdmp.Core.EntityFramework.Models
         {
             //throw new NotImplementedException();
         }
+
+        public override string ToString() => Name;
     }
 }

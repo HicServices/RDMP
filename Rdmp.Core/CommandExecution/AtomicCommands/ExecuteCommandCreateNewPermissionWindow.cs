@@ -28,7 +28,7 @@ public class ExecuteCommandCreateNewPermissionWindow : BasicCommandExecution, IA
 
     public override string GetCommandHelp() => "Creates a new time window restriction on when loads can occur";
 
-    public IAtomicCommandWithTarget SetTarget(DatabaseObject target)
+    public IAtomicCommandWithTarget SetTarget(object target)
     {
         //_cacheProgressToSetOnIfAny = target as CacheProgress;
         return this;

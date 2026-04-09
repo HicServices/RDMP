@@ -108,7 +108,7 @@ public class ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
         iconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Execute);
 
-    public override IAtomicCommandWithTarget SetTarget(DatabaseObject target)
+    public override IAtomicCommandWithTarget SetTarget(object target)
     {
         base.SetTarget(target);
 

@@ -78,7 +78,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands
             Emphasise(clone);
         }
 
-        public IAtomicCommandWithTarget SetTarget(DatabaseObject target)
+        public IAtomicCommandWithTarget SetTarget(object target)
         {
             //if (target is not CohortIdentificationConfiguration && target is not Project)
             //{
