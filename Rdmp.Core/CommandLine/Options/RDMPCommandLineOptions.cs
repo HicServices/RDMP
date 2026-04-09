@@ -127,6 +127,7 @@ public abstract class RDMPCommandLineOptions
             {
                 DataSource = ServerName,
                 IntegratedSecurity = true,
+                MultipleActiveResultSets = true,
                 InitialCatalog = CatalogueDatabaseName
             };
         else
@@ -146,6 +147,7 @@ public abstract class RDMPCommandLineOptions
             {
                 DataSource = ServerName,
                 IntegratedSecurity = true,
+                MultipleActiveResultSets = true,
                 InitialCatalog = DataExportDatabaseName
             };
         else

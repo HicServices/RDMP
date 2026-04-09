@@ -144,6 +144,7 @@ public class PlatformDatabaseCreationOptions
         {
             // if they are specifying other keywords they might be auth related so we don't want to blindly turn this on
             builder.IntegratedSecurity = string.IsNullOrWhiteSpace(OtherKeywords);
+            builder.MultipleActiveResultSets = true;
         }
 
         return builder;
