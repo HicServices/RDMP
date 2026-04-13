@@ -40,7 +40,7 @@ namespace Rdmp.Core.EntityFramework.Models
         public string Name { get; set => SetField(ref field, value); }
 
         [MaxLength(500)]
-        public string Folder { get; set => SetField(ref field, value); } = "/";
+        public string Folder { get => FolderHelper.Adjust(field); set => SetField(ref field, FolderHelper.Adjust(value)); } = "/";
 
         public string Description { get; set => SetField(ref field, value); }
 
@@ -48,18 +48,18 @@ namespace Rdmp.Core.EntityFramework.Models
         public string Detail_Page_URL { get; set => SetField(ref field, value); }
 
         [Column(TypeName = "nvarchar(max)")]
-        public int? Type { get; set => SetField(ref field, value); }
+        public string Type { get; set => SetField(ref field, value); }
         [Column(TypeName = "nvarchar(255)")]
-        public int? Purpose { get; set => SetField(ref field, value); }
+        public string Purpose { get; set => SetField(ref field, value); }
         [Column(TypeName = "nvarchar(50)")]
-        public int? Periodicity { get; set => SetField(ref field, value); }
+        public string Periodicity { get; set => SetField(ref field, value); }
         [Column(TypeName = "nvarchar(max)")]
-        public int? Granularity { get; set => SetField(ref field, value); }
+        public string Granularity { get; set => SetField(ref field, value); }
         public string Geographical_coverage { get; set => SetField(ref field, value); }
         public string Background_summary { get; set => SetField(ref field, value); }
         public string Search_keywords { get; set => SetField(ref field, value); }
         [Column(TypeName = "nvarchar(50)")]
-        public int? Update_freq { get; set => SetField(ref field, value); }
+        public string Update_freq { get; set => SetField(ref field, value); }
         public string Update_sched { get; set => SetField(ref field, value); }
         public string Time_coverage { get; set => SetField(ref field, value); }
         public DateTime? Last_revision_date { get; set => SetField(ref field, value); }
