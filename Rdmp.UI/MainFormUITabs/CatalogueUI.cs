@@ -85,7 +85,7 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
                 var catalogueItems = _catalogue.CatalogueItems.ToArray();
                 foreach (var catalogueItem in catalogueItems)
                 {
-                    catalogueItem.Periodicity = 1;// Catalogue.CataloguePeriodicity[_catalogue.Periodicity];
+                    catalogueItem.Periodicity = _catalogue.Periodicity;
                     catalogueItem.Topic = _catalogue.Search_keywords;
                     //catalogueItem.SaveToDatabase();
                 }

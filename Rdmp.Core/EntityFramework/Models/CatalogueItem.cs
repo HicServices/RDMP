@@ -37,7 +37,7 @@ namespace Rdmp.Core.EntityFramework.Models
 
         public string Comments { get; set => SetField(ref field, value); }
         [Column(TypeName = "nvarchar(max)")]
-        public int? Periodicity { get; set => SetField(ref field, value); }
+        public string Periodicity { get; set => SetField(ref field, value); }
 
         // Navigation properties
         [ForeignKey("Catalogue_ID")]
