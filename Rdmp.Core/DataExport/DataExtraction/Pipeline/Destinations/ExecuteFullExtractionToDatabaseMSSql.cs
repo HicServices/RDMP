@@ -73,6 +73,9 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
     [DemandsInitialization(DataTableUploadDestination.AlterTimeout_Description, DefaultValue = 300)]
     public int AlterTimeout { get; set; }
 
+    [DemandsInitialization("By applying the primary keys after writing the data, it ensures all data is extracted. Disabling this configuration may improve performance but will quickly raise issues with poorly keyed data.",DefaultValue =true)]
+    public bool WriteDataBeforeApplyingPrimaryKeys { get; set; }
+
     [DemandsInitialization(
         "True to copy the column collations from the source database when creating the destination database.  Only works if both the source and destination have the same DatabaseType.  Excludes columns which feature a transform as part of extraction.",
         DefaultValue = false)]
@@ -281,6 +284,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
 
         _destination.AllowResizingColumnsAtUploadTime = true;
         _destination.AlterTimeout = AlterTimeout;
+        _destination.WriteDataBeforeApplyingPrimaryKeys = WriteDataBeforeApplyingPrimaryKeys;
         _destination.AppendDataIfTableExists = AppendDataIfTableExists;
         _destination.IncludeTimeStamp = IncludeTimeStamp;
         _destination.UseTrigger = AppendDataIfTableExists;
