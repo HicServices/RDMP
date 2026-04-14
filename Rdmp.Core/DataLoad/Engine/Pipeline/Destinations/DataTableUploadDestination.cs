@@ -84,6 +84,9 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
         set => _culture = value;
     }
 
+    [DemandsInitialization("By applying the primary keys after writing the data, it ensures all data is extracted. Disabling this configuration may improve performance but will quickly raise issues with poorly keyed data.",DefaultValue =true)]
+    public bool WriteDataBeforeApplyingPrimaryKeys { get; set; }
+
     public string TargetTableName { get; private set; }
 
     /// <summary>
@@ -181,7 +184,10 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             }
         }
 
-        ClearPrimaryKeyFromDataTableAndExplicitWriteTypes(toProcess);
+        if (WriteDataBeforeApplyingPrimaryKeys)
+        {
+            ClearPrimaryKeyFromDataTableAndExplicitWriteTypes(toProcess);
+        }
 
         StartAuditIfExists(TargetTableName);
 
