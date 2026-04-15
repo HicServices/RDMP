@@ -1329,6 +1329,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         var tt = db.Server.GetQuerySyntaxHelper().TypeTranslater;
         var tbl = db.ExpectTable("DataTableUploadDestinationTests");
 
+
         try
         {
             destination.ProcessPipelineData(dt1, toConsole, token);
