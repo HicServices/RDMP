@@ -1310,7 +1310,6 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         var destination = new DataTableUploadDestination();
         destination.PreInitialize(null,db, toConsole);
         destination.AllowResizingColumnsAtUploadTime = true;
-
         var dt1 = new DataTable();
         dt1.Columns.Add("TestedCol", typeof(string));
         dt1.Rows.Add(new[] { v1 });

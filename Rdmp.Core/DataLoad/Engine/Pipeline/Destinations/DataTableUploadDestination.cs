@@ -85,7 +85,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
     }
 
     [DemandsInitialization("By applying the primary keys after writing the data, it ensures all data is extracted. Disabling this configuration may improve performance but will quickly raise issues with poorly keyed data.")]
-    public bool WriteDataBeforeApplyingPrimaryKeys { get; set; }
+    public bool WriteDataBeforeApplyingPrimaryKeys { get; set; } = true;
 
     public string TargetTableName { get; private set; }
 
