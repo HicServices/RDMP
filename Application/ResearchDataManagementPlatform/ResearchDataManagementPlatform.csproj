@@ -32,6 +32,7 @@
     <PackageReference Include="ConsoleControl" />
     <PackageReference Include="Autoupdater.NET.Official" />
     <PackageReference Include="DockPanelSuite.ThemeVS2015" />
+    <PackageReference Include="Scintilla5.NET" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\SharedAssemblyInfo.cs" Link="SharedAssemblyInfo.cs" />

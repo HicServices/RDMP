@@ -131,7 +131,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
         var toReturn = new DataTable();
         toReturn.BeginLoadData();
 
-        var rowEnumerator = worksheet.GetRowEnumerator();
+        var rowEnumerator = worksheet.GetEnumerator();
         var nColumns = -1;
 
         var nonBlankColumns = new Dictionary<int, DataColumn>();
@@ -247,7 +247,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
     /// <param name="cell">The cell whose value you want to retrieve</param>
     /// <param name="treatAs">Leave blank, used in recursion for dealing with Formula cells</param>
     /// <returns></returns>
-    private object GetCellValue([CanBeNull] ICell cell, CellType treatAs = CellType.Unknown)
+    private object GetCellValue([CanBeNull] ICell cell, CellType treatAs = CellType._None)
     {
         if (cell == null)
             return null;
@@ -255,13 +255,13 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
         treatAs = treatAs switch
         {
             CellType.Formula => throw new Exception("Cannot treat the cell contents as a Formula"),
-            CellType.Unknown => cell.CellType,
+            CellType._None => cell.CellType,
             _ => treatAs
         };
 
         switch (treatAs)
         {
-            case CellType.Unknown:
+            case CellType._None:
                 return cell.ToString();
             case CellType.Numeric:
 

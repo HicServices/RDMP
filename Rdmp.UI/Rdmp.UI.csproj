@@ -52,7 +52,7 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="ObjectListView.Repack.NET6Plus" />
-		<PackageReference Include="Scintilla.NET" />
+		<PackageReference Include="Scintilla5.NET" />
 		<PackageReference Include="VPKSoft.ScintillaLexers.NET" />
 		<PackageReference Include="WeCantSpell.Hunspell" />
 	</ItemGroup>

@@ -338,12 +338,13 @@
 		</PackageReference>
 		<PackageReference Include="MongoDB.Driver" />
 		<PackageReference Include="Newtonsoft.Json" />
-		<PackageReference Include="NPOI" />
 		<PackageReference Include="NLog" />
+		<PackageReference Include="NPOI" />
 		<PackageReference Include="SixLabors.ImageSharp" />
 		<PackageReference Include="SixLabors.ImageSharp.Drawing" />
 		<PackageReference Include="Spectre.Console" />
 		<PackageReference Include="SSH.NET" />
+		<PackageReference Include="System.Security.Cryptography.Xml" />
 		<PackageReference Include="Terminal.Gui" />
 		<PackageReference Include="YamlDotNet" />
 	</ItemGroup>
