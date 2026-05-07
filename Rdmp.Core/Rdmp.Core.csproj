@@ -342,6 +342,7 @@
 		<PackageReference Include="NLog" />
 		<PackageReference Include="SixLabors.ImageSharp" />
 		<PackageReference Include="SixLabors.ImageSharp.Drawing" />
+		<PackageReference Include="Snappier" />
 		<PackageReference Include="Spectre.Console" />
 		<PackageReference Include="SSH.NET" />
 		<PackageReference Include="System.Security.Cryptography.Xml" />
