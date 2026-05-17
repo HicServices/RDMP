@@ -1,0 +1,26 @@
+#Expects the following to exist on the server:
+#Catalogue
+#DQE
+#DataExport
+#Logging
+#These are created by the rdmp install command run by setup.sh in this folder.
+
+Prefix:	TEST_
+ServerName:	localhost,1433
+Username:	sa
+Password:	YourStrong!Passw0rd
+#Uncomment to run tests with a YamlRepository
+#UseFileSystemRepo: true
+#MySql:	server=127.0.0.1;Uid=root;Pwd=YourStrong!Passw0rd;AllowPublicKeyRetrieval=True
+#PostgreSql:	User ID=postgres;Password=;Host=127.0.0.1;Port=5432
+Oracle:
+#User accounts you can create with limited access rights (e.g. connect list databases etc).  These users will be used in low privilege tests
+#The account will be granted limited read/write access to databases on a per test basis (See DatabaseTests.SetupLowPrivilegeUserRightsFor)
+#If you leave these commented out the associated tests will be Inconclusive
+
+#SqlServerLowPrivilegeUsername:	minion
+#SqlServerLowPrivilegePassword:	minionPass
+#MySqlLowPrivilegeUsername:	minion
+#MySqlLowPrivilegePassword:	minionPass
+#OracleLowPrivilegeUsername:	minion
+#OracleLowPrivilegePassword:	minionPass
