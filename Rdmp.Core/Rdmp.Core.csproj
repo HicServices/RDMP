@@ -340,6 +340,7 @@
 		<PackageReference Include="Newtonsoft.Json" />
 		<PackageReference Include="NPOI" />
 		<PackageReference Include="NLog" />
+		<PackageReference Include="SharpCompress" />
 		<PackageReference Include="SixLabors.ImageSharp" />
 		<PackageReference Include="SixLabors.ImageSharp.Drawing" />
 		<PackageReference Include="Snappier" />

@@ -42,6 +42,7 @@
         <PackageReference Include="NSubstitute" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" />
         <PackageReference Include="NUnit" />
+        <PackageReference Include="SharpCompress" />
         <PackageReference Include="Snappier" />
         <PackageReference Include="System.Security.Cryptography.Xml" />
     </ItemGroup>
