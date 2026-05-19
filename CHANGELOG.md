@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [9.2.2] - Unreleased
 - Add ability to force primary keys at each batch of data when extracting to a database
+- Update security vulnerability scanning dependencies
 
 ## [9.2.1] - 2026-04-07
 - Update Sql Merge component to force destination column types
