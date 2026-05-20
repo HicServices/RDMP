@@ -52,8 +52,12 @@ namespace Rdmp.Core.DataExport.Data
                 eds.SaveToDatabase();
             }
 
-            var edsp = new ExtractableDataSetProject(dqeRepo, eds, project);
-            edsp.SaveToDatabase();
+            var edsp = dqeRepo.GetAllObjects<ExtractableDataSetProject>().Where(edsp => edsp.ExtractableDataSet_ID == eds.ID && edsp.Project_ID == project.ID).FirstOrDefault();
+            if (edsp is null)
+            {
+                edsp = new ExtractableDataSetProject(dqeRepo, eds, project);
+                edsp.SaveToDatabase();
+            }
             foreach (var ei in catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Where(ei => ei.ExtractionCategory is ExtractionCategory.Core))
             {
                 ei.ExtractionCategory = ExtractionCategory.ProjectSpecific;
