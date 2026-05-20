@@ -575,6 +575,21 @@ public class CatalogueChildProvider : ICoreChildProvider
         foreach (var d in AllAggregateDimensions)
             d.InjectKnown(AllExtractionInformationsDictionary[d.ExtractionInformation_ID]);
 
+        // When called from a partial refresh (e.g. SelectiveRefresh on a CohortAggregateContainer)
+        // AllJoinables is already populated from the prior full rebuild, but we have just
+        // replaced AllAggregateConfigurations with fresh instances whose joinable Lazy defaults
+        // to a per-object database lookup.  Without this re-injection, any subsequent enumeration
+        // that calls IsJoinablePatientIndexTable() (e.g. building the right-click menu for an
+        // aggregate container) fires N database round-trips at HIC scale — observed at >7s.
+        // No-op on first call from the main constructor: AllJoinables is null at that point and
+        // the explicit injection block in the constructor handles it.
+        if (AllJoinables != null)
+        {
+            var joinableDictionary = AllJoinables.ToDictionaryEx(j => j.AggregateConfiguration_ID, v => v);
+            foreach (var configuration in AllAggregateConfigurations)
+                configuration.InjectKnown(joinableDictionary.GetValueOrDefault(configuration.ID));
+        }
+
         ReportProgress("AggregateDimension injections");
 
         BuildAggregateFilterContainers();
