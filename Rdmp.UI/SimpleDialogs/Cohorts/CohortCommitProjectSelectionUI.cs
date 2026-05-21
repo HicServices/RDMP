@@ -103,12 +103,11 @@ namespace Rdmp.UI.SimpleDialogs.Cohorts
                 project.SaveToDatabase();
                 if (_currentProject != null)
                 {
-                    var projectSpecificCatalogues = _currentProject.GetAllProjectCatalogues().Where(p => p.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository));
-                    foreach (var psc in projectSpecificCatalogues)
+                    _cic.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively().Select(ac => ac.Catalogue).Where(c => c.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository)).ToList().ForEach(c =>
                     {
-                        var cmd = new ExecuteCommandMakeCatalogueProjectSpecific(_activator, psc, project, true);
+                        var cmd = new ExecuteCommandMakeCatalogueProjectSpecific(_activator, c, Result, true);
                         cmd.Execute();
-                    }
+                    });
                 }
 
                 _activator.Publish(project);
@@ -129,8 +128,6 @@ namespace Rdmp.UI.SimpleDialogs.Cohorts
                 Result = selected as Project;
                 if (_currentProject != null)
                 {
-                    //var projectSpecificCatalogues = _currentProject.GetAllProjectCatalogues().Where(p => p.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository));
-
                     var newProjectSpecificCatalogues = Result.GetAllProjectCatalogues().Where(p => p.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository));
 
                     _cic.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively().Select(ac => ac.Catalogue).Where(c => c.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository)).ToList().ForEach(c =>
@@ -141,13 +138,6 @@ namespace Rdmp.UI.SimpleDialogs.Cohorts
                             cmd.Execute();
                         }
                     });
-
-
-                    //foreach (var psc in projectSpecificCatalogues.Except(newProjectSpecificCatalogues))
-                    //{
-                    //    var cmd = new ExecuteCommandMakeCatalogueProjectSpecific(_activator, psc, Result, true);
-                    //    cmd.Execute();
-                    //}
                 }
                 DialogResult = DialogResult.OK;
                 Close();
