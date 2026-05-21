@@ -25,13 +25,15 @@ namespace Rdmp.UI.SimpleDialogs.Cohorts
     {
         private readonly IProject _currentProject;
         private readonly Project[] _projects;
+        private readonly CohortIdentificationConfiguration _cic;
         private readonly IActivateItems _activator;
-        public CohortCommitProjectSelectionUI(IActivateItems activator, IProject currentProject, Project[] projects)
+        public CohortCommitProjectSelectionUI(IActivateItems activator, IProject currentProject, Project[] projects, CohortIdentificationConfiguration cic)
         {
             InitializeComponent();
             _activator = activator;
             _currentProject = currentProject;
             _projects = projects;
+            _cic = cic;
             if (_currentProject != null)
             {
                 btnCurrentProject.Text = $"This Project ({_currentProject.Name.Substring(0, Math.Min(10, _currentProject.Name.Length))}{(_currentProject.Name.Length > 0 ? "..." : "")})";
@@ -40,6 +42,8 @@ namespace Rdmp.UI.SimpleDialogs.Cohorts
             {
                 btnCurrentProject.Enabled = false;
             }
+
+            _cic = cic;
         }
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -125,16 +129,25 @@ namespace Rdmp.UI.SimpleDialogs.Cohorts
                 Result = selected as Project;
                 if (_currentProject != null)
                 {
-                    var projectSpecificCatalogues = _currentProject.GetAllProjectCatalogues().Where(p => p.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository));
+                    //var projectSpecificCatalogues = _currentProject.GetAllProjectCatalogues().Where(p => p.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository));
 
                     var newProjectSpecificCatalogues = Result.GetAllProjectCatalogues().Where(p => p.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository));
 
-
-                    foreach (var psc in projectSpecificCatalogues.Except(newProjectSpecificCatalogues))
+                    _cic.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively().Select(ac => ac.Catalogue).Where(c => c.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository)).ToList().ForEach(c =>
                     {
-                        var cmd = new ExecuteCommandMakeCatalogueProjectSpecific(_activator, psc, Result, true);
-                        cmd.Execute();
-                    }
+                        if (!newProjectSpecificCatalogues.Any(nc => nc.ID == c.ID))
+                        {
+                            var cmd = new ExecuteCommandMakeCatalogueProjectSpecific(_activator, c, Result, true);
+                            cmd.Execute();
+                        }
+                    });
+
+
+                    //foreach (var psc in projectSpecificCatalogues.Except(newProjectSpecificCatalogues))
+                    //{
+                    //    var cmd = new ExecuteCommandMakeCatalogueProjectSpecific(_activator, psc, Result, true);
+                    //    cmd.Execute();
+                    //}
                 }
                 DialogResult = DialogResult.OK;
                 Close();
