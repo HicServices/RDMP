@@ -34,7 +34,7 @@ namespace Rdmp.UI.SimpleDialogs.Cohorts
             _projects = projects;
             if (_currentProject != null)
             {
-                btnCurrentProject.Text = $"This Project ({_currentProject.Name.Substring(0,Math.Min(10,_currentProject.Name.Length))}{(_currentProject.Name.Length>0?"...":"")})";
+                btnCurrentProject.Text = $"This Project ({_currentProject.Name.Substring(0, Math.Min(10, _currentProject.Name.Length))}{(_currentProject.Name.Length > 0 ? "..." : "")})";
             }
             else
             {
@@ -126,7 +126,11 @@ namespace Rdmp.UI.SimpleDialogs.Cohorts
                 if (_currentProject != null)
                 {
                     var projectSpecificCatalogues = _currentProject.GetAllProjectCatalogues().Where(p => p.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository));
-                    foreach (var psc in projectSpecificCatalogues)
+
+                    var newProjectSpecificCatalogues = Result.GetAllProjectCatalogues().Where(p => p.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository));
+
+
+                    foreach (var psc in projectSpecificCatalogues.Except(newProjectSpecificCatalogues))
                     {
                         var cmd = new ExecuteCommandMakeCatalogueProjectSpecific(_activator, psc, Result, true);
                         cmd.Execute();
