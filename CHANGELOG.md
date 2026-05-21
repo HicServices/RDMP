@@ -6,11 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [9.2.3] - 2026-05-21
 - Add support for developing on macOS
-- Fix slow right-click context menu in Cohort Builder by re-injecting joinable knowledge after partial refresh of `AggregateConfiguration`s
+- Fix Cohort Builder context menu freeze after partial refresh
 
 ## [9.2.2] - 2026-05-19
 - Add ability to force primary keys at each batch of data when extracting to a database
-- Fix Cohort Builder context menu freeze after partial refresh
+- Update security vulnerability scanning dependencies
 
 ## [9.2.1] - 2026-04-07
 - Update Sql Merge component to force destination column types
