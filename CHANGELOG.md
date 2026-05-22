@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [9.2.3]
 - Add ability to view proposed Archive Trigger SQL on an Extraction Dataset
-- Ensure PK Parity when using the MSSQL Extraction destination
+- Ensure PK Parity when using the MSSQLExtraction and MSSQLMerge destinations
 
 ## [9.2.2] - 2026-05-19
 - Add ability to force primary keys at each batch of data when extracting to a database
