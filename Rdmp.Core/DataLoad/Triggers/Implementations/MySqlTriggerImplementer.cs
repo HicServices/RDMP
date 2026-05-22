@@ -4,14 +4,15 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Linq;
-using System.Text.RegularExpressions;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
+using MongoDB.Driver;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Exceptions;
 using Rdmp.Core.ReusableLibraryCode.Settings;
+using System;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Rdmp.Core.DataLoad.Triggers.Implementations;
 
@@ -49,12 +50,18 @@ internal class MySqlTriggerImplementer : TriggerImplementer
         }
     }
 
+    public override string GetCreateTriggerSQL()
+    {
+        return  $@"CREATE TRIGGER {GetTriggerName()} BEFORE UPDATE ON {_table.GetFullyQualifiedName()} FOR EACH ROW
+{CreateTriggerBody()};";
+    }
+
+
     public override string CreateTrigger(ICheckNotifier notifier)
     {
         var creationSql = base.CreateTrigger(notifier);
 
-        var sql = $@"CREATE TRIGGER {GetTriggerName()} BEFORE UPDATE ON {_table.GetFullyQualifiedName()} FOR EACH ROW
-{CreateTriggerBody()};";
+        var sql = GetCreateTriggerSQL();
 
         using var con = _server.GetConnection();
         con.Open();
