@@ -43,6 +43,7 @@ namespace Rdmp.Core.EntityFramework.Models
         public string Folder { get => FolderHelper.Adjust(field); set => SetField(ref field, FolderHelper.Adjust(value)); } = "/";
 
         public string Description { get; set => SetField(ref field, value); }
+        public string InternalNote { get; set => SetField(ref field, value); }
 
         public string ShortDescription { get; set => SetField(ref field, value); }
         public string Detail_Page_URL { get; set => SetField(ref field, value); }

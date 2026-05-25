@@ -4,16 +4,14 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Linq;
 using FAnsi;
 using FAnsi.Discovery;
 using NUnit.Framework;
-using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.CohortCommitting;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CohortCommitting.Pipeline.Destinations;
 using Rdmp.Core.CohortCommitting.Pipeline.Sources;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
@@ -24,9 +22,12 @@ using Rdmp.Core.DataExport.DataExtraction.Commands;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources;
 using Rdmp.Core.DataExport.DataExtraction.UserPicks;
 using Rdmp.Core.DataFlowPipeline;
+using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.Core.ReusableLibraryCode.Progress;
+using System;
+using System.Linq;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataExport.TableValuedFunctionTests;
@@ -450,7 +451,7 @@ end
 
         var source = new ExecuteDatasetExtractionSource();
 
-        source.PreInitialize(extractionCommand, ThrowImmediatelyDataLoadEventListener.Quiet);
+        source.PreInitialize(new ThrowImmediatelyActivator(RepositoryLocator, null), extractionCommand, ThrowImmediatelyDataLoadEventListener.Quiet);
 
         var dt = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 

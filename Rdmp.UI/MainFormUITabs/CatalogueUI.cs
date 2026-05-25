@@ -129,6 +129,7 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
         Bind(cbInternal, "Checked", "IsInternalDataset", c => c.IsInternalDataset);
         Bind(editableCatalogueName, "TextValue", "Name", c => c.Name);
         Bind(editableFolder, "TextValue", "Folder", c => c.Folder);
+        Bind(tbInternalNote, "Text", "InternalNote", c => c.InternalNote);
         tabControl1_SelectedIndexChanged(tabControl1, null);
 
     }
@@ -529,6 +530,7 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
     {
 
     }
+
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<CatalogueUI_Design, UserControl>))]

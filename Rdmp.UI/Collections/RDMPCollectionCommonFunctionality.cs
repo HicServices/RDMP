@@ -200,7 +200,7 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         Tree.FullRowSelect = true;
         Tree.HideSelection = false;
         Tree.KeyPress += Tree_KeyPress;
-
+        Tree.ShowItemToolTips = true;
         Tree.CellToolTip.InitialDelay = UserSettings.TooltipAppearDelay;
         Tree.CellToolTipShowing += (s, e) => Tree_CellToolTipShowing(activator, e);
 

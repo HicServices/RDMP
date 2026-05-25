@@ -4,17 +4,18 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
 using Rdmp.Core.CohortCommitting.Pipeline;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
 
 namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations;
 
@@ -53,7 +54,7 @@ public class CohortSampler : IPluginDataFlowComponent<DataTable>, IPipelineRequi
     {
     }
 
-    public void PreInitialize(CohortCreationRequest value, IDataLoadEventListener listener)
+    public void PreInitialize(IBasicActivateItems activator, CohortCreationRequest value, IDataLoadEventListener listener)
     {
         _ect = value.NewCohortDefinition.LocationOfCohort;
         _project = value.Project;

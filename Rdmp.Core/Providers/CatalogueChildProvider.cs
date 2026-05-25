@@ -577,6 +577,22 @@ public class CatalogueChildProvider : ICoreChildProvider
         //    d.InjectKnown(AllExtractionInformationsDictionary[d.ExtractionInformation_ID]);
 
         //ReportProgress("AggregateDimension injections");
+        // When called from a partial refresh (e.g. SelectiveRefresh on a CohortAggregateContainer)
+        // AllJoinables is already populated from the prior full rebuild, but we have just
+        // replaced AllAggregateConfigurations with fresh instances whose joinable Lazy defaults
+        // to a per-object database lookup.  Without this re-injection, any subsequent enumeration
+        // that calls IsJoinablePatientIndexTable() (e.g. building the right-click menu for an
+        // aggregate container) fires N database round-trips at HIC scale — observed at >7s.
+        // No-op on first call from the main constructor: AllJoinables is null at that point and
+        // the explicit injection block in the constructor handles it.
+        if (AllJoinables != null)
+        {
+            var joinableDictionary = AllJoinables.ToDictionaryEx(j => j.AggregateConfiguration_ID, v => v);
+            foreach (var configuration in AllAggregateConfigurations)
+                configuration.InjectKnown(joinableDictionary.GetValueOrDefault(configuration.ID));
+        }
+
+        ReportProgress("AggregateDimension injections");
 
         //BuildAggregateFilterContainers();
     }
@@ -1875,10 +1891,49 @@ public class CatalogueChildProvider : ICoreChildProvider
             AggregateFilter af => SelectiveRefresh(af),
             AggregateFilterContainer afc => SelectiveRefresh(afc),
             CohortAggregateContainer cac => SelectiveRefresh(cac),
+            AggregateConfiguration ac => SelectiveRefresh(ac),
             ExtractionInformation ei => SelectiveRefresh(ei),
             CatalogueItem ci => SelectiveRefresh(ci),
             _ => false
         };
+    }
+
+    public bool SelectiveRefresh(AggregateConfiguration ac)
+    {
+        var descendancy = GetDescendancyListIfAnyFor(ac);
+        if (descendancy == null) return false;
+
+        // Cohort builder set member: the aggregate sits under a CohortAggregateContainer.
+        // Refreshing the immediate parent container is enough — re-fetching all aggregates
+        // and the container hierarchy, then re-rendering the parent's subtree.
+        var parentContainer = descendancy.Parents.OfType<CohortAggregateContainer>().LastOrDefault();
+        if (parentContainer != null)
+        {
+            var parentDescendancy = GetDescendancyListIfAnyFor(parentContainer);
+            if (parentDescendancy != null)
+            {
+                BuildAggregateConfigurations();
+                BuildCohortCohortAggregateContainers();
+                AddChildren(parentContainer, parentDescendancy.Add(parentContainer));
+                return true;
+            }
+        }
+
+        // Graph / aggregate-graph aggregate: hangs directly off a Catalogue.
+        var parentCatalogue = descendancy.Parents.OfType<Catalogue>().LastOrDefault();
+        if (parentCatalogue != null)
+        {
+            var cataDescendancy = GetDescendancyListIfAnyFor(parentCatalogue);
+            if (cataDescendancy != null)
+            {
+                BuildAggregateConfigurations();
+                AddChildren(parentCatalogue, cataDescendancy.Add(parentCatalogue));
+                return true;
+            }
+        }
+
+        // Could not place the aggregate in a known subtree; fall back to full rebuild.
+        return false;
     }
 
 

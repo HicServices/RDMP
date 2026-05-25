@@ -8,6 +8,7 @@ using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.UI.AggregationUIs.Advanced;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;

@@ -4,10 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction;
@@ -16,6 +13,10 @@ using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace Rdmp.Core.DataExport.DataRelease.Pipeline;
 
@@ -132,12 +133,12 @@ public class BasicDataReleaseDestination : IPluginDataFlowComponent<ReleaseAudit
         ((ICheckable)ReleaseSettings).Check(notifier);
     }
 
-    public void PreInitialize(Project value, IDataLoadEventListener listener)
+    public void PreInitialize(IBasicActivateItems activator, Project value, IDataLoadEventListener listener)
     {
         _project = value;
     }
 
-    public void PreInitialize(ReleaseData value, IDataLoadEventListener listener)
+    public void PreInitialize(IBasicActivateItems activator, ReleaseData value, IDataLoadEventListener listener)
     {
         _releaseData = value;
     }

@@ -4,18 +4,20 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.Collections.Generic;
-using System.Linq;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
@@ -29,6 +31,7 @@ public class ExecuteCommandAddCatalogueToCohortIdentificationSetContainer : Basi
 {
     private readonly CatalogueCombineable _catalogueCombineable;
     private readonly EntityFramework.Models.CohortAggregateContainer _targetCohortAggregateContainer;
+    private IBasicActivateItems _activator;
 
     private ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer _postImportCommand;
 
@@ -48,7 +51,7 @@ public class ExecuteCommandAddCatalogueToCohortIdentificationSetContainer : Basi
     ) : base(activator)
     {
         Weight = 0.11f;
-
+        _activator = activator;
         _targetCohortAggregateContainer = targetCohortAggregateContainer;
 
         if (targetCohortAggregateContainer.ShouldBeReadOnly(this.GetType().Name, out var reason))
@@ -57,6 +60,24 @@ public class ExecuteCommandAddCatalogueToCohortIdentificationSetContainer : Basi
         if (catalogue != null)
         {
             _catalogueCombineable = new CatalogueCombineable(catalogue);
+
+            if (catalogue.IsInternalDataset)
+            {
+                SetImpossible($"Catalogue '{catalogue}' is an Internal dataset and cannot be added to a Cohort Identification Set Container");
+                return;
+            }
+            if (catalogue.IsProjectSpecific(_catalogueCombineable.Catalogue.CatalogueDbContext))
+            {
+                var cic = _targetCohortAggregateContainer.GetCohortIdentificationConfiguration();
+                var associatedCICProjects = _activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ProjectCohortIdentificationConfigurationAssociation>("CohortIdentificationConfiguration_ID", cic.ID);
+                var associatedCatalogueProjects = _activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", catalogue.ID).SelectMany(eds => eds.Projects);
+                if (!associatedCICProjects.Any(x => associatedCatalogueProjects.Any(y => y.ID == x.Project.ID)))
+                {
+                    SetImpossible("Catalogue is project specific. Associate the CIC with the project to use this Catalogue here.");
+                    return;
+                }
+
+            }
 
             if (identifierColumn != null)
             {
@@ -114,11 +135,18 @@ public class ExecuteCommandAddCatalogueToCohortIdentificationSetContainer : Basi
         if (_catalogueCombineable == null)
         {
             var cic = _targetCohortAggregateContainer.GetCohortIdentificationConfiguration();
-            List<int> associatedProjectCataloguesIDs= new();
+            List<int> associatedProjectCataloguesIDs = new();
             var pcica = BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllObjects<ProjectCohortIdentificationConfigurationAssociation>().Where(pcica => pcica.CohortIdentificationConfiguration_ID == cic.ID).FirstOrDefault();
-            if(pcica is not null)
+            if (pcica is not null && pcica.Project is not null)
             {
-                associatedProjectCataloguesIDs = pcica.Project.GetAllProjectCatalogues().Select(c => c.ID).ToList();
+                try
+                {
+                    associatedProjectCataloguesIDs = pcica.Project.GetAllProjectCatalogues().Select(c => c.ID).ToList();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
             }
             //if (!BasicActivator.SelectObjects(new DialogArgs
             //{

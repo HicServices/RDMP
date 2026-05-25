@@ -24,9 +24,9 @@ public class PostgreSqlTriggerImplementer : TriggerImplementer
     private string _procedureNameFullyQualified;
     private string _procedureRuntimeName;
 
-    /// <inheritdoc cref="TriggerImplementer(DiscoveredTable,bool)"/>
-    public PostgreSqlTriggerImplementer(DiscoveredTable table, bool createDataLoadRunIDAlso) : base(table,
-        createDataLoadRunIDAlso)
+    /// <inheritdoc cref="TriggerImplementer(DiscoveredTable,bool,bool)"/>
+    public PostgreSqlTriggerImplementer(DiscoveredTable table, bool createDataLoadRunIDAlso, bool dontAddDataLoadrunID=false) : base(table,
+        createDataLoadRunIDAlso, dontAddDataLoadrunID)
     {
         var schema = string.IsNullOrWhiteSpace(_table.Schema)
             ? table.GetQuerySyntaxHelper().GetDefaultSchemaIfAny()
@@ -144,7 +144,7 @@ LANGUAGE 'plpgsql';";
 
         return
             $@"BEGIN
-            INSERT INTO {_archiveTable.GetFullyQualifiedName()}({string.Join(",", _columns.Select(c => syntax.EnsureWrapped(c.GetRuntimeName())))},""hic_validTo"",""hic_userID"",hic_status)
+            INSERT INTO {_archiveTable.GetFullyQualifiedName()}({string.Join(",", _columns.Where(c => _dontAddDataLoadRunId ? c.GetRuntimeName() != SpecialFieldNames.DataLoadRunID : true).Select(c => syntax.EnsureWrapped(c.GetRuntimeName())))},""hic_validTo"",""hic_userID"",hic_status)
             VALUES({string.Join(",", _columns.Select(c => $"OLD.{syntax.EnsureWrapped(c.GetRuntimeName())}"))},now(),current_user,'U');
 
             NEW.{syntax.EnsureWrapped(SpecialFieldNames.ValidFrom)} := NOW();

@@ -6,6 +6,7 @@
 
 using FAnsi;
 using FAnsi.Discovery.QuerySyntax;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.Commands;
@@ -459,8 +460,8 @@ DistinctByDestinationPKs - Performs a GROUP BY on each batch of records to ensur
 
         _timeSpentCalculatingDISTINCT.Stop();
         pks.AddRange(Request.ColumnsToExtract.Where(static c => ((ExtractableColumn)c).CatalogueExtractionInformation.IsPrimaryKey).Select(static column => ((ExtractableColumn)column).CatalogueExtractionInformation.ToString()).Select(name => chunk.Columns[name]));
+        chunk.CaseSensitive = true;
         chunk.PrimaryKey = pks.ToArray();
-
         return chunk;
     }
 
@@ -691,7 +692,7 @@ DistinctByDestinationPKs - Performs a GROUP BY on each batch of records to ensur
         return toReturn;
     }
 
-    public void PreInitialize(IExtractCommand value, IDataLoadEventListener listener)
+    public void PreInitialize(IBasicActivateItems activator, IExtractCommand value, IDataLoadEventListener listener)
     {
         if (value is ExtractDatasetCommand datasetCommand)
             Initialize(datasetCommand);

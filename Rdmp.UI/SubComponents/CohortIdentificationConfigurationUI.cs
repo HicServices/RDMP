@@ -73,13 +73,13 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
 
     private ExecuteCommandClearQueryCache _clearCacheCommand;
 
-    private CohortIdentificationConfigurationUICommon Common = new();
+    private CohortIdentificationConfigurationUICommon Common = new(null);
 
     public CohortIdentificationConfigurationUI()
     {
         InitializeComponent();
 
-        Common = new CohortIdentificationConfigurationUICommon();
+        Common = new CohortIdentificationConfigurationUICommon(Activator);
 
         olvExecute.IsButton = true;
         olvExecute.ButtonSizing = OLVColumn.ButtonSizingMode.CellBounds;
@@ -140,7 +140,9 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {
+        var x = Common.Compiler.CohortIdentificationConfiguration;
         Common.Activator = Activator;
+        Common.Compiler.CohortIdentificationConfiguration = x;
         var descendancy = Activator.CoreChildProvider.GetDescendancyListIfAnyFor(e.Object);
         //if publish event was for a child of the cic (_cic is in the objects descendancy i.e. it sits below our cic)
         if (descendancy != null && descendancy.Parents.Contains(Common.Configuration))

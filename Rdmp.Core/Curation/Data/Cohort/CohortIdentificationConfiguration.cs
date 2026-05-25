@@ -4,10 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Linq;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.Curation.Data.Defaults;
@@ -23,6 +19,10 @@ using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Annotations;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.Ticketing;
+using System;
+using System.Collections.Generic;
+using System.Data.Common;
+using System.Linq;
 
 namespace Rdmp.Core.Curation.Data.Cohort;
 
@@ -363,11 +363,12 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     /// <para>This is done in a transaction so that if it fails halfway through you won't end up with half a clone configuration</para>
     /// </summary>
     /// <param name="notifier">Event listener for reporting cloning progress and any problems</param>
+    /// <param name="dataExportRepository">Existing data export repository for use to connect to linked projects</param>
     /// <returns></returns>
-    public CohortIdentificationConfiguration CreateClone(ICheckNotifier notifier)
+    public CohortIdentificationConfiguration CreateClone(ICheckNotifier notifier, IDataExportRepository dataExportRepository)
     {
         var clone = new CohortIdentificationConfiguration(CatalogueDbContext, $"{Name} (Clone)");
-        return CloneIntoExistingConfiguration(notifier, clone);
+        return CloneIntoExistingConfiguration(notifier, clone, dataExportRepository);
     }
 
     /// <summary>
@@ -375,9 +376,10 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     /// </summary>
     /// <param name="notifier"></param>
     /// <param name="cloneTarget"></param>
+    /// <param name="dataExportRepository"></param>
     /// <param name="IncludeClonedFrom"></param>
     /// <returns></returns>
-    public CohortIdentificationConfiguration CloneIntoExistingConfiguration(ICheckNotifier notifier, CohortIdentificationConfiguration cloneTarget, bool IncludeClonedFrom = true)
+    public CohortIdentificationConfiguration CloneIntoExistingConfiguration(ICheckNotifier notifier, CohortIdentificationConfiguration cloneTarget, IDataExportRepository dataExportRepository, bool IncludeClonedFrom = true)
     {
         ////todo this would be nice if it was RDMPDbContextbut transaction is super SQLy
         //var cataRepo = CatalogueDbContext;

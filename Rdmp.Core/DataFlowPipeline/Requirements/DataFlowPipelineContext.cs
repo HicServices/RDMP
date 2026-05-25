@@ -301,7 +301,7 @@ public class DataFlowPipelineContext<T> : IDataFlowPipelineContext
         //invoke it
         try
         {
-            preInit.Invoke(component, new[] { value, listener });
+            preInit.Invoke(component, new[] { null,value, listener });
         }
         catch (Exception e)
         {

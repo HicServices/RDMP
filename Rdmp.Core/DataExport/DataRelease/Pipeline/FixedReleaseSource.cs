@@ -4,12 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction;
 using Rdmp.Core.DataExport.DataRelease.Potential;
@@ -20,6 +15,12 @@ using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using Rdmp.Core.Ticketing;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Text;
 
 namespace Rdmp.Core.DataExport.DataRelease.Pipeline;
 
@@ -60,7 +61,7 @@ public abstract class FixedReleaseSource<T> : ICheckable, IPipelineRequirement<R
 
     public T TryGetPreview() => null;
 
-    public void PreInitialize(ReleaseData value, IDataLoadEventListener listener)
+    public void PreInitialize(IBasicActivateItems activator, ReleaseData value, IDataLoadEventListener listener)
     {
         _releaseData = value;
     }

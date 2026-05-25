@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.EntityFramework;
 using Rdmp.Core.Repositories;
@@ -40,15 +41,15 @@ public class CohortIdentificationConfigurationMerger
 
         //clone them
         var cicClones = new CohortIdentificationConfiguration[cics.Length];
-        try
-        {
-            for (var i = 0; i < cics.Length; i++)
-                cicClones[i] = cics[i].CreateClone(ThrowImmediatelyCheckNotifier.Quiet);
-        }
-        catch (Exception ex)
-        {
-            throw new Exception("Error during pre merge cloning stage, no merge will be attempted", ex);
-        }
+        //try
+        //{
+        //    for (var i = 0; i < cics.Length; i++)
+        //        cicClones[i] = cics[i].CreateClone(ThrowImmediatelyCheckNotifier.Quiet, _repositoryLocator.DataExportRepository);
+        //}
+        //catch (Exception ex)
+        //{
+        //    throw new Exception("Error during pre merge cloning stage, no merge will be attempted", ex);
+        //}
 
         //using (_catalogueDbContext.BeginNewTransaction())
         //{
@@ -101,15 +102,15 @@ public class CohortIdentificationConfigurationMerger
 
         //clone them
         var cicClones = new CohortIdentificationConfiguration[cics.Length];
-        try
-        {
-            for (var i = 0; i < cics.Length; i++)
-                cicClones[i] = cics[i].CreateClone(ThrowImmediatelyCheckNotifier.Quiet);
-        }
-        catch (Exception ex)
-        {
-            throw new Exception("Error during pre import cloning stage, no import will be attempted", ex);
-        }
+        //try
+        //{
+        //    for (var i = 0; i < cics.Length; i++)
+        //        cicClones[i] = cics[i].CreateClone(ThrowImmediatelyCheckNotifier.Quiet, _repositoryLocator.DataExportRepository);
+        //}
+        //catch (Exception ex)
+        //{
+        //    throw new Exception("Error during pre import cloning stage, no import will be attempted", ex);
+        //}
 
 
         //using (_catalogueDbContext.BeginNewTransaction())
@@ -174,7 +175,7 @@ public class CohortIdentificationConfigurationMerger
         try
         {
             // clone the input cic
-            cic = cic.CreateClone(ThrowImmediatelyCheckNotifier.Quiet);
+            cic = cic.CreateClone(ThrowImmediatelyCheckNotifier.Quiet,null);
 
             // grab the new clone root container
             rootContainer = cic.RootCohortAggregateContainer;

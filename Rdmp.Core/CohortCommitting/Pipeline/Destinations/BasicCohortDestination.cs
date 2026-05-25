@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Rdmp.Core.CohortCommitting.Pipeline.Destinations.IdentifierAllocation;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Repositories.Construction;
@@ -219,9 +220,10 @@ public class BasicCohortDestination : IPluginCohortDestination
     /// <summary>
     /// Initialises <see cref="Request"/>
     /// </summary>
+    /// <param name="activator"></param>
     /// <param name="value"></param>
     /// <param name="listener"></param>
-    public virtual void PreInitialize(ICohortCreationRequest value, IDataLoadEventListener listener)
+    public virtual void PreInitialize(IBasicActivateItems activator, ICohortCreationRequest value, IDataLoadEventListener listener)
     {
         Request = value;
 
