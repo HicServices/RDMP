@@ -14,6 +14,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataQualityEngine.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
@@ -45,7 +46,7 @@ public class LoadProgressSummaryReport : ICheckable
 
     public Dictionary<Catalogue, Evaluation> CataloguesWithDQERuns { get; private set; }
 
-    public LoadProgressSummaryReport(LoadProgress loadProgress)
+    public LoadProgressSummaryReport(EntityFramework.Models.LoadProgress loadProgress)
     {
         _loadProgress = loadProgress;
         _loadMetadata = _loadProgress.LoadMetadata;

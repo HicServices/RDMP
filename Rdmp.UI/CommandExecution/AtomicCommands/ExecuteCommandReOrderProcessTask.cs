@@ -6,6 +6,7 @@
 
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
@@ -26,7 +27,7 @@ internal class ExecuteCommandReOrderProcessTask : BasicUICommandExecution
 
         if (_sourceProcessTask.LoadMetadata_ID != targetProcessTask.LoadMetadata_ID)
             SetImpossible("ProcessTasks must belong to the same Load");
-        else if ((LoadStage)_sourceProcessTask.LoadStage != targetProcessTask.LoadStage)
+        else if (_sourceProcessTask.LoadStage != targetProcessTask.LoadStage)
             SetImpossible("ProcessTasks must belong in the same LoadStage to be ReOrdered");
         else if (_insertOption == InsertOption.Default)
             SetImpossible("Drag above or below to ReOrder");

@@ -16,6 +16,7 @@ using FAnsi;
 using FAnsi.Discovery;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.UI.SimpleDialogs;

@@ -7,6 +7,7 @@
 using System;
 using System.Linq;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
 
@@ -47,7 +48,7 @@ public sealed class ExecuteCommandUnMergeCohortIdentificationConfiguration : Bas
             return;
         }
 
-        if (_target.GetSubContainers().Length <= 1)
+        if (_target.GetSubContainers().ToArray().Length <= 1)
         {
             SetImpossible("Container must have 2 or more immediate subcontainers for unmerging");
             return;

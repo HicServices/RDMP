@@ -6,15 +6,16 @@
 
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Providers.Nodes.UsedByNodes;
 
 namespace Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 
-public class CatalogueUsedByLoadMetadataNode : ObjectUsedByOtherObjectNode<LoadMetadata, Catalogue>,
+public class CatalogueUsedByLoadMetadataNode : ObjectUsedByOtherObjectNode<EntityFramework.Models.LoadMetadata, Catalogue>,
     IDeletableWithCustomMessage
 {
-    public CatalogueUsedByLoadMetadataNode(LoadMetadata loadMetadata, Catalogue catalogue) : base(loadMetadata,
+    public CatalogueUsedByLoadMetadataNode(EntityFramework.Models.LoadMetadata loadMetadata, Catalogue catalogue) : base(loadMetadata,
         catalogue)
     {
     }

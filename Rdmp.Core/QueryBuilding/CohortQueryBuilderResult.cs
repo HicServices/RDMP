@@ -16,6 +16,7 @@ using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Providers;
 using Rdmp.Core.QueryBuilding.Parameters;
@@ -37,7 +38,6 @@ public class CohortQueryBuilderResult
     public CachedAggregateConfigurationResultsManager CacheManager { get; }
 
     public bool IsForContainer { get; private set; }
-    public ICoreChildProvider ChildProvider { get; }
     public CohortQueryBuilderHelper Helper { get; }
     public QueryBuilderCustomArgs Customise { get; }
     public CancellationToken CancellationToken { get; }
@@ -87,15 +87,13 @@ public class CohortQueryBuilderResult
     /// Creates a new result for a single <see cref="AggregateConfiguration"/> or <see cref="CohortAggregateContainer"/>
     /// </summary>
     /// <param name="cacheServer"></param>
-    /// <param name="childProvider"></param>
     /// <param name="helper"></param>
     /// <param name="customise"></param>
     /// <param name="cancellationToken"></param>
-    public CohortQueryBuilderResult(EntityFramework.Models.ExternalDatabaseServer cacheServer, ICoreChildProvider childProvider,
+    public CohortQueryBuilderResult(EntityFramework.Models.ExternalDatabaseServer cacheServer, 
         CohortQueryBuilderHelper helper, QueryBuilderCustomArgs customise, CancellationToken cancellationToken)
     {
         CacheServer = cacheServer;
-        ChildProvider = childProvider;
         Helper = helper;
         Customise = customise;
         CancellationToken = cancellationToken;
@@ -280,22 +278,21 @@ public class CohortQueryBuilderResult
         return sql;
     }
 
-    private bool IsEnabled(IOrderable arg) => IsEnabled(arg, ChildProvider);
 
     /// <summary>
     /// Objects are enabled if they do not support disabling (<see cref="IDisableable"/>) or are <see cref="IDisableable.IsDisabled"/> = false
     /// </summary>
     /// <returns></returns>
-    public static bool IsEnabled(IOrderable arg, ICoreChildProvider childProvider)
+    public static bool IsEnabled(IOrderable arg)
     {
-        var parentDisabled = childProvider.GetDescendancyListIfAnyFor(arg)?.Parents.Any(p => p is IDisableable
-        {
-            IsDisabled: true
-        });
+        //var parentDisabled = childProvider.GetDescendancyListIfAnyFor(arg)?.Parents.Any(p => p is IDisableable
+        //{
+        //    IsDisabled: true
+        //});
 
-        //if a parent is disabled
-        if (parentDisabled.HasValue && parentDisabled.Value)
-            return false;
+        ////if a parent is disabled
+        //if (parentDisabled.HasValue && parentDisabled.Value)
+        //    return false;
 
         // skip empty containers unless strict validation is enabled
         if (arg is CohortAggregateContainer container &&
@@ -378,17 +375,18 @@ public class CohortQueryBuilderResult
                     $"No PluginCohortCompilers claimed to support '{cohortSet}' in their ShouldRun method");
         }
 
-        var join = ChildProvider.AllJoinUses.Where(j => j.AggregateConfiguration_ID == cohortSet.ID).ToArray();
+        //var join = ChildProvider.AllJoinUses.Where(j => j.AggregateConfiguration_ID == cohortSet.ID).ToArray();
 
-        if (join.Length > 1)
-            throw new NotSupportedException(
-                $"There are {join.Length} joins configured to AggregateConfiguration {cohortSet}");
+        //if (join.Length > 1)
+        //    throw new NotSupportedException(
+        //        $"There are {join.Length} joins configured to AggregateConfiguration {cohortSet}");
 
-        var d = new CohortQueryBuilderDependency(cohortSet, join.SingleOrDefault(), ChildProvider,
-            PluginCohortCompilers);
-        _dependencies.Add(d);
+        //var d = new CohortQueryBuilderDependency(cohortSet, join.SingleOrDefault(), ChildProvider,
+        //    PluginCohortCompilers);
+        //_dependencies.Add(d);
 
-        return d;
+        //return d;
+        return null;
     }
 
     private void MakeCacheDecision()

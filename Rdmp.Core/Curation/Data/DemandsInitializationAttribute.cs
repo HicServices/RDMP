@@ -6,7 +6,7 @@
 
 using System;
 using Rdmp.Core.Curation.Data.DataLoad;
-using Rdmp.Core.Curation.Data.Pipelines;
+using Rdmp.Core.EntityFramework.Models;
 
 namespace Rdmp.Core.Curation.Data;
 

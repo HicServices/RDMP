@@ -1,4 +1,5 @@
-﻿using Rdmp.Core.EntityFramework.Helpers;
+﻿using FAnsi;
+using Rdmp.Core.EntityFramework.Helpers;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,18 @@ namespace Rdmp.Core.EntityFramework.Models
     [Table("ConnectionStringKeyword")]
     public class ConnectionStringKeyword: DatabaseObject, ICheckable
     {
+        private DatabaseType microsoftSQLServer;
+        private string v;
+
+        public ConnectionStringKeyword() { }
+        public ConnectionStringKeyword(RDMPDbContext catalogueDbContext, DatabaseType microsoftSQLServer, string name, string v)
+        {
+            CatalogueDbContext = catalogueDbContext;
+            this.microsoftSQLServer = microsoftSQLServer;
+            Name = name;
+            this.v = v;
+        }
+
         [Key]
         public override int ID { get; set; }
         public string DatabaseType { get; set; }

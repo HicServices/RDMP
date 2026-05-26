@@ -11,6 +11,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Validation;
 
 namespace Rdmp.UI.Validation;

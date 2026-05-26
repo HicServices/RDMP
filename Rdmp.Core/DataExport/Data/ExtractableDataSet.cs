@@ -10,6 +10,7 @@ using System.Data.Common;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.EntityFramework;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
 using Rdmp.Core.Repositories;
@@ -186,7 +187,7 @@ public class ExtractableDataSet : DatabaseEntity, IExtractableDataSet, IInjectKn
         try
         {
             var cata = CatalogueDbContext.GetObjectByID<Catalogue>(Catalogue_ID);
-            cata.InjectKnown(GetCatalogueExtractabilityStatus());
+            //cata.InjectKnown(GetCatalogueExtractabilityStatus());
             return cata;
         }
         catch (KeyNotFoundException)

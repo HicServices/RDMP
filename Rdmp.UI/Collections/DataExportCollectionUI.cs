@@ -13,6 +13,7 @@ using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
 using Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
@@ -145,16 +146,16 @@ public partial class DataExportCollectionUI : RDMPCollectionUI, ILifetimeSubscri
             Alignment = ToolStripItemAlignment.Right,
             ToolTipText = "Refresh Object"
         };
-        var dataExportChildProvider = _activator.CoreChildProvider as DataExportChildProvider;
+        //var dataExportChildProvider = _activator.CoreChildProvider as DataExportChildProvider;
 
         _refresh.Click += delegate (object sender, EventArgs e)
         {
-            var project = dataExportChildProvider.Projects.First();
-            if (project is not null)
-            {
-                var cmd = new ExecuteCommandRefreshObject(Activator, project);
-                cmd.Execute();
-            }
+            //var project = dataExportChildProvider.Projects.First();
+            //if (project is not null)
+            //{
+            //    var cmd = new ExecuteCommandRefreshObject(Activator, project);
+            //    cmd.Execute();
+            //}
         };
         CommonFunctionality.Add(_refresh);
 

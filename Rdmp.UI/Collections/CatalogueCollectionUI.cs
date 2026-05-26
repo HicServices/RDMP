@@ -14,6 +14,7 @@ using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Governance;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.ReusableLibraryCode.Settings;
@@ -173,7 +174,7 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
             };
             _refresh.Click += delegate (object sender, EventArgs e)
             {
-                var catalogue = Activator.CoreChildProvider.AllCatalogues.First();
+                var catalogue = Activator.RepositoryLocator.CatalogueDbContext.Catalogues.First();
                 if (catalogue is not null)
                 {
                     var cmd = new ExecuteCommandRefreshObject(Activator, catalogue);
@@ -225,17 +226,17 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
 
     private object FilterAspectGetter(object rowObject)
     {
-        try
-        {
-            if (rowObject is CatalogueItem cataItem)
-                return Activator.RefreshBus.PublishInProgress
-                    ? (object)null
-                    : Activator.CoreChildProvider.GetAllChildrenRecursively(cataItem).OfType<IFilter>().Count();
-        }
-        catch (Exception)
-        {
-            return null;
-        }
+        //try
+        //{
+        //    if (rowObject is CatalogueItem cataItem)
+        //        return Activator.RefreshBus.PublishInProgress
+        //            ? (object)null
+        //            : Activator.CoreChildProvider.GetAllChildrenRecursively(cataItem).OfType<IFilter>().Count();
+        //}
+        //catch (Exception)
+        //{
+        //    return null;
+        //}
 
         return null;
     }
@@ -311,10 +312,10 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
 
         if (c == null)
         {
-            var descendancy = Activator.CoreChildProvider.GetDescendancyListIfAnyFor(args.Request.ObjectToEmphasise);
+            //var descendancy = Activator.CoreChildProvider.GetDescendancyListIfAnyFor(args.Request.ObjectToEmphasise);
 
-            if (descendancy != null)
-                c = descendancy.Parents.OfType<Catalogue>().SingleOrDefault();
+            //if (descendancy != null)
+            //    c = descendancy.Parents.OfType<Catalogue>().SingleOrDefault();
         }
 
         if (c != null)
@@ -330,18 +331,18 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
 
         switch (o)
         {
-            case GovernancePeriod or GovernanceDocument:
-                tlvCatalogues.RefreshObject(Activator.CoreChildProvider.AllGovernanceNode);
-                break;
-            case Catalogue cata:
-                {
-                    //if there's a change to the folder of the catalogue or it is a new Catalogue (no parent folder) we have to rebuild the entire tree
-                    if (tlvCatalogues.GetParent(cata) is not string oldFolder || !oldFolder.Equals(cata.Folder))
-                        RefreshUIFromDatabase(Activator.CoreChildProvider.CatalogueRootFolder);
-                    else
-                        RefreshUIFromDatabase(o);
-                    return;
-                }
+            //case GovernancePeriod or GovernanceDocument:
+            //    tlvCatalogues.RefreshObject(Activator.CoreChildProvider.AllGovernanceNode);
+            //    break;
+            //case Catalogue cata:
+            //    {
+            //        //if there's a change to the folder of the catalogue or it is a new Catalogue (no parent folder) we have to rebuild the entire tree
+            //        if (tlvCatalogues.GetParent(cata) is not string oldFolder || !oldFolder.Equals(cata.Folder))
+            //            RefreshUIFromDatabase(Activator.CoreChildProvider.CatalogueRootFolder);
+            //        else
+            //            RefreshUIFromDatabase(o);
+            //        return;
+            //    }
             case CatalogueItem or AggregateConfiguration or ColumnInfo or TableInfo or ExtractionFilter
                 or ExtractionFilterParameter or ExtractionFilterParameterSet or ExtractionInformation
                 or AggregateFilterContainer or AggregateFilter or AggregateFilterParameter:

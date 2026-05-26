@@ -14,6 +14,7 @@ using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Engine.Mutilators;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using System;
@@ -53,7 +54,7 @@ public class DQEPostLoadRunner : IMutilateDataTables
             return ExitCodeType.Success;
         }
         var lmdID = job.LoadMetadata.ID;
-        var linkage = job.RepositoryLocator.CatalogueDbContext.GetAllObjectsWhere<LoadMetadataCatalogueLinkage>("LoadMetadataID", lmdID);
+        var linkage = job.RepositoryLocator.CatalogueDbContext.GetAllObjectsWhere<EntityFramework.Models.LoadMetadataCatalogueLinkage>("LoadMetadataID", lmdID);
         foreach (var link in linkage)
         {
             var catalogue = job.RepositoryLocator.CatalogueDbContext.GetAllObjectsWhere<Catalogue>("ID", link.CatalogueID).FirstOrDefault();

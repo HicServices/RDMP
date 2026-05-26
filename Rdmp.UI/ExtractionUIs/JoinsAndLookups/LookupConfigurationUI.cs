@@ -11,6 +11,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using WideMessageBox = Rdmp.UI.SimpleDialogs.WideMessageBox;
@@ -63,7 +64,7 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
         _catalogue = databaseObject;
         lblTitle.Text = $"Create Lookup For {_catalogue.Name}";
         lblTitle.Visible = true;
-        var tableInfo = activator.CoreChildProvider.AllTableInfos;
+        var tableInfo = activator.RepositoryLocator.CatalogueDbContext.TableInfos.ToArray();
         if (tableInfo.Length == 0)
         {
             HandleError("No Table Infos Available");
@@ -132,7 +133,7 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
     {
         if (cbSelectLookupTable.SelectedItem == null) return;
         var selectedLookup = (TableInfo)cbSelectLookupTable.SelectedItem;
-        if (PKRelations.Count == selectedLookup.ColumnInfos.Length)
+        if (PKRelations.Count == selectedLookup.ColumnInfos.Count)
         {
             //no possible entries
             btnAddAnotherRelation.Enabled = false;

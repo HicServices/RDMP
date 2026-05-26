@@ -12,6 +12,7 @@ using Rdmp.UI.ItemActivation;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp;
 using Rdmp.UI.SimpleDialogs;
+using Rdmp.Core.EntityFramework.Models;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 

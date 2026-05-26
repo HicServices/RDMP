@@ -53,7 +53,6 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     private TextBox Filter;
 
     public ICoreIconProvider CoreIconProvider { get; private set; }
-    public ICoreChildProvider CoreChildProvider { get; set; }
     public RenameProvider RenameProvider { get; private set; }
     public DragDropProvider DragDropProvider { get; private set; }
     public CopyPasteProvider CopyPasteProvider { get; private set; }
@@ -288,7 +287,6 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         CopyPasteProvider = new CopyPasteProvider();
         CopyPasteProvider.RegisterEvents(tree);
 
-        CoreChildProvider = _activator.CoreChildProvider;
 
         _activator.Emphasise += _activator_Emphasise;
 
@@ -569,19 +567,19 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     private void _activator_Emphasise(object sender, EmphasiseEventArgs args)
     {
         //get the parental hierarchy
-        var descendancyList = CoreChildProvider.GetDescendancyListIfAnyFor(args.Request.ObjectToEmphasise);
+        //var descendancyList = CoreChildProvider.GetDescendancyListIfAnyFor(args.Request.ObjectToEmphasise);
 
-        if (descendancyList != null)
-            //for each parent in the descendancy list
-            foreach (var parent in descendancyList.Parents)
-            {
-                //parent isn't in our tree
-                if (Tree.IndexOf(parent) == -1)
-                    return;
+        //if (descendancyList != null)
+        //    //for each parent in the descendancy list
+        //    foreach (var parent in descendancyList.Parents)
+        //    {
+        //        //parent isn't in our tree
+        //        if (Tree.IndexOf(parent) == -1)
+        //            return;
 
-                //parent is in our tree so make sure it's expanded
-                Tree.Expand(parent);
-            }
+        //        //parent is in our tree so make sure it's expanded
+        //        Tree.Expand(parent);
+        //    }
 
         //tree doesn't contain object even after expanding parents
         var index = Tree.IndexOf(args.Request.ObjectToEmphasise);
@@ -889,8 +887,8 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         RefreshContextMenuStrip();
 
         //also refresh anyone who is masquerading as e.Object
-        foreach (var masquerader in _activator.CoreChildProvider.GetMasqueradersOf(e.Object))
-            RefreshObject(masquerader, e.Exists);
+        //foreach (var masquerader in _activator.CoreChildProvider.GetMasqueradersOf(e.Object))
+        //    RefreshObject(masquerader, e.Exists);
     }
 
     private void RefreshObject(object o, bool exists)

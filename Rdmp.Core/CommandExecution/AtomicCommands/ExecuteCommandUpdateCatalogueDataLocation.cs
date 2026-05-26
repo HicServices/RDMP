@@ -8,6 +8,7 @@ using System;
 using System.Linq;
 using FAnsi.Discovery;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework.Models;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
@@ -136,12 +137,12 @@ public class ExecuteCommandUpdateCatalogueDataLocation : BasicCommandExecution, 
             }
             else
             {
-                var tblInfo = new TableInfo(_activator.RepositoryLocator.CatalogueDbContext,
-                    _table.GetFullyQualifiedName());
-                tblInfo.Server = _table.Database.Server.Name;
-                tblInfo.Database = _table.Database.GetRuntimeName();
-                tblInfo.SaveToDatabase();
-                selectedCatalogueItem.ColumnInfo.TableInfo_ID = tblInfo.ID;
+                //var tblInfo = new TableInfo(_activator.RepositoryLocator.CatalogueDbContext,
+                //    _table.GetFullyQualifiedName());
+                //tblInfo.Server = _table.Database.Server.Name;
+                //tblInfo.Database = _table.Database.GetRuntimeName();
+                //tblInfo.SaveToDatabase();
+                //selectedCatalogueItem.ColumnInfo.TableInfo_ID = tblInfo.ID;
             }
 
             selectedCatalogueItem.ColumnInfo.Name = GenerateNewSQLPath(selectedCatalogueItem.ColumnInfo.Name);

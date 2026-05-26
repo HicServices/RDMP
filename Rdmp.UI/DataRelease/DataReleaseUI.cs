@@ -59,7 +59,6 @@ public partial class DataReleaseUI : DataReleaseUI_Design
 
     private IPipelineSelectionUI _pipelineSelectionUI1;
     private IMapsDirectlyToDatabaseTable[] _globals;
-    private DataExportChildProvider _childProvider;
 
     private ArbitraryFolderNode _globalsNode = new(ExtractionDirectory.GLOBALS_DATA_NAME, -500);
 
@@ -123,8 +122,8 @@ public partial class DataReleaseUI : DataReleaseUI_Design
             {
                 IExtractionConfiguration configuration => releaseRunner.GetState(configuration),
                 ISelectedDataSets sds => releaseRunner.GetState(sds),
-                SupportingDocument supportingDocument => releaseRunner.GetState(supportingDocument),
-                SupportingSQLTable supportingSqlTable => releaseRunner.GetState(supportingSqlTable),
+                //SupportingDocument supportingDocument => releaseRunner.GetState(supportingDocument),
+                //SupportingSQLTable supportingSqlTable => releaseRunner.GetState(supportingSqlTable),
                 _ => rowObject.Equals(_globalsNode) ? releaseRunner.GetGlobalReleaseState() : null
             };
     }
@@ -158,9 +157,9 @@ public partial class DataReleaseUI : DataReleaseUI_Design
     {
         return model switch
         {
-            Project p => _configurations = _childProvider.GetActiveConfigurationsOnly(p),
-            ExtractionConfiguration ec =>
-                _selectedDataSets = _childProvider.GetChildren(ec).OfType<ISelectedDataSets>(),
+            //Project p => _configurations = _childProvider.GetActiveConfigurationsOnly(p),
+            //ExtractionConfiguration ec =>
+                //_selectedDataSets = _childProvider.GetChildren(ec).OfType<ISelectedDataSets>(),
             _ => Equals(model, _globalsNode) ? _globals : null
         };
     }
@@ -191,7 +190,7 @@ public partial class DataReleaseUI : DataReleaseUI_Design
                 new Guid("2f0ca398-a0d5-4e13-bb40-a2c817d4179a"));
         }
 
-        _childProvider = (DataExportChildProvider)Activator.CoreChildProvider;
+        //_childProvider = (DataExportChildProvider)Activator.CoreChildProvider;
         _project = databaseObject;
 
         //figure out the globals

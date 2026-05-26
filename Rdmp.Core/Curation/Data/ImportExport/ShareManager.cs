@@ -14,6 +14,7 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.Serialization;
 using Rdmp.Core.EntityFramework;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Repositories;
@@ -333,7 +334,7 @@ public class ShareManager
                 var instance = (IMapsDirectlyToDatabaseTable)ObjectConstructor.ConstructIfPossible(sd.Type, this, sd) ??
                                throw new ObjectLacksCompatibleConstructorException(
                                    $"Could not find a ShareManager constructor for '{sd.Type}'");
-                if (instance.GetType() == typeof(LoadMetadataCatalogueLinkage))
+                if (instance.GetType() == typeof(EntityFramework.Models.LoadMetadataCatalogueLinkage))
                 {
                     //find most recent lmd and all catalogues since, then link them
                     var latestLMD = created.OfType<LoadMetadata>().LastOrDefault();

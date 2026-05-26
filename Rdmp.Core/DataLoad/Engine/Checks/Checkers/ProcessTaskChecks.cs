@@ -11,6 +11,7 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
 using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments;
 using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.DataLoad.Engine.Checks.Checkers;
@@ -47,8 +48,7 @@ public class ProcessTaskChecks : ICheckable
                 return;
             }
 
-
-        var created = RuntimeTaskFactory.Create(processTask, dictionary.LoadArgs[processTask.LoadStage]);
+        var created = RuntimeTaskFactory.Create(processTask, dictionary.LoadArgs[(LoadStage)processTask.LoadStage]);
         if (created is DataProviderRuntimeTask)
             ((DataProviderRuntimeTask)created).SetActivator(_activator);
         created.Check(notifier);

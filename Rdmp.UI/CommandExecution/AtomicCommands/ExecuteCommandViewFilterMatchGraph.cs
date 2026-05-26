@@ -8,6 +8,7 @@ using System.Linq;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;

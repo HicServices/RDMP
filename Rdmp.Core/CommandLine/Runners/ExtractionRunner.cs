@@ -20,6 +20,7 @@ using Rdmp.Core.DataExport.DataExtraction.Listeners;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources;
 using Rdmp.Core.DataExport.DataExtraction.UserPicks;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Logging.Listeners;
 using Rdmp.Core.ReusableLibraryCode.Checks;
@@ -96,7 +97,7 @@ public class ExtractionRunner : ManyRunner
         if (_options.ExtractGlobals)
         {
             var g = _configuration.GetGlobals();
-            var globals = new GlobalsBundle(g.OfType<SupportingDocument>().ToArray(),
+            var globals = new GlobalsBundle(g.OfType<EntityFramework.Models.SupportingDocument>().ToArray(),
                 g.OfType<SupportingSQLTable>().ToArray());
             _globalsCommand = new ExtractGlobalsCommand(RepositoryLocator, _project, _configuration, globals);
             commands.Add(_globalsCommand);

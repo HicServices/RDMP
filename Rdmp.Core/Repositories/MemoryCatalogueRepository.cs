@@ -14,6 +14,7 @@ using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.Curation.Data.Referencing;
 using Rdmp.Core.DataExport;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Logging;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
@@ -146,10 +147,10 @@ public class MemoryRDMPDbContext : MemoryRepository, ICatalogueRepository, ITabl
         return GetAllObjects<Lookup>().Any(l => l.Description.TableInfo.Equals(tableInfo));
     }
 
-    public Catalogue[] GetAllCataloguesUsing(TableInfo tableInfo)
+    public EntityFramework.Models.Catalogue[] GetAllCataloguesUsing(TableInfo tableInfo)
     {
         return
-            GetAllObjects<Catalogue>()
+            GetAllObjects<EntityFramework.Models.Catalogue>()
                 .Where(
                     c =>
                         c.CatalogueItems.Any(
@@ -502,14 +503,14 @@ public class MemoryRDMPDbContext : MemoryRepository, ICatalogueRepository, ITabl
 
         switch (oTableWrapperObject)
         {
-            case Catalogue catalogue:
+            case EntityFramework.Models.Catalogue catalogue:
                 {
                     foreach (var ci in catalogue.CatalogueItems) ci.DeleteInDatabase();
 
                     break;
                 }
             case ExtractionInformation extractionInformation:
-                extractionInformation.CatalogueItem.ClearAllInjections();
+                //extractionInformation.CatalogueItem.ClearAllInjections();
                 break;
             // when deleting a TableInfo
             case TableInfo t:
@@ -527,8 +528,8 @@ public class MemoryRDMPDbContext : MemoryRepository, ICatalogueRepository, ITabl
                     foreach (var ci in Objects.Keys.OfType<CatalogueItem>().Where(ci => ci.ColumnInfo_ID == columnInfo.ID))
                     {
                         ci.ColumnInfo_ID = null;
-                        ci.ClearAllInjections();
-                        ci.SaveToDatabase();
+                        //ci.ClearAllInjections();
+                        //ci.SaveToDatabase();
                     }
 
                     break;
@@ -560,10 +561,6 @@ public class MemoryRDMPDbContext : MemoryRepository, ICatalogueRepository, ITabl
             .Where(r => r.IsReferenceTo(obj));
     }
 
-    public void CreateLinkBetween(DataAccessCredentials credentials, ITableInfo tableInfo, DataAccessContext context)
-    {
-        throw new NotImplementedException();
-    }
 
     DataAccessCredentials ITableInfoCredentialsManager.GetCredentialsIfExistsFor(ITableInfo tableInfo, DataAccessContext context)
     {
@@ -571,16 +568,6 @@ public class MemoryRDMPDbContext : MemoryRepository, ICatalogueRepository, ITabl
     }
 
     Dictionary<DataAccessContext, DataAccessCredentials> ITableInfoCredentialsManager.GetCredentialsIfExistsFor(ITableInfo tableInfo)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void BreakLinkBetween(DataAccessCredentials credentials, ITableInfo tableInfo, DataAccessContext context)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void BreakAllLinksBetween(DataAccessCredentials credentials, ITableInfo tableInfo)
     {
         throw new NotImplementedException();
     }

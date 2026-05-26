@@ -11,6 +11,7 @@ using MongoDB.Driver;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.EntityFramework;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.ReusableLibraryCode;
 
 namespace Rdmp.Core.Repositories.Managers;

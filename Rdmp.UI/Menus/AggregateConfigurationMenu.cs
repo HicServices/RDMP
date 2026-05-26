@@ -9,6 +9,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.UI.CommandExecution.AtomicCommands;

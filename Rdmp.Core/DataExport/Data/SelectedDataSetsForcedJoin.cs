@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.EntityFramework;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
 using Rdmp.Core.Repositories;

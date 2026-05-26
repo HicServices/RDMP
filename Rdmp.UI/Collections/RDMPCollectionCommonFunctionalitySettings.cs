@@ -30,7 +30,7 @@ public class RDMPCollectionCommonFunctionalitySettings
     public bool AddIDColumn { get; set; }
 
     /// <summary>
-    /// False to automatically set up tree hierarchy children based on the <see cref="ICoreChildProvider"/> in the
+    /// False to automatically set up tree hierarchy children based on the in the
     /// <see cref="IActivateItems"/> at construction time.  True if you plan to handle object children yourself
     ///  <para>Defaults to false</para>
     /// </summary>

@@ -374,16 +374,16 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
         if (singleObjectControlTab.Control is IRDMPSingleDatabaseObjectControl singleObject &&
             UserSettings.EmphasiseOnTabChanged && singleObject.DatabaseObject != null)
         {
-            var isCicChild = Activator.CoreChildProvider.GetDescendancyListIfAnyFor(singleObject.DatabaseObject)
-                ?.Parents?.Any(p => p is CohortIdentificationConfiguration);
+            //var isCicChild = Activator.CoreChildProvider.GetDescendancyListIfAnyFor(singleObject.DatabaseObject)
+            //    ?.Parents?.Any(p => p is CohortIdentificationConfiguration);
 
-            //don't emphasise things that live under cics because it doesn't result in a collection being opened but instead opens the cic Tab (which could result in you being unable to get to your original tab!)
-            if (isCicChild == false)
-            {
-                _windowManager.Navigation.Suspend();
-                Activator.RequestItemEmphasis(this, new EmphasiseRequest(singleObject.DatabaseObject));
-                _windowManager.Navigation.Resume();
-            }
+            ////don't emphasise things that live under cics because it doesn't result in a collection being opened but instead opens the cic Tab (which could result in you being unable to get to your original tab!)
+            //if (isCicChild == false)
+            //{
+            //    _windowManager.Navigation.Suspend();
+            //    Activator.RequestItemEmphasis(this, new EmphasiseRequest(singleObject.DatabaseObject));
+            //    _windowManager.Navigation.Resume();
+            //}
         }
 
 

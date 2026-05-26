@@ -6,6 +6,7 @@
 
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Repositories.Construction;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;

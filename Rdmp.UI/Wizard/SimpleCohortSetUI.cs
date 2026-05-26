@@ -15,6 +15,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.FilterImporting.Construction;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 
@@ -55,7 +56,7 @@ public partial class SimpleCohortSetUI : UserControl
     public void SetupFor(IActivateItems activator)
     {
         _activator = activator;
-        cbxCatalogues.SetUp(activator.CoreChildProvider.AllCatalogues);
+        cbxCatalogues.SetUp(activator.RepositoryLocator.CatalogueDbContext.Catalogues);
         pbCatalogue.Image = activator.CoreIconProvider.GetImage(RDMPConcept.Catalogue).ImageToBitmap();
         pbExtractionIdentifier.Image =
             activator.CoreIconProvider.GetImage(RDMPConcept.ExtractionInformation).ImageToBitmap();

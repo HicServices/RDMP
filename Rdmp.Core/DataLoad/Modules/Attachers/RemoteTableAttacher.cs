@@ -20,6 +20,7 @@ using Rdmp.Core.DataLoad.Engine.Job.Scheduling;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Sources;
 using Rdmp.Core.DataLoad.Modules.LoadProgressUpdating;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Logging;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.ReusableLibraryCode.Checks;
@@ -74,7 +75,7 @@ public class RemoteTableAttacher : RemoteAttacher
 
     [DemandsInitialization(
         $"Optionally gives you access to two parameters {StartDateParameter} and {EndDateParameter} for use in your RemoteSelectSQL.  This requires that you create a load schedule specifically associated with the LoadMetadata, this ties you contractually to actually respect the dates correctly in your query.")]
-    public LoadProgress Progress { get; set; }
+    public EntityFramework.Models.LoadProgress Progress { get; set; }
 
     [DemandsInitialization(
         "Indicates how you want to update the Progress.DataLoadProgress value on successful load batches (only required if you have a LoadProgress)")]

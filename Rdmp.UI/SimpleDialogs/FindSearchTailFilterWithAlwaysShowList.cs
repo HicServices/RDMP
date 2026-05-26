@@ -36,18 +36,18 @@ internal class FindSearchTailFilterWithAlwaysShowList : IListFilter
             return;
         }
 
-        var searchThese = allObjects.ToDictionary(static o => o, activator.CoreChildProvider.GetDescendancyListIfAnyFor);
+        //var searchThese = allObjects.ToDictionary(static o => o, activator.CoreChildProvider.GetDescendancyListIfAnyFor);
 
-        var scorer = new SearchablesMatchScorer
-        {
-            TypeNames = new HashSet<string>(searchThese.Keys.Select(static m => m.GetType().Name),
-                StringComparer.CurrentCultureIgnoreCase)
-        };
-        var matches = scorer.ScoreMatches(searchThese, text, null, cancellationToken);
+        //var scorer = new SearchablesMatchScorer
+        //{
+        //    TypeNames = new HashSet<string>(searchThese.Keys.Select(static m => m.GetType().Name),
+        //        StringComparer.CurrentCultureIgnoreCase)
+        //};
+        //var matches = scorer.ScoreMatches(searchThese, text, null, cancellationToken);
 
-        _scoringObjects = matches == null
-            ? new List<IMapsDirectlyToDatabaseTable>() // we were cancelled
-            : SearchablesMatchScorer.ShortList(matches, maxToTake, activator);
+        //_scoringObjects = matches == null
+        //    ? new List<IMapsDirectlyToDatabaseTable>() // we were cancelled
+        //    : SearchablesMatchScorer.ShortList(matches, maxToTake, activator);
     }
 
 

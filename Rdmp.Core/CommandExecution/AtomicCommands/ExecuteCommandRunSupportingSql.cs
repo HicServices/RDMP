@@ -8,6 +8,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataViewing;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Repositories.Construction;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;

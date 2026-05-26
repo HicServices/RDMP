@@ -4,15 +4,9 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using FAnsi.Discovery;
+using MongoDB.Driver;
+using NPOI.SS.Formula.Functions;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Runners;
@@ -27,6 +21,8 @@ using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataViewing;
 using Rdmp.Core.EntityFramework;
+using Rdmp.Core.EntityFramework.Helpers;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Logging.PastEvents;
@@ -38,6 +34,14 @@ using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Comments;
 using Rdmp.Core.ReusableLibraryCode.Settings;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Rdmp.Core.CommandExecution;
 
@@ -58,9 +62,6 @@ public abstract class BasicActivateItems : IBasicActivateItems
 
     /// <inheritdoc/>
     public bool InteractiveDeletes { get; set; }
-
-    /// <inheritdoc/>
-    public ICoreChildProvider CoreChildProvider { get; protected set; }
 
     /// <inheritdoc/>
     public IServerDefaults ServerDefaults { get; }
@@ -139,45 +140,11 @@ public abstract class BasicActivateItems : IBasicActivateItems
         ConstructPluginChildProviders();
 
         // Note that this is virtual so can return null e.g. if other stuff has to happen with the activator before a valid child provider can be built (e.g. loading plugin user interfaces)
-        CoreChildProvider = GetChildProvider();
 
         //handle custom icons from plugin user interfaces in which
         CoreIconProvider = new DataExportIconProvider(catalogueDbContext, PluginUserInterfaces.ToArray());
     }
 
-    protected virtual ICoreChildProvider GetChildProvider()
-    {
-        // Build new CoreChildProvider in a temp then update to it to avoid stale references
-        ICoreChildProvider temp = null;
-
-        //prefer a linked repository with both
-        if (RepositoryLocator.CatalogueDbContext != null)
-            try
-            {
-                temp = new DataExportChildProvider(RepositoryLocator, PluginUserInterfaces.ToArray(),
-                    GlobalErrorCheckNotifier, CoreChildProvider as DataExportChildProvider);
-            }
-            catch (Exception e)
-            {
-                ShowException("Error constructing DataExportChildProvider", e);
-            }
-
-        //there was an error generating a data export repository or there was no repository specified
-
-        //so just create a catalogue one
-        temp ??= new CatalogueChildProvider(RepositoryLocator.CatalogueDbContext, PluginUserInterfaces.ToArray(),
-            GlobalErrorCheckNotifier, CoreChildProvider as CatalogueChildProvider);
-
-        //// first time
-        //if (CoreChildProvider == null)
-        //    CoreChildProvider = temp;
-        //else
-        //    CoreChildProvider.UpdateTo(temp);
-
-        CoreChildProvider = temp;
-        return CoreChildProvider;
-        
-    }
 
     private void ConstructPluginChildProviders()
     {
@@ -226,23 +193,23 @@ public abstract class BasicActivateItems : IBasicActivateItems
     /// <param name="emphasiseRequest"></param>
     protected void AdjustEmphasiseRequest(EmphasiseRequest emphasiseRequest)
     {
-        if (emphasiseRequest.ObjectToEmphasise is ExtractableCohort ec)
-            if (CoreChildProvider is DataExportChildProvider dx)
-            {
-                var projects = dx.Projects.Where(p => p.ProjectNumber == ec.ExternalProjectNumber).ToArray();
+        //if (emphasiseRequest.ObjectToEmphasise is ExtractableCohort ec)
+        //    if (CoreChildProvider is DataExportChildProvider dx)
+        //    {
+        //        var projects = dx.Projects.Where(p => p.ProjectNumber == ec.ExternalProjectNumber).ToArray();
 
-                // If there is only one Project with the number of this cohort
-                if (projects.Length == 1)
-                {
-                    // we can emphasise the cohort under that Project
-                    var usage = dx.GetAllCohortProjectUsageNodesFor(projects[0])
-                        .SelectMany(s => s.CohortsUsed)
-                        .FirstOrDefault(k => k.ObjectBeingUsed.Equals(ec));
+        //        // If there is only one Project with the number of this cohort
+        //        if (projects.Length == 1)
+        //        {
+        //            // we can emphasise the cohort under that Project
+        //            var usage = dx.GetAllCohortProjectUsageNodesFor(projects[0])
+        //                .SelectMany(s => s.CohortsUsed)
+        //                .FirstOrDefault(k => k.ObjectBeingUsed.Equals(ec));
 
-                    if (usage != null)
-                        emphasiseRequest.ObjectToEmphasise = usage;
-                }
-            }
+        //            if (usage != null)
+        //                emphasiseRequest.ObjectToEmphasise = usage;
+        //        }
+        //    }
     }
 
     /// <summary>
@@ -251,8 +218,8 @@ public abstract class BasicActivateItems : IBasicActivateItems
     /// </summary>
     /// <param name="objectToEmphasise"></param>
     /// <returns></returns>
-    public object GetRootObjectOrSelf(object objectToEmphasise) =>
-        CoreChildProvider?.GetRootObjectOrSelf(objectToEmphasise) ?? objectToEmphasise;
+    public object GetRootObjectOrSelf(object objectToEmphasise) => objectToEmphasise;
+    //CoreChildProvider?.GetRootObjectOrSelf(objectToEmphasise) ?? objectToEmphasise;
 
     /// <inheritdoc/>
     public bool SelectEnum(string prompt, Type enumType, out Enum chosen) =>
@@ -326,14 +293,14 @@ public abstract class BasicActivateItems : IBasicActivateItems
     }
 
     /// <inheritdoc/>
-    public virtual IEnumerable<T> GetAll<T>() =>
-        CoreChildProvider.GetAllSearchables()
-            .Keys.OfType<T>();
+    public virtual IEnumerable<T> GetAll<T>() => new List<T>();
+    //CoreChildProvider.GetAllSearchables()
+    //.Keys.OfType<T>();
 
     /// <inheritdoc/>
-    public virtual IEnumerable<IMapsDirectlyToDatabaseTable> GetAll(Type t) =>
-        CoreChildProvider.GetAllSearchables()
-            .Keys.Where(t.IsInstanceOfType);
+    public virtual IEnumerable<IMapsDirectlyToDatabaseTable> GetAll(Type t) => new List<IMapsDirectlyToDatabaseTable>();
+    //CoreChildProvider.GetAllSearchables()
+    //.Keys.Where(t.IsInstanceOfType);
 
     /// <inheritdoc/>
     public abstract void ShowException(string errorText, Exception exception);
@@ -349,12 +316,12 @@ public abstract class BasicActivateItems : IBasicActivateItems
             }
             else
             {
-                var descendancy = CoreChildProvider.GetDescendancyListIfAnyFor(publish);
+                //var descendancy = CoreChildProvider.GetDescendancyListIfAnyFor(publish);
 
-                var parent = descendancy?.Parents.OfType<DatabaseEntity>().LastOrDefault();
+                //var parent = descendancy?.Parents.OfType<DatabaseEntity>().LastOrDefault();
 
-                if (parent != null)
-                    Publish(parent);
+                //if (parent != null)
+                //    Publish(parent);
             }
         }
     }
@@ -379,7 +346,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
 
     protected virtual bool InteractiveDelete(IDeleteable deletable)
     {
-        var databaseObject = deletable as DatabaseEntity;
+        var databaseObject = deletable as DatabaseObject;
 
         switch (databaseObject)
         {
@@ -401,27 +368,27 @@ public abstract class BasicActivateItems : IBasicActivateItems
                     }
                     break;
                 }
-            case ExtractionFilter f:
-                {
-                    var children = f.ExtractionFilterParameterSets;
+            //case ExtractionFilter f:
+            //    {
+            //        var children = f.ExtractionFilterParameterSets;
 
-                    if (children.Any())
-                    {
-                        if (!YesNo(
-                                $"Filter has {children.Length} value sets defined.  Deleting filter will also delete these.  Confirm?",
-                                "Delete"))
-                            return false;
+            //        if (children.Any())
+            //        {
+            //            if (!YesNo(
+            //                    $"Filter has {children.Length} value sets defined.  Deleting filter will also delete these.  Confirm?",
+            //                    "Delete"))
+            //                return false;
 
-                        foreach (var child in children) child.DeleteInDatabase();
+            //            foreach (var child in children) child.DeleteInDatabase();
 
-                        f.ClearAllInjections();
+            //            f.ClearAllInjections();
 
-                        f.DeleteInDatabase();
-                        return true;
-                    }
+            //            f.DeleteInDatabase();
+            //            return true;
+            //        }
 
-                    break;
-                }
+            //        break;
+            //    }
             case AggregateConfiguration ac when ac.IsJoinablePatientIndexTable():
                 {
                     var users = ac.JoinableCohortAggregateConfiguration?.Users?.Select(u => u.AggregateConfiguration);
@@ -441,8 +408,8 @@ public abstract class BasicActivateItems : IBasicActivateItems
         }
 
         //it has already been deleted before
-        if (databaseObject != null && !databaseObject.Exists())
-            return false;
+        //if (databaseObject != null && !databaseObject.Exists())
+        //    return false;
 
         var idText = "";
 
@@ -476,13 +443,13 @@ public abstract class BasicActivateItems : IBasicActivateItems
 
             if (databaseObject == null)
             {
-                var descendancy = CoreChildProvider.GetDescendancyListIfAnyFor(deletable);
-                if (descendancy != null)
-                    databaseObject = descendancy.Parents.OfType<DatabaseEntity>().LastOrDefault();
+                //var descendancy = CoreChildProvider.GetDescendancyListIfAnyFor(deletable);
+                //if (descendancy != null)
+                //    databaseObject = descendancy.Parents.OfType<DatabaseEntity>().LastOrDefault();
             }
 
             if (deletable is IMasqueradeAs masqueradeAs)
-                databaseObject ??= masqueradeAs.MasqueradingAs() as DatabaseEntity;
+                databaseObject ??= masqueradeAs.MasqueradingAs() as DatabaseObject;
 
             return databaseObject == null
                 ? throw new NotSupportedException(
@@ -535,11 +502,11 @@ public abstract class BasicActivateItems : IBasicActivateItems
     /// <inheritdoc/>
     public virtual void Publish(IMapsDirectlyToDatabaseTable databaseEntity)
     {
-        if (!HardRefresh && UserSettings.SelectiveRefresh && CoreChildProvider.SelectiveRefresh(databaseEntity)) return;
+        //if (!HardRefresh && UserSettings.SelectiveRefresh && CoreChildProvider.SelectiveRefresh(databaseEntity)) return;
 
-        var fresh = GetChildProvider();
-        CoreChildProvider.UpdateTo(fresh);
-        HardRefresh = false;
+        //var fresh = GetChildProvider();
+        //CoreChildProvider.UpdateTo(fresh);
+        //HardRefresh = false;
     }
 
     /// <inheritdoc/>
@@ -709,7 +676,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
                             throw new ArgumentException(
                                 $"Supplied ColumnInfo {col.GetRuntimeName()} was not found amongst the columns created");
                 match.IsExtractionIdentifier = true;
-                match.SaveToDatabase();
+                //match.SaveToDatabase();
             }
 
             // Catalogue must be extractable to be project specific
@@ -744,9 +711,8 @@ public abstract class BasicActivateItems : IBasicActivateItems
         var executor = new MasterDatabaseScriptExecutor(db);
         executor.CreateAndPatchDatabase(patcher, new AcceptAllCheckNotifier { WriteToConsole = true });
 
-        var eds = new ExternalDatabaseServer(catalogueDbContext,
-            $"New {(defaultToSet == PermissableDefaults.None ? "" : defaultToSet.ToString())}Server", patcher);
-        eds.SetProperties(db);
+        var eds = new ExternalDatabaseServer(catalogueDbContext, $"New {(defaultToSet == PermissableDefaults.None ? "" : defaultToSet.ToString())}Server", patcher);
+        //eds.SetProperties(db);
 
         //if (defaultToSet != PermissableDefaults.None)
         //    catalogueDbContext.SetDefault(defaultToSet, eds);
@@ -767,10 +733,10 @@ public abstract class BasicActivateItems : IBasicActivateItems
 
     public virtual void SelectAnythingThen(DialogArgs args, Action<IMapsDirectlyToDatabaseTable> callback)
     {
-        var selected = SelectOne(args, CoreChildProvider.GetAllSearchables().Keys.ToArray());
+        //var selected = SelectOne(args, CoreChildProvider.GetAllSearchables().Keys.ToArray());
 
-        if (selected != null)
-            callback(selected);
+        //if (selected != null)
+        //    callback(selected);
     }
 
     public abstract void ShowData(IViewSQLAndResultsCollection collection);

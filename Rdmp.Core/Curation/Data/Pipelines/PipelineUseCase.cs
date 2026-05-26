@@ -10,6 +10,7 @@ using System.Linq;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.ReusableLibraryCode.Progress;
+using Rdmp.Core.EntityFramework.Models;
 
 namespace Rdmp.Core.Curation.Data.Pipelines;
 

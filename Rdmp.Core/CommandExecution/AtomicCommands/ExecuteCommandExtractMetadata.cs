@@ -7,6 +7,7 @@
 using System.IO;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Reports;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
@@ -59,7 +60,7 @@ public class ExecuteCommandExtractMetadata : BasicCommandExecution
 
         var catas = _catalogues ?? BasicActivator
             .SelectMany("Which catalogues do you want to extract metadata for", typeof(Catalogue),
-                BasicActivator.CoreChildProvider.AllCatalogues);
+                BasicActivator.RepositoryLocator.CatalogueDbContext.Catalogues.ToArray());
 
         if (catas == null || !catas.Any())
             return;

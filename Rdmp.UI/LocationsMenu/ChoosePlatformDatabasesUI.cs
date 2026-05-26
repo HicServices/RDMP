@@ -16,6 +16,7 @@ using Rdmp.Core.CommandLine.DatabaseCreation;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.Curation.Checks;
 using Rdmp.Core.Curation.Data.Pipelines;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode;

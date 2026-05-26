@@ -1,5 +1,9 @@
-﻿using Rdmp.Core.EntityFramework.Helpers;
+﻿using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework.Helpers;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -8,6 +12,16 @@ namespace Rdmp.Core.EntityFramework.Models
     [Table("CatalogueItem")]
     public class CatalogueItem: DatabaseObject
     {
+        private ICatalogue catalogue;
+
+        public CatalogueItem() { }
+
+        public CatalogueItem(RDMPDbContext catalogueDbContext, ICatalogue catalogue, string name)
+        {
+            CatalogueDbContext = catalogueDbContext;
+            this.catalogue = catalogue;
+            Name = name;
+        }
 
         [Key]
         public override int ID { get; set; }
@@ -49,5 +63,14 @@ namespace Rdmp.Core.EntityFramework.Models
         public virtual ExtractionInformation ExtractionInformation{ get; set; }
         public override string ToString() => Name;
 
+        public void SetColumnInfo(object value)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<ColumnInfo> GuessAssociatedColumn(ColumnInfo[] guessPoolColumnInfo, bool allowPartial = true)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

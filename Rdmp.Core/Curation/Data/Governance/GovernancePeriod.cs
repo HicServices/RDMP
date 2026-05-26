@@ -15,6 +15,7 @@ using Rdmp.Core.Repositories.Managers;
 using Rdmp.Core.ReusableLibraryCode.Annotations;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.Ticketing;
+using Rdmp.Core.EntityFramework.Models;
 
 namespace Rdmp.Core.Curation.Data.Governance;
 

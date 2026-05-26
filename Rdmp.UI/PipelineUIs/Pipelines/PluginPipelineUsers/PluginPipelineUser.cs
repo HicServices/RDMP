@@ -8,6 +8,7 @@ using System;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataFlowPipeline.Requirements;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls;
 
 namespace Rdmp.UI.PipelineUIs.Pipelines.PluginPipelineUsers;

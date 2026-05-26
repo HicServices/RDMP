@@ -10,6 +10,7 @@ using FAnsi.Discovery;
 using FAnsi.Naming;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.EntityNaming;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
 using Rdmp.Core.Providers;
@@ -89,10 +90,6 @@ public interface ITableInfo : IComparable, IHasRuntimeName, IDataAccessPoint, IH
     /// </summary>
     /// <returns></returns>
     bool IsLookupTable();
-
-    /// <inheritdoc cref="IsLookupTable()"/>
-    /// <remarks>High performance version for when you have an <see cref="ICoreChildProvider"/></remarks>
-    public bool IsLookupTable(ICoreChildProvider childProvider);
 
     /// <summary>
     /// Returns the <see cref="IDataAccessPoint.Database"/> name at the given <paramref name="loadStage"/> of a DLE run (RAW=>STAGING=>LIVE)

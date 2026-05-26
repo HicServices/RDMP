@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataQualityEngine;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Reports;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;

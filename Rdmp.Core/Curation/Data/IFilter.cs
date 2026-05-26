@@ -10,6 +10,7 @@ using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.EntityFramework.Models;
 
 namespace Rdmp.Core.Curation.Data;
 
@@ -31,7 +32,7 @@ public interface IFilter : ICollectSqlParameters, INamed, IHasQuerySyntaxHelper,
     string Description { get; set; }
 
     /// <summary>
-    /// True if the <see cref="IFilter"/> should always be used with the <see cref="Catalogue"/> it is associated with if any (See <see cref="GetCatalogue"/>).
+    /// True if the <see cref="IFilter"/> should always be used with the <see cref="EntityFramework.Models.Catalogue"/> it is associated with if any (See <see cref="GetCatalogue"/>).
     /// 
     /// <para>This results in the filter being added to <see cref="CohortIdentificationConfiguration"/> , extarctions etc by default when the <see cref="Catalogue"/> is added</para>
     /// </summary>
@@ -62,7 +63,7 @@ public interface IFilter : ICollectSqlParameters, INamed, IHasQuerySyntaxHelper,
     /// <para>This mostly applies to master top level filters <see cref="ExtractionFilter"/> and cloned copies and helps identify which tables to join to during query building</para>
     /// </summary>
     /// <returns></returns>
-    ColumnInfo GetColumnInfoIfExists();
+    EntityFramework.Models.ColumnInfo GetColumnInfoIfExists();
 
     /// <summary>
     /// Gets an appropriate <see cref="IFilterFactory"/> for creating arguments and other filters of the Type compatible the derived class (e.g. if the <see cref="IFilter"/> is an
@@ -72,9 +73,9 @@ public interface IFilter : ICollectSqlParameters, INamed, IHasQuerySyntaxHelper,
     IFilterFactory GetFilterFactory();
 
     /// <summary>
-    /// Gets the <see cref="Catalogue"/> that this <see cref="IFilter"/> is designed to be run on.  This should return a value regardless of the Type of <see cref="IFilter"/> e.g.
+    /// Gets the <see cref="EntityFramework.Models.Catalogue"/> that this <see cref="IFilter"/> is designed to be run on.  This should return a value regardless of the Type of <see cref="IFilter"/> e.g.
     /// master level or deployed as part of project extractions / cohort identification configurations.
     /// </summary>
     /// <returns></returns>
-    Catalogue GetCatalogue();
+    EntityFramework.Models.Catalogue GetCatalogue();
 }

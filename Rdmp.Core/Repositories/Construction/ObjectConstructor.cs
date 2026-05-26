@@ -13,6 +13,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.EntityFramework.Models;
 
 namespace Rdmp.Core.Repositories.Construction;
 

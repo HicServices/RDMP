@@ -6,6 +6,7 @@
 
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data.Pipelines;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.PipelineUIs.DemandsInitializationUIs;
 

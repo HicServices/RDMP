@@ -6,6 +6,7 @@
 
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Providers;
 using System;
 using System.Linq;

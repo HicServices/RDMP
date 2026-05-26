@@ -37,7 +37,7 @@ public partial class FavouritesCollectionUI : RDMPCollectionUI, ILifetimeSubscri
 
         CommonTreeFunctionality.SetUp(RDMPCollection.Favourites, tlvFavourites, Activator, olvName, olvName,
             new RDMPCollectionCommonFunctionalitySettings(),null);
-        CommonTreeFunctionality.AxeChildren = new Type[] { typeof(CohortIdentificationConfiguration) };
+        //CommonTreeFunctionality.AxeChildren = new Type[] { typeof(CohortIdentificationConfiguration) };
         CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter =
             a => new IAtomicCommand[]
             {
@@ -90,31 +90,31 @@ public partial class FavouritesCollectionUI : RDMPCollectionUI, ILifetimeSubscri
     public static List<IMapsDirectlyToDatabaseTable> FindRootObjects(IActivateItems activator,
         Func<IMapsDirectlyToDatabaseTable, bool> condition)
     {
-        var potentialRootFavourites =
-            activator.CoreChildProvider.GetAllSearchables().Where(k => condition(k.Key)).ToArray();
+        //var potentialRootFavourites =
+        //    activator.CoreChildProvider.GetAllSearchables().Where(k => condition(k.Key)).ToArray();
 
         var hierarchyCollisions = new List<IMapsDirectlyToDatabaseTable>();
 
         //find hierarchy collisions (shared hierarchy in which one Favourite object includes a tree of objects some of which are Favourited).  For this only display the parent
-        foreach (var currentFavourite in potentialRootFavourites)
-        {
-            //current favourite is an absolute root object Type (no parents)
-            if (currentFavourite.Value == null)
-                continue;
+        //foreach (var currentFavourite in potentialRootFavourites)
+        //{
+        //    //current favourite is an absolute root object Type (no parents)
+        //    if (currentFavourite.Value == null)
+        //        continue;
 
-            //if any of the current favourites parents
-            foreach (var parent in currentFavourite.Value.Parents)
-                //are favourites
-                if (potentialRootFavourites.Any(kvp => kvp.Key.Equals(parent)))
-                    //then this is not a favourite it's a collision (already favourited under another node)
-                    hierarchyCollisions.Add(currentFavourite.Key);
-        }
+        //    //if any of the current favourites parents
+        //    foreach (var parent in currentFavourite.Value.Parents)
+        //        //are favourites
+        //        if (potentialRootFavourites.Any(kvp => kvp.Key.Equals(parent)))
+        //            //then this is not a favourite it's a collision (already favourited under another node)
+        //            hierarchyCollisions.Add(currentFavourite.Key);
+        //}
 
         var actualRootFavourites = new List<IMapsDirectlyToDatabaseTable>();
 
-        foreach (var currentFavourite in potentialRootFavourites)
-            if (!hierarchyCollisions.Contains(currentFavourite.Key))
-                actualRootFavourites.Add(currentFavourite.Key);
+        //foreach (var currentFavourite in potentialRootFavourites)
+        //    if (!hierarchyCollisions.Contains(currentFavourite.Key))
+        //        actualRootFavourites.Add(currentFavourite.Key);
 
         return actualRootFavourites;
     }

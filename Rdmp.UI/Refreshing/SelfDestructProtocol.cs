@@ -28,15 +28,15 @@ internal class SelfDestructProtocol<T> : IRefreshBusSubscriber where T : Databas
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {
-        var descendancy = e.DeletedObjectDescendancy ??
-                          _activator.CoreChildProvider.GetDescendancyListIfAnyFor(e.Object);
+        //var descendancy = e.DeletedObjectDescendancy ??
+        //                  _activator.CoreChildProvider.GetDescendancyListIfAnyFor(e.Object);
 
         //implementation of the anonymous callback
         var o = e.Object as T;
 
         //if the descendancy contained our object Type we should also consider a refresh
-        if (o == null && descendancy != null)
-            o = (T)descendancy.Parents.LastOrDefault(p => p is T);
+        //if (o == null && descendancy != null)
+        //    o = (T)descendancy.Parents.LastOrDefault(p => p is T);
 
         //don't respond to events raised by the user themself!
         if (sender == User)

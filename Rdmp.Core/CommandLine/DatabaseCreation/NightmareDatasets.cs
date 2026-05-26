@@ -15,6 +15,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.EntityFramework.Models;
 
 namespace Rdmp.Core.CommandLine.DatabaseCreation;
 
@@ -40,10 +41,10 @@ internal class NightmareDatasets : DataGenerator
         _databaseNameRuntime = db1.GetRuntimeName();
     }
 
-    private BucketList<Catalogue> Catalogues = new ();
-    private BucketList<ExtractableDataSet> ExtractableDatasets = new ();
-    private BucketList<Project> Projects = new ();
-    private BucketList<TableInfo> Tables = new ();
+    private BucketList<Catalogue> Catalogues = new();
+    private BucketList<ExtractableDataSet> ExtractableDatasets = new();
+    private BucketList<Project> Projects = new();
+    private BucketList<TableInfo> Tables = new();
     private int TablesCount;
 
     private BucketList<ColumnInfo> Columns = new();
@@ -75,6 +76,7 @@ internal class NightmareDatasets : DataGenerator
         {
             var cata = new Catalogue(_repos.CatalogueDbContext, $"Catalogue {GetRandomGPCode(r)}")
             {
+                Name = $"Catalogue {GetRandomGPCode(r)}",
                 Description = GetRandomSentence(r)
             };
             cata.SaveToDatabase();
@@ -90,14 +92,17 @@ internal class NightmareDatasets : DataGenerator
 
             foreach (var col in CreateTable())
             {
-                var ci = new CatalogueItem(_repos.CatalogueDbContext, cata, col.Name);
+                var ci = new CatalogueItem(_repos.CatalogueDbContext, cata, col.Name) { Catalogue = cata, Name = col.Name };// _repos.CatalogueDbContext, cata, col.Name);
 
                 // = 60%  of columns are extractable
                 if (r.Next(10) < 6)
                 {
-                    var ei = new ExtractionInformation(_repos.CatalogueDbContext, ci, col, col.Name)
+                    var ei = new ExtractionInformation()
                     {
-                        ExtractionCategory = extractionCategories.GetRandom(r)
+                        CatalogueItem = ci,
+                        //ColumnInfo = col.ID,
+                        Alias = col.Name,
+                        ExtractionCategory = Enum.GetName(extractionCategories.GetRandom(r))
                     };
 
                     if (first)
@@ -109,8 +114,8 @@ internal class NightmareDatasets : DataGenerator
                         if (hasExtractionIdentifier)
                         {
                             ei.IsExtractionIdentifier = true;
-                            ei.ExtractionCategory = ExtractionCategory.Core;
-                            ei.SaveToDatabase();
+                            ei.ExtractionCategory = Enum.GetName(ExtractionCategory.Core);
+                            //ei.SaveToDatabase();
                         }
                     }
 
@@ -207,8 +212,7 @@ internal class NightmareDatasets : DataGenerator
         // 200 cics
         for (var i = 0; i < 200 * Factor; i++)
         {
-            var cic = new CohortIdentificationConfiguration(_repos.CatalogueDbContext,
-                $"Cohort Query {GetRandomGPCode(r)}");
+            var cic = new CohortIdentificationConfiguration(_repos.CatalogueDbContext, $"Cohort Query {GetRandomGPCode(r)}") { Name = $"Cohort Query {GetRandomGPCode(r)}" };
 
             // 25% of cics are associated with a specific project
             if (r.Next(4) == 0)
@@ -238,7 +242,7 @@ internal class NightmareDatasets : DataGenerator
         // 762 tables
         // 18415 columns
         // = average of 24 columns per table
-        var ti = new TableInfo(_repos.CatalogueDbContext, $"[MyDb].[Table{TablesCount++}]");
+        var ti = new TableInfo() { Name = $"[MyDb].[Table{TablesCount++}]" };
 
         // let's not set the server name on 1 in 20 so we get all those
         // horrible null references out in the open
@@ -260,7 +264,7 @@ internal class NightmareDatasets : DataGenerator
 
         var numberOfColumns = GetGaussianInt(1, 48);
         for (var j = 0; j < numberOfColumns; j++)
-            yield return new ColumnInfo(_repos.CatalogueDbContext, $"MyCol{ColumnsCount++}", "varchar(10)", ti);
+            yield return new ColumnInfo() { Name = $"MyCol{ColumnsCount++}", Data_type = "varchar(10)", TableInfo = ti };
     }
 
     // we are not actually interested in these methods, just want to use GetGaussian etc

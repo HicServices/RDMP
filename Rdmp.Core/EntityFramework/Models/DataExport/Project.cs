@@ -53,12 +53,7 @@ namespace Rdmp.Core.EntityFramework.Models.DataExport
             throw new NotImplementedException();
         }
 
-        public Curation.Data.ExtractionInformation[] GetAllProjectCatalogueColumns(ExtractionCategory any)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Curation.Data.ExtractionInformation[] GetAllProjectCatalogueColumns(ICoreChildProvider childProvider, ExtractionCategory any)
+        public ExtractionInformation[] GetAllProjectCatalogueColumns(ExtractionCategory any)
         {
             throw new NotImplementedException();
         }
@@ -88,12 +83,7 @@ namespace Rdmp.Core.EntityFramework.Models.DataExport
             throw new NotImplementedException();
         }
 
-        public void SaveToDatabase()
-        {
-            throw new NotImplementedException();
-        }
-
-        internal IMapsDirectlyToDatabaseTable AssociateWithCohortIdentification(Curation.Data.Cohort.CohortIdentificationConfiguration cic)
+        internal IMapsDirectlyToDatabaseTable AssociateWithCohortIdentification(CohortIdentificationConfiguration cic)
         {
             throw new NotImplementedException();
         }

@@ -400,6 +400,11 @@ public abstract class BasicCommandExecution : IAtomicCommand
     protected DiscoveredTable SelectTable(bool allowDatabaseCreation, string taskDescription) =>
         BasicActivator.SelectTable(allowDatabaseCreation, taskDescription);
 
+    protected void Activate(DatabaseObject o)
+    {
+
+    }
+
     protected virtual void Activate(DatabaseEntity o)
     {
         BasicActivator.Activate(o);

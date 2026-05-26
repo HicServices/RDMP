@@ -6,6 +6,7 @@
 
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Providers.Nodes.UsedByNodes;
 
@@ -29,7 +30,7 @@ internal class QueryCacheUsedByCohortIdentificationNode :
     public void DeleteInDatabase()
     {
         User.QueryCachingServer_ID = null;
-        User.SaveToDatabase();
+        //User.SaveToDatabase();
     }
 
     /// <inheritdoc/>

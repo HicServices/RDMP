@@ -6,6 +6,7 @@
 
 using System;
 using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Icons.IconOverlays;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;

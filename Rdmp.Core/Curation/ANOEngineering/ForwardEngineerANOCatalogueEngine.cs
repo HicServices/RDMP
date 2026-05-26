@@ -14,6 +14,7 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Spontaneous;
 using Rdmp.Core.EntityFramework;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
@@ -35,7 +36,7 @@ public class ForwardEngineerANOCatalogueEngine
     private readonly ForwardEngineerANOCataloguePlanManager _planManager;
     public ICatalogue NewCatalogue { get; private set; }
     public LoadMetadata LoadMetadata { get; private set; }
-    public LoadProgress LoadProgressIfAny { get; set; }
+    public EntityFramework.Models.LoadProgress LoadProgressIfAny { get; set; }
 
     public Dictionary<ITableInfo, QueryBuilder> SelectSQLForMigrations = new();
     public Dictionary<PreLoadDiscardedColumn, IDilutionOperation> DilutionOperationsForMigrations = new();

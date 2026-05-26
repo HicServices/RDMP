@@ -10,6 +10,7 @@ using System.Linq;
 using FAnsi.Discovery;
 using Microsoft.Data.SqlClient;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.Core.ReusableLibraryCode.Progress;

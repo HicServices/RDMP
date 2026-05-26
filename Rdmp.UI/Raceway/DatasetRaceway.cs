@@ -13,6 +13,7 @@ using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.DataQualityEngine.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
@@ -257,25 +258,25 @@ public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
 
     private void btnAddExtractableDatasetPackage_Click(object sender, EventArgs e)
     {
-        if (_activator.CoreChildProvider is not DataExportChildProvider dataExportChildProvider)
-            return;
+        //if (_activator.CoreChildProvider is not DataExportChildProvider dataExportChildProvider)
+        //    return;
 
-        if (Activator.SelectObject(new DialogArgs
-        {
-            TaskDescription = "Choose a Package.  All Catalogues in the Package will be added to the diagram."
-        }, dataExportChildProvider.AllPackages, out var packageToAdd))
-        {
-            //var contents =
-            //    _activator.RepositoryLocator.CatalogueDbContext.GetAllDataSets(packageToAdd,
-            //        dataExportChildProvider.ExtractableDataSets);
+        //if (Activator.SelectObject(new DialogArgs
+        //{
+        //    TaskDescription = "Choose a Package.  All Catalogues in the Package will be added to the diagram."
+        //}, dataExportChildProvider.AllPackages, out var packageToAdd))
+        //{
+        //    //var contents =
+        //    //    _activator.RepositoryLocator.CatalogueDbContext.GetAllDataSets(packageToAdd,
+        //    //        dataExportChildProvider.ExtractableDataSets);
 
-            //foreach (var cata in contents.Select(ds => ds.Catalogue))
-            //    if (!_collection.GetCatalogues().Contains(cata))
-            //        AddCatalogue((Catalogue)cata);
+        //    //foreach (var cata in contents.Select(ds => ds.Catalogue))
+        //    //    if (!_collection.GetCatalogues().Contains(cata))
+        //    //        AddCatalogue((Catalogue)cata);
 
-            SaveCollectionChanges();
-            GenerateChart();
-        }
+        //    SaveCollectionChanges();
+        //    GenerateChart();
+        //}
     }
 
     private void AddCatalogue(Catalogue cata)

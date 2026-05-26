@@ -28,7 +28,7 @@ internal class CatalogueFolderMenu : RDMPContextMenuStrip
 
         args.SkipCommand<ExecuteCommandCreateNewCatalogueByImportingFile>();
 
-        Add(new ExecuteCommandGenerateMetadataReport(_activator,
-            _activator.CoreChildProvider.GetAllChildrenRecursively(folder).OfType<ICatalogue>().ToArray()));
+        //Add(new ExecuteCommandGenerateMetadataReport(_activator,
+        //    _activator.CoreChildProvider.GetAllChildrenRecursively(folder).OfType<ICatalogue>().ToArray()));
     }
 }

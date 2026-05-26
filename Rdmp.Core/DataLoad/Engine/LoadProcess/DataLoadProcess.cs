@@ -10,6 +10,7 @@ using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
 using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Engine.LoadExecution;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
@@ -72,7 +73,7 @@ public class DataLoadProcess : IDataLoadProcess, IDataLoadOperation
             return ExitCodeType.OperationNotRequired;
 
         job.Payload = payload;
-        job.PersistentRaw = Curation.Data.DataLoad.LoadMetadata.UsesPersistentRaw(LoadMetadata);
+        job.PersistentRaw = false;//((LoadMetadata)LoadMetadata).UsesPersistentRaw(LoadMetadata);
 
         return LoadExecution.Run(job, loadCancellationToken);
     }

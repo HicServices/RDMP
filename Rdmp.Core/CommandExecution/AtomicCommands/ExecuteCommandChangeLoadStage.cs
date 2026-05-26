@@ -6,6 +6,7 @@
 
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 using Rdmp.Core.Repositories.Construction;
 

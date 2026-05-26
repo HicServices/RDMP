@@ -9,6 +9,7 @@ using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Defaults;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using LogManager = Rdmp.Core.Logging.LogManager;
 

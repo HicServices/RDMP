@@ -6,6 +6,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.EntityFramework.Helpers;
 using Rdmp.Core.Logging.PastEvents;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
 using System;
 using System.Collections.Generic;
@@ -44,13 +45,14 @@ namespace Rdmp.Core.EntityFramework.Models
 
         public int? RootLoadMetadata_ID => throw new NotImplementedException();
 
-        public Curation.Data.ExternalDatabaseServer OverrideRAWServer => throw new NotImplementedException();
+        public ExternalDatabaseServer OverrideRAWServer => throw new NotImplementedException();
 
         public bool AllowReservedPrefix { get; set; }
 
         IOrderedEnumerable<IProcessTask> ILoadMetadata.ProcessTasks => (IOrderedEnumerable<IProcessTask>)ProcessTasks;
 
         public DateTime? LastLoadTime { get; set; }
+        public int? OverrideRAWServer_ID { get; internal set; }
 
         [NotMapped]
         public string DefaultForLoadingPath = Path.Combine("Data", "ForLoading");
@@ -60,6 +62,12 @@ namespace Rdmp.Core.EntityFramework.Models
         public string DefaultExecutablesPath = "Executables";
         [NotMapped]
         public string DefaultCachePath = Path.Combine("Data", "Cache");
+
+
+        public LoadMetadata() { }
+        public LoadMetadata(RDMPDbContext catalogueDbContext, string text)
+        {
+        }
 
         public List<Catalogue> GetAllCatalogues()
         {
@@ -130,11 +138,6 @@ namespace Rdmp.Core.EntityFramework.Models
             throw new NotImplementedException();
         }
 
-        public void SaveToDatabase()
-        {
-            throw new NotImplementedException();
-        }
-
         public DiscoveredServer GetDistinctLoggingDatabase()
         {
             throw new NotImplementedException();
@@ -153,6 +156,44 @@ namespace Rdmp.Core.EntityFramework.Models
         public IEnumerable<ArchivalDataLoadInfo> FilterRuns(IEnumerable<ArchivalDataLoadInfo> runs)
         {
             throw new NotImplementedException();
+        }
+
+        internal void UnlinkFromCatalogue(Catalogue objectBeingUsed)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal void LinkToCatalogue(Catalogue cata)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal IMapsDirectlyToDatabaseTable SaveNewVersion()
+        {
+            throw new NotImplementedException();
+        }
+
+        public static bool UsesPersistentRaw(ILoadMetadata loadMetadata)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal LoadMetadata Clone()
+        {
+            throw new NotImplementedException();
+        }
+
+        public enum CacheArchiveType
+        {
+            /// <summary>
+            /// Cached files are in a directory uncompressed
+            /// </summary>
+            None = 0,
+
+            /// <summary>
+            /// Cached files are contained in a zip file
+            /// </summary>
+            Zip = 1
         }
     }
 }

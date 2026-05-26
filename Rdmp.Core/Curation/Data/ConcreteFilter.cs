@@ -12,6 +12,7 @@ using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.EntityFramework;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.QueryBuilding.SyntaxChecking;
@@ -148,8 +149,16 @@ public abstract class ConcreteFilter : DatabaseEntity, IFilter, ICheckable, IOrd
             return _cachedDatabaseTypeAnswer.Value;
 
         var col = GetColumnInfoIfExists();
-        _cachedDatabaseTypeAnswer =
-            col != null ? col.TableInfo.DatabaseType : GetCatalogue().GetDistinctLiveDatabaseServerType();
+        if (col == null)
+        {
+            _cachedDatabaseTypeAnswer = GetCatalogue().GetDistinctLiveDatabaseServerType();
+        }
+        else
+        {
+            Enum.TryParse<DatabaseType>(col.TableInfo.DatabaseType, out var dt);
+            _cachedDatabaseTypeAnswer =
+dt;
+        }
 
         return _cachedDatabaseTypeAnswer ??
                throw new AmbiguousDatabaseTypeException($"Unable to determine DatabaseType for Filter '{this}'");
@@ -170,9 +179,9 @@ public abstract class ConcreteFilter : DatabaseEntity, IFilter, ICheckable, IOrd
     }
 
     /// <inheritdoc />
-    public bool ShouldBeReadOnly(string context,out string reason)
+    public bool ShouldBeReadOnly(string context, out string reason)
     {
         reason = null;
-        return FilterContainer?.ShouldBeReadOnly(context,out reason) ?? false;
+        return FilterContainer?.ShouldBeReadOnly(context, out reason) ?? false;
     }
 }

@@ -6,6 +6,7 @@
 
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data.Pipelines;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Providers.Nodes.PipelineNodes;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 

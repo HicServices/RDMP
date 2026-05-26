@@ -7,6 +7,7 @@
 using System;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode;
@@ -18,19 +19,19 @@ namespace Rdmp.Core.CommandExecution;
 
 /// <summary>
 /// Split the contents of the OS clipboard by newlines and add the content of each
-/// line as new <see cref="CatalogueItem"/> to the <see cref="Catalogue"/>.  This
+/// line as new <see cref="CatalogueItem"/> to the <see cref="EntityFramework.Models.Catalogue"/>.  This
 /// lets user copy and paste a SELECT sql query column set to create objects in RDMP.
 /// </summary>
 public class ExecuteCommandPasteClipboardAsNewCatalogueItems : BasicCommandExecution
 {
-    private readonly Catalogue _catalogue;
+    private readonly EntityFramework.Models.Catalogue _catalogue;
     private readonly string _clipboardContents;
     private readonly Func<string> _clipboardContentGetter;
 
     [UseWithObjectConstructor]
     public ExecuteCommandPasteClipboardAsNewCatalogueItems(IBasicActivateItems activator,
         [DemandsInitialization("The Catalogue to add the new CatalogueItems to")]
-        Catalogue catalogue,
+        EntityFramework.Models.Catalogue catalogue,
         [DemandsInitialization("The contents of the OS clipboard or null to prompt user with a message box at runtime")]
         string clipboardContents) : base(activator)
     {
@@ -38,7 +39,7 @@ public class ExecuteCommandPasteClipboardAsNewCatalogueItems : BasicCommandExecu
         _clipboardContents = clipboardContents;
     }
 
-    public ExecuteCommandPasteClipboardAsNewCatalogueItems(IBasicActivateItems activator, Catalogue catalogue,
+    public ExecuteCommandPasteClipboardAsNewCatalogueItems(IBasicActivateItems activator, EntityFramework.Models.Catalogue catalogue,
         Func<string> clipboardContentGetter) : base(activator)
     {
         _catalogue = catalogue;

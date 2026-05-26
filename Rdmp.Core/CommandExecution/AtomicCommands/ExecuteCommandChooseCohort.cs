@@ -44,15 +44,15 @@ public class ExecuteCommandChooseCohort : BasicCommandExecution, IAtomicCommand
             return;
         }
 
-        if (BasicActivator.CoreChildProvider is not DataExportChildProvider childProvider)
-        {
-            SetImpossible("Activator.CoreChildProvider is not an DataExportChildProvider");
-            return;
-        }
+        //if (BasicActivator.CoreChildProvider is not DataExportChildProvider childProvider)
+        //{
+        //    SetImpossible("Activator.CoreChildProvider is not an DataExportChildProvider");
+        //    return;
+        //}
 
         //find cohorts that match the project number
-        if (childProvider.ProjectNumberToCohortsDictionary.TryGetValue(project.ProjectNumber.Value, out var value))
-            _compatibleCohorts = value.Where(c => !c.IsDeprecated).ToList();
+        //if (childProvider.ProjectNumberToCohortsDictionary.TryGetValue(project.ProjectNumber.Value, out var value))
+        //    _compatibleCohorts = value.Where(c => !c.IsDeprecated).ToList();
 
         //if there's only one compatible cohort and that one is already selected
         if (_compatibleCohorts.Count == 1 && _compatibleCohorts.Single().ID == _extractionConfiguration.Cohort_ID)

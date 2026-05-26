@@ -18,10 +18,12 @@ using Rdmp.Core.DataExport.DataExtraction.Commands;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline;
 using Rdmp.Core.DataExport.DataExtraction.UserPicks;
 using Rdmp.Core.DataExport.DataRelease.Potential;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Logging;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
+using static Rdmp.Core.EntityFramework.Models.SupportingSQLTable;
 
 namespace Rdmp.Core.DataExport.Checks;
 
@@ -343,9 +345,9 @@ public class SelectedDataSetsChecker : ICheckable
     public static void WarnAboutExtractionCategory(ICheckNotifier notifier, IExtractionConfiguration configuration,
         IExtractableDataSet dataset, ExtractionInformation[] cols, ErrorCode errorCode, ExtractionCategory category)
     {
-        if (cols.Any(c => c?.ExtractionCategory == category))
+        if (cols.Any(c => c?.ExtractionCategory == Enum.GetName(category)))
             notifier.OnCheckPerformed(new CheckEventArgs(errorCode, configuration, dataset,
-                string.Join(",", cols.Where(c => c?.ExtractionCategory == category)
+                string.Join(",", cols.Where(c => c?.ExtractionCategory == Enum.GetName(category))
                     .Select(c => c.GetRuntimeName()))));
     }
 }

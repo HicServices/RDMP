@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace Rdmp.Core.EntityFramework.Helpers
 {
-    public  class DatabaseObject: IMapsDirectlyToDatabaseTable, IDeleteable
+    public class DatabaseObject : IMapsDirectlyToDatabaseTable, IDeleteable
     {
         public virtual int ID { get; set; }
 
@@ -43,6 +43,11 @@ namespace Rdmp.Core.EntityFramework.Helpers
         {
             OnPropertyChanged(field, value, null);
             field = value;
+        }
+
+        public void SaveToDatabase()
+        {
+            //todo
         }
     }
 }

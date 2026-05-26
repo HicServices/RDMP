@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.QueryBuilding;
 
@@ -93,21 +94,22 @@ public sealed class ExecuteCommandSimilar : BasicCommandExecution
     {
         if (_matched is not null) return _matched;
 
-        try
-        {
-            var others = BasicActivator.CoreChildProvider.GetAllObjects(_to.GetType(), true).Where(IsSimilar)
-                .Where(Include).ToList().AsReadOnly();
-            if (others.Count == 0)
-                SetImpossible(_butDifferent
-                    ? "There are no alternate column specifications of this column"
-                    : "There are no Similar objects");
-            return others;
-        }
-        catch (Exception ex)
-        {
-            SetImpossible($"Error finding Similar:{ex.Message}");
-            return Empty;
-        }
+        //try
+        //{
+        //    var others = BasicActivator.CoreChildProvider.GetAllObjects(_to.GetType(), true).Where(IsSimilar)
+        //        .Where(Include).ToList().AsReadOnly();
+        //    if (others.Count == 0)
+        //        SetImpossible(_butDifferent
+        //            ? "There are no alternate column specifications of this column"
+        //            : "There are no Similar objects");
+        //    return others;
+        //}
+        //catch (Exception ex)
+        //{
+        //    SetImpossible($"Error finding Similar:{ex.Message}");
+        //    return Empty;
+        //}
+        return Empty;
     }
 
     public override string GetCommandHelp() =>

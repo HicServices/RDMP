@@ -21,6 +21,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Icons.IconOverlays;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
@@ -129,7 +130,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
     {
         { typeof(Catalogue), RDMPCollection.Catalogue },
         { typeof(CatalogueItem), RDMPCollection.Catalogue },
-        { typeof(SupportingDocument), RDMPCollection.Catalogue },
+        { typeof(Core.EntityFramework.Models.SupportingDocument), RDMPCollection.Catalogue },
         { typeof(Project), RDMPCollection.DataExport },
         { typeof(ExtractionConfiguration), RDMPCollection.DataExport },
         { typeof(ExtractableCohort), RDMPCollection.SavedCohorts },
@@ -153,7 +154,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
             { RDMPCollection.SavedCohorts, new[] { typeof(ExtractableCohort) } },
             { RDMPCollection.Tables, new[] { typeof(TableInfo) } },
             {
-                RDMPCollection.None, new[] { typeof(SupportingDocument), typeof(CatalogueItem) }
+                RDMPCollection.None, new[] { typeof(Core.EntityFramework.Models.SupportingDocument), typeof(CatalogueItem) }
             } //Add all other Type checkboxes here so that they are recognised as Typenames
         };
 
@@ -170,8 +171,9 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         if (IsDatabaseObjects())
         {
             _allObjects = toSelectFrom.Distinct().ToArray();
-            _searchables = _allObjects.Cast<IMapsDirectlyToDatabaseTable>()
-                .ToDictionary(k => k, activator.CoreChildProvider.GetDescendancyListIfAnyFor);
+            _searchables = new();
+            //_searchables = _allObjects.Cast<IMapsDirectlyToDatabaseTable>()
+            //    .ToDictionary(k => k, activator.CoreChildProvider.GetDescendancyListIfAnyFor);
             _usefulPropertyFinder = new AttributePropertyFinder<UsefulPropertyAttribute>(_searchables.Keys);
 
             AddUsefulPropertiesIfHomogeneousTypes(_allObjects);

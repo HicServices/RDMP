@@ -6,6 +6,7 @@
 
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.UI.ExtractionUIs.JoinsAndLookups;
 using Rdmp.UI.ItemActivation;
 

@@ -11,6 +11,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Repositories;
@@ -31,10 +32,10 @@ public class Gatherer
         _repositoryLocator = repositoryLocator;
 
         _functions.Add(typeof(Catalogue), o => GatherDependencies((Catalogue)o));
-        _functions.Add(typeof(ColumnInfo), o => GatherDependencies((ColumnInfo)o));
-        _functions.Add(typeof(ANOTable), o => GatherDependencies((ANOTable)o));
+        _functions.Add(typeof(EntityFramework.Models.ColumnInfo), o => GatherDependencies((EntityFramework.Models.ColumnInfo)o));
+        _functions.Add(typeof(EntityFramework.Models.ANOTable), o => GatherDependencies((EntityFramework.Models.ANOTable)o));
 
-        _functions.Add(typeof(LoadMetadata), o => GatherDependencies((LoadMetadata)o));
+        _functions.Add(typeof(EntityFramework.Models.LoadMetadata), o => GatherDependencies((EntityFramework.Models.LoadMetadata)o));
 
         _functions.Add(typeof(ExtractionFilter), o => GatherDependencies((IFilter)o));
         _functions.Add(typeof(DeployedExtractionFilter), o => GatherDependencies((IFilter)o));
@@ -60,7 +61,7 @@ public class Gatherer
 
     public GatheredObject GatherDependencies(IMapsDirectlyToDatabaseTable o) => _functions[o.GetType()](o);
 
-    public static GatheredObject GatherDependencies(ANOTable anoTable)
+    public static GatheredObject GatherDependencies(EntityFramework.Models.ANOTable anoTable)
     {
         var root = new GatheredObject(anoTable.Server);
         root.Children.Add(new GatheredObject(anoTable));
@@ -68,7 +69,7 @@ public class Gatherer
         return root;
     }
 
-    public GatheredObject GatherDependencies(LoadMetadata loadMetadata)
+    public GatheredObject GatherDependencies(EntityFramework.Models.LoadMetadata loadMetadata)
     {
         //Share the LoadMetadata
         var root = new GatheredObject(loadMetadata);
@@ -89,7 +90,7 @@ public class Gatherer
             }
         }
 
-        var linkage = loadMetadata.CatalogueDbContext.GetAllObjectsWhere<LoadMetadataCatalogueLinkage>("LoadMetadataID", loadMetadata.ID);
+        var linkage = loadMetadata.CatalogueDbContext.GetAllObjectsWhere<EntityFramework.Models.LoadMetadataCatalogueLinkage>("LoadMetadataID", loadMetadata.ID);
         foreach (var link in linkage)
         {
             var glcl = new GatheredObject(link);
@@ -126,7 +127,7 @@ public class Gatherer
     /// </summary>
     /// <param name="c"></param>
     /// <returns></returns>
-    public GatheredObject GatherDependencies(ColumnInfo c)
+    public GatheredObject GatherDependencies(EntityFramework.Models.ColumnInfo c)
     {
         var allObjects = GetAllObjectsInAllDatabases();
 

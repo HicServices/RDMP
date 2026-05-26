@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.EntityFramework;
+using Rdmp.Core.EntityFramework.Models;
 
 namespace Rdmp.Core.Repositories.Managers;
 

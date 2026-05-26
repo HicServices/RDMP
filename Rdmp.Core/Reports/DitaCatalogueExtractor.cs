@@ -16,6 +16,7 @@ using System.Threading;
 using System.Web;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.EntityFramework;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode;
@@ -121,7 +122,7 @@ public class DitaCatalogueExtractor : ICheckable
     }
 
 
-    private static string GetFileNameForCatalogueItem(Catalogue c, CatalogueItem ci)
+    private static string GetFileNameForCatalogueItem(Catalogue c, EntityFramework.Models.CatalogueItem ci)
     {
         var parentName = FixName(c.Acronym);
         var childName = FixName(ci.Name);
@@ -165,7 +166,7 @@ public class DitaCatalogueExtractor : ICheckable
         File.WriteAllText(saveLocation, xml);
     }
 
-    private void CreateCatalogueItemFile(Catalogue c, CatalogueItem ci)
+    private void CreateCatalogueItemFile(Catalogue c, EntityFramework.Models.CatalogueItem ci)
     {
         var saveLocation = Path.Combine(_folderToCreateIn.FullName, GetFileNameForCatalogueItem(c, ci));
 

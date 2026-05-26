@@ -7,6 +7,7 @@
 using BrightIdeasSoftware;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.EntityFramework;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Providers;
 using Rdmp.Core.ReusableLibraryCode.Settings;
 

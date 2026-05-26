@@ -45,8 +45,8 @@ internal class ExecuteCommandShowSummaryOfCohorts : BasicUICommandExecution, IAt
         base(activator)
     {
         _commandName = "Show Detailed Summary of Cohorts";
-        _onlyCohorts = activator.CoreChildProvider.GetChildren(externalCohortTable).OfType<ExtractableCohort>()
-            .ToArray();
+        //_onlyCohorts = activator.CoreChildProvider.GetChildren(externalCohortTable).OfType<ExtractableCohort>()
+        //    .ToArray();
     }
 
     public override string GetCommandHelp() =>

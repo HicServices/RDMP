@@ -12,6 +12,12 @@ namespace Rdmp.Core.EntityFramework.Models
 {
     public class Dataset : DatabaseObject, IHasFolder
     {
+        public Dataset() { }
+        public Dataset(RDMPDbContext catalogueDbContext, string name)
+        {
+            CatalogueDbContext = catalogueDbContext;
+        }
+
         [Key]
         public override int ID { get; set; }
 

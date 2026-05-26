@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using FAnsi.Naming;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Sharing.Refactoring.Exceptions;
@@ -69,7 +70,7 @@ public class SelectSQLRefactorer
                 $"Replacement table name was not fully specified, value passed was '{newFullySpecifiedTableName}' which did not contain any dots");
 
         column.Name = column.Name.Replace(fullyQualifiedName, newFullySpecifiedTableName);
-        column.SaveToDatabase();
+        //column.SaveToDatabase();
     }
 
     protected static void Save(object o)
@@ -259,7 +260,7 @@ public class SelectSQLRefactorer
                 if (!extractionInformation.SelectSQL.Equals(newvalue))
                 {
                     extractionInformation.SelectSQL = newvalue;
-                    extractionInformation.SaveToDatabase();
+                    //extractionInformation.SaveToDatabase();
                     updatesMade++;
                 }
             }

@@ -16,6 +16,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.QueryCaching.Aggregation;
 
@@ -146,7 +147,7 @@ public class CohortIdentificationConfigurationUICommon
 
         Configuration.CreateRootContainerIfNotExists();
         //if there is no root container,create one
-        _globals = Configuration.GetAllParameters();
+        _globals = Configuration.GetAllParameters().ToArray();
 
         //Could have configured/unconfigured a joinable state
         foreach (var j in Compiler.Tasks.Keys.OfType<JoinableTask>())

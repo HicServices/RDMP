@@ -14,6 +14,7 @@ using Rdmp.Core.DataLoad.Engine.DataProvider;
 using Rdmp.Core.DataLoad.Engine.DataProvider.FromCache;
 using Rdmp.Core.DataLoad.Engine.Mutilators;
 using Rdmp.Core.DataLoad.Modules.Attachers;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 using Rdmp.Core.Repositories;
 

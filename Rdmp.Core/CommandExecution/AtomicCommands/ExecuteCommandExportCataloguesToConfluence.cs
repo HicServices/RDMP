@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Dataset.Confluence;
+using Rdmp.Core.EntityFramework.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

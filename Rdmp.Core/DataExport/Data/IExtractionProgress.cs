@@ -7,6 +7,7 @@
 using System;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 

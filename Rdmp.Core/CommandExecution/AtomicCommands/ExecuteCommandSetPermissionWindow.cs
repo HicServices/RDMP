@@ -26,8 +26,8 @@ public class ExecuteCommandSetPermissionWindow : BasicCommandExecution, IAtomicC
         _cacheProgress = cacheProgress;
         _window = null;
 
-        if (!activator.CoreChildProvider.AllPermissionWindows.Any())
-            SetImpossible("There are no PermissionWindows created yet");
+        //if (!activator.CoreChildProvider.AllPermissionWindows.Any())
+        //    SetImpossible("There are no PermissionWindows created yet");
     }
 
     public override string GetCommandHelp() => "Restrict caching execution to the given time period";

@@ -14,6 +14,7 @@ using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using System.ComponentModel;
+using Rdmp.Core.EntityFramework.Models;
 
 namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs;
 

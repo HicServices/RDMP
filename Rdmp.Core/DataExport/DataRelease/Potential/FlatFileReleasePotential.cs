@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.DataExport.DataRelease.Potential;

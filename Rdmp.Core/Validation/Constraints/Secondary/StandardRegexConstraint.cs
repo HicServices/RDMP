@@ -10,6 +10,7 @@ using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.EntityFramework;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Validation.UIAttributes;
 

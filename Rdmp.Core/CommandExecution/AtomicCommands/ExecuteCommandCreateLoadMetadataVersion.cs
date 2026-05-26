@@ -1,6 +1,7 @@
 ﻿using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data;
 using System;
+using Rdmp.Core.EntityFramework.Models;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
@@ -23,7 +24,7 @@ public class ExecuteCommandCreateLoadMetadataVersion: BasicCommandExecution
             throw new Exception("Must Use Root LoadMetadata to create Version");
         }
         var lmd = _loadMetadata.SaveNewVersion();
-        lmd.SaveToDatabase();
+        //lmd.SaveToDatabase();
         _activator.Publish(lmd);
     }
 }

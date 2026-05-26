@@ -14,6 +14,7 @@ using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.EntityFramework.Helpers;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
+using Rdmp.Core.EntityFramework.Models;
 
 namespace Rdmp.Core.DataViewing;
 
@@ -73,7 +74,7 @@ public class ViewAggregateExtractUICollection : PersistableObjectCollection, IVi
         var cic = ac.GetCohortIdentificationConfigurationIfAny();
         var globals = cic.GetAllParameters();
 
-        var builder = new CohortQueryBuilder(ac, globals, null);
+        var builder = new CohortQueryBuilder(ac, globals);
 
         if (UseQueryCache)
             builder.CacheServer = GetCacheServer();

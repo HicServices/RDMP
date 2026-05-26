@@ -17,6 +17,11 @@ namespace Rdmp.Core.EntityFramework.Models
     public class CohortIdentificationConfiguration : DatabaseObject, IHasFolder, ICollectSqlParameters
     {
 
+        public CohortIdentificationConfiguration() { }
+        public CohortIdentificationConfiguration(RDMPDbContext catalogueDbContext, string text)
+        {
+        }
+
         [Key]
         public override int ID { get; set; }
 
@@ -40,8 +45,9 @@ namespace Rdmp.Core.EntityFramework.Models
         [ForeignKey("QueryCachingServer_ID")]
         public virtual ExternalDatabaseServer? QueryCachingServer { get; set; }
         public int? ClonedFrom_ID { get; set; }
+        public static string CICPrefix => "cic_";
 
-        #nullable disable
+#nullable disable
 
         public override string ToString()
         {
@@ -57,7 +63,7 @@ namespace Rdmp.Core.EntityFramework.Models
 
         public string GetNamingConventionPrefixForConfigurations() => "CohortIdentificationConfiguration_";//TODO
 
-        public Curation.Data.Cohort.CohortIdentificationConfiguration CreateClone(ThrowImmediatelyCheckNotifier quiet)
+        public CohortIdentificationConfiguration CreateClone(ThrowImmediatelyCheckNotifier quiet)
         {
             throw new NotImplementedException();
         }
@@ -82,7 +88,7 @@ namespace Rdmp.Core.EntityFramework.Models
             throw new NotImplementedException();
         }
 
-        public AggregateConfiguration CreateNewEmptyConfigurationForCatalogue(Catalogue catalogue, Curation.Data.Cohort.CohortIdentificationConfiguration.ChooseWhichExtractionIdentifierToUseFromManyHandler chooseWhichExtractionIdentifierToUseFromManyHandler, bool importMandatoryFilters)
+        public AggregateConfiguration CreateNewEmptyConfigurationForCatalogue(Catalogue catalogue, CohortIdentificationConfiguration.ChooseWhichExtractionIdentifierToUseFromManyHandler chooseWhichExtractionIdentifierToUseFromManyHandler, bool importMandatoryFilters)
         {
             throw new NotImplementedException();
         }
@@ -96,5 +102,21 @@ namespace Rdmp.Core.EntityFramework.Models
         {
             throw new NotImplementedException();
         }
+
+        public void CreateRootContainerIfNotExists()
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Delegate for handling the situation in which the user wants to create a cohort based on a given Catalogue but there are multiple IsExtractionIdentifier columns.
+        /// For example SMR02 (baby birth records) might have (Mother CHI, Father CHI, Baby CHI).  In this situation the decision on which column to use is resolved by this
+        /// class.
+        /// </summary>
+        /// <param name="catalogue"></param>
+        /// <param name="candidates"></param>
+        /// <returns></returns>
+        public delegate ExtractionInformation ChooseWhichExtractionIdentifierToUseFromManyHandler(ICatalogue catalogue,
+            ExtractionInformation[] candidates);
     }
 }

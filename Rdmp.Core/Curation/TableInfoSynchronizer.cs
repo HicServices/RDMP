@@ -12,6 +12,7 @@ using Microsoft.Data.SqlClient;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.DataHelper;
 using Rdmp.Core.EntityFramework;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
@@ -229,7 +230,7 @@ public class TableInfoSynchronizer
                     //make them extractable only as internal since it is likely they could contain sensitive data if user is just used to hammering Ok on all dialogues
                     foreach (var e in eis)
                     {
-                        e.ExtractionCategory = ExtractionCategory.Internal;
+                        e.ExtractionCategory = Enum.GetName(ExtractionCategory.Internal);
                         e.SaveToDatabase();
                     }
 

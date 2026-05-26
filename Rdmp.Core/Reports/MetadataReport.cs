@@ -14,6 +14,7 @@ using System.Threading;
 using NPOI.XWPF.UserModel;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.EntityFramework;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
@@ -378,7 +379,8 @@ public class MetadataReport : DocXHelper
 
     private bool Include(ExtractionInformation arg)
     {
-        return arg.ExtractionCategory switch
+        Enum.TryParse<ExtractionCategory>(arg.ExtractionCategory, out var extractionCategory);
+        return extractionCategory switch
         {
             ExtractionCategory.Core => true,
             ExtractionCategory.Supplemental => true,

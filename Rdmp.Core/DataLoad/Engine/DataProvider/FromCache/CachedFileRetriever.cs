@@ -20,6 +20,7 @@ using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Engine.Job.Scheduling;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
+using static Rdmp.Core.EntityFramework.Models.LoadMetadata;
 
 namespace Rdmp.Core.DataLoad.Engine.DataProvider.FromCache;
 

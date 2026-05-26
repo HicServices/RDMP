@@ -7,6 +7,7 @@
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.EntityFramework.Models;
 
 namespace Rdmp.Core.Providers.Nodes;
 

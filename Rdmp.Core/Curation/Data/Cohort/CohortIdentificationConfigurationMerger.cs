@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.EntityFramework;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 
@@ -54,8 +55,10 @@ public class CohortIdentificationConfigurationMerger
         //using (_catalogueDbContext.BeginNewTransaction())
         //{
         //    // Create a new master configuration
-        var cicMaster = new CohortIdentificationConfiguration(_catalogueDbContext,
-            $"Merged cics (IDs {string.Join(",", cics.Select(c => c.ID))})");
+        var cicMaster = new CohortIdentificationConfiguration(_catalogueDbContext, $"Merged cics (IDs {string.Join(",", cics.Select(c => c.ID))})")
+        {
+            Name = $"Merged cics (IDs {string.Join(",", cics.Select(c => c.ID))})"
+        };
 
         //    // With a single top level container with the provided operation
         //    cicMaster.CreateRootContainerIfNotExists();
@@ -145,7 +148,7 @@ public class CohortIdentificationConfigurationMerger
     {
         //clear any old cic_x prefixes
         ac.Name = Regex.Replace(ac.Name, $@"^({CohortIdentificationConfiguration.CICPrefix}\d+_?)+", "");
-        ac.SaveToDatabase();
+        //ac.SaveToDatabase();
 
         //and add the new correct one
         cic.EnsureNamingConvention(ac);
@@ -165,7 +168,7 @@ public class CohortIdentificationConfigurationMerger
             throw new ArgumentException("Container must contain only sub-containers (i.e. no aggregates)",
                 nameof(rootContainer));
 
-        if (rootContainer.GetSubContainers().Length <= 1)
+        if (rootContainer.GetSubContainers().Count <= 1)
             throw new ArgumentException("Container must contain 2+ sub-containers to be unmerged",
                 nameof(rootContainer));
 
@@ -175,7 +178,7 @@ public class CohortIdentificationConfigurationMerger
         try
         {
             // clone the input cic
-            cic = cic.CreateClone(ThrowImmediatelyCheckNotifier.Quiet,null);
+            cic = cic.CreateClone(ThrowImmediatelyCheckNotifier.Quiet, null);
 
             // grab the new clone root container
             rootContainer = cic.RootCohortAggregateContainer;

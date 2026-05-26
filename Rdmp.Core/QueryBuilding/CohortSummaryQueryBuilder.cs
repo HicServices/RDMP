@@ -10,6 +10,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Spontaneous;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
 
@@ -28,7 +29,6 @@ public class CohortSummaryQueryBuilder
     private IColumn _extractionIdentifierColumn;
 
     private AggregateConfiguration _cohort;
-    private readonly ICoreChildProvider _childProvider;
     private CohortAggregateContainer _cohortContainer;
 
     /// <summary>
@@ -37,9 +37,7 @@ public class CohortSummaryQueryBuilder
     /// </summary>
     /// <param name="summary">A basic aggregate that you want to restrict by cohort e.g. a pivot on drugs prescribed over time with an axis interval of year</param>
     /// <param name="cohort">A cohort aggregate that has a single AggregateDimension which must be an IsExtractionIdentifier and must follow the correct cohort aggregate naming conventions (See IsCohortIdentificationAggregate)</param>
-    /// <param name="childProvider"></param>
-    public CohortSummaryQueryBuilder(EntityFramework.Models.AggregateConfiguration summary, AggregateConfiguration cohort,
-        ICoreChildProvider childProvider)
+    public CohortSummaryQueryBuilder(EntityFramework.Models.AggregateConfiguration summary, AggregateConfiguration cohort)
     {
         if (cohort == null)
             throw new ArgumentException("cohort was null in CohortSummaryQueryBuilder constructor", nameof(cohort));
@@ -67,14 +65,13 @@ public class CohortSummaryQueryBuilder
 
         _summary = summary;
         _cohort = cohort;
-        _childProvider = childProvider;
 
         //here we take the identifier from the cohort because the dataset might have multiple identifiers e.g. birth record could have patient Id, parent Id, child Id etc.  The Aggregate will already have one of those selected and only one of them selected
         _extractionIdentifierColumn = _cohort.AggregateDimensions.Single(d => d.IsExtractionIdentifier);
 
         var cic = _cohort.GetCohortIdentificationConfigurationIfAny() ?? throw new ArgumentException(
             $"AggregateConfiguration {_cohort} looked like a cohort but did not belong to any CohortIdentificationConfiguration");
-        _globals = cic.GetAllParameters();
+        _globals = cic.GetAllParameters().ToArray();
     }
 
 
@@ -158,7 +155,7 @@ public class CohortSummaryQueryBuilder
         if (joinUse != null)
         {
             //get sql for the join table
-            var builder = new CohortQueryBuilder(joinTo, _globals, null);
+            var builder = new CohortQueryBuilder(joinTo, _globals);
             var joinableSql = new CohortQueryBuilderDependencySql(builder.SQL, builder.ParameterManager);
 
             var helper = new CohortQueryBuilderHelper();
@@ -248,9 +245,10 @@ public class CohortSummaryQueryBuilder
         if (_cohort != null)
             return _cohort.GetCohortIdentificationConfigurationIfAny().QueryCachingServer;
 
-        return _cohortContainer != null
-            ? _cohortContainer.GetCohortIdentificationConfiguration().QueryCachingServer
-            : throw new NotSupportedException("Expected there to be either a _cohort or a _cohortContainer");
+        //return _cohortContainer != null
+        //    ? _cohortContainer.GetCohortIdentificationConfiguration().QueryCachingServer
+        //    : throw new NotSupportedException("Expected there to be either a _cohort or a _cohortContainer");
+        return null;
     }
 
     private CohortQueryBuilder GetBuilder()

@@ -10,6 +10,7 @@ using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.Referencing;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Logging;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
@@ -116,7 +117,7 @@ public interface ICatalogueRepository : IRepository, IServerDefaults
     /// a whole bunch of catalogues.
     /// </summary>
     /// <returns></returns>
-    Catalogue[] GetAllCataloguesUsing(TableInfo tableInfo);
+    EntityFramework.Models.Catalogue[] GetAllCataloguesUsing(TableInfo tableInfo);
 
     /// <summary>
     /// Returns all <see cref="ExternalDatabaseServer"/> which were created by the patcher specified.  The patcher must have a blank constructor

@@ -29,6 +29,7 @@ using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataViewing;
 using Rdmp.Core.EntityFramework;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Logging;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
@@ -142,7 +143,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         _windowManager = windowManager;
         RefreshBus = refreshBus;
 
-        RefreshBus.ChildProvider = CoreChildProvider;
+        //RefreshBus.ChildProvider = CoreChildProvider;
 
         HistoryProvider = new HistoryProvider(repositoryLocator);
 
@@ -153,7 +154,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
 
         ProblemProviders = new List<IProblemProvider>
         {
-            new DataExportProblemProvider(),
+            //new DataExportProblemProvider(),
             new CatalogueProblemProvider()
         };
         RefreshProblemProviders();
@@ -164,14 +165,14 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         IsAbleToLaunchSubprocesses = true;
     }
 
-    protected override ICoreChildProvider GetChildProvider()
-    {
-        var provider = base.GetChildProvider();
+    //protected override ICoreChildProvider GetChildProvider()
+    //{
+    //    var provider = base.GetChildProvider();
 
-        if (RefreshBus != null) RefreshBus.ChildProvider = provider;
+    //    if (RefreshBus != null) RefreshBus.ChildProvider = provider;
 
-        return provider;
-    }
+    //    return provider;
+    //}
 
 
     public Form ShowWindow(Control singleControlForm, bool asDocument = false)
@@ -220,16 +221,16 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         AdjustEmphasiseRequest(request);
 
         //ensure a relevant Toolbox is available
-        var descendancy = CoreChildProvider.GetDescendancyListIfAnyFor(request.ObjectToEmphasise);
+        //var descendancy = CoreChildProvider.GetDescendancyListIfAnyFor(request.ObjectToEmphasise);
 
-        var root = descendancy != null
-            ? descendancy.Parents.FirstOrDefault()
-            : request.ObjectToEmphasise; //assume maybe o is a root object itself?
+        //var root = descendancy != null
+        //    ? descendancy.Parents.FirstOrDefault()
+        //    : request.ObjectToEmphasise; //assume maybe o is a root object itself?
 
-        if (root is Rdmp.Core.EntityFramework.Models.CohortIdentificationConfiguration cic)
-            Activate<CohortIdentificationConfigurationUI, Rdmp.Core.EntityFramework.Models.CohortIdentificationConfiguration>(cic);
-        else if (root != null)
-            _windowManager.ShowCollectionWhichSupportsRootObjectType(root);
+        //if (root is Rdmp.Core.EntityFramework.Models.CohortIdentificationConfiguration cic)
+        //    Activate<CohortIdentificationConfigurationUI, Rdmp.Core.EntityFramework.Models.CohortIdentificationConfiguration>(cic);
+        //else if (root != null)
+        //    _windowManager.ShowCollectionWhichSupportsRootObjectType(root);
 
         //really should be a listener now btw since we just launched the relevant Toolbox if it wasn't there before
         //Look at assignments to Sender, the invocation list can change the Sender!
@@ -538,20 +539,20 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {
         // if we don't want to do selective refresh or can't (because partial refreshes are not supported on the type)
-        if (HardRefresh || !UserSettings.SelectiveRefresh || !CoreChildProvider.SelectiveRefresh(e.Object))
-        {
-            //update the child provider with a full refresh
-            GetChildProvider();
-            HardRefresh = false;
-        }
+        //if (HardRefresh || !UserSettings.SelectiveRefresh || !CoreChildProvider.SelectiveRefresh(e.Object))
+        //{
+        //    //update the child provider with a full refresh
+        //    GetChildProvider();
+        //    HardRefresh = false;
+        //}
 
         RefreshProblemProviders();
     }
 
     private void RefreshProblemProviders()
     {
-        foreach (var p in ProblemProviders)
-            p.RefreshProblems(CoreChildProvider);
+        //foreach (var p in ProblemProviders)
+            //p.RefreshProblems(CoreChildProvider);
     }
 
     /// <inheritdoc />
@@ -846,24 +847,24 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
     public void StartSession(string sessionName, IEnumerable<IMapsDirectlyToDatabaseTable> initialObjects,
         string initialSearch)
     {
-        if (initialObjects == null)
-        {
-            initialObjects = SelectMany(new DialogArgs
-            {
-                WindowTitle = sessionName.StartsWith(ExecuteCommandStartSession.FindResultsTitle)
-                    ? "Find Multiple"
-                    : "Session Objects",
-                TaskDescription =
-                    "Pick which objects you want added to the session window.  You can always add more later",
-                InitialSearchText = initialSearch,
+        //if (initialObjects == null)
+        //{
+        //    initialObjects = SelectMany(new DialogArgs
+        //    {
+        //        WindowTitle = sessionName.StartsWith(ExecuteCommandStartSession.FindResultsTitle)
+        //            ? "Find Multiple"
+        //            : "Session Objects",
+        //        TaskDescription =
+        //            "Pick which objects you want added to the session window.  You can always add more later",
+        //        InitialSearchText = initialSearch,
 
-                IsFind = sessionName.StartsWith(ExecuteCommandStartSession.FindResultsTitle)
-            }, typeof(IMapsDirectlyToDatabaseTable), CoreChildProvider.GetAllSearchables().Keys.ToArray())?.ToList();
+        //        IsFind = sessionName.StartsWith(ExecuteCommandStartSession.FindResultsTitle)
+        //    }, typeof(IMapsDirectlyToDatabaseTable), CoreChildProvider.GetAllSearchables().Keys.ToArray())?.ToList();
 
-            if (initialObjects?.Any() != true)
-                // user cancelled picking objects
-                return;
-        }
+        //    if (initialObjects?.Any() != true)
+        //        // user cancelled picking objects
+        //        return;
+        //}
 
         var panel = WindowFactory.Create(this, new SessionCollectionUI(), new SessionCollection(sessionName)
         {
@@ -987,11 +988,11 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
             return;
         }
 
-        var select = new SelectDialog<IMapsDirectlyToDatabaseTable>(
-            args, this, CoreChildProvider.GetAllSearchables().Select(k => k.Key), false,
-            _windowManager.GetFocusedCollection());
+        //var select = new SelectDialog<IMapsDirectlyToDatabaseTable>(
+        //    args, this, CoreChildProvider.GetAllSearchables().Select(k => k.Key), false,
+        //    _windowManager.GetFocusedCollection());
 
-        if (select.ShowDialog() == DialogResult.OK && select.Selected != null) callback(select.Selected);
+        //if (select.ShowDialog() == DialogResult.OK && select.Selected != null) callback(select.Selected);
     }
 
     public override void ShowData(IViewSQLAndResultsCollection collection)

@@ -115,7 +115,7 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="Rdmp.Core.Curation.Data.CatalogueObscureDependencyFinder" Collapsed="true">
+  <Class Name="Rdmp.Core.CatalogueObscureDependencyFinder" Collapsed="true">
     <Position X="0.5" Y="8" Width="2.75" />
     <TypeIdentifier>
       <HashCode>gAAAAAAAAABAAAAAAAAIAAAAAAAAABAAAAACAAAAAAA=</HashCode>

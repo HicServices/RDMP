@@ -14,6 +14,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.DataExtraction;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.EntityFramework;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;

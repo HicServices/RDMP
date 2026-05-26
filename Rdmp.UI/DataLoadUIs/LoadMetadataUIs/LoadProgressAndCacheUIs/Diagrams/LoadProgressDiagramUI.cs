@@ -11,6 +11,7 @@ using System.Windows.Forms.DataVisualization.Charting;
 using BrightIdeasSoftware;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataQualityEngine.Reports;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.ReusableLibraryCode.Annotations;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
@@ -29,7 +30,7 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs.Diagrams;
 public partial class LoadProgressDiagramUI : RDMPUserControl
 {
     private LoadProgressAnnotation _annotations;
-    private LoadProgress _loadProgress;
+    private Core.EntityFramework.Models.LoadProgress _loadProgress;
     private LoadProgressSummaryReport _report;
     public event Action LoadProgressChanged;
 
@@ -62,7 +63,7 @@ public partial class LoadProgressDiagramUI : RDMPUserControl
             : value.DateOfEvaluation;
     }
 
-    public void SetLoadProgress(LoadProgress lp, IActivateItems activator)
+    public void SetLoadProgress(Core.EntityFramework.Models.LoadProgress lp, IActivateItems activator)
     {
         SetItemActivator(activator);
         _loadProgress = lp;

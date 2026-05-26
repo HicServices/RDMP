@@ -6,6 +6,7 @@
 
 using System;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.EntityFramework.Models;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
@@ -30,7 +31,7 @@ public class CohortAggregateContainerStateBasedIconProvider : IObjectStateBasedI
         {
             Type when o.Equals(typeof(CohortAggregateContainer)) => _intersect,
             SetOperation operation => GetImage(operation),
-            _ => o is not CohortAggregateContainer container ? null : GetImage(container.Operation)
+            _ => o is not CohortAggregateContainer container ? null : GetImage(SetOperation.UNION)//container.Operation)
         };
     }
 

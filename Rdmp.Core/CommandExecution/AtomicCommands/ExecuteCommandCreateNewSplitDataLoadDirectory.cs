@@ -8,6 +8,7 @@ using System.IO;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.EntityFramework.Models;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 

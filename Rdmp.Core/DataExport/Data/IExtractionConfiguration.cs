@@ -15,6 +15,7 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.Ticketing;
+using Rdmp.Core.EntityFramework.Models;
 
 namespace Rdmp.Core.DataExport.Data;
 
@@ -137,7 +138,7 @@ public interface IExtractionConfiguration : INamed, IHasDependencies, IMightBeRe
     IEnumerable<ICumulativeExtractionResults> CumulativeExtractionResults { get; }
 
     /// <summary>
-    /// If the user (or an automated system) has attempted to extract any datasets with supplemental artifacts (e.g. <see cref="SupportingDocument"/>)
+    /// If the user (or an automated system) has attempted to extract any datasets with supplemental artifacts (e.g. <see cref="Rdmp.Core.EntityFramework.Models.SupportingDocument"/>)
     /// then this will return all the audit objects describing that extraction.
     /// </summary>
     IEnumerable<ISupplementalExtractionResults> SupplementalExtractionResults { get; }
@@ -189,7 +190,7 @@ public interface IExtractionConfiguration : INamed, IHasDependencies, IMightBeRe
     void Unfreeze();
 
     /// <summary>
-    /// Returns all supplemental artifacts (e.g. <see cref="SupportingDocument"/>) marked IsGlobal which should be extracted whenever the <see cref="IExtractionConfiguration"/>
+    /// Returns all supplemental artifacts (e.g. <see cref="Rdmp.Core.EntityFramework.Models.SupportingDocument"/>) marked IsGlobal which should be extracted whenever the <see cref="IExtractionConfiguration"/>
     /// is run.  This can include disclaimers, general purpose help materials etc.
     /// </summary>
     /// <returns></returns>

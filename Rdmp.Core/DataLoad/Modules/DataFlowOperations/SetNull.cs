@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 

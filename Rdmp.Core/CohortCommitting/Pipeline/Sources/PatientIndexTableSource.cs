@@ -37,7 +37,7 @@ public class PatientIndexTableSource : AggregateConfigurationTableSource, IPipel
     protected override string GetSQL()
     {
         var builder = new CohortQueryBuilder(AggregateConfiguration,
-            CohortIdentificationConfigurationIfAny.GetAllParameters(), null);
+            CohortIdentificationConfigurationIfAny.GetAllParameters());
 
         var sql = builder.SQL;
 

@@ -12,6 +12,7 @@ using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Pipelines;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Providers.Nodes.PipelineNodes;
@@ -149,8 +150,8 @@ public partial class TableInfoCollectionUI : RDMPCollectionUI, ILifetimeSubscrib
                 break;
         }
 
-        if (tlvTableInfos.IndexOf(Activator.CoreChildProvider.AllPipelinesNode) != -1)
-            tlvTableInfos.RefreshObject(Activator.CoreChildProvider.AllPipelinesNode);
+        //if (tlvTableInfos.IndexOf(Activator.CoreChildProvider.AllPipelinesNode) != -1)
+        //    tlvTableInfos.RefreshObject(Activator.CoreChildProvider.AllPipelinesNode);
     }
 
     public static bool IsRootObject(object root) => root is AllRDMPRemotesNode or AllObjectSharingNode

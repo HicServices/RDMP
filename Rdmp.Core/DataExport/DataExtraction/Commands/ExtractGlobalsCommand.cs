@@ -10,6 +10,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.UserPicks;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.EntityFramework.Models;
 
 namespace Rdmp.Core.DataExport.DataExtraction.Commands;
 

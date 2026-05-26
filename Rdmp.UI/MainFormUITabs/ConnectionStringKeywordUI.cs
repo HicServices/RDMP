@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using FAnsi;
 using Rdmp.Core;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Rules;
 using Rdmp.UI.SimpleControls;

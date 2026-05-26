@@ -10,6 +10,7 @@ using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.EntityFramework.Models;
 
 namespace Rdmp.Core.Curation.Data;
 

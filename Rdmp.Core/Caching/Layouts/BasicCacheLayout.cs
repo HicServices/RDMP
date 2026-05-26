@@ -7,6 +7,7 @@
 using System.IO;
 using Rdmp.Core.Caching.Pipeline.Destinations;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.EntityFramework.Models;
 
 namespace Rdmp.Core.Caching.Layouts;
 
@@ -17,7 +18,7 @@ namespace Rdmp.Core.Caching.Layouts;
 public class BasicCacheLayout : CacheLayout
 {
     public BasicCacheLayout(DirectoryInfo rootCacheDirectory)
-        : base(rootCacheDirectory, "yyyy-MM-dd", CacheArchiveType.None, CacheFileGranularity.Day,
+        : base(rootCacheDirectory, "yyyy-MM-dd", LoadMetadata.CacheArchiveType.None, CacheFileGranularity.Day,
             new NoSubdirectoriesCachePathResolver())
     {
     }

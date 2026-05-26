@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.EntityFramework.Models;
 
 namespace Rdmp.Core.DataExport.DataExtraction.UserPicks;
 
@@ -23,12 +24,12 @@ public class ExtractableDatasetBundle : Bundle, IExtractableDatasetBundle
     public IExtractableDataSet DataSet { get; private set; }
 
     //all the rest of the stuff that goes with the dataset
-    public List<SupportingDocument> Documents { get; private set; }
+    public List<EntityFramework.Models.SupportingDocument> Documents { get; private set; }
     public List<SupportingSQLTable> SupportingSQL { get; private set; }
     public List<IBundledLookupTable> LookupTables { get; private set; }
 
 
-    public ExtractableDatasetBundle(IExtractableDataSet dataSet, SupportingDocument[] documents,
+    public ExtractableDatasetBundle(IExtractableDataSet dataSet, EntityFramework.Models.SupportingDocument[] documents,
         SupportingSQLTable[] supportingSQL, ITableInfo[] lookupTables) :
         base(
             new[] { (object)dataSet }.Union(documents).Union(supportingSQL).Union(lookupTables)
@@ -42,7 +43,7 @@ public class ExtractableDatasetBundle : Bundle, IExtractableDatasetBundle
     }
 
     public ExtractableDatasetBundle(IExtractableDataSet dataSet)
-        : this(dataSet, Array.Empty<SupportingDocument>(), Array.Empty<SupportingSQLTable>(), Array.Empty<TableInfo>())
+        : this(dataSet, Array.Empty<EntityFramework.Models.SupportingDocument>(), Array.Empty<SupportingSQLTable>(), Array.Empty<TableInfo>())
     {
     }
 
@@ -55,7 +56,7 @@ public class ExtractableDatasetBundle : Bundle, IExtractableDatasetBundle
             case ExtractableDataSet:
                 throw new NotSupportedException(
                     $"Cannot drop {toDrop} from Bundle {this}, you cannot perform an extraction without the dataset component (only documents/lookups etc are optional)");
-            case SupportingDocument drop:
+            case EntityFramework.Models.SupportingDocument drop:
                 Documents.Remove(drop);
                 return;
             case SupportingSQLTable item:

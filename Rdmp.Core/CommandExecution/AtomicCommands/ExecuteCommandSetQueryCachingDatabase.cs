@@ -8,6 +8,7 @@ using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Databases;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
@@ -24,7 +25,7 @@ public sealed class ExecuteCommandSetQueryCachingDatabase : BasicCommandExecutio
         base(activator)
     {
         _cic = cic;
-        _caches = activator.CoreChildProvider.AllExternalServers.Where(es => es.WasCreatedBy(new QueryCachingPatcher())).ToArray();
+        _caches = activator.RepositoryLocator.CatalogueDbContext.ExternalDatabaseServers.Where(es => es.WasCreatedBy(new QueryCachingPatcher())).ToArray();
         if (!_caches.Any())
             SetImpossible("There are no Query Caching databases set up");
     }
@@ -36,7 +37,7 @@ public sealed class ExecuteCommandSetQueryCachingDatabase : BasicCommandExecutio
         //if (!SelectOne(_caches.ToList(), out var selected)) return;
 
         //_cic.QueryCachingServer_ID = selected?.ID;
-        _cic.SaveToDatabase();
+        //_cic.SaveToDatabase();
         Publish(_cic);
     }
 

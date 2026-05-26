@@ -42,7 +42,7 @@ public class SessionCollectionUI : RDMPUserControl, IObjectCollectionControl, IC
         InitializeComponent();
 
         olvName.AspectGetter = o => o.ToString();
-        CommonTreeFunctionality.AxeChildren = new Type[] { typeof(CohortIdentificationConfiguration) };
+        //CommonTreeFunctionality.AxeChildren = new Type[] { typeof(CohortIdentificationConfiguration) };
     }
 
     public IPersistableObjectCollection GetCollection() => Collection;
@@ -125,41 +125,41 @@ public class SessionCollectionUI : RDMPUserControl, IObjectCollectionControl, IC
 
     private void AddObjectToSession(object sender, EventArgs e)
     {
-        var toAdd = Activator.SelectMany(new DialogArgs
-        {
-            WindowTitle = "Add to Session",
-            TaskDescription = "Pick which objects you want added to the session window."
-        }, typeof(IMapsDirectlyToDatabaseTable),
-                Activator.CoreChildProvider.GetAllSearchables().Keys.Except(Collection.DatabaseObjects).ToArray())
-            ?.ToList();
+        //var toAdd = Activator.SelectMany(new DialogArgs
+        //{
+        //    WindowTitle = "Add to Session",
+        //    TaskDescription = "Pick which objects you want added to the session window."
+        //}, typeof(IMapsDirectlyToDatabaseTable),
+        //        Activator.CoreChildProvider.GetAllSearchables().Keys.Except(Collection.DatabaseObjects).ToArray())
+        //    ?.ToList();
 
-        if (toAdd == null || toAdd.Count == 0)
-            // user cancelled picking objects
-            return;
+        //if (toAdd == null || toAdd.Count == 0)
+        //    // user cancelled picking objects
+        //    return;
 
-        Add(toAdd.ToArray());
+        //Add(toAdd.ToArray());
     }
 
     private void RefreshSessionObjects()
     {
-        var actualObjects = FavouritesCollectionUI.FindRootObjects(Activator, Collection.DatabaseObjects.Contains)
-            .Union(Collection.DatabaseObjects.OfType<Pipeline>()).ToList();
+        //var actualObjects = FavouritesCollectionUI.FindRootObjects(Activator, Collection.DatabaseObjects.Contains)
+        //    .Union(Collection.DatabaseObjects.OfType<Pipeline>()).ToList();
 
-        //no change in root favouritism
-        if (actualObjects.SequenceEqual(olvTree.Objects.OfType<IMapsDirectlyToDatabaseTable>()))
-            return;
+        ////no change in root favouritism
+        //if (actualObjects.SequenceEqual(olvTree.Objects.OfType<IMapsDirectlyToDatabaseTable>()))
+        //    return;
 
-        //remove old objects
-        foreach (var old in Collection.DatabaseObjects.Except(actualObjects))
-            olvTree.RemoveObject(old);
+        ////remove old objects
+        //foreach (var old in Collection.DatabaseObjects.Except(actualObjects))
+        //    olvTree.RemoveObject(old);
 
-        //add new objects
-        foreach (var newObject in actualObjects.Except(olvTree.Objects.OfType<IMapsDirectlyToDatabaseTable>()))
-            olvTree.AddObject(newObject);
+        ////add new objects
+        //foreach (var newObject in actualObjects.Except(olvTree.Objects.OfType<IMapsDirectlyToDatabaseTable>()))
+        //    olvTree.AddObject(newObject);
 
-        //update to the new list
-        Collection.DatabaseObjects = actualObjects;
-        olvTree.RebuildAll(true);
+        ////update to the new list
+        //Collection.DatabaseObjects = actualObjects;
+        //olvTree.RebuildAll(true);
     }
 
     public override string ToString() => Collection?.SessionName ?? "Unnamed Session";

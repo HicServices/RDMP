@@ -17,6 +17,7 @@ using Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
 using Rdmp.Core.DataExport.DataRelease;
 using Rdmp.Core.DataExport.DataRelease.Pipeline;
 using Rdmp.Core.DataExport.DataRelease.Potential;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Logging.Listeners;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
@@ -308,7 +309,7 @@ public class ReleaseRunner : ManyRunner
 
     public object GetState(SupportingSQLTable global) => GetState((IMapsDirectlyToDatabaseTable)global);
 
-    public object GetState(SupportingDocument global) => GetState((IMapsDirectlyToDatabaseTable)global);
+    public object GetState(EntityFramework.Models.SupportingDocument global) => GetState((IMapsDirectlyToDatabaseTable)global);
 
     private object GetState(IMapsDirectlyToDatabaseTable global)
     {

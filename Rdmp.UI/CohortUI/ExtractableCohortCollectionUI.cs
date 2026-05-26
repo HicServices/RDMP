@@ -12,6 +12,7 @@ using BrightIdeasSoftware;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.CohortDescribing;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;

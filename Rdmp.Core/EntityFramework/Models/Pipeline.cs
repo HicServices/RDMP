@@ -14,6 +14,12 @@ namespace Rdmp.Core.EntityFramework.Models
     [Table("Pipeline")]
     public class Pipeline: DatabaseObject, IPipeline
     {
+        public Pipeline() { }
+        public Pipeline(RDMPDbContext catalogueDbContext, string nameOfPipe)
+        {
+            CatalogueDbContext = catalogueDbContext;
+        }
+
         [Key]
         public override int ID { get; set; }
 
@@ -47,7 +53,7 @@ namespace Rdmp.Core.EntityFramework.Models
             //throw new NotImplementedException();
         }
 
-        public Curation.Data.Pipelines.Pipeline Clone()
+        public Pipeline Clone()
         {
             throw new NotImplementedException();
         }
@@ -69,10 +75,6 @@ namespace Rdmp.Core.EntityFramework.Models
             //throw new NotImplementedException();
         }
 
-        public void SaveToDatabase()
-        {
-            //throw new NotImplementedException();
-        }
 
         public override string ToString() => Name;
     }

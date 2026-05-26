@@ -6,6 +6,7 @@
 
 using BrightIdeasSoftware;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.UI.ItemActivation;
@@ -71,7 +72,7 @@ public partial class BulkProcessCatalogueItemsUI : BulkProcessCatalogueItems_Des
         _catalogue.ClearAllInjections();
 
         olvCatalogueItems.ClearObjects();
-        olvCatalogueItems.AddObjects(_catalogue.CatalogueItems);
+        olvCatalogueItems.AddObjects(_catalogue.CatalogueItems.ToList());
 
         cbTableInfos.Items.Clear();
         cbTableInfos.Items.AddRange(_catalogue.GetTableInfoList(true));

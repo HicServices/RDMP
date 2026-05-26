@@ -7,6 +7,7 @@
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.EntityFramework.Models;
 
 namespace Rdmp.UI.ProjectUI.Graphs;
 

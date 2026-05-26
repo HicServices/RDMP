@@ -14,6 +14,8 @@ using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.FilterImporting;
 using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.EntityFramework.Helpers;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories.Construction;
@@ -50,8 +52,8 @@ public class ExecuteCommandImportFilterContainerTree : BasicCommandExecution
     {
         Weight = DEFAULT_WEIGHT;
 
-        if (activator.CoreChildProvider is not DataExportChildProvider)
-            SetImpossible("Data export functions unavailable");
+        //if (activator.CoreChildProvider is not DataExportChildProvider)
+        //    SetImpossible("Data export functions unavailable");
     }
 
     public ExecuteCommandImportFilterContainerTree(IBasicActivateItems activator, IRootFilterContainerHost into) :
@@ -138,15 +140,15 @@ public class ExecuteCommandImportFilterContainerTree : BasicCommandExecution
                     "Interactive mode is only supported when specifying a root object to import into");
 
             //prompt user to pick one
-            var childProvider = (DataExportChildProvider)BasicActivator.CoreChildProvider;
+            var childProvider = BasicActivator.RepositoryLocator.DataExportDbContext;// (DataExportChildProvider)BasicActivator.CoreChildProvider;
 
             var ecById = childProvider.ExtractionConfigurations.ToDictionary(k => k.ID);
 
             // The root object that makes most sense to the user e.g. they select an extraction
             var fromConfiguration
                 =
-                childProvider.AllCohortIdentificationConfigurations.Where(IsEligible)
-                    .Cast<DatabaseEntity>()
+                BasicActivator.RepositoryLocator.CatalogueDbContext.CohortIdentificationConfigurations.Where(IsEligible)
+                    .Cast<DatabaseObject>()
                     .Union(childProvider.SelectedDataSets.Where(IsEligible)
                         .Select(sds => ecById[sds.ExtractionConfiguration_ID])).ToList();
 

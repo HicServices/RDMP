@@ -6,11 +6,12 @@
 
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.EntityFramework.Models;
 
 namespace Rdmp.Core.Providers.Nodes;
 
 /// <summary>
-/// All virtual columns in this <see cref="Curation.Data.TableInfo"/> which appear in the data load (RAW) but do not exist in the live database (or are diluted).  This enables
+/// All virtual columns in this <see cref="TableInfo"/> which appear in the data load (RAW) but do not exist in the live database (or are diluted).  This enables
 /// anonymisation or dropping of columns during the data load (See <see cref="PreLoadDiscardedColumn"/>)
 /// </summary>
 public class PreLoadDiscardedColumnsNode : Node

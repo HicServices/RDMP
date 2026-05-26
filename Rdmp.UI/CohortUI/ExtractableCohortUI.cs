@@ -167,22 +167,23 @@ public partial class ExtractableCohortUI : ExtractableCohortUI_Design, ISaveable
                 }
             );
 
-        if (Activator.CoreChildProvider is DataExportChildProvider dx)
-        {
-            tlvCohortUsage.ClearObjects();
-            tlvCohortUsage.AddObjects(dx.ExtractionConfigurations.Where(e => e.Cohort_ID == _extractableCohort.ID)
-                .ToArray());
+        //if (Activator.CoreChildProvider is DataExportChildProvider dx)
+        //{
+        //    tlvCohortUsage.ClearObjects();
+        //    tlvCohortUsage.AddObjects(dx.ExtractionConfigurations.Where(e => e.Cohort_ID == _extractableCohort.ID)
+        //        .ToArray());
 
-            tlvPreviousVersions.ClearObjects();
-            tlvPreviousVersions.AddObjects(
-                dx.Cohorts.Where(
-                    c =>
-                        c.ID != _extractableCohort.ID &&
-                        c.ExternalCohortTable_ID == _extractableCohort.ExternalCohortTable_ID &&
-                        c.GetExternalData().ExternalDescription ==
-                        _extractableCohort.GetExternalData().ExternalDescription &&
-                        c.ExternalProjectNumber == _extractableCohort.ExternalProjectNumber).ToArray());
-        }
+        //    tlvPreviousVersions.ClearObjects();
+        //    tlvPreviousVersions.AddObjects(
+        //        dx.Cohorts.Where(
+        //            c =>
+        //                c.ID != _extractableCohort.ID &&
+        //                c.ExternalCohortTable_ID == _extractableCohort.ExternalCohortTable_ID &&
+        //                c.GetExternalData().ExternalDescription ==
+        //                _extractableCohort.GetExternalData().ExternalDescription &&
+        //                c.ExternalProjectNumber == _extractableCohort.ExternalProjectNumber).ToArray());
+        //}
+        //}
 
         CommonFunctionality.Add(new ExecuteCommandCreateNewExtractionConfigurationForProject(activator, null)
         {
@@ -215,28 +216,28 @@ public partial class ExtractableCohortUI : ExtractableCohortUI_Design, ISaveable
 
     private void btnShowProject_Click(object sender, EventArgs e)
     {
-        var dx = (DataExportChildProvider)Activator.CoreChildProvider;
+        //var dx = (DataExportChildProvider)Activator.CoreChildProvider;
 
-        var projects = dx.Projects.Where(p => p.ProjectNumber == _extractableCohort.ExternalProjectNumber).ToArray();
+        //var projects = dx.Projects.Where(p => p.ProjectNumber == _extractableCohort.ExternalProjectNumber).ToArray();
 
-        if (!projects.Any())
-        {
-            MessageBox.Show($"No Projects exist with ProjectNumber {_extractableCohort.ExternalProjectNumber}");
-        }
-        else if (projects.Length == 1)
-        {
-            Activator.RequestItemEmphasis(this, new EmphasiseRequest(projects.Single(), 1));
-        }
-        else
-        {
-            var show = Activator.SelectOne(new DialogArgs
-            {
-                TaskDescription =
-                    $"There are multiple Projects with the ProjectNumber {_extractableCohort.ExternalProjectNumber}.  Which would you like to see?"
-            }, projects);
+        //if (!projects.Any())
+        //{
+        //    MessageBox.Show($"No Projects exist with ProjectNumber {_extractableCohort.ExternalProjectNumber}");
+        //}
+        //else if (projects.Length == 1)
+        //{
+        //    Activator.RequestItemEmphasis(this, new EmphasiseRequest(projects.Single(), 1));
+        //}
+        //else
+        //{
+        //    var show = Activator.SelectOne(new DialogArgs
+        //    {
+        //        TaskDescription =
+        //            $"There are multiple Projects with the ProjectNumber {_extractableCohort.ExternalProjectNumber}.  Which would you like to see?"
+        //    }, projects);
 
-            if (show != null) Activator.RequestItemEmphasis(this, new EmphasiseRequest(show, 1));
-        }
+        //    if (show != null) Activator.RequestItemEmphasis(this, new EmphasiseRequest(show, 1));
+        //}
     }
 
     public override string GetTabName() => $"{_extractableCohort} (V{_extractableCohort.ExternalVersion})";

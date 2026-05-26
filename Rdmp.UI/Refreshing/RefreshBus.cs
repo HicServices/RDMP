@@ -32,7 +32,6 @@ public class RefreshBus
 
     public bool PublishInProgress { get; private set; }
 
-    public ICoreChildProvider ChildProvider { get; set; }
 
     private object oPublishLock = new();
 

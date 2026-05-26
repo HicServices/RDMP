@@ -7,6 +7,7 @@
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.EntityFramework.Helpers;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories.Construction;
@@ -103,20 +104,19 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
     }
 
 
-    private List<Project> GetListOfValidProjects()
+    private List<EntityFramework.Models.DataExport.Project> GetListOfValidProjects()
     {
-        var dataExportChildProvider = ((DataExportChildProvider)_activator.CoreChildProvider);
+        //var dataExportChildProvider = ((DataExportChildProvider)_activator.CoreChildProvider);
         var eds = _activator.RepositoryLocator.CatalogueDbContext.GetAllObjectsWithParent<ExtractableDataSet>(_catalogue);
         var edsp = _activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<ExtractableDataSetProject>().Where(edsp => eds.Contains(edsp.DataSet));
         var pti = edsp.Select(e => e.Project_ID).ToList();
-        var validProjects = dataExportChildProvider.Projects.Where(p => _force ||(!pti.Contains(p.ID) && ProjectSpecificCatalogueManager.CanMakeCatalogueProjectSpecific(_activator.RepositoryLocator.CatalogueDbContext, _catalogue, p, pti)));
+        var validProjects = _activator.RepositoryLocator.DataExportDbContext.Projects.Where(p => _force ||(!pti.Contains(p.ID) && ProjectSpecificCatalogueManager.CanMakeCatalogueProjectSpecific(_activator.RepositoryLocator.CatalogueDbContext, _catalogue, p, pti)));
         return validProjects.ToList();
     }
 
     private void GetExistingProjectIDs()
     {
-        var dataExportChildProvider = ((DataExportChildProvider)_activator.CoreChildProvider);
-        var existingProjects = dataExportChildProvider.Projects.Where(p => dataExportChildProvider.ExtractableDataSetProjects.Where(edsp => edsp.Project_ID == p.ID).Select(edsp => edsp.DataSet.Catalogue).Contains(_catalogue));
+        var existingProjects = _activator.RepositoryLocator.DataExportDbContext.Projects;//.Where(p => _activator.RepositoryLocator.DataExportDbContext.ExtractableDataSetProjects.Where(edsp => edsp.Project_ID == p.ID).Select(edsp => edsp.DataSet.Catalogue).Contains(_catalogue));
         _existingProjectIDs = existingProjects.Select(p => p.ID).ToList();
     }
 

@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
 using Rdmp.Core.QueryBuilding.Parameters;
 using Rdmp.Core.ReusableLibraryCode.Checks;

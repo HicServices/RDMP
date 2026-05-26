@@ -8,6 +8,7 @@ using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.EntityFramework.Models;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
@@ -62,8 +63,8 @@ public class ExecuteCommandSetAggregateDimension : BasicCommandExecution, IAtomi
                 return;
             }
 
-            if (_available.Length == 1 && ac.AggregateDimensions.Length == 1 &&
-                _available[0].ID == ac.AggregateDimensions[0].ExtractionInformation_ID)
+            if (_available.Length == 1 && ac.AggregateDimensions.Count() == 1 &&
+                _available[0].ID == ac.AggregateDimensions.ToList()[0].ExtractionInformation_ID)
             {
                 SetImpossible(
                     $"AggregateConfiguration already uses the only IsExtractionIdentifier column in '{cata}'");

@@ -26,7 +26,8 @@ public class ExecuteCommandViewParentTree : BasicCommandExecution, IAtomicComman
 
     private void BuildTree()
     {
-        _tree = _activator.CoreChildProvider.GetDescendancyListIfAnyFor(_databaseObject);
+        //_tree = _activator.CoreChildProvider.GetDescendancyListIfAnyFor(_databaseObject);
+        _tree = new();
     }
 
     public override void Execute()

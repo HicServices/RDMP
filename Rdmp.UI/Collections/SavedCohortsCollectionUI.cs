@@ -46,7 +46,7 @@ public partial class SavedCohortsCollectionUI : RDMPCollectionUI, ILifetimeSubsc
 
         CommonTreeFunctionality.SetUp(RDMPCollection.SavedCohorts, tlvSavedCohorts, Activator, olvName, olvName);
 
-        tlvSavedCohorts.AddObject(((DataExportChildProvider)Activator.CoreChildProvider).RootCohortsNode);
+        //tlvSavedCohorts.AddObject(((DataExportChildProvider)Activator.CoreChildProvider).RootCohortsNode);
 
         SetupToolStrip();
 
@@ -77,14 +77,14 @@ public partial class SavedCohortsCollectionUI : RDMPCollectionUI, ILifetimeSubsc
             Alignment = ToolStripItemAlignment.Right,
             ToolTipText = "Refresh Object"
         };
-        _refresh.Click += delegate (object sender, EventArgs e) {
-            var cohort = ((DataExportChildProvider)Activator.CoreChildProvider).CohortSources.First();
-            if (cohort is not null)
-            {
-                var cmd = new ExecuteCommandRefreshObject(Activator, cohort);
-                cmd.Execute();
-            }
-        };
+        //_refresh.Click += delegate (object sender, EventArgs e) {
+        //    var cohort = ((DataExportChildProvider)Activator.CoreChildProvider).CohortSources.First();
+        //    if (cohort is not null)
+        //    {
+        //        var cmd = new ExecuteCommandRefreshObject(Activator, cohort);
+        //        cmd.Execute();
+        //    }
+        //};
         CommonFunctionality.Add(_refresh);
     }
 

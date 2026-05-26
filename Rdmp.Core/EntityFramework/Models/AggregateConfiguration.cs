@@ -4,7 +4,10 @@ using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.EntityFramework.Helpers;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.QueryBuilding;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using System;
 using System.Collections.Generic;
@@ -16,7 +19,7 @@ using System.Text;
 
 namespace Rdmp.Core.EntityFramework.Models
 {
-    public class AggregateConfiguration : DatabaseObject, ICollectSqlParameters, IOrderable, IHasQuerySyntaxHelper,ICheckable
+    public class AggregateConfiguration : DatabaseObject, ICollectSqlParameters, IOrderable, IHasQuerySyntaxHelper,ICheckable, IHasDependencies, INamed
     {
         [Key]
         public override int ID { get; set; }
@@ -31,7 +34,7 @@ namespace Rdmp.Core.EntityFramework.Models
         public int? PivotOnDimensionID { get; set; }
         public bool IsExtractable { get; set; }
 
-        public int OverrideFiltersByUsingParentAggregateConfigurationInstead_ID { get; set; }
+        public int? OverrideFiltersByUsingParentAggregateConfigurationInstead_ID { get; set; }
         public string HavingSQL { get; set; }
         public bool IsDisabled { get; set; }
         public int Order { get; set; } //todo this doesn't exist
@@ -48,7 +51,7 @@ namespace Rdmp.Core.EntityFramework.Models
             return null;
         }
 
-        public virtual List<AggregateDimension> AggregateDimensions { get; set; }//TODO
+        public virtual IEnumerable<AggregateDimension> AggregateDimensions { get; set; }//TODO
 
         public bool IsCohortIdentificationAggregate => false;//todo
 
@@ -78,7 +81,7 @@ namespace Rdmp.Core.EntityFramework.Models
 
 
         [NotMapped]
-        public IEnumerable<object> PatientIndexJoinablesUsed { get; internal set; }
+        public JoinableCohortAggregateConfigurationUse[] PatientIndexJoinablesUsed { get; internal set; }
         public AggregateDimension PivotDimension { get; set; }
 
         public CohortAggregateContainer GetCohortAggregateContainerIfAny() => null;//TODO
@@ -88,7 +91,7 @@ namespace Rdmp.Core.EntityFramework.Models
             throw new NotImplementedException();
         }
 
-        internal Curation.Data.Aggregation.AggregateConfiguration ShallowClone()
+        internal AggregateConfiguration ShallowClone()
         {
             throw new NotImplementedException();
         }
@@ -109,6 +112,41 @@ namespace Rdmp.Core.EntityFramework.Models
         }
 
         public void AdjustGraphDataTable(DataTable dt)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal Catalogue GetCatalogue()
+        {
+            throw new NotImplementedException();
+        }
+
+        internal AggregateDimension AddDimension(ExtractionInformation chosen)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IHasDependencies[] GetObjectsThisDependsOn()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IHasDependencies[] GetObjectsDependingOnThis()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RevertToDatabaseState()
+        {
+            throw new NotImplementedException();
+        }
+
+        public RevertableObjectReport HasLocalChanges()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Exists()
         {
             throw new NotImplementedException();
         }

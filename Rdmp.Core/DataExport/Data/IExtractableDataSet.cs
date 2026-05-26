@@ -20,7 +20,7 @@ namespace Rdmp.Core.DataExport.Data;
 public interface IExtractableDataSet : IMapsDirectlyToDatabaseTable, IRevertable
 {
     /// <summary>
-    /// The <see cref="Curation.Data.Catalogue"/> (dataset) which this object allows the extraction of.  The Catalogue object will exist in
+    /// The <see cref="Catalogue"/> (dataset) which this object allows the extraction of.  The Catalogue object will exist in
     /// the <see cref="RDMPDbContext"/> database (while the <see cref="IExtractableDataSet"/> exists in the <see cref="IDataExportRepository"/>).
     /// </summary>
     int Catalogue_ID { get; set; }

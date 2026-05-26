@@ -7,6 +7,7 @@
 using System;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
@@ -29,7 +30,7 @@ public class ExecuteCommandImportCatalogueItemDescription : BasicCommandExecutio
 
     public override void Execute()
     {
-        var available = BasicActivator.CoreChildProvider.AllCatalogueItems.Except(new[] { _toPopulate }).ToList();
+        var available = BasicActivator.RepositoryLocator.CatalogueDbContext.CatalogueItems.Except(new[] { _toPopulate }).ToList();
 
         string initialSearchText = null;
 

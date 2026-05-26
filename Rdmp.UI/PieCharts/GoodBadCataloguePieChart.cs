@@ -14,6 +14,7 @@ using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.DashboardTabs.Construction;
 using Rdmp.UI.ItemActivation;
@@ -162,7 +163,7 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
     {
         if (!_collection.IsSingleCatalogueMode)
         {
-            var catalogues = Activator.CoreChildProvider.AllCatalogues;
+            var catalogues = Activator.RepositoryLocator.CatalogueDbContext.Catalogues;
                 //.Where(c => _collection.Include(c, Activator.RepositoryLocator.DataExportRepository)).ToArray();
 
             //if there are some
@@ -172,7 +173,7 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
                 Array.Empty<CatalogueItem>(); //there weren't any so Catalogues so won't be any ExtractionInformationsEither
         }
 
-        return _collection.GetSingleCatalogueModeCatalogue().CatalogueItems;
+        return _collection.GetSingleCatalogueModeCatalogue().CatalogueItems.ToArray();
     }
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)

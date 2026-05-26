@@ -12,6 +12,7 @@ using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.EntityFramework;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Logging;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
@@ -20,6 +21,7 @@ using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
+using static Rdmp.Core.EntityFramework.Models.SupportingSQLTable;
 
 namespace Rdmp.Core.Curation.Data;
 
@@ -88,7 +90,7 @@ public interface ICatalogue : IHasDependencies, IHasQuerySyntaxHelper, INamed, I
     /// User specified period on how regularly the dataset is updated.  This does not have any technical bearing on how often it is loaded
     /// and might be an outright lie.
     /// </summary>
-    Catalogue.CataloguePeriodicity Periodicity { get; set; }
+    EntityFramework.Models.Catalogue.CataloguePeriodicity Periodicity { get; set; }
 
     /// <summary>
     /// Human readable description provided by the RDMP user that describes what the dataset contains.
@@ -165,13 +167,6 @@ public interface ICatalogue : IHasDependencies, IHasQuerySyntaxHelper, INamed, I
     ///  one <see cref="Lookup"/> declarations of <see cref="LookupType.Description"/> on the referencing ColumnInfo.</param>
     void GetTableInfos(out List<ITableInfo> normalTables, out List<ITableInfo> lookupTables);
 
-    /// <inheritdoc cref="GetTableInfos(out List{ITableInfo}, out List{ITableInfo})"/>
-    /// <remarks>
-    /// <para>High performance overload where you have a <see cref="ICoreChildProvider"/></para>
-    /// </remarks>
-    void GetTableInfos(ICoreChildProvider provider, out List<ITableInfo> normalTables,
-        out List<ITableInfo> lookupTables);
-
     /// <summary>
     /// Returns the unique <see cref="DiscoveredServer"/> from which to access connect to in order to run queries generated from the <see cref="Catalogue"/>.  This is
     /// determined by comparing all the underlying <see cref="TableInfo"/> that power the <see cref="ExtractionInformation"/> of the Catalogue and looking for a shared
@@ -195,17 +190,17 @@ public interface ICatalogue : IHasDependencies, IHasQuerySyntaxHelper, INamed, I
     ITableInfo[] GetTableInfosIdeallyJustFromMainTables();
 
     /// <inheritdoc cref="SupportingSQLTable"/>
-    SupportingSQLTable[] GetAllSupportingSQLTablesForCatalogue(FetchOptions fetch);
+    EntityFramework.Models.SupportingSQLTable[] GetAllSupportingSQLTablesForCatalogue(FetchOptions fetch);
 
     /// <summary>
-    /// Returns all <see cref="ExtractionInformation"/> declared under this <see cref="Catalogue"/> <see cref="CatalogueItem"/>s.  This can be restricted by
+    /// Returns all <see cref="ExtractionInformation"/> declared under this <see cref="EntityFramework.Models.Catalogue"/> <see cref="CatalogueItem"/>s.  This can be restricted by
     /// <see cref="ExtractionCategory"/>
     /// 
     /// <para>pass <see cref="ExtractionCategory.Any"/> to fetch all <see cref="ExtractionInformation"/> regardless of category</para>
     /// </summary>
     /// <param name="category"></param>
     /// <returns></returns>
-    ExtractionInformation[] GetAllExtractionInformation(ExtractionCategory category);
+    EntityFramework.Models.ExtractionInformation[] GetAllExtractionInformation(ExtractionCategory category);
 
     /// <summary>
     /// Overload for <see cref="GetAllExtractionInformation(ExtractionCategory)"/> using <see cref="ExtractionCategory.Any"/>
@@ -214,7 +209,7 @@ public interface ICatalogue : IHasDependencies, IHasQuerySyntaxHelper, INamed, I
     ExtractionInformation[] GetAllExtractionInformation();
 
     /// <inheritdoc cref="SupportingDocument"/>
-    SupportingDocument[] GetAllSupportingDocuments(FetchOptions fetch);
+    EntityFramework.Models.SupportingDocument[] GetAllSupportingDocuments(FetchOptions fetch);
 
     /// <summary>
     /// Gets all <see cref="ExtractionFilter"/> declared under any <see cref="ExtractionInformation"/> in the Catalogue where the  <see cref="IFilter.IsMandatory"/> flag is set.

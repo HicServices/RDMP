@@ -6,7 +6,7 @@
   <Comment CommentText="All these classes (DatabaseEntity) are stored in the 'Catalogue Repository' (Database).  These classes cannot exist unless there is a matching record in the database">
     <Position X="6.167" Y="15.781" Height="0.615" Width="3.565" />
   </Comment>
-  <Class Name="Rdmp.Core.Curation.Data.Catalogue" Collapsed="true" BaseTypeListCollapsed="true">
+  <Class Name="Rdmp.Core.Catalogue" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="3.5" Y="7.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>PfyDOI0QhEclEeQWrjVIS0xIDATDwolSaYFUYHyYJCA=</HashCode>
@@ -14,7 +14,7 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="Rdmp.Core.Curation.Data.CatalogueItem" Collapsed="true" BaseTypeListCollapsed="true">
+  <Class Name="Rdmp.Core.CatalogueItem" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="3.5" Y="5.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>BEQAgIYAAAAgEiSECBBCKAwIRACsAAAEUAASQGAAJAA=</HashCode>

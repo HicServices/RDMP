@@ -2,6 +2,7 @@
 using Rdmp.Core.Curation.Data;
 using System;
 using System.Linq;
+using Rdmp.Core.EntityFramework.Models;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 

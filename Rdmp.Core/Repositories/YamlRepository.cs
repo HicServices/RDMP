@@ -13,8 +13,9 @@ using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.Governance;
-using Rdmp.Core.Curation.Data.Remoting;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.EntityFramework.Helpers;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories.Managers;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
@@ -296,7 +297,7 @@ public class YamlRepository : MemoryDataExportRepository
     /// <typeparam name="T"></typeparam>
     /// <param name="id"></param>
     /// <returns></returns>
-    private T GetObjectByIDIfExists<T>(int id) where T : DatabaseEntity
+    private T GetObjectByIDIfExists<T>(int id) where T : DatabaseObject
     {
         try
         {

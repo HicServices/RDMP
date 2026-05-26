@@ -16,6 +16,17 @@ namespace Rdmp.Core.EntityFramework.Models
     [Table("PipelineComponent")]
     public class PipelineComponent: DatabaseObject, IPipelineComponent
     {
+        public PipelineComponent() { }
+        public PipelineComponent(RDMPDbContext catalogueDbContext, IPipeline pipeline, Type add, int order)
+        {
+            CatalogueDbContext = catalogueDbContext;
+            Order = order;
+        }
+
+        public PipelineComponent(RDMPDbContext catalogueDbContext, IPipeline pipeline, Type add, int order, string v) : this(catalogueDbContext, pipeline, add, order)
+        {
+        }
+
         [Key]
         public override int ID { get; set; }
         public int Order { get; set; }
@@ -35,7 +46,7 @@ namespace Rdmp.Core.EntityFramework.Models
 
         public IEnumerable<IPipelineComponentArgument> PipelineComponentArguments => Arguments;
 
-        public Curation.Data.Pipelines.PipelineComponent Clone(Curation.Data.Pipelines.Pipeline intoTargetPipeline)
+        public PipelineComponent Clone(Pipeline intoTargetPipeline)
         {
             throw new NotImplementedException();
         }
@@ -82,7 +93,7 @@ namespace Rdmp.Core.EntityFramework.Models
             throw new NotImplementedException();
         }
 
-        public void SaveToDatabase()
+        public static PipelineComponentRole GetRoleFor(Type componentType)
         {
             throw new NotImplementedException();
         }

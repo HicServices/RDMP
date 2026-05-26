@@ -8,6 +8,8 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 namespace Rdmp.Core.Curation.Data.Referencing;
 
+using Rdmp.Core.EntityFramework.Models;
+
 /// <summary>
 /// Interface for all objects which reference a single other object and correctly persist it to the RDMP database
 /// </summary>

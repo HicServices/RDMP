@@ -7,6 +7,7 @@
 using System;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.ReusableLibraryCode.Settings;
 
 namespace Rdmp.UI.Collections;

@@ -12,6 +12,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Serialization;
 using Rdmp.Core.DataLoad.Triggers;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using TypeGuesser;
 
@@ -141,11 +142,12 @@ public class ColumnInfoANOPlan : ICheckable
             //The ColumnInfo is extractable
             if (extractionInformation != null)
             {
-                toReturn ??= extractionInformation.ExtractionCategory;
+                Enum.TryParse<ExtractionCategory>(extractionInformation.ExtractionCategory, out var en);
+                toReturn ??= en;
 
                 //there are multiple, if the new one is more restrictive then use the more restrictive category instead
-                toReturn = extractionInformation.ExtractionCategory > toReturn
-                    ? extractionInformation.ExtractionCategory
+                toReturn = en > toReturn
+                    ? en
                     : toReturn;
             }
         }

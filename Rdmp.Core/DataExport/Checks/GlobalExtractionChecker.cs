@@ -12,6 +12,7 @@ using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.Commands;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Logging;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
@@ -19,7 +20,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataExport.Checks;
 
 /// <summary>
-/// Checks that all the globals (<see cref="SupportingDocument"/> / <see cref="SupportingSQLTable"/>) that would be fetched as part of an
+/// Checks that all the globals (<see cref="EntityFramework.Models.SupportingDocument"/> / <see cref="SupportingSQLTable"/>) that would be fetched as part of an
 /// <see cref="ExtractionConfiguration"/> are accessible.
 /// </summary>
 public class GlobalExtractionChecker : ICheckable
@@ -60,7 +61,7 @@ public class GlobalExtractionChecker : ICheckable
         foreach (var table in _configuration.GetGlobals().OfType<SupportingSQLTable>())
             new SupportingSQLTableChecker(table).Check(notifier);
 
-        foreach (var document in _configuration.GetGlobals().OfType<SupportingDocument>())
+        foreach (var document in _configuration.GetGlobals().OfType<EntityFramework.Models.SupportingDocument>())
             new SupportingDocumentsFetcher(document).Check(notifier);
 
         if (_alsoCheckPipeline != null && _command != null)

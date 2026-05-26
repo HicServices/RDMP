@@ -4,11 +4,13 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.EntityFramework.Helpers;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
@@ -116,7 +118,7 @@ public class ExecuteCommandCreateNewCohortIdentificationConfiguration : BasicCom
             return;
 
         cic.Folder = Folder;
-        cic.SaveToDatabase();
+        //cic.SaveToDatabase();
 
         if (proj != null)
         {
@@ -130,7 +132,7 @@ public class ExecuteCommandCreateNewCohortIdentificationConfiguration : BasicCom
             Emphasise(cic, int.MaxValue);
         }
 
-        Activate(cic);
+        //Activate(cic);
     }
 
     private CohortIdentificationConfiguration GenerateBasicCohortIdentificationConfiguration()
@@ -146,28 +148,30 @@ public class ExecuteCommandCreateNewCohortIdentificationConfiguration : BasicCom
             }, 255, null, out name, false))
                 return null;
 
-        var cic = new CohortIdentificationConfiguration(BasicActivator.RepositoryLocator.CatalogueDbContext, name);
+        var cic = new CohortIdentificationConfiguration(BasicActivator.RepositoryLocator.CatalogueDbContext,name) { Name = name };
         cic.CreateRootContainerIfNotExists();
         var root = cic.RootCohortAggregateContainer;
         root.Name = RootContainerName;
-        root.Operation = SetOperation.EXCEPT;
-        root.SaveToDatabase();
+        root.Operation = Enum.GetName(SetOperation.EXCEPT);
+        //root.SaveToDatabase();
 
         var inclusion =
             new CohortAggregateContainer(BasicActivator.RepositoryLocator.CatalogueDbContext, SetOperation.UNION)
             {
                 Name = InclusionCriteriaName,
-                Order = 0
+                Order = 0,
             };
-        inclusion.SaveToDatabase();
+        //inclusion.SaveToDatabase();
 
         var exclusion =
             new CohortAggregateContainer(BasicActivator.RepositoryLocator.CatalogueDbContext, SetOperation.UNION)
             {
                 Name = ExclusionCriteriaName,
-                Order = 1
+                Order = 1,
+                Operation = Enum.GetName(SetOperation.UNION)
+
             };
-        exclusion.SaveToDatabase();
+        //exclusion.SaveToDatabase();
 
         root.AddChild(inclusion);
         root.AddChild(exclusion);

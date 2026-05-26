@@ -9,6 +9,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.UserPicks;
 using Rdmp.Core.Repositories;
+using static Rdmp.Core.EntityFramework.Models.SupportingSQLTable;
 
 namespace Rdmp.Core.DataExport.DataExtraction.Commands;
 

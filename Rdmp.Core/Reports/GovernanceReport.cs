@@ -13,6 +13,7 @@ using CsvHelper.Configuration;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.EntityFramework;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.Reports;

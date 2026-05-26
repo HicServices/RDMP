@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework.Models;
 
 namespace Rdmp.Core.Providers.Nodes;
 
@@ -14,10 +15,10 @@ namespace Rdmp.Core.Providers.Nodes;
 public class DocumentationNode : Node
 {
     public Catalogue Catalogue { get; }
-    public SupportingDocument[] SupportingDocuments { get; set; }
+    public EntityFramework.Models.SupportingDocument[] SupportingDocuments { get; set; }
     public SupportingSQLTable[] SupportingSQLTables { get; set; }
 
-    public DocumentationNode(Catalogue catalogue, SupportingDocument[] supportingDocuments,
+    public DocumentationNode(Catalogue catalogue, EntityFramework.Models.SupportingDocument[] supportingDocuments,
         SupportingSQLTable[] supportingSQLTables)
     {
         Catalogue = catalogue;

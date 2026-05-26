@@ -26,7 +26,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static Rdmp.Core.Curation.Data.Catalogue;
 
 namespace Rdmp.Core.EntityFramework
 {
@@ -214,7 +213,7 @@ namespace Rdmp.Core.EntityFramework
             });
         }
 
-        public Curation.Data.Cohort.CohortAggregateContainer GetParent(Models.AggregateConfiguration aggregateConfiguration)
+        public CohortAggregateContainer GetParent(Models.AggregateConfiguration aggregateConfiguration)
         {
             throw new NotImplementedException();
         }
@@ -244,7 +243,7 @@ namespace Rdmp.Core.EntityFramework
             throw new NotImplementedException();
         }
 
-        public CatalogueExtractabilityStatus GetExtractabilityStatus(Curation.Data.Catalogue catalogue)
+        public CatalogueExtractabilityStatus GetExtractabilityStatus(Catalogue catalogue)
         {
             throw new NotImplementedException();
         }

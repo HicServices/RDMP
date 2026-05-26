@@ -23,6 +23,7 @@ using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataViewing;
 using Rdmp.Core.EntityFramework;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Logging;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
@@ -116,11 +117,6 @@ public interface IBasicActivateItems
     /// <returns></returns>
     /// <exception cref="ArgumentException">If no repositories are found that own the given <paramref name="type"/></exception>
     IRepository GetRepositoryFor(Type type);
-
-    /// <summary>
-    /// Component for recording object tree inheritance (for RDMPCollectionUI primarily but also for anyone who wants to know children of objects or all objects quickly without having to go back to the database)
-    /// </summary>
-    ICoreChildProvider CoreChildProvider { get; }
 
     /// <summary>
     /// Component class for discovering the default DQE, Logging servers etc configured in the current RDMP database

@@ -9,6 +9,7 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Icons.IconProvision;
 
 namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups;

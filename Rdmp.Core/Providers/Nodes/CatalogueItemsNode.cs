@@ -8,11 +8,12 @@ using System.Collections.Generic;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.EntityFramework.Models;
 
 namespace Rdmp.Core.Providers.Nodes;
 
 /// <summary>
-/// Collection of all the virtual columns (<see cref="CatalogueItem"/>) in a dataset (<see cref="Curation.Data.Catalogue"/>)
+/// Collection of all the virtual columns (<see cref="CatalogueItem"/>) in a dataset (<see cref="Catalogue"/>)
 /// </summary>
 public class CatalogueItemsNode : Node, IOrderable
 {

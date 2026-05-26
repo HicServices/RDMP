@@ -12,6 +12,7 @@ using FAnsi.Implementation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.DataHelper;
 using Rdmp.Core.EntityFramework;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
@@ -139,9 +140,10 @@ public class TableInfoImporter : ITableInfoImporter
             .ExpectTable(_importTableName, _importFromSchema, _importTableType)
             .DiscoverColumns();
 
-        var parent = new TableInfo(_catalogueDbContext, tableName)
+        var parent = new TableInfo()
         {
-            DatabaseType = _type,
+            Name=tableName,
+            DatabaseType = Enum.GetName(_type),
             Database = databaseName,
             Server = _importFromServer,
             Schema = _importFromSchema,
@@ -180,16 +182,6 @@ public class TableInfoImporter : ITableInfoImporter
         return col;
     }
 
-    /// <inheritdoc cref="DoImport(out ITableInfo,out EntityFramework.Models.ColumnInfo[])"/>
-    public void DoImport()
-    {
-        //DoImport(out _, out _);
-    }
-
-    public void DoImport(out ITableInfo tableInfoCreated, out ColumnInfo[] columnInfosCreated)
-    {
-        throw new NotImplementedException();
-    }
 
     EntityFramework.Models.ColumnInfo ITableInfoImporter.CreateNewColumnInfo(ITableInfo parent, DiscoveredColumn discoveredColumn)
     {

@@ -10,6 +10,7 @@ using System.Data.Common;
 using System.Linq;
 using FAnsi.Implementations.MicrosoftSQL;
 using Rdmp.Core.EntityFramework;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
 using Rdmp.Core.Repositories;

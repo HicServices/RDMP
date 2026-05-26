@@ -6,16 +6,17 @@
 
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.EntityFramework.Models;
 
 namespace Rdmp.Core.Providers.Nodes;
 
 /// <summary>
-/// Collection of all <see cref="AggregateConfiguration"/> graphs for visualising data in the <see cref="Curation.Data.Catalogue"/>.
+/// Collection of all <see cref="AggregateConfiguration"/> graphs for visualising data in the <see cref="Catalogue"/>.
 /// </summary>
 public class AggregatesNode : Node
 {
     /// <summary>
-    /// The <see cref="Curation.Data.Catalogue"/> to which all the <see cref="AggregateConfiguration"/> belong
+    /// The <see cref="Catalogue"/> to which all the <see cref="AggregateConfiguration"/> belong
     /// </summary>
     public Catalogue Catalogue { get; set; }
 

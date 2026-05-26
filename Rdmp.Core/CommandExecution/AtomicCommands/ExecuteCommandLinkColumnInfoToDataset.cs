@@ -7,15 +7,16 @@
 using System;
 using Rdmp.Core.Curation.Data;
 using System.Linq;
+using Rdmp.Core.EntityFramework.Models;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 public sealed class ExecuteCommandLinkColumnInfoToDataset : BasicCommandExecution
 {
     private readonly ColumnInfo _columnInfo;
-    private readonly Curation.Data.Dataset _dataset;
+    private readonly EntityFramework.Models.Dataset _dataset;
     private readonly bool _linkAll;
-    public ExecuteCommandLinkColumnInfoToDataset(IBasicActivateItems activator, [DemandsInitialization("The column to link")] ColumnInfo columnInfo, [DemandsInitialization("The dataset to link to")] Curation.Data.Dataset dataset, bool linkAllOtherColumns = true) : base(activator)
+    public ExecuteCommandLinkColumnInfoToDataset(IBasicActivateItems activator, [DemandsInitialization("The column to link")] ColumnInfo columnInfo, [DemandsInitialization("The dataset to link to")] EntityFramework.Models.Dataset dataset, bool linkAllOtherColumns = true) : base(activator)
     {
         _columnInfo = columnInfo;
         _dataset = dataset;
@@ -27,7 +28,7 @@ public sealed class ExecuteCommandLinkColumnInfoToDataset : BasicCommandExecutio
     {
         base.Execute();
         _columnInfo.Dataset_ID = _dataset.ID;
-        _columnInfo.SaveToDatabase();
+        //_columnInfo.SaveToDatabase();
         if (!_linkAll) return;
 
         var databaseName = _columnInfo.Name[.._columnInfo.Name.LastIndexOf('.')];
@@ -35,7 +36,7 @@ public sealed class ExecuteCommandLinkColumnInfoToDataset : BasicCommandExecutio
         foreach (var ci in catalogueItems)
         {
             ci.Dataset_ID = _dataset.ID;
-            ci.SaveToDatabase();
+            //ci.SaveToDatabase();
         }
     }
 }

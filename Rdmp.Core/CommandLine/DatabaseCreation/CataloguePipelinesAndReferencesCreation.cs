@@ -18,6 +18,7 @@ using Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources;
 using Rdmp.Core.DataExport.DataRelease.Pipeline;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
 using Rdmp.Core.DataLoad.Modules.DataFlowSources;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 

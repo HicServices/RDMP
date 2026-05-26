@@ -9,12 +9,14 @@ using System.Collections.Generic;
 using System.Linq;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
+using static Rdmp.Core.EntityFramework.Models.SupportingSQLTable;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
@@ -80,23 +82,23 @@ public class ExecuteCommandAddNewSupportingDocument : BasicCommandExecution, IAt
         if (files == null || files.All(f => f == null))
             return;
 
-        var created = new List<SupportingDocument>();
-        foreach (var f in files)
-        {
-            var doc = new SupportingDocument(c.CatalogueDbContext, c, f.Name)
-            {
-                URL = new Uri(f.FullName)
-            };
-            doc.SaveToDatabase();
-            created.Add(doc);
-        }
+        var created = new List<EntityFramework.Models.SupportingDocument>();
+        //foreach (var f in files)
+        //{
+        //    var doc = new EntityFramework.Models.SupportingDocument(c.CatalogueDbContext, c, f.Name)
+        //    {
+        //        URL = new Uri(f.FullName)
+        //    };
+        //    doc.SaveToDatabase();
+        //    created.Add(doc);
+        //}
 
         Publish(c);
 
         Emphasise(created.Last());
 
-        foreach (var doc in created)
-            Activate(doc);
+        //foreach (var doc in created)
+        //    Activate(doc);
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>

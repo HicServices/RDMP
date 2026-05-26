@@ -18,7 +18,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 public sealed class ExecuteCommandAddPackageToConfiguration : BasicCommandExecution
 {
     private readonly Core.EntityFramework.Models.DataExport.ExtractionConfiguration _extractionConfiguration;
-    private readonly ExtractableDataSetPackage[] _packages;
+    //private readonly ExtractableDataSetPackage[] _packages;
 
     public ExecuteCommandAddPackageToConfiguration(IBasicActivateItems activator,
         Core.EntityFramework.Models.DataExport.ExtractionConfiguration extractionConfiguration) : base(activator)
@@ -28,17 +28,17 @@ public sealed class ExecuteCommandAddPackageToConfiguration : BasicCommandExecut
         if (extractionConfiguration.IsReleased)
             SetImpossible("Extraction is Frozen because it has been released and is readonly, try cloning it instead");
 
-        if (activator.CoreChildProvider is DataExportChildProvider childProvider)
-        {
-            if (childProvider.AllPackages.Any())
-                _packages = childProvider.AllPackages;
-            else
-                SetImpossible("There are no ExtractableDatasetPackages configured");
-        }
-        else
-        {
-            SetImpossible("CoreChildProvider is not DataExportIconProvider");
-        }
+        //if (activator.CoreChildProvider is DataExportChildProvider childProvider)
+        //{
+        //    if (childProvider.AllPackages.Any())
+        //        _packages = childProvider.AllPackages;
+        //    else
+        //        SetImpossible("There are no ExtractableDatasetPackages configured");
+        //}
+        //else
+        //{
+        //    SetImpossible("CoreChildProvider is not DataExportIconProvider");
+        //}
     }
 
     public override void Execute()

@@ -44,7 +44,7 @@ public class ExecuteCommandAddParameter : BasicCommandExecution, IAtomicCommand
     public override void Execute()
     {
         var factory = new ParameterCollectionUIOptionsFactory();
-        var options = factory.Create(_collector, BasicActivator.CoreChildProvider);
+        var options = factory.Create(_collector);
 
         var n = _parameterName;
         var d = _datatype;

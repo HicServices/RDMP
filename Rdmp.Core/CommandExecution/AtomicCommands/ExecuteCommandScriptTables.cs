@@ -4,11 +4,13 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.IO;
 using System.Text;
 using FAnsi;
 using FAnsi.Discovery;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
@@ -55,9 +57,9 @@ public class ExecuteCommandScriptTables : BasicCommandExecution
         foreach (var tableInfo in _tableInfos)
         {
             var tbl = tableInfo.Discover(DataAccessContext.InternalDataProcessing);
-
+            Enum.TryParse(tableInfo.DatabaseType, out DatabaseType dbType);
             var hypotheticalServer = new DiscoveredServer("localhost", _dbName ?? "None",
-                _dbType ?? tableInfo.DatabaseType, null, null);
+                _dbType ?? dbType, null, null);
             var hypotheticalTable = hypotheticalServer.ExpectDatabase(_dbName ?? tbl.Database.GetRuntimeName())
                 .ExpectTable(tbl.GetRuntimeName());
 

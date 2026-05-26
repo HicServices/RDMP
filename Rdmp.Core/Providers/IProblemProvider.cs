@@ -17,8 +17,7 @@ public interface IProblemProvider
     /// Finds all the problems with all relevant objects known about by the child provider (Stored results are returned through
     /// HasProblem and DescribeProblem.
     /// </summary>
-    /// <param name="childProvider"></param>
-    void RefreshProblems(ICoreChildProvider childProvider);
+    void RefreshProblems();
 
     /// <summary>
     /// True if the supplied object has problems with it

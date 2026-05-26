@@ -10,6 +10,7 @@ using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
+using Rdmp.Core.EntityFramework.Models;
 
 namespace Rdmp.Core.DataExport.DataExtraction.UserPicks;
 

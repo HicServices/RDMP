@@ -7,6 +7,7 @@
 using System;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.DataLoad.Engine.Checks.Checkers;

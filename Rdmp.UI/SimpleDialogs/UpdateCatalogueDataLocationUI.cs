@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 
@@ -52,7 +53,7 @@ public partial class UpdateCatalogueDataLocationUI : Form
                                                 """);
         if (_catalogue is not null)
         {
-            tlvDatasets.AddObjects(_catalogue.CatalogueItems);
+            tlvDatasets.AddObjects(_catalogue.CatalogueItems.ToList());
             tlvDatasets.EnableObjects(tlvDatasets.Objects);
         }
         else

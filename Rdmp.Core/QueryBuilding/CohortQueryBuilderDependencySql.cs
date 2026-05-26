@@ -8,6 +8,7 @@ using System;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.FilterImporting;
 using Rdmp.Core.QueryBuilding.Parameters;
+using Rdmp.Core.EntityFramework.Models;
 
 namespace Rdmp.Core.QueryBuilding;
 

@@ -20,6 +20,7 @@ using Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.DataLoad.Modules.DataFlowSources;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using Rdmp.Core.Setting;
@@ -60,7 +61,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
     private void GetNextProjectNumber(IActivateItems activator)
     {
         var autoSuggestProjectNumbers = false;
-        var autoSuggestProjectNumbersSetting = activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Setting>().FirstOrDefault(static s => s.Key == "AutoSuggestProjectNumbers");
+        var autoSuggestProjectNumbersSetting = activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Core.EntityFramework.Models.Setting>().FirstOrDefault(static s => s.Key == "AutoSuggestProjectNumbers");
         if (autoSuggestProjectNumbersSetting is not null) autoSuggestProjectNumbers = Convert.ToBoolean(autoSuggestProjectNumbersSetting.Value);
         _existingProjects = activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Project>();
 

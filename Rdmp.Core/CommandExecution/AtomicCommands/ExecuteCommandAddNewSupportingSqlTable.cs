@@ -6,6 +6,7 @@
 
 using System;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
@@ -61,11 +62,11 @@ public class ExecuteCommandAddNewSupportingSqlTable : BasicCommandExecution, IAt
                 // user cancelled typing a name
                 return;
 
-        var newSqlTable = new SupportingSQLTable(c.CatalogueDbContext, c, name ??
-            $"New Supporting SQL Table {Guid.NewGuid()}");
+        //var newSqlTable = new SupportingSQLTable(c.CatalogueDbContext, c, name ??
+        //    $"New Supporting SQL Table {Guid.NewGuid()}");
 
-        Activate(newSqlTable);
-        Publish(c);
+        //Activate(newSqlTable);
+        //Publish(c);
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>

@@ -8,6 +8,7 @@ using System;
 using FAnsi.Discovery;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Defaults;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Icons.IconOverlays;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
@@ -91,8 +92,7 @@ public class ExecuteCommandCreateNewExternalDatabaseServer : BasicCommandExecuti
         //user wants to create a new server e.g. a new Logging server
         if (_patcher == null)
         {
-            ServerCreatedIfAny = new ExternalDatabaseServer(BasicActivator.RepositoryLocator.CatalogueDbContext,
-                $"New ExternalDatabaseServer {Guid.NewGuid()}", _patcher);
+            ServerCreatedIfAny = new ExternalDatabaseServer(BasicActivator.RepositoryLocator.CatalogueDbContext, $"New ExternalDatabaseServer {Guid.NewGuid()}", _patcher);
             if(_database is not null)
                 ServerCreatedIfAny.SetProperties(_database);
         }

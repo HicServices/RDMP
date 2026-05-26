@@ -7,6 +7,7 @@
 using System;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.Wizard;
@@ -65,7 +66,7 @@ public partial class SimpleSetOperation : UserControl
     {
         var operation = GetSetOperation();
 
-        if (rootContainer.Operation != SetOperation.EXCEPT)
+        if (rootContainer.Operation != Enum.GetName(SetOperation.EXCEPT))
             throw new ArgumentException("rootContainer");
 
         var container = new CohortAggregateContainer(_activator.RepositoryLocator.CatalogueDbContext, operation);

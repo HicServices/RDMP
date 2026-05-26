@@ -7,6 +7,7 @@
 using System;
 using System.IO;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.Curation;
@@ -16,7 +17,7 @@ namespace Rdmp.Core.Curation;
 /// </summary>
 public class SupportingDocumentsFetcher
 {
-    private readonly SupportingDocument _document;
+    private readonly EntityFramework.Models.SupportingDocument _document;
     private readonly Catalogue _catalogue;
     private readonly bool _singleDocument;
 
@@ -25,10 +26,10 @@ public class SupportingDocumentsFetcher
         _catalogue = catalogue;
     }
 
-    public SupportingDocumentsFetcher(SupportingDocument document)
+    public SupportingDocumentsFetcher(EntityFramework.Models.SupportingDocument document)
     {
         _document = document;
-        _catalogue = document.CatalogueDbContext.GetObjectByID<Catalogue>(document.Catalogue_ID);
+        _catalogue = document.CatalogueDbContext.GetObjectByID<Catalogue>((int)document.Catalogue_ID);
         _singleDocument = true;
     }
 
@@ -36,7 +37,7 @@ public class SupportingDocumentsFetcher
         ? ExtractToDirectory(directory, _document)
         : throw new Exception("SupportingDocument was not specified!");
 
-    private static string ExtractToDirectory(DirectoryInfo directory, SupportingDocument supportingDocument)
+    private static string ExtractToDirectory(DirectoryInfo directory, EntityFramework.Models.SupportingDocument supportingDocument)
     {
         if (!supportingDocument.IsReleasable())
             throw new Exception(
@@ -62,12 +63,12 @@ public class SupportingDocumentsFetcher
         if (_singleDocument)
             CheckDocument(_document, notifier);
         else
-            foreach (var supportingDocument in _catalogue.GetAllSupportingDocuments(FetchOptions
+            foreach (var supportingDocument in _catalogue.GetAllSupportingDocuments(SupportingSQLTable.FetchOptions
                          .ExtractableGlobalsAndLocals))
                 CheckDocument(supportingDocument, notifier);
     }
 
-    private void CheckDocument(SupportingDocument document, ICheckNotifier notifier)
+    private void CheckDocument(EntityFramework.Models.SupportingDocument document, ICheckNotifier notifier)
     {
         if (document == null)
         {

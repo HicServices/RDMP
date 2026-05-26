@@ -121,7 +121,7 @@ public sealed class ExtractionAggregateGraphUI : AggregateGraphUI, IObjectCollec
         else if (e.Object.Equals(_collection.Graph))
             if (e.Exists)
             {
-                _collection.Graph.RevertToDatabaseState();
+                //_collection.Graph.RevertToDatabaseState();
             }
             else
             {

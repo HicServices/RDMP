@@ -16,6 +16,7 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Databases;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.ReusableLibraryCode.Checks;

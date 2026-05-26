@@ -14,6 +14,7 @@ using System.Windows.Forms;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataQualityEngine;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Reports;
 using Rdmp.Core.ReusableLibraryCode.Progress;
@@ -48,7 +49,7 @@ public partial class MetadataReportUI : RDMPForm
     {
         InitializeComponent();
 
-        _catalogues = Activator.CoreChildProvider.AllCatalogues.OrderBy(static x => x.Name).ToArray();
+        _catalogues = Activator.RepositoryLocator.CatalogueDbContext.Catalogues.OrderBy(static x => x.Name).ToArray();
         cbxCatalogues.Items.AddRange(_catalogues);
 
         if (initialSelection != null)
@@ -255,8 +256,7 @@ public partial class MetadataReportUI : RDMPForm
 
     private void btnFolder_Click(object sender, EventArgs e)
     {
-        var folders = Activator.CoreChildProvider
-            .AllCatalogues
+        var folders = Activator.RepositoryLocator.CatalogueDbContext.Catalogues
             .Select(c => c.Folder)
             .Distinct()
             .ToArray();
@@ -267,8 +267,7 @@ public partial class MetadataReportUI : RDMPForm
                     "Which folder do you want to generate metadata for? All Catalogues in that folder will be included in the metadata report generated"
         }, folders, out var selected))
             SetCatalogueSelection(
-                Activator.CoreChildProvider
-                    .AllCatalogues
+                Activator.RepositoryLocator.CatalogueDbContext.Catalogues
                     .Where(c => c.Folder.Equals(selected))
                     .ToArray());
     }

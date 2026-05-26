@@ -379,7 +379,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         //Make sure we know if we are going between database types
         var fromDbType = _destinationDatabase.Server.DatabaseType;
         var toDbType = col.ColumnInfo.TableInfo.DatabaseType;
-        if (fromDbType != toDbType)
+        if (Enum.GetName(fromDbType) != toDbType)
         {
             var fromSyntax = col.ColumnInfo.GetQuerySyntaxHelper();
             var toSyntax = _destinationDatabase.Server.GetQuerySyntaxHelper();
@@ -568,7 +568,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         IMapsDirectlyToDatabaseTable globalToCheck) =>
         new MsSqlGlobalsReleasePotential(repositoryLocator, globalResult, globalToCheck);
 
-    protected override void TryExtractSupportingSQLTableImpl(SupportingSQLTable sqlTable, DirectoryInfo directory,
+    protected override void TryExtractSupportingSQLTableImpl(EntityFramework.Models.SupportingSQLTable sqlTable, DirectoryInfo directory,
         IExtractionConfiguration configuration, IDataLoadEventListener listener, out int linesWritten,
         out string destinationDescription)
     {

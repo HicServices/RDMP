@@ -8,6 +8,7 @@ using System;
 using System.Reflection;
 using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.EntityFramework;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.Curation.Data.Pipelines;

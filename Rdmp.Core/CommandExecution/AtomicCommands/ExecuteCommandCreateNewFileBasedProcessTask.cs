@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Icons.IconOverlays;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories;
@@ -110,7 +111,7 @@ public class ExecuteCommandCreateNewFileBasedProcessTask : BasicCommandExecution
         task.SaveToDatabase();
 
         Publish(_loadMetadata);
-        Activate(task);
+        //Activate(task);
     }
 
     public override string GetCommandName()

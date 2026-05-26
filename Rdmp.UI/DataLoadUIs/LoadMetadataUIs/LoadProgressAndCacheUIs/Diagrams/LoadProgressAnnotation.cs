@@ -19,7 +19,7 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs.Diagrams;
 /// </summary>
 internal class LoadProgressAnnotation
 {
-    private readonly LoadProgress _lp;
+    private readonly Core.EntityFramework.Models.LoadProgress _lp;
     private readonly DataTable _dt;
 
     public LineAnnotation LineAnnotationOrigin { get; private set; }
@@ -31,7 +31,7 @@ internal class LoadProgressAnnotation
     public LineAnnotation LineAnnotationCacheProgress { get; private set; }
     public TextAnnotation TextAnnotationCacheProgress { get; private set; }
 
-    public LoadProgressAnnotation(LoadProgress lp, DataTable dt, Chart chart)
+    public LoadProgressAnnotation(Core.EntityFramework.Models.LoadProgress lp, DataTable dt, Chart chart)
     {
         _lp = lp;
         _dt = dt;

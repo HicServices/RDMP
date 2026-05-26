@@ -1,13 +1,16 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Rdmp.Core.EntityFramework.Helpers;
+using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.IO;
 
 namespace Rdmp.Core.EntityFramework.Models
 {
     [Table("SupportingDocument")]
-    public class SupportingDocument
+    public class SupportingDocument: DatabaseObject
     {
         [Key]
-        public int ID { get; set; }
+        public override int ID { get; set; }
 
         [Required]
         [MaxLength(500)]
@@ -20,5 +23,15 @@ namespace Rdmp.Core.EntityFramework.Models
 
         [ForeignKey("Catalogue_ID")]
         public virtual Catalogue Catalogue { get; set; }
+
+        internal FileInfo GetFileName()
+        {
+            throw new NotImplementedException();
+        }
+
+        internal bool IsReleasable()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

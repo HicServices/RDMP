@@ -11,6 +11,7 @@ using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.FilterImporting;
 using Rdmp.Core.Curation.FilterImporting.Construction;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;

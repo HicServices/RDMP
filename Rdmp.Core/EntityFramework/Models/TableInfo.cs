@@ -80,11 +80,6 @@ namespace Rdmp.Core.EntityFramework.Models
             throw new NotImplementedException();
         }
 
-        public bool IsLookupTable(ICoreChildProvider childProvider)
-        {
-            throw new NotImplementedException();
-        }
-
         public string GetDatabaseRuntimeName(LoadStage loadStage, INameDatabasesAndTablesDuringLoads namer = null)
         {
             var baseName = GetDatabaseRuntimeName();
@@ -109,7 +104,7 @@ namespace Rdmp.Core.EntityFramework.Models
             throw new NotImplementedException();
         }
 
-        public Curation.Data.Catalogue[] GetAllRelatedCatalogues()
+        public Catalogue[] GetAllRelatedCatalogues()
         {
             throw new NotImplementedException();
         }
@@ -159,11 +154,6 @@ namespace Rdmp.Core.EntityFramework.Models
             throw new NotImplementedException();
         }
 
-        public void SaveToDatabase()
-        {
-            throw new NotImplementedException();
-        }
-
         public void ClearAllInjections()
         {
             throw new NotImplementedException();
@@ -180,6 +170,11 @@ namespace Rdmp.Core.EntityFramework.Models
         }
 
         Catalogue[] ITableInfo.GetAllRelatedCatalogues()
+        {
+            throw new NotImplementedException();
+        }
+
+        internal bool Is(DiscoveredTable discoveredTable)
         {
             throw new NotImplementedException();
         }

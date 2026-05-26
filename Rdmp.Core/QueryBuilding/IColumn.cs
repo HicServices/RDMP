@@ -54,7 +54,7 @@ public interface IColumn : IHasRuntimeName, ICheckable, IOrderable, IMapsDirectl
 
     /// <summary>
     /// Indicates whether this column is the Primary Key (or part of a composite Primary Key) when extracted.  This flag is not copied / imputed from
-    /// <see cref="Curation.Data.ColumnInfo.IsPrimaryKey"/> because primary keys can often contain sensitive information (e.g. lab number) and
+    /// <see cref="ColumnInfo.IsPrimaryKey"/> because primary keys can often contain sensitive information (e.g. lab number) and
     /// you may have a transform or hash configured or your <see cref="Catalogue"/> may involve joining multiple <see cref="TableInfo"/> together.
     /// </summary>
     bool IsPrimaryKey { get; }

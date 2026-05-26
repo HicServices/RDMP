@@ -13,6 +13,7 @@ using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Providers;
 using Rdmp.Core.QueryBuilding;
@@ -60,23 +61,12 @@ public class CohortCompiler
     public IReadOnlyCollection<IPluginCohortCompiler> PluginCohortCompilers { get; private set; }
 
     /// <summary>
-    /// Returns the current child provider (creating it if none has been injected yet).
-    /// </summary>
-    public ICoreChildProvider CoreChildProvider
-    {
-        get => _coreChildProvider ??= new CatalogueChildProvider(CohortIdentificationConfiguration.CatalogueDbContext,
-            null, IgnoreAllErrorsCheckNotifier.Instance, null);
-        set => _coreChildProvider = value;
-    }
-
-    /// <summary>
     /// Tasks currently running in the compiler, Value can be null if the <see cref="ICompileable"/> is still building
     /// and not running yet.
     /// </summary>
     public Dictionary<ICompileable, CohortIdentificationTaskExecution> Tasks = new();
 
     public List<Thread> Threads = new();
-    private ICoreChildProvider _coreChildProvider;
     private IBasicActivateItems _activator;
 
     public CohortCompiler(IBasicActivateItems activator, CohortIdentificationConfiguration cohortIdentificationConfiguration)
@@ -239,7 +229,7 @@ public class CohortCompiler
                 // no
                 : new AggregationTask(aggregate, this);
 
-            queryBuilder = new CohortQueryBuilder(aggregate, globals, CoreChildProvider);
+            queryBuilder = new CohortQueryBuilder(aggregate, globals);
 
             //which has a parent
             parent = aggregate.GetCohortAggregateContainerIfAny();
@@ -253,7 +243,7 @@ public class CohortCompiler
         else
         {
             task = new AggregationContainerTask(container, this);
-            queryBuilder = new CohortQueryBuilder(container, globals, CoreChildProvider);
+            queryBuilder = new CohortQueryBuilder(container, globals);
             parent = container.GetParentContainerIfAny();
         }
 
@@ -267,7 +257,7 @@ public class CohortCompiler
             //but...
             //if the container/aggregate being processed isn't the first component in the container
             if (!isFirstInContainer && IncludeCumulativeTotals) //and we want cumulative totals
-                cumulativeQueryBuilder = new CohortQueryBuilder(parent, globals, CoreChildProvider)
+                cumulativeQueryBuilder = new CohortQueryBuilder(parent, globals)
                 {
                     StopContainerWhenYouReach = (IOrderable)runnable
                 };

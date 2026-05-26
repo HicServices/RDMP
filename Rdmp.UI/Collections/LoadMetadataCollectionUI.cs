@@ -13,6 +13,7 @@ using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.UI.CommandExecution.AtomicCommands;
@@ -103,8 +104,8 @@ public partial class LoadMetadataCollectionUI : RDMPCollectionUI, ILifetimeSubsc
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {
-        if (e.Object is LoadMetadata)
-            tlvLoadMetadata.RefreshObject(Activator.CoreChildProvider.LoadMetadataRootFolder);
+        //if (e.Object is LoadMetadata)
+        //    tlvLoadMetadata.RefreshObject(Activator.CoreChildProvider.LoadMetadataRootFolder);
 
         if (e.Object is PermissionWindow)
             tlvLoadMetadata.RefreshObject(tlvLoadMetadata.Objects.OfType<AllPermissionWindowsNode>());
@@ -131,12 +132,12 @@ public partial class LoadMetadataCollectionUI : RDMPCollectionUI, ILifetimeSubsc
             ToolTipText = "Refresh Object"
         };
         _refresh.Click += delegate (object sender, EventArgs e) {
-            var lmd = Activator.CoreChildProvider.AllLoadMetadatas.First();
-            if (lmd is not null)
-            {
-                var cmd = new ExecuteCommandRefreshObject(Activator, lmd);
-                cmd.Execute();
-            }
+            //var lmd = Activator.CoreChildProvider.AllLoadMetadatas.First();
+            //if (lmd is not null)
+            //{
+            //    var cmd = new ExecuteCommandRefreshObject(Activator, lmd);
+            //    cmd.Execute();
+            //}
         };
         CommonFunctionality.Add(_refresh);
     }

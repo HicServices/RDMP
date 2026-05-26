@@ -28,7 +28,7 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs;
 /// </summary>
 public partial class LoadProgressUI : LoadProgressUI_Design, ISaveableUI
 {
-    private LoadProgress _loadProgress;
+    private Core.EntityFramework.Models.LoadProgress _loadProgress;
 
     public LoadProgressUI()
     {
@@ -90,7 +90,7 @@ public partial class LoadProgressUI : LoadProgressUI_Design, ISaveableUI
         }
     }
 
-    public override void SetDatabaseObject(IActivateItems activator, LoadProgress databaseObject)
+    public void SetDatabaseObject(IActivateItems activator, Core.EntityFramework.Models.LoadProgress databaseObject)
     {
         base.SetDatabaseObject(activator, databaseObject);
         _loadProgress = databaseObject;

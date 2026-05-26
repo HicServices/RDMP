@@ -9,6 +9,7 @@ using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
@@ -34,9 +35,10 @@ public class AggregationContainerTask : Compileable, IOrderable
         //ContainedConfigurations =
         //    compiler.CoreChildProvider.GetChildren(Container).OfType<AggregateConfiguration>().ToArray();
 
-        var d = compiler.CoreChildProvider.GetDescendancyListIfAnyFor(Container);
-        _parentContainers = d?.Parents?.OfType<EntityFramework.Models.CohortAggregateContainer>()?.ToArray() ??
-                            Array.Empty<EntityFramework.Models.CohortAggregateContainer>();
+        //var d = compiler.CoreChildProvider.GetDescendancyListIfAnyFor(Container);
+        //_parentContainers = d?.Parents?.OfType<EntityFramework.Models.CohortAggregateContainer>()?.ToArray() ??
+        //                    Array.Empty<EntityFramework.Models.CohortAggregateContainer>();
+        _parentContainers = Array.Empty<EntityFramework.Models.CohortAggregateContainer>();
     }
 
     public override string GetCatalogueName() => "";
@@ -73,7 +75,8 @@ public class AggregationContainerTask : Compileable, IOrderable
 
     public string DescribeOperation()
     {
-        return ((CohortAggregateContainer)Child).Operation switch
+        Enum.TryParse<SetOperation>(((CohortAggregateContainer)Child).Operation, out var op);
+        return op switch
         {
             SetOperation.UNION =>
                 @"Includes ALL patients which appear in any of the sets in this container.  If there are subcontainers

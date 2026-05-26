@@ -18,6 +18,7 @@ using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
+using Rdmp.Core.EntityFramework.Models;
 
 namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations;
 

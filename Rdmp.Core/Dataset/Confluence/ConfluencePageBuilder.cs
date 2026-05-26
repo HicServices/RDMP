@@ -1,4 +1,5 @@
 ﻿using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -86,9 +87,9 @@ namespace Rdmp.Core.Dataset.Confluence
 
         }
 
-        private static string BuildDataVariableRecord(CatalogueItem catalogueItem)
+        private static string BuildDataVariableRecord(EntityFramework.Models.CatalogueItem catalogueItem)
         {
-            var lookups = catalogueItem.CatalogueDbContext.GetAllObjectsWhere<Lookup>("ForeignKey_ID", catalogueItem.ColumnInfo.ID);
+            var lookups = catalogueItem.CatalogueDbContext.GetAllObjectsWhere<EntityFramework.Models.Lookup>("ForeignKey_ID", catalogueItem.ColumnInfo.ID);
             return $"""
                 <tr>
                     <td>{catalogueItem.Name}</td>
@@ -113,11 +114,11 @@ namespace Rdmp.Core.Dataset.Confluence
             <table>
                 <tr>
                     <th>Resource Type</th>
-                    <td>{SplitCamelCase(Enum.GetName(catalogue.Type))}</td>
+                    <td>{SplitCamelCase(catalogue.Type)}</td>
                 </tr>
                 <tr>
                     <th>Dataset Purpose</th>
-                    <td>{SplitCamelCase(Enum.GetName(catalogue.Purpose))}</td>
+                    <td>{SplitCamelCase((catalogue.Purpose))}</td>
                 </tr>
                 <tr>
                     <th>Dataset Type</th>
@@ -137,7 +138,7 @@ namespace Rdmp.Core.Dataset.Confluence
                 </tr>
                 <tr>
                     <th>Dataset Purpose</th>
-                    <td>{SplitCamelCase(Enum.GetName(catalogue.Purpose))}</td>
+                    <td>{SplitCamelCase((catalogue.Purpose))}</td>
                 </tr>
             <tr>
                     <th>Dataset Keywords</th>
@@ -205,7 +206,7 @@ namespace Rdmp.Core.Dataset.Confluence
             <table>
                 <tr>
                     <th>Update Frequency</th>
-                    <td>{Enum.GetName(catalogue.Update_freq)}</td>
+                    <td>{(catalogue.Update_freq)}</td>
                 </tr>
                 <tr>
                     <th>Initial Release Date</th>
@@ -213,7 +214,7 @@ namespace Rdmp.Core.Dataset.Confluence
                 </tr>
                 <tr>
                     <th>Update Lag</th>
-                    <td>{Enum.GetName(catalogue.UpdateLag)}</td>
+                    <td>{(catalogue.UpdateLag)}</td>
                 </tr>
             </table>
             <h2>Dataset Variables</h2>

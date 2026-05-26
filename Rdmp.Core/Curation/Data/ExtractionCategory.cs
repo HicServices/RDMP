@@ -6,6 +6,8 @@
 
 namespace Rdmp.Core.Curation.Data;
 
+using Rdmp.Core.EntityFramework.Models;
+
 /// <summary>
 /// Determines how accessible a given ExtractionInformation should be.
 /// </summary>

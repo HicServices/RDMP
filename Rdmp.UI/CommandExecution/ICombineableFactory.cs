@@ -54,7 +54,7 @@ public interface ICombineableFactory
     /// Creates a new packaged command initiation object from the given dragged <paramref name="modelObject"/>.  The resulting
     /// <see cref="ICombineToMakeCommand"/> can be waved around over other objects to test for a valid command combination.
     /// </summary>
-    /// <param name="modelObject">A C# object e.g. <see cref="Rdmp.Core.Curation.Data.Catalogue"/> that dragging has begun on</param>
+    /// <param name="modelObject">A C# object e.g. <see cref="Rdmp.Core.EntityFramework.Models.Catalogue"/> that dragging has begun on</param>
     /// <returns></returns>
     ICombineToMakeCommand Create(object modelObject);
 }

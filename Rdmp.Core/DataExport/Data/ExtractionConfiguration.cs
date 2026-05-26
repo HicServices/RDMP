@@ -17,6 +17,7 @@ using Rdmp.Core.Curation.FilterImporting;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources;
 using Rdmp.Core.DataExport.DataRelease.Audit;
 using Rdmp.Core.EntityFramework;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Logging.PastEvents;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
@@ -26,6 +27,7 @@ using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Annotations;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
+using static Rdmp.Core.EntityFramework.Models.SupportingSQLTable;
 
 namespace Rdmp.Core.DataExport.Data;
 
@@ -594,8 +596,8 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
 
         //add Core or ProjectSpecific columns
         foreach (var all in extractableDataSet.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any))
-            if (all.ExtractionCategory == ExtractionCategory.Core ||
-                all.ExtractionCategory == ExtractionCategory.ProjectSpecific)
+            if (all.ExtractionCategory == Enum.GetName(ExtractionCategory.Core) ||
+                all.ExtractionCategory == Enum.GetName(ExtractionCategory.ProjectSpecific))
                 if (legacyColumns.All(l => l.CatalogueExtractionInformation_ID != all.ID))
                     AddColumnToExtraction(extractableDataSet, all);
     }

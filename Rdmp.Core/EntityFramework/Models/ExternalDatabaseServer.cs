@@ -3,12 +3,14 @@ using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.Databases;
 using Rdmp.Core.EntityFramework.Helpers;
 using Rdmp.Core.Logging.PastEvents;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -88,11 +90,6 @@ namespace Rdmp.Core.EntityFramework.Models
             throw new System.NotImplementedException();
         }
 
-        public void SaveToDatabase()
-        {
-            throw new System.NotImplementedException();
-        }
-
         public DiscoveredServer GetDistinctLoggingDatabase()
         {
             throw new System.NotImplementedException();
@@ -112,6 +109,13 @@ namespace Rdmp.Core.EntityFramework.Models
         {
             throw new System.NotImplementedException();
         }
+
+        internal void SetProperties(DiscoveredDatabase database)
+        {
+            throw new NotImplementedException();
+        }
+        public ExternalDatabaseServer() { }
+        public ExternalDatabaseServer(RDMPDbContext context, string name,IPatcher dqePatcher ){}
     }
 
 }

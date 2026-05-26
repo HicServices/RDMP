@@ -23,6 +23,7 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.UI.Collections.Providers.Filtering;
+using Rdmp.Core.EntityFramework.Models;
 namespace Rdmp.UI.SimpleDialogs
 {
     public partial class NewfindUI : Form
@@ -51,7 +52,7 @@ namespace Rdmp.UI.SimpleDialogs
               typeof(ColumnInfo),
                 typeof(Catalogue),
                 typeof(CatalogueItem),
-                typeof(SupportingDocument),
+                typeof(Core.EntityFramework.Models.SupportingDocument),
                 typeof(Project),
                typeof(ExtractionConfiguration),
                 typeof(ExtractableCohort),
@@ -75,7 +76,7 @@ namespace Rdmp.UI.SimpleDialogs
                         SimulateClickForAutoFilter<CatalogueItem>();
                         break;
                     case 4:
-                        SimulateClickForAutoFilter<SupportingDocument>();
+                        SimulateClickForAutoFilter<Core.EntityFramework.Models.SupportingDocument>();
                         break;
                     case 5:
                         SimulateClickForAutoFilter<Project>();
@@ -103,7 +104,7 @@ namespace Rdmp.UI.SimpleDialogs
         {
 
             _activator = activator;
-            _items = _activator.CoreChildProvider.GetAllSearchables();
+            _items = new();// _activator.CoreChildProvider.GetAllSearchables();
             InitializeComponent();
             _showReplaceOptions = showReplaceOptions;
             Text = _showReplaceOptions ? "Find and Replace" : "Find";
@@ -166,7 +167,7 @@ namespace Rdmp.UI.SimpleDialogs
                     _sqlNodes.Add(new FindAndReplaceNode(o, propertyInfo));
             if (rbStandard.Checked)
             {
-                _items = _activator.CoreChildProvider.GetAllSearchables();
+                _items = new();// _activator.CoreChildProvider.GetAllSearchables();
                 //filter based on showOnlyTypes
                 if (showOnlyTypes.Count > 0)
                 {
@@ -204,16 +205,16 @@ namespace Rdmp.UI.SimpleDialogs
 
             //We get these from the child provider because some objects (those below go off looking stuff up if you get them
             //and do not inject known good values first)
-            foreach (var o in activator.CoreChildProvider.AllExtractionInformations)
+            foreach (var o in activator.RepositoryLocator.CatalogueDbContext.ExtractionInformation)
                 _allObjects.Add(o);
 
-            foreach (var o in activator.CoreChildProvider.AllCatalogueItems)
+            foreach (var o in activator.RepositoryLocator.CatalogueDbContext.CatalogueItems)
                 _allObjects.Add(o);
 
-            if (activator.CoreChildProvider is DataExportChildProvider dxmChildProvider)
-                foreach (var o in dxmChildProvider.GetAllExtractableColumns(
-                             activator.RepositoryLocator.DataExportRepository))
-                    _allObjects.Add(o);
+            //if (activator.CoreChildProvider is DataExportChildProvider dxmChildProvider)
+            //    foreach (var o in dxmChildProvider.GetAllExtractableColumns(
+            //                 activator.RepositoryLocator.DataExportRepository))
+            //        _allObjects.Add(o);
 
             foreach (var o in g.GetAllObjectsInAllDatabases())
                 _allObjects.Add(o);
@@ -312,7 +313,7 @@ namespace Rdmp.UI.SimpleDialogs
             { RDMPCollection.SavedCohorts, new[] { typeof(ExtractableCohort) } },
             { RDMPCollection.Tables, new[] { typeof(TableInfo) } },
             {
-                RDMPCollection.None, new[] { typeof(SupportingDocument), typeof(CatalogueItem) }
+                RDMPCollection.None, new[] { typeof(Core.EntityFramework.Models.SupportingDocument), typeof(CatalogueItem) }
             } //Add all other Type checkboxes here so that they are recognised as Typenames
         };
 
@@ -320,7 +321,7 @@ namespace Rdmp.UI.SimpleDialogs
     {
         { typeof(Catalogue), RDMPCollection.Catalogue },
         { typeof(CatalogueItem), RDMPCollection.Catalogue },
-        { typeof(SupportingDocument), RDMPCollection.Catalogue },
+        { typeof(Core.EntityFramework.Models.SupportingDocument), RDMPCollection.Catalogue },
         { typeof(Project), RDMPCollection.DataExport },
         { typeof(ExtractionConfiguration), RDMPCollection.DataExport },
         { typeof(ExtractableCohort), RDMPCollection.SavedCohorts },

@@ -9,6 +9,8 @@ using System.Data.Common;
 using FAnsi.Implementations.MicrosoftSQL;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.EntityFramework;
+using Rdmp.Core.EntityFramework.Helpers;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.QueryBuilding;
@@ -24,7 +26,7 @@ namespace Rdmp.Core.Curation.Data;
 /// 
 /// <para>Provides an implementation of IColumn whilst still being a DatabaseEntity (saveable / part of a database repository etc)</para>
 /// </summary>
-public abstract class ConcreteColumn : DatabaseEntity, IColumn, IOrderable, IComparable
+public abstract class ConcreteColumn : DatabaseObject, IColumn, IOrderable, IComparable
 {
     #region Database Properties
 
@@ -99,7 +101,7 @@ public abstract class ConcreteColumn : DatabaseEntity, IColumn, IOrderable, ICom
     #endregion
 
     /// <inheritdoc/>
-    protected ConcreteColumn(RDMPDbContext catalogueDbContext, DbDataReader r) :base(catalogueDbContext, r)
+    protected ConcreteColumn(RDMPDbContext catalogueDbContext, DbDataReader r) //:base(catalogueDbContext, r)
     {
     }
 

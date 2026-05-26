@@ -53,10 +53,6 @@ namespace Rdmp.Core.EntityFramework.Models.DataExport
             throw new NotImplementedException();
         }
 
-        public void SaveToDatabase()
-        {
-            throw new NotImplementedException();
-        }
         public override string ToString()
         {
             if (Catalogue == null)

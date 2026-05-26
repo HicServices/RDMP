@@ -12,6 +12,7 @@ using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
 using Rdmp.Core.DataExport.DataRelease.Potential;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;

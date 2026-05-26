@@ -17,6 +17,7 @@ using Rdmp.Core.DataLoad.Engine.Migration;
 using Rdmp.Core.DataLoad.Engine.Migration.QueryBuilding;
 using Rdmp.Core.DataLoad.Engine.Mutilators;
 using Rdmp.Core.DataLoad.Modules.Mutilators.QueryBuilders;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.Core.ReusableLibraryCode.Progress;

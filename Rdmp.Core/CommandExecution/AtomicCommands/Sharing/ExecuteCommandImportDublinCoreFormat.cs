@@ -7,6 +7,7 @@
 using System.IO;
 using System.Xml.Linq;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Reports.DublinCore;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands.Sharing;

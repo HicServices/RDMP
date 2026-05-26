@@ -3,6 +3,7 @@ using Rdmp.Core.EntityFramework.Helpers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,6 +16,9 @@ namespace Rdmp.Core.EntityFramework.Models
         public int PrimaryKey_ID { get; set; }
         public int ForeignKey_ID { get; set; }
         public int Description_ID { get; set; }
+
+        [NotMapped]
+        public ColumnInfo Description => CatalogueDbContext.GetObjectByID<ColumnInfo>(Description_ID);
 
         public string Collation { get; set; }
         public int ExtractionJoinType { get; set; } //left,right,inner

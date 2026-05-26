@@ -15,6 +15,7 @@ using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Providers.Nodes.PipelineNodes;
 using Rdmp.Core.ReusableLibraryCode;
@@ -72,7 +73,7 @@ public class SearchablesMatchScorer
         {
             { "c", typeof(Catalogue) },
             { "ci", typeof(CatalogueItem) },
-            { "sd", typeof(SupportingDocument) },
+            { "sd", typeof(EntityFramework.Models.SupportingDocument) },
             { "p", typeof(Project) },
             { "ec", typeof(ExtractionConfiguration) },
             { "co", typeof(ExtractableCohort) },
@@ -107,7 +108,7 @@ public class SearchablesMatchScorer
     /// Performs a free text search on all <paramref name="searchables"/>.  The <paramref name="searchText"/> will match on both the object
     /// and its parental hierarchy e.g. "chi" "biochemistry" matches column "chi" in Catalogue "biochemistry" strongly.
     /// </summary>
-    /// <param name="searchables">All available objects that can be searched (see <see cref="ICoreChildProvider.GetAllSearchables"/>)</param>
+    /// <param name="searchables">All available objects that can be searched (see )</param>
     /// <param name="searchText">Tokens to use separated by space e.g. "chi biochemistry CatalogueItem"</param>
     /// <param name="showOnlyTypes">Optional (can be null) list of types to return results from.  Not respected if <paramref name="searchText"/> includes type names</param>
     /// <param name="cancellationToken">Token for cancelling match scoring.  This method will return null if cancellation is detected</param>

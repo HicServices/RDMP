@@ -113,7 +113,7 @@ public class CohortSummaryAggregateGraphUI : AggregateGraphUI, IObjectCollection
     protected override AggregateBuilder GetQueryBuilder(Core.EntityFramework.Models.AggregateConfiguration summary)
     {
         var builder = _collection.CohortIfAny != null
-            ? new CohortSummaryQueryBuilder(summary, _collection.CohortIfAny, Activator.CoreChildProvider)
+            ? new CohortSummaryQueryBuilder(summary, _collection.CohortIfAny)
             : new CohortSummaryQueryBuilder(summary, _collection.CohortContainerIfAny);
 
         return builder.GetAdjustedAggregateBuilder(_collection.Adjustment, _collection.SingleFilterOnly);

@@ -6,6 +6,7 @@
 
 using System.Linq;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
@@ -22,7 +23,7 @@ public class ExecuteCommandCreateNewCatalogueFromTableInfo : CatalogueCreationCo
     {
         _tableInfo = tableInfo;
 
-        if (activator.CoreChildProvider.AllCatalogues.Any(c => c.Name.Equals(tableInfo.GetRuntimeName())))
+        if (activator.RepositoryLocator.CatalogueDbContext.Catalogues.Any(c => c.Name.Equals(tableInfo.GetRuntimeName())))
             SetImpossible($"There is already a Catalogue called '{tableInfo.GetRuntimeName()}'");
     }
 

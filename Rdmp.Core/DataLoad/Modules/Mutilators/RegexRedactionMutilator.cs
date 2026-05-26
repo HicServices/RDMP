@@ -15,6 +15,7 @@ using System.Data;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
+using Rdmp.Core.EntityFramework.Models;
 
 namespace Rdmp.Core.DataLoad.Modules.Mutilators;
 /// <summary>

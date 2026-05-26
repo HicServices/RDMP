@@ -12,6 +12,7 @@ using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Triggers;
+using Rdmp.Core.EntityFramework.Models;
 
 namespace Rdmp.Core.QueryBuilding;
 

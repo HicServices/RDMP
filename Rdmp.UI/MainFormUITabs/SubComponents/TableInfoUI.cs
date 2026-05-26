@@ -11,6 +11,7 @@ using Rdmp.Core;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.FilterImporting;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Sharing.Refactoring;
 using Rdmp.UI.ChecksUI;

@@ -10,6 +10,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.EntityFramework.Helpers;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories.Construction;
@@ -24,11 +25,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
 /// </summary>
 public class ExecuteCommandCreateNewCohortFromCatalogue : CohortCreationCommandExecution
 {
-    private ExtractionInformation _extractionIdentifierColumn;
+    private EntityFramework.Models.ExtractionInformation _extractionIdentifierColumn;
 
 
     public ExecuteCommandCreateNewCohortFromCatalogue(IBasicActivateItems activator,
-        ExtractionInformation extractionInformation) : this(activator)
+        EntityFramework.Models.ExtractionInformation extractionInformation) : this(activator)
     {
         if (!extractionInformation.IsExtractionIdentifier)
             SetImpossible("Column is not marked IsExtractionIdentifier");
@@ -67,7 +68,7 @@ public class ExecuteCommandCreateNewCohortFromCatalogue : CohortCreationCommandE
         {
             if (toQuery is Catalogue c)
                 SetExtractionIdentifierColumn(GetExtractionInformationFromCatalogue(c));
-            else if (toQuery is ExtractionInformation ei)
+            else if (toQuery is EntityFramework.Models.ExtractionInformation ei)
                 SetExtractionIdentifierColumn(ei);
             else
                 throw new ArgumentException(
@@ -105,7 +106,7 @@ public class ExecuteCommandCreateNewCohortFromCatalogue : CohortCreationCommandE
         return base.SetTarget(target);
     }
 
-    private ExtractionInformation GetExtractionInformationFromCatalogue(ICatalogue catalogue)
+    private EntityFramework.Models.ExtractionInformation GetExtractionInformationFromCatalogue(ICatalogue catalogue)
     {
         var eis = catalogue.GetAllExtractionInformation(ExtractionCategory.Any);
 
@@ -118,7 +119,7 @@ public class ExecuteCommandCreateNewCohortFromCatalogue : CohortCreationCommandE
         return eis.Single(e => e.IsExtractionIdentifier);
     }
 
-    private void SetExtractionIdentifierColumn(ExtractionInformation extractionInformation)
+    private void SetExtractionIdentifierColumn(EntityFramework.Models.ExtractionInformation extractionInformation)
     {
         //if they are trying to set the identifier column to something that isn't marked IsExtractionIdentifier
         if (_extractionIdentifierColumn != null && !extractionInformation.IsExtractionIdentifier)
@@ -141,18 +142,18 @@ public class ExecuteCommandCreateNewCohortFromCatalogue : CohortCreationCommandE
 
         base.Execute();
 
-        var request =
-            GetCohortCreationRequest(ExtractableCohortAuditLogBuilder.GetDescription(_extractionIdentifierColumn));
+        //var request =
+        //    GetCohortCreationRequest(ExtractableCohortAuditLogBuilder.GetDescription(_extractionIdentifierColumn));
 
-        //user choose to cancel the cohort creation request dialogue
-        if (request == null)
+        ////user choose to cancel the cohort creation request dialogue
+        //if (request == null)
             return;
 
-        request.ExtractionIdentifierColumn = _extractionIdentifierColumn;
-        var configureAndExecute = GetConfigureAndExecuteControl(request,
-            $"Import column {_extractionIdentifierColumn} as cohort and commit results", _extractionIdentifierColumn);
+        //request.ExtractionIdentifierColumn = _extractionIdentifierColumn;
+        //var configureAndExecute = GetConfigureAndExecuteControl(request,
+        //    $"Import column {_extractionIdentifierColumn} as cohort and commit results", _extractionIdentifierColumn);
 
-        configureAndExecute.Run(BasicActivator.RepositoryLocator, null, null, null);
+        //configureAndExecute.Run(BasicActivator.RepositoryLocator, null, null, null);
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>

@@ -13,6 +13,11 @@ namespace Rdmp.Core.EntityFramework.Models
     [Table("ProcessTask")]
     public class ProcessTask : DatabaseObject, IProcessTask, ICheckable
     {
+        public ProcessTask() { }
+        public ProcessTask(RDMPDbContext catalogueDbContext, LoadMetadata lmd, LoadStage mounting)
+        {
+        }
+
         [Key]
         public override int ID { get; set; }
 
@@ -52,7 +57,9 @@ namespace Rdmp.Core.EntityFramework.Models
 
         public int? RelatesSolelyToCatalogue_ID => throw new NotImplementedException();
 
-        IEnumerable<Curation.Data.DataLoad.ProcessTaskArgument> IProcessTask.ProcessTaskArguments => throw new NotImplementedException();
+        public void SetArgumentValue(string parameterName, object o) { }
+
+        IEnumerable<ProcessTaskArgument> IProcessTask.ProcessTaskArguments => throw new NotImplementedException();
 
         LoadStage IProcessTask.LoadStage => throw new NotImplementedException();
 
@@ -105,12 +112,22 @@ namespace Rdmp.Core.EntityFramework.Models
             throw new NotImplementedException();
         }
 
-        public void SaveToDatabase()
+        public void Check(ICheckNotifier notifier)
         {
             throw new NotImplementedException();
         }
 
-        public void Check(ICheckNotifier notifier)
+        internal void Clone(LoadMetadata lmd)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static bool IsCompatibleStage(ProcessTaskType taskType, LoadStage loadStage)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<TableInfo> GetTableInfos()
         {
             throw new NotImplementedException();
         }

@@ -12,6 +12,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Curation.Data.Spontaneous;
 using Rdmp.Core.EntityFramework.Helpers;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
@@ -53,7 +54,7 @@ public class ViewTableInfoExtractUICollection : PersistableObjectCollection, IVi
 
     public object GetDataObject()
     {
-        return DatabaseObjects.Single(o => o is ColumnInfo or Curation.Data.TableInfo);
+        return DatabaseObjects.Single(o => o is ColumnInfo or EntityFramework.Models.TableInfo);
     }
 
     public IFilter GetFilterIfAny()

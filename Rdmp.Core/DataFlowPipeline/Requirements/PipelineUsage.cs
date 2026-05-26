@@ -6,6 +6,7 @@
 
 using System;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Logging;
 
 namespace Rdmp.Core.DataFlowPipeline.Requirements;

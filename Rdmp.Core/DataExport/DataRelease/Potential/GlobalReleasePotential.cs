@@ -6,6 +6,7 @@
 
 using System.IO;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
@@ -53,7 +54,7 @@ public abstract class GlobalReleasePotential : ICheckable
             }
         }
 
-        if (GlobalResult.IsReferenceTo(typeof(SupportingDocument)))
+        if (GlobalResult.IsReferenceTo(typeof(EntityFramework.Models.SupportingDocument)))
             CheckFileExists(notifier, GlobalResult.DestinationDescription);
         else
             CheckDestination(notifier, GlobalResult);

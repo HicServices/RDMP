@@ -221,13 +221,13 @@ public partial class CohortCreationRequestUI : RDMPForm
             return;
         }
 
-        var cohorts =
-            ((DataExportChildProvider)Activator.CoreChildProvider).Cohorts.Where(c =>
-                c.ExternalProjectNumber == Project.ProjectNumber);
+        //var cohorts =
+        //    ((DataExportChildProvider)Activator.CoreChildProvider).Cohorts.Where(c =>
+        //        c.ExternalProjectNumber == Project.ProjectNumber);
 
-        var maxVersionCohorts = cohorts.GroupBy(x => x.GetExternalData().ExternalDescription,
-            (key, g) => g.OrderByDescending(e => e.ExternalVersion).First()).ToArray();
-        ddExistingCohort.Items.AddRange(maxVersionCohorts);
+        //var maxVersionCohorts = cohorts.GroupBy(x => x.GetExternalData().ExternalDescription,
+        //    (key, g) => g.OrderByDescending(e => e.ExternalVersion).First()).ToArray();
+        //ddExistingCohort.Items.AddRange(maxVersionCohorts);
     }
 
     private void btnNewProject_Click(object sender, EventArgs e)

@@ -8,6 +8,7 @@ using System;
 using System.Data;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataQualityEngine.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Reports;
 using Rdmp.Core.Repositories;
 
@@ -108,10 +109,5 @@ public class DatasetTimespanCalculator : IDetermineDatasetTimespan
         var nonZeroAverage = total / (double)counted;
 
         return (int)(nonZeroAverage / 1000);
-    }
-
-    public Tuple<DateTime?, DateTime?> GetMachineReadableTimespanIfKnownOf(EntityFramework.Models.Catalogue catalogue, bool discardOutliers, out DateTime? accurateAsOf)
-    {
-        throw new NotImplementedException();
     }
 }

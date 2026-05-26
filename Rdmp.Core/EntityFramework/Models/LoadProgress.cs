@@ -61,9 +61,5 @@ namespace Rdmp.Core.EntityFramework.Models
             throw new NotImplementedException();
         }
 
-        public void SaveToDatabase()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

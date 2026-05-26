@@ -8,6 +8,7 @@ using System.IO;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
@@ -27,7 +28,7 @@ public class MsSqlExtractionReleasePotential : ReleasePotential
     protected override Releaseability GetSupplementalSpecificAssessment(
         IExtractionResults supplementalExtractionResults)
     {
-        if (supplementalExtractionResults.IsReferenceTo(typeof(SupportingDocument)))
+        if (supplementalExtractionResults.IsReferenceTo(typeof(EntityFramework.Models.SupportingDocument)))
             return File.Exists(supplementalExtractionResults.DestinationDescription)
                 ? Releaseability.Undefined
                 : Releaseability.ExtractFilesMissing;

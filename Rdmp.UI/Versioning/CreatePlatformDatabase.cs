@@ -13,6 +13,7 @@ using FAnsi.Discovery;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.EntityFramework;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
@@ -147,7 +148,7 @@ public partial class CreatePlatformDatabase : Form
         if (db != null)
         {
             var newServer = new ExternalDatabaseServer(catalogueDbContext, db.GetRuntimeName(), patcher);
-            newServer.SetProperties(db);
+            //newServer.SetProperties(db);
 
             //if (defaultToSet != PermissableDefaults.None)
             //    catalogueDbContext.SetDefault(defaultToSet, newServer);

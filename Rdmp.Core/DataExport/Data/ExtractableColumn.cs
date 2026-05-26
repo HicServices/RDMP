@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.EntityFramework;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
 using Rdmp.Core.QueryBuilding;
@@ -201,7 +202,7 @@ public class ExtractableColumn : ConcreteColumn, IComparable, IInjectKnown<Catal
     public override string ToString() => !string.IsNullOrWhiteSpace(Alias) ? Alias : SelectSQL;
 
     /// <summary>
-    /// Returns true if the underlying column (<see cref="Curation.Data.ColumnInfo"/>) referenced by this class has disappeared since its creation.
+    /// Returns true if the underlying column (<see cref="ColumnInfo"/>) referenced by this class has disappeared since its creation.
     /// </summary>
     /// <returns></returns>
     public bool HasOriginalExtractionInformationVanished() => ColumnInfo == null;
@@ -282,5 +283,15 @@ public class ExtractableColumn : ConcreteColumn, IComparable, IInjectKnown<Catal
             SelectSQL);
         CopyShallowValuesTo(clone);
         return clone;
+    }
+
+    private void CopyShallowValuesTo(ExtractableColumn clone)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal bool Exists()
+    {
+        throw new NotImplementedException();
     }
 }

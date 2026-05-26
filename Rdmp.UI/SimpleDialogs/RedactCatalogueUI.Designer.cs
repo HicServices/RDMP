@@ -1,6 +1,7 @@
 ﻿using BrightIdeasSoftware;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.DataHelper.RegexRedaction;
+using Rdmp.Core.EntityFramework.Models;
 using System.Text.RegularExpressions;
 
 namespace Rdmp.UI.SimpleDialogs;

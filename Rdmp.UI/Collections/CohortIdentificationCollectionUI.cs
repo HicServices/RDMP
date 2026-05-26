@@ -12,6 +12,7 @@ using Rdmp.Core;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Providers.Nodes.CohortNodes;
@@ -56,7 +57,7 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
         );
         CommonTreeFunctionality.AxeChildren = new[]
         {
-            typeof(Core.EntityFramework.Models.CohortIdentificationConfiguration), typeof(Core.Curation.Data.Aggregation.AggregateConfiguration)
+            typeof(Core.EntityFramework.Models.CohortIdentificationConfiguration), typeof(AggregateConfiguration)
         };
 
         CommonTreeFunctionality.MaintainRootObjects = new[]
@@ -126,7 +127,7 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
             };
             _refresh.Click += delegate (object sender, EventArgs e)
             {
-                var cic = Activator.CoreChildProvider.AllCohortIdentificationConfigurations.First();
+                var cic = Activator.RepositoryLocator.CatalogueDbContext.CohortIdentificationConfigurations.First();
                 if (cic is not null)
                 {
                     var cmd = new ExecuteCommandRefreshObject(Activator, cic);
@@ -153,9 +154,9 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
         var cic = o as CohortIdentificationConfiguration;
         if (cic != null)
         {
-            var dx = Activator.CoreChildProvider as DataExportChildProvider;
-            var associations = dx.AllProjectAssociatedCics.Where(c => c.CohortIdentificationConfiguration_ID == cic.ID);
-            return string.Join(", ", associations.Select(a => a.Project.ID));
+            //var dx = Activator.CoreChildProvider as DataExportChildProvider;
+            //var associations = dx.AllProjectAssociatedCics.Where(c => c.CohortIdentificationConfiguration_ID == cic.ID);
+            //return string.Join(", ", associations.Select(a => a.Project.ID));
         }
         return "";
     }

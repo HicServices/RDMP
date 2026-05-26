@@ -1314,7 +1314,7 @@ namespace MyPluginUI
 Update the `UserControl1` constructor to take a `Catalogue`
 
 ```csharp
-public UserControl1(Rdmp.Core.Curation.Data.Catalogue c)
+public UserControl1(Rdmp.Core.Catalogue c)
 {
     InitializeComponent();
     textBox1.Text = c.Description;

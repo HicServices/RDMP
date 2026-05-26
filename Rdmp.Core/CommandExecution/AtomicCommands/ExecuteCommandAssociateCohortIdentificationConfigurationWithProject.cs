@@ -8,6 +8,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.EntityFramework.Helpers;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.EntityFramework.Models.DataExport;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
@@ -28,7 +29,7 @@ public sealed class ExecuteCommandAssociateCohortIdentificationConfigurationWith
     public ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(IBasicActivateItems activator) :
         base(activator)
     {
-        if (!activator.CoreChildProvider.AllCohortIdentificationConfigurations.Any())
+        if (!activator.RepositoryLocator.CatalogueDbContext.CohortIdentificationConfigurations.Any())
             SetImpossible("There are no Cohort Identification Configurations yet");
 
         _existingAssociations = activator.RepositoryLocator.DataExportDbContext.ProjectCohortIdentificationConfigurationAssociations.ToArray(); //((DataExportChildProvider)activator.CoreChildProvider).AllProjectAssociatedCics;

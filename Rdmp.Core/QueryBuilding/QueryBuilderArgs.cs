@@ -8,6 +8,7 @@ using System;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
+using Rdmp.Core.EntityFramework.Models;
 
 namespace Rdmp.Core.QueryBuilding;
 

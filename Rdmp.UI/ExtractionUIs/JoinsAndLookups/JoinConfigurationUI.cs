@@ -13,6 +13,7 @@ using Rdmp.Core;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
@@ -81,7 +82,7 @@ public partial class JoinConfigurationUI : JoinConfiguration_Design
         UpdateValidityAssessment();
 
         olvLeftColumns.ClearObjects();
-        olvLeftColumns.AddObjects(_leftTableInfo.ColumnInfos);
+        olvLeftColumns.AddObjects(_leftTableInfo.ColumnInfos.ToList());
 
         if (pk1.IsValidGetter == null)
         {
@@ -119,7 +120,7 @@ public partial class JoinConfigurationUI : JoinConfiguration_Design
         fk3.IsValidGetter = c => c.TableInfo_ID == t.ID;
 
         olvRightColumns.ClearObjects();
-        olvRightColumns.AddObjects(_rightTableInfo.ColumnInfos);
+        olvRightColumns.AddObjects(_rightTableInfo.ColumnInfos.ToList());
     }
 
     private void k_SelectedColumnChanged()

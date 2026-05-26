@@ -11,6 +11,7 @@ using System.Linq;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.EntityFramework;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 
@@ -161,7 +162,7 @@ public class AggregateFilterContainer : ConcreteContainer, IDisableable
                      nameof(AggregateConfiguration.RootFilterContainer_ID), ID))
         {
             ac.RootFilterContainer_ID = null;
-            ac.SaveToDatabase();
+            //ac.SaveToDatabase();
         }
     }
 }

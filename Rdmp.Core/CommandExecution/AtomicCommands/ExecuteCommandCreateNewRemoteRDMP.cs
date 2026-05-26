@@ -4,7 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using Rdmp.Core.Curation.Data.Remoting;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
@@ -21,10 +21,10 @@ public class ExecuteCommandCreateNewRemoteRDMP : BasicCommandExecution, IAtomicC
     public override void Execute()
     {
         base.Execute();
-        var remote = new RemoteRDMP(BasicActivator.RepositoryLocator.CatalogueDbContext);
+        var remote = new RemoteRDMP();
         Publish(remote);
         Emphasise(remote);
-        Activate(remote);
+        //Activate(remote);
     }
 
     public override string GetCommandHelp() =>

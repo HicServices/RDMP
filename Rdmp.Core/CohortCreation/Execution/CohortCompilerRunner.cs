@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Rdmp.Core.CohortCreation.Execution.Joinables;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.QueryBuilding;
 
 namespace Rdmp.Core.CohortCreation.Execution;
@@ -73,7 +74,7 @@ public class CohortCompilerRunner
     {
         try
         {
-            var globals = _cic.GetAllParameters();
+            var globals = _cic.GetAllParameters().ToArray();
 
             //clear compiler list
             Compiler.CancelAllTasks(true);
@@ -118,7 +119,7 @@ public class CohortCompilerRunner
             if (RunSubcontainers)
                 Parallel.ForEach(
                     _cic.RootCohortAggregateContainer.GetAllSubContainersRecursively().Where(
-                        c => CohortQueryBuilderResult.IsEnabled(c, Compiler.CoreChildProvider)),
+                        c => CohortQueryBuilderResult.IsEnabled(c)),
                     a => Compiler.AddTask(a, globals));
 
 

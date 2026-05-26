@@ -7,6 +7,7 @@
 using System.Collections.Generic;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.FilterImporting.Construction;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
 
 namespace Rdmp.Core.Curation.Data;

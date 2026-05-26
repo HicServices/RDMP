@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.EntityFramework;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Repositories;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.PipelineUIs.Pipelines;

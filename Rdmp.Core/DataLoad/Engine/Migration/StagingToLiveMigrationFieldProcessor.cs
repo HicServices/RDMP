@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using FAnsi.Discovery;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataLoad.Triggers;
+using Rdmp.Core.EntityFramework.Models;
 
 namespace Rdmp.Core.DataLoad.Engine.Migration;
 

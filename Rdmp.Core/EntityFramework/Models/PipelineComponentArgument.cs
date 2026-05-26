@@ -28,7 +28,7 @@ namespace Rdmp.Core.EntityFramework.Models
         [ForeignKey("PipelineComponent_ID")]
         public virtual PipelineComponent PipelineComponent { get; set; }
 
-        public void Clone(Curation.Data.Pipelines.PipelineComponent intoTargetComponent)
+        public void Clone(PipelineComponent intoTargetComponent)
         {
             throw new NotImplementedException();
         }
@@ -58,10 +58,6 @@ namespace Rdmp.Core.EntityFramework.Models
             throw new NotImplementedException();
         }
 
-        public void SaveToDatabase()
-        {
-            throw new NotImplementedException();
-        }
 
         public void SetType(Type t)
         {

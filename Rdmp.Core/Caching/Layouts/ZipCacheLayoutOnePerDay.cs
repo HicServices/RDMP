@@ -7,6 +7,7 @@
 using System.IO;
 using Rdmp.Core.Caching.Pipeline.Destinations;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.EntityFramework.Models;
 
 namespace Rdmp.Core.Caching.Layouts;
 
@@ -16,7 +17,8 @@ namespace Rdmp.Core.Caching.Layouts;
 public class ZipCacheLayoutOnePerDay : CacheLayout
 {
     public ZipCacheLayoutOnePerDay(DirectoryInfo rootCacheDirectory, ILoadCachePathResolver resolver)
-        : base(rootCacheDirectory, "yyyy-MM-dd", CacheArchiveType.Zip, CacheFileGranularity.Day, resolver)
+    
+        : base(rootCacheDirectory, "yyyy-MM-dd", LoadMetadata.CacheArchiveType.Zip, CacheFileGranularity.Day, resolver)
     {
     }
 }

@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework.Models;
 
 namespace Rdmp.Core.Curation;
 

@@ -18,13 +18,11 @@ namespace Rdmp.UI.Menus;
 internal class ExtractableDataSetPackageMenu : RDMPContextMenuStrip
 {
     private readonly ExtractableDataSetPackage _package;
-    private readonly DataExportChildProvider _childProvider;
 
     public ExtractableDataSetPackageMenu(RDMPContextMenuStripArgs args, ExtractableDataSetPackage package) : base(args,
         package)
     {
         _package = package;
-        _childProvider = (DataExportChildProvider)_activator.CoreChildProvider;
         Items.Add("Add ExtractableDataSet(s) to Package",
             _activator.CoreIconProvider.GetImage(RDMPConcept.ExtractableDataSet, OverlayKind.Link).ImageToBitmap(),
             AddExtractableDatasetToPackage);

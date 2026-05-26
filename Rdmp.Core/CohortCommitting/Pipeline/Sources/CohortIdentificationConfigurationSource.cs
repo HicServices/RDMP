@@ -15,6 +15,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.QueryCaching.Aggregation;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
@@ -136,7 +137,7 @@ public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<Dat
     {
         //add root container task
         var task = cohortCompiler.AddTask(_cohortIdentificationConfiguration.RootCohortAggregateContainer,
-            _cohortIdentificationConfiguration.GetAllParameters());
+            _cohortIdentificationConfiguration.GetAllParameters().ToArray());
 
         cohortCompiler.LaunchSingleTask(task, Timeout, false);
 

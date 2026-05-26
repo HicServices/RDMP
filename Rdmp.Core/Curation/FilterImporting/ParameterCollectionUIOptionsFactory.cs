@@ -10,6 +10,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Providers;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.QueryBuilding.Parameters;
@@ -68,8 +69,7 @@ public class ParameterCollectionUIOptionsFactory
         return new ParameterCollectionUIOptions(UseCaseParameterValueSet, parameterSet, ParameterLevel.TableInfo, pm);
     }
 
-    public static ParameterCollectionUIOptions Create(EntityFramework.Models.AggregateConfiguration aggregateConfiguration,
-        ICoreChildProvider coreChildProvider)
+    public static ParameterCollectionUIOptions Create(EntityFramework.Models.AggregateConfiguration aggregateConfiguration)
     {
         ParameterManager pm;
 
@@ -80,7 +80,7 @@ public class ParameterCollectionUIOptionsFactory
 
             var globals = cic != null ? cic.GetAllParameters().ToArray() : Array.Empty<ISqlParameter>();
 
-            var builder = new CohortQueryBuilder(aggregateConfiguration, globals, coreChildProvider);
+            var builder = new CohortQueryBuilder(aggregateConfiguration, globals);
             pm = builder.ParameterManager;
 
             try
@@ -115,17 +115,17 @@ public class ParameterCollectionUIOptionsFactory
     }
 
 
-    public ParameterCollectionUIOptions Create(ICollectSqlParameters host, ICoreChildProvider coreChildProvider)
+    public ParameterCollectionUIOptions Create(ICollectSqlParameters host)
     {
         return host switch
         {
             TableInfo tableInfo => Create(tableInfo),
             ExtractionFilterParameterSet extractionFilterParameterSet => Create(extractionFilterParameterSet),
-            AggregateConfiguration aggregateConfiguration => Create(aggregateConfiguration, coreChildProvider),
+            AggregateConfiguration aggregateConfiguration => Create(aggregateConfiguration),
             IFilter filter => Create(filter,
                 FilterUIOptionsFactory.Create(filter).GetGlobalParametersInFilterScope()),
             CohortIdentificationConfiguration cohortIdentificationConfiguration => Create(
-                cohortIdentificationConfiguration, coreChildProvider),
+                cohortIdentificationConfiguration),
             ExtractionConfiguration extractionConfiguration => Create(extractionConfiguration),
             _ => throw new ArgumentException(
                 "Host Type was not recognised as one of the Types we know how to deal with", nameof(host))
@@ -133,9 +133,9 @@ public class ParameterCollectionUIOptionsFactory
     }
 
     private static ParameterCollectionUIOptions Create(
-        EntityFramework.Models.CohortIdentificationConfiguration cohortIdentificationConfiguration, ICoreChildProvider coreChildProvider)
+        EntityFramework.Models.CohortIdentificationConfiguration cohortIdentificationConfiguration)
     {
-        var builder = new CohortQueryBuilder(cohortIdentificationConfiguration, coreChildProvider);
+        var builder = new CohortQueryBuilder(cohortIdentificationConfiguration);
         builder.RegenerateSQL();
 
         var paramManager = builder.ParameterManager;

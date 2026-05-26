@@ -34,7 +34,6 @@ namespace Rdmp.Core.QueryBuilding;
 /// </summary>
 public class CohortQueryBuilder
 {
-    private ICoreChildProvider _childProvider;
     private object oSQLLock = new();
     private string _sql;
 
@@ -75,9 +74,8 @@ public class CohortQueryBuilder
     #region constructors
 
     //Constructors - This one is the base one called by all others
-    private CohortQueryBuilder(IEnumerable<ISqlParameter> globals, ICoreChildProvider childProvider)
+    private CohortQueryBuilder(IEnumerable<ISqlParameter> globals)
     {
-        _childProvider = childProvider;
         var globals1 = globals?.ToArray() ?? Array.Empty<ISqlParameter>();
         TopX = -1;
 
@@ -87,8 +85,8 @@ public class CohortQueryBuilder
             ParameterManager.AddGlobalParameter(parameter);
     }
 
-    public CohortQueryBuilder(EntityFramework.Models.CohortIdentificationConfiguration configuration, ICoreChildProvider childProvider) : this(
-        configuration.GetAllParameters(), childProvider)
+    public CohortQueryBuilder(EntityFramework.Models.CohortIdentificationConfiguration configuration) : this(
+        configuration.GetAllParameters())
     {
         if (configuration == null)
             throw new QueryBuildingException("Configuration has not been set yet");
@@ -106,8 +104,8 @@ public class CohortQueryBuilder
         SetChildProviderIfNull();
     }
 
-    public CohortQueryBuilder(EntityFramework.Models.CohortAggregateContainer c, IEnumerable<ISqlParameter> globals,
-        ICoreChildProvider childProvider) : this(globals, childProvider)
+    public CohortQueryBuilder(EntityFramework.Models.CohortAggregateContainer c, IEnumerable<ISqlParameter> globals
+        ) : this(globals)
     {
         //set ourselves up to run with the root container
         container = c;
@@ -115,8 +113,7 @@ public class CohortQueryBuilder
         SetChildProviderIfNull();
     }
 
-    public CohortQueryBuilder(EntityFramework.Models.AggregateConfiguration config, IEnumerable<ISqlParameter> globals,
-        ICoreChildProvider childProvider) : this(globals, childProvider)
+    public CohortQueryBuilder(EntityFramework.Models.AggregateConfiguration config, IEnumerable<ISqlParameter> globals) : this(globals)
     {
         //set ourselves up to run with the root container
         configuration = config;
@@ -126,13 +123,13 @@ public class CohortQueryBuilder
 
     private void SetChildProviderIfNull()
     {
-        _childProvider ??= new CatalogueChildProvider(
-            configuration?.CatalogueDbContext ?? container.CatalogueDbContext, null, null, null);
+        //_childProvider ??= new CatalogueChildProvider(
+        //    configuration?.CatalogueDbContext ?? container.CatalogueDbContext, null, null, null);
     }
 
     #endregion
 
-    public string GetDatasetSampleSQL(int topX = 1000, ICoreChildProvider childProvider = null)
+    public string GetDatasetSampleSQL(int topX = 1000)
     {
         if (configuration == null)
             throw new NotSupportedException(
@@ -201,7 +198,7 @@ public class CohortQueryBuilder
     private void RecreateHelpers(QueryBuilderCustomArgs customizations, CancellationToken cancellationToken)
     {
         helper = new CohortQueryBuilderHelper();
-        Results = new CohortQueryBuilderResult(CacheServer, _childProvider, helper, customizations, cancellationToken);
+        Results = new CohortQueryBuilderResult(CacheServer, helper, customizations, cancellationToken);
     }
 
     /// <summary>

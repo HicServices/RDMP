@@ -7,6 +7,7 @@
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
@@ -42,7 +43,7 @@ public class ExecuteCommandAssociateCatalogueWithLoadMetadata : BasicCommandExec
     {
         _loadMetadata = loadMetadata;
 
-        var cataloguesAlreadyUsedByLoadMetadata = _loadMetadata.CatalogueDbContext.GetAllObjectsWhere<LoadMetadataCatalogueLinkage>("LoadMetadataID", loadMetadata.ID).Select(l => l.CatalogueID);
+        var cataloguesAlreadyUsedByLoadMetadata = _loadMetadata.CatalogueDbContext.GetAllObjectsWhere<EntityFramework.Models.LoadMetadataCatalogueLinkage>("LoadMetadataID", loadMetadata.ID).Select(l => l.CatalogueID);
         _availableCatalogues = _loadMetadata.CatalogueDbContext.Catalogues.Where(c => !cataloguesAlreadyUsedByLoadMetadata.Contains(c.ID)).ToArray();//BasicActivator.CoreChildProvider.AllCatalogues.Where(c => !cataloguesAlreadyUsedByLoadMetadata.Contains(c.ID)).ToArray();
         //Ensure logging task is correct
         _otherCatalogues = _loadMetadata.GetAllCatalogues().ToArray();

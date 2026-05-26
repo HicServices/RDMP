@@ -1,9 +1,12 @@
-﻿using FAnsi.Discovery;
+﻿using CsvHelper.Configuration;
+using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using FAnsi.Naming;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.EntityFramework.Helpers;
 using Rdmp.Core.QueryBuilding;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using System;
 using System.Collections.Generic;
@@ -15,7 +18,7 @@ using System.Linq;
 namespace Rdmp.Core.EntityFramework.Models
 {
     [Table("ColumnInfo")]
-    public class ColumnInfo: DatabaseObject, IResolveDuplication, IHasRuntimeName
+    public class ColumnInfo: DatabaseObject, IResolveDuplication, IHasRuntimeName, IHasDependencies
     {
         [Key]
         public override  int ID { get; set; }
@@ -34,6 +37,7 @@ namespace Rdmp.Core.EntityFramework.Models
         public bool IsPrimaryKey { get; set; }
         public string Collation { get; set; }
         public int? DuplicateRecordResolutionOrder { get; set; }
+        public int? Dataset_ID { get; set; }
         public bool DuplicateRecordResolutionIsAscending { get; set; }
         public string Format { get; set; }
 
@@ -52,6 +56,9 @@ namespace Rdmp.Core.EntityFramework.Models
         public virtual Dataset Dataset{ get; set; }
 
         public bool IgnoreInLoads { get; set; }
+        public bool IsAutoIncrement { get; internal set; }
+        public string Data_type { get; internal set; }
+        public IEnumerable<ExtractionInformation> ExtractionInformations => CatalogueDbContext.GetAllObjects<ExtractionInformation>().Where(e => e.ColumnInfo.ID == ID);
 
         public override string ToString() => Name;
         public string GetFullyQualifiedName() => Name;
@@ -107,6 +114,30 @@ namespace Rdmp.Core.EntityFramework.Models
             return db.ExpectTable(ti.GetRuntimeName()).DiscoverColumn(GetRuntimeName());
         }
 
+        internal bool IsNumerical()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Lookup[] GetAllLookupForColumnInfoWhereItIsA(LookupType foreignKey)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IHasDependencies[] GetObjectsThisDependsOn()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IHasDependencies[] GetObjectsDependingOnThis()
+        {
+            throw new NotImplementedException();
+        }
+
+        internal bool Exists()
+        {
+            throw new NotImplementedException();
+        }
     }
 
 }

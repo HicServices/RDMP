@@ -18,6 +18,7 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.QueryCaching.Aggregation;
 using Rdmp.Core.QueryCaching.Aggregation.Arguments;
 using TypeGuesser;
+using Rdmp.Core.EntityFramework.Models;
 
 namespace Rdmp.Core.CohortCreation.Execution;
 

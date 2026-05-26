@@ -17,8 +17,8 @@ namespace Rdmp.Core.DataExport.DataExtraction.UserPicks;
 public interface IExtractableDatasetBundle
 {
     IExtractableDataSet DataSet { get; }
-    List<SupportingDocument> Documents { get; }
-    List<SupportingSQLTable> SupportingSQL { get; }
+    List<EntityFramework.Models.SupportingDocument> Documents { get; }
+    List<EntityFramework.Models.SupportingSQLTable> SupportingSQL { get; }
     List<IBundledLookupTable> LookupTables { get; }
 
     void DropContent(object toDrop);

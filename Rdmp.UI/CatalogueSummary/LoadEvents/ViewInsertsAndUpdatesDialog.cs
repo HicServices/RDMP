@@ -11,6 +11,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataLoad.Triggers;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Logging.PastEvents;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.UI.SimpleDialogs;

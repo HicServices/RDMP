@@ -12,6 +12,7 @@ using Rdmp.Core.Curation.Data.Referencing;
 using Rdmp.Core.EntityFramework;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.EntityFramework.Models;
 
 namespace Rdmp.Core.DataExport.Data;
 
@@ -109,8 +110,8 @@ public class SupplementalExtractionResults : ReferenceOtherObjectDatabaseEntity,
     /// </summary>
     /// <param name="catalogueDbContext"></param>
     /// <param name="configuration">The configuration being extracted</param>
-    /// <param name="sql">The SQL executed to generate the artifact or null if not appropriate (e.g. if it is a <see cref="SupportingDocument"/>)</param>
-    /// <param name="extractedObject">The owner of the artifact being extracted (e.g. a <see cref="SupportingDocument"/> or <see cref="SupportingSQLTable"/>)</param>
+    /// <param name="sql">The SQL executed to generate the artifact or null if not appropriate (e.g. if it is a <see cref="EntityFramework.Models.SupportingDocument"/>)</param>
+    /// <param name="extractedObject">The owner of the artifact being extracted (e.g. a <see cref="EntityFramework.Models.SupportingDocument"/> or <see cref="SupportingSQLTable"/>)</param>
     public SupplementalExtractionResults(RDMPDbContext catalogueDbContext, IExtractionConfiguration configuration,
         string sql, IMapsDirectlyToDatabaseTable extractedObject)
     {
@@ -139,8 +140,8 @@ public class SupplementalExtractionResults : ReferenceOtherObjectDatabaseEntity,
     /// </summary>
     /// <param name="catalogueDbContext"></param>
     /// <param name="mainAudit">The dataset extraction audit for the dataset to which this supplemental artifact belongs</param>
-    /// <param name="sql">The SQL executed to generate the artifact or null if not appropriate (e.g. if it is a <see cref="SupportingDocument"/>)</param>
-    /// <param name="extractedObject">The owner of the artifact being extracted (e.g. a <see cref="SupportingDocument"/> or <see cref="SupportingSQLTable"/>)</param>
+    /// <param name="sql">The SQL executed to generate the artifact or null if not appropriate (e.g. if it is a <see cref="EntityFramework.Models.SupportingDocument"/>)</param>
+    /// <param name="extractedObject">The owner of the artifact being extracted (e.g. a <see cref="EntityFramework.Models.SupportingDocument"/> or <see cref="SupportingSQLTable"/>)</param>
     public SupplementalExtractionResults(RDMPDbContext catalogueDbContext, ICumulativeExtractionResults mainAudit,
         string sql, IMapsDirectlyToDatabaseTable extractedObject)
     {

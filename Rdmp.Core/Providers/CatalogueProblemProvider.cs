@@ -22,6 +22,7 @@ using Rdmp.Core.DataExport.DataExtraction.Commands;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
@@ -38,7 +39,6 @@ namespace Rdmp.Core.Providers;
 /// </summary>
 public class CatalogueProblemProvider : ProblemProvider
 {
-    private ICoreChildProvider _childProvider;
     private HashSet<int> _orphanCatalogueItems = new();
     //private HashSet<int> _usedJoinables;
     private JoinInfo[] _joinsWithMismatchedCollations = Array.Empty<JoinInfo>();
@@ -50,27 +50,26 @@ public class CatalogueProblemProvider : ProblemProvider
     public CultureInfo Culture;
 
     /// <inheritdoc/>
-    public override void RefreshProblems(ICoreChildProvider childProvider)
+    public override void RefreshProblems()
     {
-        _childProvider = childProvider;
 
-       // //Take all the catalogue items which DON'T have an associated ColumnInfo (should hopefully be quite rare)
-       // var catalogueIDs = _childProvider.AllCatalogueItems.Where(ci => ci.ColumnInfo_ID == null).Select(i => i.ID).ToList();
-       // var extractionInfoIDs = _childProvider.AllExtractionInformations.Select(ei => ei.CatalogueItem_ID).ToList();
-       // var orphans = catalogueIDs.Intersect(extractionInfoIDs);
-       // _orphanCatalogueItems = orphans.ToHashSet<int>();
-       // _usedJoinables = new HashSet<int>(
-       //childProvider.AllJoinableCohortAggregateConfigurationUse.Select(
-       //    ju => ju.JoinableCohortAggregateConfiguration_ID));
+        // //Take all the catalogue items which DON'T have an associated ColumnInfo (should hopefully be quite rare)
+        // var catalogueIDs = _childProvider.AllCatalogueItems.Where(ci => ci.ColumnInfo_ID == null).Select(i => i.ID).ToList();
+        // var extractionInfoIDs = _childProvider.AllExtractionInformations.Select(ei => ei.CatalogueItem_ID).ToList();
+        // var orphans = catalogueIDs.Intersect(extractionInfoIDs);
+        // _orphanCatalogueItems = orphans.ToHashSet<int>();
+        // _usedJoinables = new HashSet<int>(
+        //childProvider.AllJoinableCohortAggregateConfigurationUse.Select(
+        //    ju => ju.JoinableCohortAggregateConfiguration_ID));
 
-       // _joinsWithMismatchedCollations = childProvider.AllJoinInfos.Where(j =>
-       //     !string.IsNullOrWhiteSpace(j.PrimaryKey.Collation) &&
-       //     !string.IsNullOrWhiteSpace(j.ForeignKey.Collation) &&
+        // _joinsWithMismatchedCollations = childProvider.AllJoinInfos.Where(j =>
+        //     !string.IsNullOrWhiteSpace(j.PrimaryKey.Collation) &&
+        //     !string.IsNullOrWhiteSpace(j.ForeignKey.Collation) &&
 
-       //     // does not have an explicit join collation specified
-       //     string.IsNullOrWhiteSpace(j.Collation) &&
-       //     !string.Equals(j.PrimaryKey.Collation, j.ForeignKey.Collation)
-       // ).ToArray();
+        //     // does not have an explicit join collation specified
+        //     string.IsNullOrWhiteSpace(j.Collation) &&
+        //     !string.Equals(j.PrimaryKey.Collation, j.ForeignKey.Collation)
+        // ).ToArray();
     }
 
     /// <inheritdoc/>
@@ -80,15 +79,15 @@ public class CatalogueProblemProvider : ProblemProvider
         {
             AllGovernanceNode node => DescribeProblem(node),
             Catalogue catalogue => DescribeProblem(catalogue),
-            CatalogueItem item => DescribeProblem(item),
+            EntityFramework.Models.CatalogueItem item => DescribeProblem(item),
             LoadDirectoryNode directoryNode => DescribeProblem(directoryNode),
-            ExtractionInformation information => DescribeProblem(information),
+            EntityFramework.Models.ExtractionInformation information => DescribeProblem(information),
             IFilter filter => DescribeProblem(filter),
-            AggregateConfiguration configuration => DescribeProblem(configuration),
+            EntityFramework.Models.AggregateConfiguration configuration => DescribeProblem(configuration),
             DecryptionPrivateKeyNode keyNode => DescribeProblem(keyNode),
             AllCataloguesUsedByLoadMetadataNode metadataNode => DescribeProblem(metadataNode),
             ISqlParameter p => DescribeProblem(p),
-            CohortAggregateContainer container => DescribeProblem(container),
+            EntityFramework.Models.CohortAggregateContainer container => DescribeProblem(container),
             PipelineCompatibleWithUseCaseNode pipelineUseCaseNode => DescribeProblem(pipelineUseCaseNode),
             EntityFramework.Models.PipelineComponent pipelineComponent => DescibeProblem(pipelineComponent),
             _ => null
@@ -125,11 +124,11 @@ public class CatalogueProblemProvider : ProblemProvider
         var pipeline = pipelineUseCaseNode.Pipeline;
         var useCaseNode = new PipelineCompatibleWithUseCaseNode(repo, pipeline, pipelineUseCaseNode.UseCase);
         var useCase = useCaseNode.UseCase;
-        if(!useCase.IsAllowable(pipeline))
+        if (!useCase.IsAllowable(pipeline))
         {
             return "Something is wrong with this pipeline";
         }
-        foreach(var component in pipeline.PipelineComponents)
+        foreach (var component in pipeline.PipelineComponents)
         {
             var componentProblem = DescibeProblem(component);
             if (componentProblem != null)
@@ -154,12 +153,12 @@ public class CatalogueProblemProvider : ProblemProvider
         if (string.IsNullOrWhiteSpace(parameter.Value) || parameter.Value == AnyTableSqlParameter.DefaultValue)
         {
             // unless it has ExtractionFilterParameterSets defined on it
-            var desc = _childProvider.GetDescendancyListIfAnyFor(parameter);
-            if (desc != null && parameter is ExtractionFilterParameter)
-            {
-                var filter = desc.Parents.OfType<ExtractionFilter>().FirstOrDefault();
-                if (filter != null && filter.ExtractionFilterParameterSets.Any()) return null;
-            }
+            //var desc = _childProvider.GetDescendancyListIfAnyFor(parameter);
+            //if (desc != null && parameter is ExtractionFilterParameter)
+            //{
+            //    var filter = desc.Parents.OfType<ExtractionFilter>().FirstOrDefault();
+            //    if (filter != null && filter.ExtractionFilterParameterSets.Any()) return null;
+            //}
 
             return "No value defined";
         }
@@ -185,7 +184,7 @@ public class CatalogueProblemProvider : ProblemProvider
     public static string DescribeProblem(DecryptionPrivateKeyNode decryptionPrivateKeyNode) =>
         decryptionPrivateKeyNode.KeyNotSpecified ? "No RSA encryption key has been created yet" : null;
 
-    public string DescribeProblem(AggregateConfiguration aggregateConfiguration)
+    public string DescribeProblem(EntityFramework.Models.AggregateConfiguration aggregateConfiguration)
     {
         //if (aggregateConfiguration.IsJoinablePatientIndexTable())
         //    if (!_usedJoinables.Contains(aggregateConfiguration.JoinableCohortAggregateConfiguration.ID))
@@ -212,60 +211,61 @@ public class CatalogueProblemProvider : ProblemProvider
         var expiredCatalogueIds = new HashSet<int>();
 
         //Get all expired Catalogue IDs
-        foreach (var kvp in _childProvider.GovernanceCoverage)
-        {
-            var gp = _childProvider.AllGovernancePeriods.Single(g => g.ID == kvp.Key);
+        //foreach (var kvp in _childProvider.GovernanceCoverage)
+        //{
+        //    var gp = _childProvider.AllGovernancePeriods.Single(g => g.ID == kvp.Key);
 
-            if (gp.IsExpired())
-                foreach (var i in kvp.Value)
-                    expiredCatalogueIds.Add(i);
-        }
+        //    if (gp.IsExpired())
+        //        foreach (var i in kvp.Value)
+        //            expiredCatalogueIds.Add(i);
+        //}
 
         //Throw out any covered by a not expired one
-        foreach (var kvp in _childProvider.GovernanceCoverage)
-        {
-            var gp = _childProvider.AllGovernancePeriods.Single(g => g.ID == kvp.Key);
+        //foreach (var kvp in _childProvider.GovernanceCoverage)
+        //{
+        //    var gp = _childProvider.AllGovernancePeriods.Single(g => g.ID == kvp.Key);
 
-            if (!gp.IsExpired())
-                foreach (var i in kvp.Value)
-                    expiredCatalogueIds.Remove(i);
-        }
+        //    if (!gp.IsExpired())
+        //        foreach (var i in kvp.Value)
+        //            expiredCatalogueIds.Remove(i);
+        //}
 
-        var expiredCatalogues = expiredCatalogueIds.Select(id => _childProvider.AllCataloguesDictionary[id])
-            .Where(c => !c.IsDeprecated /* || c.IsInternal*/).ToArray();
+        //var expiredCatalogues = expiredCatalogueIds.Select(id => _childProvider.AllCataloguesDictionary[id])
+        //    .Where(c => !c.IsDeprecated /* || c.IsInternal*/).ToArray();
 
-        if (expiredCatalogues.Any())
-            return
-                $"Governance Expired On:{Environment.NewLine}{string.Join(Environment.NewLine, expiredCatalogues.Take(5))}";
+        //if (expiredCatalogues.Any())
+        //    return
+        //        $"Governance Expired On:{Environment.NewLine}{string.Join(Environment.NewLine, expiredCatalogues.Take(5))}";
 
         //no expired governance
         return null;
     }
 
-    private string DescribeProblem(ExtractionInformation extractionInformation)
+    private string DescribeProblem(EntityFramework.Models.ExtractionInformation extractionInformation)
     {
         //Get the Catalogue that this ExtractionInformation is descended from
-        var descendancy = _childProvider.GetDescendancyListIfAnyFor(extractionInformation);
-        var catalogue = descendancy?.Parents.OfType<Catalogue>().SingleOrDefault();
-        if (catalogue != null)
-        {
-            //if we know the Catalogue extractability
+        //var descendancy = _childProvider.GetDescendancyListIfAnyFor(extractionInformation);
+        //var catalogue = descendancy?.Parents.OfType<Catalogue>().SingleOrDefault();
+        //if (catalogue != null)
+        //{
+        //    //if we know the Catalogue extractability
 
-            //ExtractionCategory.ProjectSpecific should match the Catalogue extractability.IsProjectSpecific
-            //otherwise it's a Problem
+        //    //ExtractionCategory.ProjectSpecific should match the Catalogue extractability.IsProjectSpecific
+        //    //otherwise it's a Problem
+        //    Enum.TryParse<ExtractionCategory>(extractionInformation.ExtractionCategory, out var name);
 
-            if (catalogue.IsProjectSpecific(null))
-            {
-                if (extractionInformation.ExtractionCategory != ExtractionCategory.ProjectSpecific)
-                    return
-                        $"Catalogue {catalogue} is Project Specific Catalogue so all ExtractionCategory should be {ExtractionCategory.ProjectSpecific}";
-            }
-            else if (extractionInformation.ExtractionCategory == ExtractionCategory.ProjectSpecific)
-            {
-                return
-                    $"ExtractionCategory is only valid when the Catalogue ('{catalogue}') is also ProjectSpecific";
-            }
-        }
+        //    if (catalogue.IsProjectSpecific(null))
+        //    {
+        //        if (name != ExtractionCategory.ProjectSpecific)
+        //            return
+        //                $"Catalogue {catalogue} is Project Specific Catalogue so all ExtractionCategory should be {ExtractionCategory.ProjectSpecific}";
+        //    }
+        //    else if (name == ExtractionCategory.ProjectSpecific)
+        //    {
+        //        return
+        //            $"ExtractionCategory is only valid when the Catalogue ('{catalogue}') is also ProjectSpecific";
+        //    }
+        //}
 
         return null;
     }
@@ -274,7 +274,7 @@ public class CatalogueProblemProvider : ProblemProvider
         ? "No Project Directory has been specified for the load"
         : null;
 
-    public string DescribeProblem(CatalogueItem catalogueItem)
+    public string DescribeProblem(EntityFramework.Models.CatalogueItem catalogueItem)
     {
         if (_orphanCatalogueItems.Contains(catalogueItem.ID))
             return "CatalogueItem is extractable but has no associated ColumnInfo";
@@ -288,65 +288,65 @@ public class CatalogueProblemProvider : ProblemProvider
             : null;
     }
 
-    public string DescribeProblem(CohortAggregateContainer container)
+    public string DescribeProblem(EntityFramework.Models.CohortAggregateContainer container)
     {
         // Make sure if the user has the default configuration (Root, Inclusion, Exclusion) that they do not mess up the ordering and get very confused
 
         // if the container is inclusion make sure the user hasn't reordered the container to make it act as exclusion instead!
-        if (container.Name?.Contains(ExecuteCommandCreateNewCohortIdentificationConfiguration.InclusionCriteriaName) ??
-            false)
-        {
-            // if there is a parent container
-            var parents = _childProvider.GetDescendancyListIfAnyFor(container);
-            if (parents?.Last() is CohortAggregateContainer { Operation: SetOperation.EXCEPT } parentContainer)
-            // which is EXCEPT
-            {
-                // then something called 'inclusion criteria' should be the first among them
-                var first = _childProvider.GetChildren(parentContainer).OfType<IOrderable>().MinBy(o => o.Order);
-                if (first != null && !first.Equals(container))
-                    return
-                        $"{container.Name} must be the first container in the parent set.  Please re-order it to be the first";
-            }
-        }
+        //if (container.Name?.Contains(ExecuteCommandCreateNewCohortIdentificationConfiguration.InclusionCriteriaName) ??
+        //    false)
+        //{
+        //    // if there is a parent container
+        //    var parents = _childProvider.GetDescendancyListIfAnyFor(container);
+        //    if (parents?.Last() is EntityFramework.Models.CohortAggregateContainer { Operation: nameof(SetOperation.EXCEPT) } parentContainer)
+        //    // which is EXCEPT
+        //    {
+        //        // then something called 'inclusion criteria' should be the first among them
+        //        var first = _childProvider.GetChildren(parentContainer).OfType<IOrderable>().MinBy(o => o.Order);
+        //        if (first != null && !first.Equals(container))
+        //            return
+        //                $"{container.Name} must be the first container in the parent set.  Please re-order it to be the first";
+        //    }
+        //}
 
-        //count children that are not disabled
-        var children = _childProvider.GetChildren(container);
-        var enabledChildren = children.Where(o => o is not IDisableable { IsDisabled: true }).ToArray();
+        ////count children that are not disabled
+        //var children = _childProvider.GetChildren(container);
+        //var enabledChildren = children.Where(o => o is not IDisableable { IsDisabled: true }).ToArray();
 
-        //are there any children with the same order in this container?
-        if (children.OfType<IOrderable>().GroupBy(o => o.Order).Any(g => g.Count() > 1))
-            return "Child order is ambiguous, show the Order column and reorder contents";
+        ////are there any children with the same order in this container?
+        //if (children.OfType<IOrderable>().GroupBy(o => o.Order).Any(g => g.Count() > 1))
+        //    return "Child order is ambiguous, show the Order column and reorder contents";
 
-        //check if we're looking at a root container
-        if (_childProvider.AllCohortIdentificationConfigurations.Any(c =>
-                c.RootCohortAggregateContainer_ID == container.ID))
-        {
-            //if it's a root container
-            //then UNION should have at least 1
-            if (enabledChildren.Length < 1 && container.Operation == SetOperation.UNION)
-                return "You must have at least one element in the root container";
+        ////check if we're looking at a root container
+        //if (_childProvider.AllCohortIdentificationConfigurations.Any(c =>
+        //        c.RootCohortAggregateContainer_ID == container.ID))
+        //{
+        //    //if it's a root container
+        //    //then UNION should have at least 1
+        //    if (enabledChildren.Length < 1 && container.Operation == nameof(SetOperation.UNION))
+        //        return "You must have at least one element in the root container";
 
-            //Excepts and Intersects must have at least 2
-            if (enabledChildren.Length < 2 && (container.Operation == SetOperation.EXCEPT ||
-                                               container.Operation == SetOperation.INTERSECT))
-                return
-                    "EXCEPT/INTERSECT containers must have at least two elements within. Either Add a Catalogue or Disable/Delete this container if not required";
-        }
-        else
-        {
-            if (UserSettings.StrictValidationForCohortBuilderContainers)
-            {
-                //if it's not a root, then there should be at least 2
-                if (enabledChildren.Length == 0)
-                    return
-                        "SET containers cannot be empty. Either Add a Catalogue or Disable/Delete this container if not required";
+        //    //Excepts and Intersects must have at least 2
+        //    if (enabledChildren.Length < 2 && (container.Operation == nameof(SetOperation.EXCEPT) ||
+        //                                       container.Operation == nameof(SetOperation.INTERSECT)))
+        //        return
+        //            "EXCEPT/INTERSECT containers must have at least two elements within. Either Add a Catalogue or Disable/Delete this container if not required";
+        //}
+        //else
+        //{
+        //    if (UserSettings.StrictValidationForCohortBuilderContainers)
+        //    {
+        //        //if it's not a root, then there should be at least 2
+        //        if (enabledChildren.Length == 0)
+        //            return
+        //                "SET containers cannot be empty. Either Add a Catalogue or Disable/Delete this container if not required";
 
 
-                if (enabledChildren.Length == 1)
-                    return
-                        "SET containers have no effect if there is only one child within. Either Add a Catalogue or Disable/Delete this container if not required";
-            }
-        }
+        //        if (enabledChildren.Length == 1)
+        //            return
+        //                "SET containers have no effect if there is only one child within. Either Add a Catalogue or Disable/Delete this container if not required";
+        //    }
+        //}
 
         return null;
     }

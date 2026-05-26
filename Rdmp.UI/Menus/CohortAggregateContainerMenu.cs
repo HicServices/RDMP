@@ -8,6 +8,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.SubComponents.Graphs;
@@ -32,9 +33,9 @@ internal class CohortAggregateContainerMenu : RDMPContextMenuStrip
             var matchIdentifiers = new ToolStripMenuItem("Graph All Records For Matching Patients",
                 _activator.CoreIconProvider.GetImage(RDMPConcept.AggregateGraph).ImageToBitmap());
 
-            var availableGraphs = _activator.CoreChildProvider.AllAggregateConfigurations
+            var availableGraphs = _activator.RepositoryLocator.CatalogueDbContext.AggregateConfigurations
                 .Where(g => !g.IsCohortIdentificationAggregate).ToArray();
-            var allCatalogues = _activator.CoreChildProvider.AllCatalogues;
+            var allCatalogues = _activator.RepositoryLocator.CatalogueDbContext.Catalogues;
 
             if (availableGraphs.Any())
             {

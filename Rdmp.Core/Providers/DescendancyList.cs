@@ -11,6 +11,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 using Rdmp.Core.Providers.Nodes.ProjectCohortNodes;
+using Rdmp.Core.EntityFramework.Models;
 
 namespace Rdmp.Core.Providers;
 

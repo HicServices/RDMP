@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.UI.ItemActivation;
@@ -56,7 +57,7 @@ public partial class LookupUI : LookupUI_Design
         olvCompositeJoins.ClearObjects();
         olvExtractionDescriptions.ClearObjects();
 
-        var eis = Activator.CoreChildProvider.AllExtractionInformations
+        var eis = Activator.RepositoryLocator.CatalogueDbContext.ExtractionInformation
             .Where(ei => ei.CatalogueItem.ColumnInfo_ID == _lookup.Description_ID).ToArray();
         olvExtractionDescriptions.AddObjects(eis);
 

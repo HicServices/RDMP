@@ -10,6 +10,7 @@ using System.Linq;
 using System.Reflection;
 using NPOI.XWPF.UserModel;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.ReusableLibraryCode;
 
 namespace Rdmp.Core.Reports.ExtractionTime;

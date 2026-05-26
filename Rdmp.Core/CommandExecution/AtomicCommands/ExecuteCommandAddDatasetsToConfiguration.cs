@@ -54,9 +54,9 @@ public class ExecuteCommandAddDatasetsToConfiguration : BasicCommandExecution
             SetImpossible("Extraction is Frozen because it has been released and is readonly, try cloning it instead");
 
         //if we don't yet know what datasets to add (i.e. haven't called SetExtractableDataSets)
-        if (_toadd == null)
-            if (itemActivator.CoreChildProvider is DataExportChildProvider childProvider)
-            {
+        //if (_toadd == null)
+            //if (itemActivator.CoreChildProvider is DataExportChildProvider childProvider)
+            //{
                 //use the ones that are not already in the ExtractionConfiguration
                 //var _datasets = childProvider.GetDatasets(targetExtractionConfiguration)
                 //    .Select(n => n.ExtractableDataSet).ToArray();
@@ -77,11 +77,11 @@ public class ExecuteCommandAddDatasetsToConfiguration : BasicCommandExecution
                 //    .ToArray();
 
                 //SetExtractableDataSets(true, _importableDataSets);
-            }
-            else
-            {
-                SetImpossible("CoreChildProvider was not DataExportChildProvider");
-            }
+            //}
+            //else
+            //{
+            //    SetImpossible("CoreChildProvider was not DataExportChildProvider");
+            //}
     }
 
     private void SetExtractableDataSets(bool userMustPick, params IExtractableDataSet[] toAdd)

@@ -7,6 +7,7 @@ using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Curation.DataHelper.RegexRedaction;
+using Rdmp.Core.EntityFramework.Models;
 
 namespace Rdmp.UI.Collections;
 
@@ -42,8 +43,8 @@ public partial class ConfigurationsCollectionUI : RDMPCollectionUI, ILifetimeSub
             new RDMPCollectionCommonFunctionalitySettings());
         CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = e => GetWhitespaceRightClickMenu();
         Activator.RefreshBus.EstablishLifetimeSubscription(this);
-        tlvConfigurations.AddObject(Activator.CoreChildProvider.AllDatasetsNode);
-        tlvConfigurations.AddObject(Activator.CoreChildProvider.AllRegexRedactionConfigurationsNode);
+        //tlvConfigurations.AddObject(Activator.CoreChildProvider.AllDatasetsNode);
+        //tlvConfigurations.AddObject(Activator.CoreChildProvider.AllRegexRedactionConfigurationsNode);
         tlvConfigurations.Refresh();
         }
 

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FAnsi.Discovery;
 using Rdmp.Core.Curation.Data.Defaults;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 

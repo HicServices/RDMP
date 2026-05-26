@@ -4,12 +4,14 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.EntityFramework.Helpers;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.DataViewing;
@@ -38,7 +40,7 @@ internal class ViewSupportingSqlCollection : PersistableObjectCollection, IViewS
 
     public IQuerySyntaxHelper GetQuerySyntaxHelper()
     {
-        var syntax = SupportingSQLTable.ExternalDatabaseServer?.DatabaseType ?? FAnsi.DatabaseType.MicrosoftSQLServer;
+        Enum.TryParse<FAnsi.DatabaseType>(SupportingSQLTable.ExternalDatabaseServer?.DatabaseType ?? Enum.GetName(FAnsi.DatabaseType.MicrosoftSQLServer),out var syntax);
         return QuerySyntaxHelperFactory.Create(syntax);
     }
 

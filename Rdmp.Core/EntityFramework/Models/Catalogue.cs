@@ -21,12 +21,20 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using static Rdmp.Core.EntityFramework.Models.SupportingSQLTable;
 
 namespace Rdmp.Core.EntityFramework.Models
 {
     [Table("Catalogue")]
     public class Catalogue : DatabaseObject, IHasFolder,ICatalogue
     {
+
+        public Catalogue() { }
+        public Catalogue(RDMPDbContext catalogueDbContext, string v)
+        {
+            CatalogueDbContext = catalogueDbContext;
+        }
+
         [Key]
         public override int ID { get; set; }
 
@@ -112,22 +120,22 @@ namespace Rdmp.Core.EntityFramework.Models
         public string ValidatorXML { get; set; }
         public int? TimeCoverage_ExtractionInformation_ID { get; set; }
         public int? PivotCategory_ExtractionInformation_ID { get; set; }
-        Curation.Data.Catalogue.CataloguePeriodicity ICatalogue.Periodicity { get; set; }
+        CataloguePeriodicity ICatalogue.Periodicity { get; set; }
 
-        public Curation.Data.ExtractionInformation TimeCoverage_ExtractionInformation => throw new NotImplementedException();
+        public ExtractionInformation TimeCoverage_ExtractionInformation => throw new NotImplementedException();
 
-        public Curation.Data.ExtractionInformation PivotCategory_ExtractionInformation => throw new NotImplementedException();
+        public ExtractionInformation PivotCategory_ExtractionInformation => throw new NotImplementedException();
 
         public AggregateConfiguration[] AggregateConfigurations => Array.Empty<AggregateConfiguration>();
 
-        public Curation.Data.ExternalDatabaseServer LiveLoggingServer => throw new NotImplementedException();
+        public ExternalDatabaseServer LiveLoggingServer => throw new NotImplementedException();
 
         CatalogueItem[] ICatalogue.CatalogueItems => this.CatalogueItems.ToArray();
 
 
         public virtual List<LoadMetadataCatalogueLinkage> LoadMetadataCatalogueLinkages { get; set; }
 
-        Curation.Data.Aggregation.AggregateConfiguration[] ICatalogue.AggregateConfigurations => throw new NotImplementedException();
+        AggregateConfiguration[] ICatalogue.AggregateConfigurations => throw new NotImplementedException();
 
         public override string ToString() => Name;
 
@@ -157,9 +165,9 @@ namespace Rdmp.Core.EntityFramework.Models
             }
         }
 
-        public IEnumerable<ExtractionInformation> GetAllExtractionInformation(ExtractionCategory category)
+        public ExtractionInformation[] GetAllExtractionInformation(ExtractionCategory category)
         {
-            return CatalogueItems.Select(ci => ci.ExtractionInformation).Where(ei => ei.GetExtractionCategory() == category);
+            return CatalogueItems.Select(ci => ci.ExtractionInformation).Where(ei => ei.GetExtractionCategory() == category).ToArray();
         }
 
         public ITableInfo[] GetTableInfoList(bool includeLookupTables)
@@ -173,11 +181,6 @@ namespace Rdmp.Core.EntityFramework.Models
         }
 
         public void GetTableInfos(out List<ITableInfo> normalTables, out List<ITableInfo> lookupTables)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void GetTableInfos(ICoreChildProvider provider, out List<ITableInfo> normalTables, out List<ITableInfo> lookupTables)
         {
             throw new NotImplementedException();
         }
@@ -197,22 +200,22 @@ namespace Rdmp.Core.EntityFramework.Models
             throw new NotImplementedException();
         }
 
-        public Curation.Data.SupportingSQLTable[] GetAllSupportingSQLTablesForCatalogue(FetchOptions fetch)
+        public SupportingSQLTable[] GetAllSupportingSQLTablesForCatalogue(FetchOptions fetch)
         {
             throw new NotImplementedException();
         }
 
-        Curation.Data.ExtractionInformation[] ICatalogue.GetAllExtractionInformation(ExtractionCategory category)
+        EntityFramework.Models.ExtractionInformation[] ICatalogue.GetAllExtractionInformation(ExtractionCategory category)
         {
             throw new NotImplementedException();
         }
 
-        public Curation.Data.ExtractionInformation[] GetAllExtractionInformation()
+        public ExtractionInformation[] GetAllExtractionInformation()
         {
             throw new NotImplementedException();
         }
 
-        public Curation.Data.SupportingDocument[] GetAllSupportingDocuments(FetchOptions fetch)
+        public SupportingDocument[] GetAllSupportingDocuments(FetchOptions fetch)
         {
             throw new NotImplementedException();
         }
@@ -288,10 +291,6 @@ namespace Rdmp.Core.EntityFramework.Models
             //throw new NotImplementedException();
         }
 
-        public void SaveToDatabase()
-        {
-            //throw new NotImplementedException();
-        }
 
         public void ClearAllInjections()
         {
@@ -301,6 +300,11 @@ namespace Rdmp.Core.EntityFramework.Models
         public void Check(ICheckNotifier notifier)
         {
             //throw new NotImplementedException();
+        }
+
+        internal static bool IsAcceptableName(string name, out object reason)
+        {
+            throw new NotImplementedException();
         }
 
 
@@ -382,8 +386,181 @@ namespace Rdmp.Core.EntityFramework.Models
             Quarterly = 6,
             Yearly = 7
         }
+        #region Enums
+
+        /// <summary>
+        /// Somewhat arbitrary concepts for defining the limitations of a Catalogues data
+        /// </summary>
+
+        /// <summary>
+        /// Notional user declared period on which the data in the Catalogue is refreshed.  This may not have any bearing
+        /// on reality.  Not used by RDMP for any technical processes.
+        /// </summary>
+
+        /// <summary>
+        /// Notional user declared boundary for the dataset defined by the Catalogue.  The data should be isolated to this Granularity
+        /// </summary>
+
+        /// <summary>
+        /// Notional user declared type of data catalogue contains. Copied from the HDR Gateway
+        /// </summary>
+        public enum DatasetType
+        {
+            /// <summary>
+            ///  Includes any data related to mental health, cardiovascular, cancer, rare diseases, metabolic and endocrine, neurological, reproductive, maternity and neonatology, respiratory, immunity, musculoskeletal, vision, renal and urogenital, oral and gastrointestinal, cognitive function or hearing.
+            /// </summary>
+            HealthcareAndDisease,
+            /// <summary>
+            /// Includes any data related to treatment or interventions related to vaccines or which are preventative or therapeutic in nature.
+            /// </summary>
+            TreatmentsAndInterventions,
+            /// <summary>
+            /// Includes any data related to laboratory or other diagnostics.
+            /// </summary>
+            MeasurementsAndTests,
+            /// <summary>
+            /// Includes any data related to CT, MRI, PET, x-ray, ultrasound or pathology imaging.
+            /// </summary>
+            ImagingTypes,
+            /// <summary>
+            ///  Indicates whether the dataset relates to head, chest, arm abdomen or leg imaging.
+            /// </summary>
+            ImagingAreaOfTheBody,
+            /// <summary>
+            ///  Includes any data related to proteomics, transcriptomics, epigenomics, metabolomics, multiomics, metagenomics or genomics.
+            /// </summary>
+            Omics,
+            /// <summary>
+            ///  Includes any data related to education, crime and justice, ethnicity, housing, labour, ageing, economics, marital status, social support, deprivation, religion, occupation, finances or family circumstances.
+            /// </summary>
+            Socioeconomic,
+            /// <summary>
+            /// Includes any data related to smoking, physical activity, dietary habits or alcohol.
+            /// </summary>
+            Lifestyle,
+            /// <summary>
+            ///  Includes any data related to disease registries for research, national disease registries, audits, or birth and deaths records.
+            /// </summary>
+            Registry,
+            /// <summary>
+            ///  Includes any data related to the monitoring or study of environmental or energy factors or events.
+            /// </summary>
+            EnvironmentalAndEnergy,
+            /// <summary>
+            ///  Includes any data related to the study or application of information and communication.
+            /// </summary>
+            InformationAndCommunication,
+            /// <summary>
+            ///  Includes any data related to political views, activities, voting, etc.
+            /// </summary>
+            Politics
+        }
+
+        public enum DatasetSubType
+        {
+            NotApplicable,
+            BirthsAndDeaths,
+            NationalDiseaseRegistryAndAudits,
+            ResearchDiseaseRegistry,
+            Alcohol,
+            DietaryHabits,
+            PhysicalActivity,
+            FamilyCircumstance,
+            Finances,
+            Occupation,
+            Religion,
+            Deprivation,
+            SocialSupport,
+            MaritalStatus,
+            Economics,
+            Ageing,
+            Labour,
+            Housing,
+            Ethnicity,
+            CrimeAndJustice,
+            Education,
+            Lipidomics,
+            Genomics,
+            Metagenomics,
+            Metabolomics,
+            Epigenomics,
+            Transcriptomics,
+            Proteomics,
+            Leg,
+            Abdomen,
+            Arm,
+            MentalHealth,
+            Cardiovascular,
+            Cancer,
+            RareDiseases,
+            MetabolicAndEndocrine,
+            Neurological,
+            Reproductve,
+            MaternityAndNeonatology,
+            Chest,
+            Head,
+            Pathology,
+            Ultrasound,
+            XRay,
+            PET,
+            MRI,
+            CT,
+            CognitiveFunction,
+            Hearing,
+            Others,
+            Vaccines,
+            Preventative,
+            Theraputic,
+            Laboratory,
+            OtherDiagnosis,
+            Respiratory,
+            Immunity,
+            Musculoskeletal,
+            Vision,
+            RenalAndUrogenital,
+            OralAndGastrointestinal
+        }
+
+        public enum DataSourceTypes
+        {
+            Other,
+            EPR,
+            ElectronicSurvey,
+            LIMS,
+            PaperBased,
+            FreeTextNLP,
+            MachineLearning
+        }
+        public enum DataSourceSettingTypes
+        {
+            Other,
+            CohortStudyTrial,
+            Clinic,
+            PrimaryCareReferrals,
+            PrimaryCareClinic,
+            PrimaryCareOutOfHours,
+            SecondaryCareAccidentAndEmergency,
+            SecondaryCareOutpatients,
+            SecondaryCareInPateints,
+            SecondaryCareAmbulance,
+            SecondaryCareICU,
+            PrescribingCommunityPharmacy,
+            PateintReportOutcome,
+            Wearables,
+            LocalAuthority,
+            NationalGovernment,
+            Community,
+            Services,
+            Home,
+            Private,
+            SocialCareHealthcareAtHome,
+            SocialCareOthersocialData,
+            Census
+        }
+        #endregion
+
     }
 
 
-  
+
 }

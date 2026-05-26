@@ -6,6 +6,7 @@
 
 using System;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.EntityFramework.Models;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
@@ -37,7 +38,7 @@ public class ProcessTaskStateBasedIconProvider : IObjectStateBasedIconProvider
 
         return o is not ProcessTask pt
             ? null
-            : pt.ProcessTaskType switch
+            : (ProcessTaskType)pt.ProcessTaskType switch
             {
                 ProcessTaskType.Executable => _exe,
                 ProcessTaskType.SQLFile => _sql,

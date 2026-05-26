@@ -15,6 +15,7 @@ using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
@@ -143,21 +144,21 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
         var x = Common.Compiler.CohortIdentificationConfiguration;
         Common.Activator = Activator;
         Common.Compiler.CohortIdentificationConfiguration = x;
-        var descendancy = Activator.CoreChildProvider.GetDescendancyListIfAnyFor(e.Object);
-        //if publish event was for a child of the cic (_cic is in the objects descendancy i.e. it sits below our cic)
-        if (descendancy != null && descendancy.Parents.Contains(Common.Configuration))
-        {
-            //Go up descendency list clearing out the tasks above (and including) e.Object because it has changed
-            foreach (var o in descendancy.Parents.Union(new[] { e.Object }))
-            {
-                var key = Common.GetKey(o);
-                if (key != null)
-                    Common.Compiler.CancelTask(key, true);
-            }
+        //var descendancy = Activator.CoreChildProvider.GetDescendancyListIfAnyFor(e.Object);
+        ////if publish event was for a child of the cic (_cic is in the objects descendancy i.e. it sits below our cic)
+        //if (descendancy != null && descendancy.Parents.Contains(Common.Configuration))
+        //{
+        //    //Go up descendency list clearing out the tasks above (and including) e.Object because it has changed
+        //    foreach (var o in descendancy.Parents.Union(new[] { e.Object }))
+        //    {
+        //        var key = Common.GetKey(o);
+        //        if (key != null)
+        //            Common.Compiler.CancelTask(key, true);
+        //    }
 
-            //TODO: this doesn't clear the compiler
-            Common.RecreateAllTasks();
-        }
+        //    //TODO: this doesn't clear the compiler
+        //    Common.RecreateAllTasks();
+        //}
     }
 
     private void refreshColumnValues(object sender, EventArgs e)
@@ -283,7 +284,7 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
 
     private void ticket_TicketTextChanged(object sender, EventArgs e)
     {
-        Common.Configuration.Ticket = ticket.TicketText;
+        //Common.Configuration.Ticket = ticket.TicketText;
     }
 
 

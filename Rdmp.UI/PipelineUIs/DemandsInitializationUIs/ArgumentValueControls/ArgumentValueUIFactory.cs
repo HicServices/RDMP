@@ -13,6 +13,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.EntityFramework;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.UI.ItemActivation;
@@ -137,8 +138,8 @@ public class ArgumentValueUIFactory
             array = GetColumnInfosInScope(args.CatalogueDbContext, args.Parent).ToArray();
         else if (argumentType == typeof(PreLoadDiscardedColumn))
             array = GetAllPreloadDiscardedColumnsInScope(args.CatalogueDbContext, args.Parent).ToArray();
-        else if (argumentType == typeof(LoadProgress) && args.Parent is ProcessTask pt)
-            array = pt.LoadMetadata.LoadProgresses;
+        else if (argumentType == typeof(Core.EntityFramework.Models.LoadProgress) && args.Parent is ProcessTask pt)
+            array = pt.LoadMetadata.LoadProgresses.ToArray();
         else
             array = args.CatalogueDbContext.GetAllObjects(argumentType)
                 .ToArray(); //Default case fetch all the objects of the Type

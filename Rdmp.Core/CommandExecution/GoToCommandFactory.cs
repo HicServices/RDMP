@@ -16,6 +16,7 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
@@ -68,18 +69,18 @@ public class GoToCommandFactory : CommandFactoryBase
         }
 
         // cic => associated projects
-        if (Is(forObject, out CohortIdentificationConfiguration cic))
-            yield return new ExecuteCommandShow(_activator, () =>
-            {
-                return _activator.CoreChildProvider is DataExportChildProvider { AllProjectAssociatedCics: not null } dx
-                    ? dx.AllProjectAssociatedCics.Where(a => a.CohortIdentificationConfiguration_ID == cic.ID)
-                        .Select(a => a.Project).Distinct()
-                    : Array.Empty<CohortIdentificationConfiguration>();
-            })
-            {
-                OverrideCommandName = "Project(s)",
-                OverrideIcon = GetImage(RDMPConcept.Project)
-            };
+        //if (Is(forObject, out CohortIdentificationConfiguration cic))
+            //yield return new ExecuteCommandShow(_activator, () =>
+            //{
+            //    return _activator.CoreChildProvider is DataExportChildProvider { AllProjectAssociatedCics: not null } dx
+            //        ? dx.AllProjectAssociatedCics.Where(a => a.CohortIdentificationConfiguration_ID == cic.ID)
+            //            .Select(a => a.Project).Distinct()
+            //        : Array.Empty<CohortIdentificationConfiguration>();
+            //})
+            //{
+            //    OverrideCommandName = "Project(s)",
+            //    OverrideIcon = GetImage(RDMPConcept.Project)
+            //};
 
         if (Is(forObject, out ColumnInfo columnInfo))
         {
@@ -95,13 +96,13 @@ public class GoToCommandFactory : CommandFactoryBase
                 OverrideCommandName = "Table Info",
                 OverrideIcon = GetImage(RDMPConcept.TableInfo)
             };
-            yield return new ExecuteCommandShow(_activator,
-                () => _activator.CoreChildProvider.AllCatalogueItems.Where(catItem =>
-                    catItem.ColumnInfo_ID == columnInfo.ID))
-            {
-                OverrideCommandName = "Catalogue Item(s)",
-                OverrideIcon = GetImage(RDMPConcept.CatalogueItem)
-            };
+            //yield return new ExecuteCommandShow(_activator,
+            //    () => _activator.CoreChildProvider.AllCatalogueItems.Where(catItem =>
+            //        catItem.ColumnInfo_ID == columnInfo.ID))
+            //{
+            //    OverrideCommandName = "Catalogue Item(s)",
+            //    OverrideIcon = GetImage(RDMPConcept.CatalogueItem)
+            //};
 
             yield return new ExecuteCommandShow(_activator, columnInfo.ANOTable_ID, typeof(ANOTable))
             {
@@ -156,17 +157,17 @@ public class GoToCommandFactory : CommandFactoryBase
                 OverrideIcon = GetImage(RDMPConcept.Catalogue)
             };
 
-            yield return new ExecuteCommandShow(_activator, () =>
-            {
-                return _activator.CoreChildProvider is DataExportChildProvider dx
-                    ? dx.SelectedDataSets.Where(s => s.ExtractableDataSet_ID == eds.ID)
-                        .Select(s => s.ExtractionConfiguration)
-                    : Array.Empty<SelectedDataSets>();
-            })
-            {
-                OverrideCommandName = "Extraction Configuration(s)",
-                OverrideIcon = GetImage(RDMPConcept.ExtractionConfiguration)
-            };
+            //yield return new ExecuteCommandShow(_activator, () =>
+            //{
+            //    return _activator.CoreChildProvider is DataExportChildProvider dx
+            //        ? dx.SelectedDataSets.Where(s => s.ExtractableDataSet_ID == eds.ID)
+            //            .Select(s => s.ExtractionConfiguration)
+            //        : Array.Empty<SelectedDataSets>();
+            //})
+            //{
+            //    OverrideCommandName = "Extraction Configuration(s)",
+            //    OverrideIcon = GetImage(RDMPConcept.ExtractionConfiguration)
+            //};
         }
 
         if (Is(forObject, out GovernancePeriod period))
@@ -186,11 +187,11 @@ public class GoToCommandFactory : CommandFactoryBase
 
         if (Is(forObject, out ExtractionFilter masterFilter))
         {
-            yield return new ExecuteCommandShow(_activator, () =>
-                _activator.CoreChildProvider.AllAggregateFilters.Where(af => af.ClonedFromExtractionFilter_ID == masterFilter.ID).Select(f => f.GetAggregate())
-                    .Where(a => a != null).Distinct()
-            )
-            { OverrideCommandName = "Usages (in Cohort Builder)" };
+            //yield return new ExecuteCommandShow(_activator, () =>
+            //    _activator.CoreChildProvider.AllAggregateFilters.Where(af => af.ClonedFromExtractionFilter_ID == masterFilter.ID).Select(f => f.GetAggregate())
+            //        .Where(a => a != null).Distinct()
+            //)
+            //{ OverrideCommandName = "Usages (in Cohort Builder)" };
 
             yield return new ExecuteCommandShow(_activator, () =>
                 _activator.RepositoryLocator.CatalogueDbContext
@@ -233,15 +234,15 @@ public class GoToCommandFactory : CommandFactoryBase
             if (ep != null) yield return new ExecuteCommandShow(_activator, ep, 0, true);
         }
 
-        if (Is(forObject, out TableInfo tableInfo))
-            yield return new ExecuteCommandShow(_activator,
-                () => tableInfo.ColumnInfos.SelectMany(c =>
-                    _activator.CoreChildProvider.AllCatalogueItems.Where(catItem => catItem.ColumnInfo_ID == c.ID)
-                        .Select(catItem => catItem.Catalogue)).Distinct())
-            {
-                OverrideCommandName = "Catalogue(s)",
-                OverrideIcon = GetImage(RDMPConcept.Catalogue)
-            };
+        //if (Is(forObject, out TableInfo tableInfo))
+        //    yield return new ExecuteCommandShow(_activator,
+        //        () => tableInfo.ColumnInfos.SelectMany(c =>
+        //            _activator.CoreChildProvider.AllCatalogueItems.Where(catItem => catItem.ColumnInfo_ID == c.ID)
+        //                .Select(catItem => catItem.Catalogue)).Distinct())
+        //    {
+        //        OverrideCommandName = "Catalogue(s)",
+        //        OverrideIcon = GetImage(RDMPConcept.Catalogue)
+        //    };
 
         if (Is(forObject, out AggregateConfiguration aggregate))
         {
@@ -260,151 +261,151 @@ public class GoToCommandFactory : CommandFactoryBase
 
         if (Is(forObject, out Catalogue catalogue))
         {
-            var lmdLinkage = _activator.CoreChildProvider.AllLoadMetadataCatalogueLinkages.Where(lmdcl => lmdcl.CatalogueID == catalogue.ID).Select(lmdcl => lmdcl.LoadMetadataID);
-            var lmds = _activator.CoreChildProvider.AllLoadMetadatas.Where(lmd => lmdLinkage.Contains(lmd.ID));
-            foreach (var lmd in lmds)
-            {
-                yield return new ExecuteCommandShow(_activator, lmd.ID, typeof(LoadMetadata))
-                { OverrideCommandName = $"Data Load ({lmd.Name})", OverrideIcon = GetImage(RDMPConcept.LoadMetadata) };
-            }
-            if (!lmds.Any())
-            {
-                yield return new ExecuteCommandShow(_activator, null, typeof(LoadMetadata))
-                { OverrideCommandName = "No Data Load", OverrideIcon = GetImage(RDMPConcept.LoadMetadata) };
-            }
+            //var lmdLinkage = _activator.CoreChildProvider.AllLoadMetadataCatalogueLinkages.Where(lmdcl => lmdcl.CatalogueID == catalogue.ID).Select(lmdcl => lmdcl.LoadMetadataID);
+            //var lmds = _activator.CoreChildProvider.AllLoadMetadatas.Where(lmd => lmdLinkage.Contains(lmd.ID));
+            //foreach (var lmd in lmds)
+            //{
+            //    yield return new ExecuteCommandShow(_activator, lmd.ID, typeof(LoadMetadata))
+            //    { OverrideCommandName = $"Data Load ({lmd.Name})", OverrideIcon = GetImage(RDMPConcept.LoadMetadata) };
+            //}
+            //if (!lmds.Any())
+            //{
+            //    yield return new ExecuteCommandShow(_activator, null, typeof(LoadMetadata))
+            //    { OverrideCommandName = "No Data Load", OverrideIcon = GetImage(RDMPConcept.LoadMetadata) };
+            //}
 
 
-            if (_activator.CoreChildProvider is DataExportChildProvider exp)
-            {
-                var cataEds = exp.ExtractableDataSets.Where(d => d.Catalogue_ID == catalogue.ID);
+            //if (_activator.CoreChildProvider is DataExportChildProvider exp)
+            //{
+            //    var cataEds = exp.ExtractableDataSets.Where(d => d.Catalogue_ID == catalogue.ID);
 
-                if (cataEds != null)
-                {
-                    yield return new ExecuteCommandShow(_activator,
-                         () => (cataEds.SelectMany(c => c.Projects.Select(p => p.ID)).Select(p => _activator.RepositoryLocator.CatalogueDbContext.GetObjectByID<Project>(p))))
-                    {
-                        OverrideCommandName = "Associated Projects",
-                        OverrideIcon = GetImage(RDMPConcept.Project)
-                    };
-                    yield return new ExecuteCommandShow(_activator,
-                          () => (cataEds.SelectMany(c => c.ExtractionConfigurations.Select(e => e.Project))))
-                    {
-                        OverrideCommandName = "Extracted In (Project)",
-                        OverrideIcon = GetImage(RDMPConcept.Project)
-                    };
-                    yield return new ExecuteCommandShow(_activator, () => cataEds.SelectMany(c => c.ExtractionConfigurations))
-                    {
-                        OverrideCommandName = $"Extracted In (Extraction Configuration)",
-                        OverrideIcon = GetImage(RDMPConcept.ExtractionConfiguration)
-                    };
-                }
-                else
-                {
-                    //no values, show disabled options
-                    yield return new ExecuteCommandShow(_activator,
-                          () =>
-                          {
-                              return new Project[] { };
-                          }
-                      )
-                    {
-                        OverrideCommandName = "No Associated Project",
-                        OverrideIcon = GetImage(RDMPConcept.Project)
-                    };
-                    yield return new ExecuteCommandShow(_activator,
-                                             () =>
-                                             {
-                                                 return new Project[] { };
-                                             }
-                                         )
-                    {
-                        OverrideCommandName = "Not Extracted In (Project)",
-                        OverrideIcon = GetImage(RDMPConcept.Project)
-                    };
-                    yield return new ExecuteCommandShow(_activator,
-                        () =>
-                        {
-                            return new ExtractionConfiguration[] { };
-                        }
-                    )
-                    {
-                        OverrideCommandName = "Not Extracted In (Extraction Configuration)",
-                        OverrideIcon = GetImage(RDMPConcept.ExtractionConfiguration)
-                    };
-                }
-            }
+            //    if (cataEds != null)
+            //    {
+            //        yield return new ExecuteCommandShow(_activator,
+            //             () => (cataEds.SelectMany(c => c.Projects.Select(p => p.ID)).Select(p => _activator.RepositoryLocator.CatalogueDbContext.GetObjectByID<Project>(p))))
+            //        {
+            //            OverrideCommandName = "Associated Projects",
+            //            OverrideIcon = GetImage(RDMPConcept.Project)
+            //        };
+            //        yield return new ExecuteCommandShow(_activator,
+            //              () => (cataEds.SelectMany(c => c.ExtractionConfigurations.Select(e => e.Project))))
+            //        {
+            //            OverrideCommandName = "Extracted In (Project)",
+            //            OverrideIcon = GetImage(RDMPConcept.Project)
+            //        };
+            //        yield return new ExecuteCommandShow(_activator, () => cataEds.SelectMany(c => c.ExtractionConfigurations))
+            //        {
+            //            OverrideCommandName = $"Extracted In (Extraction Configuration)",
+            //            OverrideIcon = GetImage(RDMPConcept.ExtractionConfiguration)
+            //        };
+            //    }
+            //    else
+            //    {
+            //        //no values, show disabled options
+            //        yield return new ExecuteCommandShow(_activator,
+            //              () =>
+            //              {
+            //                  return new Project[] { };
+            //              }
+            //          )
+            //        {
+            //            OverrideCommandName = "No Associated Project",
+            //            OverrideIcon = GetImage(RDMPConcept.Project)
+            //        };
+            //        yield return new ExecuteCommandShow(_activator,
+            //                                 () =>
+            //                                 {
+            //                                     return new Project[] { };
+            //                                 }
+            //                             )
+            //        {
+            //            OverrideCommandName = "Not Extracted In (Project)",
+            //            OverrideIcon = GetImage(RDMPConcept.Project)
+            //        };
+            //        yield return new ExecuteCommandShow(_activator,
+            //            () =>
+            //            {
+            //                return new ExtractionConfiguration[] { };
+            //            }
+            //        )
+            //        {
+            //            OverrideCommandName = "Not Extracted In (Extraction Configuration)",
+            //            OverrideIcon = GetImage(RDMPConcept.ExtractionConfiguration)
+            //        };
+            //    }
+            //}
 
             yield return new ExecuteCommandShow(_activator, () => catalogue.GetTableInfoList(true))
             { OverrideCommandName = "Table(s)", OverrideIcon = GetImage(RDMPConcept.TableInfo) };
 
-            yield return new ExecuteCommandShow(_activator,
-                () =>
-                    _activator
-                        .CoreChildProvider
-                        .AllAggregateConfigurations.Where(ac =>
-                            ac.IsCohortIdentificationAggregate && ac.Catalogue_ID == catalogue.ID)
-                        .Select(ac => ac.GetCohortIdentificationConfigurationIfAny())
-                        .Where(cataCic => cataCic != null)
-                        .Distinct())
-            {
-                OverrideCommandName = "Cohort Identification Configuration(s)",
-                OverrideIcon = GetImage(RDMPConcept.CohortIdentificationConfiguration)
-            };
+            //yield return new ExecuteCommandShow(_activator,
+            //    () =>
+            //        _activator
+            //            .CoreChildProvider
+            //            .AllAggregateConfigurations.Where(ac =>
+            //                ac.IsCohortIdentificationAggregate && ac.Catalogue_ID == catalogue.ID)
+            //            .Select(ac => ac.GetCohortIdentificationConfigurationIfAny())
+            //            .Where(cataCic => cataCic != null)
+            //            .Distinct())
+            //{
+            //    OverrideCommandName = "Cohort Identification Configuration(s)",
+            //    OverrideIcon = GetImage(RDMPConcept.CohortIdentificationConfiguration)
+            //};
 
 
-            yield return new ExecuteCommandShow(_activator,
-                () => _activator.CoreChildProvider.AllGovernancePeriods.Where(p =>
-                    p.GovernedCatalogues.Contains(catalogue)))
-            {
-                OverrideCommandName = "Governance",
-                OverrideIcon = GetImage(RDMPConcept.GovernancePeriod)
-            };
+            //yield return new ExecuteCommandShow(_activator,
+            //    () => _activator.CoreChildProvider.AllGovernancePeriods.Where(p =>
+            //        p.GovernedCatalogues.Contains(catalogue)))
+            //{
+            //    OverrideCommandName = "Governance",
+            //    OverrideIcon = GetImage(RDMPConcept.GovernancePeriod)
+            //};
         }
 
         if (Is(forObject, out ExtractableCohort cohort))
         {
-            yield return new ExecuteCommandShow(_activator, () =>
-            {
-                return _activator.CoreChildProvider is DataExportChildProvider dx
-                    ? dx.ExtractionConfigurations.Where(ec => ec.Cohort_ID == cohort.ID)
-                    : (IEnumerable<IMapsDirectlyToDatabaseTable>)Array.Empty<ExtractionConfiguration>();
-            })
-            {
-                OverrideCommandName = "Extraction Configuration(s)",
-                OverrideIcon = GetImage(RDMPConcept.ExtractionConfiguration)
-            };
+            //    yield return new ExecuteCommandShow(_activator, () =>
+            //    {
+            //        return _activator.CoreChildProvider is DataExportChildProvider dx
+            //            ? dx.ExtractionConfigurations.Where(ec => ec.Cohort_ID == cohort.ID)
+            //            : (IEnumerable<IMapsDirectlyToDatabaseTable>)Array.Empty<ExtractionConfiguration>();
+            //    })
+            //    {
+            //        OverrideCommandName = "Extraction Configuration(s)",
+            //        OverrideIcon = GetImage(RDMPConcept.ExtractionConfiguration)
+            //    };
 
-            yield return new ExecuteCommandShow(_activator, () =>
-            {
-                return _activator.CoreChildProvider is DataExportChildProvider dx
-                    ? dx.Projects.Where(p => p.ProjectNumber == cohort.ExternalProjectNumber)
-                    : (IEnumerable<IMapsDirectlyToDatabaseTable>)Array.Empty<Project>();
-            })
-            {
-                OverrideCommandName = "Project(s)",
-                OverrideIcon = GetImage(RDMPConcept.Project)
-            };
+            //    yield return new ExecuteCommandShow(_activator, () =>
+            //    {
+            //        return _activator.CoreChildProvider is DataExportChildProvider dx
+            //            ? dx.Projects.Where(p => p.ProjectNumber == cohort.ExternalProjectNumber)
+            //            : (IEnumerable<IMapsDirectlyToDatabaseTable>)Array.Empty<Project>();
+            //    })
+            //    {
+            //        OverrideCommandName = "Project(s)",
+            //        OverrideIcon = GetImage(RDMPConcept.Project)
+            //    };
 
-            var obj = ExtractableCohortAuditLogBuilder.GetObjectIfAny(cohort, _activator.RepositoryLocator);
-            if (obj is not null && obj is CohortIdentificationConfiguration configuration)
-            {
-                yield return new ExecuteCommandShow(_activator, () =>
-                {
-                    return [configuration];
-                })
-                {
-                    OverrideCommandName = "Cohort Identification Configuration(s)",
-                    OverrideIcon = GetImage(RDMPConcept.CohortIdentificationConfiguration)
-                };
-            }
+            //var obj = ExtractableCohortAuditLogBuilder.GetObjectIfAny(cohort, _activator.RepositoryLocator);
+            //if (obj is not null && obj is CohortIdentificationConfiguration configuration)
+            //{
+            //    yield return new ExecuteCommandShow(_activator, () =>
+            //    {
+            //        return [configuration];
+            //    })
+            //    {
+            //        OverrideCommandName = "Cohort Identification Configuration(s)",
+            //        OverrideIcon = GetImage(RDMPConcept.CohortIdentificationConfiguration)
+            //    };
+            //}
 
         }
 
         //if it is a masquerader and masquerading as a DatabaseEntity then add a goto the object
-        if (forObject is IMasqueradeAs masqueraderIfAny)
-            if (masqueraderIfAny.MasqueradingAs() is DatabaseEntity m)
-                yield return new ExecuteCommandShow(_activator, m, 0, true)
-                { OverrideIcon = _activator.CoreIconProvider.GetImage(m) };
+        //if (forObject is IMasqueradeAs masqueraderIfAny)
+        //    if (masqueraderIfAny.MasqueradingAs() is DatabaseEntity m)
+        //        yield return new ExecuteCommandShow(_activator, m, 0, true)
+        //        { OverrideIcon = _activator.CoreIconProvider.GetImage(m) };
     }
 
     private static bool SupportsReplacement(object o) => o is not DashboardLayout;

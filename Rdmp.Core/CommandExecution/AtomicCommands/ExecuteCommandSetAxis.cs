@@ -9,6 +9,7 @@ using System.Linq;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.QueryBuilding.Options;
 using Rdmp.Core.Repositories.Construction;
+using Rdmp.Core.EntityFramework.Models;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 

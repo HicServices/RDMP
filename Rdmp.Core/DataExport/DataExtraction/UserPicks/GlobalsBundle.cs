@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework.Models;
 
 namespace Rdmp.Core.DataExport.DataExtraction.UserPicks;
 
@@ -17,10 +18,10 @@ namespace Rdmp.Core.DataExport.DataExtraction.UserPicks;
 /// </summary>
 public class GlobalsBundle : Bundle
 {
-    public List<SupportingDocument> Documents { get; private set; }
+    public List<EntityFramework.Models.SupportingDocument> Documents { get; private set; }
     public List<SupportingSQLTable> SupportingSQL { get; private set; }
 
-    public GlobalsBundle(SupportingDocument[] documents, SupportingSQLTable[] supportingSQL) :
+    public GlobalsBundle(EntityFramework.Models.SupportingDocument[] documents, SupportingSQLTable[] supportingSQL) :
         base(
             Array.Empty<object>().Union(documents).Union(supportingSQL).ToArray()
         //pass all the objects to the base class so it can allocate initial States
@@ -37,7 +38,7 @@ public class GlobalsBundle : Bundle
     {
         switch (toDrop)
         {
-            case SupportingDocument item:
+            case EntityFramework.Models.SupportingDocument item:
                 Documents.Remove(item);
                 return;
             case SupportingSQLTable drop:

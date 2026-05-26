@@ -9,6 +9,7 @@ using System;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Repositories.Construction;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
@@ -46,7 +47,7 @@ public class ExecuteCommandSetIgnoredColumns : BasicCommandExecution
             foreach (var c in availableColumns)
             {
                 c.IgnoreInLoads = ignore.Contains(c);
-                c.SaveToDatabase();
+                //c.SaveToDatabase();
             }
         }
         else
@@ -58,7 +59,7 @@ public class ExecuteCommandSetIgnoredColumns : BasicCommandExecution
                 foreach (var c in availableColumns)
                 {
                     c.IgnoreInLoads = chosen.Contains(c);
-                    c.SaveToDatabase();
+                    //c.SaveToDatabase();
                 }
         }
 

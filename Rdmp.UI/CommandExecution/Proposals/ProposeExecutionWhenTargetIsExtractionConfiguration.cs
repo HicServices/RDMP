@@ -38,13 +38,14 @@ internal class
             //user is trying to set the cohort of the configuration
             case CatalogueCombineable sourceCatalogueCombineable:
                 {
-                    var dataExportChildProvider = (DataExportChildProvider)ItemActivator.CoreChildProvider;
-                    var eds = dataExportChildProvider.ExtractableDataSets.SingleOrDefault(ds =>
-                        ds.Catalogue_ID == sourceCatalogueCombineable.Catalogue.ID);
+                    //var dataExportChildProvider = (DataExportChildProvider)ItemActivator.CoreChildProvider;
+                    //var eds = dataExportChildProvider.ExtractableDataSets.SingleOrDefault(ds =>
+                    //    ds.Catalogue_ID == sourceCatalogueCombineable.Catalogue.ID);
 
-                    return eds == null
-                        ? new ImpossibleCommand("Catalogue is not Extractable")
-                        : new ExecuteCommandAddDatasetsToConfiguration(ItemActivator, eds, targetExtractionConfiguration);
+                    //return eds == null
+                    //    ? new ImpossibleCommand("Catalogue is not Extractable")
+                    //    : new ExecuteCommandAddDatasetsToConfiguration(ItemActivator, eds, targetExtractionConfiguration);
+                    return new ImpossibleCommand("Catalogue is not Extractable");
                 }
             //case ExtractableCohortCombineable sourceExtractableCohortCombineable:
             //    return new ExecuteCommandAddCohortToExtractionConfiguration(ItemActivator,

@@ -11,6 +11,7 @@ using FAnsi.Discovery.QuerySyntax;
 using FAnsi.Discovery.QuerySyntax.Aggregation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.QueryBuilding.Options;
 using Rdmp.Core.QueryBuilding.Parameters;
 using Rdmp.Core.ReusableLibraryCode.Settings;

@@ -7,6 +7,7 @@
 using System.Collections.Generic;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.EntityFramework.Models;
 
 namespace Rdmp.Core.Providers.Nodes.UsedByNodes;
 

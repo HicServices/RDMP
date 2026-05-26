@@ -1,12 +1,13 @@
 ﻿using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework.Models;
 using System.Linq;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 public sealed class ExecuteCommandDeleteDataset: BasicCommandExecution
 {
-    private readonly Curation.Data.Dataset _dataset;
+    private readonly EntityFramework.Models.Dataset _dataset;
     private readonly IBasicActivateItems _activator;
-public ExecuteCommandDeleteDataset(IBasicActivateItems activator, [DemandsInitialization("The Dataset to delete")]Curation.Data.Dataset dataset)
+public ExecuteCommandDeleteDataset(IBasicActivateItems activator, [DemandsInitialization("The Dataset to delete")] EntityFramework.Models.Dataset dataset)
     {
         _dataset = dataset;
         _activator = activator;
@@ -19,7 +20,7 @@ public ExecuteCommandDeleteDataset(IBasicActivateItems activator, [DemandsInitia
         foreach (var col in columnItemsLinkedToDataset)
         {
             col.Dataset_ID = null;
-            col.SaveToDatabase();
+            //col.SaveToDatabase();
         }
         _dataset.DeleteInDatabase();
     }

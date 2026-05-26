@@ -6,6 +6,7 @@
 
 using FAnsi.Discovery;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework.Models;
 
 namespace Rdmp.Core.Curation.DataHelper;
 

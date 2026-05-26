@@ -13,6 +13,7 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Logging.PastEvents;
 using TypeGuesser.Deciders;
+using Rdmp.Core.EntityFramework.Models;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 

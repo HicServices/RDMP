@@ -10,6 +10,7 @@ using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Repositories;
@@ -164,15 +165,15 @@ public class RDMPCommandExecutionFactory : ICommandExecutionFactory
         {
             if (sourceAggregateConfigurationCombineable.Aggregate.Catalogue.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository))
             {
-                var dx = (DataExportChildProvider)_activator.CoreChildProvider;
-                var acic = targetJoinableCollectionNode.Configuration;
-                var cicProjAssociations = dx.AllProjectAssociatedCics.Where(c => c.CohortIdentificationConfiguration_ID == acic.ID).ToArray().Select(a => a.Project);
-                var extractableDatasets = _activator.RepositoryLocator.CatalogueDbContext.GetAllObjectsWithParent<ExtractableDataSet>(sourceAggregateConfigurationCombineable.Aggregate.Catalogue).ToList();
-                var catalogueProjects = extractableDatasets.SelectMany(e => e.Projects);
-                if (!catalogueProjects.Any(c => cicProjAssociations.Contains(c)))
-                {
-                    return null;
-                }
+                //var dx = (DataExportChildProvider)_activator.CoreChildProvider;
+                //var acic = targetJoinableCollectionNode.Configuration;
+                //var cicProjAssociations = dx.AllProjectAssociatedCics.Where(c => c.CohortIdentificationConfiguration_ID == acic.ID).ToArray().Select(a => a.Project);
+                //var extractableDatasets = _activator.RepositoryLocator.CatalogueDbContext.GetAllObjectsWithParent<ExtractableDataSet>(sourceAggregateConfigurationCombineable.Aggregate.Catalogue).ToList();
+                //var catalogueProjects = extractableDatasets.SelectMany(e => e.Projects);
+                //if (!catalogueProjects.Any(c => cicProjAssociations.Contains(c)))
+                //{
+                //    return null;
+                //}
 
             }
             if (sourceAggregateConfigurationCombineable.Aggregate.IsCohortIdentificationAggregate)
@@ -183,15 +184,15 @@ public class RDMPCommandExecutionFactory : ICommandExecutionFactory
         {
             if (sourceCatalogueCombineable.Catalogue.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository))
             {
-                var dx = (DataExportChildProvider)_activator.CoreChildProvider;
-                var cic = targetJoinableCollectionNode.Configuration;
-                var cicProjAssociations = dx.AllProjectAssociatedCics.Where(c => c.CohortIdentificationConfiguration_ID == cic.ID).ToArray().Select(a => a.Project);
-                var extractableDatasets = _activator.RepositoryLocator.CatalogueDbContext.GetAllObjectsWithParent<ExtractableDataSet>(sourceCatalogueCombineable.Catalogue).ToList();
-                var catalogueProjects = extractableDatasets.SelectMany(e => e.Projects);
-                if (!catalogueProjects.Any(c => cicProjAssociations.Contains(c)))
-                {
-                    return null;
-                }
+                //var dx = (DataExportChildProvider)_activator.CoreChildProvider;
+                //var cic = targetJoinableCollectionNode.Configuration;
+                //var cicProjAssociations = dx.AllProjectAssociatedCics.Where(c => c.CohortIdentificationConfiguration_ID == cic.ID).ToArray().Select(a => a.Project);
+                //var extractableDatasets = _activator.RepositoryLocator.CatalogueDbContext.GetAllObjectsWithParent<ExtractableDataSet>(sourceCatalogueCombineable.Catalogue).ToList();
+                //var catalogueProjects = extractableDatasets.SelectMany(e => e.Projects);
+                //if (!catalogueProjects.Any(c => cicProjAssociations.Contains(c)))
+                //{
+                //    return null;
+                //}
 
             }
             return new ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable(_activator,

@@ -14,6 +14,7 @@ using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Progress;
@@ -133,7 +134,7 @@ public partial class ExtractionConfigurationUI : ExtractionConfigurationUI_Desig
     private void SetupCohortIdentificationConfiguration()
     {
         cbxCohortIdentificationConfiguration.DataSource =
-            Activator.CoreChildProvider.AllCohortIdentificationConfigurations;
+            Activator.RepositoryLocator.CatalogueDbContext.CohortIdentificationConfigurations;
         cbxCohortIdentificationConfiguration.SelectedItem = _extractionConfiguration.CohortIdentificationConfiguration;
     }
 

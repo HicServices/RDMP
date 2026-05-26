@@ -60,9 +60,10 @@ public class ExecuteCommandCreateNewExtractionConfigurationForProject : BasicCom
         // we have a cohort so can only create an ExtractionConfiguration for Projects that share
         // the cohorts project number
 
-        return BasicActivator.CoreChildProvider is DataExportChildProvider dx
-            ? dx.Projects.Where(p => p.ProjectNumber == cohortIfAny.ExternalProjectNumber)
-            : Enumerable.Empty<Project>();
+        //return BasicActivator.CoreChildProvider is DataExportChildProvider dx
+        //    ? dx.Projects.Where(p => p.ProjectNumber == cohortIfAny.ExternalProjectNumber)
+        //    : Enumerable.Empty<Project>();
+        return Enumerable.Empty<Project>();
     }
 
     [UseWithObjectConstructor]

@@ -20,6 +20,7 @@ using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.DataHelper;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories;
 using Rdmp.UI.Collections;
@@ -298,9 +299,9 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
             if (shouldBeExtractable)
             {
                 //if they want to change the extraction category
-                if (category.HasValue && n.ExtractionInformation.ExtractionCategory != category.Value)
+                if (category.HasValue && n.ExtractionInformation.ExtractionCategory != Enum.GetName(category.Value))
                 {
-                    n.ExtractionInformation.ExtractionCategory = category.Value;
+                    n.ExtractionInformation.ExtractionCategory = Enum.GetName(category.Value);
                     n.ExtractionInformation.Order = olvColumnExtractability.IndexOf(n);
                     n.ExtractionInformation.SaveToDatabase();
                     olvColumnExtractability.RefreshObject(n);
@@ -446,7 +447,7 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
         {
             TaskDescription =
                     "You are about to add the newly imported table columns to an existing Catalogue.  This will mean that your Catalogue draws data from 2+ tables.  You will need to also create a join between the underlying columns for this to work properly."
-        }, Activator.CoreChildProvider.AllCatalogues, out var selected))
+        }, Activator.RepositoryLocator.CatalogueDbContext.Catalogues.ToArray(), out var selected))
             AddToExistingCatalogue(selected, eis);
     }
 

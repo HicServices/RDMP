@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Defaults;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.UI.ItemActivation;
 
 

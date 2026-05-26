@@ -15,6 +15,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Providers;
 using Rdmp.Core.QueryBuilding.Parameters;
 using Rdmp.Core.QueryCaching.Aggregation;
@@ -81,10 +82,9 @@ public class CohortQueryBuilderDependency
 
 
     public CohortQueryBuilderDependency(EntityFramework.Models.AggregateConfiguration cohortSet,
-        JoinableCohortAggregateConfigurationUse patientIndexTableIfAny, ICoreChildProvider childProvider,
+        JoinableCohortAggregateConfigurationUse patientIndexTableIfAny,
         IReadOnlyCollection<IPluginCohortCompiler> pluginCohortCompilers)
     {
-        var childProvider1 = childProvider;
         _pluginCohortCompilers = pluginCohortCompilers;
         CohortSet = cohortSet;
         PatientIndexTableIfAny = patientIndexTableIfAny;
@@ -98,9 +98,9 @@ public class CohortQueryBuilderDependency
 
         if (PatientIndexTableIfAny != null)
         {
-            var join = childProvider1.AllJoinables.SingleOrDefault(j =>
-                           j.ID == PatientIndexTableIfAny.JoinableCohortAggregateConfiguration_ID) ??
-                       throw new Exception("ICoreChildProvider did not know about the provided patient index table");
+            //var join = childProvider1.AllJoinables.SingleOrDefault(j =>
+            //               j.ID == PatientIndexTableIfAny.JoinableCohortAggregateConfiguration_ID) ??
+            //           throw new Exception("ICoreChildProvider did not know about the provided patient index table");
             //JoinedTo = childProvider1.AllAggregateConfigurations.SingleOrDefault(ac =>
             //    ac.ID == join.AggregateConfiguration_ID);
 

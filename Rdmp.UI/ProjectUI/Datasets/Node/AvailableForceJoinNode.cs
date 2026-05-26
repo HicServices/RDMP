@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.EntityFramework;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Providers;
 using Rdmp.Core.ReusableLibraryCode.Annotations;
 
@@ -57,10 +59,10 @@ internal class AvailableForceJoinNode : IMasqueradeAs
     /// </summary>
     /// <param name="coreChildProvider"></param>
     /// <param name="otherNodes"></param>
-    public void FindJoinsBetween(ICoreChildProvider coreChildProvider, HashSet<AvailableForceJoinNode> otherNodes)
+    public void FindJoinsBetween(RDMPDbContext coreChildProvider, HashSet<AvailableForceJoinNode> otherNodes)
     {
-        var allJoins = coreChildProvider.AllJoinInfos;
-        var mycols = coreChildProvider.TableInfosToColumnInfos[TableInfo.ID].ToArray();
+        //var allJoins = coreChildProvider.AllJoinInfos;
+        //var mycols = coreChildProvider.TableInfosToColumnInfos[TableInfo.ID].ToArray();
 
         var foundJoinInfos = new List<JoinInfo>();
 

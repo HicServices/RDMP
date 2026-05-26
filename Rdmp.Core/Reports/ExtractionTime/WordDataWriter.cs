@@ -16,6 +16,7 @@ using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Annotations;
 using Rdmp.Core.Validation.Constraints;
@@ -57,7 +58,7 @@ public class WordDataWriter : DocXHelper
 
 
     [NotNull]
-    private static string GetDoi([NotNull] Curation.Data.Dataset ds)
+    private static string GetDoi([NotNull] EntityFramework.Models.Dataset ds)
     {
         return !string.IsNullOrWhiteSpace(ds.DigitalObjectIdentifier) ? $" (DOI: {ds.DigitalObjectIdentifier})" : "";
     }
@@ -163,7 +164,7 @@ public class WordDataWriter : DocXHelper
 
             if (foundDatasets.Count > 0)
             {
-                var datasets = Executer.Source.Request.Catalogue.CatalogueDbContext.GetAllObjects<Curation.Data.Dataset>().ToList();
+                var datasets = Executer.Source.Request.Catalogue.CatalogueDbContext.GetAllObjects<EntityFramework.Models.Dataset>().ToList();
 
                 var datasetString = string.Join(", ",
                     foundDatasets

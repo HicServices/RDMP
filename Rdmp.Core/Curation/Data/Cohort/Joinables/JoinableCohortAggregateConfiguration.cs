@@ -10,6 +10,7 @@ using System.Data.Common;
 using System.Linq;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.EntityFramework;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 
@@ -129,7 +130,7 @@ public class JoinableCohortAggregateConfiguration : DatabaseEntity
             throw new Exception(
                 $"AggregateConfiguration '{user}' already uses '{existing.JoinableCohortAggregateConfiguration}'. Only one patient index table join is permitted.");
 
-        user.ClearAllInjections();
+        //user.ClearAllInjections();
 
         return new JoinableCohortAggregateConfigurationUse(CatalogueDbContext, user, this);
     }

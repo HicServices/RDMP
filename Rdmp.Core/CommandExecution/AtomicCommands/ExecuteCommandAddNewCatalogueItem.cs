@@ -10,6 +10,7 @@ using System.Linq;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.EntityFramework;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
@@ -56,7 +57,7 @@ public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution, IAtomicC
     {
         return catalogue == null
             ? null
-            : new HashSet<int>(_activator.CoreChildProvider.AllCatalogueItems.Where(ci => ci.Catalogue_ID == catalogue.ID).Select(static ci => ci.ColumnInfo_ID)
+            : new HashSet<int>(_activator.RepositoryLocator.CatalogueDbContext.CatalogueItems.Where(ci => ci.Catalogue_ID == catalogue.ID).Select(static ci => ci.ColumnInfo_ID)
                 .Where(static col => col.HasValue).Select(static v => v.Value).Distinct());
     }
 
@@ -94,7 +95,7 @@ public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution, IAtomicC
             {
                 TaskDescription = "Select which column the new CatalogueItem will describe/extract",
                 WindowTitle = "Choose underlying Column"
-            }, BasicActivator.CoreChildProvider.AllColumnInfos);
+            }, BasicActivator.RepositoryLocator.CatalogueDbContext.ColumnInfos.ToArray());
 
             if (columnInfo == null)
                 return;
@@ -142,11 +143,16 @@ public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution, IAtomicC
         // also make extractable
         if (Category == null) return;
 
-        var ei = new ExtractionInformation(catalogueDbcontext, ci, columnInfo, columnInfo.GetFullyQualifiedName());
-        if (ei.ExtractionCategory == Category) return;
+        var ei = new ExtractionInformation()
+        {
+            CatalogueItem_ID = ci.ID,
+            ExtractionCategory = Enum.GetName(Category.Value),
+            Alias = columnInfo.GetFullyQualifiedName()
+        };// catalogueDbcontext, ci, columnInfo, columnInfo.GetFullyQualifiedName());
+        if (Category is null || ei.ExtractionCategory == Enum.GetName(((ExtractionCategory)Category))) return;
 
-        ei.ExtractionCategory = Category.Value;
-        ei.SaveToDatabase();
+        ei.ExtractionCategory = Enum.GetName(Category.Value);
+        //ei.SaveToDatabase();
     }
 
     private static bool AlreadyInCatalogue(EntityFramework.Models.ColumnInfo candidate, IReadOnlySet<int> existingColumnInfos) =>

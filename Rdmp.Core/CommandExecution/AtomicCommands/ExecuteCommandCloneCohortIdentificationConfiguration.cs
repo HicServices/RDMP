@@ -8,6 +8,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.EntityFramework.Helpers;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories.Construction;
@@ -108,7 +109,7 @@ public class ExecuteCommandCloneCohortIdentificationConfiguration : BasicCommand
                 CloneCreatedIfAny.Name = _name ?? $"{CloneCreatedIfAny.Name[..^7]}:{CloneCreatedIfAny.Version}";
             if (_version is not null)
                 CloneCreatedIfAny.Frozen = true;
-            CloneCreatedIfAny.SaveToDatabase();
+            //CloneCreatedIfAny.SaveToDatabase();
         }
 
         //if (_project != null) // clone the association
@@ -124,6 +125,6 @@ public class ExecuteCommandCloneCohortIdentificationConfiguration : BasicCommand
         else
             Emphasise(CloneCreatedIfAny);
 
-        Activate(CloneCreatedIfAny);
+        //Activate(CloneCreatedIfAny);
     }
 }

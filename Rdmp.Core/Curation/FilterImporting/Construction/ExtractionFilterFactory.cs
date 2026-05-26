@@ -7,6 +7,7 @@
 using System;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.EntityFramework;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.Curation.FilterImporting.Construction;

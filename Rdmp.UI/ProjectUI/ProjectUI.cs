@@ -51,12 +51,12 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
         if (_project?.ProjectNumber == null)
             return;
 
-        if (Activator.CoreChildProvider is not DataExportChildProvider dxChildProvider)
-            return;
+        //if (Activator.CoreChildProvider is not DataExportChildProvider dxChildProvider)
+        //    return;
         extractableCohortCollection1.SetItemActivator(Activator);
 
-        extractableCohortCollection1.SetupFor(dxChildProvider.Cohorts
-            .Where(c => c.ExternalProjectNumber == _project.ProjectNumber).ToArray());
+        //extractableCohortCollection1.SetupFor(dxChildProvider.Cohorts
+        //    .Where(c => c.ExternalProjectNumber == _project.ProjectNumber).ToArray());
     }
 
     //menu item setup

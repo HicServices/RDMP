@@ -55,9 +55,9 @@ namespace Rdmp.Core.DataExport.Data
 
             var edsp = new ExtractableDataSetProject(dqeRepo, eds, project);
             edsp.SaveToDatabase();
-            foreach (var ei in catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Where(ei => ei.ExtractionCategory is ExtractionCategory.Core))
+            foreach (var ei in catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Where(ei => { Enum.TryParse<ExtractionCategory>(ei.ExtractionCategory, out var ec); return ec is ExtractionCategory.Core; }))
             {
-                ei.ExtractionCategory = ExtractionCategory.ProjectSpecific;
+                ei.ExtractionCategory = Enum.GetName(ExtractionCategory.ProjectSpecific);
                 ei.SaveToDatabase();
             }
             return eds;
@@ -86,7 +86,7 @@ namespace Rdmp.Core.DataExport.Data
 
             foreach (var ei in catalogue.GetAllExtractionInformation(ExtractionCategory.ProjectSpecific))
             {
-                ei.ExtractionCategory = ExtractionCategory.Core;
+                ei.ExtractionCategory = Enum.GetName(ExtractionCategory.Core);
                 ei.SaveToDatabase();
             }
         }

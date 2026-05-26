@@ -72,7 +72,7 @@ public class ExecuteCommandCreateNewClassBasedProcessTask : BasicCommandExecutio
             else
                 return;
         }
-        var newTask = new EntityFramework.Models.ProcessTask()
+        var newTask = new EntityFramework.Models.ProcessTask(BasicActivator.RepositoryLocator.CatalogueDbContext,_loadMetadata,_loadStage)
         {
             Path = _type.FullName,
             ProcessTaskType = (int)_processTaskType,

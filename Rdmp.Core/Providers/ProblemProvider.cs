@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Pipelines;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.ReusableLibraryCode;
 
@@ -36,5 +37,5 @@ public abstract class ProblemProvider : IProblemProvider
 
     protected abstract string DescribeProblemImpl(object o);
 
-    public abstract void RefreshProblems(ICoreChildProvider childProvider);
+    public abstract void RefreshProblems();
 }

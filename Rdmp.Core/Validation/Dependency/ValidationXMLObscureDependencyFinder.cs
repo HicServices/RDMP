@@ -33,7 +33,7 @@ public class ValidationXMLObscureDependencyFinder : IObscureDependencyFinder
     /// <summary>
     /// Catalogues whose ValidationXML doesn't resolve properly
     /// </summary>
-    public List<Catalogue> CataloguesWithBrokenValidationXml = new();
+    public List<EntityFramework.Models.Catalogue> CataloguesWithBrokenValidationXml = new();
 
 
     public ValidationXMLObscureDependencyFinder(RDMPDbContextServiceLocator catalogueRepositoryServiceLocator)
@@ -127,10 +127,10 @@ public class ValidationXMLObscureDependencyFinder : IObscureDependencyFinder
         foreach (var suspect in TheUsualSuspects)
             checkers.Add(new Regex(string.Format(suspect.Pattern, oTableWrapperObject.ID), RegexOptions.Singleline));
 
-        var firstPassSuspects = new HashSet<Catalogue>();
+        var firstPassSuspects = new HashSet<EntityFramework.Models.Catalogue>();
 
         //get all catalogues with some validation XML and see if the checker matches any of them
-        foreach (var catalogue in repository.GetAllObjects<Catalogue>()
+        foreach (var catalogue in repository.GetAllObjects<EntityFramework.Models.Catalogue>()
                      .Where(c => !string.IsNullOrWhiteSpace(c.ValidatorXML)))
             if (checkers.Any(checker => checker.IsMatch(catalogue.ValidatorXML)))
                 firstPassSuspects.Add(catalogue);
@@ -142,7 +142,7 @@ public class ValidationXMLObscureDependencyFinder : IObscureDependencyFinder
     }
 
     private bool DeserializeToSeeIfThereIsADependency(IMapsDirectlyToDatabaseTable oTableWrapperObject,
-        Catalogue firstPassSuspect)
+        EntityFramework.Models.Catalogue firstPassSuspect)
     {
         //we already forbidlisted this Catalogue because it has dodgy XML that can't be deserialized properly
         var forbidlisted = CataloguesWithBrokenValidationXml.SingleOrDefault(c => c.ID == firstPassSuspect.ID);

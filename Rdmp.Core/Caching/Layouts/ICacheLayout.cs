@@ -10,6 +10,7 @@ using System.IO;
 using Rdmp.Core.Caching.Pipeline.Destinations;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.ReusableLibraryCode.Progress;
+using static Rdmp.Core.EntityFramework.Models.LoadMetadata;
 
 namespace Rdmp.Core.Caching.Layouts;
 

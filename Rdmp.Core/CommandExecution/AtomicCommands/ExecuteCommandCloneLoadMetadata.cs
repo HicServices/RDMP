@@ -1,5 +1,6 @@
 ﻿using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework.Models;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 

@@ -6,6 +6,7 @@
 
 using System;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands.Alter;
@@ -56,7 +57,7 @@ public class ExecuteCommandAlterColumnType : BasicCommandExecution
         }
 
         columnInfo.Data_type = newSqlType;
-        columnInfo.SaveToDatabase();
+        //columnInfo.SaveToDatabase();
 
         var archive = col.Table.Database.ExpectTable($"{col.Table}_Archive");
 

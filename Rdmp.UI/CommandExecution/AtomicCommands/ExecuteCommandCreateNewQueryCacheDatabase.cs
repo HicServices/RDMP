@@ -9,6 +9,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Databases;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
@@ -44,7 +45,7 @@ public class ExecuteCommandCreateNewQueryCacheDatabase : BasicUICommandExecution
         {
             var newServer =
                 new ExternalDatabaseServer(Activator.RepositoryLocator.CatalogueDbContext, "Caching Database", p);
-            newServer.SetProperties(db);
+            //newServer.SetProperties(db);
 
             _cic.QueryCachingServer_ID = newServer.ID;
             _cic.SaveToDatabase();

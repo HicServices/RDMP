@@ -36,6 +36,7 @@ using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using TypeGuesser;
+using Rdmp.Core.EntityFramework.Models;
 
 namespace Rdmp.Core.CommandLine.DatabaseCreation;
 
@@ -68,7 +69,7 @@ public partial class ExampleDatasetsCreation
         {
             var keywords = _repos.CatalogueDbContext
                 .GetAllObjects<ConnectionStringKeyword>()
-                .Where(k => k.DatabaseType == DatabaseType.MicrosoftSQLServer)
+                .Where(k => k.DatabaseType == Enum.GetName(DatabaseType.MicrosoftSQLServer))
                 .ToArray();
 
             AddKeywordIfSpecified(b.TrustServerCertificate, nameof(b.TrustServerCertificate), keywords);
@@ -131,7 +132,7 @@ public partial class ExampleDatasetsCreation
         ForExtractionInformations(demography,
             e =>
             {
-                e.ExtractionCategory = ExtractionCategory.SpecialApprovalRequired;
+                e.ExtractionCategory = Enum.GetName(ExtractionCategory.SpecialApprovalRequired);
                 e.SaveToDatabase();
             },
             "current_postcode",
@@ -248,7 +249,8 @@ public partial class ExampleDatasetsCreation
                 DatabaseType.MicrosoftSQLServer, name, "true");
 
             //pass it into the system wide static keyword collection for use with all databases of this type all the time
-            DiscoveredServerHelper.AddConnectionStringKeyword(keyword.DatabaseType, keyword.Name, keyword.Value,
+            Enum.TryParse<DatabaseType>(keyword.DatabaseType, out var dbType);
+            DiscoveredServerHelper.AddConnectionStringKeyword(dbType, keyword.Name, keyword.Value,
                 ConnectionStringKeywordPriority.SystemDefaultMedium);
         }
     }
@@ -407,7 +409,7 @@ public partial class ExampleDatasetsCreation
     private EntityFramework.Models.CohortIdentificationConfiguration CreateCohortIdentificationConfiguration(ExtractionFilter inclusionFilter1)
     {
         //Create the top level configuration object
-        var cic = new EntityFramework.Models.CohortIdentificationConfiguration()
+        var cic = new EntityFramework.Models.CohortIdentificationConfiguration(_repos.CatalogueDbContext, "Tayside Lung Cancer Cohort")
         {
             Name = "Tayside Lung Cancer Cohort",
             CatalogueDbContext = _repos.CatalogueDbContext
@@ -541,12 +543,15 @@ public partial class ExampleDatasetsCreation
     private AggregateConfiguration CreateGraph(ICatalogue cata, string name, string dimension1, bool isAxis,
         string dimension2)
     {
-        var ac = new AggregateConfiguration(_repos.CatalogueDbContext, cata, name)
+        var ac = new AggregateConfiguration()
         {
-            CountSQL = "count(*) as NumberOfRecords"
+            CountSQL = "count(*) as NumberOfRecords",
+            Catalogue_ID = cata.ID,
+            Name = name
         };
-        ac.SaveToDatabase();
+        cata.CatalogueDbContext.Add(ac);
         ac.IsExtractable = true;
+        cata.CatalogueDbContext.SaveChanges();
 
         var mainDimension = ac.AddDimension(GetExtractionInformation(cata, dimension1));
         var otherDimension = string.IsNullOrWhiteSpace(dimension2)
@@ -566,7 +571,7 @@ public partial class ExampleDatasetsCreation
         if (otherDimension != null)
         {
             ac.PivotOnDimensionID = otherDimension.ID;
-            ac.SaveToDatabase();
+            //ac.SaveToDatabase();
         }
 
         return ac;

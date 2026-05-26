@@ -20,6 +20,14 @@ namespace Rdmp.Core.EntityFramework.Models
     [Table("ANOTable")]
     public class ANOTable: DatabaseObject, ICheckable
     {
+        public ANOTable() { }
+
+        public ANOTable(RDMPDbContext catalogueDbContext, ExternalDatabaseServer anoStoreServer, string name, string suffix)
+        {
+            CatalogueDbContext = catalogueDbContext;
+            Suffix = suffix;
+        }
+
         [Key]
         public override int ID { get; set; }
         public string TableName { get; set; }
@@ -30,6 +38,9 @@ namespace Rdmp.Core.EntityFramework.Models
 
         [NoMappingToDatabase]
         public ExternalDatabaseServer Server => CatalogueDbContext.GetObjectByID<ExternalDatabaseServer>(Server_ID);
+
+        public static string ANOPrefix { get; set; }
+
         public void Check(ICheckNotifier notifier)
         {
             throw new NotImplementedException();
@@ -166,5 +177,9 @@ CONSTRAINT AK_{TableName} UNIQUE({anonymousColumnName})
                     tbl.Drop();
         }
 
+        public bool IsTablePushed()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

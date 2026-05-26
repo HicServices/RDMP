@@ -11,6 +11,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.EntityFramework.Helpers;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
@@ -54,14 +55,14 @@ internal class ViewCohortIdentificationConfigurationSqlCollection : PersistableO
         if (UseQueryCache && cache != null)
             return cache;
 
-        var builder = new CohortQueryBuilder(CohortIdentificationConfiguration, null);
+        var builder = new CohortQueryBuilder(CohortIdentificationConfiguration);
         builder.RegenerateSQL();
         return new SelfCertifyingDataAccessPoint(builder.Results.TargetServer);
     }
 
     public string GetSql()
     {
-        var builder = new CohortQueryBuilder(CohortIdentificationConfiguration, null);
+        var builder = new CohortQueryBuilder(CohortIdentificationConfiguration);
 
         if (!UseQueryCache && CohortIdentificationConfiguration.QueryCachingServer_ID.HasValue)
             builder.CacheServer = null;

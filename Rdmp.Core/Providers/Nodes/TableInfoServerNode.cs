@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FAnsi;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework.Models;
 
 namespace Rdmp.Core.Providers.Nodes;
 
@@ -46,5 +47,5 @@ public class TableInfoServerNode : Node
     public bool IsSameServer(TableInfo tableInfo) =>
         ServerName.Equals(tableInfo.Server ?? NullServerNode, StringComparison.CurrentCultureIgnoreCase)
         &&
-        DatabaseType == tableInfo.DatabaseType;
+        Enum.GetName<DatabaseType>(DatabaseType) == tableInfo.DatabaseType;
 }

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FAnsi.Discovery;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework.Models;
 
 namespace Rdmp.Core.DataLoad.Modules.Mutilators.QueryBuilders;
 

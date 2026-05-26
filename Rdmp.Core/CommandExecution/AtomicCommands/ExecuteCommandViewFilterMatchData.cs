@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataViewing;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
@@ -22,8 +23,8 @@ public class ExecuteCommandViewFilterMatchData : ExecuteCommandViewDataBase, IAt
     private readonly IContainer _container;
 
     private readonly ViewType _viewType;
-    private ColumnInfo _columnInfo;
-    private ColumnInfo[] _candidates;
+    private EntityFramework.Models.ColumnInfo _columnInfo;
+    private EntityFramework.Models.ColumnInfo[] _candidates;
 
     /// <summary>
     /// Views an extract of data from a column that matches a given <paramref name="filter"/>
@@ -86,7 +87,7 @@ public class ExecuteCommandViewFilterMatchData : ExecuteCommandViewDataBase, IAt
             SetImpossible($"No ColumnInfo is associated with '{rootObj}'");
     }
 
-    private ColumnInfo[] GetCandidates(Catalogue catalogue)
+    private EntityFramework.Models.ColumnInfo[] GetCandidates(Catalogue catalogue)
     {
         if (catalogue == null)
         {

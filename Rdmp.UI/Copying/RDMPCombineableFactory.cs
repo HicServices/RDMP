@@ -19,6 +19,7 @@ using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.UI.CommandExecution;

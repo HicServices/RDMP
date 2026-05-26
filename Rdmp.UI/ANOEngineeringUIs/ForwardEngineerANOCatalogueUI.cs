@@ -23,6 +23,7 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Serialization;
 using Rdmp.Core.DataLoad.Modules.Attachers;
 using Rdmp.Core.DataLoad.Modules.Mutilators.Dilution;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.UI.Collections;
@@ -209,7 +210,7 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
                 {
                     TaskDescription =
                             "Choose an ANOTable into which to put the identifiable values stored in this column"
-                }, Activator.CoreChildProvider.AllANOTables, out var selected))
+                }, Activator.RepositoryLocator.CatalogueDbContext.ANOTables.ToArray(), out var selected))
                     try
                     {
                         plan.ANOTable = selected;
@@ -333,8 +334,8 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
             tlvANOTablesCommonFunctionality.SetUp(RDMPCollection.None, tlvANOTables, activator, olvANOTablesName, null,
                 settings);
 
-            tlvANOTables.AddObject(activator.CoreChildProvider.AllANOTablesNode);
-            tlvANOTables.ExpandAll();
+            //tlvANOTables.AddObject(activator.CoreChildProvider.AllANOTablesNode);
+            //tlvANOTables.ExpandAll();
 
             //Setup tree view to show all TableInfos that you are trying to Migrate
             tlvTableInfoMigrationsCommonFunctionality = new RDMPCollectionCommonFunctionality();
@@ -459,11 +460,11 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
         }
     }
 
-    private void CreateAttacher(ITableInfo t, QueryBuilder qb, LoadMetadata lmd, LoadProgress loadProgressIfAny)
+    private void CreateAttacher(ITableInfo t, QueryBuilder qb, LoadMetadata lmd, Core.EntityFramework.Models.LoadProgress loadProgressIfAny)
     {
         var pt = new ProcessTask(Activator.RepositoryLocator.CatalogueDbContext, lmd, LoadStage.Mounting)
         {
-            ProcessTaskType = ProcessTaskType.Attacher,
+            ProcessTaskType = (int)ProcessTaskType.Attacher,
             Name = $"Read from {t}",
             Path = typeof(RemoteTableAttacher).FullName
         };
@@ -498,7 +499,7 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
     {
         var pt = new ProcessTask(Activator.RepositoryLocator.CatalogueDbContext, lmd, LoadStage.AdjustStaging);
         pt.CreateArgumentsForClassIfNotExists<Dilution>();
-        pt.ProcessTaskType = ProcessTaskType.MutilateDataTable;
+        pt.ProcessTaskType = (int)ProcessTaskType.MutilateDataTable;
         pt.Name = $"Dilute {dilutionOp.Key.GetRuntimeName()}";
         pt.Path = typeof(Dilution).FullName;
         pt.SaveToDatabase();

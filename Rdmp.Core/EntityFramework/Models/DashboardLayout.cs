@@ -12,6 +12,12 @@ namespace Rdmp.Core.EntityFramework.Models
     [Table("DashboardLayout")]
     public class DashboardLayout: DatabaseObject
     {
+        public DashboardLayout() { }
+        public DashboardLayout(RDMPDbContext catalogueDbContext, string name)
+        {
+            Name = name;
+        }
+
         [Key]
         public override int ID { get; set; }
 

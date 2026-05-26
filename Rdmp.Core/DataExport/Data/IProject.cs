@@ -6,6 +6,7 @@
 
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
@@ -29,7 +30,7 @@ public interface IProject : IHasDependencies, INamed, IHasFolder
     string MasterTicket { get; set; }
 
     /// <summary>
-    /// Location on disk that the extracted artifacts for the project (csv files , <see cref="SupportingDocument"/> etc) are put in.
+    /// Location on disk that the extracted artifacts for the project (csv files , <see cref="EntityFramework.Models.SupportingDocument"/> etc) are put in.
     /// </summary>
     string ExtractionDirectory { get; set; }
 
@@ -64,17 +65,4 @@ public interface IProject : IHasDependencies, INamed, IHasFolder
     /// <param name="any"></param>
     /// <returns></returns>
     ExtractionInformation[] GetAllProjectCatalogueColumns(ExtractionCategory any);
-
-    /// <summary>
-    /// <para>
-    /// Returns all <see cref="ExtractionInformation"/> in all <see cref="Catalogue"/> which are marked as project specific (for this <see cref="IProject"/>)
-    /// </para>
-    /// <para>
-    /// High performance overload for when you have a <see cref="ICoreChildProvider"/>
-    /// </para>
-    /// </summary>
-    /// <param name="childProvider"></param>
-    /// <param name="any"></param>
-    /// <returns></returns>
-    ExtractionInformation[] GetAllProjectCatalogueColumns(ICoreChildProvider childProvider, ExtractionCategory any);
 }

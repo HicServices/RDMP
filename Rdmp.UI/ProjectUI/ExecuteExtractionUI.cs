@@ -365,11 +365,11 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
         {
             var eds = sds.ExtractableDataSet;
 
-            foreach (var document in eds.Catalogue.GetAllSupportingDocuments(FetchOptions.ExtractableLocals))
+            foreach (var document in eds.Catalogue.GetAllSupportingDocuments(Core.EntityFramework.Models.SupportingSQLTable.FetchOptions.ExtractableLocals))
                 _bundledStuff.Add(
                     new ObjectUsedByOtherObjectNode<ISelectedDataSets, IMapsDirectlyToDatabaseTable>(sds, document));
 
-            foreach (var supportingSQLTable in eds.Catalogue.GetAllSupportingSQLTablesForCatalogue(FetchOptions
+            foreach (var supportingSQLTable in eds.Catalogue.GetAllSupportingSQLTablesForCatalogue(Core.EntityFramework.Models.SupportingSQLTable.FetchOptions
                          .ExtractableLocals))
                 _bundledStuff.Add(
                     new ObjectUsedByOtherObjectNode<ISelectedDataSets, IMapsDirectlyToDatabaseTable>(sds,

@@ -17,6 +17,7 @@ using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
+using Rdmp.Core.EntityFramework.Models;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
 
@@ -31,11 +32,11 @@ public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfig
         EntityFramework.Models.DataExport.ExternalCohortTable externalCohortTable) :
         this(activator, null, externalCohortTable, null, null, null)
     {
-        var allConfigurations = activator.CoreChildProvider.AllCohortIdentificationConfigurations;
+        //var allConfigurations = activator.CoreChildProvider.AllCohortIdentificationConfigurations;
 
-        if (!allConfigurations.Any())
-            SetImpossible(
-                "You do not have any CohortIdentificationConfigurations yet, you can create them through the 'Cohorts Identification Toolbox' accessible through Window=>Cohort Identification");
+        //if (!allConfigurations.Any())
+        //    SetImpossible(
+        //        "You do not have any CohortIdentificationConfigurations yet, you can create them through the 'Cohorts Identification Toolbox' accessible through Window=>Cohort Identification");
 
         UseTripleDotSuffix = true;
     }
@@ -87,17 +88,17 @@ public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfig
 
         IProject currentProj = null;
         ProjectCohortIdentificationConfigurationAssociation[] projAssociations = Array.Empty<ProjectCohortIdentificationConfigurationAssociation>();
-        if (BasicActivator.CoreChildProvider is DataExportChildProvider dx)
-        {
-            projAssociations = dx.AllProjectAssociatedCics
-                .Where(c => c.CohortIdentificationConfiguration_ID == cic.ID).ToArray();
-            if (projAssociations.Length > 0)
-            {
-                currentProj = Project != null ? Project : projAssociations.Length == 1 ? projAssociations[0].Project : null;
-                Project = BasicActivator.CohortCommitProjectSelect(currentProj, BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Project>().ToArray());
-                if (Project is null) return;
-            }
-        }
+        //if (BasicActivator.CoreChildProvider is DataExportChildProvider dx)
+        //{
+        //    projAssociations = dx.AllProjectAssociatedCics
+        //        .Where(c => c.CohortIdentificationConfiguration_ID == cic.ID).ToArray();
+        //    if (projAssociations.Length > 0)
+        //    {
+        //        currentProj = Project != null ? Project : projAssociations.Length == 1 ? projAssociations[0].Project : null;
+        //        Project = BasicActivator.CohortCommitProjectSelect(currentProj, BasicActivator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Project>().ToArray());
+        //        if (Project is null) return;
+        //    }
+        //}
 
         var auditLogBuilder = new ExtractableCohortAuditLogBuilder();
         var request = GetCohortCreationRequest(ExtractableCohortAuditLogBuilder.GetDescription(cic));

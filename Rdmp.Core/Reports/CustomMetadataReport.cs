@@ -13,6 +13,7 @@ using System.Text.RegularExpressions;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataQualityEngine;
 using Rdmp.Core.DataQualityEngine.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.Reports;
@@ -30,7 +31,7 @@ public partial class CustomMetadataReport
     /// <summary>
     /// Substitutions that are used during template value replacement when inside a '$foreach CatalogueItem' block e.g. $Name => CatalogueItem.Name
     /// </summary>
-    private Dictionary<string, Func<CatalogueItem, object>> ReplacementsCatalogueItem = new();
+    private Dictionary<string, Func<EntityFramework.Models.CatalogueItem, object>> ReplacementsCatalogueItem = new();
 
 
     /// <summary>
@@ -97,7 +98,7 @@ public partial class CustomMetadataReport
             Replacements.Add($"${prop.Name}", c => prop.GetValue(c));
 
         //add basic properties TableInfo
-        foreach (var prop in typeof(TableInfo).GetProperties())
+        foreach (var prop in typeof(EntityFramework.Models.TableInfo).GetProperties())
             // if it's not already a property of Catalogue
             Replacements.TryAdd($"${prop.Name}", c => GetTable(c) == null ? null : prop.GetValue(GetTable(c)));
 
@@ -106,11 +107,11 @@ public partial class CustomMetadataReport
         // Catalogue Item level properties (only work in a $foreach CatalogueItem block)
 
         //add basic properties CatalogueItem
-        foreach (var prop in typeof(CatalogueItem).GetProperties())
+        foreach (var prop in typeof(EntityFramework.Models.CatalogueItem).GetProperties())
             ReplacementsCatalogueItem.Add($"${prop.Name}", s => prop.GetValue(s));
 
         //add basic properties ColumnInfo
-        foreach (var prop in typeof(ColumnInfo).GetProperties())
+        foreach (var prop in typeof(EntityFramework.Models.ColumnInfo).GetProperties())
             // if it's not already a property of CatalogueItem
             ReplacementsCatalogueItem.TryAdd($"${prop.Name}",
                 s => s.ColumnInfo_ID == null ? null : prop.GetValue(s.ColumnInfo));
@@ -183,18 +184,18 @@ public partial class CustomMetadataReport
         return eval != null ? func(eval) : null;
     }
 
-    private object GetFromColumnState(CatalogueItem ci, Func<ColumnState, object> func)
+    private object GetFromColumnState(EntityFramework.Models.CatalogueItem ci, Func<ColumnState, object> func)
     {
         var state = GetColumnState(ci);
         return state != null ? func(state) : null;
     }
 
-    private ColumnState GetColumnState(CatalogueItem ci)
+    private ColumnState GetColumnState(EntityFramework.Models.CatalogueItem ci)
     {
         return GetEvaluation(ci)?.ColumnStates.FirstOrDefault(c => string.Equals(c.TargetProperty, ci.Name));
     }
 
-    private string GetPercentNull(CatalogueItem ci)
+    private string GetPercentNull(EntityFramework.Models.CatalogueItem ci)
     {
         var columnStats = GetColumnState(ci);
 
@@ -206,7 +207,7 @@ public partial class CustomMetadataReport
         return total == 0 ? null : $"{(int)(columnStats.CountDBNull / (double)total * 100)}%";
     }
 
-    private Evaluation GetEvaluation(CatalogueItem ci) => null;// GetEvaluation(ci.Catalogue);
+    private Evaluation GetEvaluation(EntityFramework.Models.CatalogueItem ci) => null;// GetEvaluation(ci.Catalogue);
 
     private Evaluation GetEvaluation(Catalogue c)
     {
@@ -408,7 +409,7 @@ public partial class CustomMetadataReport
     /// <param name="section"></param>
     /// <param name="iteration">Indicates if looping through Catalogues and we are not at the last element in the collection yet.</param>
     /// <returns></returns>
-    private string DoReplacements(string[] strs, Catalogue catalogue, CatalogueSection section,
+    private string DoReplacements(string[] strs, EntityFramework.Models.Catalogue catalogue, CatalogueSection section,
         ElementIteration iteration)
     {
         var sb = new StringBuilder();
@@ -420,7 +421,7 @@ public partial class CustomMetadataReport
 
             if (str.Trim().Equals(LoopCatalogueItems, StringComparison.CurrentCultureIgnoreCase))
             {
-                index = DoReplacements(strs, index, out copy, catalogue.CatalogueItems, section);
+                index = DoReplacements(strs, index, out copy, catalogue.CatalogueItems.ToArray(), section);
             }
             else
             {
@@ -450,7 +451,7 @@ public partial class CustomMetadataReport
     /// <param name="catalogueItems"></param>
     /// <param name="section"></param>
     /// <returns>The index in <paramref name="strs"/> where the $end was detected</returns>
-    private int DoReplacements(string[] strs, int index, out string result, CatalogueItem[] catalogueItems,
+    private int DoReplacements(string[] strs, int index, out string result, EntityFramework.Models.CatalogueItem[] catalogueItems,
         CatalogueSection section)
     {
         // The foreach template block as extracted from strs
@@ -505,7 +506,7 @@ public partial class CustomMetadataReport
     /// <param name="v"></param>
     /// <returns></returns>
     private string ValueToString(object v) =>
-        v is ExtractionInformation ei ? ei.GetRuntimeName() : ReplaceNewlines(v?.ToString() ?? "");
+        v is EntityFramework.Models.ExtractionInformation ei ? ei.GetRuntimeName() : ReplaceNewlines(v?.ToString() ?? "");
 
     public string ReplaceNewlines(string input) => input != null && NewlineSubstitution != null
         ? Newline().Replace(input, NewlineSubstitution)
@@ -518,7 +519,7 @@ public partial class CustomMetadataReport
     /// <param name="catalogueItem"></param>
     /// <param name="iteration">Indicates if looping through CatalogueItems and we are not at the last element in the collection yet.</param>
     /// <returns></returns>
-    private string DoReplacements(string template, CatalogueItem catalogueItem, ElementIteration iteration)
+    private string DoReplacements(string template, EntityFramework.Models.CatalogueItem catalogueItem, ElementIteration iteration)
     {
         foreach (var r in ReplacementsCatalogueItem)
             if (template.Contains(r.Key))

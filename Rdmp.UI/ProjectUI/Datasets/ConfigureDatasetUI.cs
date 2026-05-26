@@ -18,6 +18,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Checks;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.QueryBuilding;
@@ -180,7 +181,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design, ILifetimeSu
 
         var cata = ei.CatalogueItem.Catalogue;
 
-        var toReturn = ei.ExtractionCategory == ExtractionCategory.ProjectSpecific
+        var toReturn = ei.ExtractionCategory == Enum.GetName(ExtractionCategory.ProjectSpecific)
             ? $"{ei.ExtractionCategory}::{cata.Name}"
             : ei.ExtractionCategory.ToString();
 
@@ -201,10 +202,10 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design, ILifetimeSu
         olvSelected.ClearObjects();
 
         //get the catalogue and then all the items
-        ICatalogue cata;
+        //ICatalogue cata;
         try
         {
-            cata = Activator.CoreChildProvider.AllCataloguesDictionary[_dataSet.Catalogue_ID];
+            //cata = Activator.CoreChildProvider.AllCataloguesDictionary[_dataSet.Catalogue_ID];
         }
         catch (Exception e)
         {
@@ -218,21 +219,21 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design, ILifetimeSu
         var toAdd = new HashSet<ExtractionInformation>();
 
         //add all the extractable columns from the current Catalogue
-        foreach (var e in cata.GetAllExtractionInformation(ExtractionCategory.Any))
-            toAdd.Add(e);
+        //foreach (var e in cata.GetAllExtractionInformation(ExtractionCategory.Any))
+        //    toAdd.Add(e);
 
-        if (UserSettings.ShowProjectSpecificColumns)
-            //plus all the Project Specific columns
-            foreach (var e in _config.Project.GetAllProjectCatalogueColumns(Activator.CoreChildProvider,
-                         ExtractionCategory.ProjectSpecific))
-                toAdd.Add(e);
+        //if (UserSettings.ShowProjectSpecificColumns)
+        //    //plus all the Project Specific columns
+        //    foreach (var e in _config.Project.GetAllProjectCatalogueColumns(Activator.CoreChildProvider,
+        //                 ExtractionCategory.ProjectSpecific))
+        //        toAdd.Add(e);
 
 
         // Tell our columns about their CatalogueItems/ColumnInfos by using CoreChildProvider
         // Prevents later queries to db to figure out things like column name etc
         foreach (var ei in toAdd)
         {
-            var ci = Activator.CoreChildProvider.AllCatalogueItemsDictionary[ei.CatalogueItem_ID];
+            //var ci = Activator.CoreChildProvider.AllCatalogueItemsDictionary[ei.CatalogueItem_ID];
 
             //ei.InjectKnown(ci);
             //if (ci.ColumnInfo_ID != null)
@@ -256,14 +257,14 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design, ILifetimeSu
         foreach (var ec in allExtractableColumns)
         {
             if (ec.CatalogueExtractionInformation_ID == null) continue;
-            var eiDict = Activator.CoreChildProvider.AllExtractionInformationsDictionary;
-            var ciDict = Activator.CoreChildProvider.AllCatalogueItemsDictionary;
+            //var eiDict = Activator.CoreChildProvider.AllExtractionInformationsDictionary;
+            //var ciDict = Activator.CoreChildProvider.AllCatalogueItemsDictionary;
 
-            if (!eiDict.TryGetValue(ec.CatalogueExtractionInformation_ID.Value, out var ei)) continue;
-            ec.InjectKnown(ei);
-            ec.InjectKnown(ei.ColumnInfo);
+            //if (!eiDict.TryGetValue(ec.CatalogueExtractionInformation_ID.Value, out var ei)) continue;
+            //ec.InjectKnown(ei);
+            //ec.InjectKnown(ei.ColumnInfo);
 
-            if (ciDict.TryGetValue(ei.CatalogueItem_ID, out var id)) ec.InjectKnown(id);
+            //if (ciDict.TryGetValue(ei.CatalogueItem_ID, out var id)) ec.InjectKnown(id);
         }
 
 
@@ -540,15 +541,15 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design, ILifetimeSu
     {
         var extractionIsFor = SelectedDataSet.ExtractableDataSet.Catalogue_ID;
 
-        olvAvailable.SelectObjects(
-            olvAvailable.Objects.OfType<ExtractionInformation>()
-                .Where(ei =>
-                    //select core columns
-                    ei.ExtractionCategory == ExtractionCategory.Core
-                    // or ProjectSpecific ones if it is the main dataset
-                    || (extractionIsFor == ei.CatalogueItem.Catalogue_ID &&
-                        ei.ExtractionCategory == ExtractionCategory.ProjectSpecific)
-                ).ToArray());
+        //olvAvailable.SelectObjects(
+        //    olvAvailable.Objects.OfType<ExtractionInformation>()
+        //        .Where(ei =>
+        //            //select core columns
+        //            ei.ExtractionCategory == ExtractionCategory.Core
+        //            // or ProjectSpecific ones if it is the main dataset
+        //            || (extractionIsFor == ei.CatalogueItem.Catalogue_ID &&
+        //                ei.ExtractionCategory == ExtractionCategory.ProjectSpecific)
+        //        ).ToArray());
     }
 
     #region Joins
@@ -614,7 +615,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design, ILifetimeSu
         foreach (TableInfo tableInfo in tablesInQuery)
             nodes.Add(new AvailableForceJoinNode(tableInfo, true));
 
-        SelectedDataSet.GetCatalogue().GetTableInfos(Activator.CoreChildProvider, out var normal, out _);
+        SelectedDataSet.GetCatalogue().GetTableInfos(out var normal, out _);
 
         // Add all tables as optional joins that the Catalogue has
         foreach (var node in normal.Select(t => new AvailableForceJoinNode((TableInfo)t, false))) nodes.Add(node);
@@ -623,7 +624,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design, ILifetimeSu
         foreach (var projectCatalogue in SelectedDataSet.ExtractionConfiguration.Project.GetAllProjectCatalogues())
         {
             // find tables
-            projectCatalogue.GetTableInfos(Activator.CoreChildProvider, out var projNormal, out _);
+            projectCatalogue.GetTableInfos(out var projNormal, out _);
 
             // that are not lookups
             foreach (var node in projNormal.Cast<TableInfo>()
@@ -650,7 +651,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design, ILifetimeSu
             redundantForcedJoin.DeleteInDatabase();
 
         foreach (var node in nodes)
-            node.FindJoinsBetween(Activator.CoreChildProvider, nodes);
+            node.FindJoinsBetween(Activator.RepositoryLocator.CatalogueDbContext, nodes);
 
         //highlight to user the fact that there are unlinkable tables
 
@@ -663,15 +664,16 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design, ILifetimeSu
 
     private IEnumerable<ITableInfo> GetTablesUsedInQuery()
     {
-        var eis = Activator.CoreChildProvider.AllExtractionInformationsDictionary;
+        //var eis = Activator.CoreChildProvider.AllExtractionInformationsDictionary;
 
-        return olvSelected.Objects.OfType<ExtractableColumn>()
-            .Where(static ec => ec.CatalogueExtractionInformation_ID != null)
-            .Select(ec => eis.GetValueOrDefault(ec.CatalogueExtractionInformation_ID.Value))
-            .Where(static ei => ei != null)
-            .Select(static ei => ei.ColumnInfo.TableInfo)
-            .Distinct()
-            .Where(t => !t.IsLookupTable(Activator.CoreChildProvider));
+        //return olvSelected.Objects.OfType<ExtractableColumn>()
+        //    .Where(static ec => ec.CatalogueExtractionInformation_ID != null)
+        //    .Select(ec => eis.GetValueOrDefault(ec.CatalogueExtractionInformation_ID.Value))
+        //    .Where(static ei => ei != null)
+        //    .Select(static ei => ei.ColumnInfo.TableInfo)
+        //    .Distinct()
+        //    .Where(t => !t.IsLookupTable(Activator.CoreChildProvider));
+        return new List<ITableInfo>();
     }
 
     private void olvJoin_ButtonClick(object sender, CellClickEventArgs e)

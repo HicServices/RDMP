@@ -11,6 +11,7 @@ using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Serialization;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Repositories.Construction;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands.Sharing;
@@ -64,11 +65,11 @@ public class ExecuteCommandImportCatalogueDescriptionsFromShare : ExecuteCommand
 
             var shareName = (string)sd.Properties["Name"];
 
-            var existingMatch = liveCatalogueItems.FirstOrDefault(ci => ci.Name.Equals(shareName)) ??
-                                new CatalogueItem(BasicActivator.RepositoryLocator.CatalogueDbContext,
-                                    _targetCatalogue, shareName);
+            var existingMatch = liveCatalogueItems.FirstOrDefault(ci => ci.Name.Equals(shareName)) ?? new CatalogueItem(BasicActivator.RepositoryLocator.CatalogueDbContext,_targetCatalogue,shareName) { Catalogue=_targetCatalogue, Name = shareName };
+                                //new CatalogueItem(BasicActivator.RepositoryLocator.CatalogueDbContext,
+                                    //_targetCatalogue, shareName);
             ShareManager.ImportPropertiesOnly(existingMatch, sd);
-            existingMatch.SaveToDatabase();
+            //existingMatch.SaveToDatabase();
         }
 
         Publish(_targetCatalogue);

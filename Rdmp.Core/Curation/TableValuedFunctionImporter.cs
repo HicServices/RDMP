@@ -13,6 +13,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.DataHelper;
 using Rdmp.Core.EntityFramework;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
@@ -83,8 +84,9 @@ public class TableValuedFunctionImporter : ITableInfoImporter
         var finalName =
             $"{syntax.EnsureWrapped(_database)}.{wrappedSchema}.{_tableValuedFunctionName}({string.Join(',', _parameters.Select(p => p.ParameterName))}) AS {_tableValuedFunctionName}"; //give it an alias so all the children ColumnInfos can be fully specified
 
-        tableInfoCreated = new TableInfo(_catalogueDbContext, finalName)
+        tableInfoCreated = new TableInfo()
         {
+            Name=finalName,
             Server = _server,
             Database = _database,
             IsTableValuedFunction = true,
@@ -107,16 +109,18 @@ public class TableValuedFunctionImporter : ITableInfoImporter
     public ColumnInfo CreateNewColumnInfo(ITableInfo parent, DiscoveredColumn discoveredColumn)
     {
         var toAdd =
-            new ColumnInfo(parent.CatalogueDbContext, discoveredColumn.GetFullyQualifiedName(),
-                discoveredColumn.DataType.SQLType, parent)
+            new ColumnInfo()//parent.CatalogueDbContext, discoveredColumn.GetFullyQualifiedName(),
+                //discoveredColumn.DataType.SQLType, parent)
             {
                 Format = discoveredColumn.Format,
                 Collation = discoveredColumn.Collation,
                 IsPrimaryKey = discoveredColumn.IsPrimaryKey,
-                IsAutoIncrement = discoveredColumn.IsAutoIncrement
+                IsAutoIncrement = discoveredColumn.IsAutoIncrement,
+                Name = discoveredColumn.GetFullyQualifiedName(),
+                DataType = discoveredColumn.DataType.SQLType,
             };
 
-        toAdd.SaveToDatabase();
+        //toAdd.SaveToDatabase();
 
         return toAdd;
     }
@@ -161,11 +165,6 @@ public class TableValuedFunctionImporter : ITableInfoImporter
         var syntaxHelper = _tableValuedFunction.Database.Server.GetQuerySyntaxHelper();
 
         return syntaxHelper.GetParameterDeclaration(parameter.ParameterName, parameter.DataType.SQLType);
-    }
-
-    public void DoImport(out ITableInfo tableInfoCreated, out EntityFramework.Models.ColumnInfo[] columnInfosCreated)
-    {
-        throw new NotImplementedException();
     }
 
     EntityFramework.Models.ColumnInfo ITableInfoImporter.CreateNewColumnInfo(ITableInfo parent, DiscoveredColumn discoveredColumn)

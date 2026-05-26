@@ -98,12 +98,6 @@ namespace Rdmp.Core.EntityFramework.Models
         }
 
         public object GetValueAsSystemType() => Deserialize(Value, Type);
-
-        public void SaveToDatabase()
-        {
-            throw new NotImplementedException();
-        }
-
         public void SetType(Type t)
         {
             throw new NotImplementedException();

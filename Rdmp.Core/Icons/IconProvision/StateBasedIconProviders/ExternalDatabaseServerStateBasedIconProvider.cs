@@ -4,10 +4,13 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Collections.Generic;
 using System.Reflection;
+using FAnsi;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Databases;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Icons.IconOverlays;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
@@ -68,7 +71,8 @@ public sealed class ExternalDatabaseServerStateBasedIconProvider : IObjectStateB
             toReturn = value;
 
         //add the database type overlay
-        toReturn = IconOverlayProvider.GetOverlay(toReturn, _typeSpecificIconsProvider.GetOverlay(server.DatabaseType));
+        Enum.TryParse(server.DatabaseType, out DatabaseType databaseType);
+        toReturn = IconOverlayProvider.GetOverlay(toReturn, _typeSpecificIconsProvider.GetOverlay(databaseType));
 
         if (dumpServerUsage != null)
             toReturn = IconOverlayProvider.GetOverlay(toReturn, OverlayKind.Link);

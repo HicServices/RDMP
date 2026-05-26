@@ -6,6 +6,7 @@
 
 using System.Drawing;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.UI.ScintillaHelper;

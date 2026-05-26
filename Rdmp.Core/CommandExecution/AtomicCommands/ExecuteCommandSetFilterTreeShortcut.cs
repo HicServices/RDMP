@@ -7,6 +7,7 @@
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Repositories.Construction;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
@@ -103,7 +104,7 @@ internal class ExecuteCommandSetFilterTreeShortcut : BasicCommandExecution
         }
 
         _setOn.OverrideFiltersByUsingParentAggregateConfigurationInstead_ID = pointTo?.ID;
-        _setOn.SaveToDatabase();
+        //_setOn.SaveToDatabase();
         Publish(_setOn);
     }
 }

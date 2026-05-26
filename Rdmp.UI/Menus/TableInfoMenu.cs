@@ -7,6 +7,7 @@
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.FilterImporting;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs;

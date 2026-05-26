@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using FAnsi;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataFlowPipeline;
@@ -15,6 +16,7 @@ using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Sources;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Logging;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
@@ -108,7 +110,8 @@ False - Trigger an error reporting the missing table(s)
             }
             else
             {
-                sql = $"SELECT * FROM {syntaxFrom.EnsureWrapped(table)} {SqlHistoricalDataFilter(job.LoadMetadata,RemoteSource.DatabaseType, RemoteTableDateColumn)}";
+                Enum.TryParse<DatabaseType>(RemoteSource.DatabaseType, out var type);
+                sql = $"SELECT * FROM {syntaxFrom.EnsureWrapped(table)} {SqlHistoricalDataFilter(job.LoadMetadata,type, RemoteTableDateColumn)}";
             }
             job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
                 $"About to execute SQL:{Environment.NewLine}{sql}"));

@@ -22,6 +22,7 @@ using Rdmp.Core.DataLoad.Engine.LoadProcess;
 using Rdmp.Core.DataLoad.Engine.LoadProcess.Scheduling;
 using Rdmp.Core.DataLoad.Engine.LoadProcess.Scheduling.Strategy;
 using Rdmp.Core.DataLoad.Modules.Attachers;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
@@ -44,7 +45,7 @@ public class DleRunner : Runner
     public override int Run(IRDMPPlatformRepositoryServiceLocator locator, IDataLoadEventListener listener,
         ICheckNotifier checkNotifier, GracefulCancellationToken token)
     {
-        ILoadProgress loadProgress = GetObjectFromCommandLineString<LoadProgress>(locator, _options.LoadProgress);
+        ILoadProgress loadProgress = GetObjectFromCommandLineString<EntityFramework.Models.LoadProgress>(locator, _options.LoadProgress);
         ILoadMetadata loadMetadata = GetObjectFromCommandLineString<LoadMetadata>(locator, _options.LoadMetadata);
 
         if (loadMetadata == null && loadProgress != null)

@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.EntityFramework;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Annotations;
 using Rdmp.Core.Setting;
@@ -127,7 +128,7 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
 
         ddPipelines.DrawMode = DrawMode.OwnerDrawFixed;
         ddPipelines.DrawItem += cmb_Type_DrawItem;
-        var showButtonsSetting = activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Setting>()
+        var showButtonsSetting = activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Core.EntityFramework.Models.Setting>()
             .FirstOrDefault(static s => s.Key == "ExtractionPipelineQuickEdit");
         var showbuttons = showButtonsSetting != null && Convert.ToBoolean(showButtonsSetting.Value);
         btnClonePipeline.Visible = showbuttons;

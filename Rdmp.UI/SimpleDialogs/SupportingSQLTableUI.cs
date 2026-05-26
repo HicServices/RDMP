@@ -12,6 +12,7 @@ using Rdmp.Core;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Defaults;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.UI.Copying;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Rules;

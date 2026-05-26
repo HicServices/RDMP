@@ -6,6 +6,7 @@
 
 using System;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.EntityFramework.Models;
 
 namespace Rdmp.Core.Curation.Data.DataLoad;
 

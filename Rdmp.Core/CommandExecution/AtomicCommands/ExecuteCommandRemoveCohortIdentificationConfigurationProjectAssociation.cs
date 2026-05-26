@@ -9,6 +9,7 @@ using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
@@ -29,7 +30,7 @@ public sealed class ExecuteCommandRemoveCohortIdentificationConfigurationProject
         base(activator)
     {
         _activator = activator;
-        if (!activator.CoreChildProvider.AllCohortIdentificationConfigurations.Any())
+        if (!activator.RepositoryLocator.CatalogueDbContext.CohortIdentificationConfigurations.Any())
             SetImpossible("There are no Cohort Identification Configurations yet");
 
     }

@@ -11,6 +11,7 @@ using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.EntityFramework;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
 using Rdmp.Core.Repositories;
@@ -36,7 +37,7 @@ public class ProjectCohortIdentificationConfigurationAssociation : DatabaseEntit
     }
 
     /// <summary>
-    /// The <see cref="Curation.Data.Cohort.CohortIdentificationConfiguration"/> which is associated with the given <see cref="Project_ID"/>.
+    /// The <see cref="CohortIdentificationConfiguration"/> which is associated with the given <see cref="Project_ID"/>.
     /// </summary>
     public int CohortIdentificationConfiguration_ID
     {

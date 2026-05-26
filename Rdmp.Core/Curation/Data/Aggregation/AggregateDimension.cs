@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using Rdmp.Core.EntityFramework;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
@@ -300,7 +301,7 @@ public class AggregateDimension : DatabaseEntity, ISaveable, IDeleteable, IColum
             if (ac.PivotOnDimensionID == ID)
             {
                 ac.PivotOnDimensionID = null;
-                ac.SaveToDatabase();
+                //ac.SaveToDatabase();
             }
 
         var axis = ac?.GetAxisIfAny();

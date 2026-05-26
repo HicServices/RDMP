@@ -13,6 +13,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Curation.Data.Spontaneous;
 using Rdmp.Core.EntityFramework.Helpers;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
@@ -48,7 +49,7 @@ public class ViewColumnExtractCollection : PersistableObjectCollection, IViewSQL
     {
     }
 
-    public ViewColumnExtractCollection(ColumnInfo c, ViewType viewType, IFilter filter = null) : this()
+    public ViewColumnExtractCollection(EntityFramework.Models.ColumnInfo c, ViewType viewType, IFilter filter = null) : this()
     {
         DatabaseObjects.Add(c);
         if (filter != null)
@@ -56,7 +57,7 @@ public class ViewColumnExtractCollection : PersistableObjectCollection, IViewSQL
         ViewType = viewType;
     }
 
-    public ViewColumnExtractCollection(ColumnInfo c, ViewType viewType, IContainer container) : this()
+    public ViewColumnExtractCollection(EntityFramework.Models.ColumnInfo c, ViewType viewType, IContainer container) : this()
     {
         DatabaseObjects.Add(c);
         if (container != null)

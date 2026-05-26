@@ -8,6 +8,7 @@ using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.FilterImporting;
 using Rdmp.Core.DataViewing;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.UI.AutoComplete;
 using Rdmp.UI.CommandExecution.AtomicCommands;
@@ -164,7 +165,7 @@ public partial class ExtractionFilterUI : ExtractionFilterUI_Design, ILifetimeSu
         try
         {
             var factory = new ParameterCollectionUIOptionsFactory();
-            options = factory.Create(databaseObject, activator.CoreChildProvider);
+            options = factory.Create(databaseObject);
         }
         catch (Exception e)
         {
@@ -184,8 +185,8 @@ public partial class ExtractionFilterUI : ExtractionFilterUI_Design, ILifetimeSu
             new ExecuteCommandViewFilterMatchData(Activator, databaseObject, ViewType.Aggregate));
         CommonFunctionality.AddToMenu(new ExecuteCommandViewFilterMatchGraph(Activator, databaseObject));
         CommonFunctionality.AddToMenu(new ExecuteCommandBrowseLookup(Activator, databaseObject));
-        CommonFunctionality.AddToMenu(new ExecuteCommandPublishFilter(Activator, databaseObject,
-            databaseObject.GetCatalogue()));
+        //CommonFunctionality.AddToMenu(new ExecuteCommandPublishFilter(Activator, databaseObject,
+        //    databaseObject.GetCatalogue()));
 
         FigureOutGlobalsAndAutoComplete();
 

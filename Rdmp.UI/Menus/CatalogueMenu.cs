@@ -8,6 +8,7 @@ using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.AtomicCommands.Sharing;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.Menus.MenuItems;
 using System;
@@ -87,10 +88,10 @@ internal class CatalogueMenu : RDMPContextMenuStrip
         { SuggestedCategory = CatalogueItems, Weight = -99.043f });
 
 
-        var links = _activator.CoreChildProvider.AllLoadMetadataCatalogueLinkages.Where(lmdcl => lmdcl.CatalogueID == catalogue.ID).Select(lmdcl => lmdcl.LoadMetadataID);
+        var links = _activator.RepositoryLocator.CatalogueDbContext.LoadMetadataCatalogueLinkages.Where(lmdcl => lmdcl.CatalogueID == catalogue.ID).Select(lmdcl => lmdcl.LoadMetadataID);
         if (!links.Any())
         {
-            foreach (var lmd in _activator.CoreChildProvider.AllLoadMetadatas.Where(lmd => links.Contains(lmd.ID)))
+            foreach (var lmd in _activator.RepositoryLocator.CatalogueDbContext.LoadMetadatas.Where(lmd => links.Contains(lmd.ID)))
             {
                 if (lmd.GetRootDirectory() == null) return;
                 try

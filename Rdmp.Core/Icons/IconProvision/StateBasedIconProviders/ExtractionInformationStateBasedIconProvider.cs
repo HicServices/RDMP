@@ -6,6 +6,7 @@
 
 using System;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Icons.IconOverlays;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
@@ -43,8 +44,8 @@ internal sealed class ExtractionInformationStateBasedIconProvider : IObjectState
             return GetImage(cat);
 
         if (o is not ExtractionInformation ei) return null;
-
-        var toReturn = GetImage(ei.ExtractionCategory);
+        Enum.TryParse(ei.ExtractionCategory, out ExtractionCategory category);
+        var toReturn = GetImage(category);
 
         if (ei.IsExtractionIdentifier)
             toReturn = IconOverlayProvider.GetOverlay(toReturn, OverlayKind.IsExtractionIdentifier);

@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
@@ -130,13 +131,13 @@ public partial class CreateNewCohortIdentificationConfigurationUI : RDMPForm
         //If we're not using the wizard then just return an empty CIC
         if (!cbUseWizard.Checked)
         {
-            root.Operation = SetOperation.UNION;
+            root.Operation = Enum.GetName(SetOperation.UNION);
             root.SaveToDatabase();
             return cic;
         }
 
         //We're using the wizard, so this builds a framework
-        root.Operation = SetOperation.EXCEPT;
+        root.Operation = Enum.GetName(SetOperation.EXCEPT);
         root.SaveToDatabase();
 
         //Create include and exclude containers

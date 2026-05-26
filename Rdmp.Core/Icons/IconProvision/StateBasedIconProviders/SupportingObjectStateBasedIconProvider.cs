@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework.Models;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
@@ -39,10 +40,10 @@ public class SupportingObjectStateBasedIconProvider : IObjectStateBasedIconProvi
     {
         return o switch
         {
-            SupportingDocument { Extractable: true } doc => doc.IsGlobal
+            EntityFramework.Models.SupportingDocument { Extractable: true } doc => doc.IsGlobal
                 ? _supportingDocumentExtractableGlobal
                 : _supportingDocumentExtractable,
-            SupportingDocument doc => doc.IsGlobal ? _supportingDocumentGlobal : _supportingDocument,
+            EntityFramework.Models.SupportingDocument doc => doc.IsGlobal ? _supportingDocumentGlobal : _supportingDocument,
             SupportingSQLTable { Extractable: true } sql => sql.IsGlobal
                 ? _supportingSqlExtractableGlobal
                 : _supportingSqlExtractable,

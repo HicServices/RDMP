@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
@@ -13,7 +14,7 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.DataExport.DataRelease.Potential;
 
 /// <summary>
-/// Determines the releasability of global objects (e.g. <see cref="SupportingDocument"/>) that should have been extracted as
+/// Determines the releasability of global objects (e.g. <see cref="EntityFramework.Models.SupportingDocument"/>) that should have been extracted as
 /// part of a project extraction.  For <see cref="SupportingSQLTable"/> it will confirm that the table exists in the database
 /// </summary>
 public class MsSqlGlobalsReleasePotential : GlobalReleasePotential

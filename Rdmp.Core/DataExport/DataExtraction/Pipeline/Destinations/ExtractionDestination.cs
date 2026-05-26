@@ -17,6 +17,7 @@ using Rdmp.Core.DataExport.DataRelease.Potential;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.EntityFramework;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Logging;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
@@ -403,7 +404,7 @@ e.g. /$i/$a")]
     /// <param name="directory"></param>
     /// <param name="listener"></param>
     /// <returns></returns>
-    protected virtual bool TryExtractSupportingDocument(SupportingDocument doc, DirectoryInfo directory,
+    protected virtual bool TryExtractSupportingDocument(EntityFramework.Models.SupportingDocument doc, DirectoryInfo directory,
         IDataLoadEventListener listener)
     {
         var fetcher = new SupportingDocumentsFetcher(doc);

@@ -8,6 +8,7 @@ using System;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
@@ -61,10 +62,10 @@ public class ExecuteCommandAddNewAggregateGraph : BasicCommandExecution, IAtomic
                 // user cancelled typing a name for the graph
                 return;
 
-        var newAggregate = new AggregateConfiguration(BasicActivator.RepositoryLocator.CatalogueDbContext, c, name ??
-            $"New Aggregate {Guid.NewGuid()}");
-        Publish(_catalogue);
-        Activate(newAggregate);
+        //var newAggregate = new EntityFramework.Models.AggregateConfiguration(BasicActivator.RepositoryLocator.CatalogueDbContext, c, name ??
+        //    $"New Aggregate {Guid.NewGuid()}");
+        //Publish(_catalogue);
+        //Activate(newAggregate);
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>

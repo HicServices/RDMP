@@ -37,9 +37,10 @@ public sealed class ExtractableColumnStateBasedIconProvider : IObjectStateBasedI
         var ei = col.CatalogueExtractionInformation;
 
         //its parent ExtractionInformation still exists then we can determine its category
+        Enum.TryParse(ei?.ExtractionCategory, out ExtractionCategory category);
         return ei == null
             ? toReturn
-            : ei.ExtractionCategory switch
+            : category switch
             {
                 ExtractionCategory.ProjectSpecific =>
                     IconOverlayProvider.GetOverlay(toReturn, OverlayKind.Extractable),
