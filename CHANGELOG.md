@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [9.2.3] - Unreleased 
 - Fix issue with extractable project data set creation for project specific catalogues
+- Add support for developing on macOS
+- Fix Cohort Builder context menu freeze after partial refresh
 
 ## [9.2.2] - 2026-05-19
 - Add ability to force primary keys at each batch of data when extracting to a database
