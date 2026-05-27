@@ -4,8 +4,10 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 using Rdmp.Core.ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 using Rdmp.Core.Setting;
 using Rdmp.UI.ItemActivation;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +15,7 @@ using System.Windows.Forms;
 
 namespace Rdmp.UI.SimpleDialogs
 {
-    public partial class InstanceSettings : Form
+    public partial class InstanceSettings : RDMPForm
     {
         private readonly IActivateItems _activator;
         private bool _loaded;
@@ -29,7 +31,24 @@ namespace Rdmp.UI.SimpleDialogs
             RegisterCheckbox(cbCohortVersioningOnCommit, "PromptForVersionOnCohortCommit");
             RegisterCheckbox(cbYesNoAll, "ToggleYestoAllNotoAlldataloadcheck");
             RegisterCheckbox(cbExtractionPipelineQuickEdit, "ExtractionPipelineQuickEdit");
+            var userSetUpdateURL =_settings.FirstOrDefault(static s => s.Key == "UserSetUpdateURL");
+            tbCustomUpdateURL.Text = userSetUpdateURL?.Value ?? string.Empty;
             _loaded = true;
+        }
+
+        private void tbCustomUpdateURL_TextChanged(object sender, EventArgs e)
+        {
+            var userSetUpdateURL = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Setting>().FirstOrDefault(static s => s.Key == "UserSetUpdateURL");
+            if (userSetUpdateURL != null)
+            {
+                userSetUpdateURL.Value = tbCustomUpdateURL.Text;
+                userSetUpdateURL.SaveToDatabase();
+            }
+            else
+            {
+                var newSetting = new Setting(_activator.RepositoryLocator.CatalogueRepository, "UserSetUpdateURL", tbCustomUpdateURL.Text);
+                newSetting.SaveToDatabase();
+            }
         }
 
         private void CheckboxCheckedChanged(object sender, EventArgs e)

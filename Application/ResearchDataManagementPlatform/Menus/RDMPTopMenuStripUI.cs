@@ -23,6 +23,7 @@ using Rdmp.Core.Reports;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Settings;
+using Rdmp.Core.Setting;
 using Rdmp.UI;
 using Rdmp.UI.ChecksUI;
 using Rdmp.UI.CommandExecution.AtomicCommands;
@@ -494,8 +495,9 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
         // AutoUpdater.NET is Windows-only for now:
         if (!OperatingSystem.IsWindowsVersionAtLeast(7))
             return;
+        var userSetUpdateURL = Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Setting>().FirstOrDefault(static s => s.Key == "UserSetUpdateURL");
 
-        var url = "https://raw.githubusercontent.com/HicServices/RDMP/main/rdmp-client.xml";
+        var url = userSetUpdateURL != null ? userSetUpdateURL.Value : "https://raw.githubusercontent.com/HicServices/RDMP/main/rdmp-client.xml";
 
         // Give user a chance to change the URL that is updating from
         if (!Activator.TypeText("Update Location", "Url:", int.MaxValue, url, out url, false))
