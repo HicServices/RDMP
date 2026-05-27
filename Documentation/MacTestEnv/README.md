@@ -336,7 +336,7 @@ but worth knowing before running the full suite.
 
 ### Tests that need MySQL/Oracle/PostgreSQL
 
-Some fixtures iterate over multiple [DBMS]: ../CodeTutorials/Glossary.md#DBMS types via `[TestCase(DatabaseType.MySql)]`
+Some fixtures iterate over multiple database types via `[TestCase(DatabaseType.MySql)]`
 etc.  With MySQL/Oracle/PostgreSQL absent from `TestDatabases.txt`, those
 cases either skip with `Assert.Inconclusive` or fail with a connection
 error depending on how they're written.  If you need full coverage, add
