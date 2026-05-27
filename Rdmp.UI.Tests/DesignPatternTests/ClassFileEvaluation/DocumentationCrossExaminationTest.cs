@@ -282,7 +282,9 @@ internal class DocumentationCrossExaminationTest
         "ResearchDataManagmentPlatform",
 
         // CSVHandling
-        "TypeTranslation"
+        "TypeTranslation",
+        //MacTestEnv
+        "DBMS"
     };
 
     #endregion
