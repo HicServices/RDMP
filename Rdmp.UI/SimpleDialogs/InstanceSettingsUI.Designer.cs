@@ -1,6 +1,6 @@
 ﻿namespace Rdmp.UI.SimpleDialogs
 {
-    partial class InstanceSettings
+    partial class InstanceSettingsUI
     {
         /// <summary>
         /// Required designer variable.

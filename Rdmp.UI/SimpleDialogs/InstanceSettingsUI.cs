@@ -15,13 +15,13 @@ using System.Windows.Forms;
 
 namespace Rdmp.UI.SimpleDialogs
 {
-    public partial class InstanceSettings : RDMPForm
+    public partial class InstanceSettingsUI : RDMPForm
     {
         private readonly IActivateItems _activator;
         private bool _loaded;
         private Setting[] _settings;
 
-        public InstanceSettings(IActivateItems activator)
+        public InstanceSettingsUI(IActivateItems activator)
         {
             InitializeComponent();
             _activator = activator;
@@ -70,7 +70,7 @@ namespace Rdmp.UI.SimpleDialogs
         private void AddTooltip(Control c, string propertyName)
         {
             var helpText =
-                _activator.CommentStore.GetDocumentationIfExists($"{nameof(InstanceSettings)}.{propertyName}", false);
+                _activator.CommentStore.GetDocumentationIfExists($"{nameof(InstanceSettingsUI)}.{propertyName}", false);
             if (string.IsNullOrWhiteSpace(helpText)) return;
 
             instanceSettingsToolTips.SetToolTip(c, UsefulStuff.SplitByLength(helpText, 100));

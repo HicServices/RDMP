@@ -421,7 +421,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
 
     private void instanceSettingsToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        var settings = new InstanceSettings(Activator);
+        var settings = new InstanceSettingsUI(Activator);
         settings.Show();
     }
 
