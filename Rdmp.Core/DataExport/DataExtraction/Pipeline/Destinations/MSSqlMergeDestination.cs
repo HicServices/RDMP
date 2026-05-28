@@ -164,10 +164,10 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
         {
             var discoveredServer = DataAccessPortal.ExpectServer(TargetDatabaseServer, DataAccessContext.DataExport, false);
             var tblName = _toProcess.TableName;
-            var db = discoveredServer.ExpectDatabase(GetDatabaseName());
-            if (db.Exists())
+            var targetDb = discoveredServer.ExpectDatabase(GetDatabaseName());
+            if (targetDb.Exists())
             {
-                var existing = db.ExpectTable(tblName);
+                var existing = targetDb.ExpectTable(tblName);
                 if (existing.Exists())
                 {
                     var remotePKs = existing.DiscoverColumns().Where(col => col.IsPrimaryKey).Select(col => col.GetRuntimeName()).ToList();
