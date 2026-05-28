@@ -290,7 +290,8 @@ internal class DocumentationCrossExaminationTest
         "EnableWindowsTargeting",
         "YourStrong",
         "TreatWarningsAsErrors",
-        "PreserveNewest"
+        "PreserveNewest",
+        "DBMS"
     };
 
     #endregion
