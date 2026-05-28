@@ -283,7 +283,14 @@ internal class DocumentationCrossExaminationTest
 
         // CSVHandling
         "TypeTranslation",
-        //MacTestEnv
+        //Mac Test Documentation
+        "WarningsNotAsErrors",
+        "TEST_DataExport",
+        "RequiresMySql",
+        "EnableWindowsTargeting",
+        "YourStrong",
+        "TreatWarningsAsErrors",
+        "PreserveNewest",
         "DBMS"
     };
 

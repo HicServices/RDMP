@@ -546,10 +546,10 @@ public class AtomicCommandFactory : CommandFactoryBase
                 {
                     OverrideCommandName = "Save Version"
                 };
-                yield return new ExecuteCommandCloneLoadMetadata(_activator, lmd)
-                {
-                    OverrideCommandName = "Clone Load Metadata"
-                };
+                //yield return new ExecuteCommandCloneLoadMetadata(_activator, lmd)
+                //{
+                //    OverrideCommandName = "Clone Load Metadata"
+                //};
 
                 yield return new ExecuteCommandSetGlobalDleIgnorePattern(_activator) { SuggestedCategory = Advanced };
                 yield return new ExecuteCommandSetIgnoredColumns(_activator, lmd) { SuggestedCategory = Advanced };
@@ -734,6 +734,7 @@ public class AtomicCommandFactory : CommandFactoryBase
 
 
             yield return new ExecuteCommandViewExtractionSql(_activator, sds);
+            yield return new ExecuteCommandViewArchiveTriggerSql(_activator, sds);
             yield return new ExecuteCommandAddExtractionProgress(_activator, sds)
             { SuggestedCategory = Batching, Weight = 1.1f };
             yield return new ExecuteCommandResetExtractionProgress(_activator, sds)
