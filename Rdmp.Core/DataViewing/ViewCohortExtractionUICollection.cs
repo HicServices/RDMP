@@ -25,6 +25,7 @@ public class ViewCohortExtractionUICollection : PersistableObjectCollection, IVi
         get => _arguments.TryGetValue(TopKey, out var value) ? int.Parse(value) : 100;
         set => _arguments[TopKey] = value.ToString();
     }
+    public bool DisableRun => false;
 
     private Dictionary<string, string> _arguments = new();
     private const string TopKey = "Top";
