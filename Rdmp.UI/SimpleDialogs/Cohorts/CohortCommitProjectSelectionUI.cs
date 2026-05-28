@@ -103,7 +103,7 @@ namespace Rdmp.UI.SimpleDialogs.Cohorts
                 project.SaveToDatabase();
                 if (_currentProject != null)
                 {
-                    _cic.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively().Select(ac => ac.Catalogue).Where(c => c.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository)).ToList().ForEach(c =>
+                    _cic.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively().Select(ac => ac.Catalogue).Distinct().Where(c => c.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository)).ToList().ForEach(c =>
                     {
                         var cmd = new ExecuteCommandMakeCatalogueProjectSpecific(_activator, c, Result, true);
                         cmd.Execute();
@@ -128,7 +128,7 @@ namespace Rdmp.UI.SimpleDialogs.Cohorts
                 Result = selected as Project;
                 if (_currentProject != null)
                 {
-                    var newProjectSpecificCatalogues = Result.GetAllProjectCatalogues().Where(p => p.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository));
+                    var newProjectSpecificCatalogues = Result.GetAllProjectCatalogues().Distinct().Where(p => p.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository));
 
                     _cic.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively().Select(ac => ac.Catalogue).Where(c => c.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository)).ToList().ForEach(c =>
                     {
