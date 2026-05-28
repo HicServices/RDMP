@@ -666,7 +666,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
             RepositoryLocator.DataExportRepository, cohortInitialDescription);
     }
 
-    public virtual IProject CohortCommitProjectSelect(IProject currentProject, Project[] projects)
+    public virtual IProject CohortCommitProjectSelect(IProject currentProject, Project[] projects, CohortIdentificationConfiguration cic)
     {
         return currentProject;
     }
