@@ -39,10 +39,10 @@ public class TableValuedFunctionImporter : ITableInfoImporter
     private string _schema;
 
     /// <summary>
-    /// List of parameters belonging to the <see cref="DiscoveredTableValuedFunction"/> being imported.  Each parameter will result in an RDMP object <see cref="AnyTableSqlParameter"/>
+    /// List of parameters belonging to the <see cref="DiscoveredTableValuedFunction"/> being imported.  Each parameter will result in an RDMP object <see cref="Data.Cohort.AnyTableSqlParameter"/>
     /// which records the default value to send when fetching data etc as well as to facilitate the population of parameters in data extract / cohort generation etc.
     /// </summary>
-    public List<AnyTableSqlParameter> ParametersCreated { get; private set; }
+    public List<Data.Cohort.AnyTableSqlParameter> ParametersCreated { get; private set; }
 
     /// <summary>
     /// Prepares to import the given table valued function <paramref name="tableValuedFunction"/> as <see cref="TableInfo"/> / <see cref="ColumnInfo"/> references in the
@@ -70,7 +70,7 @@ public class TableValuedFunctionImporter : ITableInfoImporter
 
         _parameters = _tableValuedFunction.DiscoverParameters().ToArray();
 
-        ParametersCreated = new List<AnyTableSqlParameter>();
+        ParametersCreated = new List<Data.Cohort.AnyTableSqlParameter>();
     }
 
 
@@ -142,14 +142,14 @@ public class TableValuedFunctionImporter : ITableInfoImporter
     }
 
     /// <summary>
-    /// Creates a new <see cref="AnyTableSqlParameter"/> for describing a parameter of the table valued function <paramref name="parent"/>.  This is public so that
+    /// Creates a new <see cref="Data.Cohort.AnyTableSqlParameter"/> for describing a parameter of the table valued function <paramref name="parent"/>.  This is public so that
     /// it can be used for later synchronization as well as initial import.
     /// </summary>
     /// <param name="parent"></param>
     /// <param name="discoveredParameter"></param>
-    internal AnyTableSqlParameter CreateParameter(ITableInfo parent, DiscoveredParameter discoveredParameter)
+    internal Data.Cohort.AnyTableSqlParameter CreateParameter(ITableInfo parent, DiscoveredParameter discoveredParameter)
     {
-        var created = new AnyTableSqlParameter(_catalogueDbContext, parent, GetParamaterDeclarationSQL(discoveredParameter));
+        var created = new Data.Cohort.AnyTableSqlParameter(_catalogueDbContext, parent, GetParamaterDeclarationSQL(discoveredParameter));
         ParametersCreated.Add(created);
         return created;
     }

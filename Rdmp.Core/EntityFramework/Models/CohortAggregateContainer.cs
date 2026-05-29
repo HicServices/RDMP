@@ -81,6 +81,7 @@ namespace Rdmp.Core.EntityFramework.Models
         [NotMapped]
         public Catalogue Catalogue => throw new NotImplementedException();
 
+        [NotMapped]
         public int? QueryCachingServer_ID { get; set; }
 
         public List<object> GetOrderedContents()

@@ -86,11 +86,11 @@ public interface ICatalogueRepository : IRepository, IServerDefaults
     /// <summary>
     /// Returns all sql parameters declared in the immediate scope of the <paramref name="parent"/> (does not include parameters that are declared at a lower scope).
     /// 
-    /// <para>To determine which parent types are supported see <see cref="AnyTableSqlParameter.IsSupportedType"/></para>
+    /// <para>To determine which parent types are supported</para>
     /// </summary>
     /// <param name="parent"></param>
     /// <returns></returns>
-    IEnumerable<AnyTableSqlParameter> GetAllParametersForParentTable(IMapsDirectlyToDatabaseTable parent);
+    IEnumerable<Curation.Data.Cohort.AnyTableSqlParameter> GetAllParametersForParentTable(IMapsDirectlyToDatabaseTable parent);
 
     /// <summary>
     /// Returns the persistence object which describes which <see cref="ITicketingSystem"/> should be consulted when making governance decisions (e.g. according to

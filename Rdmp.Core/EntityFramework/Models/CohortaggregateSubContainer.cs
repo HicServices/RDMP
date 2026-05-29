@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Rdmp.Core.EntityFramework.Models
 {
     [Table("CohortAggregateSubContainer")]
-    public class CohortaggregateSubContainer: DatabaseObject, IOrderable
+    public class CohortaggregateSubContainer: DatabaseObject
     {
         public int CohortAggregateContainer_ParentID { get; set; }
         public int CohortAggregateContainer_ChildID { get; set; }
@@ -20,6 +20,5 @@ namespace Rdmp.Core.EntityFramework.Models
 
         [ForeignKey("CohortAggregateContainer_ParentID")]
         public virtual CohortAggregateContainer Parent { get; set; }
-        public int Order { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     }
 }

@@ -120,9 +120,9 @@ public class MemoryRDMPDbContext : MemoryRepository, ICatalogueRepository, ITabl
         return server == null ? null : new LogManager(server);
     }
 
-    public IEnumerable<AnyTableSqlParameter> GetAllParametersForParentTable(IMapsDirectlyToDatabaseTable parent)
+    public IEnumerable<Curation.Data.Cohort.AnyTableSqlParameter> GetAllParametersForParentTable(IMapsDirectlyToDatabaseTable parent)
     {
-        return GetAllObjects<AnyTableSqlParameter>().Where(o => o.IsReferenceTo(parent));
+        return GetAllObjects<Curation.Data.Cohort.AnyTableSqlParameter>().Where(o => o.IsReferenceTo(parent));
     }
 
     public TicketingSystemConfiguration GetTicketingSystem() => null;

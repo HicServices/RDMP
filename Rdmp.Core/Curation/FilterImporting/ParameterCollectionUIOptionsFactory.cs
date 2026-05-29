@@ -174,6 +174,6 @@ public class ParameterCollectionUIOptionsFactory
 
         var ec = (ExtractionConfiguration)collector;
         return new GlobalExtractionFilterParameter(ec.CatalogueDbContext, ec,
-            AnyTableSqlParameter.GetDefaultDeclaration(parameterName));
+            Data.Cohort.AnyTableSqlParameter.GetDefaultDeclaration(parameterName));
     }
 }

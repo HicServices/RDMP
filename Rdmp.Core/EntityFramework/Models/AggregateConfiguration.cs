@@ -19,6 +19,7 @@ using System.Text;
 
 namespace Rdmp.Core.EntityFramework.Models
 {
+    [Table("AggregateConfiguration")]
     public class AggregateConfiguration : DatabaseObject, ICollectSqlParameters, IOrderable, IHasQuerySyntaxHelper,ICheckable, IHasDependencies, INamed
     {
         [Key]
@@ -37,6 +38,7 @@ namespace Rdmp.Core.EntityFramework.Models
         public int? OverrideFiltersByUsingParentAggregateConfigurationInstead_ID { get; set; }
         public string HavingSQL { get; set; }
         public bool IsDisabled { get; set; }
+        [NotMapped]
         public int Order { get; set; } //todo this doesn't exist
 
         //[ForeignKey("RootFilterContainer_ID")]
@@ -76,12 +78,13 @@ namespace Rdmp.Core.EntityFramework.Models
             return true;
         }
         public virtual ITableInfo[] ForcedJoins => null;// CatalogueDbContext.AggregateForcedJoinManager.GetAllForcedJoinsFor(this);
-
+        [NotMapped]
         public JoinableCohortAggregateConfiguration JoinableCohortAggregateConfiguration { get; internal set; }
 
 
         [NotMapped]
         public JoinableCohortAggregateConfigurationUse[] PatientIndexJoinablesUsed { get; internal set; }
+        [NotMapped]
         public AggregateDimension PivotDimension { get; set; }
 
         public CohortAggregateContainer GetCohortAggregateContainerIfAny() => null;//TODO

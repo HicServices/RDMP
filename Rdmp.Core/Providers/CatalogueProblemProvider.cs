@@ -146,11 +146,11 @@ public class CatalogueProblemProvider : ProblemProvider
 
     public string DescribeProblem(ISqlParameter parameter)
     {
-        if (AnyTableSqlParameter.HasProhibitedName(parameter))
+        if (Curation.Data.Cohort.AnyTableSqlParameter.HasProhibitedName(parameter))
             return "Parameter name is a reserved name for the RDMP software";
 
         // if parameter has no value that's a problem
-        if (string.IsNullOrWhiteSpace(parameter.Value) || parameter.Value == AnyTableSqlParameter.DefaultValue)
+        if (string.IsNullOrWhiteSpace(parameter.Value) || parameter.Value == Curation.Data.Cohort.AnyTableSqlParameter.DefaultValue)
         {
             // unless it has ExtractionFilterParameterSets defined on it
             //var desc = _childProvider.GetDescendancyListIfAnyFor(parameter);

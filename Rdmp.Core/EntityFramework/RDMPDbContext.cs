@@ -11,6 +11,7 @@ using Rdmp.Core.DataExport.DataExtraction.Pipeline;
 using Rdmp.Core.DataExport.DataRelease.Pipeline;
 using Rdmp.Core.DataLoad.Engine.Pipeline;
 using Rdmp.Core.EntityFramework.Models;
+using Rdmp.Core.EntityFramework.Models.DataExport;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Providers.Nodes;
@@ -67,6 +68,14 @@ namespace Rdmp.Core.EntityFramework
 
         public DbSet<Models.AggregateConfiguration> AggregateConfigurations { get; set; }
 
+        public DbSet<CohortAggregateContainer> CohortAggregateContainers { get; set; }
+
+        public DbSet<Models.AnyTableSqlParameter> AnyTableSqlParameters { get; set; }
+
+        public DbSet<CohortaggregateSubContainer> CohortaggregateSubContainers { get; set; }
+
+        public DbSet<CohortAggregateContainerAggregateConfiguration> CohortAggregateContainerAggregateConfigurations { get; set; }
+
         public T[] GetAllObjects<T>()
         {
             return null;//todo
@@ -119,6 +128,10 @@ namespace Rdmp.Core.EntityFramework
             {
                 entity.HasKey(e => e.ID);
             });
+            modelBuilder.Entity<Models.AnyTableSqlParameter>(entity =>
+            {
+                entity.HasKey(e => e.ID);
+            });
 
             modelBuilder.Entity<Models.CohortIdentificationConfiguration>(entity =>
             {
@@ -146,6 +159,10 @@ namespace Rdmp.Core.EntityFramework
                 entity.HasKey(e => e.ID);
             });
             modelBuilder.Entity<Models.StandardRegex>(entity =>
+            {
+                entity.HasKey(e => e.ID);
+            });
+            modelBuilder.Entity<Models.CohortAggregateContainer>(entity =>
             {
                 entity.HasKey(e => e.ID);
             });
@@ -183,7 +200,7 @@ namespace Rdmp.Core.EntityFramework
             modelBuilder.Entity<Models.PipelineComponentArgument>(entity =>
             {
                 entity.HasKey(e => e.ID);
-                entity.HasOne(e => e.PipelineComponent).WithMany(e => e.Arguments).HasForeignKey(e =>e.PipelineComponent_ID);
+                entity.HasOne(e => e.PipelineComponent).WithMany(e => e.Arguments).HasForeignKey(e => e.PipelineComponent_ID);
             });
             modelBuilder.Entity<Models.Catalogue>(entity =>
             {
@@ -210,6 +227,14 @@ namespace Rdmp.Core.EntityFramework
             {
                 entity.HasKey(e => e.ID);
                 entity.HasOne(e => e.LoadMetadata).WithMany(e => e.LoadProgresses).HasForeignKey(e => e.LoadMetadata_ID);
+            });
+            modelBuilder.Entity<Models.CohortaggregateSubContainer>(entity =>
+            {
+                //entity.HasOne(e => e.CohortAggregateContainer_ChildID).WithOne(entity => entity.CohortAggregateContainer_ParentID).HasForeignKey<CohortaggregateSubContainer>(e => e.CohortAggregateContainer_ChildID);
+            });
+            modelBuilder.Entity<Models.DataExport.CohortAggregateContainerAggregateConfiguration>(entity =>
+            {
+                entity.HasNoKey();
             });
         }
 
@@ -248,7 +273,7 @@ namespace Rdmp.Core.EntityFramework
             throw new NotImplementedException();
         }
 
-        public IEnumerable<AnyTableSqlParameter> GetAllParametersForParentTable(IMapsDirectlyToDatabaseTable oTableWrapperObject)
+        public IEnumerable<Models.AnyTableSqlParameter> GetAllParametersForParentTable(IMapsDirectlyToDatabaseTable oTableWrapperObject)
         {
             throw new NotImplementedException();
         }
@@ -314,6 +339,35 @@ namespace Rdmp.Core.EntityFramework
             if (obj is CatalogueItemsNode cin)
             {
                 return cin.CatalogueItems;
+            }
+            if (obj is CohortIdentificationConfiguration cic)
+            {
+                List<object> children = new();
+                if (cic.RootCohortAggregateContainer_ID != null)
+                {
+                    children.Add(CohortAggregateContainers.Single(c => c.ID == cic.RootCohortAggregateContainer_ID));
+                }
+                if (cic.QueryCachingServer_ID != null)
+                {
+                    children.Add(ExternalDatabaseServers.Single(s => s.ID == cic.QueryCachingServer_ID));
+                }
+                var parameters = AnyTableSqlParameters.ToList().Where(p => p.IsReferenceTo(cic)).Cast<ISqlParameter>().ToArray();
+                foreach (var p in parameters) children.Add(p);
+
+                return children;
+            }
+            if (obj is CohortAggregateContainer cac)
+            {
+                List<object> children = new();
+
+                //subcontainers
+                var subcontainers = CohortaggregateSubContainers.Where(sc => sc.CohortAggregateContainer_ParentID == cac.ID).Select(sc => sc.Child);
+                foreach (var sc in subcontainers) children.Add(sc);
+                //agg containers
+                //var configs = AggregateConfigurations.Where(ac => ac. == cac.ID).ToList();
+                var configs = CohortAggregateContainerAggregateConfigurations.Where(cacc => cacc.AggregateConfiguration_ID == cac.ID).Select(cacc => cacc.Child);
+                foreach(var config in configs.ToList()) children.Add(config);
+                return children;
             }
             if (obj is Models.CatalogueItem catalogueItem)
             {

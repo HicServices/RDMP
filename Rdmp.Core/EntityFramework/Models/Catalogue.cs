@@ -126,7 +126,7 @@ namespace Rdmp.Core.EntityFramework.Models
 
         public ExtractionInformation PivotCategory_ExtractionInformation => throw new NotImplementedException();
 
-        public AggregateConfiguration[] AggregateConfigurations => Array.Empty<AggregateConfiguration>();
+        public List<AggregateConfiguration> AggregateConfigurations => new();
 
         public ExternalDatabaseServer LiveLoggingServer => throw new NotImplementedException();
 
@@ -247,7 +247,7 @@ namespace Rdmp.Core.EntityFramework.Models
 
         public bool IsApiCall()
         {
-            throw new NotImplementedException();
+            return false;// throw new NotImplementedException();
         }
 
         public bool IsApiCall(out IPluginCohortCompiler plugin)
