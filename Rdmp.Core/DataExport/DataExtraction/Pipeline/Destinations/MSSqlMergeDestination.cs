@@ -163,14 +163,32 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
 
         protected override void Open(DataTable toProcess, IDataLoadEventListener job, GracefulCancellationToken cancellationToken)
         {
+            var discoveredServer = DataAccessPortal.ExpectServer(TargetDatabaseServer, DataAccessContext.DataExport, false);
+            var tblName = _toProcess.TableName;
+            var targetDb = discoveredServer.ExpectDatabase(GetDatabaseName());
+            if (targetDb.Exists())
+            {
+                var existing = targetDb.ExpectTable(tblName);
+                if (existing.Exists())
+                {
+                    var remotePKs = existing.DiscoverColumns().Where(col => col.IsPrimaryKey).Select(col => col.GetRuntimeName()).ToList();
+                    var rdmpPKs = toProcess.PrimaryKey.Cast<DataColumn>().Select(col => col.ColumnName).ToList();
+                    if (!remotePKs.All(rdmpPKs.Contains) || remotePKs.Count != rdmpPKs.Count)
+                    { 
+                        throw new Exception($"""
+                        Table {existing.GetFullyQualifiedName()} already exists and has different PKs to the source table.                            
+                        Source PKs: {string.Join(", ", rdmpPKs)}
+                        Destination PKs: {string.Join(", ", remotePKs)}
+                        """);
+                    }
+                }
+            }
             _toProcess = toProcess;
         }
 
-        protected override void WriteRows(DataTable toProcess, IDataLoadEventListener job, GracefulCancellationToken cancellationToken, Stopwatch stopwatch)
-        {
-            _toProcess = toProcess;
-            var discoveredServer = DataAccessPortal.ExpectServer(TargetDatabaseServer, DataAccessContext.DataExport, false);
 
+        private string GetDatabaseName()
+        {
             //sort out the naming 
             var dbName = DatabaseNamingPattern;
 
@@ -180,6 +198,16 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
                 .Replace("$r", _request?.Configuration.RequestTicket)
                 .Replace("$l", _request?.Configuration.ReleaseTicket)
                 .Replace("$e", _request?.Configuration.ID.ToString());
+            return dbName;
+        }
+
+        protected override void WriteRows(DataTable toProcess, IDataLoadEventListener job, GracefulCancellationToken cancellationToken, Stopwatch stopwatch)
+        {
+            _toProcess = toProcess;
+            var discoveredServer = DataAccessPortal.ExpectServer(TargetDatabaseServer, DataAccessContext.DataExport, false);
+
+            //sort out the naming 
+            var dbName = GetDatabaseName();
 
             //make sure the db exist
             db = discoveredServer.ExpectDatabase(dbName);
@@ -212,7 +240,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
             if (UseArchiveTrigger)
             {
                 TriggerImplementerFactory triggerFactory = new TriggerImplementerFactory(FAnsi.DatabaseType.MicrosoftSQLServer);
-                var implementor = triggerFactory.Create(destinationTable,false,true);
+                var implementor = triggerFactory.Create(destinationTable, false, true);
                 bool present;
                 try
                 {
@@ -251,7 +279,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
                 USING {tmpTbl.GetFullyQualifiedName()} AS source
                     ON {string.Join(" AND ", pkColumns.Select(pkc => $"target.{pkc.ColumnName} = source.{pkc.ColumnName}"))}
                 WHEN MATCHED AND(
-                {string.Join(" OR ", nonPkColumns.Select(c => GetORLine(c,db.Server.GetQuerySyntaxHelper())))}
+                {string.Join(" OR ", nonPkColumns.Select(c => GetORLine(c, db.Server.GetQuerySyntaxHelper())))}
                 )
                 THEN 
                     UPDATE SET {string.Join(" , ", nonPkColumns.Select(pkc => $"target.{pkc.ColumnName} = source.{pkc.ColumnName}"))}

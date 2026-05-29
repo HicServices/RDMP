@@ -27,7 +27,10 @@ public sealed class CommentStoreWithKeywords : CommentStore
 
     private void AddToHelp(string keywordHelpFileContents)
     {
-        var lines = keywordHelpFileContents.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+        // Split on any line-ending convention so the parser tolerates resources embedded
+        // by a non-Windows build host (where the embedded bytes use LF, not CRLF).
+        // RemoveEmptyEntries collapses the spurious empty between '\r' and '\n' on CRLF inputs.
+        var lines = keywordHelpFileContents.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 
         foreach (var line in lines)
         {

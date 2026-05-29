@@ -25,7 +25,7 @@ public class PostgreSqlTriggerImplementer : TriggerImplementer
     private string _procedureRuntimeName;
 
     /// <inheritdoc cref="TriggerImplementer(DiscoveredTable,bool,bool)"/>
-    public PostgreSqlTriggerImplementer(DiscoveredTable table, bool createDataLoadRunIDAlso, bool dontAddDataLoadrunID=false) : base(table,
+    public PostgreSqlTriggerImplementer(DiscoveredTable table, bool createDataLoadRunIDAlso, bool dontAddDataLoadrunID = false) : base(table,
         createDataLoadRunIDAlso, dontAddDataLoadrunID)
     {
         var schema = string.IsNullOrWhiteSpace(_table.Schema)
@@ -69,6 +69,13 @@ public class PostgreSqlTriggerImplementer : TriggerImplementer
         }
     }
 
+    public override string GetCreateTriggerSQL()
+    {
+        return $@"CREATE TRIGGER ""{_triggerRuntimeName}"" BEFORE UPDATE ON {_table.GetFullyQualifiedName()} FOR EACH ROW
+EXECUTE PROCEDURE {_procedureNameFullyQualified}();";
+    }
+
+
     public override string CreateTrigger(ICheckNotifier notifier)
     {
         var creationSql = base.CreateTrigger(notifier);
@@ -77,9 +84,9 @@ public class PostgreSqlTriggerImplementer : TriggerImplementer
 
         CreateProcedure(con);
 
-        var sql =
-            $@"CREATE TRIGGER ""{_triggerRuntimeName}"" BEFORE UPDATE ON {_table.GetFullyQualifiedName()} FOR EACH ROW
-EXECUTE PROCEDURE {_procedureNameFullyQualified}();";
+        var sql = GetCreateTriggerSQL();
+
+
 
         using var cmd = _server.GetCommand(sql, con);
         cmd.CommandTimeout = UserSettings.ArchiveTriggerTimeout;

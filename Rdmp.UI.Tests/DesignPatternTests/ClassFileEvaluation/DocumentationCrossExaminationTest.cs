@@ -282,7 +282,16 @@ internal class DocumentationCrossExaminationTest
         "ResearchDataManagmentPlatform",
 
         // CSVHandling
-        "TypeTranslation"
+        "TypeTranslation",
+        //Mac Test Documentation
+        "WarningsNotAsErrors",
+        "TEST_DataExport",
+        "RequiresMySql",
+        "EnableWindowsTargeting",
+        "YourStrong",
+        "TreatWarningsAsErrors",
+        "PreserveNewest",
+        "DBMS"
     };
 
     #endregion

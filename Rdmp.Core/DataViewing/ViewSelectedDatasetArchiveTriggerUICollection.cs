@@ -4,32 +4,36 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using FAnsi.Discovery.QuerySyntax;
+using NPOI.OpenXmlFormats.Spreadsheet;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.Commands;
 using Rdmp.Core.DataExport.DataExtraction.UserPicks;
+using Rdmp.Core.DataLoad.Triggers;
+using Rdmp.Core.DataLoad.Triggers.Implementations;
 using Rdmp.Core.EntityFramework.Helpers;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Rdmp.Core.DataViewing;
 
-internal class ViewSelectedDatasetExtractionUICollection : PersistableObjectCollection, IViewSQLAndResultsCollection
+internal class ViewSelectedDatasetArchiveTriggerUICollection : PersistableObjectCollection, IViewSQLAndResultsCollection
 {
     private ExtractDatasetCommand _request;
 
     private ISelectedDataSets SelectedDataset => DatabaseObjects.OfType<ISelectedDataSets>().FirstOrDefault();
-    public bool DisableRun => false;
 
-    public ViewSelectedDatasetExtractionUICollection()
+    public bool DisableRun => true;
+
+    public ViewSelectedDatasetArchiveTriggerUICollection()
     {
     }
 
-    public ViewSelectedDatasetExtractionUICollection(ISelectedDataSets dataset) : this()
+    public ViewSelectedDatasetArchiveTriggerUICollection(ISelectedDataSets dataset) : this()
     {
         DatabaseObjects.Add(dataset);
     }
@@ -38,8 +42,12 @@ internal class ViewSelectedDatasetExtractionUICollection : PersistableObjectColl
     {
         BuildRequest();
 
-        //get the SQL from the query builder
-        return _request.QueryBuilder.SQL;
+        var table = _request.QueryBuilder.TablesUsedInQuery.FirstOrDefault().Discover(DataAccessContext.InternalDataProcessing);
+        TriggerImplementerFactory triggerFactory = new TriggerImplementerFactory(_request.QueryBuilder.QuerySyntaxHelper.DatabaseType);
+
+        var implimentor = triggerFactory.Create(table);
+        return implimentor.GetCreateTriggerSQL();
+
     }
 
     private void BuildRequest()
@@ -63,6 +71,7 @@ internal class ViewSelectedDatasetExtractionUICollection : PersistableObjectColl
         BuildRequest();
 
         return _request?.QueryBuilder?.TablesUsedInQuery?.FirstOrDefault();
+        //return null;
     }
 
     public IEnumerable<DatabaseObject> GetToolStripObjects()
@@ -70,7 +79,7 @@ internal class ViewSelectedDatasetExtractionUICollection : PersistableObjectColl
         yield return (DatabaseObject)SelectedDataset;
     }
 
-    public string GetTabName() => $"Extract {SelectedDataset}";
+    public string GetTabName() => $"Archive Trigger for {SelectedDataset}";
 
     public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
     {

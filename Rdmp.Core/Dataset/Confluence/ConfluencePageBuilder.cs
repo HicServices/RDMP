@@ -239,7 +239,7 @@ namespace Rdmp.Core.Dataset.Confluence
                         Has Lookups
                     </th>
                 </tr>
-                {string.Join("", catalogue.CatalogueItems.Where(ci => ci.ExtractionInformation is not null).Select(ci => BuildDataVariableRecord(ci)))}
+                {string.Join("", catalogue.CatalogueItems.Where(ci => { Enum.TryParse<ExtractionCategory>(ci.ExtractionInformation.ExtractionCategory, out var ec); return ci.ExtractionInformation is not null && ec is ExtractionCategory.Core; }).Select(ci => BuildDataVariableRecord(ci)))}
             </table>
             """;
         }

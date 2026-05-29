@@ -739,280 +739,285 @@ public class AtomicCommandFactory : CommandFactoryBase
         //    { SuggestedCategory = Batching, Weight = 1.2f };
         //}
 
-        //if (Is(o, out ExtractionProgress progress))
-        //    yield return new ExecuteCommandResetExtractionProgress(_activator, progress);
-
-        //if (Is(o, out ExtractionConfiguration ec))
-        //{
-        //    ///////////////////Add//////////////
-
-        //    yield return new ExecuteCommandChooseCohort(_activator, ec)
-        //    { Weight = -99.8f, SuggestedCategory = Add, OverrideCommandName = "Existing Cohort" };
-        //    yield return new ExecuteCommandAddDatasetsToConfiguration(_activator, ec)
-        //    { Weight = -99.7f, SuggestedCategory = Add, OverrideCommandName = "Existing Datasets" };
-        //    yield return new ExecuteCommandAddPackageToConfiguration(_activator, ec)
-        //    { Weight = -99.6f, SuggestedCategory = Add, OverrideCommandName = "Existing Package" };
-        //    yield return new ExecuteCommandAddParameter(_activator, ec, null, null, null)
-        //    {
-        //        Weight = -99.5f,
-        //        SuggestedCategory = Add,
-        //        OverrideCommandName = "New Extraction Filter Parameter"
-        //    };
-
-
-        //    yield return new ExecuteCommandGenerateReleaseDocument(_activator, ec) { Weight = -99.4f };
-
-        //    yield return ec.IsReleased
-        //        ? new ExecuteCommandUnfreezeExtractionConfiguration(_activator, ec) { Weight = 1.2f }
-        //        : new ExecuteCommandFreezeExtractionConfiguration(_activator, ec) { Weight = 1.2f };
-
-        //    yield return new ExecuteCommandCloneExtractionConfiguration(_activator, ec) { Weight = 1.3f };
-
-        //    yield return new ExecuteCommandResetExtractionProgress(_activator, ec, null) { Weight = 1.4f };
-        //}
-
-        //if (Is(o, out EntityFramework.Models.DataExport.Project proj))
-        //{
-        //    //yield return new ExecuteCommandCreateNewCohortIdentificationConfiguration(_activator)
-        //    //{ OverrideCommandName = "New Cohort Builder Query", SuggestedCategory = Add, Weight = -5f }
-        //    //    .SetTarget(proj);
-        //    //yield return
-        //    //    new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(_activator, null)
-        //    //    {
-        //    //        OverrideCommandName = "New Cohort From Cohort Builder Query",
-        //    //        SuggestedCategory = Add,
-        //    //        Weight = -4.9f
-        //    //    }.SetTarget(proj);
-        //    //yield return new ExecuteCommandCreateNewCohortFromFile(_activator, null)
-        //    //{ OverrideCommandName = "New Cohort From File", SuggestedCategory = Add, Weight = -4.8f }
-        //    //    .SetTarget(proj);
-        //    //yield return new ExecuteCommandCreateNewCohortFromCatalogue(_activator, (Catalogue)null)
-        //    //{ OverrideCommandName = "New Cohort From Catalogue", SuggestedCategory = Add, Weight = -4.7f }
-        //    //    .SetTarget(proj);
-        //    //yield return new ExecuteCommandCreateNewCohortFromTable(_activator, null)
-        //    //{ OverrideCommandName = "New Cohort From Table", SuggestedCategory = Add, Weight = -4.6f }
-        //    //    .SetTarget(proj);
-        //    //yield return new ExecuteCommandCreateNewExtractionConfigurationForProject(_activator, proj)
-        //    //{
-        //    //    OverrideCommandName = "New Extraction Configuration",
-        //    //    SuggestedCategory = Add,
-        //    //    Weight = -2f
-        //    //};
-        //    //yield return new ExecuteCommandCreateNewCatalogueByImportingFile(_activator)
-        //    //{
-        //    //    OverrideCommandName = "New Project Specific Catalogue From File...",
-        //    //    SuggestedCategory = Add,
-        //    //    Weight = -1.9f
-        //    //}.SetTarget(proj);
-        //    //yield return new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator)
-        //    //{
-        //    //    OverrideCommandName = "New Project Specific Catalogue From Database...",
-        //    //    SuggestedCategory = Add,
-        //    //    Weight = -1.8f
-        //    //}.SetTarget(proj);
-        //}
-
-        //if (Is(o, out ProjectCataloguesNode pcn))
-        //{
-        //    //yield return new ExecuteCommandMakeCatalogueProjectSpecific(_activator)
-        //    //{ OverrideCommandName = "Add Existing Catalogue", Weight = -10 }.SetTarget(pcn.Project);
-        //    //yield return new ExecuteCommandCreateNewCatalogueByImportingFile(_activator)
-        //    //{ OverrideCommandName = "Add New Catalogue From File", Weight = -9.5f }.SetTarget(pcn.Project);
-        //    //yield return new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator)
-        //    //{ OverrideCommandName = "Add New Catalogue From Existing Data Table", Weight = -9.4f }
-        //    //    .SetTarget(pcn.Project);
-        //}
-
-        //if (Is(o, out ProjectCohortsNode projCohorts))
-        //{
-        //    //yield return new ExecuteCommandCreateNewCohortIdentificationConfiguration(_activator)
-        //    //{ OverrideCommandName = "Add New Cohort Builder Query", Weight = -5.1f }.SetTarget(projCohorts.Project);
-        //    //yield return new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(_activator)
-        //    //{ OverrideCommandName = "Add Existing Cohort Builder Query (link to)", Weight = -5f }
-        //    //    .SetTarget(projCohorts.Project);
-        //    //yield return
-        //    //    new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(_activator, null)
-        //    //    { OverrideCommandName = "Add New Cohort From Cohort Builder Query", Weight = -4.9f }
-        //    //        .SetTarget(projCohorts.Project);
-        //    //yield return new ExecuteCommandCreateNewCohortFromFile(_activator, null)
-        //    //{ OverrideCommandName = "Add New Cohort From File", Weight = -4.8f }.SetTarget(projCohorts.Project);
-        //    //yield return new ExecuteCommandCreateNewCohortFromCatalogue(_activator, (Catalogue)null)
-        //    //{ OverrideCommandName = "Add New Cohort From Catalogue", Weight = -4.7f }
-        //    //    .SetTarget(projCohorts.Project);
-        //    //yield return new ExecuteCommandCreateNewCohortFromTable(_activator, null)
-        //    //{ OverrideCommandName = "Add New Cohort From Table", Weight = -4.6f }.SetTarget(projCohorts.Project);
-        //}
-
-        //if (Is(o, out ProjectCohortIdentificationConfigurationAssociationsNode pccan))
-        //{
-        //    yield return new ExecuteCommandCreateNewCohortIdentificationConfiguration(_activator)
-        //    { OverrideCommandName = "Add New Cohort Builder Query", Weight = -5.1f }.SetTarget(pccan.Project);
-        //    yield return new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(_activator)
-        //    { OverrideCommandName = "Add Existing Cohort Builder Query (link to)", Weight = -5f }
-        //        .SetTarget(pccan.Project);
-        //}
-
-        //if (Is(o, out ProjectSavedCohortsNode savedCohortsNode))
-        //{
-        //    //yield return
-        //    //    new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(_activator, null)
-        //    //    { OverrideCommandName = "Add New Cohort From Cohort Builder Query", Weight = -4.9f }
-        //    //        .SetTarget(savedCohortsNode.Project);
-        //    //yield return new ExecuteCommandCreateNewCohortFromFile(_activator, null)
-        //    //{ OverrideCommandName = "Add New Cohort From File", Weight = -4.8f }
-        //    //    .SetTarget(savedCohortsNode.Project);
-        //    //yield return new ExecuteCommandCreateNewCohortFromCatalogue(_activator, (Catalogue)null)
-        //    //{ OverrideCommandName = "Add New Cohort From Catalogue", Weight = -4.7f }
-        //    //    .SetTarget(savedCohortsNode.Project);
-        //    //yield return new ExecuteCommandCreateNewCohortFromTable(_activator, null)
-        //    //{ OverrideCommandName = "Add New Cohort From Table", Weight = -4.6f }
-        //    //    .SetTarget(savedCohortsNode.Project);
-        //    //yield return new ExecuteCommandImportAlreadyExistingCohort(_activator, null, savedCohortsNode.Project);
-        //}
-
-        //if (Is(o, out ExtractionConfigurationsNode ecn))
-        //    yield return new ExecuteCommandCreateNewExtractionConfigurationForProject(_activator, ecn.Project)
-        //    { OverrideCommandName = "Add New Extraction Configuration", Weight = -4.7f };
-
-        //if (Is(o, out ExternalCohortTable ect))
-        //{
-        //    var ectProj = o is CohortSourceUsedByProjectNode csbpn ? csbpn.User : null;
-
-        //    //yield return new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(_activator,
-        //    //        null)
-        //    //{
-        //    //    OverrideCommandName = "New Cohort From Cohort Builder Query",
-        //    //    Weight = -4.9f,
-        //    //    SuggestedCategory = "Add"
-        //    //}
-        //    //    .SetTarget(ect)
-        //    //    .SetTarget(ectProj);
-        //    //yield return new ExecuteCommandCreateNewCohortFromFile(_activator, null)
-        //    //{ OverrideCommandName = "New Cohort From File", Weight = -4.8f, SuggestedCategory = "Add" }
-        //    //    .SetTarget(ect)
-        //    //    .SetTarget(ectProj);
-        //    //yield return new ExecuteCommandCreateNewCohortFromCatalogue(_activator, (Catalogue)null)
-        //    //{ OverrideCommandName = "New Cohort From Catalogue", Weight = -4.7f, SuggestedCategory = "Add" }
-        //    //    .SetTarget(ect)
-        //    //    .SetTarget(ectProj);
-
-        //    //yield return new ExecuteCommandCreateNewCohortFromTable(_activator, null)
-        //    //{ OverrideCommandName = "New Cohort From Table", Weight = -4.6f, SuggestedCategory = Add }
-        //    //    .SetTarget(ect)
-        //    //    .SetTarget(ectProj);
-
-        //    //yield return new ExecuteCommandImportAlreadyExistingCohort(_activator, ect, null)
-        //    //{ OverrideCommandName = "Existing Cohort", Weight = -4.6f, SuggestedCategory = "Add" };
-
-        //    yield return new ExecuteCommandRefreshBrokenCohorts(_activator, ect) { Weight = 1 };
-        //}
-
-        //if (Is(o, out ExtractableCohort cohort))
-        //{
-        //    yield return new ExecuteCommandViewData(_activator, cohort, ViewType.TOP_100) { Weight = -99.9f };
-        //    yield return new ExecuteCommandViewData(_activator, cohort, ViewType.All)
-        //    {
-        //        AskForFile = true,
-        //        OverrideCommandName = "Save Cohort To File...",
-        //        OverrideIcon = Image.Load<Rgba32>(FamFamFamIcons.disk),
-        //        Weight = -99.8f
-        //    };
-        //    yield return new ExecuteCommandCreateNewExtractionConfigurationForProject(_activator)
-        //    {
-        //        CohortIfAny = cohort,
-        //        OverrideCommandName = "New Extraction Configuration using Cohort"
-        //    };
-        //}
-
-        //if (Is(o, out IMightBeDeprecated d))
-        //{
-        //    yield return new ExecuteCommandDeprecate(_activator, new[] { d }, !d.IsDeprecated)
-        //    {
-        //        OverrideCommandName = d.IsDeprecated ? "Un Deprecate" : "Deprecate",
-        //        SuggestedCategory = Deprecation,
-        //        Weight = -99.7f
-        //    };
-        //    yield return new ExecuteCommandReplacedBy(_activator, d, null)
-        //    {
-        //        PromptToPickReplacement = true,
-        //        SuggestedCategory = Deprecation,
-        //        Weight = -99.6f,
-        //        OverrideCommandName = "Set Replaced By"
-        //    };
-        //}
-
-        //if (Is(o, out CohortAggregateContainer cohortAggregateContainer))
-        //{
-        //    var associatedCIC = cohortAggregateContainer.GetCohortIdentificationConfiguration();
-        //    if (!associatedCIC.Frozen)
-        //    {
-        //        //yield return new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(_activator,
-        //        //    cohortAggregateContainer, null, null)
-        //        //{ SuggestedCategory = Add, OverrideCommandName = "Catalogue" };
-        //        //yield return new ExecuteCommandAddCohortSubContainer(_activator, cohortAggregateContainer)
-        //        //{ SuggestedCategory = Add, OverrideCommandName = "Sub Container" };
-        //        //yield return new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(_activator,
-        //        //        cohortAggregateContainer, true)
-        //        //{ SuggestedCategory = Add, OverrideCommandName = "Existing Cohort Set (copy of)" };
-        //        //yield return new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(_activator,
-        //        //    cohortAggregateContainer, false)
-        //        //{ SuggestedCategory = Add, OverrideCommandName = "Aggregate" };
-        //        yield return new ExecuteCommandImportCohortIdentificationConfiguration(_activator, null,
-        //                cohortAggregateContainer)
-        //        { SuggestedCategory = Add, OverrideCommandName = "Existing Cohort Builder Query (copy of)" };
-
-        //        //Set Operation
-        //        yield return new ExecuteCommandSetContainerOperation(_activator, cohortAggregateContainer,
-        //            SetOperation.UNION)
-        //        { SuggestedCategory = SetContainerOperation, OverrideCommandName = "UNION" };
-        //        yield return new ExecuteCommandSetContainerOperation(_activator, cohortAggregateContainer,
-        //            SetOperation.EXCEPT)
-        //        { SuggestedCategory = SetContainerOperation, OverrideCommandName = "EXCEPT" };
-        //        yield return new ExecuteCommandSetContainerOperation(_activator, cohortAggregateContainer,
-        //                SetOperation.INTERSECT)
-        //        { SuggestedCategory = SetContainerOperation, OverrideCommandName = "INTERSECT" };
-
-        //        yield return new ExecuteCommandUnMergeCohortIdentificationConfiguration(_activator,
-        //            cohortAggregateContainer)
-        //        { OverrideCommandName = "Separate Cohort Builder Query" };
-        //    }
-        //}
-
-        //if (Is(o, out IDisableable disable))
-        //    //todo this calls the db
-        //    yield return new ExecuteCommandDisableOrEnable(_activator, disable);
-
-        //// If the root object is deletable offer deleting
-        //if (Is(o, out IDeleteable deletable))
-        //    //todo this calls the db
-        //    yield return new ExecuteCommandDelete(_activator, deletable) { SuggestedShortcut = "Delete" };
-
-        //if (Is(o, out ReferenceOtherObjectDatabaseEntity reference))
-        //    yield return new ExecuteCommandShowRelatedObject(_activator, reference);
-
-        //if (Is(o, out INamed n))
-        //    yield return new ExecuteCommandRename(_activator, n) { SuggestedShortcut = "F2" };
-
-        ////if (Is(o, out PipelineCompatibleWithUseCaseNode pcu))
-        ////{
-        ////    yield return new ExecuteCommandNewObject(_activator, typeof(Pipeline))
-        ////    { OverrideCommandName = "New Pipeline" };
-        ////    yield return new ExecuteCommandClonePipeline(_activator, pcu.Pipeline);
-        ////    yield return new ExecuteCommandAddPipelineComponent(_activator, pcu.Pipeline, pcu.UseCase);
-        ////}
-        //else if (Is(o, out Pipeline pipeline))
-        //{
-        //    yield return new ExecuteCommandNewObject(_activator, typeof(Pipeline))
-        //    { OverrideCommandName = "New Pipeline" };
-        //    yield return new ExecuteCommandClonePipeline(_activator, pipeline);
-        //    yield return new ExecuteCommandAddPipelineComponent(_activator, pipeline, null);
-        //}
-
-        //if (Is(o, out StandardPipelineUseCaseNode psu))
-        //    yield return new ExecuteCommandNewObject(_activator, typeof(Pipeline))
-        //    { OverrideCommandName = "New Pipeline" };
-        //yield return null;
+        //yield return new ExecuteCommandViewExtractionSql(_activator, sds);
+        //yield return new ExecuteCommandViewArchiveTriggerSql(_activator, sds);
+        //yield return new ExecuteCommandAddExtractionProgress(_activator, sds)
+        //{ SuggestedCategory = Batching, Weight = 1.1f };
+        //yield return new ExecuteCommandResetExtractionProgress(_activator, sds)
+        //{ SuggestedCategory = Batching, Weight = 1.2f };
     }
+
+    //if (Is(o, out ExtractionConfiguration ec))
+    //{
+    //    ///////////////////Add//////////////
+
+    //    yield return new ExecuteCommandChooseCohort(_activator, ec)
+    //    { Weight = -99.8f, SuggestedCategory = Add, OverrideCommandName = "Existing Cohort" };
+    //    yield return new ExecuteCommandAddDatasetsToConfiguration(_activator, ec)
+    //    { Weight = -99.7f, SuggestedCategory = Add, OverrideCommandName = "Existing Datasets" };
+    //    yield return new ExecuteCommandAddPackageToConfiguration(_activator, ec)
+    //    { Weight = -99.6f, SuggestedCategory = Add, OverrideCommandName = "Existing Package" };
+    //    yield return new ExecuteCommandAddParameter(_activator, ec, null, null, null)
+    //    {
+    //        Weight = -99.5f,
+    //        SuggestedCategory = Add,
+    //        OverrideCommandName = "New Extraction Filter Parameter"
+    //    };
+
+
+    //    yield return new ExecuteCommandGenerateReleaseDocument(_activator, ec) { Weight = -99.4f };
+
+    //    yield return ec.IsReleased
+    //        ? new ExecuteCommandUnfreezeExtractionConfiguration(_activator, ec) { Weight = 1.2f }
+    //        : new ExecuteCommandFreezeExtractionConfiguration(_activator, ec) { Weight = 1.2f };
+
+    //    yield return new ExecuteCommandCloneExtractionConfiguration(_activator, ec) { Weight = 1.3f };
+
+    //    yield return new ExecuteCommandResetExtractionProgress(_activator, ec, null) { Weight = 1.4f };
+    //}
+
+    //if (Is(o, out EntityFramework.Models.DataExport.Project proj))
+    //{
+    //    //yield return new ExecuteCommandCreateNewCohortIdentificationConfiguration(_activator)
+    //    //{ OverrideCommandName = "New Cohort Builder Query", SuggestedCategory = Add, Weight = -5f }
+    //    //    .SetTarget(proj);
+    //    //yield return
+    //    //    new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(_activator, null)
+    //    //    {
+    //    //        OverrideCommandName = "New Cohort From Cohort Builder Query",
+    //    //        SuggestedCategory = Add,
+    //    //        Weight = -4.9f
+    //    //    }.SetTarget(proj);
+    //    //yield return new ExecuteCommandCreateNewCohortFromFile(_activator, null)
+    //    //{ OverrideCommandName = "New Cohort From File", SuggestedCategory = Add, Weight = -4.8f }
+    //    //    .SetTarget(proj);
+    //    //yield return new ExecuteCommandCreateNewCohortFromCatalogue(_activator, (Catalogue)null)
+    //    //{ OverrideCommandName = "New Cohort From Catalogue", SuggestedCategory = Add, Weight = -4.7f }
+    //    //    .SetTarget(proj);
+    //    //yield return new ExecuteCommandCreateNewCohortFromTable(_activator, null)
+    //    //{ OverrideCommandName = "New Cohort From Table", SuggestedCategory = Add, Weight = -4.6f }
+    //    //    .SetTarget(proj);
+    //    //yield return new ExecuteCommandCreateNewExtractionConfigurationForProject(_activator, proj)
+    //    //{
+    //    //    OverrideCommandName = "New Extraction Configuration",
+    //    //    SuggestedCategory = Add,
+    //    //    Weight = -2f
+    //    //};
+    //    //yield return new ExecuteCommandCreateNewCatalogueByImportingFile(_activator)
+    //    //{
+    //    //    OverrideCommandName = "New Project Specific Catalogue From File...",
+    //    //    SuggestedCategory = Add,
+    //    //    Weight = -1.9f
+    //    //}.SetTarget(proj);
+    //    //yield return new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator)
+    //    //{
+    //    //    OverrideCommandName = "New Project Specific Catalogue From Database...",
+    //    //    SuggestedCategory = Add,
+    //    //    Weight = -1.8f
+    //    //}.SetTarget(proj);
+    //}
+
+    //if (Is(o, out ProjectCataloguesNode pcn))
+    //{
+    //    //yield return new ExecuteCommandMakeCatalogueProjectSpecific(_activator)
+    //    //{ OverrideCommandName = "Add Existing Catalogue", Weight = -10 }.SetTarget(pcn.Project);
+    //    //yield return new ExecuteCommandCreateNewCatalogueByImportingFile(_activator)
+    //    //{ OverrideCommandName = "Add New Catalogue From File", Weight = -9.5f }.SetTarget(pcn.Project);
+    //    //yield return new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator)
+    //    //{ OverrideCommandName = "Add New Catalogue From Existing Data Table", Weight = -9.4f }
+    //    //    .SetTarget(pcn.Project);
+    //}
+
+    //if (Is(o, out ProjectCohortsNode projCohorts))
+    //{
+    //    //yield return new ExecuteCommandCreateNewCohortIdentificationConfiguration(_activator)
+    //    //{ OverrideCommandName = "Add New Cohort Builder Query", Weight = -5.1f }.SetTarget(projCohorts.Project);
+    //    //yield return new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(_activator)
+    //    //{ OverrideCommandName = "Add Existing Cohort Builder Query (link to)", Weight = -5f }
+    //    //    .SetTarget(projCohorts.Project);
+    //    //yield return
+    //    //    new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(_activator, null)
+    //    //    { OverrideCommandName = "Add New Cohort From Cohort Builder Query", Weight = -4.9f }
+    //    //        .SetTarget(projCohorts.Project);
+    //    //yield return new ExecuteCommandCreateNewCohortFromFile(_activator, null)
+    //    //{ OverrideCommandName = "Add New Cohort From File", Weight = -4.8f }.SetTarget(projCohorts.Project);
+    //    //yield return new ExecuteCommandCreateNewCohortFromCatalogue(_activator, (Catalogue)null)
+    //    //{ OverrideCommandName = "Add New Cohort From Catalogue", Weight = -4.7f }
+    //    //    .SetTarget(projCohorts.Project);
+    //    //yield return new ExecuteCommandCreateNewCohortFromTable(_activator, null)
+    //    //{ OverrideCommandName = "Add New Cohort From Table", Weight = -4.6f }.SetTarget(projCohorts.Project);
+    //}
+
+    //if (Is(o, out ProjectCohortIdentificationConfigurationAssociationsNode pccan))
+    //{
+    //    yield return new ExecuteCommandCreateNewCohortIdentificationConfiguration(_activator)
+    //    { OverrideCommandName = "Add New Cohort Builder Query", Weight = -5.1f }.SetTarget(pccan.Project);
+    //    yield return new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(_activator)
+    //    { OverrideCommandName = "Add Existing Cohort Builder Query (link to)", Weight = -5f }
+    //        .SetTarget(pccan.Project);
+    //}
+
+    //if (Is(o, out ProjectSavedCohortsNode savedCohortsNode))
+    //{
+    //    //yield return
+    //    //    new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(_activator, null)
+    //    //    { OverrideCommandName = "Add New Cohort From Cohort Builder Query", Weight = -4.9f }
+    //    //        .SetTarget(savedCohortsNode.Project);
+    //    //yield return new ExecuteCommandCreateNewCohortFromFile(_activator, null)
+    //    //{ OverrideCommandName = "Add New Cohort From File", Weight = -4.8f }
+    //    //    .SetTarget(savedCohortsNode.Project);
+    //    //yield return new ExecuteCommandCreateNewCohortFromCatalogue(_activator, (Catalogue)null)
+    //    //{ OverrideCommandName = "Add New Cohort From Catalogue", Weight = -4.7f }
+    //    //    .SetTarget(savedCohortsNode.Project);
+    //    //yield return new ExecuteCommandCreateNewCohortFromTable(_activator, null)
+    //    //{ OverrideCommandName = "Add New Cohort From Table", Weight = -4.6f }
+    //    //    .SetTarget(savedCohortsNode.Project);
+    //    //yield return new ExecuteCommandImportAlreadyExistingCohort(_activator, null, savedCohortsNode.Project);
+    //}
+
+    //if (Is(o, out ExtractionConfigurationsNode ecn))
+    //    yield return new ExecuteCommandCreateNewExtractionConfigurationForProject(_activator, ecn.Project)
+    //    { OverrideCommandName = "Add New Extraction Configuration", Weight = -4.7f };
+
+    //if (Is(o, out ExternalCohortTable ect))
+    //{
+    //    var ectProj = o is CohortSourceUsedByProjectNode csbpn ? csbpn.User : null;
+
+    //    //yield return new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(_activator,
+    //    //        null)
+    //    //{
+    //    //    OverrideCommandName = "New Cohort From Cohort Builder Query",
+    //    //    Weight = -4.9f,
+    //    //    SuggestedCategory = "Add"
+    //    //}
+    //    //    .SetTarget(ect)
+    //    //    .SetTarget(ectProj);
+    //    //yield return new ExecuteCommandCreateNewCohortFromFile(_activator, null)
+    //    //{ OverrideCommandName = "New Cohort From File", Weight = -4.8f, SuggestedCategory = "Add" }
+    //    //    .SetTarget(ect)
+    //    //    .SetTarget(ectProj);
+    //    //yield return new ExecuteCommandCreateNewCohortFromCatalogue(_activator, (Catalogue)null)
+    //    //{ OverrideCommandName = "New Cohort From Catalogue", Weight = -4.7f, SuggestedCategory = "Add" }
+    //    //    .SetTarget(ect)
+    //    //    .SetTarget(ectProj);
+
+    //    //yield return new ExecuteCommandCreateNewCohortFromTable(_activator, null)
+    //    //{ OverrideCommandName = "New Cohort From Table", Weight = -4.6f, SuggestedCategory = Add }
+    //    //    .SetTarget(ect)
+    //    //    .SetTarget(ectProj);
+
+    //    //yield return new ExecuteCommandImportAlreadyExistingCohort(_activator, ect, null)
+    //    //{ OverrideCommandName = "Existing Cohort", Weight = -4.6f, SuggestedCategory = "Add" };
+
+    //    yield return new ExecuteCommandRefreshBrokenCohorts(_activator, ect) { Weight = 1 };
+    //}
+
+    //if (Is(o, out ExtractableCohort cohort))
+    //{
+    //    yield return new ExecuteCommandViewData(_activator, cohort, ViewType.TOP_100) { Weight = -99.9f };
+    //    yield return new ExecuteCommandViewData(_activator, cohort, ViewType.All)
+    //    {
+    //        AskForFile = true,
+    //        OverrideCommandName = "Save Cohort To File...",
+    //        OverrideIcon = Image.Load<Rgba32>(FamFamFamIcons.disk),
+    //        Weight = -99.8f
+    //    };
+    //    yield return new ExecuteCommandCreateNewExtractionConfigurationForProject(_activator)
+    //    {
+    //        CohortIfAny = cohort,
+    //        OverrideCommandName = "New Extraction Configuration using Cohort"
+    //    };
+    //}
+
+    //if (Is(o, out IMightBeDeprecated d))
+    //{
+    //    yield return new ExecuteCommandDeprecate(_activator, new[] { d }, !d.IsDeprecated)
+    //    {
+    //        OverrideCommandName = d.IsDeprecated ? "Un Deprecate" : "Deprecate",
+    //        SuggestedCategory = Deprecation,
+    //        Weight = -99.7f
+    //    };
+    //    yield return new ExecuteCommandReplacedBy(_activator, d, null)
+    //    {
+    //        PromptToPickReplacement = true,
+    //        SuggestedCategory = Deprecation,
+    //        Weight = -99.6f,
+    //        OverrideCommandName = "Set Replaced By"
+    //    };
+    //}
+
+    //if (Is(o, out CohortAggregateContainer cohortAggregateContainer))
+    //{
+    //    var associatedCIC = cohortAggregateContainer.GetCohortIdentificationConfiguration();
+    //    if (!associatedCIC.Frozen)
+    //    {
+    //        //yield return new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(_activator,
+    //        //    cohortAggregateContainer, null, null)
+    //        //{ SuggestedCategory = Add, OverrideCommandName = "Catalogue" };
+    //        //yield return new ExecuteCommandAddCohortSubContainer(_activator, cohortAggregateContainer)
+    //        //{ SuggestedCategory = Add, OverrideCommandName = "Sub Container" };
+    //        //yield return new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(_activator,
+    //        //        cohortAggregateContainer, true)
+    //        //{ SuggestedCategory = Add, OverrideCommandName = "Existing Cohort Set (copy of)" };
+    //        //yield return new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(_activator,
+    //        //    cohortAggregateContainer, false)
+    //        //{ SuggestedCategory = Add, OverrideCommandName = "Aggregate" };
+    //        yield return new ExecuteCommandImportCohortIdentificationConfiguration(_activator, null,
+    //                cohortAggregateContainer)
+    //        { SuggestedCategory = Add, OverrideCommandName = "Existing Cohort Builder Query (copy of)" };
+
+    //        //Set Operation
+    //        yield return new ExecuteCommandSetContainerOperation(_activator, cohortAggregateContainer,
+    //            SetOperation.UNION)
+    //        { SuggestedCategory = SetContainerOperation, OverrideCommandName = "UNION" };
+    //        yield return new ExecuteCommandSetContainerOperation(_activator, cohortAggregateContainer,
+    //            SetOperation.EXCEPT)
+    //        { SuggestedCategory = SetContainerOperation, OverrideCommandName = "EXCEPT" };
+    //        yield return new ExecuteCommandSetContainerOperation(_activator, cohortAggregateContainer,
+    //                SetOperation.INTERSECT)
+    //        { SuggestedCategory = SetContainerOperation, OverrideCommandName = "INTERSECT" };
+
+    //        yield return new ExecuteCommandUnMergeCohortIdentificationConfiguration(_activator,
+    //            cohortAggregateContainer)
+    //        { OverrideCommandName = "Separate Cohort Builder Query" };
+    //    }
+    //}
+
+    //if (Is(o, out IDisableable disable))
+    //    //todo this calls the db
+    //    yield return new ExecuteCommandDisableOrEnable(_activator, disable);
+
+    //// If the root object is deletable offer deleting
+    //if (Is(o, out IDeleteable deletable))
+    //    //todo this calls the db
+    //    yield return new ExecuteCommandDelete(_activator, deletable) { SuggestedShortcut = "Delete" };
+
+    //if (Is(o, out ReferenceOtherObjectDatabaseEntity reference))
+    //    yield return new ExecuteCommandShowRelatedObject(_activator, reference);
+
+    //if (Is(o, out INamed n))
+    //    yield return new ExecuteCommandRename(_activator, n) { SuggestedShortcut = "F2" };
+
+    ////if (Is(o, out PipelineCompatibleWithUseCaseNode pcu))
+    ////{
+    ////    yield return new ExecuteCommandNewObject(_activator, typeof(Pipeline))
+    ////    { OverrideCommandName = "New Pipeline" };
+    ////    yield return new ExecuteCommandClonePipeline(_activator, pcu.Pipeline);
+    ////    yield return new ExecuteCommandAddPipelineComponent(_activator, pcu.Pipeline, pcu.UseCase);
+    ////}
+    //else if (Is(o, out Pipeline pipeline))
+    //{
+    //    yield return new ExecuteCommandNewObject(_activator, typeof(Pipeline))
+    //    { OverrideCommandName = "New Pipeline" };
+    //    yield return new ExecuteCommandClonePipeline(_activator, pipeline);
+    //    yield return new ExecuteCommandAddPipelineComponent(_activator, pipeline, null);
+    //}
+
+    //if (Is(o, out StandardPipelineUseCaseNode psu))
+    //    yield return new ExecuteCommandNewObject(_activator, typeof(Pipeline))
+    //    { OverrideCommandName = "New Pipeline" };
+    //yield return null;
+    //}
 
     public IEnumerable<IAtomicCommand> CreateManyObjectCommands(ICollection many)
     {

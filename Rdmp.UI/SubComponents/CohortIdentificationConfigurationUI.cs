@@ -167,22 +167,22 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
             tlvCic.RefreshObjects(tlvCic.Objects.Cast<object>().ToArray());
     }
 
-    public override void SetDatabaseObject(IActivateItems activator, Core.EntityFramework.Models.CohortIdentificationConfiguration databaseObject)
+    public override void SetDatabaseObject(IActivateItems activator, CohortIdentificationConfiguration databaseObject)
     {
-        //base.SetDatabaseObject(activator, databaseObject);
-        //version.Setup(databaseObject, activator);
-        //Common.Configuration = databaseObject;
-        //Common.Compiler.CohortIdentificationConfiguration = databaseObject;
+        base.SetDatabaseObject(activator, databaseObject);
+        version.Setup(databaseObject, activator);
+        Common.Configuration = databaseObject;
+        Common.Compiler.CohortIdentificationConfiguration = databaseObject;
 
-        //RebuildClearCacheCommand();
+        RebuildClearCacheCommand();
 
-        //gbCicInfo.Text = $"Name: {databaseObject.Name}";
-        //tbDescription.Text = $"Description: {databaseObject.Description}";
+        gbCicInfo.Text = $"Name: {databaseObject.Name}";
+        tbDescription.Text = $"Description: {databaseObject.Description}";
         //ticket.TicketText = databaseObject.Ticket;
-        //if (databaseObject.IsTemplate)
-        //{
-        //    version.Visible = false;
-        //}
+        if (databaseObject.IsTemplate)
+        {
+            version.Visible = false;
+        }
         if (_commonFunctionality == null)
         {
             activator.RefreshBus.Subscribe(this);

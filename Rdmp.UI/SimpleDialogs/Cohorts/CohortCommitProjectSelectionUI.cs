@@ -4,6 +4,7 @@ using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.EntityFramework.Models;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Providers;
 using Rdmp.UI.ItemActivation;
@@ -25,21 +26,25 @@ namespace Rdmp.UI.SimpleDialogs.Cohorts
     {
         private readonly IProject _currentProject;
         private readonly Project[] _projects;
+        private readonly CohortIdentificationConfiguration _cic;
         private readonly IActivateItems _activator;
-        public CohortCommitProjectSelectionUI(IActivateItems activator, IProject currentProject, Project[] projects)
+        public CohortCommitProjectSelectionUI(IActivateItems activator, IProject currentProject, Project[] projects, CohortIdentificationConfiguration cic)
         {
             InitializeComponent();
             _activator = activator;
             _currentProject = currentProject;
             _projects = projects;
+            _cic = cic;
             if (_currentProject != null)
             {
-                btnCurrentProject.Text = $"This Project ({_currentProject.Name.Substring(0,Math.Min(10,_currentProject.Name.Length))}{(_currentProject.Name.Length>0?"...":"")})";
+                btnCurrentProject.Text = $"This Project ({_currentProject.Name.Substring(0, Math.Min(10, _currentProject.Name.Length))}{(_currentProject.Name.Length > 0 ? "..." : "")})";
             }
             else
             {
                 btnCurrentProject.Enabled = false;
             }
+
+            _cic = cic;
         }
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -99,12 +104,11 @@ namespace Rdmp.UI.SimpleDialogs.Cohorts
                 project.SaveToDatabase();
                 if (_currentProject != null)
                 {
-                    var projectSpecificCatalogues = _currentProject.GetAllProjectCatalogues().Where(p => p.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository));
-                    foreach (var psc in projectSpecificCatalogues)
+                    _cic.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively().Select(ac => ac.Catalogue).Distinct().Where(c => c.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository)).ToList().ForEach(c =>
                     {
-                        var cmd = new ExecuteCommandMakeCatalogueProjectSpecific(_activator, psc, project, true);
+                        var cmd = new ExecuteCommandMakeCatalogueProjectSpecific(_activator, c, Result, true);
                         cmd.Execute();
-                    }
+                    });
                 }
 
                 _activator.Publish(project);
@@ -125,12 +129,16 @@ namespace Rdmp.UI.SimpleDialogs.Cohorts
                 Result = selected as Project;
                 if (_currentProject != null)
                 {
-                    var projectSpecificCatalogues = _currentProject.GetAllProjectCatalogues().Where(p => p.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository));
-                    foreach (var psc in projectSpecificCatalogues)
+                    var newProjectSpecificCatalogues = Result.GetAllProjectCatalogues().Distinct().Where(p => p.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository));
+
+                    _cic.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively().Select(ac => ac.Catalogue).Where(c => c.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository)).ToList().ForEach(c =>
                     {
-                        var cmd = new ExecuteCommandMakeCatalogueProjectSpecific(_activator, psc, Result, true);
-                        cmd.Execute();
-                    }
+                        if (!newProjectSpecificCatalogues.Any(nc => nc.ID == c.ID))
+                        {
+                            var cmd = new ExecuteCommandMakeCatalogueProjectSpecific(_activator, c, Result, true);
+                            cmd.Execute();
+                        }
+                    });
                 }
                 DialogResult = DialogResult.OK;
                 Close();

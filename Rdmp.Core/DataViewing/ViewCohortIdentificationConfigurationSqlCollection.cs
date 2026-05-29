@@ -22,6 +22,7 @@ internal class ViewCohortIdentificationConfigurationSqlCollection : PersistableO
     IViewSQLAndResultsCollection
 {
     public bool UseQueryCache { get; set; }
+    public bool DisableRun => false;
 
     public ViewCohortIdentificationConfigurationSqlCollection()
     {

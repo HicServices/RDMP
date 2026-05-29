@@ -28,6 +28,7 @@ public class ViewCatalogueDataCollection : PersistableObjectCollection, IViewSQL
     public EntityFramework.Models.Catalogue Catalogue => DatabaseObjects.OfType<EntityFramework.Models.Catalogue>().FirstOrDefault();
 
     public IFilter[] Filters => DatabaseObjects.OfType<IFilter>().ToArray();
+    public bool DisableRun => false;
 
     public ExtractionInformation[] ExtractionInformations => DatabaseObjects.OfType<ExtractionInformation>().ToArray();
 

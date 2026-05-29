@@ -27,6 +27,7 @@ namespace Rdmp.Core.DataViewing;
 public class ViewColumnExtractCollection : PersistableObjectCollection, IViewSQLAndResultsCollection
 {
     public ViewType ViewType { get; private set; }
+    public bool DisableRun => false;
 
     /// <summary>
     /// The SELECT column (can be null if this instance was constructed using a <see cref="ColumnInfo"/>)

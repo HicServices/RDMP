@@ -24,4 +24,6 @@ public interface IViewSQLAndResultsCollection : IPersistableObjectCollection, IH
     string GetSql();
     string GetTabName();
     void AdjustAutocomplete(IAutoCompleteProvider autoComplete);
+
+    bool DisableRun { get; }
 }

@@ -25,6 +25,8 @@ namespace Rdmp.Core.DataViewing;
 public class ViewAggregateExtractUICollection : PersistableObjectCollection, IViewSQLAndResultsCollection
 {
     public bool UseQueryCache { get; set; }
+    public bool DisableRun => false;
+
 
     /// <summary>
     /// How big should the sample be

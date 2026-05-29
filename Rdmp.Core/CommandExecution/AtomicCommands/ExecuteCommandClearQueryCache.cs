@@ -34,6 +34,7 @@ public sealed class ExecuteCommandClearQueryCache : BasicCommandExecution
         [DemandsInitialization("The Cohort Builder query for which you want to invalidate all cache entries")]
         EntityFramework.Models.CohortIdentificationConfiguration cic) : base(activator)
     {
+        if (cic is null) return;
         _cic = cic;
 
         if (cic.QueryCachingServer_ID == null)

@@ -21,6 +21,7 @@ public class ViewLogsCollection : PersistableObjectCollection, IViewSQLAndResult
 {
     private EntityFramework.Models.ExternalDatabaseServer _loggingServer;
     private LogViewerFilter _filter;
+    public bool DisableRun => false;
 
     public ViewLogsCollection(EntityFramework.Models.ExternalDatabaseServer loggingServer, LogViewerFilter filter)
     {

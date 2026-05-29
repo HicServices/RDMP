@@ -136,7 +136,10 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
 
         SetItemActivator(activator);
 
-        CommonFunctionality.Add(btnExecuteSql);
+        if (!_collection.DisableRun)
+        {
+            CommonFunctionality.Add(btnExecuteSql);
+        }
         CommonFunctionality.Add(btnResetSql);
 
         foreach (var c in _timeoutControls.GetControls())

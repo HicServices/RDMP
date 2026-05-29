@@ -212,4 +212,6 @@ public abstract class TriggerImplementer : ITriggerImplementer
         return t1.ToLower().Contains("identity") &&
                t1.ToLower().Replace("identity", "").Trim().Equals(t2.ToLower().Trim());
     }
+
+    public abstract string GetCreateTriggerSQL();
 }

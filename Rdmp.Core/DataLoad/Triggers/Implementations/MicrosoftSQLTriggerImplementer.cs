@@ -147,7 +147,7 @@ public class MicrosoftSQLTriggerImplementer : TriggerImplementer
         return createArchiveTableSQL;
     }
 
-    private string GetCreateTriggerSQL()
+    public override string GetCreateTriggerSQL()
     {
         if (!_primaryKeys.Any())
             throw new TriggerException("There must be at least 1 primary key");
@@ -401,4 +401,5 @@ END
 
         return true;
     }
+
 }

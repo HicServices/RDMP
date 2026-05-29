@@ -25,6 +25,7 @@ namespace Rdmp.Core.DataViewing;
 public class ViewTableInfoExtractUICollection : PersistableObjectCollection, IViewSQLAndResultsCollection
 {
     public ViewType ViewType { get; private set; }
+    public bool DisableRun => false;
 
     /// <summary>
     /// for persistence, do not use

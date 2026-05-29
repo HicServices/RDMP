@@ -907,9 +907,9 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         return ui.ShowDialog() == DialogResult.OK ? ui.Result : null;
     }
 
-    public override IProject CohortCommitProjectSelect(IProject currentProject,Project[] projects)
+    public override IProject CohortCommitProjectSelect(IProject currentProject,Project[] projects, CohortIdentificationConfiguration cic)
     {
-        var ui = new CohortCommitProjectSelectionUI(this, currentProject, projects);
+        var ui = new CohortCommitProjectSelectionUI(this, currentProject, projects,cic);
         return ui.ShowDialog() == DialogResult.OK ? ui.Result : null; ;
     }
 

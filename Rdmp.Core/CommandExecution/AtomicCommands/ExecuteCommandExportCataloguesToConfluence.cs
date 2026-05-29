@@ -283,6 +283,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             var catalogues = _activator.RepositoryLocator.CatalogueDbContext.GetAllObjects<Catalogue>()
                 .Where(c => !c.IsDeprecated && !c.IsInternalDataset && !c.IsProjectSpecific(_activator.RepositoryLocator.CatalogueDbContext))
                 .ToList();
+
             var builder = new ConfluencePageBuilder(catalogues, _owner, _description, _subdomain);
             var uri = _isServiceAccount ? $"https://api.atlassian.com/ex/confluence/{_subdomain}/api/v2/pages" : $"https://{_subdomain}.atlassian.net/wiki/api/v2/pages";
             CreateContainerPage(builder, uri);
