@@ -638,7 +638,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
         }
 
         //if we have a primary key to create
-        if (pipelineFailureExceptionIfAny == null && _primaryKey?.Any() == true && _discoveredTable?.Exists() == true)
+        if (pipelineFailureExceptionIfAny == null && _primaryKey?.Any() == true && _discoveredTable?.Exists() == true && WriteDataBeforeApplyingPrimaryKeys)
         {
             //Find the columns in the destination
             var allColumns = _discoveredTable.DiscoverColumns();
