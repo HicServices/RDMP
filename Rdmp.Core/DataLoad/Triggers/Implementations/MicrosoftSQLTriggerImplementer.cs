@@ -36,9 +36,9 @@ public class MicrosoftSQLTriggerImplementer : TriggerImplementer
     private string _schema;
     private string _triggerName;
 
-    /// <inheritdoc cref="TriggerImplementer(DiscoveredTable,bool)"/>
-    public MicrosoftSQLTriggerImplementer(DiscoveredTable table, bool createDataLoadRunIDAlso = true) : base(table,
-        createDataLoadRunIDAlso)
+    /// <inheritdoc cref="TriggerImplementer(DiscoveredTable,bool,bool)"/>
+    public MicrosoftSQLTriggerImplementer(DiscoveredTable table, bool createDataLoadRunIDAlso = true, bool dontAddDataLoadrunID = false) : base(table,
+        createDataLoadRunIDAlso, dontAddDataLoadrunID)
     {
         _schema = string.IsNullOrWhiteSpace(_table.Schema) ? "dbo" : _table.Schema;
         _triggerName = $"{_schema}.{GetTriggerName()}";
@@ -147,7 +147,7 @@ public class MicrosoftSQLTriggerImplementer : TriggerImplementer
         return createArchiveTableSQL;
     }
 
-    private string GetCreateTriggerSQL()
+    public override string GetCreateTriggerSQL()
     {
         if (!_primaryKeys.Any())
             throw new TriggerException("There must be at least 1 primary key");
@@ -171,7 +171,7 @@ public class MicrosoftSQLTriggerImplementer : TriggerImplementer
 
         var columnNames = _columns.Select(c => c.GetRuntimeName()).ToList();
 
-        if (!columnNames.Contains(SpecialFieldNames.DataLoadRunID, StringComparer.CurrentCultureIgnoreCase))
+        if (!columnNames.Contains(SpecialFieldNames.DataLoadRunID, StringComparer.CurrentCultureIgnoreCase) && !_dontAddDataLoadRunId)
             columnNames.Add(SpecialFieldNames.DataLoadRunID);
 
         if (!columnNames.Contains(SpecialFieldNames.ValidFrom, StringComparer.CurrentCultureIgnoreCase))
@@ -273,7 +273,7 @@ END
         var liveCols = _columns.Select(c => $"[{c.GetRuntimeName()}]").Union(new string[]
         {
             $"[{SpecialFieldNames.DataLoadRunID}]", $"[{SpecialFieldNames.ValidFrom}]"
-        }).ToArray();
+        }).Where(col => _dontAddDataLoadRunId ? col != $"[{SpecialFieldNames.DataLoadRunID}]" : true).ToArray();
 
         var archiveCols = $"{string.Join(",", liveCols)},hic_validTo,hic_userID,hic_status";
         var cDotArchiveCols = string.Join(",", liveCols.Select(s => $"c.{s}"));
@@ -401,4 +401,5 @@ END
 
         return true;
     }
+
 }

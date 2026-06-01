@@ -25,7 +25,7 @@ namespace Rdmp.Core.DataLoad.Modules.Mutilators
 
         public void Check(ICheckNotifier notifier)
         {
-            if (!RemoteServer.Exists())
+            if (RemoteServer != null && !RemoteServer.Exists())
             {
                 notifier.OnCheckPerformed(new CheckEventArgs("Remote Server unavailable", CheckResult.Fail));
             }

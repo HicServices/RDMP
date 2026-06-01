@@ -18,6 +18,7 @@ public class CohortIdentificationConfigurationStateBasedIconProvider : IObjectSt
     private readonly Image<Rgba32> _cohortIdentificationConfigurationVersion;
     private readonly Image<Rgba32> _frozenCohortIdentificationConfiguration;
     private readonly Image<Rgba32> _frozenCohortIdentificationConfigurationVersion;
+    private readonly Image<Rgba32> _templateCogortIdentificationConfiguration;
 
     public CohortIdentificationConfigurationStateBasedIconProvider()
     {
@@ -26,13 +27,14 @@ public class CohortIdentificationConfigurationStateBasedIconProvider : IObjectSt
         _frozenCohortIdentificationConfiguration =
             Image.Load<Rgba32>(CatalogueIcons.FrozenCohortIdentificationConfiguration);
         _frozenCohortIdentificationConfigurationVersion = IconOverlayProvider.GetOverlay(_frozenCohortIdentificationConfiguration, OverlayKind.Version);
+        _templateCogortIdentificationConfiguration = Image.Load<Rgba32>(CatalogueIcons.TemplateCohortIdentificationConfiguration);
 
     }
 
     public Image<Rgba32> GetImageIfSupportedObject(object o) =>
         o is not CohortIdentificationConfiguration cic
             ? null
-            : cic.Frozen
+            : cic.IsTemplate?_templateCogortIdentificationConfiguration:cic.Frozen
                 ? cic.Version is null?_frozenCohortIdentificationConfiguration: _frozenCohortIdentificationConfigurationVersion
                 : cic.Version is null ? _cohortIdentificationConfiguration: _cohortIdentificationConfigurationVersion;
 }

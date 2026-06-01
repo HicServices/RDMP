@@ -4,13 +4,9 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Data;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
+using Amazon.Auth.AccessControlPolicy;
 using FAnsi.Discovery;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.Commands;
@@ -18,7 +14,10 @@ using Rdmp.Core.DataExport.DataExtraction.UserPicks;
 using Rdmp.Core.DataExport.DataRelease.Pipeline;
 using Rdmp.Core.DataExport.DataRelease.Potential;
 using Rdmp.Core.DataFlowPipeline;
+using Rdmp.Core.DataLoad.Engine.Job.Scheduling;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
+using Rdmp.Core.DataLoad.Triggers.Exceptions;
+using Rdmp.Core.DataLoad.Triggers.Implementations;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
@@ -26,6 +25,12 @@ using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.Core.ReusableLibraryCode.Progress;
+using System;
+using System.Data;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
 using YamlDotNet.Core;
 
 namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
@@ -69,6 +74,9 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
     [DemandsInitialization(DataTableUploadDestination.AlterTimeout_Description, DefaultValue = 300)]
     public int AlterTimeout { get; set; }
 
+    [DemandsInitialization("By applying the primary keys after writing the data, it ensures all data is extracted. Disabling this configuration may improve performance but will quickly raise issues with poorly keyed data.", DefaultValue = true)]
+    public bool WriteDataBeforeApplyingPrimaryKeys { get; set; }
+
     [DemandsInitialization(
         "True to copy the column collations from the source database when creating the destination database.  Only works if both the source and destination have the same DatabaseType.  Excludes columns which feature a transform as part of extraction.",
         DefaultValue = false)]
@@ -109,12 +117,17 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
     [DemandsInitialization("An optional list of columns to index on e.g \"Column1, Column2\"")]
     public string UserDefinedIndex { get; set; }
 
+
+    [DemandsInitialization("When writing to an existing database, will update records and store historical versions via a view", DefaultValue = false)]
+    public bool UseArchiveTrigger { get; set; }
+
     private DiscoveredDatabase _destinationDatabase;
     private DataTableUploadDestination _destination;
 
     private bool _tableDidNotExistAtStartOfLoad;
     private bool _isTableAlreadyNamed;
     private DataTable _toProcess;
+    private IBasicActivateItems _activator;
 
     public ExecuteFullExtractionToDatabaseMSSql() : base(false)
     {
@@ -177,6 +190,26 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
             var existing = _destinationDatabase.ExpectTable(tblName);
             if (existing.Exists())
             {
+                var hasPKs = existing.DiscoverColumns().Any(col => col.IsPrimaryKey);
+
+                if (!AlwaysDropExtractionTables)
+                {
+                    //check the PKs are the same
+                    var remotePKs = existing.DiscoverColumns().Where(col => col.IsPrimaryKey).Select(col => col.GetRuntimeName()).ToList();
+                    var rdmpPKs = toProcess.PrimaryKey.Cast<DataColumn>().Select(col => col.ColumnName).ToList();
+                    if (!remotePKs.All(rdmpPKs.Contains) || remotePKs.Count != rdmpPKs.Count)
+                    {
+                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,
+                            $"""
+                        Table {existing.GetFullyQualifiedName()} already exists and has different PKs to the source table.                            
+                        Source PKs: {string.Join(", ", rdmpPKs)}
+                        Destination PKs: {string.Join(", ", remotePKs)}
+                        """));
+                        return null;
+                    }
+
+                }
+
                 if (_request.IsBatchResume)
                 {
                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
@@ -193,6 +226,58 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
 
                     // since we dropped it we should treat it as if it was never there to begin with
                     _tableDidNotExistAtStartOfLoad = true;
+                }
+                else if (UseArchiveTrigger && hasPKs)
+                {
+
+                    TriggerImplementerFactory triggerFactory = new TriggerImplementerFactory(FAnsi.DatabaseType.MicrosoftSQLServer);
+                    var implementor = triggerFactory.Create(existing);
+                    bool present;
+                    try
+                    {
+                        present = implementor.GetTriggerStatus() == DataLoad.Triggers.TriggerStatus.Enabled;
+                    }
+                    catch (TriggerMissingException)
+                    {
+                        present = false;
+                    }
+                    //check the columns are correct, we might have added some
+                    var existingColumns = existing.DiscoverColumns();
+                    var existingColumnNames = existingColumns.Select(ec => ec.GetRuntimeName());
+                    var toProcessColumnNames = toProcess.Columns.Cast<DataColumn>().Select(col => col.ColumnName);
+                    var newColumns = toProcessColumnNames.Where(c => !existingColumnNames.Contains(c));
+                    if (newColumns.Any())
+                    {
+                        var archiveTable = _destinationDatabase.ExpectTable(tblName + "_Archive");
+                        if (archiveTable.Exists())
+                        {
+                            foreach (var column in newColumns)
+                            {
+                                existing.AddColumn(column, new TypeGuesser.DatabaseTypeRequest(toProcess.Columns[column].DataType), true, 30000);
+                                archiveTable.AddColumn(column, new TypeGuesser.DatabaseTypeRequest(toProcess.Columns[column].DataType), true, 30000);
+                            }
+                            if (present)
+                            {
+                                string triggerProblems = "";
+                                string triggerOK = "";
+                                implementor.DropTrigger(out triggerProblems, out triggerOK);
+                                if (triggerProblems != "")
+                                {
+                                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, triggerProblems));
+                                }
+
+                                existing = _destinationDatabase.ExpectTable(tblName);
+                                implementor = triggerFactory.Create(existing);
+                                present = false;
+                            }
+                        }
+                    }
+
+                    if (!present)
+                    {
+                        implementor.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
+                    }
+
                 }
                 else
                 {
@@ -219,14 +304,17 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
 
         _destination.AllowResizingColumnsAtUploadTime = true;
         _destination.AlterTimeout = AlterTimeout;
+        _destination.WriteDataBeforeApplyingPrimaryKeys = WriteDataBeforeApplyingPrimaryKeys;
         _destination.AppendDataIfTableExists = AppendDataIfTableExists;
         _destination.IncludeTimeStamp = IncludeTimeStamp;
         _destination.UseTrigger = AppendDataIfTableExists;
         _destination.IndexTables = IndexTables;
+        _destination.UseTrigger = UseArchiveTrigger;
         _destination.IndexTableName = GetIndexName();
         if (UserDefinedIndex is not null)
             _destination.UserDefinedIndexes = UserDefinedIndex.Split(',').Select(i => i.Trim()).ToList();
-        _destination.PreInitialize(_destinationDatabase, listener);
+        _destination.PreInitialize(_activator, _destinationDatabase, listener);
+
 
         return _destination;
     }
@@ -343,7 +431,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         }
 
 
-        return indexName.Replace(" ","");
+        return indexName.Replace(" ", "");
     }
 
     private string GetTableName(string suffix = null)
@@ -466,8 +554,9 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         _destination?.Abort(listener);
     }
 
-    protected override void PreInitializeImpl(IExtractCommand value, IDataLoadEventListener listener)
+    protected override void PreInitializeImpl(IBasicActivateItems activator, IExtractCommand value, IDataLoadEventListener listener)
     {
+        _activator = activator;
     }
 
 
@@ -664,12 +753,32 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                     $"Catalogue '{dsRequest.Catalogue}' does not have an Acronym but TableNamingPattern contains $a",
                     CheckResult.Fail));
 
+
+
         base.Check(notifier);
 
         try
         {
             var server = DataAccessPortal.ExpectServer(TargetDatabaseServer, DataAccessContext.DataExport, false);
             var database = _destinationDatabase = server.ExpectDatabase(GetDatabaseName());
+
+            if (UseArchiveTrigger)
+            {
+                if (_request is ExtractDatasetCommand dsRequest)
+                {
+                    var existing = _destinationDatabase.ExpectTable(dsRequest.Catalogue.Name);
+                    if (existing.Exists())
+                    {
+                        var hasPKs = existing.DiscoverColumns().Any(col => col.IsPrimaryKey);
+                        if (!hasPKs)
+                        {
+                            notifier.OnCheckPerformed(new CheckEventArgs(
+                               $"Catalogue does not have any PKS. Cannot apply the archive trigger",
+                               CheckResult.Fail));
+                        }
+                    }
+                }
+            }
 
             if (database.Exists())
             {

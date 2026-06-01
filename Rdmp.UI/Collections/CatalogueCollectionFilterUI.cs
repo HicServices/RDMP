@@ -22,6 +22,7 @@ public partial class CatalogueCollectionFilterUI : UserControl
         cbShowInternal.Checked = UserSettings.ShowInternalCatalogues;
         cbShowDeprecated.Checked = UserSettings.ShowDeprecatedCatalogues;
         cbProjectSpecific.Checked = UserSettings.ShowProjectSpecificCatalogues;
+        cbFlatView.Checked = UserSettings.ShowFlatLists;
 
         _loading = false;
     }
@@ -36,7 +37,7 @@ public partial class CatalogueCollectionFilterUI : UserControl
         UserSettings.ShowInternalCatalogues = cbShowInternal.Checked;
         UserSettings.ShowDeprecatedCatalogues = cbShowDeprecated.Checked;
         UserSettings.ShowProjectSpecificCatalogues = cbProjectSpecific.Checked;
-
+        UserSettings.ShowFlatLists = cbFlatView.Checked;
         FiltersChanged?.Invoke(this, EventArgs.Empty);
     }
 

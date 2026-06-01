@@ -203,7 +203,7 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable, INamed, IDis
     /// <inheritdoc/>
     public override string ToString() => Name;
 
-    public bool ShouldBeReadOnly(out string reason)
+    public bool ShouldBeReadOnly(string context, out string reason)
     {
         var cic = GetCohortIdentificationConfiguration();
 
@@ -213,7 +213,7 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable, INamed, IDis
             return false;
         }
 
-        return cic.ShouldBeReadOnly(out reason);
+        return cic.ShouldBeReadOnly(context,out reason);
     }
 
     /// <summary>

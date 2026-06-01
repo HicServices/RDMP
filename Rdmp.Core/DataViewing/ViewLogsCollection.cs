@@ -20,6 +20,7 @@ public class ViewLogsCollection : PersistableObjectCollection, IViewSQLAndResult
 {
     private ExternalDatabaseServer _loggingServer;
     private LogViewerFilter _filter;
+    public bool DisableRun => false;
 
     public ViewLogsCollection(ExternalDatabaseServer loggingServer, LogViewerFilter filter)
     {

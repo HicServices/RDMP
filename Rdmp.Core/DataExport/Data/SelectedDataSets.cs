@@ -126,7 +126,7 @@ public class SelectedDataSets : DatabaseEntity, ISelectedDataSets, IInjectKnown<
     /// <returns></returns>
     public override string ToString() => ExtractableDataSet.ToString();
 
-    public bool ShouldBeReadOnly(out string reason) => ExtractionConfiguration.ShouldBeReadOnly(out reason);
+    public bool ShouldBeReadOnly(string context, out string reason) => ExtractionConfiguration.ShouldBeReadOnly(context, out reason);
 
     /// <inheritdoc/>
     public string GetDeleteVerb() => "Remove";

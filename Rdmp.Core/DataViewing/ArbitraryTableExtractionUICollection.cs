@@ -114,6 +114,7 @@ public class ArbitraryTableExtractionUICollection : PersistableObjectCollection,
         set => _arguments[DatabaseKey] = value;
     }
 
+    public bool DisableRun => false;
 
     public IDataAccessCredentials GetCredentialsIfExists(DataAccessContext context) =>
         //we have our own credentials if we do

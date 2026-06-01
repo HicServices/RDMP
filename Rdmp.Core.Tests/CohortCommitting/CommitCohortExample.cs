@@ -4,18 +4,19 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.Data;
-using System.Linq;
 using FAnsi;
 using NUnit.Framework;
 using Rdmp.Core.CohortCommitting;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CohortCommitting.Pipeline.Destinations;
 using Rdmp.Core.CohortCommitting.Pipeline.Destinations.IdentifierAllocation;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
+using System.Data;
+using System.Linq;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.CohortCommitting;
@@ -63,7 +64,7 @@ internal class CommitCohortExample : DatabaseTests
         };
 
         //initialize the destination
-        pipelineDestination.PreInitialize(
+        pipelineDestination.PreInitialize(new ThrowImmediatelyActivator(RepositoryLocator, null),
             new CohortCreationRequest(project, definition, DataExportRepository,
                 "A cohort created in an example unit test"),
             ThrowImmediatelyDataLoadEventListener.Quiet);

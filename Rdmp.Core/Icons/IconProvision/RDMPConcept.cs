@@ -98,7 +98,6 @@ public enum RDMPConcept
 
     AllCohortsNode,
     ProjectsNode,
-    ProjectCohortIdentificationConfigurationAssociationsNode,
     ProjectSavedCohortsNode,
     ExtractableDataSetsNode,
     ExtractionDirectoryNode,
@@ -208,10 +207,11 @@ public enum RDMPConcept
     LoadMetadataCatalogueLinkage,
     Setting,
     TicketingSystemReleaseStatus,
-    CommittedCohortIdentificationNode,
     AllDatasetsNode,
     RegexRedaction,
     RegexRedactionConfiguration,
     RegexRedactionKey,
-    AllRegexRedactionConfigurationsNode
+    AllRegexRedactionConfigurationsNode,
+    AllTemplateCohortIdentificationConfigurationsNode,
+    AssociatedCohortIdentificationTemplatesNode
 }

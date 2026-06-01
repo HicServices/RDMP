@@ -4,13 +4,14 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Data;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.DataExport.DataExtraction.Commands;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
+using System;
+using System.Data;
 
 namespace Rdmp.Core.DataExport.DataExtraction.Pipeline;
 
@@ -35,7 +36,7 @@ public abstract class FileExtractor : IPluginDataFlowComponent<DataTable>, IPipe
     {
     }
 
-    public void PreInitialize(IExtractCommand value, IDataLoadEventListener listener)
+    public void PreInitialize(IBasicActivateItems activator, IExtractCommand value, IDataLoadEventListener listener)
     {
         // We only want to extract the files once so let's do it as part of extracting globals
         _command = value as ExtractGlobalsCommand;

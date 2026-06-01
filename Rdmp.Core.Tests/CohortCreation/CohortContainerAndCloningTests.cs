@@ -240,7 +240,7 @@ sex=@sex
 
         try
         {
-            var clone = cohortIdentificationConfiguration.CreateClone(ThrowImmediatelyCheckNotifier.Quiet);
+            var clone = cohortIdentificationConfiguration.CreateClone(ThrowImmediatelyCheckNotifier.Quiet,DataExportRepository);
 
             Assert.Multiple(() =>
             {

@@ -24,6 +24,7 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations;
 public abstract class TriggerImplementer : ITriggerImplementer
 {
     protected readonly bool _createDataLoadRunIdAlso;
+    protected readonly bool _dontAddDataLoadRunId;
 
     protected readonly DiscoveredServer _server;
     protected readonly DiscoveredTable _table;
@@ -37,7 +38,8 @@ public abstract class TriggerImplementer : ITriggerImplementer
     /// </summary>
     /// <param name="table"></param>
     /// <param name="createDataLoadRunIDAlso"></param>
-    protected TriggerImplementer(DiscoveredTable table, bool createDataLoadRunIDAlso = true)
+    /// <param name="dontAddDataLoadrunID"></param>
+    protected TriggerImplementer(DiscoveredTable table, bool createDataLoadRunIDAlso = true, bool dontAddDataLoadrunID=false)
     {
         _server = table.Database.Server;
         _table = table;
@@ -46,6 +48,7 @@ public abstract class TriggerImplementer : ITriggerImplementer
         _primaryKeys = _columns.Where(c => c.IsPrimaryKey).ToArray();
 
         _createDataLoadRunIdAlso = createDataLoadRunIDAlso;
+        _dontAddDataLoadRunId = dontAddDataLoadrunID;
     }
 
     public abstract void DropTrigger(out string problemsDroppingTrigger, out string thingsThatWorkedDroppingTrigger);
@@ -209,4 +212,6 @@ public abstract class TriggerImplementer : ITriggerImplementer
         return t1.ToLower().Contains("identity") &&
                t1.ToLower().Replace("identity", "").Trim().Equals(t2.ToLower().Trim());
     }
+
+    public abstract string GetCreateTriggerSQL();
 }

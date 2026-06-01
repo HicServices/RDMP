@@ -40,7 +40,7 @@ public class ExecuteCommandConvertAggregateConfigurationToPatientIndexTable : Ba
             SetImpossible(
                 $"Aggregate '{_sourceAggregateConfigurationCombineable.Aggregate}'  belongs to a different Cohort Identification Configuration");
 
-        if (cic != null && cic.ShouldBeReadOnly(out var reason))
+        if (cic != null && cic.ShouldBeReadOnly(this.GetType().Name, out var reason))
             SetImpossible(reason);
     }
 

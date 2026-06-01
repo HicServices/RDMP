@@ -4,23 +4,24 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Linq;
-using System.Text.RegularExpressions;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
+using MongoDB.Driver;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Exceptions;
 using Rdmp.Core.ReusableLibraryCode.Settings;
+using System;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Rdmp.Core.DataLoad.Triggers.Implementations;
 
 /// <inheritdoc/>
 internal class MySqlTriggerImplementer : TriggerImplementer
 {
-    /// <inheritdoc cref="TriggerImplementer(DiscoveredTable,bool)"/>
-    public MySqlTriggerImplementer(DiscoveredTable table, bool createDataLoadRunIDAlso = true) : base(table,
-        createDataLoadRunIDAlso)
+    /// <inheritdoc cref="TriggerImplementer(DiscoveredTable,bool,bool)"/>
+    public MySqlTriggerImplementer(DiscoveredTable table, bool createDataLoadRunIDAlso = true, bool dontAddDataLoadrunID=false) : base(table,
+        createDataLoadRunIDAlso, dontAddDataLoadrunID)
     {
     }
 
@@ -49,12 +50,18 @@ internal class MySqlTriggerImplementer : TriggerImplementer
         }
     }
 
+    public override string GetCreateTriggerSQL()
+    {
+        return  $@"CREATE TRIGGER {GetTriggerName()} BEFORE UPDATE ON {_table.GetFullyQualifiedName()} FOR EACH ROW
+{CreateTriggerBody()};";
+    }
+
+
     public override string CreateTrigger(ICheckNotifier notifier)
     {
         var creationSql = base.CreateTrigger(notifier);
 
-        var sql = $@"CREATE TRIGGER {GetTriggerName()} BEFORE UPDATE ON {_table.GetFullyQualifiedName()} FOR EACH ROW
-{CreateTriggerBody()};";
+        var sql = GetCreateTriggerSQL();
 
         using var con = _server.GetConnection();
         con.Open();
@@ -106,7 +113,7 @@ internal class MySqlTriggerImplementer : TriggerImplementer
         var syntax = _server.GetQuerySyntaxHelper();
 
         return $@"BEGIN
-    INSERT INTO {_archiveTable.GetFullyQualifiedName()} SET {string.Join(",", _columns.Select(c =>
+    INSERT INTO {_archiveTable.GetFullyQualifiedName()} SET {string.Join(",", _columns.Where(c => _dontAddDataLoadRunId ? c.GetRuntimeName() != SpecialFieldNames.DataLoadRunID : true).Select(c =>
         $"{syntax.EnsureWrapped(c.GetRuntimeName())}=OLD.{syntax.EnsureWrapped(c.GetRuntimeName())}"))},hic_validTo=now(),hic_userID=CURRENT_USER(),hic_status='U';
 
 	SET NEW.{syntax.EnsureWrapped(SpecialFieldNames.ValidFrom)} = now();

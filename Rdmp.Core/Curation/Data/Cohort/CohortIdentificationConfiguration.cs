@@ -4,16 +4,13 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Linq;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.FilterImporting;
 using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.Databases;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.QueryBuilding;
@@ -22,6 +19,10 @@ using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Annotations;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.Ticketing;
+using System;
+using System.Collections.Generic;
+using System.Data.Common;
+using System.Linq;
 
 namespace Rdmp.Core.Curation.Data.Cohort;
 
@@ -64,6 +65,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     private DateTime? _frozenDate;
     private int? _clonedFrom_ID;
     private string _folder;
+    private bool _isTemplate;
 
     /// <inheritdoc/>
     [Unique]
@@ -171,6 +173,15 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
         set => SetField(ref _folder, FolderHelper.Adjust(value));
     }
 
+    /// <summary>
+    /// Marks if CIC is used like a template, and cannot be committed
+    /// </summary>
+    public bool IsTemplate
+    {
+        get => _isTemplate;
+        set => SetField(ref _isTemplate, value);
+    }
+
     #endregion
 
     #region Relationships
@@ -234,6 +245,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
         ClonedFrom_ID = ObjectToNullableInt(r["ClonedFrom_ID"]);
         Version = ObjectToNullableInt(r["Version"]);
         Folder = r["Folder"] as string ?? FolderHelper.Root;
+        IsTemplate = Convert.ToBoolean(r["IsTemplate"]);
     }
 
     /// <summary>
@@ -272,8 +284,14 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     /// <inheritdoc/>
     public override string ToString() => Name;
 
-    public bool ShouldBeReadOnly(out string reason)
+    public bool ShouldBeReadOnly(string context, out string reason)
     {
+        if (IsTemplate && context == "ExecuteCommandRename")
+        {
+            reason = null;
+            return false;
+        }
+
         if (Frozen)
         {
             reason = $"{Name} is Frozen";
@@ -345,11 +363,12 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     /// <para>This is done in a transaction so that if it fails halfway through you won't end up with half a clone configuration</para>
     /// </summary>
     /// <param name="notifier">Event listener for reporting cloning progress and any problems</param>
+    /// <param name="dataExportRepository">Existing data export repository for use to connect to linked projects</param>
     /// <returns></returns>
-    public CohortIdentificationConfiguration CreateClone(ICheckNotifier notifier)
+    public CohortIdentificationConfiguration CreateClone(ICheckNotifier notifier, IDataExportRepository dataExportRepository)
     {
         var clone = new CohortIdentificationConfiguration((ICatalogueRepository)Repository, $"{Name} (Clone)");
-        return CloneIntoExistingConfiguration(notifier, clone);
+        return CloneIntoExistingConfiguration(notifier, clone, dataExportRepository);
     }
 
     /// <summary>
@@ -357,9 +376,10 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     /// </summary>
     /// <param name="notifier"></param>
     /// <param name="cloneTarget"></param>
+    /// <param name="dataExportRepository"></param>
     /// <param name="IncludeClonedFrom"></param>
     /// <returns></returns>
-    public CohortIdentificationConfiguration CloneIntoExistingConfiguration(ICheckNotifier notifier, CohortIdentificationConfiguration cloneTarget, bool IncludeClonedFrom = true)
+    public CohortIdentificationConfiguration CloneIntoExistingConfiguration(ICheckNotifier notifier, CohortIdentificationConfiguration cloneTarget, IDataExportRepository dataExportRepository, bool IncludeClonedFrom = true)
     {
         //todo this would be nice if it was ICatalogueRepository but transaction is super SQLy
         var cataRepo = (ICatalogueRepository)Repository;
@@ -397,7 +417,18 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
                     cloneTarget.ClonedFrom_ID = ID;
                 cloneTarget.RootCohortAggregateContainer_ID = RootCohortAggregateContainer
                     .CloneEntireTreeRecursively(notifier, this, cloneTarget, parentToCloneJoinablesDictionary).ID;
+
                 cloneTarget.SaveToDatabase();
+
+
+                var associatedProjects = dataExportRepository.GetAllObjectsWhere<ProjectCohortIdentificationConfigurationAssociation>("CohortIdentificationConfiguration_ID", ID);
+                foreach(var proj in associatedProjects)
+                {
+                    var projassociation = new ProjectCohortIdentificationConfigurationAssociation(dataExportRepository, (Project)proj.Project, cloneTarget);
+                    projassociation.SaveToDatabase();
+                }
+                
+
 
                 notifier.OnCheckPerformed(
                     new CheckEventArgs("Clone creation successful, about to commit Super Transaction",

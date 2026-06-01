@@ -28,12 +28,6 @@ public class ExecuteCommandAddExtractionProgress : BasicCommandExecution
             SetImpossible("Catalogue already has an ExtractionProgress");
             return;
         }
-
-        if (_sds.GetCatalogue()?.TimeCoverage_ExtractionInformation_ID == null)
-        {
-            SetImpossible("Catalogue does not have a time coverage field configured");
-            return;
-        }
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>

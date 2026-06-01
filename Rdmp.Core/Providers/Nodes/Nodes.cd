@@ -55,14 +55,6 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="Rdmp.Core.Providers.Nodes.ProjectCohortNodes.ProjectCohortIdentificationConfigurationAssociationsNode" Collapsed="true">
-    <Position X="38.75" Y="3" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAEAAAAAAAAAAAAEgAAACAAAAAAAAIAAAAAAAAAAAAA=</HashCode>
-      <FileName>Providers\Nodes\ProjectCohortNodes\ProjectCohortIdentificationConfigurationAssociationsNode.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" />
-  </Class>
   <Class Name="Rdmp.Core.Providers.Nodes.ProjectCohortNodes.ProjectCohortsNode" Collapsed="true">
     <Position X="23" Y="4.25" Width="1.5" />
     <TypeIdentifier>

@@ -35,7 +35,7 @@ internal class ExecuteCommandReOrderAggregateContainer : BasicUICommandExecution
         if (_insertOption == InsertOption.Default)
             SetImpossible("Insert must be above/below");
 
-        if (_targetParent.ShouldBeReadOnly(out var reason))
+        if (_targetParent.ShouldBeReadOnly(this.GetType().Name, out var reason))
             SetImpossible(reason);
     }
 

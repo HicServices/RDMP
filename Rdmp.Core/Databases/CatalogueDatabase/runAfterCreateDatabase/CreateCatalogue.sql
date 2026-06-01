@@ -289,7 +289,8 @@ CREATE TABLE [dbo].[Catalogue](
 	[AssociatedPeople] [nvarchar](MAX) NULL,
 	[Doi] [nvarchar](50) NULL,
 	[Purpose] [nvarchar](255) NULL,
-	[AssociatedMedia] [nvarchar](max) NULL
+	[AssociatedMedia] [nvarchar](max) NULL,
+	[InternalNote] [nvarchar](max) NULL,
  CONSTRAINT [PK_Data_Catalogue] PRIMARY KEY CLUSTERED 
 (
 	[ID] ASC

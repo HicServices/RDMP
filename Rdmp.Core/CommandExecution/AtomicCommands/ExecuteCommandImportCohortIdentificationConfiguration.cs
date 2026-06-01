@@ -36,7 +36,7 @@ public class ExecuteCommandImportCohortIdentificationConfiguration : BasicComman
             return;
         }
 
-        if (intoContainer.ShouldBeReadOnly(out var reason)) SetImpossible(reason);
+        if (intoContainer.ShouldBeReadOnly(this.GetType().Name, out var reason)) SetImpossible(reason);
 
         // if we don't know what to import yet then we should have the
         // 'more choices to come' suffix
@@ -69,8 +69,7 @@ public class ExecuteCommandImportCohortIdentificationConfiguration : BasicComman
 
 
         var merger =
-            new CohortIdentificationConfigurationMerger(
-                (CatalogueRepository)BasicActivator.RepositoryLocator.CatalogueRepository);
+            new CohortIdentificationConfigurationMerger(BasicActivator.RepositoryLocator);
         merger.Import(import, IntoContainer);
 
         Publish(IntoContainer);

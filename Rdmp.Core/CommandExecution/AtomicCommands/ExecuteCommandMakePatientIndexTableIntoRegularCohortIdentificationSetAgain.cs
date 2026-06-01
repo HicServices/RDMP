@@ -39,7 +39,7 @@ public class ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationS
             SetImpossible(
                 $"The following Cohort Set(s) use this PatientIndex table:{string.Join(",", _sourceAggregateCommand.JoinableUsersIfAny.Select(j => j.ToString()))}");
 
-        if (_targetCohortAggregateContainer.ShouldBeReadOnly(out var reason))
+        if (_targetCohortAggregateContainer.ShouldBeReadOnly(this.GetType().Name, out var reason))
             SetImpossible(reason);
     }
 

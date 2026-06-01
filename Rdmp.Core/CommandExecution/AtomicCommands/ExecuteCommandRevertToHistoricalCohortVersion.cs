@@ -41,7 +41,7 @@ public class ExecuteCommandRevertToHistoricalCohortVersion : BasicCommandExecuti
         }
 
         base.Execute();
-        var clone = _historicalConfiguration.CloneIntoExistingConfiguration(ThrowImmediatelyCheckNotifier.Quiet, _configuration,false);
+        var clone = _historicalConfiguration.CloneIntoExistingConfiguration(ThrowImmediatelyCheckNotifier.Quiet, _configuration,_activator.RepositoryLocator.DataExportRepository, false);
         Publish(clone);
         Emphasise(clone);
     }

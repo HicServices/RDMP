@@ -51,7 +51,7 @@ public class FilterContainer : ConcreteContainer, IContainer
         return (Catalogue)sel?.ExtractableDataSet.Catalogue;
     }
 
-    public override bool ShouldBeReadOnly(out string reason)
+    public override bool ShouldBeReadOnly(string context, out string reason)
     {
         var ec = GetSelectedDataSetsRecursively()?.ExtractionConfiguration;
 
@@ -61,7 +61,7 @@ public class FilterContainer : ConcreteContainer, IContainer
             return false;
         }
 
-        return ec.ShouldBeReadOnly(out reason);
+        return ec.ShouldBeReadOnly(context, out reason);
     }
 
     /// <summary>

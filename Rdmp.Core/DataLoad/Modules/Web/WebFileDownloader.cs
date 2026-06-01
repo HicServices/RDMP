@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using FAnsi.Discovery;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
@@ -54,18 +55,22 @@ public class WebFileDownloader : IPluginDataProvider
 
     private void DownloadFileWhilstPretendingToBeFirefox(FileInfo destinationFile, IDataLoadJob job)
     {
-        NetworkCredential credentials;
-        try
+        NetworkCredential credentials = null;
+        if (WebsenseCredentials is not null)
         {
-            credentials =
-                new NetworkCredential(WebsenseCredentials.Username, WebsenseCredentials.GetDecryptedPassword());
+            try
+            {
+                credentials =
+                    new NetworkCredential(WebsenseCredentials.Username, WebsenseCredentials.GetDecryptedPassword());
+            }
+            catch (Exception)
+            {
+                credentials = null;
+            }
         }
-        catch (Exception)
-        {
-            credentials = null;
+        using (var fs = File.Create(destinationFile.FullName)) {
+            FetchRequest(fs, UriToFile.AbsoluteUri, credentials);
         }
-
-        FetchRequest(File.Create(destinationFile.FullName), UriToFile.AbsoluteUri, credentials);
     }
 
     private static void FetchRequest(Stream output, string url, ICredentials credentials = null,
@@ -83,7 +88,7 @@ public class WebFileDownloader : IPluginDataProvider
         using var response = httpClient.GetAsync(url).Result;
         if (response.IsSuccessStatusCode)
         {
-            response.Content.ReadAsStreamAsync().Result.CopyTo(output);
+            response.Content.ReadAsStream().CopyTo(output);
             return;
         }
 
@@ -93,8 +98,10 @@ public class WebFileDownloader : IPluginDataProvider
                 h.Parameter?.Equals("realm=\"Websense\"", StringComparison.OrdinalIgnoreCase) == true))
             FetchRequest(output, response.Headers.Location?.AbsoluteUri, credentials, true);
         else
+        {
             throw new Exception(
                 $"Could not get response from {url} - {response.StatusCode} - {response.ReasonPhrase}");
+        }
     }
 
     public string GetDescription() => throw new NotImplementedException();

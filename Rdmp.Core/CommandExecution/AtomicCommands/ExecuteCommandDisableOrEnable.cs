@@ -62,7 +62,7 @@ public class ExecuteCommandDisableOrEnable : BasicCommandExecution, IAtomicComma
                 }
         }
 
-        if (target is IMightBeReadOnly ro && ro.ShouldBeReadOnly(out var reason))
+        if (target is IMightBeReadOnly ro && ro.ShouldBeReadOnly(this.GetType().Name, out var reason))
             SetImpossible(reason);
     }
 

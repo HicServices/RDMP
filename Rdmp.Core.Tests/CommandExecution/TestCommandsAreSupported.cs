@@ -38,6 +38,8 @@ public class TestCommandsAreSupported : UnitTests
     [TestCase(typeof(ExecuteCommandCreateNewCatalogueByImportingFile))]
     [TestCase(typeof(ExecuteCommandCreateNewCatalogueFromTableInfo))]
     [TestCase(typeof(ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration))]
+    [TestCase(typeof(ExecuteCommandUseTemplateCohortIdentificationConfiguration))]
+    [TestCase(typeof(ExecuteCommandCreateCohortIdentificationConfigurationTemplate))]
     [TestCase(typeof(ExecuteCommandCreateNewCohortFromCatalogue))]
     [TestCase(typeof(ExecuteCommandCreateNewCohortFromFile))]
     [TestCase(typeof(ExecuteCommandCreateNewCohortFromTable))]

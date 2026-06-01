@@ -50,7 +50,7 @@ public class ParameterCollectionUIOptions
                 _createNewParameterDelegate = CreateNewParameterDefaultImplementation;
 
         if (collector is IMightBeReadOnly ro)
-            ReadOnly = ro.ShouldBeReadOnly(out _);
+            ReadOnly = ro.ShouldBeReadOnly(this.GetType().Name, out _);
     }
 
 

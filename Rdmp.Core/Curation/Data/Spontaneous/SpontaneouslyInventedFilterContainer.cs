@@ -54,7 +54,7 @@ public class SpontaneouslyInventedFilterContainer : ConcreteContainer, IContaine
 
     public override Catalogue GetCatalogueIfAny() => null;
 
-    public override bool ShouldBeReadOnly(out string reason)
+    public override bool ShouldBeReadOnly(string context, out string reason)
     {
         reason = null;
         return false;

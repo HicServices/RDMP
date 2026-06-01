@@ -105,7 +105,7 @@ public partial class PerformanceCounterResultsUI : UserControl
             var query = performanceCounter.DictionaryOfQueries[stackTrace];
 
             //get the stack trace split by line reversed so the root is at the top
-            var lines = stackTrace.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).Reverse()
+            var lines = stackTrace.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).AsEnumerable().Reverse()
                 .ToArray();
 
             lines = lines.Where(l => !isSystemCall.IsMatch(l)).ToArray();

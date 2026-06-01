@@ -342,7 +342,7 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
     /// <returns></returns>
     public override string ToString() => Name;
 
-    public bool ShouldBeReadOnly(out string reason)
+    public bool ShouldBeReadOnly(string context,out string reason)
     {
         if (IsReleased)
         {

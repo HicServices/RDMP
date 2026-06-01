@@ -80,6 +80,15 @@ public class ExecuteCommandCloneExtractionConfiguration : BasicCommandExecution
         CheckForDeprecatedCatalogues();
 
         var clone = _extractionConfiguration.DeepCloneWithNewIDs();
+        if (_activeItems.IsInteractive && clone.SelectedDataSets.Any(sds => sds.ExtractionProgressIfAny != null))
+        {
+            if(!_activeItems.YesNo("Do you want to include this extraction's extraction progress in this clone?", "Include Extraction Progress?")) {
+                foreach (var ep in clone.SelectedDataSets.Where(sds => sds.ExtractionProgressIfAny != null).Select(sds => sds.ExtractionProgressIfAny))
+                {
+                    ep.DeleteInDatabase();
+                }
+            }
+        }
         foreach (var ds in _toRemove.Cast<ExtractableDataSet>())
         {
             clone.RemoveDatasetFromConfiguration(ds);

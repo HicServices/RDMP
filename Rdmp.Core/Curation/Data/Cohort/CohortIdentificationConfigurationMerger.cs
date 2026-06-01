@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
@@ -20,10 +21,12 @@ namespace Rdmp.Core.Curation.Data.Cohort;
 public class CohortIdentificationConfigurationMerger
 {
     private readonly ICatalogueRepository _repository;
+    private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
 
-    public CohortIdentificationConfigurationMerger(ICatalogueRepository repository)
+    public CohortIdentificationConfigurationMerger(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
     {
-        _repository = repository;
+        _repositoryLocator = repositoryLocator;
+        _repository = repositoryLocator.CatalogueRepository;
     }
 
     /// <summary>
@@ -42,7 +45,7 @@ public class CohortIdentificationConfigurationMerger
         try
         {
             for (var i = 0; i < cics.Length; i++)
-                cicClones[i] = cics[i].CreateClone(ThrowImmediatelyCheckNotifier.Quiet);
+                cicClones[i] = cics[i].CreateClone(ThrowImmediatelyCheckNotifier.Quiet, _repositoryLocator.DataExportRepository);
         }
         catch (Exception ex)
         {
@@ -103,7 +106,7 @@ public class CohortIdentificationConfigurationMerger
         try
         {
             for (var i = 0; i < cics.Length; i++)
-                cicClones[i] = cics[i].CreateClone(ThrowImmediatelyCheckNotifier.Quiet);
+                cicClones[i] = cics[i].CreateClone(ThrowImmediatelyCheckNotifier.Quiet, _repositoryLocator.DataExportRepository);
         }
         catch (Exception ex)
         {
@@ -173,7 +176,7 @@ public class CohortIdentificationConfigurationMerger
         try
         {
             // clone the input cic
-            cic = cic.CreateClone(ThrowImmediatelyCheckNotifier.Quiet);
+            cic = cic.CreateClone(ThrowImmediatelyCheckNotifier.Quiet, _repositoryLocator.DataExportRepository);
 
             // grab the new clone root container
             rootContainer = cic.RootCohortAggregateContainer;

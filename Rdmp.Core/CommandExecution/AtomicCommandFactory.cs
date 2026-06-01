@@ -465,34 +465,53 @@ public class AtomicCommandFactory : CommandFactoryBase
         {
             if (pcic != null) cic = pcic.CohortIdentificationConfiguration;
 
-            var commit =
-                new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(_activator, null)
-                {
-                    OverrideCommandName = "Commit Cohort",
-                    Weight = -99.8f
-                }.SetTarget(cic);
-            if (pcic != null) commit.SetTarget((DatabaseEntity)pcic.Project);
 
-            yield return commit;
 
             yield return new ExecuteCommandViewData(_activator, cic, ViewType.All, null, true) { Weight = -99.7f };
             yield return new ExecuteCommandViewData(_activator, cic, ViewType.All, null, false) { Weight = -99.6f };
 
-            yield return new ExecuteCommandFreezeCohortIdentificationConfiguration(_activator, cic, !cic.Frozen)
-            { Weight = -50.5f };
-            yield return new ExecuteCommandCreateHoldoutLookup(_activator, cic)
-            { Weight = -50.5f };
+            if (cic != null && cic.IsTemplate)
+            {
+                yield return new ExecuteCommandUseTemplateCohortIdentificationConfiguration(_activator, cic)
+                {
+                    Weight = -50.5f
+                };
+            }
+            else
+            {
+                var commit =
+              new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(_activator, null)
+              {
+                  OverrideCommandName = "Commit Cohort",
+                  Weight = -99.8f
+              }.SetTarget(cic);
+                if (pcic != null) commit.SetTarget((DatabaseEntity)pcic.Project);
 
-            var clone = new ExecuteCommandCloneCohortIdentificationConfiguration(_activator)
-            { Weight = -50.4f, OverrideCommandName = "Clone" }.SetTarget(cic);
-            if (pcic != null) clone.SetTarget((DatabaseEntity)pcic.Project);
-            yield return clone;
+                yield return commit;
+                yield return new ExecuteCommandCreateCohortIdentificationConfigurationTemplate(_activator, cic)
+                {
+                    Weight = -50.5f
+                };
+                yield return new ExecuteCommandFreezeCohortIdentificationConfiguration(_activator, cic, !cic.Frozen)
+                { Weight = -50.5f };
+                yield return new ExecuteCommandCreateHoldoutLookup(_activator, cic)
+                { Weight = -50.5f };
+                var clone = new ExecuteCommandCloneCohortIdentificationConfiguration(_activator)
+                { Weight = -50.4f, OverrideCommandName = "Clone" }.SetTarget(cic);
+                if (pcic != null) clone.SetTarget((DatabaseEntity)pcic.Project);
+                yield return clone;
+
+                yield return new ExecuteCommandSetQueryCachingDatabase(_activator, cic)
+                { Weight = -50.4f, OverrideCommandName = "Change Query Cache" };
+            }
+
+
             //associate with project
             yield return new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(_activator)
             { Weight = -50.3f, OverrideCommandName = "Associate with Project" }.SetTarget(cic);
+            yield return new ExecuteCommandRemoveCohortIdentificationConfigurationProjectAssociation(_activator)
+            { Weight = -50.2f, OverrideCommandName = "Remove Association with Project" }.SetTarget(pcic != null?pcic:cic);
 
-            yield return new ExecuteCommandSetQueryCachingDatabase(_activator, cic)
-            { Weight = -50.4f, OverrideCommandName = "Change Query Cache" };
         }
 
         if (Is(o, out AllGovernanceNode _))
@@ -527,10 +546,10 @@ public class AtomicCommandFactory : CommandFactoryBase
                 {
                     OverrideCommandName = "Save Version"
                 };
-                yield return new ExecuteCommandCloneLoadMetadata(_activator, lmd)
-                {
-                    OverrideCommandName = "Clone Load Metadata"
-                };
+                //yield return new ExecuteCommandCloneLoadMetadata(_activator, lmd)
+                //{
+                //    OverrideCommandName = "Clone Load Metadata"
+                //};
 
                 yield return new ExecuteCommandSetGlobalDleIgnorePattern(_activator) { SuggestedCategory = Advanced };
                 yield return new ExecuteCommandSetIgnoredColumns(_activator, lmd) { SuggestedCategory = Advanced };
@@ -715,6 +734,7 @@ public class AtomicCommandFactory : CommandFactoryBase
 
 
             yield return new ExecuteCommandViewExtractionSql(_activator, sds);
+            yield return new ExecuteCommandViewArchiveTriggerSql(_activator, sds);
             yield return new ExecuteCommandAddExtractionProgress(_activator, sds)
             { SuggestedCategory = Batching, Weight = 1.1f };
             yield return new ExecuteCommandResetExtractionProgress(_activator, sds)
@@ -825,15 +845,6 @@ public class AtomicCommandFactory : CommandFactoryBase
             { OverrideCommandName = "Add New Cohort From Table", Weight = -4.6f }.SetTarget(projCohorts.Project);
         }
 
-        if (Is(o, out ProjectCohortIdentificationConfigurationAssociationsNode pccan))
-        {
-            yield return new ExecuteCommandCreateNewCohortIdentificationConfiguration(_activator)
-            { OverrideCommandName = "Add New Cohort Builder Query", Weight = -5.1f }.SetTarget(pccan.Project);
-            yield return new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(_activator)
-            { OverrideCommandName = "Add Existing Cohort Builder Query (link to)", Weight = -5f }
-                .SetTarget(pccan.Project);
-        }
-
         if (Is(o, out ProjectSavedCohortsNode savedCohortsNode))
         {
             yield return
@@ -925,35 +936,39 @@ public class AtomicCommandFactory : CommandFactoryBase
 
         if (Is(o, out CohortAggregateContainer cohortAggregateContainer))
         {
-            yield return new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(_activator,
-                cohortAggregateContainer, null, null)
-            { SuggestedCategory = Add, OverrideCommandName = "Catalogue" };
-            yield return new ExecuteCommandAddCohortSubContainer(_activator, cohortAggregateContainer)
-            { SuggestedCategory = Add, OverrideCommandName = "Sub Container" };
-            yield return new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(_activator,
-                    cohortAggregateContainer, true)
-            { SuggestedCategory = Add, OverrideCommandName = "Existing Cohort Set (copy of)" };
-            yield return new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(_activator,
-                cohortAggregateContainer, false)
-            { SuggestedCategory = Add, OverrideCommandName = "Aggregate" };
-            yield return new ExecuteCommandImportCohortIdentificationConfiguration(_activator, null,
+            var associatedCIC = cohortAggregateContainer.GetCohortIdentificationConfiguration();
+            if (!associatedCIC.Frozen)
+            {
+                yield return new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(_activator,
+                    cohortAggregateContainer, null, null)
+                { SuggestedCategory = Add, OverrideCommandName = "Catalogue" };
+                yield return new ExecuteCommandAddCohortSubContainer(_activator, cohortAggregateContainer)
+                { SuggestedCategory = Add, OverrideCommandName = "Sub Container" };
+                yield return new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(_activator,
+                        cohortAggregateContainer, true)
+                { SuggestedCategory = Add, OverrideCommandName = "Existing Cohort Set (copy of)" };
+                yield return new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(_activator,
+                    cohortAggregateContainer, false)
+                { SuggestedCategory = Add, OverrideCommandName = "Aggregate" };
+                yield return new ExecuteCommandImportCohortIdentificationConfiguration(_activator, null,
+                        cohortAggregateContainer)
+                { SuggestedCategory = Add, OverrideCommandName = "Existing Cohort Builder Query (copy of)" };
+
+                //Set Operation
+                yield return new ExecuteCommandSetContainerOperation(_activator, cohortAggregateContainer,
+                    SetOperation.UNION)
+                { SuggestedCategory = SetContainerOperation, OverrideCommandName = "UNION" };
+                yield return new ExecuteCommandSetContainerOperation(_activator, cohortAggregateContainer,
+                    SetOperation.EXCEPT)
+                { SuggestedCategory = SetContainerOperation, OverrideCommandName = "EXCEPT" };
+                yield return new ExecuteCommandSetContainerOperation(_activator, cohortAggregateContainer,
+                        SetOperation.INTERSECT)
+                { SuggestedCategory = SetContainerOperation, OverrideCommandName = "INTERSECT" };
+
+                yield return new ExecuteCommandUnMergeCohortIdentificationConfiguration(_activator,
                     cohortAggregateContainer)
-            { SuggestedCategory = Add, OverrideCommandName = "Existing Cohort Builder Query (copy of)" };
-
-            //Set Operation
-            yield return new ExecuteCommandSetContainerOperation(_activator, cohortAggregateContainer,
-                SetOperation.UNION)
-            { SuggestedCategory = SetContainerOperation, OverrideCommandName = "UNION" };
-            yield return new ExecuteCommandSetContainerOperation(_activator, cohortAggregateContainer,
-                SetOperation.EXCEPT)
-            { SuggestedCategory = SetContainerOperation, OverrideCommandName = "EXCEPT" };
-            yield return new ExecuteCommandSetContainerOperation(_activator, cohortAggregateContainer,
-                    SetOperation.INTERSECT)
-            { SuggestedCategory = SetContainerOperation, OverrideCommandName = "INTERSECT" };
-
-            yield return new ExecuteCommandUnMergeCohortIdentificationConfiguration(_activator,
-                cohortAggregateContainer)
-            { OverrideCommandName = "Separate Cohort Builder Query" };
+                { OverrideCommandName = "Separate Cohort Builder Query" };
+            }
         }
 
         if (Is(o, out IDisableable disable))

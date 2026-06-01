@@ -533,7 +533,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
 
         dt = destinationTable.GetDataTable();
 
-        Assert.That(dt.Rows, Has.Count.EqualTo(2)); 
+        Assert.That(dt.Rows, Has.Count.EqualTo(3)); 
     }
 
     [Test]
@@ -802,7 +802,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
 
         dt = destinationTable.GetDataTable();
 
-        Assert.That(dt.Rows, Has.Count.EqualTo(2));
+        Assert.That(dt.Rows, Has.Count.EqualTo(3));
     }
 
     [Test]
@@ -1061,7 +1061,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
 
         dt = destinationTable.GetDataTable();
 
-        Assert.That(dt.Rows, Has.Count.EqualTo(2));
+        Assert.That(dt.Rows, Has.Count.EqualTo(3));
     }
 
     [Test]
@@ -1209,6 +1209,8 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
         var argumentDbNamePattern = destinationArguments.Single(static a => a.Name == "DatabaseNamingPattern");
         var argumentTblNamePattern = destinationArguments.Single(static a => a.Name == "TableNamingPattern");
         var reExtract = destinationArguments.Single(static a => a.Name == "AppendDataIfTableExists");
+        var argUseArchiveTrigger = destinationArguments.Single(static a => a.Name == "UseArchiveTrigger");
+
         Assert.That(argumentServer.Name, Is.EqualTo("TargetDatabaseServer"));
         var extractionServer = new ExternalDatabaseServer(CatalogueRepository, "myserver", null)
         {
@@ -1224,6 +1226,8 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
         argumentDbNamePattern.SaveToDatabase();
         argumentTblNamePattern.SetValue("$c_$d");
         argumentTblNamePattern.SaveToDatabase();
+        argUseArchiveTrigger.SetValue(true);
+        argUseArchiveTrigger.SaveToDatabase();
         reExtract.SetValue(true);
         reExtract.SaveToDatabase();
 

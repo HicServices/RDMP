@@ -22,6 +22,7 @@ internal class ViewSelectedDatasetExtractionUICollection : PersistableObjectColl
     private ExtractDatasetCommand _request;
 
     private ISelectedDataSets SelectedDataset => DatabaseObjects.OfType<ISelectedDataSets>().FirstOrDefault();
+    public bool DisableRun => false;
 
     public ViewSelectedDatasetExtractionUICollection()
     {

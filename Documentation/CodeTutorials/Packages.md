@@ -29,10 +29,7 @@
 | YamlDotNet | [GitHub](https://github.com/aaubry/YamlDotNet)  | [MIT](https://opensource.org/licenses/MIT) |Loading configuration files|
 | SixLabors.ImageSharp | [GitHub](https://github.com/SixLabors/ImageSharp) | [Apache 2.0](https://github.com/SixLabors/ImageSharp/blob/main/LICENSE) | Platform-independent replacement for legacy Windows-only System.Drawing.Common | |
 | SixLabors.ImageSharp.Drawing | [GitHub](https://github.com/SixLabors/ImageSharp.Drawing) | [Apache 2.0](https://github.com/SixLabors/ImageSharp/blob/main/LICENSE) | Font handling for ImageSharp | |
-| System.Private.Uri | Part of .Net, referenced to override vulnerable transitive dependency | .Net SDK | |
-| System.Threading.ThreadPool | [GitHub](https://github.com/dotnet/corefx) |[MIT](https://opensource.org/licenses/MIT) | Required to compile native linux binaries |  |
-| [AutoComplete Console](https://www.codeproject.com/Articles/1182358/Using-Autocomplete-in-Windows-Console-Applications) by Jasper Lammers | Embedded | [CPOL](https://www.codeproject.com/info/cpol10.aspx) | Provides interactive autocomplete in console input | |
-| System.Resources.Extensions | [GitHub](https://github.com/dotnet/corefx) | [MIT](https://opensource.org/licenses/MIT) | Allows [publishing with dotnet publish on machines with netcoreapp3.0 SDK installed](https://github.com/microsoft/msbuild/issues/4704#issuecomment-530034240) | |
+| [AutoComplete Console] by Jasper Lammers | Embedded | [CPOL]() | Provides interactive autocomplete in console input | |
 | Spectre.Console | [GitHub](https://github.com/spectreconsole/spectre.console) | [MIT](https://opensource.org/licenses/MIT) | Allows richer command line interactions| |
 | HIC.System.Windows.Forms.DataVisualization | [GitHub](https://github.com/HicServices/winforms-datavisualization) |[MIT](https://opensource.org/licenses/MIT) | Dotnet core support for DQE charts |  |
 | Autoupdater.NET.Official | [GitHub](https://github.com/ravibpatel/AutoUpdater.NET) | MIT | Manages updating of the RDMP windows client directly from the RDMP GitHub Releases|
@@ -43,4 +40,7 @@
 | AWSSDK.SSO | [GitHub](https://github.com/aws/aws-sdk-net) | [Apache 2.0](https://opensource.org/licenses/Apache-2.0)  | |
 | AWSSDK.SSOOIDC | [GitHub](https://github.com/aws/aws-sdk-net) | [Apache 2.0](https://opensource.org/licenses/Apache-2.0)  | |
 | Microsoft.Bcl.AsyncInterfaces | [Nuget](https://www.nuget.org/packages/microsoft.bcl.asyncinterfaces/) | [MIT](https://opensource.org/licenses/MIT)  | |
+| System.Security.Cryptography.Xml | [GitHub](https://github.com/dotnet/dotnet) |  [MIT](https://opensource.org/licenses/MIT) | |
+| Snappier | [GitHub](https://github.com/brantburnett/Snappier) | [License](https://github.com/brantburnett/Snappier?tab=License-1-ov-file#readme)| |
+| SharpCompress | [GitHub](https://github.com/adamhathcock/sharpcompress) | [MIT](https://opensource.org/licenses/MIT) | |
 [DBMS]: ./Glossary.md#DBMS

@@ -73,13 +73,13 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
 
     private ExecuteCommandClearQueryCache _clearCacheCommand;
 
-    private CohortIdentificationConfigurationUICommon Common = new();
+    private CohortIdentificationConfigurationUICommon Common = new(null);
 
     public CohortIdentificationConfigurationUI()
     {
         InitializeComponent();
 
-        Common = new CohortIdentificationConfigurationUICommon();
+        Common = new CohortIdentificationConfigurationUICommon(Activator);
 
         olvExecute.IsButton = true;
         olvExecute.ButtonSizing = OLVColumn.ButtonSizingMode.CellBounds;
@@ -140,9 +140,10 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {
+        var x = Common.Compiler.CohortIdentificationConfiguration;
         Common.Activator = Activator;
+        Common.Compiler.CohortIdentificationConfiguration = x;
         var descendancy = Activator.CoreChildProvider.GetDescendancyListIfAnyFor(e.Object);
-
         //if publish event was for a child of the cic (_cic is in the objects descendancy i.e. it sits below our cic)
         if (descendancy != null && descendancy.Parents.Contains(Common.Configuration))
         {
@@ -170,6 +171,7 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
         base.SetDatabaseObject(activator, databaseObject);
         version.Setup(databaseObject, activator);
         Common.Configuration = databaseObject;
+        Common.Activator = activator;
         Common.Compiler.CohortIdentificationConfiguration = databaseObject;
 
         RebuildClearCacheCommand();
@@ -177,7 +179,10 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
         gbCicInfo.Text = $"Name: {databaseObject.Name}";
         tbDescription.Text = $"Description: {databaseObject.Description}";
         ticket.TicketText = databaseObject.Ticket;
-
+        if (databaseObject.IsTemplate)
+        {
+            version.Visible = false;
+        }
         if (_commonFunctionality == null)
         {
             activator.RefreshBus.Subscribe(this);
@@ -216,12 +221,14 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
         CommonFunctionality.AddToMenu(
             new ExecuteCommandShowXmlDoc(activator, "CohortIdentificationConfiguration.QueryCachingServer_ID",
                 "Query Caching"), "Help (What is Query Caching)");
-        CommonFunctionality.Add(
-            new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(activator, null).SetTarget(
-                databaseObject),
-            "Commit Cohort",
-            activator.CoreIconProvider.GetImage(RDMPConcept.ExtractableCohort, OverlayKind.Add));
-
+        if (!databaseObject.IsTemplate)
+        {
+            CommonFunctionality.Add(
+                new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(activator, null).SetTarget(
+                    databaseObject),
+                "Commit Cohort",
+                activator.CoreIconProvider.GetImage(RDMPConcept.ExtractableCohort, OverlayKind.Add));
+        }
         foreach (var c in _timeoutControls.GetControls())
             CommonFunctionality.Add(c);
 

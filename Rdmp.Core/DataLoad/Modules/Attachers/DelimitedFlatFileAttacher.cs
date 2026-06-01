@@ -156,7 +156,7 @@ public abstract class DelimitedFlatFileAttacher : FlatFileAttacher
         Source.StronglyTypeInput = false;
         Source.StronglyTypeInputBatchSize = 0;
         _listener = listener;
-        Source.PreInitialize(new FlatFileToLoad(fileToLoad), listener);
+        Source.PreInitialize(null,new FlatFileToLoad(fileToLoad), listener);
         _currentFile = fileToLoad;
     }
 

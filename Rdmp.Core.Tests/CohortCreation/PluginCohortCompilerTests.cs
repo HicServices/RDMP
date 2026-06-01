@@ -8,6 +8,7 @@ using FAnsi;
 using NUnit.Framework;
 using Rdmp.Core.CohortCommitting.Pipeline.Sources;
 using Rdmp.Core.CohortCreation.Execution;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.CommandLine.Interactive;
@@ -15,11 +16,11 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.DataFlowPipeline;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 using Rdmp.Core.Tests.CohortCreation.QueryTests;
 using System;
 using System.Data;
-using Rdmp.Core.ReusableLibraryCode.Checks;
-using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.Tests.CohortCreation;
 
@@ -53,7 +54,7 @@ public class PluginCohortCompilerTests : CohortQueryBuilderWithCacheTests
 
         // run the cic
         var source = new CohortIdentificationConfigurationSource();
-        source.PreInitialize(cic, ThrowImmediatelyDataLoadEventListener.Quiet);
+        source.PreInitialize(new ThrowImmediatelyActivator(RepositoryLocator, null), cic, ThrowImmediatelyDataLoadEventListener.Quiet);
         var dt = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
         // 5 random chi numbers
@@ -65,7 +66,7 @@ public class PluginCohortCompilerTests : CohortQueryBuilderWithCacheTests
 
         // run the cic again
         source = new CohortIdentificationConfigurationSource();
-        source.PreInitialize(cic, ThrowImmediatelyDataLoadEventListener.Quiet);
+        source.PreInitialize(new ThrowImmediatelyActivator(RepositoryLocator, null), cic, ThrowImmediatelyDataLoadEventListener.Quiet);
         dt = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
         // because the rules changed to generate 2 chis only there should be a new result
@@ -76,7 +77,7 @@ public class PluginCohortCompilerTests : CohortQueryBuilderWithCacheTests
         // run the cic again with no changes, the results should be unchanged since there is no config changed
         // I.e. no new chis should be generated and the cached values returned
         source = new CohortIdentificationConfigurationSource();
-        source.PreInitialize(cic, ThrowImmediatelyDataLoadEventListener.Quiet);
+        source.PreInitialize(new ThrowImmediatelyActivator(RepositoryLocator, null), cic, ThrowImmediatelyDataLoadEventListener.Quiet);
         dt = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
         Assert.That(dt.Rows, Has.Count.EqualTo(2));
@@ -223,7 +224,7 @@ public class PluginCohortCompilerTests : CohortQueryBuilderWithCacheTests
 
         // run the cic again
         var source = new CohortIdentificationConfigurationSource();
-        source.PreInitialize(cic, ThrowImmediatelyDataLoadEventListener.Quiet);
+        source.PreInitialize(new ThrowImmediatelyActivator(RepositoryLocator, null), cic, ThrowImmediatelyDataLoadEventListener.Quiet);
         var result = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
         Assert.That(result.Rows, Has.Count.EqualTo(1));
     }

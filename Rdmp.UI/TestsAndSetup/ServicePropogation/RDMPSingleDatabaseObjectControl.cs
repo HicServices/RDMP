@@ -118,7 +118,7 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
 
         if (databaseObject is IMightBeReadOnly ro)
         {
-            if (ro.ShouldBeReadOnly(out var reason))
+            if (ro.ShouldBeReadOnly(this.GetType().Name, out var reason))
             {
                 _readonlyIndicator.Text = reason;
                 Controls.Add(_readonlyIndicator);
