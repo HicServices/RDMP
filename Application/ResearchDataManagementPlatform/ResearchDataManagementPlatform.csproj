@@ -32,6 +32,8 @@
     <PackageReference Include="ConsoleControl" />
     <PackageReference Include="Autoupdater.NET.Official" />
     <PackageReference Include="DockPanelSuite.ThemeVS2015" />
+    <PackageReference Include="SharpCompress" />
+    <PackageReference Include="Snappier" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\SharedAssemblyInfo.cs" Link="SharedAssemblyInfo.cs" />

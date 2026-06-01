@@ -1,6 +1,6 @@
 ﻿namespace Rdmp.UI.SimpleDialogs
 {
-    partial class InstanceSettings
+    partial class InstanceSettingsUI
     {
         /// <summary>
         /// Required designer variable.
@@ -35,6 +35,8 @@
             cbCohortVersioningOnCommit = new System.Windows.Forms.CheckBox();
             cbYesNoAll = new System.Windows.Forms.CheckBox();
             cbExtractionPipelineQuickEdit = new System.Windows.Forms.CheckBox();
+            tbCustomUpdateURL = new System.Windows.Forms.TextBox();
+            label2 = new System.Windows.Forms.Label();
             SuspendLayout();
             // 
             // cbAutoSuggestProjectNumbers
@@ -83,16 +85,35 @@
             cbExtractionPipelineQuickEdit.AutoSize = true;
             cbExtractionPipelineQuickEdit.Location = new System.Drawing.Point(13, 115);
             cbExtractionPipelineQuickEdit.Name = "cbExtractionPipelineQuickEdit";
-            cbExtractionPipelineQuickEdit.Size = new System.Drawing.Size(366, 19);
+            cbExtractionPipelineQuickEdit.Size = new System.Drawing.Size(365, 19);
             cbExtractionPipelineQuickEdit.TabIndex = 5;
             cbExtractionPipelineQuickEdit.Text = "Show Pipeline Clone/Edit functionality from within an extraction";
             cbExtractionPipelineQuickEdit.UseVisualStyleBackColor = true;
+            // 
+            // tbCustomUpdateURL
+            // 
+            tbCustomUpdateURL.Location = new System.Drawing.Point(135, 140);
+            tbCustomUpdateURL.Name = "tbCustomUpdateURL";
+            tbCustomUpdateURL.Size = new System.Drawing.Size(467, 23);
+            tbCustomUpdateURL.TabIndex = 6;
+            tbCustomUpdateURL.TextChanged += tbCustomUpdateURL_TextChanged;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new System.Drawing.Point(12, 143);
+            label2.Name = "label2";
+            label2.Size = new System.Drawing.Size(117, 15);
+            label2.TabIndex = 7;
+            label2.Text = "Custom Update URL:";
             // 
             // InstanceSettings
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(800, 450);
+            Controls.Add(label2);
+            Controls.Add(tbCustomUpdateURL);
             Controls.Add(cbExtractionPipelineQuickEdit);
             Controls.Add(cbYesNoAll);
             Controls.Add(cbCohortVersioningOnCommit);
@@ -112,5 +133,7 @@
         private System.Windows.Forms.CheckBox cbCohortVersioningOnCommit;
         private System.Windows.Forms.CheckBox cbYesNoAll;
         private System.Windows.Forms.CheckBox cbExtractionPipelineQuickEdit;
+        private System.Windows.Forms.TextBox tbCustomUpdateURL;
+        private System.Windows.Forms.Label label2;
     }
 }

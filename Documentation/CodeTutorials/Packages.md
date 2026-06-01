@@ -40,4 +40,7 @@
 | AWSSDK.SSO | [GitHub](https://github.com/aws/aws-sdk-net) | [Apache 2.0](https://opensource.org/licenses/Apache-2.0)  | |
 | AWSSDK.SSOOIDC | [GitHub](https://github.com/aws/aws-sdk-net) | [Apache 2.0](https://opensource.org/licenses/Apache-2.0)  | |
 | Microsoft.Bcl.AsyncInterfaces | [Nuget](https://www.nuget.org/packages/microsoft.bcl.asyncinterfaces/) | [MIT](https://opensource.org/licenses/MIT)  | |
+| System.Security.Cryptography.Xml | [GitHub](https://github.com/dotnet/dotnet) |  [MIT](https://opensource.org/licenses/MIT) | |
+| Snappier | [GitHub](https://github.com/brantburnett/Snappier) | [License](https://github.com/brantburnett/Snappier?tab=License-1-ov-file#readme)| |
+| SharpCompress | [GitHub](https://github.com/adamhathcock/sharpcompress) | [MIT](https://opensource.org/licenses/MIT) | |
 [DBMS]: ./Glossary.md#DBMS

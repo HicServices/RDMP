@@ -79,6 +79,9 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="SharpCompress" />
+        <PackageReference Include="Snappier" />
+        <PackageReference Include="System.Security.Cryptography.Xml" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Rdmp.Core\Rdmp.Core.csproj" />
