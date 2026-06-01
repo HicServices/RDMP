@@ -10,16 +10,6 @@ using System.Reflection;
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
-<<<<<<< HEAD
-[assembly: AssemblyVersion("9.2.2")]
-[assembly: AssemblyFileVersion("9.2.2")]
-[assembly: AssemblyInformationalVersion("9.2.2")]
-||||||| e0f3c2ce3
-[assembly: AssemblyVersion("9.2.1")]
-[assembly: AssemblyFileVersion("9.2.1")]
-[assembly: AssemblyInformationalVersion("9.2.1")]
-=======
-[assembly: AssemblyVersion("9.2.3")]
-[assembly: AssemblyFileVersion("9.2.3")]
-[assembly: AssemblyInformationalVersion("9.2.3")]
->>>>>>> 4ae094eefb3aa6c6eeffba05c849802b13807012
+[assembly: AssemblyVersion("9.2.4")]
+[assembly: AssemblyFileVersion("9.2.4")]
+[assembly: AssemblyInformationalVersion("9.2.4")]
