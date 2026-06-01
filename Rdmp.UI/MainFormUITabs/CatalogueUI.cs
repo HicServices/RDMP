@@ -254,10 +254,13 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
                     item.Visible = false;
                 }
                 Bind(tbAcronym, "Text", "Acronym", c => c.Acronym);
+                Bind(tbExtractionName, "Text", "ExtractionName", c => c.ExtractionName);
                 Bind(tbAbstract, "Text", "ShortDescription", c => c.ShortDescription);
                 Bind(tbDescription, "Text", "Description", c => c.Description);
                 aiAcronym.TooltipText = CatalogueUIHelperText.Acronym;
                 aiAcronym.SetItemActivator(Activator);
+                AIExtractionName.TooltipText = CatalogueUIHelperText.ExtractionName;
+                AIExtractionName.SetItemActivator(Activator);
                 aiShortDescription.TooltipText = CatalogueUIHelperText.ShortDescription;
                 aiShortDescription.SetItemActivator(Activator);
                 aiDescription.TooltipText = CatalogueUIHelperText.Description;

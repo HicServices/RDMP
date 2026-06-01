@@ -106,6 +106,8 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
     private string _doi;
     private Lazy<CatalogueItem[]> _knownCatalogueItems;
 
+    private string _extractionName;
+
 
     /// <inheritdoc/>
     [Unique]
@@ -127,6 +129,13 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
     {
         get => _name;
         set => SetField(ref _name, value);
+    }
+
+    [Unique]
+    public string ExtractionName
+    {
+        get => _extractionName;
+        set => SetField(ref _extractionName, value);
     }
 
     /// <inheritdoc/>
@@ -972,6 +981,7 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
 
         Acronym = r["Acronym"].ToString();
         Name = r["Name"].ToString();
+        ExtractionName = r["ExtractionName"].ToString();
         Description = r["Description"].ToString();
 
         //detailed info url with support for invalid urls

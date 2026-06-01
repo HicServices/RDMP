@@ -2,6 +2,7 @@
 {
     public static class CatalogueUIHelperText
     {
+        public static readonly string ExtractionName = "TODO";
         public static readonly string Acronym = "A shorthand name for the catalogue.";
         public static readonly string ShortDescription = """
             The Short Description should provide a clear and brief descriptive signpost for researchers who are searching for data that may be relevant to their research.

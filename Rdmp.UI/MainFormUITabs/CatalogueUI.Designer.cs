@@ -40,6 +40,9 @@ namespace Rdmp.UI.MainFormUITabs
             ticketingControl1 = new TicketingControlUI();
             tabControl1 = new TabControl();
             tabPage1 = new TabPage();
+            groupBox27 = new GroupBox();
+            AIExtractionName = new Rdmp.UI.SimpleControls.AdditionalInfomationUI();
+            tbExtractionName = new TextBox();
             groupBox26 = new GroupBox();
             tbInternalNote = new TextBox();
             groupBox23 = new GroupBox();
@@ -134,6 +137,7 @@ namespace Rdmp.UI.MainFormUITabs
             splitContainer1.SuspendLayout();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
+            groupBox27.SuspendLayout();
             groupBox26.SuspendLayout();
             groupBox23.SuspendLayout();
             groupBox16.SuspendLayout();
@@ -258,6 +262,7 @@ namespace Rdmp.UI.MainFormUITabs
             // 
             tabPage1.AutoScroll = true;
             tabPage1.BackColor = System.Drawing.Color.WhiteSmoke;
+            tabPage1.Controls.Add(groupBox27);
             tabPage1.Controls.Add(groupBox26);
             tabPage1.Controls.Add(groupBox23);
             tabPage1.Controls.Add(groupBox16);
@@ -269,6 +274,31 @@ namespace Rdmp.UI.MainFormUITabs
             tabPage1.TabIndex = 0;
             tabPage1.Text = "Descriptions";
             tabPage1.Click += tabPage1_Click;
+            // 
+            // groupBox27
+            // 
+            groupBox27.Controls.Add(AIExtractionName);
+            groupBox27.Controls.Add(tbExtractionName);
+            groupBox27.Location = new System.Drawing.Point(244, 6);
+            groupBox27.Name = "groupBox27";
+            groupBox27.Size = new System.Drawing.Size(347, 56);
+            groupBox27.TabIndex = 8;
+            groupBox27.TabStop = false;
+            groupBox27.Text = "Extraction Name";
+            // 
+            // AIExtractionName
+            // 
+            AIExtractionName.Location = new System.Drawing.Point(98, 0);
+            AIExtractionName.Name = "AIExtractionName";
+            AIExtractionName.Size = new System.Drawing.Size(20, 20);
+            AIExtractionName.TabIndex = 7;
+            // 
+            // tbExtractionName
+            // 
+            tbExtractionName.Location = new System.Drawing.Point(6, 22);
+            tbExtractionName.Name = "tbExtractionName";
+            tbExtractionName.Size = new System.Drawing.Size(335, 23);
+            tbExtractionName.TabIndex = 0;
             // 
             // groupBox26
             // 
@@ -1126,6 +1156,8 @@ namespace Rdmp.UI.MainFormUITabs
             splitContainer1.ResumeLayout(false);
             tabControl1.ResumeLayout(false);
             tabPage1.ResumeLayout(false);
+            groupBox27.ResumeLayout(false);
+            groupBox27.PerformLayout();
             groupBox26.ResumeLayout(false);
             groupBox26.PerformLayout();
             groupBox23.ResumeLayout(false);
@@ -1282,5 +1314,8 @@ namespace Rdmp.UI.MainFormUITabs
         private SimpleControls.MultiSelectChips.DropdownOptionsChipDisplay ddDataSource;
         private GroupBox groupBox26;
         public TextBox tbInternalNote;
+        private GroupBox groupBox27;
+        private SimpleControls.AdditionalInfomationUI AIExtractionName;
+        public TextBox tbExtractionName;
     }
 }
