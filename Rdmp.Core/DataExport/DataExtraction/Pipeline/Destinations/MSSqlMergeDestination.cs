@@ -72,6 +72,10 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
         private DiscoveredDatabase db;
         private DataTable _toProcess;
         private string mergeTableName;
+        private DiscoveredTable tmpTbl;
+        private DataColumn[] pkColumns;
+        private DataColumn[] nonPkColumns;
+
         public MSSqlMergeDestination() : base(false)
         {
         }
@@ -157,9 +161,6 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
             return mergeSql;
         }
 
-        private DiscoveredTable tmpTbl;
-        private DataColumn[] pkColumns;
-        private DataColumn[] nonPkColumns;
         public override void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
         {
 
