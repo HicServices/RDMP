@@ -166,7 +166,6 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
 
             if (tmpTbl == null) return;
             var _managedConnection = tmpTbl.Database.Server.GetManagedConnection();
-            var discoveredServer = DataAccessPortal.ExpectServer(TargetDatabaseServer, DataAccessContext.DataExport, false);
 
             if (!db.Exists()) return;
             var tableName = GetTableName(null, null);
@@ -256,7 +255,9 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
             _toProcess = toProcess;
             var discoveredServer = DataAccessPortal.ExpectServer(TargetDatabaseServer, DataAccessContext.DataExport, false);
 
-           
+            var dbName = GetDatabaseName();
+            db = discoveredServer.ExpectDatabase(dbName);
+
             if (!db.Exists())
                 db.Create();
 

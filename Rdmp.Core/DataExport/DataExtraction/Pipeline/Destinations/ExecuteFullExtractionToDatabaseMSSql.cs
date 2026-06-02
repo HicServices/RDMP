@@ -205,8 +205,14 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                         Source PKs: {string.Join(", ", rdmpPKs)}
                         Destination PKs: {string.Join(", ", remotePKs)}
                         """));
-                        return null;
+                        return null;//TODO this erroring could be metter
                     }
+                    bool hasStructuralDifferences = false;
+                    if (hasStructuralDifferences)
+                    {
+
+                    }
+
 
                 }
 
