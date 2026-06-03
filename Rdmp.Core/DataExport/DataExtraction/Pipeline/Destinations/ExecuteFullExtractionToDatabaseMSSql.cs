@@ -6,6 +6,7 @@
 
 using Amazon.Auth.AccessControlPolicy;
 using FAnsi.Discovery;
+using NPOI.SS.Formula.Functions;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
@@ -16,6 +17,7 @@ using Rdmp.Core.DataExport.DataRelease.Potential;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.Job.Scheduling;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
+using Rdmp.Core.DataLoad.Triggers;
 using Rdmp.Core.DataLoad.Triggers.Exceptions;
 using Rdmp.Core.DataLoad.Triggers.Implementations;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
@@ -169,6 +171,14 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         LinesWritten += toProcess.Rows.Count;
     }
 
+
+    private bool hasStructuralChanges(DataTable source, DiscoveredTable destination)
+    {
+        var sourceColumns = source.Columns.Cast<DataColumn>().Select(c => c.ColumnName).ToList();
+        var destinationColumns = destination.DiscoverColumns().Select(c => c.GetRuntimeName()).ToList();
+        return !sourceColumns.All(destinationColumns.Contains) || !destinationColumns.All(sourceColumns.Contains);
+    }
+
     private DataTableUploadDestination PrepareDestination(IDataLoadEventListener listener, DataTable toProcess)
     {
         //see if the user has entered an extraction server/database
@@ -191,7 +201,17 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
             if (existing.Exists())
             {
                 var hasPKs = existing.DiscoverColumns().Any(col => col.IsPrimaryKey);
-
+                TriggerImplementerFactory triggerFactory = new TriggerImplementerFactory(FAnsi.DatabaseType.MicrosoftSQLServer);
+                var implementor = triggerFactory.Create(existing);
+                bool present;
+                try
+                {
+                    present = implementor.GetTriggerStatus() == DataLoad.Triggers.TriggerStatus.Enabled;
+                }
+                catch (TriggerMissingException)
+                {
+                    present = false;
+                }
                 if (!AlwaysDropExtractionTables)
                 {
                     //check the PKs are the same
@@ -205,7 +225,51 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                         Source PKs: {string.Join(", ", rdmpPKs)}
                         Destination PKs: {string.Join(", ", remotePKs)}
                         """));
-                        return null;
+                        return null;//todo this error could be better
+                    }
+                    if (hasStructuralChanges(toProcess, existing))
+                    {
+                        var sourceColumns = toProcess.Columns.Cast<DataColumn>().Select(c => c.ColumnName).ToList();
+                        var destinationColumns = existing.DiscoverColumns().Select(c => c.GetRuntimeName()).ToList();
+
+                        //no way to create new archive trigger based on new columns if the archive has columns that aren't in the 
+
+                        if (present && destinationColumns.Except(sourceColumns).Where(c => !SpecialFieldNames.IsHicPrefixed(c)).Any())//only mess about with column removal if there is an archive trigger
+                        {
+
+                            //move everything into the archive - do this by updating the HIC_validfrom
+                            var sql = $"UPDATE {existing.GetFullyQualifiedName()} set {SpecialFieldNames.ValidFrom} = GETDATE()";
+                            using var con = _destinationDatabase.Server.GetConnection();
+                            con.Open();
+                            using var cmd = _destinationDatabase.Server.GetCommand(sql, con);
+                            cmd.CommandTimeout = 30000;
+                            cmd.ExecuteNonQuery();
+
+                            var removedColumns = destinationColumns.Except(sourceColumns).Where(c => !SpecialFieldNames.IsHicPrefixed(c));
+                            foreach (var column in removedColumns)
+                            {
+                                var discoveredColumn = existing.DiscoverColumn(column);
+                                existing.DropColumn(discoveredColumn);
+                            }
+                            string triggerProblems = "";
+                            string triggerOK = "";
+                            implementor.DropTrigger(out triggerProblems, out triggerOK);
+                            if (triggerProblems != "")
+                            {
+                                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, triggerProblems));
+                            }
+
+                            existing = _destinationDatabase.ExpectTable(tblName);
+                            implementor = triggerFactory.Create(existing);
+                            try
+                            {
+                                present = implementor.GetTriggerStatus() == DataLoad.Triggers.TriggerStatus.Enabled;
+                            }
+                            catch (TriggerMissingException)
+                            {
+                                present = false;
+                            }
+                        }
                     }
 
                 }
@@ -229,18 +293,6 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                 }
                 else if (UseArchiveTrigger && hasPKs)
                 {
-
-                    TriggerImplementerFactory triggerFactory = new TriggerImplementerFactory(FAnsi.DatabaseType.MicrosoftSQLServer);
-                    var implementor = triggerFactory.Create(existing);
-                    bool present;
-                    try
-                    {
-                        present = implementor.GetTriggerStatus() == DataLoad.Triggers.TriggerStatus.Enabled;
-                    }
-                    catch (TriggerMissingException)
-                    {
-                        present = false;
-                    }
                     //check the columns are correct, we might have added some
                     var existingColumns = existing.DiscoverColumns();
                     var existingColumnNames = existingColumns.Select(ec => ec.GetRuntimeName());
@@ -254,7 +306,10 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                             foreach (var column in newColumns)
                             {
                                 existing.AddColumn(column, new TypeGuesser.DatabaseTypeRequest(toProcess.Columns[column].DataType), true, 30000);
-                                archiveTable.AddColumn(column, new TypeGuesser.DatabaseTypeRequest(toProcess.Columns[column].DataType), true, 30000);
+                                if (archiveTable.DiscoverColumns().All(col => col.GetRuntimeName() != column))
+                                {
+                                    archiveTable.AddColumn(column, new TypeGuesser.DatabaseTypeRequest(toProcess.Columns[column].DataType), true, 30000);
+                                }
                             }
                             if (present)
                             {

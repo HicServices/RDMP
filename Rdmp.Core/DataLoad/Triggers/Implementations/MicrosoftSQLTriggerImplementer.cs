@@ -270,10 +270,20 @@ END
         sqlToRun += $"BEGIN{Environment.NewLine}";
         sqlToRun += Environment.NewLine;
 
-        var liveCols = _columns.Select(c => $"[{c.GetRuntimeName()}]").Union(new string[]
-        {
-            $"[{SpecialFieldNames.DataLoadRunID}]", $"[{SpecialFieldNames.ValidFrom}]"
-        }).Where(col => _dontAddDataLoadRunId ? col != $"[{SpecialFieldNames.DataLoadRunID}]" : true).ToArray();
+
+        //var liveCols = _columns.DiscoverColumns().Select(c => $"[{c.GetRuntimeName()}]").Union(new string[]
+        var liveCols = _archiveTable.DiscoverColumns().Select(c => $"[{c.GetRuntimeName()}]")
+            .Where(c => c != "[hic_validTo]" && c != "[hic_userID]" && c != "[hic_status]")
+            .ToList();
+        //.Union(new string[]
+        //{
+        //$"[{SpecialFieldNames.DataLoadRunID}]", $"[{SpecialFieldNames.ValidFrom}]"
+        //}).Where(col => _dontAddDataLoadRunId ? col != $"[{SpecialFieldNames.DataLoadRunID}]" : true)
+        //.Where(col => col != "[hic_validTo]" && col != "hic_userID" && col != "hic_status")
+        //.ToArray();
+        if (!liveCols.Contains($"[{SpecialFieldNames.DataLoadRunID}]")) liveCols.Add($"[{SpecialFieldNames.DataLoadRunID}]");
+        if (!liveCols.Contains($"[{SpecialFieldNames.ValidFrom}]")) liveCols.Add($"[{SpecialFieldNames.ValidFrom}]");
+        liveCols = liveCols.Where(col => _dontAddDataLoadRunId ? col != $"[{SpecialFieldNames.DataLoadRunID}]" : true).ToList();
 
         var archiveCols = $"{string.Join(",", liveCols)},hic_validTo,hic_userID,hic_status";
         var cDotArchiveCols = string.Join(",", liveCols.Select(s => $"c.{s}"));
