@@ -280,10 +280,10 @@ END
         sqlToRun += Environment.NewLine;
 
 
-        var x = _archiveTable.DiscoverColumns();
+        //var x = _archiveTable.DiscoverColumns();
         //var liveCols = _columns.DiscoverColumns().Select(c => $"[{c.GetRuntimeName()}]").Union(new string[]
         var liveCols = _archiveTable.DiscoverColumns().Select(c => $"[{c.GetRuntimeName()}]")
-            .Where(c => c != "[hic_validTo]" && c != "[hic_userID]" && c != "[hic_status]")
+            //.Where(c => c != "[hic_validTo]" && c != "[hic_userID]" && c != "[hic_status]")
             .ToList();
 
         if (!liveCols.Contains($"[{SpecialFieldNames.DataLoadRunID}]")) liveCols.Add($"[{SpecialFieldNames.DataLoadRunID}]");
@@ -292,9 +292,9 @@ END
 
         var archiveCols = $"{string.Join(",", liveCols)}";
         //$",hic_validTo,hic_userID,hic_status";
-        if (!archiveCols.Contains("hic_validTo")) archiveCols += ",hic_validTo";
-        if (!archiveCols.Contains("hic_userID")) archiveCols += ",hic_userID ";
-        if (!archiveCols.Contains("hic_status")) archiveCols += ",hic_status ";
+        //if (!archiveCols.Contains("hic_validTo")) archiveCols += ",hic_validTo";
+        //if (!archiveCols.Contains("hic_userID")) archiveCols += ",hic_userID ";
+        //if (!archiveCols.Contains("hic_status")) archiveCols += ",hic_status ";
 
         var cDotArchiveCols = string.Join(",", liveCols.Select(s => $"c.{s}"));
 
@@ -310,7 +310,7 @@ END
 
         sqlToRun += $"\tINSERT @returntable{Environment.NewLine}";
         sqlToRun +=
-            $"\tSELECT {cDotArchiveCols},NULL AS hic_validTo, NULL AS hic_userID, 'C' AS hic_status{Environment.NewLine}"; //c is for current
+            $"\tSELECT {cDotArchiveCols}";//,NULL AS hic_validTo, NULL AS hic_userID, 'C' AS hic_status{Environment.NewLine}"; //c is for current
         sqlToRun += string.Format("\tFROM [{0}] c" + Environment.NewLine, _table.GetRuntimeName());
         sqlToRun += $"\tLEFT OUTER JOIN @returntable a ON {Environment.NewLine}";
 
