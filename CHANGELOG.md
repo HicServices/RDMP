@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [9.2.4] - Unreleased
 - Improve SQL Extraction Merge
 - Allow Merge code to be viewed in UI
+- Fix bug with catalogues not becoming project specific when commit from another project
+- Improve displayed reason for being unable to make Catalogue Project Specific
 
 ## [9.2.3] - 2026-05-28
 - Fix issue with extractable project data set creation for project specific catalogues

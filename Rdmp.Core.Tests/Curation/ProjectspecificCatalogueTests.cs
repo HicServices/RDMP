@@ -103,7 +103,7 @@ namespace Rdmp.Core.Tests.Curation
             var cmd = new ExecuteCommandMakeCatalogueProjectSpecific(_activator,catalogue,project,force);
             cmd.SetTarget(project);
             cmd.SetTarget(catalogue);
-            if (shouldThrow) Assert.That(ProjectSpecificCatalogueManager.CanMakeCatalogueProjectSpecific(_activator.RepositoryLocator.DataExportRepository, catalogue,project,projectIdsToIgnore??new List<int>()), Is.False);
+            if (shouldThrow) Assert.That(ProjectSpecificCatalogueManager.CanMakeCatalogueProjectSpecific(_activator.RepositoryLocator.DataExportRepository, catalogue,project,projectIdsToIgnore??new List<int>(),out _), Is.False);
             else Assert.DoesNotThrow(() => cmd.Execute());
         }
 

@@ -66,19 +66,18 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
         if (_existingProjectIDs is null)
             GetExistingProjectIDs();
 
-        var projects = GetListOfValidProjects();
+        var projects = GetListOfValidProjects(out string worstReason);
         if (!projects.Any())
         {
-            Show($"No valid projects found to make {_catalogue.Name} project specific.");
+            Show($"No valid projects found to make {_catalogue.Name} project specific. Reason: {worstReason}");
             return;
         }
-        _project ??= SelectOne<Project>(GetListOfValidProjects());
+        _project ??= SelectOne<Project>(GetListOfValidProjects(out _));
 
         if (_project == null || _catalogue == null)
             return;
 
         base.Execute();
-
         ProjectSpecificCatalogueManager.MakeCatalogueProjectSpecific(BasicActivator.RepositoryLocator.DataExportRepository, _catalogue, _project);
         Publish(_catalogue);
     }
@@ -102,15 +101,51 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
     }
 
 
-    private List<Project> GetListOfValidProjects()
+    private List<Project> GetListOfValidProjects(out string worstReason)
     {
         var dataExportChildProvider = ((DataExportChildProvider)_activator.CoreChildProvider);
         var eds = _activator.RepositoryLocator.DataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(_catalogue);
         var edsp = _activator.RepositoryLocator.DataExportRepository.GetAllObjects<ExtractableDataSetProject>().Where(edsp => eds.Contains(edsp.DataSet));
         var pti = edsp.Select(e => e.Project_ID).ToList();
-        var validProjects = dataExportChildProvider.Projects.Where(p => _force ||(!pti.Contains(p.ID) && ProjectSpecificCatalogueManager.CanMakeCatalogueProjectSpecific(_activator.RepositoryLocator.DataExportRepository, _catalogue, p, pti)));
+        var validProjects = new List<Project>();
+        List<string> reasons = new();
+        foreach (var project in dataExportChildProvider.Projects)
+        {
+            if (_force)
+            {
+                validProjects.Add(project);
+                continue;
+            }
+            if (!pti.Contains(project.ID))
+            {
+                var valid = ProjectSpecificCatalogueManager.CanMakeCatalogueProjectSpecific(_activator.RepositoryLocator.DataExportRepository, _catalogue, project, pti, out string reason);
+                if (valid)
+                {
+                    validProjects.Add(project);
+                }
+                else
+                {
+                    reasons.Add(reason);
+                }
+            }
+
+        }
+        worstReason = GetWorstReason(reasons);
         return validProjects.ToList();
     }
+
+    private string GetWorstReason(List<string> reasons)
+    {
+        string reason = null;
+        if (!reasons.Any()) return "Unknown";
+        reason = reasons.FirstOrDefault(r => r.Contains("already used in extraction configuration")) ?? reason;
+        if (reason is null)
+        {
+            reason = reasons.First();
+        }
+        return reason;
+    }
+
 
     private void GetExistingProjectIDs()
     {
@@ -130,9 +165,9 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
             return;
         }
         var status = _catalogue.GetExtractabilityStatus(BasicActivator.RepositoryLocator.DataExportRepository);
-        if (!GetListOfValidProjects().Any() && !_force)
+        if (!GetListOfValidProjects(out string worstReason).Any() && !_force)
         {
-            SetImpossible("No valid Projects available");
+            SetImpossible($"No valid Projects available.Reason: {worstReason}");
         }
 
         if (!status.IsExtractable)
