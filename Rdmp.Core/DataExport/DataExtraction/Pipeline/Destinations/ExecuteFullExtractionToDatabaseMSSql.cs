@@ -179,6 +179,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         return !sourceColumns.All(destinationColumns.Contains) || !destinationColumns.All(sourceColumns.Contains);
     }
 
+
     private DataTableUploadDestination PrepareDestination(IDataLoadEventListener listener, DataTable toProcess)
     {
         //see if the user has entered an extraction server/database
@@ -203,14 +204,14 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                 var hasPKs = existing.DiscoverColumns().Any(col => col.IsPrimaryKey);
                 TriggerImplementerFactory triggerFactory = new TriggerImplementerFactory(FAnsi.DatabaseType.MicrosoftSQLServer);
                 var implementor = triggerFactory.Create(existing);
-                bool present;
+                bool triggerPresent;
                 try
                 {
-                    present = implementor.GetTriggerStatus() == DataLoad.Triggers.TriggerStatus.Enabled;
+                    triggerPresent = implementor.GetTriggerStatus() == DataLoad.Triggers.TriggerStatus.Enabled;
                 }
                 catch (TriggerMissingException)
                 {
-                    present = false;
+                    triggerPresent = false;
                 }
                 if (!AlwaysDropExtractionTables)
                 {
@@ -232,9 +233,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                         var sourceColumns = toProcess.Columns.Cast<DataColumn>().Select(c => c.ColumnName).ToList();
                         var destinationColumns = existing.DiscoverColumns().Select(c => c.GetRuntimeName()).ToList();
 
-                        //no way to create new archive trigger based on new columns if the archive has columns that aren't in the 
-
-                        if (present && destinationColumns.Except(sourceColumns).Where(c => !SpecialFieldNames.IsHicPrefixed(c)).Any())//only mess about with column removal if there is an archive trigger
+                        if (triggerPresent && destinationColumns.Except(sourceColumns).Where(c => !SpecialFieldNames.IsHicPrefixed(c)).Any())//only mess about with column removal if there is an archive trigger
                         {
 
                             //move everything into the archive - do this by updating the HIC_validfrom
@@ -263,11 +262,11 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                             implementor = triggerFactory.Create(existing);
                             try
                             {
-                                present = implementor.GetTriggerStatus() == DataLoad.Triggers.TriggerStatus.Enabled;
+                                triggerPresent = implementor.GetTriggerStatus() == DataLoad.Triggers.TriggerStatus.Enabled;
                             }
                             catch (TriggerMissingException)
                             {
-                                present = false;
+                                triggerPresent = false;
                             }
                         }
                     }
@@ -311,7 +310,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                                     archiveTable.AddColumn(column, new TypeGuesser.DatabaseTypeRequest(toProcess.Columns[column].DataType), true, 30000);
                                 }
                             }
-                            if (present)
+                            if (triggerPresent)
                             {
                                 string triggerProblems = "";
                                 string triggerOK = "";
@@ -323,12 +322,12 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
 
                                 existing = _destinationDatabase.ExpectTable(tblName);
                                 implementor = triggerFactory.Create(existing);
-                                present = false;
+                                triggerPresent = false;
                             }
                         }
                     }
 
-                    if (!present)
+                    if (!triggerPresent)
                     {
                         implementor.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
                     }

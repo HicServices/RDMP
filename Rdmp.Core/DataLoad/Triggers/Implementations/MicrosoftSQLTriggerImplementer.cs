@@ -280,10 +280,7 @@ END
         sqlToRun += Environment.NewLine;
 
 
-        //var x = _archiveTable.DiscoverColumns();
-        //var liveCols = _columns.DiscoverColumns().Select(c => $"[{c.GetRuntimeName()}]").Union(new string[]
         var liveCols = _archiveTable.DiscoverColumns().Select(c => $"[{c.GetRuntimeName()}]")
-            //.Where(c => c != "[hic_validTo]" && c != "[hic_userID]" && c != "[hic_status]")
             .ToList();
 
         if (!liveCols.Contains($"[{SpecialFieldNames.DataLoadRunID}]")) liveCols.Add($"[{SpecialFieldNames.DataLoadRunID}]");
@@ -291,10 +288,6 @@ END
         liveCols = liveCols.Where(col => _dontAddDataLoadRunId ? col != $"[{SpecialFieldNames.DataLoadRunID}]" : true).ToList();
 
         var archiveCols = $"{string.Join(",", liveCols)}";
-        //$",hic_validTo,hic_userID,hic_status";
-        //if (!archiveCols.Contains("hic_validTo")) archiveCols += ",hic_validTo";
-        //if (!archiveCols.Contains("hic_userID")) archiveCols += ",hic_userID ";
-        //if (!archiveCols.Contains("hic_status")) archiveCols += ",hic_status ";
 
         var cDotArchiveCols = string.Join(",", liveCols.Select(s => $"c.{s}"));
 
@@ -322,8 +315,6 @@ END
             if (index + 1 < _primaryKeys.Length)
                 sqlToRun += $"\tAND{Environment.NewLine}"; //add an AND because there are more coming
         }
-
-        //TODO: ordering issue when adding a new column and removing an existing one
 
         sqlToRun += string.Format("\tWHERE a.[{0}] IS NULL -- where archive record doesn't exist" + Environment.NewLine,
             _primaryKeys.First().GetRuntimeName());
