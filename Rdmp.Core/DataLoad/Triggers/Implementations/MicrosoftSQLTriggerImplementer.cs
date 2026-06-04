@@ -280,16 +280,12 @@ END
         sqlToRun += Environment.NewLine;
 
 
+        var x = _archiveTable.DiscoverColumns();
         //var liveCols = _columns.DiscoverColumns().Select(c => $"[{c.GetRuntimeName()}]").Union(new string[]
         var liveCols = _archiveTable.DiscoverColumns().Select(c => $"[{c.GetRuntimeName()}]")
             .Where(c => c != "[hic_validTo]" && c != "[hic_userID]" && c != "[hic_status]")
             .ToList();
-        //.Union(new string[]
-        //{
-        //$"[{SpecialFieldNames.DataLoadRunID}]", $"[{SpecialFieldNames.ValidFrom}]"
-        //}).Where(col => _dontAddDataLoadRunId ? col != $"[{SpecialFieldNames.DataLoadRunID}]" : true)
-        //.Where(col => col != "[hic_validTo]" && col != "hic_userID" && col != "hic_status")
-        //.ToArray();
+
         if (!liveCols.Contains($"[{SpecialFieldNames.DataLoadRunID}]")) liveCols.Add($"[{SpecialFieldNames.DataLoadRunID}]");
         if (!liveCols.Contains($"[{SpecialFieldNames.ValidFrom}]")) liveCols.Add($"[{SpecialFieldNames.ValidFrom}]");
         liveCols = liveCols.Where(col => _dontAddDataLoadRunId ? col != $"[{SpecialFieldNames.DataLoadRunID}]" : true).ToList();
@@ -309,6 +305,9 @@ END
             ", '1899/01/01') AND hic_validTo" + Environment.NewLine, _archiveTable);
         sqlToRun += Environment.NewLine;
 
+        var nullCoulmns = _archiveTable.DiscoverColumns().Select(c => $"[{c.GetRuntimeName()}]").Except(_table.DiscoverColumns().Select(c => $"[{c.GetRuntimeName()}]"));
+        cDotArchiveCols = string.Join(",", liveCols.Select(s => nullCoulmns.Contains(s) ? $"NULL AS {s}" : $"c.{s}"));
+
         sqlToRun += $"\tINSERT @returntable{Environment.NewLine}";
         sqlToRun +=
             $"\tSELECT {cDotArchiveCols},NULL AS hic_validTo, NULL AS hic_userID, 'C' AS hic_status{Environment.NewLine}"; //c is for current
@@ -324,7 +323,7 @@ END
                 sqlToRun += $"\tAND{Environment.NewLine}"; //add an AND because there are more coming
         }
 
-        //TODO: Current issue is that columsn don;t exist in the destination table, but inthe archive, need to set something like NULL as Interpretation
+        //TODO: ordering issue when adding a new column and removing an existing one
 
         sqlToRun += string.Format("\tWHERE a.[{0}] IS NULL -- where archive record doesn't exist" + Environment.NewLine,
             _primaryKeys.First().GetRuntimeName());
