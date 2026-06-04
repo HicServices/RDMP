@@ -259,10 +259,19 @@ END
 
         //these were added during transaction so we have to specify them again here because transaction will not have been committed yet
         sqlToRun = sqlToRun.Trim();
-        sqlToRun += $",{Environment.NewLine}";
-        sqlToRun += $"\thic_validTo datetime,{Environment.NewLine}";
-        sqlToRun += "\thic_userID varchar(128),";
-        sqlToRun += "\thic_status char(1)";
+        if (!sqlToRun.Contains("hic_validTo"))
+        {
+            sqlToRun += $"{Environment.NewLine}";
+            sqlToRun += $",\thic_validTo datetime";
+        }
+        if (!sqlToRun.Contains("hic_userID"))
+        {
+            sqlToRun += ",\thic_userID varchar(128)";
+        }
+        if (!sqlToRun.Contains("hic_status"))
+        {
+            sqlToRun += ",\thic_status char(1)";
+        }
 
 
         sqlToRun += $"){Environment.NewLine}";
@@ -285,7 +294,12 @@ END
         if (!liveCols.Contains($"[{SpecialFieldNames.ValidFrom}]")) liveCols.Add($"[{SpecialFieldNames.ValidFrom}]");
         liveCols = liveCols.Where(col => _dontAddDataLoadRunId ? col != $"[{SpecialFieldNames.DataLoadRunID}]" : true).ToList();
 
-        var archiveCols = $"{string.Join(",", liveCols)},hic_validTo,hic_userID,hic_status";
+        var archiveCols = $"{string.Join(",", liveCols)}";
+        //$",hic_validTo,hic_userID,hic_status";
+        if (!archiveCols.Contains("hic_validTo")) archiveCols += ",hic_validTo";
+        if (!archiveCols.Contains("hic_userID")) archiveCols += ",hic_userID ";
+        if (!archiveCols.Contains("hic_status")) archiveCols += ",hic_status ";
+
         var cDotArchiveCols = string.Join(",", liveCols.Select(s => $"c.{s}"));
 
 
@@ -309,6 +323,8 @@ END
             if (index + 1 < _primaryKeys.Length)
                 sqlToRun += $"\tAND{Environment.NewLine}"; //add an AND because there are more coming
         }
+
+        //TODO: Current issue is that columsn don;t exist in the destination table, but inthe archive, need to set something like NULL as Interpretation
 
         sqlToRun += string.Format("\tWHERE a.[{0}] IS NULL -- where archive record doesn't exist" + Environment.NewLine,
             _primaryKeys.First().GetRuntimeName());
