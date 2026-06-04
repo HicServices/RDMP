@@ -207,7 +207,6 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                         """));
                         return null;
                     }
-
                 }
 
                 if (_request.IsBatchResume)
