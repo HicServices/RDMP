@@ -31,7 +31,7 @@ jobs:
         run: |
           dotnet build --configuration Release --verbosity minimal
       - name: Install MS SQL 2019 Express LocalDB
-        uses: crazy-max/ghaction-chocolatey@v3
+        uses: crazy-max/ghaction-chocolatey@v4
         with:
           args: install -r sqllocaldb --no-progress
       - name: Initialise LocalDB
@@ -98,7 +98,7 @@ jobs:
         run: |
           dotnet build --configuration Release --verbosity minimal
       - name: Install MS SQL 2019 Express LocalDB
-        uses: crazy-max/ghaction-chocolatey@v3
+        uses: crazy-max/ghaction-chocolatey@v4
         with:
           args: install -r sqllocaldb --no-progress
       - name: Initialise LocalDB
