@@ -285,7 +285,7 @@ END
 
         if (!liveCols.Contains($"[{SpecialFieldNames.DataLoadRunID}]")) liveCols.Add($"[{SpecialFieldNames.DataLoadRunID}]");
         if (!liveCols.Contains($"[{SpecialFieldNames.ValidFrom}]")) liveCols.Add($"[{SpecialFieldNames.ValidFrom}]");
-        liveCols = liveCols.Where(col => _dontAddDataLoadRunId ? col != $"[{SpecialFieldNames.DataLoadRunID}]" : true).ToList();
+        liveCols = liveCols.Where(col => !_dontAddDataLoadRunId || col != $"[{SpecialFieldNames.DataLoadRunID}]").ToList();
 
         var archiveCols = $"{string.Join(",", liveCols)}";
 

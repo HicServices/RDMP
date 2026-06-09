@@ -245,10 +245,9 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                             cmd.ExecuteNonQuery();
 
                             var removedColumns = destinationColumns.Except(sourceColumns).Where(c => !SpecialFieldNames.IsHicPrefixed(c));
-                            foreach (var column in removedColumns)
+                            foreach (var column in removedColumns.Select(c => existing.DiscoverColumn(c)))
                             {
-                                var discoveredColumn = existing.DiscoverColumn(column);
-                                existing.DropColumn(discoveredColumn);
+                                existing.DropColumn(column);
                             }
                             string triggerProblems = "";
                             string triggerOK = "";
