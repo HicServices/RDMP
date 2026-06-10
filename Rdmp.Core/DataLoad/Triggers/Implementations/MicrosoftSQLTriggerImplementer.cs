@@ -261,16 +261,19 @@ END
         sqlToRun = sqlToRun.Trim();
         if (!sqlToRun.Contains("hic_validTo"))
         {
-            sqlToRun += $"{Environment.NewLine}";
-            sqlToRun += $",\thic_validTo datetime";
+            sqlToRun += $",{Environment.NewLine}";
+            sqlToRun += $"hic_validTo datetime";
         }
         if (!sqlToRun.Contains("hic_userID"))
         {
-            sqlToRun += ",\thic_userID varchar(128)";
+            sqlToRun += $",{Environment.NewLine}";
+
+            sqlToRun += "hic_userID varchar(128)";
         }
         if (!sqlToRun.Contains("hic_status"))
         {
-            sqlToRun += ",\thic_status char(1)";
+            sqlToRun += $",{Environment.NewLine}";
+            sqlToRun += "hic_status char(1)";
         }
 
 
@@ -298,12 +301,13 @@ END
             ", '1899/01/01') AND hic_validTo" + Environment.NewLine, _archiveTable);
         sqlToRun += Environment.NewLine;
 
+        //these are columns that exist in the archive, but not the table. So have to be set as NULL as <value>
         var nullCoulmns = _archiveTable.DiscoverColumns().Select(c => $"[{c.GetRuntimeName()}]").Except(_table.DiscoverColumns().Select(c => $"[{c.GetRuntimeName()}]"));
         cDotArchiveCols = string.Join(",", liveCols.Select(s => nullCoulmns.Contains(s) ? $"NULL AS {s}" : $"c.{s}"));
 
         sqlToRun += $"\tINSERT @returntable{Environment.NewLine}";
         sqlToRun +=
-            $"\tSELECT {cDotArchiveCols}";//,NULL AS hic_validTo, NULL AS hic_userID, 'C' AS hic_status{Environment.NewLine}"; //c is for current
+            $"\tSELECT {cDotArchiveCols}";
         sqlToRun += string.Format("\tFROM [{0}] c" + Environment.NewLine, _table.GetRuntimeName());
         sqlToRun += $"\tLEFT OUTER JOIN @returntable a ON {Environment.NewLine}";
 

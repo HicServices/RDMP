@@ -4,9 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using Amazon.Auth.AccessControlPolicy;
 using FAnsi.Discovery;
-using NPOI.SS.Formula.Functions;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
@@ -15,7 +13,6 @@ using Rdmp.Core.DataExport.DataExtraction.UserPicks;
 using Rdmp.Core.DataExport.DataRelease.Pipeline;
 using Rdmp.Core.DataExport.DataRelease.Potential;
 using Rdmp.Core.DataFlowPipeline;
-using Rdmp.Core.DataLoad.Engine.Job.Scheduling;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
 using Rdmp.Core.DataLoad.Triggers;
 using Rdmp.Core.DataLoad.Triggers.Exceptions;
@@ -33,7 +30,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using YamlDotNet.Core;
 
 namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
 
@@ -227,6 +223,8 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                         Destination PKs: {string.Join(", ", remotePKs)}
                         """));
                         return null;//todo this error could be better
+                        //todo: need to make the same changes on the merge component
+                        //todo: figure out the tests
                     }
                     if (hasStructuralChanges(toProcess, existing))
                     {
