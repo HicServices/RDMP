@@ -917,7 +917,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationWithArchiveTriggerTe
         col.DeleteInDatabase();
         cols = ec.GetAllExtractableColumnsFor(eds);
         ec.SaveToDatabase();
-        var extractionPipeline = new Pipeline(CatalogueRepository, "Empty extraction pipeline 3");
+        var extractionPipeline = new Pipeline(CatalogueRepository, "Empty extraction pipeline 4");
         var component = new PipelineComponent(CatalogueRepository, extractionPipeline,
             typeof(ExecuteFullExtractionToDatabaseMSSql), 0, "MS SQL Destination");
         var destinationArguments = component.CreateArgumentsForClassIfNotExists<ExecuteFullExtractionToDatabaseMSSql>()
@@ -1161,7 +1161,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationWithArchiveTriggerTe
         var eds = new ExtractableDataSet(DataExportRepository, catalogue);
         ec.AddDatasetToConfiguration(eds);
         ec.SaveToDatabase();
-        var extractionPipeline = new Pipeline(CatalogueRepository, "Empty extraction pipeline 3");
+        var extractionPipeline = new Pipeline(CatalogueRepository, "Empty extraction pipeline 5");
         var component = new PipelineComponent(CatalogueRepository, extractionPipeline,
             typeof(ExecuteFullExtractionToDatabaseMSSql), 0, "MS SQL Destination");
         var destinationArguments = component.CreateArgumentsForClassIfNotExists<ExecuteFullExtractionToDatabaseMSSql>()
@@ -1414,7 +1414,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationWithArchiveTriggerTe
         var eds = new ExtractableDataSet(DataExportRepository, catalogue);
         ec.AddDatasetToConfiguration(eds);
         ec.SaveToDatabase();
-        var extractionPipeline = new Pipeline(CatalogueRepository, "Empty extraction pipeline 3");
+        var extractionPipeline = new Pipeline(CatalogueRepository, "Empty extraction pipeline 6");
         var component = new PipelineComponent(CatalogueRepository, extractionPipeline,
             typeof(ExecuteFullExtractionToDatabaseMSSql), 0, "MS SQL Destination");
         var destinationArguments = component.CreateArgumentsForClassIfNotExists<ExecuteFullExtractionToDatabaseMSSql>()
@@ -1710,7 +1710,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationWithArchiveTriggerTe
         var eds = new ExtractableDataSet(DataExportRepository, catalogue);
         ec.AddDatasetToConfiguration(eds);
         ec.SaveToDatabase();
-        var extractionPipeline = new Pipeline(CatalogueRepository, "Empty extraction pipeline 3");
+        var extractionPipeline = new Pipeline(CatalogueRepository, "Empty extraction pipeline 7");
         var component = new PipelineComponent(CatalogueRepository, extractionPipeline,
             typeof(ExecuteFullExtractionToDatabaseMSSql), 0, "MS SQL Destination");
         var destinationArguments = component.CreateArgumentsForClassIfNotExists<ExecuteFullExtractionToDatabaseMSSql>()
@@ -2013,7 +2013,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationWithArchiveTriggerTe
         col.DeleteInDatabase();
         cols = ec.GetAllExtractableColumnsFor(eds);
         ec.SaveToDatabase();
-        var extractionPipeline = new Pipeline(CatalogueRepository, "Empty extraction pipeline 3");
+        var extractionPipeline = new Pipeline(CatalogueRepository, "Empty extraction pipeline 8");
         var component = new PipelineComponent(CatalogueRepository, extractionPipeline,
             typeof(ExecuteFullExtractionToDatabaseMSSql), 0, "MS SQL Destination");
         var destinationArguments = component.CreateArgumentsForClassIfNotExists<ExecuteFullExtractionToDatabaseMSSql>()
@@ -2300,7 +2300,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationWithArchiveTriggerTe
         col.DeleteInDatabase();
         cols = ec.GetAllExtractableColumnsFor(eds);
         ec.SaveToDatabase();
-        var extractionPipeline = new Pipeline(CatalogueRepository, "Empty extraction pipeline 3");
+        var extractionPipeline = new Pipeline(CatalogueRepository, "Empty extraction pipeline 9");
         var component = new PipelineComponent(CatalogueRepository, extractionPipeline,
             typeof(ExecuteFullExtractionToDatabaseMSSql), 0, "MS SQL Destination");
         var destinationArguments = component.CreateArgumentsForClassIfNotExists<ExecuteFullExtractionToDatabaseMSSql>()
@@ -2588,7 +2588,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationWithArchiveTriggerTe
         col.DeleteInDatabase();
         cols = ec.GetAllExtractableColumnsFor(eds);
         ec.SaveToDatabase();
-        var extractionPipeline = new Pipeline(CatalogueRepository, "Empty extraction pipeline 3");
+        var extractionPipeline = new Pipeline(CatalogueRepository, "Empty extraction pipeline 10");
         var component = new PipelineComponent(CatalogueRepository, extractionPipeline,
             typeof(ExecuteFullExtractionToDatabaseMSSql), 0, "MS SQL Destination");
         var destinationArguments = component.CreateArgumentsForClassIfNotExists<ExecuteFullExtractionToDatabaseMSSql>()
