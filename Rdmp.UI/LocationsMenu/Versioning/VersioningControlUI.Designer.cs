@@ -103,7 +103,7 @@ namespace Rdmp.UI.LocationsMenu.Versioning
                 return;
             }
             var versions = _cic.GetVersions();
-            var addedNewDescription = _activator.TypeText("Set Description for new Version", "Would you like to set a description for this new cohort version?", 250, _cic.Description, out string newDescription, false);
+            var addedNewDescription = _activator.TypeText("Describe Saved Version", "Saving a version stores a frozen snapshot of the cohort as it is now. Would you like to give that saved snapshot a description? (Your live configuration stays editable and keeps its current description.)", 250, _cic.Description, out string newDescription, false);
             var cmd = new ExecuteCommandCreateVersionOfCohortConfiguration(_activator, _cic, $"{_cic.Name}-v{versions.Count + 1}-{DateTime.Now.ToString("yyyy-MM-dd")}", addedNewDescription ? newDescription : null);
             cmd.Execute();
         }
