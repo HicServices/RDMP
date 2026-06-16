@@ -39,23 +39,24 @@ public class ExecuteCommandCreateVersionOfCohortConfiguration : BasicCommandExec
         }
         var cmd = new ExecuteCommandCloneCohortIdentificationConfiguration(_activator, _cic, _name, version, true);
         cmd.Execute();
-        if (_description is not null)
+        var createdItem = _activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<CohortIdentificationConfiguration>("ClonedFrom_ID", _cic.ID).Where(cic => cic.Name == _name);
+        if (createdItem.Any())
         {
-            var createdItem = _activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<CohortIdentificationConfiguration>("ClonedFrom_ID", _cic.ID).Where(cic => cic.Name == _name);
-            if (createdItem.Any())
+            if (_description is not null)
             {
+
                 createdItem.First().Description = _description;
                 createdItem.First().SaveToDatabase();
-
-                var associations = _activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ProjectCohortIdentificationConfigurationAssociation>("CohortIdentificationConfiguration_ID", _cic.ID);
-                foreach (var association in associations)
-                {
-                    var link = new ProjectCohortIdentificationConfigurationAssociation(_activator.RepositoryLocator.DataExportRepository, (Project)association.Project, createdItem.First());
-                    link.SaveToDatabase();
-                }
-
-                Publish(createdItem.First());
             }
+            var associations = _activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ProjectCohortIdentificationConfigurationAssociation>("CohortIdentificationConfiguration_ID", _cic.ID);
+            foreach (var association in associations)
+            {
+                var link = new ProjectCohortIdentificationConfigurationAssociation(_activator.RepositoryLocator.DataExportRepository, (Project)association.Project, createdItem.First());
+                link.SaveToDatabase();
+            }
+
+            Publish(createdItem.First());
+
         }
 
     }
