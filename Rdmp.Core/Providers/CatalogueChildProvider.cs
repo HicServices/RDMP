@@ -423,7 +423,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         AllTemplateCohortIdentificationConfigurationsNode = new AllTemplateCohortIdentificationConfigurationsNode();
         var templateCICTree = FolderHelper.BuildFolderTree(AllTemplateCohortIdentificationConfigurations);
-        AddChildren(templateCICTree, new DescendancyList(AllTemplateCohortIdentificationConfigurationsNode));
+        //AddChildren(templateCICTree, new DescendancyList(AllTemplateCohortIdentificationConfigurationsNode));
 
         TemplateAggregateConfigurations = AllAggregateConfigurations
             .Where(ac => templateAggregateConfigurationIds.Contains(ac.ID)).ToArray();
