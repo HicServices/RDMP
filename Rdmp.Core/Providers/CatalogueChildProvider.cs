@@ -408,6 +408,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         AllTemplateCohortIdentificationConfigurationsNode = new AllTemplateCohortIdentificationConfigurationsNode();
         var templateCICTree = FolderHelper.BuildFolderTree(AllTemplateCohortIdentificationConfigurations);
+        templateCICTree.Name = "templates";
         AddChildren(templateCICTree, new DescendancyList(AllTemplateCohortIdentificationConfigurationsNode));
 
         CohortIdentificationConfigurationRootFolder =
