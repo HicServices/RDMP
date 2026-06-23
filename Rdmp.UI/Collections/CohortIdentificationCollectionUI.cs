@@ -84,6 +84,11 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
                 return ((CohortIdentificationConfiguration)x).GetVersions().Count > 0;
             }
 
+            if (x is FolderNode<CohortIdentificationConfiguration> fnc && (fnc.ChildObjects.Any() || fnc.ChildFolders.Any()))
+            {
+                return true;
+            }
+
             return Activator.CoreChildProvider.GetChildren(x).Length > 0;
         };
 
@@ -94,6 +99,12 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
                 CohortIdentificationConfiguration cic = (CohortIdentificationConfiguration)x;
                 return cic.GetVersions();
             }
+            if(x is FolderNode<CohortIdentificationConfiguration> fnc && (fnc.ChildObjects.Any() || fnc.ChildFolders.Any()) )
+            {
+                return fnc.ChildFolders.Cast<object>()
+                    .Union(fnc.ChildObjects);
+            }
+
             return Activator.CoreChildProvider.GetChildren(x);
         };
 
