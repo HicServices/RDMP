@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using FAnsi.Discovery;
 using Rdmp.Core.CohortCreation;
@@ -200,8 +201,8 @@ public class ExecuteCommandExportCohortBuildHealthBoardBreakdown : BasicCommandE
         {
             Seq = seq++,
             Type = "Container",
-            Name = container.Name,
-            Container = parent?.Name ?? "",
+            Name = CleanName(container.Name),
+            Container = CleanName(parent?.Name),
             SetOperation = container.Operation.ToString(),
             DisplayOrder = container.Order,
             FinalUnfiltered = cFinal,
@@ -225,8 +226,8 @@ public class ExecuteCommandExportCohortBuildHealthBoardBreakdown : BasicCommandE
                     {
                         Seq = seq++,
                         Type = "Cohort Set",
-                        Name = agg.Name,
-                        Container = container.Name,
+                        Name = CleanName(agg.Name),
+                        Container = CleanName(container.Name),
                         SetOperation = "",
                         DisplayOrder = agg.Order,
                         FinalUnfiltered = aFinal,
@@ -310,6 +311,12 @@ public class ExecuteCommandExportCohortBuildHealthBoardBreakdown : BasicCommandE
 
         return result;
     }
+
+    // RDMP prefixes cohort set names with "cic_<ID>_" (EnsureNamingConvention); cloning a cohort across
+    // CICs stacks them (e.g. cic_18286_cic_18284_cic_17950_People in SHARE...). Strip them for display.
+    private static readonly Regex CicPrefix = new(@"^(cic_\d+_)+", RegexOptions.Compiled);
+
+    public static string CleanName(string name) => string.IsNullOrEmpty(name) ? "" : CicPrefix.Replace(name, "");
 
     private static string Sanitise(string name)
     {

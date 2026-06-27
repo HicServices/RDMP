@@ -39,6 +39,7 @@ public class CohortBuildHealthBoardBreakdownTests : FromToDatabaseTests
         Enumerable.Range(from, to - from + 1).Select(i => $"P{i:000}");
 
     [Test]
+    [Retry(3)] // DB integration test: absorb the occasional transient SQL error under local load
     public void BuildBreakdown_Fixture_NationalAndThreeBoards()
     {
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
@@ -115,6 +116,12 @@ public class CohortBuildHealthBoardBreakdownTests : FromToDatabaseTests
             Assert.That(cmd.IsImpossible, Is.False, cmd.ReasonCommandImpossible);
             cmd.Execute();
 
+            // the build can be marked impossible mid-Execute if a task crashed (transient DB issue);
+            // surface that clearly instead of failing later on an empty file
+            Assert.That(cmd.IsImpossible, Is.False, $"build did not complete: {cmd.ReasonCommandImpossible}");
+            Assert.That(file.Exists && new FileInfo(file.FullName).Length > 0, Is.True,
+                "no breakdown was written (the cohort build did not finish)");
+
             var w = ParseWide(File.ReadAllText(file.FullName));
 
             const string T = "Tayside", G = "Greater Glasgow & Clyde", F = "Fife";
@@ -165,51 +172,6 @@ public class CohortBuildHealthBoardBreakdownTests : FromToDatabaseTests
         {
             file.Delete();
         }
-    }
-
-    [Test]
-    public void Report_Split_SeparatesScottishOtherAndNotKnown()
-    {
-        // Total 100; T=50, G=30 (Scottish), X=15 (present but not a Scottish board) -> Other 15;
-        // NotKnown = 100 - 80 - 15 = 5 (not in demography / null region)
-        var b = CohortBuildHealthBoardBreakdownReport.Split(100,
-            new Dictionary<string, int> { ["T"] = 50, ["G"] = 30, ["X"] = 15 });
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(b.Total, Is.EqualTo(100));
-            Assert.That(b.Boards["T"], Is.EqualTo(50));
-            Assert.That(b.Boards["G"], Is.EqualTo(30));
-            Assert.That(b.Boards.ContainsKey("X"), Is.False); // non-Scottish code is NOT a board
-            Assert.That(b.Other, Is.EqualTo(15));             // it lands in Other
-            Assert.That(b.NotKnown, Is.EqualTo(5));           // residual
-            Assert.That(b.Boards.Values.Sum() + b.Other + b.NotKnown, Is.EqualTo(b.Total));
-        });
-    }
-
-    [Test]
-    public void Report_ToCsv_WideHeaderAndMetricRows()
-    {
-        var nodes = new List<CohortBuildHealthBoardBreakdownReport.NodeBreakdown>
-        {
-            new()
-            {
-                Seq = 0, Type = "Container", Name = "Root", Container = "", SetOperation = "EXCEPT",
-                FinalUnfiltered = 80, CumulativeUnfiltered = null,
-                FinalByRegion = new Dictionary<string, int> { ["T"] = 50, ["G"] = 30 }
-            }
-        };
-
-        var csv = CohortBuildHealthBoardBreakdownReport.ToCsv(nodes);
-        var header = csv.Split('\n')[0].Trim();
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(header, Does.StartWith("Order,Type,Name,Container,SetOperation,Metric,Total,"));
-            Assert.That(header, Does.Contain("Tayside"));
-            Assert.That(header, Does.EndWith("Other,NotKnown"));
-            Assert.That(csv, Does.Contain("% of final cohort"));
-        });
     }
 
     private static DataTable OneCol(string col, IEnumerable<string> values)
@@ -278,4 +240,69 @@ public class CohortBuildHealthBoardBreakdownTests : FromToDatabaseTests
     }
 
     private static Wide ParseWide(string csv) => new(csv);
+}
+
+/// <summary>No-database tests for the wide report projection and the name cleaner.</summary>
+public class CohortBuildHealthBoardBreakdownReportTests
+{
+    [Test]
+    public void Split_SeparatesScottishOtherAndNotKnown()
+    {
+        // Total 100; T=50, G=30 (Scottish), X=15 (present but not a Scottish board) -> Other 15;
+        // NotKnown = 100 - 80 - 15 = 5 (not in demography / null region)
+        var b = CohortBuildHealthBoardBreakdownReport.Split(100,
+            new Dictionary<string, int> { ["T"] = 50, ["G"] = 30, ["X"] = 15 });
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(b.Total, Is.EqualTo(100));
+            Assert.That(b.Boards["T"], Is.EqualTo(50));
+            Assert.That(b.Boards["G"], Is.EqualTo(30));
+            Assert.That(b.Boards.ContainsKey("X"), Is.False); // non-Scottish code is NOT a board
+            Assert.That(b.Other, Is.EqualTo(15));             // it lands in Other
+            Assert.That(b.NotKnown, Is.EqualTo(5));           // residual
+            Assert.That(b.Boards.Values.Sum() + b.Other + b.NotKnown, Is.EqualTo(b.Total));
+        });
+    }
+
+    [Test]
+    public void ToCsv_WideHeaderAndMetricRows()
+    {
+        var nodes = new List<CohortBuildHealthBoardBreakdownReport.NodeBreakdown>
+        {
+            new()
+            {
+                Seq = 0, Type = "Container", Name = "Root", Container = "", SetOperation = "EXCEPT",
+                FinalUnfiltered = 80, CumulativeUnfiltered = null,
+                FinalByRegion = new Dictionary<string, int> { ["T"] = 50, ["G"] = 30 }
+            }
+        };
+
+        var csv = CohortBuildHealthBoardBreakdownReport.ToCsv(nodes);
+        var header = csv.Split('\n')[0].Trim();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(header, Does.StartWith("Order,Type,Name,Container,SetOperation,Metric,Total,"));
+            Assert.That(header, Does.Contain("Tayside"));
+            Assert.That(header, Does.EndWith("Other,NotKnown"));
+            Assert.That(csv, Does.Contain("% of final cohort"));
+        });
+    }
+
+    [Test]
+    public void CleanName_StripsStackedCicPrefixes()
+    {
+        Assert.Multiple(() =>
+        {
+            Assert.That(ExecuteCommandExportCohortBuildHealthBoardBreakdown.CleanName(
+                    "cic_18286_cic_18284_cic_17950_cic_16459_People in SHARE Current For Contact [Recruitment]"),
+                Is.EqualTo("People in SHARE Current For Contact [Recruitment]"));
+            Assert.That(ExecuteCommandExportCohortBuildHealthBoardBreakdown.CleanName(
+                    "cic_18286_cic_18284_cic_17950_Excl Grp 1 and 2"),
+                Is.EqualTo("Excl Grp 1 and 2"));
+            Assert.That(ExecuteCommandExportCohortBuildHealthBoardBreakdown.CleanName("Root"), Is.EqualTo("Root"));
+            Assert.That(ExecuteCommandExportCohortBuildHealthBoardBreakdown.CleanName(null), Is.EqualTo(""));
+        });
+    }
 }
