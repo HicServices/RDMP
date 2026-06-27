@@ -212,6 +212,8 @@ public class CohortBuildHealthBoardBreakdownTests : FromToDatabaseTests
             foreach (var line in lines.Skip(1))
             {
                 var c = line.Split(',');
+                if (c[0] == "Order")
+                    continue; // the header is repeated just above the percentage row
                 if (c[_col["Metric"]] == CohortBuildHealthBoardBreakdownReport.PercentMetric)
                     _percent = c;
                 else

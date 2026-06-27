@@ -130,6 +130,7 @@ public static class CohortBuildHealthBoardBreakdownReport
         if (root != null && root.FinalUnfiltered > 0)
         {
             sb.AppendLine();
+            sb.AppendLine(string.Join(",", header.Select(Escape))); // repeat header so % aligns to each board
             var b = Split(root.FinalUnfiltered, root.FinalByRegion);
             double Pct(int v) => v * 100.0 / b.Total;
             var cells = new List<string> { "", "", PercentMetric, "", "", PercentMetric, Fmt(100.0) };
