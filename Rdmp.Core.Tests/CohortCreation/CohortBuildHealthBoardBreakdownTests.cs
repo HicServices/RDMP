@@ -115,59 +115,51 @@ public class CohortBuildHealthBoardBreakdownTests : FromToDatabaseTests
             Assert.That(cmd.IsImpossible, Is.False, cmd.ReasonCommandImpossible);
             cmd.Execute();
 
-            var rows = ParseLong(File.ReadAllText(file.FullName));
-
-            LongRow Row(string board, string token) =>
-                rows.Single(r => r.Board == board && r.Name.Contains(token, StringComparison.Ordinal));
+            var w = ParseWide(File.ReadAllText(file.FullName));
 
             const string T = "Tayside", G = "Greater Glasgow & Clyde", F = "Fife";
 
             Assert.Multiple(() =>
             {
-                // unfiltered tree (must equal the UI / RDMP's own counts)
-                Assert.That(Row("Unfiltered", "Root").Final, Is.EqualTo(58));
-                Assert.That(Row("Unfiltered", "Inclusion").Final, Is.EqualTo(100));
-                Assert.That(Row("Unfiltered", "Registry").Final, Is.EqualTo(120));
-                Assert.That(Row("Unfiltered", "Demography").Final, Is.EqualTo(100));
-                Assert.That(Row("Unfiltered", "Demography").Cum, Is.EqualTo(100));   // INTERSECT cumulative
-                Assert.That(Row("Unfiltered", "Excl1").Cum, Is.EqualTo(80));
-                Assert.That(Row("Unfiltered", "Excl2").Cum, Is.EqualTo(65));
-                Assert.That(Row("Unfiltered", "Excl3").Cum, Is.EqualTo(60));
-                Assert.That(Row("Unfiltered", "Excl4").Cum, Is.EqualTo(58));
+                // Total column == RDMP's own (national, non-breakdown) counts
+                Assert.That(w.Cell("Root", "Final", "Total"), Is.EqualTo(58));
+                Assert.That(w.Cell("Inclusion", "Final", "Total"), Is.EqualTo(100));
+                Assert.That(w.Cell("Registry", "Final", "Total"), Is.EqualTo(120));
+                Assert.That(w.Cell("Demography", "Final", "Total"), Is.EqualTo(100));
+                Assert.That(w.Cell("Demography", "Cumulative", "Total"), Is.EqualTo(100)); // INTERSECT cumulative
+                Assert.That(w.Cell("Excl1", "Cumulative", "Total"), Is.EqualTo(80));
+                Assert.That(w.Cell("Excl2", "Cumulative", "Total"), Is.EqualTo(65));
+                Assert.That(w.Cell("Excl3", "Cumulative", "Total"), Is.EqualTo(60));
+                Assert.That(w.Cell("Excl4", "Cumulative", "Total"), Is.EqualTo(58));
 
-                // Tayside cumulative through the tree
-                Assert.That(Row(T, "Inclusion").Final, Is.EqualTo(50));
-                Assert.That(Row(T, "Excl1").Cum, Is.EqualTo(40));
-                Assert.That(Row(T, "Excl2").Cum, Is.EqualTo(32));
-                Assert.That(Row(T, "Excl3").Cum, Is.EqualTo(30));
-                Assert.That(Row(T, "Excl4").Cum, Is.EqualTo(29));
-                Assert.That(Row(T, "Root").Final, Is.EqualTo(29));
+                // Tayside running total down the EXCEPT chain
+                Assert.That(w.Cell("Inclusion", "Final", T), Is.EqualTo(50));
+                Assert.That(w.Cell("Excl1", "Cumulative", T), Is.EqualTo(40));
+                Assert.That(w.Cell("Excl2", "Cumulative", T), Is.EqualTo(32));
+                Assert.That(w.Cell("Excl3", "Cumulative", T), Is.EqualTo(30));
+                Assert.That(w.Cell("Excl4", "Cumulative", T), Is.EqualTo(29));
+                Assert.That(w.Cell("Root", "Final", T), Is.EqualTo(29));
 
                 // Glasgow + Fife endpoints
-                Assert.That(Row(G, "Root").Final, Is.EqualTo(17));
-                Assert.That(Row(G, "Excl4").Cum, Is.EqualTo(17));
-                Assert.That(Row(F, "Root").Final, Is.EqualTo(12));
-                Assert.That(Row(F, "Excl4").Cum, Is.EqualTo(12));
+                Assert.That(w.Cell("Root", "Final", G), Is.EqualTo(17));
+                Assert.That(w.Cell("Excl4", "Cumulative", G), Is.EqualTo(17));
+                Assert.That(w.Cell("Root", "Final", F), Is.EqualTo(12));
+                Assert.That(w.Cell("Excl4", "Cumulative", F), Is.EqualTo(12));
 
-                // the 20 registry-only people (no demography row) land in Unknown on the Registry set
-                Assert.That(Row("Unknown", "Registry").Final, Is.EqualTo(20));
+                // 20 registry-only people (no demography row) -> NotKnown; Other stays 0 (no non-Scottish codes)
+                Assert.That(w.Cell("Registry", "Final", "NotKnown"), Is.EqualTo(20));
+                Assert.That(w.Cell("Registry", "Final", "Other"), Is.EqualTo(0));
+
+                // % of final cohort row (root final = 58)
+                Assert.That(w.Percent(T), Is.EqualTo("50.0"));
+                Assert.That(w.Percent(G), Is.EqualTo("29.3"));
+                Assert.That(w.Percent(F), Is.EqualTo("20.7"));
             });
 
-            // ---- partition: at EVERY node, the boards (+Unknown) sum to the unfiltered total ----
-            foreach (var node in rows.GroupBy(r => (r.Name, r.Order, r.Container)))
-            {
-                var unfiltered = node.Single(r => r.Board == "Unfiltered");
-                var boardFinal = node.Where(r => r.Board != "Unfiltered").Sum(r => r.Final ?? 0);
-                Assert.That(boardFinal, Is.EqualTo(unfiltered.Final),
-                    $"Final partition mismatch at node '{unfiltered.Name}'");
-
-                if (unfiltered.Cum.HasValue)
-                {
-                    var boardCum = node.Where(r => r.Board != "Unfiltered").Sum(r => r.Cum ?? 0);
-                    Assert.That(boardCum, Is.EqualTo(unfiltered.Cum),
-                        $"Cumulative partition mismatch at node '{unfiltered.Name}'");
-                }
-            }
+            // ---- partition: every data row's columns after Total sum back to Total ----
+            foreach (var (name, metric) in w.Keys)
+                Assert.That(w.SumAfterTotal(name, metric), Is.EqualTo(w.Cell(name, metric, "Total")),
+                    $"partition mismatch at {name}/{metric}");
         }
         finally
         {
@@ -176,36 +168,48 @@ public class CohortBuildHealthBoardBreakdownTests : FromToDatabaseTests
     }
 
     [Test]
-    public void Report_BuildRows_UnfilteredFirst_UnknownDerived_BoardMajor()
+    public void Report_Split_SeparatesScottishOtherAndNotKnown()
     {
-        // one node: unfiltered 100, T=50 G=30 (known), so Unknown = 100 - 80 = 20
+        // Total 100; T=50, G=30 (Scottish), X=15 (present but not a Scottish board) -> Other 15;
+        // NotKnown = 100 - 80 - 15 = 5 (not in demography / null region)
+        var b = CohortBuildHealthBoardBreakdownReport.Split(100,
+            new Dictionary<string, int> { ["T"] = 50, ["G"] = 30, ["X"] = 15 });
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(b.Total, Is.EqualTo(100));
+            Assert.That(b.Boards["T"], Is.EqualTo(50));
+            Assert.That(b.Boards["G"], Is.EqualTo(30));
+            Assert.That(b.Boards.ContainsKey("X"), Is.False); // non-Scottish code is NOT a board
+            Assert.That(b.Other, Is.EqualTo(15));             // it lands in Other
+            Assert.That(b.NotKnown, Is.EqualTo(5));           // residual
+            Assert.That(b.Boards.Values.Sum() + b.Other + b.NotKnown, Is.EqualTo(b.Total));
+        });
+    }
+
+    [Test]
+    public void Report_ToCsv_WideHeaderAndMetricRows()
+    {
         var nodes = new List<CohortBuildHealthBoardBreakdownReport.NodeBreakdown>
         {
             new()
             {
-                Seq = 0, Type = "Cohort Set", Name = "Set1", Container = "Root", SetOperation = "",
-                FinalUnfiltered = 100, CumulativeUnfiltered = null,
+                Seq = 0, Type = "Container", Name = "Root", Container = "", SetOperation = "EXCEPT",
+                FinalUnfiltered = 80, CumulativeUnfiltered = null,
                 FinalByRegion = new Dictionary<string, int> { ["T"] = 50, ["G"] = 30 }
             }
         };
 
-        var rows = CohortBuildHealthBoardBreakdownReport.BuildRows(nodes);
+        var csv = CohortBuildHealthBoardBreakdownReport.ToCsv(nodes);
+        var header = csv.Split('\n')[0].Trim();
 
         Assert.Multiple(() =>
         {
-            Assert.That(rows[0].Board, Is.EqualTo("Unfiltered"));
-            Assert.That(rows[0].FinalCount, Is.EqualTo(100));
-            Assert.That(rows.Single(r => r.Board == "Tayside").FinalCount, Is.EqualTo(50));
-            Assert.That(rows.Single(r => r.Board == "Greater Glasgow & Clyde").FinalCount, Is.EqualTo(30));
-            Assert.That(rows.Last().Board, Is.EqualTo("Unknown"));
-            Assert.That(rows.Last().FinalCount, Is.EqualTo(20)); // 100 - (50+30)
-            // partition holds
-            Assert.That(rows.Where(r => r.Board != "Unfiltered").Sum(r => r.FinalCount ?? 0), Is.EqualTo(100));
+            Assert.That(header, Does.StartWith("Order,Type,Name,Container,SetOperation,Metric,Total,"));
+            Assert.That(header, Does.Contain("Tayside"));
+            Assert.That(header, Does.EndWith("Other,NotKnown"));
+            Assert.That(csv, Does.Contain("% of final cohort"));
         });
-
-        var csv = CohortBuildHealthBoardBreakdownReport.ToCsv(rows);
-        Assert.That(csv.Split('\n')[0].Trim(),
-            Is.EqualTo("Board,Node,Order,Type,Name,Container,SetOperation,FinalCount,CumulativeCount"));
     }
 
     private static DataTable OneCol(string col, IEnumerable<string> values)
@@ -231,19 +235,47 @@ public class CohortBuildHealthBoardBreakdownTests : FromToDatabaseTests
         return agg;
     }
 
-    private sealed record LongRow(string Board, string Node, int Order, string Type, string Name,
-        string Container, string SetOp, int? Final, int? Cum);
-
-    private static List<LongRow> ParseLong(string csv)
+    /// <summary>Parsed wide CSV: data rows keyed by (Name-token, Metric), plus the percent row.</summary>
+    private sealed class Wide
     {
-        var rows = new List<LongRow>();
-        foreach (var line in csv.Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries).Skip(1))
+        private readonly Dictionary<string, int> _col;
+        private readonly List<string[]> _data = new();
+        private string[] _percent;
+
+        public Wide(string csv)
         {
-            var c = line.Split(',');
-            int? N(string s) => string.IsNullOrEmpty(s) ? null : int.Parse(s);
-            rows.Add(new LongRow(c[0], c[1], int.Parse(c[2]), c[3], c[4], c[5], c[6], N(c[7]), N(c[8])));
+            var lines = csv.Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries);
+            var header = lines[0].Split(',');
+            _col = header.Select((h, i) => (h, i)).ToDictionary(x => x.h, x => x.i);
+            foreach (var line in lines.Skip(1))
+            {
+                var c = line.Split(',');
+                if (c[_col["Metric"]] == CohortBuildHealthBoardBreakdownReport.PercentMetric)
+                    _percent = c;
+                else
+                    _data.Add(c);
+            }
         }
 
-        return rows;
+        public IEnumerable<(string name, string metric)> Keys =>
+            _data.Select(c => (c[_col["Name"]], c[_col["Metric"]]));
+
+        private string[] Find(string nameToken, string metric) =>
+            _data.Single(c => c[_col["Name"]].Contains(nameToken, StringComparison.Ordinal)
+                              && c[_col["Metric"]] == metric);
+
+        public int Cell(string nameToken, string metric, string column) =>
+            int.Parse(Find(nameToken, metric)[_col[column]]);
+
+        /// <summary>Sum of every column after Total (boards + Other + NotKnown) for a row.</summary>
+        public int SumAfterTotal(string name, string metric)
+        {
+            var row = _data.Single(c => c[_col["Name"]] == name && c[_col["Metric"]] == metric);
+            return Enumerable.Range(_col["Total"] + 1, row.Length - _col["Total"] - 1).Sum(i => int.Parse(row[i]));
+        }
+
+        public string Percent(string column) => _percent[_col[column]];
     }
+
+    private static Wide ParseWide(string csv) => new(csv);
 }
