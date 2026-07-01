@@ -4,8 +4,7 @@ Reproduces the Cohort Builder's per-set / per-container count tree (the `FinalCo
 running totals shown as UNION/INTERSECT/EXCEPT are applied) **split by Scottish health board**, plus an
 unfiltered national total, and writes it to a wide CSV.
 
-This folder is a self-contained package: the ready-to-install plugin, install/usage notes, the source,
-and the design + technical documentation.
+This folder is a self-contained package: the ready-to-install plugin, install/usage notes, and the source.
 
 ## Contents
 
@@ -14,11 +13,6 @@ and the design + technical documentation.
 | `RdmpCohortBuildHealthBoardBreakdown.rdmp` | the built plugin (drop into RDMP / add via the Plugins node) |
 | `INSTALL.md` | install + usage (GUI right-click and CLI) |
 | `src/` | plugin source (command, report, health-board lookup, UI hook, csproj, nuspec) |
-| `docs/TECHNICAL-BACKGROUND.html` | high-level walkthrough — what runs at each step, real code + SQL |
-| `docs/BUILD-BREAKDOWN-FEASIBILITY.md` | feasibility + the distributivity / cache-only rationale |
-| `docs/BUILD-BREAKDOWN-PLAN.md` | implementation plan (as built) |
-| `docs/BUILD-BREAKDOWN-TEST-FIXTURE.md` | the deterministic synthetic validation fixture |
-| `docs/BUILD-BREAKDOWN-WIDE-REPORT-PLAN.md` | the wide-report layout decisions |
 
 ## How it works (in one paragraph)
 
@@ -40,7 +34,7 @@ above a `% of final cohort` row. Boards + Other + NotKnown reconcile to Total on
 Verified end-to-end against a deterministic synthetic fixture (top EXCEPT over an inclusion INTERSECT
 minus four exclusion sets, the cohort partitioned across 3 boards): every national and per-board
 `FinalCount` / cumulative is asserted cell-by-cell, the unfiltered column equals RDMP's own
-`CohortCompiler` counts, and the boards sum to national at every node. See `docs/BUILD-BREAKDOWN-TEST-FIXTURE.md`.
+`CohortCompiler` counts, and the boards sum to national at every node.
 
 ## Build from source (optional)
 
