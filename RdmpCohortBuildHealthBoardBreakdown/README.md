@@ -18,7 +18,7 @@ This folder is a self-contained package: the ready-to-install plugin, install/us
 
 It builds the national cohort once (which populates RDMP's query cache), then recomposes every count
 point purely from the cached per-set identifier tables and splits each by `SHARE_Demography.Region`
-with one `GROUP BY` per node — all boards at once. No per-board rebuild, and no hits on the source
+with one `GROUP BY` per node, all boards at once. No per-board rebuild, and no hits on the source
 catalogues after the single build (so it is cross-server safe). Requires a query-caching server, and
 the demography catalogue on the same server as the cache.
 
