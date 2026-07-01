@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <AssemblyName>RdmpCohortBuildHealthBoardBreakdown</AssemblyName>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <!-- only this plugin's dll goes in the .rdmp; the host RDMP provides Rdmp.Core etc. -->
+    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Build against the in-tree RDMP so the plugin matches the running version exactly.
+         Private=false => Rdmp.Core.dll is NOT bundled into the plugin output.
+         The host RDMP/worktree core must NOT already contain these classes (CS0433); build
+         against vanilla 9.2.3. -->
+    <ProjectReference Include="../../../Rdmp.Core/Rdmp.Core.csproj">
+      <Private>false</Private>
+    </ProjectReference>
+  </ItemGroup>
+
+</Project>
