@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [9.2.4] - Unreleased
+- Improve SQL Extraction Merge
+- Allow Merge code to be viewed in UI
+- Fix bug with catalogues not becoming project specific when commit from another project
+- Improve displayed reason for being unable to make Catalogue Project Specific
+- Fix issue with template CICs replacing CICs with matching folder structures
+
 ## [9.2.3] - 2026-05-28
 - Fix issue with extractable project data set creation for project specific catalogues
 - Add ability to view proposed Archive Trigger SQL on an Extraction Dataset

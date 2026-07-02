@@ -71,6 +71,10 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
 
         private DiscoveredDatabase db;
         private DataTable _toProcess;
+        private string mergeTableName;
+        private DiscoveredTable tmpTbl;
+        private DataColumn[] pkColumns;
+        private DataColumn[] nonPkColumns;
 
         public MSSqlMergeDestination() : base(false)
         {
@@ -130,8 +134,49 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
         {
         }
 
+
+
+        public static string GetMergeSQL(string destinationTableName,string tempTableName, DataColumn[] pkColumns, DataColumn[] nonPkColumns, bool performDeletes,IQuerySyntaxHelper syntaxHelper)
+        {
+            List<DataColumn> columns = new();
+            columns.AddRange(pkColumns);
+            columns.AddRange(nonPkColumns);
+            var mergeSql = $"""
+                MERGE INTO {destinationTableName} WITH (HOLDLOCK) AS target
+                USING {tempTableName} AS source
+                    ON {string.Join(" AND ", pkColumns.Select(pkc => $"target.{pkc.ColumnName} = source.{pkc.ColumnName}"))}
+                WHEN MATCHED AND(
+                {string.Join(" OR ", nonPkColumns.Select(c => GetORLine(c, syntaxHelper)))}
+                )
+                THEN 
+                    UPDATE SET {string.Join(" , ", nonPkColumns.Select(pkc => $"target.{pkc.ColumnName} = source.{pkc.ColumnName}"))}
+                WHEN NOT MATCHED BY TARGET THEN
+                    INSERT ({string.Join(" , ", columns.Cast<DataColumn>().Select(pkc => pkc.ColumnName))})
+                    VALUES ({string.Join(" , ", columns.Cast<DataColumn>().Select(pkc => $"source.{pkc.ColumnName}"))}){(performDeletes ? "" : ";")}
+                {(performDeletes ? """
+                WHEN NOT MATCHED BY SOURCE THEN
+                    DELETE;
+                """ : "")}
+                """;
+            return mergeSql;
+        }
+
         public override void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
         {
+
+            if (tmpTbl == null) return;
+            var _managedConnection = tmpTbl.Database.Server.GetManagedConnection();
+
+            if (!db.Exists()) return;
+            var tableName = GetTableName(null, null);
+            var destinationTable = db.ExpectTable(tableName);
+            var mergeSql = GetMergeSQL(destinationTable.GetFullyQualifiedName(), tmpTbl.GetFullyQualifiedName(), pkColumns, nonPkColumns, AllowMergeToPerformDeletes, db.Server.GetQuerySyntaxHelper());
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"{mergeSql}"));
+            var cmd = new SqlCommand(mergeSql, (SqlConnection)_managedConnection.Connection);
+            cmd.CommandTimeout = SQLMergeTimeout;
+            var rowCount = cmd.ExecuteNonQuery();
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Merged {rowCount} rows into {destinationTable.GetFullyQualifiedName()}."));
+            if (DeleteMergeTempTable) tmpTbl.Drop();
         }
 
         public override string GetDestinationDescription()
@@ -163,7 +208,12 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
         protected override void Open(DataTable toProcess, IDataLoadEventListener job, GracefulCancellationToken cancellationToken)
         {
             var discoveredServer = DataAccessPortal.ExpectServer(TargetDatabaseServer, DataAccessContext.DataExport, false);
-            var tblName = _toProcess.TableName;
+            //sort out the naming 
+            var dbName = GetDatabaseName();
+
+            //make sure the db exist
+            db = discoveredServer.ExpectDatabase(dbName);
+            var tblName = GetTableName(null, _toProcess);
             var targetDb = discoveredServer.ExpectDatabase(GetDatabaseName());
             if (targetDb.Exists())
             {
@@ -173,7 +223,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
                     var remotePKs = existing.DiscoverColumns().Where(col => col.IsPrimaryKey).Select(col => col.GetRuntimeName()).ToList();
                     var rdmpPKs = toProcess.PrimaryKey.Cast<DataColumn>().Select(col => col.ColumnName).ToList();
                     if (!remotePKs.All(rdmpPKs.Contains) || remotePKs.Count != rdmpPKs.Count)
-                    { 
+                    {
                         throw new Exception($"""
                         Table {existing.GetFullyQualifiedName()} already exists and has different PKs to the source table.                            
                         Source PKs: {string.Join(", ", rdmpPKs)}
@@ -205,11 +255,9 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
             _toProcess = toProcess;
             var discoveredServer = DataAccessPortal.ExpectServer(TargetDatabaseServer, DataAccessContext.DataExport, false);
 
-            //sort out the naming 
             var dbName = GetDatabaseName();
-
-            //make sure the db exist
             db = discoveredServer.ExpectDatabase(dbName);
+
             if (!db.Exists())
                 db.Create();
 
@@ -255,47 +303,31 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
                 }
             }
 
-            var pkColumns = toProcess.PrimaryKey;
-            var nonPkColumns = toProcess.Columns.Cast<DataColumn>().Where(dc => !pkColumns.Contains(dc) && !dc.ColumnName.StartsWith("hic_")).ToArray();
+            pkColumns = toProcess.PrimaryKey;
+            nonPkColumns = toProcess.Columns.Cast<DataColumn>().Where(dc => !pkColumns.Contains(dc) && !dc.ColumnName.StartsWith("hic_")).ToArray();
             //merge
             List<DatabaseColumnRequest> columnTypes = new List<DatabaseColumnRequest>() { };
             foreach (var column in destinationTable.DiscoverColumns())
             {
                 columnTypes.Add(new DatabaseColumnRequest(column.GetRuntimeName(), column.DataType.ToString(), column.AllowNulls));
             }
-
-            var tmpTbl = db.CreateTable(
-                out Dictionary<string, Guesser> _dataTypeDictionary,
-                $"mergeTempTable_{tableName}_{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture).Replace('.', '-')}",
-                toProcess, columnTypes.ToArray(), true, null);
+            if (mergeTableName is null)
+            {
+                mergeTableName = $"mergeTempTable_{tableName}_{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture).Replace('.', '-')}";
+            }
+            tmpTbl = db.ExpectTable(mergeTableName);
+            if (!tmpTbl.Exists())
+            {
+                db.CreateTable(
+                    out Dictionary<string, Guesser> _dataTypeDictionary,
+                    mergeTableName,
+                    toProcess, columnTypes.ToArray(), true, null);
+            }
             var _managedConnection = tmpTbl.Database.Server.GetManagedConnection();
             var _bulkcopy = tmpTbl.BeginBulkInsert(CultureInfo.CurrentCulture, _managedConnection.ManagedTransaction);
             _bulkcopy.Timeout = SQLMergeTimeout;
             _bulkcopy.Upload(toProcess);
             _bulkcopy.Dispose();
-            var mergeSql = $"""
-                MERGE INTO {destinationTable.GetFullyQualifiedName()} WITH (HOLDLOCK) AS target
-                USING {tmpTbl.GetFullyQualifiedName()} AS source
-                    ON {string.Join(" AND ", pkColumns.Select(pkc => $"target.{pkc.ColumnName} = source.{pkc.ColumnName}"))}
-                WHEN MATCHED AND(
-                {string.Join(" OR ", nonPkColumns.Select(c => GetORLine(c, db.Server.GetQuerySyntaxHelper())))}
-                )
-                THEN 
-                    UPDATE SET {string.Join(" , ", nonPkColumns.Select(pkc => $"target.{pkc.ColumnName} = source.{pkc.ColumnName}"))}
-                WHEN NOT MATCHED BY TARGET THEN
-                    INSERT ({string.Join(" , ", toProcess.Columns.Cast<DataColumn>().Select(pkc => pkc.ColumnName))})
-                    VALUES ({string.Join(" , ", toProcess.Columns.Cast<DataColumn>().Select(pkc => $"source.{pkc.ColumnName}"))}){(AllowMergeToPerformDeletes ? "" : ";")}
-                {(AllowMergeToPerformDeletes ? """
-                WHEN NOT MATCHED BY SOURCE THEN
-                    DELETE;
-                """ : "")}
-                """;
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"{mergeSql}"));
-            var cmd = new SqlCommand(mergeSql, (SqlConnection)_managedConnection.Connection);
-            cmd.CommandTimeout = SQLMergeTimeout;
-            var rowCount = cmd.ExecuteNonQuery();
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Merged {rowCount} rows into {destinationTable.GetFullyQualifiedName()}."));
-            if (DeleteMergeTempTable) tmpTbl.Drop();
             _managedConnection.Dispose();
         }
 

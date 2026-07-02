@@ -57,6 +57,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
             dt.PrimaryKey= new DataColumn[] { dt.Columns["chi"] };
             dt.Rows.Add("10", "one");
             destination.Execute(dt);
+            destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet,null);
             var tbl = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(destination.DatabaseNamingPattern).ExpectTable(destination.TableNamingPattern);
             Assert.That(tbl.Exists());
             Assert.That(tbl.GetDataTable().Rows.Count, Is.EqualTo(1));
@@ -85,12 +86,22 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
             dt.PrimaryKey = new DataColumn[] { dt.Columns["chi"] };
             dt.Rows.Add("10", "one");
             destination.Execute(dt);
+            destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
+
             var tbl = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(destination.DatabaseNamingPattern).ExpectTable(destination.TableNamingPattern);
             Assert.That(tbl.Exists());
             Assert.That(tbl.GetDataTable().Rows.Count, Is.EqualTo(1));
             dt.Rows.Remove(dt.Rows[0]);
             dt.Rows.Add("2", "two");
+            destination = new MSSqlMergeDestination_Test();
+            destination.TargetDatabaseServer = _extractionServer;
+            destination.DatabaseNamingPattern = "MSSQLMerge_Creates_Table";
+            destination.TableNamingPattern = "MSSQLMerge_Merge_Data";
+            destination.DeleteMergeTempTable = true;
+            destination.PreInitialize(null, new Project(RepositoryLocator.DataExportRepository, "test project"), ThrowImmediatelyDataLoadEventListener.Quiet);
             destination.Execute(dt);
+            destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
+
             Assert.That(tbl.GetDataTable().Rows.Count, Is.EqualTo(2));
             tbl.Drop();
         }
@@ -118,15 +129,31 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
             dt.PrimaryKey = new DataColumn[] { dt.Columns["chi"] };
             dt.Rows.Add("10", "one");
             destination.Execute(dt);
+            destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet,null);
+
             var tbl = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(destination.DatabaseNamingPattern).ExpectTable(destination.TableNamingPattern);
             Assert.That(tbl.Exists());
             Assert.That(tbl.GetDataTable().Rows.Count, Is.EqualTo(1));
             dt.Rows.Remove(dt.Rows[0]);
             dt.Rows.Add("2", "two");
+            destination = new MSSqlMergeDestination_Test();
+            destination.TargetDatabaseServer = _extractionServer;
+            destination.DatabaseNamingPattern = "MSSQLMerge_Creates_Table";
+            destination.TableNamingPattern = "MSSQLMerge_Merge_Update";
+            destination.DeleteMergeTempTable = true;
+            destination.PreInitialize(null, new Project(RepositoryLocator.DataExportRepository, "test project"), ThrowImmediatelyDataLoadEventListener.Quiet);
             destination.Execute(dt);
+            destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet,null);
             Assert.That(tbl.GetDataTable().Rows.Count, Is.EqualTo(2));
             dt.Rows.Add("10", "thr");
+            destination = new MSSqlMergeDestination_Test();
+            destination.TargetDatabaseServer = _extractionServer;
+            destination.DatabaseNamingPattern = "MSSQLMerge_Creates_Table";
+            destination.TableNamingPattern = "MSSQLMerge_Merge_Update";
+            destination.DeleteMergeTempTable = true;
+            destination.PreInitialize(null, new Project(RepositoryLocator.DataExportRepository, "test project"), ThrowImmediatelyDataLoadEventListener.Quiet);
             destination.Execute(dt);
+            destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
             Assert.That(tbl.GetDataTable().Rows.Count, Is.EqualTo(2));
             Assert.That(tbl.GetDataTable().Rows[1].ItemArray, Is.EqualTo(new List<object>() { 10, "thr" }));
             Assert.That(tbl.GetDataTable().Rows[0].ItemArray, Is.EqualTo(new List<object>() { 2, "two" }));
@@ -157,12 +184,21 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
             dt.PrimaryKey = new DataColumn[] { dt.Columns["chi"] };
             dt.Rows.Add("10", "one");
             destination.Execute(dt);
+            destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet,null);
             var tbl = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(destination.DatabaseNamingPattern).ExpectTable(destination.TableNamingPattern);
             Assert.That(tbl.Exists());
             Assert.That(tbl.GetDataTable().Rows.Count, Is.EqualTo(1));
             dt.Rows.Remove(dt.Rows[0]);
             dt.Rows.Add("2", "two");
+            destination = new MSSqlMergeDestination_Test();
+            destination.TargetDatabaseServer = _extractionServer;
+            destination.DatabaseNamingPattern = "MSSQLMerge_Creates_Table";
+            destination.TableNamingPattern = "MSSQLMerge_Merge_Delete";
+            destination.DeleteMergeTempTable = true;
+            destination.AllowMergeToPerformDeletes = true;
+            destination.PreInitialize(null, new Project(RepositoryLocator.DataExportRepository, "test project"), ThrowImmediatelyDataLoadEventListener.Quiet);
             destination.Execute(dt);
+            destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet,null);
             Assert.That(tbl.GetDataTable().Rows.Count, Is.EqualTo(1));
             Assert.That(tbl.GetDataTable().Rows[0].ItemArray, Is.EqualTo(new List<object>() {2, "two" }));
             tbl.Drop();

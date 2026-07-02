@@ -406,6 +406,11 @@ public class CatalogueChildProvider : ICoreChildProvider
         LoadMetadataRootFolder = FolderHelper.BuildFolderTree(AllLoadMetadatas.Where(lmd => lmd.RootLoadMetadata_ID is null).ToArray());
         AddChildren(LoadMetadataRootFolder, new DescendancyList(LoadMetadataRootFolder));
 
+        AllTemplateCohortIdentificationConfigurationsNode = new AllTemplateCohortIdentificationConfigurationsNode();
+        var templateCICTree = FolderHelper.BuildFolderTree(AllTemplateCohortIdentificationConfigurations);
+        templateCICTree.Name = "templates";
+        AddChildren(templateCICTree, new DescendancyList(AllTemplateCohortIdentificationConfigurationsNode));
+
         CohortIdentificationConfigurationRootFolder =
             FolderHelper.BuildFolderTree(AllCohortIdentificationConfigurations);
         AddChildren(CohortIdentificationConfigurationRootFolder,
@@ -421,9 +426,7 @@ public class CatalogueChildProvider : ICoreChildProvider
                     .Where(p => p.ReferencedObjectType.Equals(nameof(AggregateConfiguration)))
                     .Select(r => r.ReferencedObjectID));
 
-        AllTemplateCohortIdentificationConfigurationsNode = new AllTemplateCohortIdentificationConfigurationsNode();
-        var templateCICTree = FolderHelper.BuildFolderTree(AllTemplateCohortIdentificationConfigurations);
-        AddChildren(templateCICTree, new DescendancyList(AllTemplateCohortIdentificationConfigurationsNode));
+
 
         TemplateAggregateConfigurations = AllAggregateConfigurations
             .Where(ac => templateAggregateConfigurationIds.Contains(ac.ID)).ToArray();
