@@ -238,7 +238,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
                         """);
                     }
                     TriggerImplementerFactory triggerFactory = new TriggerImplementerFactory(FAnsi.DatabaseType.MicrosoftSQLServer);
-                    var implementor = triggerFactory.Create(existing);
+                    var implementor = triggerFactory.Create(existing,false,true);
                     bool triggerPresent;
                     try
                     {
@@ -278,7 +278,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
                             }
 
                             existing = targetDb.ExpectTable(tblName);
-                            implementor = triggerFactory.Create(existing);
+                            implementor = triggerFactory.Create(existing,false,true);
                             try
                             {
                                 triggerPresent = implementor.GetTriggerStatus() == DataLoad.Triggers.TriggerStatus.Enabled;
@@ -358,7 +358,13 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
                 }
                 if (!present)
                 {
-                    implementor.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
+                    try
+                    {
+                        implementor.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
+                    }catch(Exception e)
+                    {
+                        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, $"Failed to create archive trigger on {destinationTable.GetFullyQualifiedName()}: {e.Message}"));
+                    }
                 }
             }
 

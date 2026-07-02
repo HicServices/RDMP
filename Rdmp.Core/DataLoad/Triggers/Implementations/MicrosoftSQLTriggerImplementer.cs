@@ -302,8 +302,9 @@ END
         sqlToRun += Environment.NewLine;
 
         //these are columns that exist in the archive, but not the table. So have to be set as NULL as <value>
-        var nullCoulmns = _archiveTable.DiscoverColumns().Select(c => $"[{c.GetRuntimeName()}]").Except(_table.DiscoverColumns().Select(c => $"[{c.GetRuntimeName()}]"));
-        cDotArchiveCols = string.Join(",", liveCols.Select(s => nullCoulmns.Contains(s) ? $"NULL AS {s}" : $"c.{s}"));
+        var nullColumns = _archiveTable.DiscoverColumns().Select(c => $"[{c.GetRuntimeName()}]").Except(_table.DiscoverColumns().Select(c => $"[{c.GetRuntimeName()}]")).ToList();
+
+        cDotArchiveCols = string.Join(",", liveCols.Select(s => nullColumns.Contains(s) ? $"NULL AS {s}" : $"c.{s}"));
 
         sqlToRun += $"\tINSERT @returntable{Environment.NewLine}";
         sqlToRun +=
