@@ -222,9 +222,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                         Source PKs: {string.Join(", ", rdmpPKs)}
                         Destination PKs: {string.Join(", ", remotePKs)}
                         """));
-                        return null;//todo this error could be better
-                        //todo: need to make the same changes on the merge component
-                        //todo: figure out the tests
+                        return null;
                     }
                     if (hasStructuralChanges(toProcess, existing))
                     {

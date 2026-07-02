@@ -80,6 +80,13 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
         {
         }
 
+        private bool hasStructuralChanges(DataTable source, DiscoveredTable destination)
+        {
+            var sourceColumns = source.Columns.Cast<DataColumn>().Select(c => c.ColumnName).ToList();
+            var destinationColumns = destination.DiscoverColumns().Select(c => c.GetRuntimeName()).ToList();
+            return !sourceColumns.All(destinationColumns.Contains) || !destinationColumns.All(sourceColumns.Contains);
+        }
+
         private string GetTableName(string suffix, DataTable dt)
         {
             string tblName = TableNamingPattern;
@@ -229,6 +236,58 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
                         Source PKs: {string.Join(", ", rdmpPKs)}
                         Destination PKs: {string.Join(", ", remotePKs)}
                         """);
+                    }
+                    TriggerImplementerFactory triggerFactory = new TriggerImplementerFactory(FAnsi.DatabaseType.MicrosoftSQLServer);
+                    var implementor = triggerFactory.Create(existing);
+                    bool triggerPresent;
+                    try
+                    {
+                        triggerPresent = implementor.GetTriggerStatus() == DataLoad.Triggers.TriggerStatus.Enabled;
+                    }
+                    catch (TriggerMissingException)
+                    {
+                        triggerPresent = false;
+                    }
+                    if (hasStructuralChanges(toProcess, existing))
+                    {
+                        var sourceColumns = toProcess.Columns.Cast<DataColumn>().Select(c => c.ColumnName).ToList();
+                        var destinationColumns = existing.DiscoverColumns().Select(c => c.GetRuntimeName()).ToList();
+
+                        if (triggerPresent && destinationColumns.Except(sourceColumns).Where(c => !SpecialFieldNames.IsHicPrefixed(c)).Any())//only mess about with column removal if there is an archive trigger
+                        {
+
+                            //move everything into the archive - do this by updating the HIC_validfrom
+                            var sql = $"UPDATE {existing.GetFullyQualifiedName()} set {SpecialFieldNames.ValidFrom} = GETDATE()";
+                            using var con = targetDb.Server.GetConnection();
+                            con.Open();
+                            using var cmd = targetDb.Server.GetCommand(sql, con);
+                            cmd.CommandTimeout = 30000;
+                            cmd.ExecuteNonQuery();
+
+                            var removedColumns = destinationColumns.Except(sourceColumns).Where(c => !SpecialFieldNames.IsHicPrefixed(c));
+                            foreach (var column in removedColumns.Select(c => existing.DiscoverColumn(c)))
+                            {
+                                existing.DropColumn(column);
+                            }
+                            string triggerProblems = "";
+                            string triggerOK = "";
+                            implementor.DropTrigger(out triggerProblems, out triggerOK);
+                            if (triggerProblems != "")
+                            {
+                                throw new Exception(triggerProblems);
+                            }
+
+                            existing = targetDb.ExpectTable(tblName);
+                            implementor = triggerFactory.Create(existing);
+                            try
+                            {
+                                triggerPresent = implementor.GetTriggerStatus() == DataLoad.Triggers.TriggerStatus.Enabled;
+                            }
+                            catch (TriggerMissingException)
+                            {
+                                triggerPresent = false;
+                            }
+                        }
                     }
                 }
             }
