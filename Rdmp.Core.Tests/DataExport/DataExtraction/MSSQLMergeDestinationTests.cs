@@ -1039,7 +1039,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
             archiveTable = dbToExtractTo.ExpectTable("ext1_bob_Archive");
             Assert.That(archiveTable.Exists());
             archive_dt = archiveTable.GetDataTable();
-            Assert.That(archive_dt.Rows, Has.Count.EqualTo(1));
+            Assert.That(archive_dt.Rows, Has.Count.EqualTo(2));
             Assert.That(archive_dt.Columns, Has.Count.EqualTo(43));
         }
         //remove a column, add the column back
