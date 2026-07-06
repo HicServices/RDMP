@@ -143,7 +143,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
 
 
 
-        public static string GetMergeSQL(string destinationTableName,string tempTableName, DataColumn[] pkColumns, DataColumn[] nonPkColumns, bool performDeletes,IQuerySyntaxHelper syntaxHelper)
+        public static string GetMergeSQL(string destinationTableName, string tempTableName, DataColumn[] pkColumns, DataColumn[] nonPkColumns, bool performDeletes, IQuerySyntaxHelper syntaxHelper)
         {
             List<DataColumn> columns = new();
             columns.AddRange(pkColumns);
@@ -238,7 +238,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
                         """);
                     }
                     TriggerImplementerFactory triggerFactory = new TriggerImplementerFactory(FAnsi.DatabaseType.MicrosoftSQLServer);
-                    var implementor = triggerFactory.Create(existing,false,true);
+                    var implementor = triggerFactory.Create(existing);
                     bool triggerPresent;
                     try
                     {
@@ -278,7 +278,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
                             }
 
                             existing = targetDb.ExpectTable(tblName);
-                            implementor = triggerFactory.Create(existing,false,true);
+                            implementor = triggerFactory.Create(existing);
                             try
                             {
                                 triggerPresent = implementor.GetTriggerStatus() == DataLoad.Triggers.TriggerStatus.Enabled;
@@ -288,6 +288,42 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
                                 triggerPresent = false;
                             }
                         }
+                        if (triggerPresent && sourceColumns.Except(destinationColumns).Where(c => !SpecialFieldNames.IsHicPrefixed(c)).Any())
+                        {
+                            var addedColumns = sourceColumns.Except(destinationColumns).Where(c => !SpecialFieldNames.IsHicPrefixed(c));
+                            var archiveTable = existing.Database.ExpectTable(tblName + "_Archive");
+                            foreach (var column in addedColumns)
+                            {
+                                var colType = toProcess.Columns[column].DataType;
+                                existing.AddColumn(column, new TypeGuesser.DatabaseTypeRequest(colType), true, 30000);
+                                if (archiveTable.Exists() && archiveTable.DiscoverColumns().All(col => col.GetRuntimeName() != column))
+                                {
+                                    archiveTable.AddColumn(column, new TypeGuesser.DatabaseTypeRequest(toProcess.Columns[column].DataType), true, 30000);
+                                }
+                            }
+                            string triggerProblems = "";
+                            string triggerOK = "";
+                            implementor.DropTrigger(out triggerProblems, out triggerOK);
+                            if (triggerProblems != "")
+                            {
+                                throw new Exception(triggerProblems);
+                            }
+
+                            existing = targetDb.ExpectTable(tblName);
+                            implementor = triggerFactory.Create(existing);
+                            try
+                            {
+                                triggerPresent = implementor.GetTriggerStatus() == DataLoad.Triggers.TriggerStatus.Enabled;
+                            }
+                            catch (TriggerMissingException)
+                            {
+                                triggerPresent = false;
+                            }
+                        }
+                    }
+                    if (!triggerPresent && UseArchiveTrigger)
+                    {
+                        implementor.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
                     }
                 }
             }
@@ -346,7 +382,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
             if (UseArchiveTrigger)
             {
                 TriggerImplementerFactory triggerFactory = new TriggerImplementerFactory(FAnsi.DatabaseType.MicrosoftSQLServer);
-                var implementor = triggerFactory.Create(destinationTable, false, true);
+                var implementor = triggerFactory.Create(destinationTable);
                 bool present;
                 try
                 {
@@ -361,7 +397,8 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
                     try
                     {
                         implementor.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
-                    }catch(Exception e)
+                    }
+                    catch (Exception e)
                     {
                         job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, $"Failed to create archive trigger on {destinationTable.GetFullyQualifiedName()}: {e.Message}"));
                     }

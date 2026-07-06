@@ -26,6 +26,7 @@ using SynthEHR;
 using SynthEHR.Datasets;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.IO;
 using System.Linq;
@@ -383,6 +384,8 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
             var argumentDbNamePattern = destinationArguments.Single(a => a.Name == "DatabaseNamingPattern");
             var argumentTblNamePattern = destinationArguments.Single(a => a.Name == "TableNamingPattern");
             var argumentUseArchiveTrigger = destinationArguments.Single(a => a.Name == "UseArchiveTrigger");
+            var DeleteMergeTempTable = destinationArguments.Single(a => a.Name == "DeleteMergeTempTable");
+            
             //var reExtract = destinationArguments.Single(a => a.Name == "AppendDataIfTableExists");
             Assert.That(argumentServer.Name, Is.EqualTo("TargetDatabaseServer"));
             var _extractionServer = new ExternalDatabaseServer(CatalogueRepository, "myserver", null)
@@ -401,6 +404,8 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
             argumentTblNamePattern.SaveToDatabase();
             argumentUseArchiveTrigger.SetValue(true);
             argumentUseArchiveTrigger.SaveToDatabase();
+            DeleteMergeTempTable.SetValue(false);
+            DeleteMergeTempTable.SaveToDatabase();
             //reExtract.SetValue(true);
             //reExtract.SaveToDatabase();
 
@@ -455,7 +460,11 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
             Assert.That(archive_dt.Rows, Has.Count.EqualTo(0));
             Assert.That(archive_dt.Columns, Has.Count.EqualTo(42));
             ec.RemoveDatasetFromConfiguration(eds);
+            var nec = new ExtractableColumn(DataExportRepository,eds,ec,col.CatalogueExtractionInformation,0,col.SelectSQL);
+            nec.SaveToDatabase();
             ec.AddDatasetToConfiguration(eds);
+            cols = ec.GetAllExtractableColumnsFor(eds);
+            ec.SaveToDatabase();
             runner = new ExtractionRunner(new ThrowImmediatelyActivator(RepositoryLocator), new ExtractionOptions
             {
                 Command = CommandLineActivity.run,
