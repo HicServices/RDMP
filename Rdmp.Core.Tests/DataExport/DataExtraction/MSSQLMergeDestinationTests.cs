@@ -386,7 +386,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
             var argumentUseArchiveTrigger = destinationArguments.Single(a => a.Name == "UseArchiveTrigger");
             var DeleteMergeTempTable = destinationArguments.Single(a => a.Name == "DeleteMergeTempTable");
             
-            //var reExtract = destinationArguments.Single(a => a.Name == "AppendDataIfTableExists");
+            ////var reExtract = destinationArguments.Single(a => a.Name == "AppendDataIfTableExists");
             Assert.That(argumentServer.Name, Is.EqualTo("TargetDatabaseServer"));
             var _extractionServer = new ExternalDatabaseServer(CatalogueRepository, "myserver", null)
             {
@@ -636,7 +636,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
             var argumentDbNamePattern = destinationArguments.Single(a => a.Name == "DatabaseNamingPattern");
             var argumentTblNamePattern = destinationArguments.Single(a => a.Name == "TableNamingPattern");
             var argumentUseArchiveTrigger = destinationArguments.Single(a => a.Name == "UseArchiveTrigger");
-            var reExtract = destinationArguments.Single(a => a.Name == "AppendDataIfTableExists");
+            //var reExtract = destinationArguments.Single(a => a.Name == "AppendDataIfTableExists");
             Assert.That(argumentServer.Name, Is.EqualTo("TargetDatabaseServer"));
             var _extractionServer = new ExternalDatabaseServer(CatalogueRepository, "myserver", null)
             {
@@ -654,8 +654,8 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
             argumentTblNamePattern.SaveToDatabase();
             argumentUseArchiveTrigger.SetValue(true);
             argumentUseArchiveTrigger.SaveToDatabase();
-            reExtract.SetValue(true);
-            reExtract.SaveToDatabase();
+            //reExtract.SetValue(true);
+            //reExtract.SaveToDatabase();
 
             var component2 = new PipelineComponent(CatalogueRepository, extractionPipeline,
                 typeof(ExecuteCrossServerDatasetExtractionSource), -1, "Source");
@@ -889,7 +889,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
             var argumentDbNamePattern = destinationArguments.Single(a => a.Name == "DatabaseNamingPattern");
             var argumentTblNamePattern = destinationArguments.Single(a => a.Name == "TableNamingPattern");
             var argumentUseArchiveTrigger = destinationArguments.Single(a => a.Name == "UseArchiveTrigger");
-            var reExtract = destinationArguments.Single(a => a.Name == "AppendDataIfTableExists");
+            //var reExtract = destinationArguments.Single(a => a.Name == "AppendDataIfTableExists");
             Assert.That(argumentServer.Name, Is.EqualTo("TargetDatabaseServer"));
             var _extractionServer = new ExternalDatabaseServer(CatalogueRepository, "myserver", null)
             {
@@ -907,8 +907,8 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
             argumentTblNamePattern.SaveToDatabase();
             argumentUseArchiveTrigger.SetValue(true);
             argumentUseArchiveTrigger.SaveToDatabase();
-            reExtract.SetValue(true);
-            reExtract.SaveToDatabase();
+            //reExtract.SetValue(true);
+            //reExtract.SaveToDatabase();
 
             var component2 = new PipelineComponent(CatalogueRepository, extractionPipeline,
                 typeof(ExecuteCrossServerDatasetExtractionSource), -1, "Source");
@@ -931,7 +931,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
 
 
             var cols_1 = ec.GetAllExtractableColumnsFor(eds);
-            var col_1 = cols_1.First(c => c.SelectSQL.Contains("current_address_L4"));
+            var col_1 = cols_1.First(c => c.SelectSQL.Contains("current_address_L3"));
             var order = col_1.Order;
             var selectSQL = col_1.SelectSQL;
             var cei = col_1.CatalogueExtractionInformation;
@@ -975,7 +975,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
 
             var cols = ec.GetAllExtractableColumnsFor(eds);
             cols.First(c => c.SelectSQL.Contains("current_record")).DeleteInDatabase();
-            cols.First(c => c.SelectSQL.Contains("current_address_L4")).DeleteInDatabase();
+            cols.First(c => c.SelectSQL.Contains("current_address_L3")).DeleteInDatabase();
             //col.DeleteInDatabase();
 
             runner = new ExtractionRunner(new ThrowImmediatelyActivator(RepositoryLocator), new ExtractionOptions
@@ -1012,7 +1012,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
 
             cols = ec.GetAllExtractableColumnsFor(eds);
             cols.First(c => c.SelectSQL.Contains("current_record")).DeleteInDatabase();
-            //cols.First(c => c.SelectSQL.Contains("current_address_L4")).DeleteInDatabase();
+            //cols.First(c => c.SelectSQL.Contains("current_address_L3")).DeleteInDatabase();
             //col.DeleteInDatabase();
             runner = new ExtractionRunner(new ThrowImmediatelyActivator(RepositoryLocator), new ExtractionOptions
             {
@@ -1185,7 +1185,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
             var argumentDbNamePattern = destinationArguments.Single(a => a.Name == "DatabaseNamingPattern");
             var argumentTblNamePattern = destinationArguments.Single(a => a.Name == "TableNamingPattern");
             var argumentUseArchiveTrigger = destinationArguments.Single(a => a.Name == "UseArchiveTrigger");
-            var reExtract = destinationArguments.Single(a => a.Name == "AppendDataIfTableExists");
+            //var reExtract = destinationArguments.Single(a => a.Name == "AppendDataIfTableExists");
             Assert.That(argumentServer.Name, Is.EqualTo("TargetDatabaseServer"));
             var _extractionServer = new ExternalDatabaseServer(CatalogueRepository, "myserver", null)
             {
@@ -1203,8 +1203,8 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
             argumentTblNamePattern.SaveToDatabase();
             argumentUseArchiveTrigger.SetValue(true);
             argumentUseArchiveTrigger.SaveToDatabase();
-            reExtract.SetValue(true);
-            reExtract.SaveToDatabase();
+            //reExtract.SetValue(true);
+            //reExtract.SaveToDatabase();
 
             var component2 = new PipelineComponent(CatalogueRepository, extractionPipeline,
                 typeof(ExecuteCrossServerDatasetExtractionSource), -1, "Source");
@@ -1227,7 +1227,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
 
 
             var cols_1 = ec.GetAllExtractableColumnsFor(eds);
-            var col_1 = cols_1.First(c => c.SelectSQL.Contains("current_address_L4"));
+            var col_1 = cols_1.First(c => c.SelectSQL.Contains("current_address_L3"));
             var order = col_1.Order;
             var selectSQL = col_1.SelectSQL;
             var cei = col_1.CatalogueExtractionInformation;
@@ -1271,7 +1271,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
 
             var cols = ec.GetAllExtractableColumnsFor(eds);
             cols.First(c => c.SelectSQL.Contains("current_record")).DeleteInDatabase();
-            //cols.First(c => c.SelectSQL.Contains("current_address_L4")).DeleteInDatabase();
+            //cols.First(c => c.SelectSQL.Contains("current_address_L3")).DeleteInDatabase();
             //col.DeleteInDatabase();
 
             runner = new ExtractionRunner(new ThrowImmediatelyActivator(RepositoryLocator), new ExtractionOptions
@@ -1308,7 +1308,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
 
             cols = ec.GetAllExtractableColumnsFor(eds);
             //cols.First(c => c.SelectSQL.Contains("current_record")).DeleteInDatabase();
-            //cols.First(c => c.SelectSQL.Contains("current_address_L4")).DeleteInDatabase();
+            //cols.First(c => c.SelectSQL.Contains("current_address_L3")).DeleteInDatabase();
             //col.DeleteInDatabase();
             runner = new ExtractionRunner(new ThrowImmediatelyActivator(RepositoryLocator), new ExtractionOptions
             {
@@ -1488,7 +1488,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
             var argumentDbNamePattern = destinationArguments.Single(a => a.Name == "DatabaseNamingPattern");
             var argumentTblNamePattern = destinationArguments.Single(a => a.Name == "TableNamingPattern");
             var argumentUseArchiveTrigger = destinationArguments.Single(a => a.Name == "UseArchiveTrigger");
-            var reExtract = destinationArguments.Single(a => a.Name == "AppendDataIfTableExists");
+            //var reExtract = destinationArguments.Single(a => a.Name == "AppendDataIfTableExists");
             Assert.That(argumentServer.Name, Is.EqualTo("TargetDatabaseServer"));
             var _extractionServer = new ExternalDatabaseServer(CatalogueRepository, "myserver", null)
             {
@@ -1506,8 +1506,8 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
             argumentTblNamePattern.SaveToDatabase();
             argumentUseArchiveTrigger.SetValue(true);
             argumentUseArchiveTrigger.SaveToDatabase();
-            reExtract.SetValue(true);
-            reExtract.SaveToDatabase();
+            //reExtract.SetValue(true);
+            //reExtract.SaveToDatabase();
 
             var component2 = new PipelineComponent(CatalogueRepository, extractionPipeline,
                 typeof(ExecuteCrossServerDatasetExtractionSource), -1, "Source");
@@ -1593,10 +1593,11 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
             ec.RemoveDatasetFromConfiguration(eds);
             ec.AddDatasetToConfiguration(eds);
 
-            //current_address_L4
+            //current_address_L3
             cols = ec.GetAllExtractableColumnsFor(eds);
-            cols.First(c => c.SelectSQL.Contains("current_address_L4")).DeleteInDatabase();
-
+            cols.First(c => c.SelectSQL.Contains("current_address_L3")).DeleteInDatabase();
+            cols = ec.GetAllExtractableColumnsFor(eds);
+            ec.SaveToDatabase();
             runner = new ExtractionRunner(new ThrowImmediatelyActivator(RepositoryLocator), new ExtractionOptions
             {
                 Command = CommandLineActivity.run,
@@ -1775,7 +1776,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
             var argumentDbNamePattern = destinationArguments.Single(a => a.Name == "DatabaseNamingPattern");
             var argumentTblNamePattern = destinationArguments.Single(a => a.Name == "TableNamingPattern");
             var argumentUseArchiveTrigger = destinationArguments.Single(a => a.Name == "UseArchiveTrigger");
-            var reExtract = destinationArguments.Single(a => a.Name == "AppendDataIfTableExists");
+            //var reExtract = destinationArguments.Single(a => a.Name == "AppendDataIfTableExists");
             Assert.That(argumentServer.Name, Is.EqualTo("TargetDatabaseServer"));
             var _extractionServer = new ExternalDatabaseServer(CatalogueRepository, "myserver", null)
             {
@@ -1793,8 +1794,8 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
             argumentTblNamePattern.SaveToDatabase();
             argumentUseArchiveTrigger.SetValue(true);
             argumentUseArchiveTrigger.SaveToDatabase();
-            reExtract.SetValue(true);
-            reExtract.SaveToDatabase();
+            //reExtract.SetValue(true);
+            //reExtract.SaveToDatabase();
 
             var component2 = new PipelineComponent(CatalogueRepository, extractionPipeline,
                 typeof(ExecuteCrossServerDatasetExtractionSource), -1, "Source");
@@ -1880,7 +1881,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
             ec.RemoveDatasetFromConfiguration(eds);
             ec.AddDatasetToConfiguration(eds);
 
-            //current_address_L4
+            //current_address_L3
             cols = ec.GetAllExtractableColumnsFor(eds);
             cols.First(c => c.SelectSQL.Contains("current_record")).DeleteInDatabase();
 
@@ -2063,7 +2064,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
             var argumentDbNamePattern = destinationArguments.Single(a => a.Name == "DatabaseNamingPattern");
             var argumentTblNamePattern = destinationArguments.Single(a => a.Name == "TableNamingPattern");
             var argumentUseArchiveTrigger = destinationArguments.Single(a => a.Name == "UseArchiveTrigger");
-            var reExtract = destinationArguments.Single(a => a.Name == "AppendDataIfTableExists");
+            //var reExtract = destinationArguments.Single(a => a.Name == "AppendDataIfTableExists");
             Assert.That(argumentServer.Name, Is.EqualTo("TargetDatabaseServer"));
             var _extractionServer = new ExternalDatabaseServer(CatalogueRepository, "myserver", null)
             {
@@ -2081,8 +2082,8 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
             argumentTblNamePattern.SaveToDatabase();
             argumentUseArchiveTrigger.SetValue(true);
             argumentUseArchiveTrigger.SaveToDatabase();
-            reExtract.SetValue(true);
-            reExtract.SaveToDatabase();
+            //reExtract.SetValue(true);
+            //reExtract.SaveToDatabase();
 
             var component2 = new PipelineComponent(CatalogueRepository, extractionPipeline,
                 typeof(ExecuteCrossServerDatasetExtractionSource), -1, "Source");
@@ -2136,7 +2137,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
             Assert.That(archive_dt.Columns, Has.Count.EqualTo(42));
             ec.RemoveDatasetFromConfiguration(eds);
             ec.AddDatasetToConfiguration(eds);
-            cols.First(c => c.SelectSQL.Contains("current_address_L4")).DeleteInDatabase();
+            cols.First(c => c.SelectSQL.Contains("current_address_L3")).DeleteInDatabase();
 
             runner = new ExtractionRunner(new ThrowImmediatelyActivator(RepositoryLocator), new ExtractionOptions
             {
