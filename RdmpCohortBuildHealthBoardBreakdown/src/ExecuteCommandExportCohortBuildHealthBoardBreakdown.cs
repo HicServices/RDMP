@@ -176,7 +176,10 @@ public class ExecuteCommandExportCohortBuildHealthBoardBreakdown : BasicCommandE
         var seq = 0;
         Walk(_cic.RootCohortAggregateContainer, null, 0, nodes, ref seq);
 
-        CohortBuildHealthBoardBreakdownReport.WriteCsv(_toFile.FullName, nodes);
+        // reference: each board's share of the WHOLE demography population (a sanity check row)
+        var demographyReference = ComputeDemographyReference();
+
+        CohortBuildHealthBoardBreakdownReport.WriteCsv(_toFile.FullName, nodes, demographyReference);
 
         // reconciliation note
         var drift = nodes.Count(n =>
@@ -310,6 +313,38 @@ public class ExecuteCommandExportCohortBuildHealthBoardBreakdown : BasicCommandE
         }
 
         return result;
+    }
+
+    /// <summary>
+    /// The whole demography population split by region (the reference/background distribution). Total
+    /// includes NULL-region rows so <see cref="CohortBuildHealthBoardBreakdownReport.Buckets.NotKnown"/>
+    /// captures them.
+    /// </summary>
+    private CohortBuildHealthBoardBreakdownReport.Buckets ComputeDemographyReference()
+    {
+        var sql =
+            $"SELECT d.[{_regionName}] AS Region, COUNT(DISTINCT d.[{_demogId}]) AS n\n" +
+            $"FROM {_demogTable} d\n" +
+            $"GROUP BY d.[{_regionName}]";
+
+        var byRegion = new Dictionary<string, int>(System.StringComparer.OrdinalIgnoreCase);
+        var total = 0;
+        using (var con = _cacheDb.Server.GetConnection())
+        {
+            con.Open();
+            using var cmd = _cacheDb.Server.GetCommand(sql, con);
+            cmd.CommandTimeout = _timeout;
+            using var r = cmd.ExecuteReader();
+            while (r.Read())
+            {
+                var n = System.Convert.ToInt32(r["n"]);
+                total += n; // includes the NULL-region group in the denominator
+                if (r["Region"] != System.DBNull.Value)
+                    byRegion[r["Region"].ToString()] = n;
+            }
+        }
+
+        return CohortBuildHealthBoardBreakdownReport.Split(total, byRegion);
     }
 
     // RDMP prefixes cohort set names with "cic_<ID>_" (EnsureNamingConvention); cloning a cohort across

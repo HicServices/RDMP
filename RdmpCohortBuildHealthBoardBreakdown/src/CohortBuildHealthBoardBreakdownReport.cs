@@ -27,6 +27,9 @@ public static class CohortBuildHealthBoardBreakdownReport
     public const string NotKnownColumn = "NotKnown";
     public const string PercentMetric = "% of final cohort";
 
+    /// <summary>Label for the reference row: each board's share of the whole demography population.</summary>
+    public const string DemographyPercentMetric = "% of demography";
+
     /// <summary>One count point of the build tree with its per-region counts (known boards only).</summary>
     public sealed class NodeBreakdown
     {
@@ -92,9 +95,10 @@ public static class CohortBuildHealthBoardBreakdownReport
     }
 
     /// <summary>The ordered mapped boards that appear anywhere (column order: node then name).</summary>
-    private static List<HealthBoard> BoardColumns(IEnumerable<NodeBreakdown> nodes) =>
+    private static List<HealthBoard> BoardColumns(IEnumerable<NodeBreakdown> nodes, Buckets demographyReference) =>
         nodes
             .SelectMany(n => n.FinalByRegion.Keys.Concat(n.CumulativeByRegion?.Keys ?? Enumerable.Empty<string>()))
+            .Concat(demographyReference?.Boards.Keys ?? Enumerable.Empty<string>())
             .Select(HealthBoardLookup.Resolve)
             .Where(b => b.Node != HealthBoardLookup.UnknownNode)
             .GroupBy(b => b.Region, System.StringComparer.OrdinalIgnoreCase)
@@ -103,11 +107,15 @@ public static class CohortBuildHealthBoardBreakdownReport
             .ThenBy(b => b.Name, System.StringComparer.OrdinalIgnoreCase)
             .ToList();
 
-    /// <summary>Builds the wide CSV (data rows per node+metric, then a % of final cohort row).</summary>
-    public static string ToCsv(IReadOnlyList<NodeBreakdown> nodes)
+    /// <summary>
+    /// Builds the wide CSV (data rows per node+metric, then a <c>% of final cohort</c> row and, when
+    /// <paramref name="demographyReference"/> is supplied, a <c>% of demography</c> row underneath it
+    /// giving each board's share of the whole demography population, as a sanity check).
+    /// </summary>
+    public static string ToCsv(IReadOnlyList<NodeBreakdown> nodes, Buckets demographyReference = null)
     {
         var ordered = nodes.OrderBy(n => n.Seq).ToList();
-        var boards = BoardColumns(ordered);
+        var boards = BoardColumns(ordered, demographyReference);
 
         var header = new List<string> { "Order", "Type", "Name", "Container", "SetOperation", "Metric", "Total" };
         header.AddRange(boards.Select(b => b.Name));
@@ -125,22 +133,28 @@ public static class CohortBuildHealthBoardBreakdownReport
                     Split(n.CumulativeUnfiltered.Value, n.CumulativeByRegion));
         }
 
-        // bottom: % of final cohort (root node's Final), after a blank separator
+        // bottom: % of final cohort (root node's Final), then % of demography, after a blank separator
         var root = ordered.FirstOrDefault(n => string.IsNullOrEmpty(n.Container)) ?? ordered.FirstOrDefault();
         if (root != null && root.FinalUnfiltered > 0)
         {
             sb.AppendLine();
             sb.AppendLine(string.Join(",", header.Select(Escape))); // repeat header so % aligns to each board
-            var b = Split(root.FinalUnfiltered, root.FinalByRegion);
-            double Pct(int v) => v * 100.0 / b.Total;
-            var cells = new List<string> { "", "", PercentMetric, "", "", PercentMetric, Fmt(100.0) };
-            cells.AddRange(boards.Select(bd => Fmt(Pct(b.Boards.TryGetValue(bd.Region, out var v) ? v : 0))));
-            cells.Add(Fmt(Pct(b.Other)));
-            cells.Add(Fmt(Pct(b.NotKnown)));
-            sb.AppendLine(string.Join(",", cells.Select(Escape)));
+            AppendPercentRow(sb, PercentMetric, boards, Split(root.FinalUnfiltered, root.FinalByRegion));
+            if (demographyReference != null)
+                AppendPercentRow(sb, DemographyPercentMetric, boards, demographyReference);
         }
 
         return sb.ToString();
+    }
+
+    private static void AppendPercentRow(StringBuilder sb, string label, List<HealthBoard> boards, Buckets b)
+    {
+        double Pct(int v) => b.Total == 0 ? 0 : v * 100.0 / b.Total;
+        var cells = new List<string> { "", "", label, "", "", label, Fmt(b.Total == 0 ? 0 : 100.0) };
+        cells.AddRange(boards.Select(bd => Fmt(Pct(b.Boards.TryGetValue(bd.Region, out var v) ? v : 0))));
+        cells.Add(Fmt(Pct(b.Other)));
+        cells.Add(Fmt(Pct(b.NotKnown)));
+        sb.AppendLine(string.Join(",", cells.Select(Escape)));
     }
 
     private static void AppendCountRow(StringBuilder sb, NodeBreakdown n, List<HealthBoard> boards,
@@ -159,8 +173,8 @@ public static class CohortBuildHealthBoardBreakdownReport
         sb.AppendLine(string.Join(",", cells.Select(Escape)));
     }
 
-    public static void WriteCsv(string path, IReadOnlyList<NodeBreakdown> nodes) =>
-        File.WriteAllText(path, ToCsv(nodes));
+    public static void WriteCsv(string path, IReadOnlyList<NodeBreakdown> nodes, Buckets demographyReference = null) =>
+        File.WriteAllText(path, ToCsv(nodes, demographyReference));
 
     private static string Fmt(double d) => d.ToString("0.0", CultureInfo.InvariantCulture);
 

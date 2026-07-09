@@ -27,7 +27,9 @@ the demography catalogue on the same server as the cache.
 Wide CSV: one row per count point (name once), a `Metric` column (Final + Cumulative), a `Total`
 column (RDMP's national number), one column per Scottish board, then `Other` (present non-Scottish /
 unmapped region codes) and `NotKnown` (not in demography / null region). The column header is repeated
-above a `% of final cohort` row. Boards + Other + NotKnown reconcile to Total on every row.
+above a `% of final cohort` row and a `% of demography` row (each board's share of the whole demography
+population, for a cohort-vs-population sanity check). Boards + Other + NotKnown reconcile to Total on
+every row.
 
 ## Validation
 
