@@ -14,12 +14,13 @@ namespace Rdmp.Core.CohortCreation;
 
 /// <summary>
 /// Projects a cohort build's count tree (the per-set / per-container <c>FinalCount</c> and cumulative
-/// running totals shown in the Cohort Builder) split by health board into a WIDE CSV: one row per
-/// (count-point × metric), the container/set name written once, a <c>Total</c> column (RDMP's own
-/// national count), one column per Scottish health board, an <c>Other</c> column (present non-Scottish /
-/// unmapped region codes) and a <c>NotKnown</c> residual (patients not in demography / NULL region).
-/// A bottom <c>% of final cohort</c> row gives each board's share of the final national cohort.
-/// Boards + Other + NotKnown reconcile to Total on every row.
+/// running totals shown in the Cohort Builder) split by region into a WIDE CSV: one row per
+/// (count-point x metric), the container/set name written once, a <c>Total</c> column (RDMP's own
+/// national count), one column per region recognised by the supplied <see cref="RegionLookup"/>, an
+/// <c>Other</c> column (present codes the lookup does not recognise) and a <c>NotKnown</c> residual
+/// (patients not in demography / NULL region). Two bottom rows give each region's share of the final
+/// cohort and of the whole demography population (a sanity check). Regions + Other + NotKnown reconcile
+/// to Total on every row.
 /// </summary>
 public static class CohortBuildHealthBoardBreakdownReport
 {
@@ -27,98 +28,58 @@ public static class CohortBuildHealthBoardBreakdownReport
     public const string NotKnownColumn = "NotKnown";
     public const string PercentMetric = "% of final cohort";
 
-    /// <summary>Label for the reference row: each board's share of the whole demography population.</summary>
+    /// <summary>Label for the reference row: each region's share of the whole demography population.</summary>
     public const string DemographyPercentMetric = "% of demography";
 
-    /// <summary>One count point of the build tree with its per-region counts (known boards only).</summary>
-    public sealed class NodeBreakdown
-    {
-        public int Seq { get; init; }
-        public string Type { get; init; } = "";
-        public string Name { get; init; } = "";
-
-        /// <summary>Parent container name (empty for the root).</summary>
-        public string Container { get; init; } = "";
-
-        public string SetOperation { get; init; } = "";
-        public int DisplayOrder { get; init; }
-
-        /// <summary>RDMP's own count for this node (the unfiltered/national total).</summary>
-        public int FinalUnfiltered { get; init; }
-
-        /// <summary>RDMP's own cumulative within the parent container; null if not applicable.</summary>
-        public int? CumulativeUnfiltered { get; init; }
-
-        /// <summary>Region cipher → final count (every present code; GROUP BY Region result).</summary>
-        public IReadOnlyDictionary<string, int> FinalByRegion { get; init; } = new Dictionary<string, int>();
-
-        /// <summary>Region cipher → cumulative count; null when this node has no cumulative.</summary>
-        public IReadOnlyDictionary<string, int> CumulativeByRegion { get; init; }
-    }
-
-    /// <summary>The Total / per-board / Other / NotKnown counts for one node+metric.</summary>
-    public sealed class Buckets
-    {
-        public int Total { get; init; }
-
-        /// <summary>Region cipher → count (mapped Scottish boards only).</summary>
-        public IReadOnlyDictionary<string, int> Boards { get; init; } = new Dictionary<string, int>();
-
-        /// <summary>Sum of present region codes that are NOT one of the 15 Scottish boards.</summary>
-        public int Other { get; init; }
-
-        /// <summary>Total − boards − Other = not-in-demography + NULL region.</summary>
-        public int NotKnown { get; init; }
-    }
+    /// <summary>A resolved output column (a region recognised by the lookup).</summary>
+    private sealed record RegionColumn(string Code, string Name, string Node);
 
     /// <summary>
-    /// Splits one node's region counts into Total / mapped-boards / Other / NotKnown. <paramref name="byRegion"/>
-    /// is the GROUP BY Region result (every present code); <paramref name="total"/> is RDMP's own count.
+    /// Splits one node's region counts into Total / recognised-regions / Other / NotKnown using
+    /// <paramref name="lookup"/>. <paramref name="byRegion"/> is the GROUP BY Region result (every present
+    /// code); <paramref name="total"/> is RDMP's own count.
     /// </summary>
-    public static Buckets Split(int total, IReadOnlyDictionary<string, int> byRegion)
+    public static CohortBuildBreakdownBuckets Split(int total, IReadOnlyDictionary<string, int> byRegion,
+        RegionLookup lookup)
     {
-        var boards = new Dictionary<string, int>(System.StringComparer.OrdinalIgnoreCase);
+        var regions = new Dictionary<string, int>(System.StringComparer.OrdinalIgnoreCase);
         var other = 0;
         foreach (var (code, n) in byRegion)
-            if (HealthBoardLookup.Resolve(code).Node == HealthBoardLookup.UnknownNode)
-                other += n; // present but not a Scottish board (non-Scottish / unmapped)
+            if (lookup.Contains(code))
+                regions[code] = n;
             else
-                boards[code] = n;
+                other += n; // present but not recognised by the lookup
 
-        return new Buckets
-        {
-            Total = total,
-            Boards = boards,
-            Other = other,
-            NotKnown = total - boards.Values.Sum() - other
-        };
+        return new CohortBuildBreakdownBuckets(total, regions, other, total - regions.Values.Sum() - other);
     }
 
-    /// <summary>The ordered mapped boards that appear anywhere (column order: node then name).</summary>
-    private static List<HealthBoard> BoardColumns(IEnumerable<NodeBreakdown> nodes, Buckets demographyReference) =>
+    /// <summary>The recognised regions that appear anywhere, ordered by node (nulls last) then name.</summary>
+    private static List<RegionColumn> RegionColumns(IEnumerable<CohortBuildBreakdownNode> nodes,
+        CohortBuildBreakdownBuckets demographyReference, RegionLookup lookup) =>
         nodes
             .SelectMany(n => n.FinalByRegion.Keys.Concat(n.CumulativeByRegion?.Keys ?? Enumerable.Empty<string>()))
-            .Concat(demographyReference?.Boards.Keys ?? Enumerable.Empty<string>())
-            .Select(HealthBoardLookup.Resolve)
-            .Where(b => b.Node != HealthBoardLookup.UnknownNode)
-            .GroupBy(b => b.Region, System.StringComparer.OrdinalIgnoreCase)
-            .Select(g => g.First())
-            .OrderBy(b => b.Node, System.StringComparer.OrdinalIgnoreCase)
-            .ThenBy(b => b.Name, System.StringComparer.OrdinalIgnoreCase)
+            .Concat(demographyReference?.Regions.Keys ?? Enumerable.Empty<string>())
+            .Where(lookup.Contains)
+            .GroupBy(code => code, System.StringComparer.OrdinalIgnoreCase)
+            .Select(g => new RegionColumn(g.Key, lookup.NameOf(g.Key), lookup.NodeOf(g.Key)))
+            .OrderBy(c => string.IsNullOrEmpty(c.Node) ? 1 : 0) // nodeless regions (e.g. non-Scottish) last
+            .ThenBy(c => c.Node, System.StringComparer.OrdinalIgnoreCase)
+            .ThenBy(c => c.Name, System.StringComparer.OrdinalIgnoreCase)
             .ToList();
 
     /// <summary>
     /// Builds the wide CSV (data rows per node+metric, then a <c>% of final cohort</c> row and, when
-    /// <paramref name="demographyReference"/> is supplied, a <c>% of demography</c> row underneath it
-    /// giving each board's share of the whole demography population, as a sanity check).
+    /// <paramref name="demographyReference"/> is supplied, a <c>% of demography</c> row underneath it as
+    /// a cohort-vs-population sanity check).
     /// </summary>
-    public static string ToCsv(IReadOnlyList<NodeBreakdown> nodes, Buckets demographyReference = null)
+    public static string ToCsv(IReadOnlyList<CohortBuildBreakdownNode> nodes, RegionLookup lookup,
+        CohortBuildBreakdownBuckets demographyReference = null)
     {
         var ordered = nodes.OrderBy(n => n.Seq).ToList();
-        var boards = BoardColumns(ordered, demographyReference);
+        var columns = RegionColumns(ordered, demographyReference, lookup);
 
         var header = new List<string> { "Order", "Type", "Name", "Container", "SetOperation", "Metric", "Total" };
-        header.AddRange(boards.Select(b => b.Name));
+        header.AddRange(columns.Select(c => c.Name));
         header.Add(OtherColumn);
         header.Add(NotKnownColumn);
 
@@ -127,10 +88,10 @@ public static class CohortBuildHealthBoardBreakdownReport
 
         foreach (var n in ordered)
         {
-            AppendCountRow(sb, n, boards, "Final", Split(n.FinalUnfiltered, n.FinalByRegion));
+            AppendCountRow(sb, n, columns, "Final", Split(n.FinalUnfiltered, n.FinalByRegion, lookup));
             if (n.CumulativeUnfiltered.HasValue && n.CumulativeByRegion != null)
-                AppendCountRow(sb, n, boards, "Cumulative",
-                    Split(n.CumulativeUnfiltered.Value, n.CumulativeByRegion));
+                AppendCountRow(sb, n, columns, "Cumulative",
+                    Split(n.CumulativeUnfiltered.Value, n.CumulativeByRegion, lookup));
         }
 
         // bottom: % of final cohort (root node's Final), then % of demography, after a blank separator
@@ -138,27 +99,28 @@ public static class CohortBuildHealthBoardBreakdownReport
         if (root != null && root.FinalUnfiltered > 0)
         {
             sb.AppendLine();
-            sb.AppendLine(string.Join(",", header.Select(Escape))); // repeat header so % aligns to each board
-            AppendPercentRow(sb, PercentMetric, boards, Split(root.FinalUnfiltered, root.FinalByRegion));
+            sb.AppendLine(string.Join(",", header.Select(Escape))); // repeat header so % aligns to each region
+            AppendPercentRow(sb, PercentMetric, columns, Split(root.FinalUnfiltered, root.FinalByRegion, lookup));
             if (demographyReference != null)
-                AppendPercentRow(sb, DemographyPercentMetric, boards, demographyReference);
+                AppendPercentRow(sb, DemographyPercentMetric, columns, demographyReference);
         }
 
         return sb.ToString();
     }
 
-    private static void AppendPercentRow(StringBuilder sb, string label, List<HealthBoard> boards, Buckets b)
+    private static void AppendPercentRow(StringBuilder sb, string label, List<RegionColumn> columns,
+        CohortBuildBreakdownBuckets b)
     {
         double Pct(int v) => b.Total == 0 ? 0 : v * 100.0 / b.Total;
         var cells = new List<string> { "", "", label, "", "", label, Fmt(b.Total == 0 ? 0 : 100.0) };
-        cells.AddRange(boards.Select(bd => Fmt(Pct(b.Boards.TryGetValue(bd.Region, out var v) ? v : 0))));
+        cells.AddRange(columns.Select(c => Fmt(Pct(b.Regions.TryGetValue(c.Code, out var v) ? v : 0))));
         cells.Add(Fmt(Pct(b.Other)));
         cells.Add(Fmt(Pct(b.NotKnown)));
         sb.AppendLine(string.Join(",", cells.Select(Escape)));
     }
 
-    private static void AppendCountRow(StringBuilder sb, NodeBreakdown n, List<HealthBoard> boards,
-        string metric, Buckets b)
+    private static void AppendCountRow(StringBuilder sb, CohortBuildBreakdownNode n, List<RegionColumn> columns,
+        string metric, CohortBuildBreakdownBuckets b)
     {
         var cells = new List<string>
         {
@@ -166,15 +128,16 @@ public static class CohortBuildHealthBoardBreakdownReport
             n.Type, n.Name, n.Container, n.SetOperation, metric,
             b.Total.ToString(CultureInfo.InvariantCulture)
         };
-        cells.AddRange(boards.Select(bd =>
-            (b.Boards.TryGetValue(bd.Region, out var v) ? v : 0).ToString(CultureInfo.InvariantCulture)));
+        cells.AddRange(columns.Select(c =>
+            (b.Regions.TryGetValue(c.Code, out var v) ? v : 0).ToString(CultureInfo.InvariantCulture)));
         cells.Add(b.Other.ToString(CultureInfo.InvariantCulture));
         cells.Add(b.NotKnown.ToString(CultureInfo.InvariantCulture));
         sb.AppendLine(string.Join(",", cells.Select(Escape)));
     }
 
-    public static void WriteCsv(string path, IReadOnlyList<NodeBreakdown> nodes, Buckets demographyReference = null) =>
-        File.WriteAllText(path, ToCsv(nodes, demographyReference));
+    public static void WriteCsv(string path, IReadOnlyList<CohortBuildBreakdownNode> nodes, RegionLookup lookup,
+        CohortBuildBreakdownBuckets demographyReference = null) =>
+        File.WriteAllText(path, ToCsv(nodes, lookup, demographyReference));
 
     private static string Fmt(double d) => d.ToString("0.0", CultureInfo.InvariantCulture);
 
