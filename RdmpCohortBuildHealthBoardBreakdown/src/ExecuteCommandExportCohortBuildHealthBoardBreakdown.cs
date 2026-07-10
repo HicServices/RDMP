@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
+using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.CohortCreation;
@@ -255,9 +256,21 @@ public class ExecuteCommandExportCohortBuildHealthBoardBreakdown : BasicCommandE
 
     private string Compose(CohortAggregateContainer container, IReadOnlyList<IOrderable> children)
     {
-        var op = $"\n{container.Operation}\n"; // UNION / INTERSECT / EXCEPT (the operators RDMP itself uses)
+        var op = $"\n{SetOperationSql(container.Operation, _syntax.DatabaseType)}\n";
         return string.Join(op, children.Select(ch => $"({IdSql(ch)})"));
     }
+
+    /// <summary>
+    /// Renders a container's set operation for the target DBMS (Oracle spells EXCEPT as MINUS) - the
+    /// same mapping RDMP uses in <c>CohortQueryBuilderResult.GetSetOperationSql</c>.
+    /// </summary>
+    public static string SetOperationSql(SetOperation operation, DatabaseType dbType) => operation switch
+    {
+        SetOperation.UNION => "UNION",
+        SetOperation.INTERSECT => "INTERSECT",
+        SetOperation.EXCEPT => dbType == DatabaseType.Oracle ? "MINUS" : "EXCEPT",
+        _ => throw new ArgumentOutOfRangeException(nameof(operation), operation, null)
+    };
 
     private string CachedSetSql(AggregateConfiguration agg)
     {
