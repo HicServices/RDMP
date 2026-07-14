@@ -26,17 +26,23 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
 /// Reproduces the Cohort Builder's per-set / per-container count tree (the FinalCount and cumulative
-/// running totals shown as UNION/INTERSECT/EXCEPT are applied) split by a region column, using a
-/// user-supplied lookup table to name/group the regions. Operates purely on the query cache: it builds
-/// the cohort once to populate the per-set cache tables, then recomposes every count point from those
-/// cache tables and splits it by region with one GROUP BY per node (all regions at once).
+/// running totals shown as UNION/INTERSECT/EXCEPT are applied) split by an arbitrary group column
+/// (e.g. health board, GP practice, age band), using a user-supplied lookup table to label and order
+/// the groups. Operates purely on the query cache: it builds the cohort once to populate the per-set
+/// cache tables, then recomposes every count point from those cache tables and splits it by group with
+/// one GROUP BY per node (all groups at once).
+///
+/// <para>Inputs are four columns; the tables are derived: <c>groupColumn</c>'s table is the reference
+/// table (which must contain exactly one IsExtractionIdentifier column, the join key to the cohort),
+/// and <c>lookupKeyColumn</c>'s table is the lookup table.</para>
 /// </summary>
-public class ExecuteCommandExportCohortBuildHealthBoardBreakdown : BasicCommandExecution
+public class ExecuteCommandExportCohortBuildBreakDownByGroups : BasicCommandExecution
 {
     private readonly CohortIdentificationConfiguration _cic;
-    private ICatalogue _demographyCatalogue;
-    private ColumnInfo _regionColumn;
-    private TableInfo _groupLookup;
+    private ColumnInfo _groupColumn;
+    private ColumnInfo _lookupKeyColumn;
+    private ColumnInfo _lookupLabelColumn;
+    private ColumnInfo _lookupGroupingColumn;
     private readonly int _timeout;
     private FileInfo _toFile;
 
@@ -44,32 +50,35 @@ public class ExecuteCommandExportCohortBuildHealthBoardBreakdown : BasicCommandE
     private IQuerySyntaxHelper _syntax;
     private DiscoveredDatabase _cacheDb;
     private CachedAggregateConfigurationResultsManager _cacheManager;
-    private RegionLookup _lookup;
-    private string _demogTable;
-    private string _demogId;
-    private string _regionName;
+    private GroupLookup _lookup;
+    private string _referenceTable;
+    private string _referenceId;
+    private string _groupName;
 
     private readonly Dictionary<int, (string fqn, string col)> _setCacheTable = new();
     private readonly Dictionary<(bool isContainer, int id), (int final, int? cumulative)> _baseline = new();
 
-    public ExecuteCommandExportCohortBuildHealthBoardBreakdown(IBasicActivateItems activator,
+    public ExecuteCommandExportCohortBuildBreakDownByGroups(IBasicActivateItems activator,
         [DemandsInitialization("The cohort identification configuration whose build tree to break down")]
         CohortIdentificationConfiguration cic,
-        [DemandsInitialization("Demography catalogue that provides the patient identifier and the region column")]
-        ICatalogue demographyCatalogue = null,
-        [DemandsInitialization("The region column to group the breakdown by")]
-        ColumnInfo regionColumn = null,
-        [DemandsInitialization("Lookup table mapping region code to a name and node (columns: Region, HB_Name, SafeHaven_Region)")]
-        TableInfo groupLookup = null,
+        [DemandsInitialization("The column to group the breakdown by (its table is the reference table and must contain the patient identifier)")]
+        ColumnInfo groupColumn = null,
+        [DemandsInitialization("Lookup table column holding the group code (as it appears in the group column); its table is the lookup table")]
+        ColumnInfo lookupKeyColumn = null,
+        [DemandsInitialization("Lookup table column holding the display label for each code")]
+        ColumnInfo lookupLabelColumn = null,
+        [DemandsInitialization("Optional lookup table column holding a higher grouping (used to order the output columns)")]
+        ColumnInfo lookupGroupingColumn = null,
         [DemandsInitialization("CSV file to write. Defaults to <cic>-build-breakdown.csv in the current directory")]
         FileInfo toFile = null,
         [DemandsInitialization("Per-query command timeout in seconds", DefaultValue = 5000)]
         int timeout = 5000) : base(activator)
     {
         _cic = cic;
-        _demographyCatalogue = demographyCatalogue;
-        _regionColumn = regionColumn;
-        _groupLookup = groupLookup;
+        _groupColumn = groupColumn;
+        _lookupKeyColumn = lookupKeyColumn;
+        _lookupLabelColumn = lookupLabelColumn;
+        _lookupGroupingColumn = lookupGroupingColumn;
         _timeout = timeout;
         _toFile = toFile;
 
@@ -88,47 +97,63 @@ public class ExecuteCommandExportCohortBuildHealthBoardBreakdown : BasicCommandE
         if (_cic.QueryCachingServer_ID == null)
             SetImpossible($"'{_cic}' has no query caching server - this breakdown works only on cached results");
 
-        // the demography catalogue / region column / lookup table are resolved (and prompted for, in the
-        // GUI) in Execute, so the command can be added to a right-click menu with only the cohort selected.
+        // the columns are resolved (and prompted for, in the GUI) in Execute, so the command can be
+        // added to a right-click menu with only the cohort selected.
     }
 
-    /// <summary>Resolves the RDMP-object inputs, prompting the user for any not supplied. Returns false on cancel.</summary>
+    /// <summary>Resolves the column inputs, prompting the user for any not supplied. Returns false on cancel.</summary>
     private bool ResolveInputs()
     {
-        _demographyCatalogue ??= SelectOne<Catalogue>("Demography catalogue (provides the patient identifier + region column)",
-            BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>());
-        if (_demographyCatalogue == null)
-            return Fail("No demography catalogue was supplied");
+        _groupColumn ??= SelectColumn("Group-by column (on the reference table, e.g. demography Region)");
+        if (_groupColumn == null)
+            return Fail("No group column was supplied");
 
-        _idEi = _demographyCatalogue.GetAllExtractionInformation(ExtractionCategory.Any)
-            .FirstOrDefault(e => e.IsExtractionIdentifier);
-        if (_idEi == null)
-            return Fail($"'{_demographyCatalogue}' has no IsExtractionIdentifier column to join the cohort on");
+        // derive the patient identifier from the group column's table: the (single) column flagged
+        // IsExtractionIdentifier. Zero = no join key; several = ambiguous identifier domain.
+        var idEis = _groupColumn.TableInfo.ColumnInfos
+            .SelectMany(c => c.CatalogueItems.Select(ci => ci.ExtractionInformation))
+            .Where(ei => ei is { IsExtractionIdentifier: true })
+            .GroupBy(ei => ei.ColumnInfo.ID)
+            .Select(g => g.First())
+            .ToList();
 
-        _regionColumn ??= SelectOne("Region column to group by",
-            _demographyCatalogue.GetAllExtractionInformation(ExtractionCategory.Any)
-                .Select(e => e.ColumnInfo).Where(c => c != null).Distinct().ToArray());
-        if (_regionColumn == null)
-            return Fail("No region column was supplied");
+        if (idEis.Count != 1)
+            return Fail($"Table '{_groupColumn.TableInfo}' must have exactly one IsExtractionIdentifier column " +
+                        $"to join the cohort on (found {idEis.Count})");
+        _idEi = idEis[0];
 
-        _groupLookup ??= SelectOne<TableInfo>("Region lookup table (Region, HB_Name, SafeHaven_Region)",
-            BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<TableInfo>());
-        if (_groupLookup == null)
-            return Fail("No region lookup table was supplied");
+        _lookupKeyColumn ??= SelectColumn("Lookup KEY column (the group code, e.g. z_hb_lookup.Region)");
+        if (_lookupKeyColumn == null)
+            return Fail("No lookup key column was supplied");
 
-        // co-location: the recompose + GROUP BY join runs on the cache server, so demography must be there
+        _lookupLabelColumn ??= SelectColumn("Lookup LABEL column (display name, e.g. z_hb_lookup.HB_Name)");
+        if (_lookupLabelColumn == null)
+            return Fail("No lookup label column was supplied");
+
+        // grouping stays optional: do not prompt for it, only validate if supplied
+
+        if (_lookupLabelColumn.TableInfo_ID != _lookupKeyColumn.TableInfo_ID ||
+            (_lookupGroupingColumn != null && _lookupGroupingColumn.TableInfo_ID != _lookupKeyColumn.TableInfo_ID))
+            return Fail("The lookup key, label and grouping columns must all belong to the same table");
+
+        // co-location: the recompose + GROUP BY join runs on the cache server, so the reference table must be there
         var cacheServer = _cic.QueryCachingServer.Server;
-        var demogServer = _regionColumn.TableInfo.Server;
-        if (!string.IsNullOrWhiteSpace(cacheServer) && !string.IsNullOrWhiteSpace(demogServer)
-            && !string.Equals(cacheServer.Trim(), demogServer.Trim(), StringComparison.OrdinalIgnoreCase))
-            return Fail($"Region column is on server '{demogServer}' but the query cache is on '{cacheServer}'; " +
+        var refServer = _groupColumn.TableInfo.Server;
+        if (!string.IsNullOrWhiteSpace(cacheServer) && !string.IsNullOrWhiteSpace(refServer)
+            && !string.Equals(cacheServer.Trim(), refServer.Trim(), StringComparison.OrdinalIgnoreCase))
+            return Fail($"Group column is on server '{refServer}' but the query cache is on '{cacheServer}'; " +
                         "the breakdown joins on the cache server, so they must be the same server.");
 
         return true;
     }
 
-    private T SelectOne<T>(string prompt, T[] available) where T : class =>
-        available.Length > 0 && BasicActivator.SelectObject(prompt, available, out var selected) ? selected : null;
+    private ColumnInfo SelectColumn(string prompt)
+    {
+        var available = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<ColumnInfo>();
+        return available.Length > 0 && BasicActivator.SelectObject(prompt, available, out var selected)
+            ? selected
+            : null;
+    }
 
     private bool Fail(string reason)
     {
@@ -150,15 +175,20 @@ public class ExecuteCommandExportCohortBuildHealthBoardBreakdown : BasicCommandE
         if (_toFile == null)
             return;
 
-        _syntax = _regionColumn.GetQuerySyntaxHelper();
+        _syntax = _groupColumn.GetQuerySyntaxHelper();
         _cacheDb = _cic.QueryCachingServer.Discover(DataAccessContext.InternalDataProcessing);
         _cacheManager = new CachedAggregateConfigurationResultsManager(_cic.QueryCachingServer);
-        _demogTable = _regionColumn.TableInfo.Name;
-        _demogId = _syntax.EnsureWrapped(_idEi.GetRuntimeName());
-        _regionName = _syntax.EnsureWrapped(_regionColumn.GetRuntimeName());
+        _referenceTable = _groupColumn.TableInfo.Name;
+        _referenceId = _syntax.EnsureWrapped(_idEi.GetRuntimeName());
+        _groupName = _syntax.EnsureWrapped(_groupColumn.GetRuntimeName());
 
-        // load the (user-defined) region -> name/node mapping from the lookup table
-        _lookup = RegionLookup.LoadFrom(_groupLookup.Discover(DataAccessContext.InternalDataProcessing), _timeout);
+        // load the (user-defined) code -> label/grouping mapping from the lookup table
+        _lookup = GroupLookup.LoadFrom(
+            _lookupKeyColumn.TableInfo.Discover(DataAccessContext.InternalDataProcessing),
+            _lookupKeyColumn.GetRuntimeName(),
+            _lookupLabelColumn.GetRuntimeName(),
+            _lookupGroupingColumn?.GetRuntimeName(),
+            _timeout);
 
         // 1. Build once: populates every per-set cache table and gives the baseline (unfiltered) counts.
         var compiler = new CohortCompiler(BasicActivator, _cic) { IncludeCumulativeTotals = true };
@@ -186,22 +216,22 @@ public class ExecuteCommandExportCohortBuildHealthBoardBreakdown : BasicCommandE
             _baseline[(isContainer.Value, task.Child.ID)] = (task.FinalRowCount, task.CumulativeRowCount);
         }
 
-        // 2. Walk the tree, recomposing each count point from the cache and splitting by region.
+        // 2. Walk the tree, recomposing each count point from the cache and splitting by group.
         var nodes = new List<CohortBuildBreakdownNode>();
         var seq = 0;
         Walk(_cic.RootCohortAggregateContainer, null, 0, nodes, ref seq);
 
-        // reference: each region's share of the WHOLE demography population (a sanity-check row)
-        var demographyReference = ComputeDemographyReference();
+        // reference: each group's share of the WHOLE reference population (a sanity-check row)
+        var referencePopulation = ComputeReferencePopulation();
 
-        CohortBuildHealthBoardBreakdownReport.WriteCsv(_toFile.FullName, nodes, _lookup, demographyReference);
+        CohortBuildBreakdownByGroupsReport.WriteCsv(_toFile.FullName, nodes, _lookup, referencePopulation);
 
-        // reconciliation note: recognised-region counts should never exceed the unfiltered total
+        // reconciliation note: recognised-group counts should never exceed the unfiltered total
         var drift = nodes.Count(n =>
-            n.FinalByRegion.Where(kv => _lookup.Contains(kv.Key)).Sum(kv => kv.Value) > n.FinalUnfiltered);
+            n.FinalByGroup.Where(kv => _lookup.Contains(kv.Key)).Sum(kv => kv.Value) > n.FinalUnfiltered);
         var summary = $"Exported build breakdown to {_toFile.FullName} ({nodes.Count} count points)";
         if (drift > 0)
-            summary += $" - WARNING: {drift} node(s) have region counts exceeding the unfiltered total (check keys)";
+            summary += $" - WARNING: {drift} node(s) have group counts exceeding the unfiltered total (check keys)";
         BasicActivator.Show(summary);
     }
 
@@ -210,14 +240,14 @@ public class ExecuteCommandExportCohortBuildHealthBoardBreakdown : BasicCommandE
     {
         // container node row (cumulative is within its parent)
         var (cFinal, cCum) = _baseline.TryGetValue((true, container.ID), out var cb) ? cb : (0, null);
-        IReadOnlyDictionary<string, int> cCumByRegion = null;
+        IReadOnlyDictionary<string, int> cCumByGroup = null;
         if (parent != null && indexInParent > 0 && cCum.HasValue)
-            cCumByRegion = RunRegionCounts(CumulativeSql(parent, indexInParent));
+            cCumByGroup = RunGroupCounts(CumulativeSql(parent, indexInParent));
 
         nodes.Add(new CohortBuildBreakdownNode(seq++, "Container", CleanName(container.Name),
             CleanName(parent?.Name), container.Operation.ToString(), container.Order, cFinal,
             parent != null && indexInParent > 0 ? cCum : null,
-            RunRegionCounts(IdSql(container)), cCumByRegion));
+            RunGroupCounts(IdSql(container)), cCumByGroup));
 
         var kids = EnabledOrdered(container);
         for (var i = 0; i < kids.Count; i++)
@@ -226,13 +256,13 @@ public class ExecuteCommandExportCohortBuildHealthBoardBreakdown : BasicCommandE
             {
                 case AggregateConfiguration agg:
                     var (aFinal, aCum) = _baseline.TryGetValue((false, agg.ID), out var ab) ? ab : (0, null);
-                    IReadOnlyDictionary<string, int> aCumByRegion = null;
+                    IReadOnlyDictionary<string, int> aCumByGroup = null;
                     if (i > 0 && aCum.HasValue)
-                        aCumByRegion = RunRegionCounts(CumulativeSql(container, i));
+                        aCumByGroup = RunGroupCounts(CumulativeSql(container, i));
 
                     nodes.Add(new CohortBuildBreakdownNode(seq++, "Cohort Set", CleanName(agg.Name),
                         CleanName(container.Name), "", agg.Order, aFinal, i > 0 ? aCum : null,
-                        RunRegionCounts(CachedSetSql(agg)), aCumByRegion));
+                        RunGroupCounts(CachedSetSql(agg)), aCumByGroup));
                     break;
 
                 case CohortAggregateContainer sub:
@@ -296,36 +326,36 @@ public class ExecuteCommandExportCohortBuildHealthBoardBreakdown : BasicCommandE
             _ => true
         }).ToList();
 
-    // --- run a GROUP BY Region join (on the cache server) for one count point ---
+    // --- run a GROUP BY join (on the cache server) for one count point ---
 
-    private IReadOnlyDictionary<string, int> RunRegionCounts(string idListSql)
+    private IReadOnlyDictionary<string, int> RunGroupCounts(string idListSql)
     {
         var sql =
-            $"SELECT d.{_regionName} region, COUNT(DISTINCT i.id) n\n" +
+            $"SELECT d.{_groupName} grp, COUNT(DISTINCT i.id) n\n" +
             $"FROM (\n{idListSql}\n) i\n" +
-            $"INNER JOIN {_demogTable} d ON d.{_demogId} = i.id\n" +
-            $"GROUP BY d.{_regionName}";
+            $"INNER JOIN {_referenceTable} d ON d.{_referenceId} = i.id\n" +
+            $"GROUP BY d.{_groupName}";
 
-        return ReadRegionCounts(sql, out _);
+        return ReadGroupCounts(sql, out _);
     }
 
     /// <summary>
-    /// The whole demography population split by region (the reference/background distribution). Total
-    /// includes NULL-region rows so <see cref="CohortBuildBreakdownBuckets.NotKnown"/> captures them.
+    /// The whole reference population split by group (the background distribution). Total includes
+    /// NULL-group rows so <see cref="CohortBuildBreakdownBuckets.NotKnown"/> captures them.
     /// </summary>
-    private CohortBuildBreakdownBuckets ComputeDemographyReference()
+    private CohortBuildBreakdownBuckets ComputeReferencePopulation()
     {
         var sql =
-            $"SELECT d.{_regionName} region, COUNT(DISTINCT d.{_demogId}) n\n" +
-            $"FROM {_demogTable} d\n" +
-            $"GROUP BY d.{_regionName}";
+            $"SELECT d.{_groupName} grp, COUNT(DISTINCT d.{_referenceId}) n\n" +
+            $"FROM {_referenceTable} d\n" +
+            $"GROUP BY d.{_groupName}";
 
-        var byRegion = ReadRegionCounts(sql, out var total);
-        return CohortBuildHealthBoardBreakdownReport.Split(total, byRegion, _lookup);
+        var byGroup = ReadGroupCounts(sql, out var total);
+        return CohortBuildBreakdownByGroupsReport.Split(total, byGroup, _lookup);
     }
 
-    /// <summary>Runs a "region, count" query on the cache server; returns non-null regions and the grand total.</summary>
-    private Dictionary<string, int> ReadRegionCounts(string sql, out int total)
+    /// <summary>Runs a "group, count" query on the cache server; returns non-null groups and the grand total.</summary>
+    private Dictionary<string, int> ReadGroupCounts(string sql, out int total)
     {
         var result = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
         total = 0;
@@ -337,7 +367,7 @@ public class ExecuteCommandExportCohortBuildHealthBoardBreakdown : BasicCommandE
         while (r.Read())
         {
             var n = Convert.ToInt32(r.GetValue(1));
-            total += n; // includes any NULL-region group in the denominator
+            total += n; // includes any NULL-group rows in the denominator
             if (!r.IsDBNull(0))
                 result[r.GetValue(0).ToString()] = n;
         }

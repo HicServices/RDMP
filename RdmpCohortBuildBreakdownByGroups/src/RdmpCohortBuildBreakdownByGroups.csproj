@@ -4,7 +4,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
-    <AssemblyName>RdmpCohortBuildHealthBoardBreakdown</AssemblyName>
+    <AssemblyName>RdmpCohortBuildBreakdownByGroups</AssemblyName>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <!-- only this plugin's dll goes in the .rdmp; the host RDMP provides Rdmp.Core etc. -->
     <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>

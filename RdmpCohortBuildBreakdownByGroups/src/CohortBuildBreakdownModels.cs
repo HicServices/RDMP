@@ -10,7 +10,7 @@ namespace Rdmp.Core.CohortCreation;
 
 /// <summary>
 /// One count point of a cohort build tree (a cohort set or a container) with the per-region counts that
-/// were computed for it. Used by <see cref="CohortBuildHealthBoardBreakdownReport"/>.
+/// were computed for it. Used by <see cref="CohortBuildBreakdownByGroupsReport"/>.
 /// </summary>
 public sealed class CohortBuildBreakdownNode
 {
@@ -36,15 +36,15 @@ public sealed class CohortBuildBreakdownNode
     /// <summary>RDMP's own cumulative within the parent container; null if not applicable.</summary>
     public int? CumulativeUnfiltered { get; }
 
-    /// <summary>Region code -> final count (every present code; the GROUP BY Region result).</summary>
-    public IReadOnlyDictionary<string, int> FinalByRegion { get; }
+    /// <summary>Group code -> final count (every present code; the GROUP BY Region result).</summary>
+    public IReadOnlyDictionary<string, int> FinalByGroup { get; }
 
-    /// <summary>Region code -> cumulative count; null when this node has no cumulative.</summary>
-    public IReadOnlyDictionary<string, int> CumulativeByRegion { get; }
+    /// <summary>Group code -> cumulative count; null when this node has no cumulative.</summary>
+    public IReadOnlyDictionary<string, int> CumulativeByGroup { get; }
 
     public CohortBuildBreakdownNode(int seq, string type, string name, string container, string setOperation,
         int displayOrder, int finalUnfiltered, int? cumulativeUnfiltered,
-        IReadOnlyDictionary<string, int> finalByRegion, IReadOnlyDictionary<string, int> cumulativeByRegion)
+        IReadOnlyDictionary<string, int> finalByGroup, IReadOnlyDictionary<string, int> cumulativeByGroup)
     {
         Seq = seq;
         Type = type ?? "";
@@ -54,14 +54,14 @@ public sealed class CohortBuildBreakdownNode
         DisplayOrder = displayOrder;
         FinalUnfiltered = finalUnfiltered;
         CumulativeUnfiltered = cumulativeUnfiltered;
-        FinalByRegion = finalByRegion ?? new Dictionary<string, int>();
-        CumulativeByRegion = cumulativeByRegion;
+        FinalByGroup = finalByGroup ?? new Dictionary<string, int>();
+        CumulativeByGroup = cumulativeByGroup;
     }
 }
 
 /// <summary>
 /// The Total / per-region / Other / NotKnown split of one node+metric, relative to a
-/// <see cref="RegionLookup"/>. <see cref="Regions"/> holds the counts for codes present in the lookup;
+/// <see cref="GroupLookup"/>. <see cref="Groups"/> holds the counts for codes present in the lookup;
 /// <see cref="Other"/> sums present codes absent from the lookup; <see cref="NotKnown"/> is the residual
 /// (not in demography, or NULL region).
 /// </summary>
@@ -69,8 +69,8 @@ public sealed class CohortBuildBreakdownBuckets
 {
     public int Total { get; }
 
-    /// <summary>Region code -> count, for codes recognised by the lookup.</summary>
-    public IReadOnlyDictionary<string, int> Regions { get; }
+    /// <summary>Group code -> count, for codes recognised by the lookup.</summary>
+    public IReadOnlyDictionary<string, int> Groups { get; }
 
     /// <summary>Sum of present region codes that the lookup does not recognise.</summary>
     public int Other { get; }
@@ -78,10 +78,10 @@ public sealed class CohortBuildBreakdownBuckets
     /// <summary>Total - recognised - Other = not in demography + NULL region.</summary>
     public int NotKnown { get; }
 
-    public CohortBuildBreakdownBuckets(int total, IReadOnlyDictionary<string, int> regions, int other, int notKnown)
+    public CohortBuildBreakdownBuckets(int total, IReadOnlyDictionary<string, int> groups, int other, int notKnown)
     {
         Total = total;
-        Regions = regions ?? new Dictionary<string, int>();
+        Groups = groups ?? new Dictionary<string, int>();
         Other = other;
         NotKnown = notKnown;
     }

@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
   <metadata>
-    <id>RdmpCohortBuildHealthBoardBreakdown</id>
+    <id>RdmpCohortBuildBreakdownByGroups</id>
     <version>0.0.1</version>
     <authors>HIC</authors>
     <description>Reproduces the Cohort Builder's per-set / per-container count tree (FinalCount and
-      cumulative running totals) split by Scottish health board, working purely on the query cache:
-      builds the cohort once, then recomposes every count point from the cached per-set tables and
-      splits it by SHARE_Demography.Region. CLI: ExportCohortBuildHealthBoardBreakdown; GUI:
-      right-click a cohort identification configuration.</description>
+      cumulative running totals) split by an arbitrary group column (e.g. health board), labelled and
+      ordered by a user-supplied lookup table. Works purely on the query cache: builds the cohort once,
+      then recomposes every count point from the cached per-set tables. CLI:
+      ExportCohortBuildBreakDownByGroups; GUI: right-click a cohort identification configuration
+      (SHARE preset or choose inputs).</description>
     <dependencies>
       <!-- major.minor must match the running RDMP (set to your release, e.g. 9.2). -->
       <dependency id="HIC.RDMP.Plugin" version="9.2" />
