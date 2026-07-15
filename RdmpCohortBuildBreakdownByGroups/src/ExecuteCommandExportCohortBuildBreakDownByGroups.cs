@@ -30,9 +30,9 @@ namespace RdmpCohortBuildBreakdownByGroups;
 /// Reproduces the Cohort Builder's per-set / per-container count tree (the FinalCount and cumulative
 /// running totals shown as UNION/INTERSECT/EXCEPT are applied) split by an arbitrary group column
 /// (e.g. health board, GP practice, age band), using a user-supplied lookup table to label and order
-/// the groups. Operates purely on the query cache: it builds the cohort once to populate the per-set
-/// cache tables, then recomposes every count point from those cache tables and splits it by group with
-/// one GROUP BY per node (all groups at once).
+/// the groups. The cohort is built once to populate the per-set query-cache tables; every count point
+/// is then recomposed from those cache tables (the cohort-set source queries are never re-run) and
+/// split by group with one GROUP BY per node joining the reference table (all groups at once).
 ///
 /// <para>Inputs are four columns; the tables are derived: <c>groupColumn</c>'s table is the reference
 /// table (which must contain exactly one IsExtractionIdentifier column, the join key to the cohort),
@@ -161,11 +161,20 @@ public class ExecuteCommandExportCohortBuildBreakDownByGroups : BasicCommandExec
             points.Add(_cic.QueryCachingServer);
             points.Add(_groupColumn.TableInfo);
         }
-        catch (Exception ex)
-        {
+        catch (InvalidOperationException ex) // co-location failure; other exceptions (e.g. credential
+        {                                    // decryption) deliberately propagate as in RDMP core
             return Fail($"The reference table '{_groupColumn.TableInfo}' and the query cache " +
                         $"'{_cic.QueryCachingServer}' must be on the same server: {ex.Message}");
         }
+
+        // PostgreSQL connections are bound to a single database, so the SQL Server-style
+        // cross-database join (cache connection referencing another database's table) cannot work
+        if (_cic.QueryCachingServer.DatabaseType == DatabaseType.PostgreSql &&
+            !string.Equals(_cic.QueryCachingServer.Database?.Trim(), _groupColumn.TableInfo.Database?.Trim(),
+                StringComparison.OrdinalIgnoreCase))
+            return Fail("On PostgreSQL the reference table must be in the SAME DATABASE as the query cache " +
+                        $"(cache '{_cic.QueryCachingServer.Database}', reference '{_groupColumn.TableInfo.Database}') - " +
+                        "a PostgreSQL connection cannot access tables in another database.");
 
         return true;
     }
@@ -404,8 +413,11 @@ public class ExecuteCommandExportCohortBuildBreakDownByGroups : BasicCommandExec
             if (r.IsDBNull(0))
                 continue;
             // ACCUMULATE: a case-sensitive DBMS can return 'A' and 'a' as separate rows, which our
-            // case-insensitive key would otherwise silently overwrite
-            var key = r.GetValue(0).ToString();
+            // case-insensitive key would otherwise silently overwrite. TRIM so 'T ' and 'T' cannot
+            // become two identically-labelled columns; whitespace-only behaves like NULL (-> NotKnown)
+            var key = r.GetValue(0).ToString()?.Trim();
+            if (string.IsNullOrEmpty(key))
+                continue;
             result[key] = result.TryGetValue(key, out var existing) ? existing + n : n;
         }
 
@@ -420,9 +432,10 @@ public class ExecuteCommandExportCohortBuildBreakDownByGroups : BasicCommandExec
 
     /// <summary>
     /// True unless the identifier's SelectSQL is a plain (possibly qualified) reference to the
-    /// physical column: the syntax helper's runtime name of the expression must equal the physical
-    /// column's runtime name (a WHITELIST - anything else, including expressions the helper cannot
-    /// parse, is treated as transformed).
+    /// physical column: any alias is split off first (an alias only renames the output column, e.g.
+    /// "chi AS PatientId" still selects raw chi values), then the syntax helper's runtime name of the
+    /// UNDERLYING expression must equal the physical column's runtime name (a WHITELIST - anything
+    /// else, including expressions the helper cannot parse, is treated as transformed).
     /// </summary>
     public static bool IsTransformedIdentifier(string selectSql, string physicalRuntimeName,
         IQuerySyntaxHelper syntax)
@@ -432,7 +445,9 @@ public class ExecuteCommandExportCohortBuildBreakDownByGroups : BasicCommandExec
 
         try
         {
-            return !string.Equals(syntax.GetRuntimeName(selectSql), physicalRuntimeName,
+            // strip the alias so "UPPER(chi) AS chi" is judged on UPPER(chi), not on its alias
+            syntax.SplitLineIntoSelectSQLAndAlias(selectSql, out var underlying, out _);
+            return !string.Equals(syntax.GetRuntimeName(underlying), physicalRuntimeName,
                 StringComparison.OrdinalIgnoreCase);
         }
         catch (Exception)

@@ -19,7 +19,7 @@ This folder is a self-contained package: the ready-to-install plugin, install/us
 ## How it works (in one paragraph)
 
 It builds the national cohort once (which populates RDMP's query cache), then recomposes every count
-point purely from the cached per-set identifier tables and splits each by the group column with one
+point from the cached per-set identifier tables and splits each by the group column with one
 `GROUP BY` per node, all groups at once. No per-group rebuild; the cohort-set source queries are never re-run after the single build - only
 the query-cache server is queried (each node joins the reference table there), so it is cross-server
 safe for the cohort's catalogues. Inputs are four `ColumnInfo` objects: the group-by
@@ -34,7 +34,8 @@ one health board).
 `src/SharePreset.cs` is deliberately the only place any deployment-specific name lives: it resolves
 `SHARE_Demography`.`Region` and `z_hb_lookup`.`Region`/`HB_Name`/`SafeHaven_Region` by name at runtime.
 The GUI offers two right-click entries on a cohort identification configuration: "(SHARE preset)"
-(one click; prompts only for anything the preset cannot resolve) and "(choose inputs)" (always prompts).
+(one click; prompts only for a group, key or label column it cannot resolve - an unresolved optional
+grouping is silently omitted) and "(choose inputs)" (prompts for the group, key and label columns).
 
 ## Output
 

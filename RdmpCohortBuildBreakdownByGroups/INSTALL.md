@@ -6,7 +6,7 @@ running totals shown as UNION/INTERSECT/EXCEPT are applied) **split by an arbitr
 
 Built against the **released RDMP 9.2.3**. Do not use on a different major.minor RDMP.
 
-## How it works (cache-only, cross-server safe)
+## How it works (cache-based recompose, cross-server safe)
 
 It builds the cohort **once** (populating the query cache), then recomposes every count point from the
 cached per-set identifier tables and splits each by the group column with one GROUP BY per node. The
@@ -37,7 +37,15 @@ table (or with a NULL group) go to `NotKnown`.
   denominator.
 
 - The cohort identification configuration must have a **query caching server** configured.
-- The reference table must be on the **same SQL server as the query cache** (checked; refuses if not).
+- The reference table must be on the **same SQL server as the query cache** (validated with RDMP's
+  single-server check: server, DBMS type and credential compatibility). On **PostgreSQL** it must also
+  be in the **same database** (a PostgreSQL connection cannot cross databases).
+- The patient identifier must be a **plain column** (a transformed expression such as `UPPER(chi)` is
+  refused - the join runs against the raw table column).
+- The lookup table must have **one row per code**, with **unique labels** that do not collide with the
+  report's fixed column headers (`Total`, `Other`, `NotKnown`, ...); violations stop with a clear error.
+- Execution is **verified on SQL Server**; other DBMS are dialect-correct by construction but not yet
+  exercised by the automated tests.
 
 ## Install
 
@@ -50,7 +58,8 @@ Confirm (CLI): `rdmp.exe cmd ListSupportedCommands` lists `ExportCohortBuildBrea
 
 **GUI:** right-click a Cohort Identification Configuration. Two entries:
 - *Export Build Breakdown By Groups (SHARE preset)* - resolves `SHARE_Demography`.`Region` and
-  `z_hb_lookup`.`Region`/`HB_Name`/`SafeHaven_Region` by name; prompts only for anything not found.
+  `z_hb_lookup`.`Region`/`HB_Name`/`SafeHaven_Region` by name; prompts only for a group, key or label
+  column it cannot resolve (an unresolved optional grouping is silently omitted).
 - *Export Build Breakdown By Groups (choose inputs)* - prompts for the group, key and label columns
   (the optional grouping column is never prompted; supply it via the preset or the CLI).
 
@@ -67,7 +76,8 @@ One row per count point (name written once), a `Metric` column (Final and Cumula
 (RDMP's national number), one column per group recognised by the lookup, then `Other` and `NotKnown`.
 The column header is repeated above two percentage rows: `% of final cohort` and `% of reference
 population` (each group's share of the whole reference table, a cohort-vs-population sanity check).
-Groups + Other + NotKnown reconcile to Total on every row.
+Groups + Other + NotKnown reconcile to Total on every row. (If the final cohort is empty the two
+percentage rows are omitted - a share of zero patients is undefined.)
 
 ## Validation
 

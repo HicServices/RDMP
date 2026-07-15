@@ -6,8 +6,8 @@
     <authors>HIC</authors>
     <description>Reproduces the Cohort Builder's per-set / per-container count tree (FinalCount and
       cumulative running totals) split by an arbitrary group column (e.g. health board), labelled and
-      ordered by a user-supplied lookup table. Works purely on the query cache: builds the cohort once,
-      then recomposes every count point from the cached per-set tables. CLI:
+      ordered by a user-supplied lookup table. Builds the cohort once, then recomposes every count point
+      from the cached per-set tables (cohort-set source queries are never re-run). CLI:
       ExportCohortBuildBreakDownByGroups; GUI: right-click a cohort identification configuration
       (SHARE preset or choose inputs).</description>
     <dependencies>
