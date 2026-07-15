@@ -55,7 +55,7 @@ Verified end-to-end against a deterministic synthetic fixture (top EXCEPT over a
 minus four exclusion sets, driven by a synthetic z_hb_lookup table): the key national and per-group
 counts and cumulatives are asserted explicitly, the unfiltered column equals RDMP's own
 `CohortCompiler` counts, and a reconciliation invariant (groups + Other + NotKnown == Total) is
-asserted on every row.
+asserted on every row. The fixture runs end-to-end on both SQL Server and PostgreSQL.
 
 ## Build from source (optional)
 

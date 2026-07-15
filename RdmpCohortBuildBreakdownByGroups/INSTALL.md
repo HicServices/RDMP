@@ -45,7 +45,9 @@ table (or with a NULL group) go to `NotKnown`.
 - The lookup table must have **one row per code**, with **unique labels** that do not collide with the
   report's fixed column headers (`Total`, `Other`, `NotKnown`, ...); violations stop with a clear error.
 - Identifiers, fully-qualified names, commands and set-operation keywords use RDMP/FAnsi dialect
-  helpers; execution is currently tested on SQL Server only.
+  helpers; execution is tested on SQL Server and PostgreSQL (on PostgreSQL everything, including the
+  query cache, must be in one database). Oracle is currently blocked upstream: RDMP's cache bookkeeping
+  table name exceeds FAnsi's 30-character Oracle identifier cap.
 
 ## Install
 
