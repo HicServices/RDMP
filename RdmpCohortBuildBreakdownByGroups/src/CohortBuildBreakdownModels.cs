@@ -6,7 +6,7 @@
 
 using System.Collections.Generic;
 
-namespace Rdmp.Core.CohortCreation;
+namespace RdmpCohortBuildBreakdownByGroups;
 
 /// <summary>
 /// One count point of a cohort build tree (a cohort set or a container) with the per-region counts that

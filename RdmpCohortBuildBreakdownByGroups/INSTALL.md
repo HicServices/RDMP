@@ -9,10 +9,10 @@ Built against the **released RDMP 9.2.3**. Do not use on a different major.minor
 ## How it works (cache-only, cross-server safe)
 
 It builds the cohort **once** (populating the query cache), then recomposes every count point from the
-cached per-set identifier tables and splits each by the group column with one GROUP BY per node. It
-never re-runs the source catalogues per group, and never touches the source servers after the single
-build, only the query-cache server (which is why the reference table must be on the same server as the
-query cache). Nothing is hard-coded in the engine; the SHARE names live only in the plugin's preset.
+cached per-set identifier tables and splits each by the group column with one GROUP BY per node. The
+cohort-set source queries are never re-run: after the single build only the query-cache server is
+queried (each node joins the reference table, which is why it must be on the same server as the query
+cache). Nothing is hard-coded in the engine; the SHARE names live only in the plugin's preset.
 
 ## Inputs (4 columns; the tables are derived)
 
@@ -23,12 +23,17 @@ query cache). Nothing is hard-coded in the engine; the SHARE names live only in 
   Its table is the lookup table.
 - **lookup label column** - the display name per code (e.g. `z_hb_lookup.HB_Name`).
 - **lookup grouping column** (optional) - a higher grouping used to order the output columns (e.g.
-  `z_hb_lookup.SafeHaven_Region`; NULL values allowed).
+  `z_hb_lookup.SafeHaven_Region`; NULL values allowed). Being optional it is never prompted for in
+  the GUI; supply it via the preset or the CLI.
 
 Codes present in the data but absent from the lookup go to `Other`; patients missing from the reference
 table (or with a NULL group) go to `NotKnown`.
 
 ## Requirements
+
+- **One-to-one relationship**: each identifier must belong to AT MOST ONE group in the reference
+  table (e.g. one patient, one health board). Multi-group membership double-counts patients and
+  invalidates the NotKnown residual and the reference denominator.
 
 - The cohort identification configuration must have a **query caching server** configured.
 - The reference table must be on the **same SQL server as the query cache** (checked; refuses if not).
@@ -66,5 +71,6 @@ Groups + Other + NotKnown reconcile to Total on every row.
 
 Verified end-to-end on a deterministic synthetic fixture (top EXCEPT over an inclusion INTERSECT minus
 four exclusion sets, driven by a synthetic `z_hb_lookup` table with the 14 Scottish boards plus
-E/O/K/X): every national and per-group FinalCount and cumulative asserted cell-by-cell, the unfiltered
-column equals RDMP's own CohortCompiler counts, and the groups sum to national at every node.
+E/O/K/X): the key national and per-group counts and cumulatives are asserted explicitly, the unfiltered column
+equals RDMP's own CohortCompiler counts, and a reconciliation invariant (groups + Other + NotKnown
+== Total) is asserted on every row.

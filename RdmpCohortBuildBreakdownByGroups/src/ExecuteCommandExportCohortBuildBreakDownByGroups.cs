@@ -13,8 +13,9 @@ using System.Threading;
 using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
-using Rdmp.Core.CohortCreation;
 using Rdmp.Core.CohortCreation.Execution;
+using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
@@ -22,7 +23,7 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.QueryCaching.Aggregation;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands;
+namespace RdmpCohortBuildBreakdownByGroups;
 
 /// <summary>
 /// Reproduces the Cohort Builder's per-set / per-container count tree (the FinalCount and cumulative
@@ -35,6 +36,12 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 /// <para>Inputs are four columns; the tables are derived: <c>groupColumn</c>'s table is the reference
 /// table (which must contain exactly one IsExtractionIdentifier column, the join key to the cohort),
 /// and <c>lookupKeyColumn</c>'s table is the lookup table.</para>
+///
+/// <para>PRECONDITION: each identifier must belong to AT MOST ONE group in the reference table (a
+/// one-to-one relationship such as patient -> health board). Multi-group membership double-counts
+/// patients across group columns, inflates the reference-population denominator and can make the
+/// NotKnown residual negative. The post-run warning (group counts exceeding the unfiltered total)
+/// is a symptom of violating this.</para>
 /// </summary>
 public class ExecuteCommandExportCohortBuildBreakDownByGroups : BasicCommandExecution
 {
@@ -67,10 +74,10 @@ public class ExecuteCommandExportCohortBuildBreakDownByGroups : BasicCommandExec
         ColumnInfo lookupKeyColumn = null,
         [DemandsInitialization("Lookup table column holding the display label for each code")]
         ColumnInfo lookupLabelColumn = null,
-        [DemandsInitialization("Optional lookup table column holding a higher grouping (used to order the output columns)")]
-        ColumnInfo lookupGroupingColumn = null,
         [DemandsInitialization("CSV file to write. Defaults to <cic>-build-breakdown.csv in the current directory")]
         FileInfo toFile = null,
+        [DemandsInitialization("Optional lookup table column holding a higher grouping (used to order the output columns)")]
+        ColumnInfo lookupGroupingColumn = null,
         [DemandsInitialization("Per-query command timeout in seconds", DefaultValue = 5000)]
         int timeout = 5000) : base(activator)
     {
@@ -122,6 +129,12 @@ public class ExecuteCommandExportCohortBuildBreakDownByGroups : BasicCommandExec
                         $"to join the cohort on (found {idEis.Count})");
         _idEi = idEis[0];
 
+        // a TRANSFORMED identifier (e.g. UPPER(chi)) means the cohort's cached ids may not equal the
+        // raw column values, so a raw-table join would silently mismatch - refuse rather than guess
+        if (IsTransformedIdentifier(_idEi.SelectSQL))
+            return Fail($"The identifier column '{_idEi}' is a transformed expression ('{_idEi.SelectSQL}'); " +
+                        "this breakdown joins on the raw table column, so transformed identifiers are not supported");
+
         _lookupKeyColumn ??= SelectColumn("Lookup KEY column (the group code, e.g. z_hb_lookup.Region)");
         if (_lookupKeyColumn == null)
             return Fail("No lookup key column was supplied");
@@ -139,6 +152,9 @@ public class ExecuteCommandExportCohortBuildBreakDownByGroups : BasicCommandExec
         // co-location: the recompose + GROUP BY join runs on the cache server, so the reference table must be there
         var cacheServer = _cic.QueryCachingServer.Server;
         var refServer = _groupColumn.TableInfo.Server;
+        if (_cic.QueryCachingServer.DatabaseType != _groupColumn.TableInfo.DatabaseType)
+            return Fail($"Group column is on a {_groupColumn.TableInfo.DatabaseType} server but the query cache is " +
+                        $"{_cic.QueryCachingServer.DatabaseType}; the breakdown joins on the cache server, so they must match.");
         if (!string.IsNullOrWhiteSpace(cacheServer) && !string.IsNullOrWhiteSpace(refServer)
             && !string.Equals(cacheServer.Trim(), refServer.Trim(), StringComparison.OrdinalIgnoreCase))
             return Fail($"Group column is on server '{refServer}' but the query cache is on '{cacheServer}'; " +
@@ -178,8 +194,12 @@ public class ExecuteCommandExportCohortBuildBreakDownByGroups : BasicCommandExec
         _syntax = _groupColumn.GetQuerySyntaxHelper();
         _cacheDb = _cic.QueryCachingServer.Discover(DataAccessContext.InternalDataProcessing);
         _cacheManager = new CachedAggregateConfigurationResultsManager(_cic.QueryCachingServer);
-        _referenceTable = _groupColumn.TableInfo.Name;
-        _referenceId = _syntax.EnsureWrapped(_idEi.GetRuntimeName());
+        // fully-qualified via the discovery API rather than trusting TableInfo.Name verbatim
+        _referenceTable = _groupColumn.TableInfo.Discover(DataAccessContext.InternalDataProcessing)
+            .GetFullyQualifiedName();
+        // join on the PHYSICAL identifier column: ExtractionInformation.GetRuntimeName() returns the
+        // alias when one exists (e.g. "chi AS PatientId"), which does not exist on the raw table
+        _referenceId = _syntax.EnsureWrapped(_idEi.ColumnInfo.GetRuntimeName());
         _groupName = _syntax.EnsureWrapped(_groupColumn.GetRuntimeName());
 
         // load the (user-defined) code -> label/grouping mapping from the lookup table
@@ -322,9 +342,19 @@ public class ExecuteCommandExportCohortBuildBreakDownByGroups : BasicCommandExec
         container.GetOrderedContents().Where(o => o switch
         {
             AggregateConfiguration a => !a.IsDisabled,
-            CohortAggregateContainer c => !c.IsDisabled,
+            // mirror RDMP's builder: skip containers that are disabled OR have no enabled content
+            // (an enabled-but-empty container would otherwise emit empty SQL)
+            CohortAggregateContainer c => !c.IsDisabled && HasEnabledContent(c),
             _ => true
         }).ToList();
+
+    private bool HasEnabledContent(CohortAggregateContainer container) =>
+        container.GetOrderedContents().Any(o => o switch
+        {
+            AggregateConfiguration a => !a.IsDisabled,
+            CohortAggregateContainer c => !c.IsDisabled && HasEnabledContent(c),
+            _ => false
+        });
 
     // --- run a GROUP BY join (on the cache server) for one count point ---
 
@@ -368,8 +398,12 @@ public class ExecuteCommandExportCohortBuildBreakDownByGroups : BasicCommandExec
         {
             var n = Convert.ToInt32(r.GetValue(1));
             total += n; // includes any NULL-group rows in the denominator
-            if (!r.IsDBNull(0))
-                result[r.GetValue(0).ToString()] = n;
+            if (r.IsDBNull(0))
+                continue;
+            // ACCUMULATE: a case-sensitive DBMS can return 'A' and 'a' as separate rows, which our
+            // case-insensitive key would otherwise silently overwrite
+            var key = r.GetValue(0).ToString();
+            result[key] = result.TryGetValue(key, out var existing) ? existing + n : n;
         }
 
         return result;
@@ -380,6 +414,15 @@ public class ExecuteCommandExportCohortBuildBreakDownByGroups : BasicCommandExec
     private static readonly Regex CicPrefix = new(@"^(cic_\d+_)+", RegexOptions.Compiled);
 
     public static string CleanName(string name) => string.IsNullOrEmpty(name) ? "" : CicPrefix.Replace(name, "");
+
+    /// <summary>
+    /// True if the identifier's SelectSQL is a transformed expression (function call/computation)
+    /// rather than a plain (possibly qualified) column reference.
+    /// </summary>
+    public static bool IsTransformedIdentifier(string selectSql) =>
+        !string.IsNullOrWhiteSpace(selectSql) &&
+        (selectSql.Contains('(') || selectSql.Contains('+') || selectSql.Contains("||") ||
+         selectSql.TrimStart().StartsWith("CASE", StringComparison.OrdinalIgnoreCase));
 
     private static string Sanitise(string name)
     {

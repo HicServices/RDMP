@@ -20,11 +20,13 @@ This folder is a self-contained package: the ready-to-install plugin, install/us
 
 It builds the national cohort once (which populates RDMP's query cache), then recomposes every count
 point purely from the cached per-set identifier tables and splits each by the group column with one
-`GROUP BY` per node, all groups at once. No per-group rebuild, and no hits on the source catalogues
-after the single build (so it is cross-server safe). Inputs are four `ColumnInfo` objects: the group-by
+`GROUP BY` per node, all groups at once. No per-group rebuild; the cohort-set source queries are never re-run after the single build - only
+the query-cache server is queried (each node joins the reference table there), so it is cross-server
+safe for the cohort's catalogues. Inputs are four `ColumnInfo` objects: the group-by
 column (its table is the reference table, whose single IsExtractionIdentifier column is the join key to
 the cohort) and the lookup table's key/label/optional-grouping columns. Requires a query-caching server,
-with the reference table on the same server as the cache.
+with the reference table on the same server as the cache, and a one-to-one identifier-to-group
+relationship in the reference table (e.g. one patient, one health board).
 
 ## The SHARE preset
 
@@ -45,9 +47,10 @@ NotKnown reconcile to Total on every row.
 ## Validation
 
 Verified end-to-end against a deterministic synthetic fixture (top EXCEPT over an inclusion INTERSECT
-minus four exclusion sets, driven by a synthetic z_hb_lookup table): every national and per-group
-`FinalCount` / cumulative is asserted cell-by-cell, the unfiltered column equals RDMP's own
-`CohortCompiler` counts, and the groups sum to national at every node.
+minus four exclusion sets, driven by a synthetic z_hb_lookup table): the key national and per-group
+counts and cumulatives are asserted explicitly, the unfiltered column equals RDMP's own
+`CohortCompiler` counts, and a reconciliation invariant (groups + Other + NotKnown == Total) is
+asserted on every row.
 
 ## Build from source (optional)
 

@@ -8,16 +8,16 @@
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <!-- only this plugin's dll goes in the .rdmp; the host RDMP provides Rdmp.Core etc. -->
     <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+    <!-- standalone: opt out of the host repo Central Package Management so the pinned Version applies anywhere -->
+    <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- Build against the in-tree RDMP so the plugin matches the running version exactly.
-         Private=false => Rdmp.Core.dll is NOT bundled into the plugin output.
-         The host RDMP/worktree core must NOT already contain these classes (CS0433); build
-         against vanilla 9.2.3. -->
-    <ProjectReference Include="../../../Rdmp.Core/Rdmp.Core.csproj">
-      <Private>false</Private>
-    </ProjectReference>
+    <!-- Pinned released RDMP dependency: the plugin builds standalone from any checkout,
+         against exactly the version it targets (no in-tree Rdmp.Core reference). -->
+    <PackageReference Include="HIC.RDMP.Plugin" Version="9.2.3">
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </PackageReference>
   </ItemGroup>
 
 </Project>

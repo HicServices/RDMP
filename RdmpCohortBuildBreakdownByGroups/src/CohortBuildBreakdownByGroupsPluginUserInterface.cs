@@ -26,7 +26,7 @@ public class CohortBuildBreakdownByGroupsPluginUserInterface : PluginUserInterfa
             out var groupColumn, out var lookupKey, out var lookupLabel, out var lookupGrouping);
 
         yield return new ExecuteCommandExportCohortBuildBreakDownByGroups(BasicActivator, cic,
-            groupColumn, lookupKey, lookupLabel, lookupGrouping)
+            groupColumn, lookupKey, lookupLabel, lookupGroupingColumn: lookupGrouping)
         {
             OverrideCommandName = "Export Build Breakdown By Groups (SHARE preset)"
         };

@@ -6,9 +6,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using FAnsi.Discovery;
 
-namespace Rdmp.Core.CohortCreation;
+namespace RdmpCohortBuildBreakdownByGroups;
 
 /// <summary>
 /// A user-defined mapping from a group code to a display label and an optional grouping node, loaded
@@ -18,10 +19,38 @@ namespace Rdmp.Core.CohortCreation;
 /// </summary>
 public sealed class GroupLookup
 {
+    /// <summary>Labels that would collide with the report's fixed column headers.</summary>
+    public static readonly string[] ReservedLabels =
+        { "Order", "Type", "Name", "Container", "SetOperation", "Metric", "Total", "Other", "NotKnown" };
+
     private readonly Dictionary<string, (string Label, string Grouping)> _map;
 
-    public GroupLookup(IReadOnlyDictionary<string, (string Label, string Grouping)> map) =>
+    public GroupLookup(IReadOnlyDictionary<string, (string Label, string Grouping)> map)
+    {
         _map = new Dictionary<string, (string, string)>(map, StringComparer.OrdinalIgnoreCase);
+        Validate(_map);
+    }
+
+    /// <summary>
+    /// Hard-stops on lookup content that would silently corrupt the report: duplicate labels (two
+    /// codes rendering as identically-named columns) or labels equal to a fixed report header.
+    /// (Duplicate keys are rejected at load time before they can collapse into one entry.)
+    /// </summary>
+    private static void Validate(Dictionary<string, (string Label, string Grouping)> map)
+    {
+        var dupLabel = map.Values.Select(v => v.Label)
+            .GroupBy(l => l, StringComparer.OrdinalIgnoreCase)
+            .FirstOrDefault(g => g.Count() > 1);
+        if (dupLabel != null)
+            throw new ArgumentException(
+                $"Lookup contains duplicate label '{dupLabel.Key}' - two group codes would render as identically named columns");
+
+        var reserved = map.Values.Select(v => v.Label)
+            .FirstOrDefault(l => ReservedLabels.Contains(l, StringComparer.OrdinalIgnoreCase));
+        if (reserved != null)
+            throw new ArgumentException(
+                $"Lookup label '{reserved}' collides with a fixed report column header - rename it in the lookup table");
+    }
 
     /// <summary>True if the code is present in the lookup (a recognised group).</summary>
     public bool Contains(string code) => code != null && _map.ContainsKey(code.Trim());
@@ -59,6 +88,9 @@ public sealed class GroupLookup
             var code = r.IsDBNull(0) ? null : r.GetValue(0).ToString()?.Trim();
             if (string.IsNullOrEmpty(code))
                 continue;
+            if (map.ContainsKey(code))
+                throw new ArgumentException(
+                    $"Lookup table '{table.GetRuntimeName()}' contains duplicate key '{code}' - one row per code is required");
             var label = r.IsDBNull(1) ? code : r.GetValue(1).ToString();
             var grouping = groupingColumn != null && !r.IsDBNull(2) ? r.GetValue(2).ToString() : null;
             map[code] = (label, grouping);

@@ -10,7 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace Rdmp.Core.CohortCreation;
+namespace RdmpCohortBuildBreakdownByGroups;
 
 /// <summary>
 /// Projects a cohort build's count tree (the per-set / per-container <c>FinalCount</c> and cumulative
