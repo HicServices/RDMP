@@ -16,7 +16,7 @@ namespace RdmpCohortBuildBreakdownByGroups;
 /// Projects a cohort build's count tree (the per-set / per-container <c>FinalCount</c> and cumulative
 /// running totals shown in the Cohort Builder) split by group into a WIDE CSV: one row per
 /// (count-point x metric), the container/set name written once, a <c>Total</c> column (RDMP's own
-/// national count), one column per group recognised by the supplied <see cref="GroupLookup"/>, an
+/// unfiltered count), one column per group recognised by the supplied <see cref="GroupLookup"/>, an
 /// <c>Other</c> column (present codes the lookup does not recognise) and a <c>NotKnown</c> residual
 /// (patients not in the reference table / NULL group). Two bottom rows give each group's share of the
 /// final cohort and of the whole reference population (a sanity check). Groups + Other + NotKnown reconcile

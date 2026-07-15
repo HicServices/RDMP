@@ -10,9 +10,9 @@ Built against the **released RDMP 9.2.3**. Do not use on a different major.minor
 
 It builds the cohort **once** (populating the query cache), then recomposes every count point from the
 cached per-set identifier tables and splits each by the group column with one GROUP BY per node. The
-cohort-set source queries are never re-run: after the single build only the query-cache server is
-queried (each node joins the reference table, which is why it must be on the same server as the query
-cache). Nothing is hard-coded in the engine; the SHARE names live only in the plugin's preset.
+lookup table is read once up front; the cohort-set source queries are never re-run, and every
+recomposed count query then runs on the query-cache server (each node joins the reference table there,
+which is why it must be on the same server as the cache). Nothing is hard-coded in the engine; the SHARE names live only in the plugin's preset.
 
 ## Inputs (4 columns; the tables are derived)
 
@@ -37,15 +37,15 @@ table (or with a NULL group) go to `NotKnown`.
   denominator.
 
 - The cohort identification configuration must have a **query caching server** configured.
-- The reference table must be on the **same SQL server as the query cache** (validated with RDMP's
+- The reference table must be on the **same database server as the query cache** (validated with RDMP's
   single-server check: server, DBMS type and credential compatibility). On **PostgreSQL** it must also
   be in the **same database** (a PostgreSQL connection cannot cross databases).
 - The patient identifier must be a **plain column** (a transformed expression such as `UPPER(chi)` is
   refused - the join runs against the raw table column).
 - The lookup table must have **one row per code**, with **unique labels** that do not collide with the
   report's fixed column headers (`Total`, `Other`, `NotKnown`, ...); violations stop with a clear error.
-- Execution is **verified on SQL Server**; other DBMS are dialect-correct by construction but not yet
-  exercised by the automated tests.
+- Identifiers, fully-qualified names, commands and set-operation keywords use RDMP/FAnsi dialect
+  helpers; execution is currently tested on SQL Server only.
 
 ## Install
 

@@ -18,8 +18,9 @@ This folder is a self-contained package: the ready-to-install plugin, install/us
 
 ## How it works (in one paragraph)
 
-It builds the national cohort once (which populates RDMP's query cache), then recomposes every count
-point from the cached per-set identifier tables and splits each by the group column with one
+It builds the national cohort once (which populates RDMP's query cache) and reads the lookup table
+once, then recomposes every count point from the cached per-set identifier tables and splits each by
+the group column with one
 `GROUP BY` per node, all groups at once. No per-group rebuild; the cohort-set source queries are never re-run after the single build - only
 the query-cache server is queried (each node joins the reference table there), so it is cross-server
 safe for the cohort's catalogues. Inputs are four `ColumnInfo` objects: the group-by
@@ -44,7 +45,8 @@ column (RDMP's national number), one column per group recognised by the lookup, 
 codes the lookup does not recognise) and `NotKnown` (not in the reference table / null group). The
 column header is repeated above a `% of final cohort` row and a `% of reference population` row (each
 group's share of the whole reference table, for a cohort-vs-population sanity check). Groups + Other +
-NotKnown reconcile to Total on every row.
+NotKnown reconcile to Total on every row. (Both percentage rows are omitted if the final cohort is
+empty.)
 
 ## Validation
 

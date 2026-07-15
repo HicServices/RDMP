@@ -1,6 +1,7 @@
 // Surfaces the build breakdown-by-groups command in the RDMP desktop GUI (right-click a cohort
 // identification configuration). Two entries: the SHARE preset (inputs resolved by name via
-// SharePreset, prompting only for anything missing) and a choose-inputs variant that always prompts.
+// SharePreset, prompting only for missing REQUIRED inputs - an unresolved optional grouping is omitted)
+// and a choose-inputs variant that prompts for the group, key and label columns.
 // The same command class is auto-discovered for the CLI (`rdmp cmd ExportCohortBuildBreakDownByGroups`).
 
 using System.Collections.Generic;

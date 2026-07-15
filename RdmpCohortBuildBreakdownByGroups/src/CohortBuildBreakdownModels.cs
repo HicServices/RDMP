@@ -9,7 +9,7 @@ using System.Collections.Generic;
 namespace RdmpCohortBuildBreakdownByGroups;
 
 /// <summary>
-/// One count point of a cohort build tree (a cohort set or a container) with the per-region counts that
+/// One count point of a cohort build tree (a cohort set or a container) with the per-group counts that
 /// were computed for it. Used by <see cref="CohortBuildBreakdownByGroupsReport"/>.
 /// </summary>
 public sealed class CohortBuildBreakdownNode
@@ -30,7 +30,7 @@ public sealed class CohortBuildBreakdownNode
 
     public int DisplayOrder { get; }
 
-    /// <summary>RDMP's own count for this node (the unfiltered/national total).</summary>
+    /// <summary>RDMP's own count for this node (the unfiltered total).</summary>
     public int FinalUnfiltered { get; }
 
     /// <summary>RDMP's own cumulative within the parent container; null if not applicable.</summary>
@@ -60,10 +60,10 @@ public sealed class CohortBuildBreakdownNode
 }
 
 /// <summary>
-/// The Total / per-region / Other / NotKnown split of one node+metric, relative to a
+/// The Total / per-group / Other / NotKnown split of one node+metric, relative to a
 /// <see cref="GroupLookup"/>. <see cref="Groups"/> holds the counts for codes present in the lookup;
 /// <see cref="Other"/> sums present codes absent from the lookup; <see cref="NotKnown"/> is the residual
-/// (not in demography, or NULL region).
+/// (not in the reference table, or NULL group).
 /// </summary>
 public sealed class CohortBuildBreakdownBuckets
 {
@@ -72,10 +72,10 @@ public sealed class CohortBuildBreakdownBuckets
     /// <summary>Group code -> count, for codes recognised by the lookup.</summary>
     public IReadOnlyDictionary<string, int> Groups { get; }
 
-    /// <summary>Sum of present region codes that the lookup does not recognise.</summary>
+    /// <summary>Sum of present group codes that the lookup does not recognise.</summary>
     public int Other { get; }
 
-    /// <summary>Total - recognised - Other = not in demography + NULL region.</summary>
+    /// <summary>Total - recognised - Other = not in the reference table + NULL group.</summary>
     public int NotKnown { get; }
 
     public CohortBuildBreakdownBuckets(int total, IReadOnlyDictionary<string, int> groups, int other, int notKnown)

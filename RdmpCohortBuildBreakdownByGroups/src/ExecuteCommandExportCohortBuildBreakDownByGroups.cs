@@ -106,11 +106,13 @@ public class ExecuteCommandExportCohortBuildBreakDownByGroups : BasicCommandExec
         if (_cic.QueryCachingServer_ID == null)
             SetImpossible($"'{_cic}' has no query caching server - this breakdown works only on cached results");
 
-        // the columns are resolved (and prompted for, in the GUI) in Execute, so the command can be
-        // added to a right-click menu with only the cohort selected.
+        // required columns are resolved (and prompted for, in the GUI) in Execute - the optional
+        // grouping column is never prompted - so the command can sit on a right-click menu with only
+        // the cohort selected.
     }
 
-    /// <summary>Resolves the column inputs, prompting the user for any not supplied. Returns false on cancel.</summary>
+    /// <summary>Resolves the column inputs, prompting for any REQUIRED input not supplied (the optional
+    /// grouping column is never prompted). Returns false on cancel.</summary>
     private bool ResolveInputs()
     {
         _groupColumn ??= SelectColumn("Group-by column (on the reference table, e.g. demography Region)");
@@ -169,12 +171,13 @@ public class ExecuteCommandExportCohortBuildBreakDownByGroups : BasicCommandExec
 
         // PostgreSQL connections are bound to a single database, so the SQL Server-style
         // cross-database join (cache connection referencing another database's table) cannot work
-        if (_cic.QueryCachingServer.DatabaseType == DatabaseType.PostgreSql &&
-            !string.Equals(_cic.QueryCachingServer.Database?.Trim(), _groupColumn.TableInfo.Database?.Trim(),
-                StringComparison.OrdinalIgnoreCase))
-            return Fail("On PostgreSQL the reference table must be in the SAME DATABASE as the query cache " +
-                        $"(cache '{_cic.QueryCachingServer.Database}', reference '{_groupColumn.TableInfo.Database}') - " +
-                        "a PostgreSQL connection cannot access tables in another database.");
+        if (_cic.QueryCachingServer.DatabaseType == DatabaseType.PostgreSql)
+        {
+            var error = PostgreSqlSameDatabaseError(_cic.QueryCachingServer.Database,
+                _groupColumn.TableInfo.Database, _cic.QueryCachingServer.GetQuerySyntaxHelper());
+            if (error != null)
+                return Fail(error);
+        }
 
         return true;
     }
@@ -327,6 +330,30 @@ public class ExecuteCommandExportCohortBuildBreakDownByGroups : BasicCommandExec
                 $"Container '{container.Name}' has no enabled content to compose - it should have been skipped");
         var op = $"\n{SetOperationSql(container.Operation, _syntax.DatabaseType)}\n";
         return string.Join(op, children.Select(ch => $"({IdSql(ch)})"));
+    }
+
+    /// <summary>
+    /// PostgreSQL-only guard: the reference table must be in the same database as the query cache
+    /// (one PostgreSQL connection cannot access another database). RDMP stores TableInfo.Database
+    /// WRAPPED (e.g. "mydb") but cache-server databases UNWRAPPED, so both names are normalized via
+    /// the syntax helper's GetRuntimeName before an EXACT comparison (quoted PostgreSQL identifiers
+    /// are case-sensitive), mirroring DataAccessPortal. Returns an error message, or null if ok.
+    /// </summary>
+    public static string PostgreSqlSameDatabaseError(string cacheDatabase, string referenceDatabase,
+        IQuerySyntaxHelper syntax)
+    {
+        if (string.IsNullOrWhiteSpace(cacheDatabase) || string.IsNullOrWhiteSpace(referenceDatabase))
+            return "On PostgreSQL both the query cache and the reference table must have a database name " +
+                   $"recorded (cache '{cacheDatabase}', reference '{referenceDatabase}').";
+
+        var cache = syntax.GetRuntimeName(cacheDatabase);
+        var reference = syntax.GetRuntimeName(referenceDatabase);
+
+        return string.Equals(cache, reference, StringComparison.Ordinal)
+            ? null
+            : "On PostgreSQL the reference table must be in the SAME DATABASE as the query cache " +
+              $"(cache '{cache}', reference '{reference}') - a PostgreSQL connection cannot access " +
+              "tables in another database.";
     }
 
     /// <summary>
