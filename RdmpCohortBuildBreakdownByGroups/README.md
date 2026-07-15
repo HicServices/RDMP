@@ -25,8 +25,9 @@ the query-cache server is queried (each node joins the reference table there), s
 safe for the cohort's catalogues. Inputs are four `ColumnInfo` objects: the group-by
 column (its table is the reference table, whose single IsExtractionIdentifier column is the join key to
 the cohort) and the lookup table's key/label/optional-grouping columns. Requires a query-caching server,
-with the reference table on the same server as the cache, and a one-to-one identifier-to-group
-relationship in the reference table (e.g. one patient, one health board).
+with the reference table on the same server as the cache, and a single-valued identifier-to-group
+mapping in the reference table (each identifier maps to at most one group, e.g. a patient belongs to
+one health board).
 
 ## The SHARE preset
 
@@ -54,5 +55,7 @@ asserted on every row.
 
 ## Build from source (optional)
 
-`src/` builds against RDMP 9.2.3 (`Rdmp.Core`, `Private=false`). Package the resulting DLL + nuspec into
-a `.rdmp` zip (`<nuspec>` at root, DLL under `lib/net10.0/`).
+`src/` builds standalone from any checkout: it references the released `HIC.RDMP.Plugin 9.2.3` NuGet
+package (no in-tree RDMP source needed). `dotnet build src/RdmpCohortBuildBreakdownByGroups.csproj`,
+then package the resulting DLL + nuspec into a `.rdmp` zip (`<nuspec>` at root, DLL under
+`lib/net10.0/`).

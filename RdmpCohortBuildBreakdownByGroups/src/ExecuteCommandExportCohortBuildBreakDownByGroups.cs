@@ -20,6 +20,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.QueryCaching.Aggregation;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
@@ -37,8 +38,9 @@ namespace RdmpCohortBuildBreakdownByGroups;
 /// table (which must contain exactly one IsExtractionIdentifier column, the join key to the cohort),
 /// and <c>lookupKeyColumn</c>'s table is the lookup table.</para>
 ///
-/// <para>PRECONDITION: each identifier must belong to AT MOST ONE group in the reference table (a
-/// one-to-one relationship such as patient -> health board). Multi-group membership double-counts
+/// <para>PRECONDITION: each identifier must map to AT MOST ONE group in the reference table (a
+/// single-valued identifier-to-group mapping, e.g. patient -> health board; many identifiers per
+/// group is of course fine). Multi-group membership double-counts
 /// patients across group columns, inflates the reference-population denominator and can make the
 /// NotKnown residual negative. The post-run warning (group counts exceeding the unfiltered total)
 /// is a symptom of violating this.</para>
@@ -131,7 +133,8 @@ public class ExecuteCommandExportCohortBuildBreakDownByGroups : BasicCommandExec
 
         // a TRANSFORMED identifier (e.g. UPPER(chi)) means the cohort's cached ids may not equal the
         // raw column values, so a raw-table join would silently mismatch - refuse rather than guess
-        if (IsTransformedIdentifier(_idEi.SelectSQL))
+        if (IsTransformedIdentifier(_idEi.SelectSQL, _idEi.ColumnInfo.GetRuntimeName(),
+                _groupColumn.GetQuerySyntaxHelper()))
             return Fail($"The identifier column '{_idEi}' is a transformed expression ('{_idEi.SelectSQL}'); " +
                         "this breakdown joins on the raw table column, so transformed identifiers are not supported");
 
@@ -149,16 +152,20 @@ public class ExecuteCommandExportCohortBuildBreakDownByGroups : BasicCommandExec
             (_lookupGroupingColumn != null && _lookupGroupingColumn.TableInfo_ID != _lookupKeyColumn.TableInfo_ID))
             return Fail("The lookup key, label and grouping columns must all belong to the same table");
 
-        // co-location: the recompose + GROUP BY join runs on the cache server, so the reference table must be there
-        var cacheServer = _cic.QueryCachingServer.Server;
-        var refServer = _groupColumn.TableInfo.Server;
-        if (_cic.QueryCachingServer.DatabaseType != _groupColumn.TableInfo.DatabaseType)
-            return Fail($"Group column is on a {_groupColumn.TableInfo.DatabaseType} server but the query cache is " +
-                        $"{_cic.QueryCachingServer.DatabaseType}; the breakdown joins on the cache server, so they must match.");
-        if (!string.IsNullOrWhiteSpace(cacheServer) && !string.IsNullOrWhiteSpace(refServer)
-            && !string.Equals(cacheServer.Trim(), refServer.Trim(), StringComparison.OrdinalIgnoreCase))
-            return Fail($"Group column is on server '{refServer}' but the query cache is on '{cacheServer}'; " +
-                        "the breakdown joins on the cache server, so they must be the same server.");
+        // co-location: the recompose + GROUP BY join runs on the cache server, so the reference table
+        // must be reachable there. Use RDMP's own single-server validation (server + DBMS type +
+        // credential compatibility) rather than a hand-rolled string comparison.
+        try
+        {
+            var points = new DataAccessPointCollection(true);
+            points.Add(_cic.QueryCachingServer);
+            points.Add(_groupColumn.TableInfo);
+        }
+        catch (Exception ex)
+        {
+            return Fail($"The reference table '{_groupColumn.TableInfo}' and the query cache " +
+                        $"'{_cic.QueryCachingServer}' must be on the same server: {ex.Message}");
+        }
 
         return true;
     }
@@ -306,6 +313,9 @@ public class ExecuteCommandExportCohortBuildBreakDownByGroups : BasicCommandExec
 
     private string Compose(CohortAggregateContainer container, IReadOnlyList<IOrderable> children)
     {
+        if (children.Count == 0)
+            throw new InvalidOperationException(
+                $"Container '{container.Name}' has no enabled content to compose - it should have been skipped");
         var op = $"\n{SetOperationSql(container.Operation, _syntax.DatabaseType)}\n";
         return string.Join(op, children.Select(ch => $"({IdSql(ch)})"));
     }
@@ -342,19 +352,12 @@ public class ExecuteCommandExportCohortBuildBreakDownByGroups : BasicCommandExec
         container.GetOrderedContents().Where(o => o switch
         {
             AggregateConfiguration a => !a.IsDisabled,
-            // mirror RDMP's builder: skip containers that are disabled OR have no enabled content
-            // (an enabled-but-empty container would otherwise emit empty SQL)
-            CohortAggregateContainer c => !c.IsDisabled && HasEnabledContent(c),
+            // reuse RDMP's own enabled/skip logic (disabled or empty containers) so our walk matches
+            // the baseline task set produced by CohortCompilerRunner
+            CohortAggregateContainer c => CohortQueryBuilderResult.IsEnabled(c,
+                BasicActivator.CoreChildProvider),
             _ => true
         }).ToList();
-
-    private bool HasEnabledContent(CohortAggregateContainer container) =>
-        container.GetOrderedContents().Any(o => o switch
-        {
-            AggregateConfiguration a => !a.IsDisabled,
-            CohortAggregateContainer c => !c.IsDisabled && HasEnabledContent(c),
-            _ => false
-        });
 
     // --- run a GROUP BY join (on the cache server) for one count point ---
 
@@ -416,13 +419,27 @@ public class ExecuteCommandExportCohortBuildBreakDownByGroups : BasicCommandExec
     public static string CleanName(string name) => string.IsNullOrEmpty(name) ? "" : CicPrefix.Replace(name, "");
 
     /// <summary>
-    /// True if the identifier's SelectSQL is a transformed expression (function call/computation)
-    /// rather than a plain (possibly qualified) column reference.
+    /// True unless the identifier's SelectSQL is a plain (possibly qualified) reference to the
+    /// physical column: the syntax helper's runtime name of the expression must equal the physical
+    /// column's runtime name (a WHITELIST - anything else, including expressions the helper cannot
+    /// parse, is treated as transformed).
     /// </summary>
-    public static bool IsTransformedIdentifier(string selectSql) =>
-        !string.IsNullOrWhiteSpace(selectSql) &&
-        (selectSql.Contains('(') || selectSql.Contains('+') || selectSql.Contains("||") ||
-         selectSql.TrimStart().StartsWith("CASE", StringComparison.OrdinalIgnoreCase));
+    public static bool IsTransformedIdentifier(string selectSql, string physicalRuntimeName,
+        IQuerySyntaxHelper syntax)
+    {
+        if (string.IsNullOrWhiteSpace(selectSql))
+            return false; // no expression stored - the column itself is used
+
+        try
+        {
+            return !string.Equals(syntax.GetRuntimeName(selectSql), physicalRuntimeName,
+                StringComparison.OrdinalIgnoreCase);
+        }
+        catch (Exception)
+        {
+            return true; // unparseable = not a plain column reference
+        }
+    }
 
     private static string Sanitise(string name)
     {

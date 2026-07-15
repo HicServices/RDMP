@@ -31,9 +31,10 @@ table (or with a NULL group) go to `NotKnown`.
 
 ## Requirements
 
-- **One-to-one relationship**: each identifier must belong to AT MOST ONE group in the reference
-  table (e.g. one patient, one health board). Multi-group membership double-counts patients and
-  invalidates the NotKnown residual and the reference denominator.
+- **Single-valued mapping**: each identifier must map to AT MOST ONE group in the reference table
+  (e.g. a patient belongs to one health board; many patients per group is fine). Multi-group
+  membership double-counts patients and invalidates the NotKnown residual and the reference
+  denominator.
 
 - The cohort identification configuration must have a **query caching server** configured.
 - The reference table must be on the **same SQL server as the query cache** (checked; refuses if not).
@@ -50,14 +51,15 @@ Confirm (CLI): `rdmp.exe cmd ListSupportedCommands` lists `ExportCohortBuildBrea
 **GUI:** right-click a Cohort Identification Configuration. Two entries:
 - *Export Build Breakdown By Groups (SHARE preset)* - resolves `SHARE_Demography`.`Region` and
   `z_hb_lookup`.`Region`/`HB_Name`/`SafeHaven_Region` by name; prompts only for anything not found.
-- *Export Build Breakdown By Groups (choose inputs)* - prompts for all four columns.
+- *Export Build Breakdown By Groups (choose inputs)* - prompts for the group, key and label columns
+  (the optional grouping column is never prompted; supply it via the preset or the CLI).
 
 **CLI:** the inputs are RDMP objects, mapped by id:
 ```
 rdmp.exe cmd ExportCohortBuildBreakDownByGroups \
-    CohortIdentificationConfiguration:<id> ColumnInfo:<group> ColumnInfo:<key> ColumnInfo:<label> ColumnInfo:<grouping> out.csv
+    CohortIdentificationConfiguration:<id> ColumnInfo:<group> ColumnInfo:<key> ColumnInfo:<label> out.csv ColumnInfo:<grouping>
 ```
-`out.csv`, the grouping column and the timeout are optional.
+`out.csv`, the trailing grouping column and the timeout are optional.
 
 ## Output (wide format)
 
