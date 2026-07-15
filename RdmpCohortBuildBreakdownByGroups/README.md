@@ -33,10 +33,11 @@ one health board).
 ## The SHARE preset
 
 `src/SharePreset.cs` is deliberately the only place any deployment-specific name lives: it resolves
-`SHARE_Demography`.`Region` and `z_hb_lookup`.`Region`/`HB_Name`/`SafeHaven_Region` by name at runtime.
+`SHARE_Demography`.`Region` and `z_hb_lookup`.`Region`/`HB_Name` by name at runtime (the optional
+grouping column is not part of the preset; output columns are ordered by label).
 The GUI offers two right-click entries on a cohort identification configuration: "(SHARE preset)"
-(one click; prompts only for a group, key or label column it cannot resolve - an unresolved optional
-grouping is silently omitted) and "(choose inputs)" (prompts for the group, key and label columns).
+(one click; prompts only for a column it cannot resolve) and "(choose inputs)" (prompts for the group,
+key and label columns).
 
 ## Output
 

@@ -1,7 +1,8 @@
 // Surfaces the build breakdown-by-groups command in the RDMP desktop GUI (right-click a cohort
 // identification configuration). Two entries: the SHARE preset (inputs resolved by name via
-// SharePreset, prompting only for missing REQUIRED inputs - an unresolved optional grouping is omitted)
-// and a choose-inputs variant that prompts for the group, key and label columns.
+// SharePreset, prompting only for anything it cannot resolve) and a choose-inputs variant that prompts
+// for the group, key and label columns. The optional grouping column (output ordering) is not part of
+// the preset; supply it via the CLI if wanted.
 // The same command class is auto-discovered for the CLI (`rdmp cmd ExportCohortBuildBreakDownByGroups`).
 
 using System.Collections.Generic;
@@ -24,10 +25,10 @@ public class CohortBuildBreakdownByGroupsPluginUserInterface : PluginUserInterfa
             yield break;
 
         SharePreset.TryResolve(BasicActivator.RepositoryLocator.CatalogueRepository,
-            out var groupColumn, out var lookupKey, out var lookupLabel, out var lookupGrouping);
+            out var groupColumn, out var lookupKey, out var lookupLabel);
 
         yield return new ExecuteCommandExportCohortBuildBreakDownByGroups(BasicActivator, cic,
-            groupColumn, lookupKey, lookupLabel, lookupGroupingColumn: lookupGrouping)
+            groupColumn, lookupKey, lookupLabel)
         {
             OverrideCommandName = "Export Build Breakdown By Groups (SHARE preset)"
         };

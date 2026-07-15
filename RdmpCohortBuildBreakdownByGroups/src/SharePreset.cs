@@ -1,8 +1,7 @@
 // The SHARE deployment preset: well-known object NAMES resolved against the repository at runtime.
 // This is deliberately the ONLY place any deployment-specific name lives - the generic engine
 // (ExecuteCommandExportCohortBuildBreakDownByGroups) has no defaults at all. If a name is not found
-// (or is ambiguous) the preset returns null for that input: required inputs are then prompted for by
-// the command; an unresolved OPTIONAL grouping is simply omitted.
+// (or is ambiguous) the preset returns null for that input and the command prompts for it.
 
 using System;
 using System.Linq;
@@ -18,16 +17,13 @@ public static class SharePreset
     public const string LookupTableName = "z_hb_lookup";
     public const string LookupKeyColumnName = "Region";
     public const string LookupLabelColumnName = "HB_Name";
-    public const string LookupGroupingColumnName = "SafeHaven_Region";
 
     /// <summary>
     /// Resolves the preset names against the repository. Any input that cannot be resolved to exactly
-    /// one object comes back null (required inputs are then prompted for by the command; an unresolved
-    /// optional grouping is simply omitted).
+    /// one object comes back null (the command then prompts for it).
     /// </summary>
     public static void TryResolve(ICatalogueRepository repository,
-        out ColumnInfo groupColumn, out ColumnInfo lookupKey, out ColumnInfo lookupLabel,
-        out ColumnInfo lookupGrouping)
+        out ColumnInfo groupColumn, out ColumnInfo lookupKey, out ColumnInfo lookupLabel)
     {
         groupColumn = null;
 
@@ -43,7 +39,6 @@ public static class SharePreset
 
         lookupKey = LookupColumn(lookupTable, LookupKeyColumnName);
         lookupLabel = LookupColumn(lookupTable, LookupLabelColumnName);
-        lookupGrouping = LookupColumn(lookupTable, LookupGroupingColumnName);
     }
 
     private static ColumnInfo LookupColumn(TableInfo table, string name) =>
