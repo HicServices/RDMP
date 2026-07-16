@@ -60,8 +60,9 @@ Confirm (CLI): `rdmp.exe cmd ListSupportedCommands` lists `ExportCohortBuildBrea
 
 **GUI:** right-click a Cohort Identification Configuration. Two entries:
 - *Export Build Breakdown By Groups (SHARE preset)* - resolves `SHARE_Demography`.`Region` and
-  `z_hb_lookup`.`Region`/`HB_Name` by name; prompts only for a column it cannot resolve. The optional
-  grouping column is not part of the preset (output columns are ordered by label).
+  `z_hb_lookup`.`Region`/`HB_Name` by name; prompts only for a column it cannot resolve. If several
+  tables are named `z_hb_lookup`, the one in the same database as `SHARE_Demography` is chosen. The
+  optional grouping column is not part of the preset (output columns are ordered by label).
 - *Export Build Breakdown By Groups (choose inputs)* - prompts for the group, key and label columns
   (the optional grouping column is never prompted; supply it via the preset or the CLI).
 

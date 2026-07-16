@@ -20,26 +20,49 @@ public static class SharePreset
 
     /// <summary>
     /// Resolves the preset names against the repository. Any input that cannot be resolved to exactly
-    /// one object comes back null (the command then prompts for it).
+    /// one object comes back null (the command then prompts for it). When several tables share the
+    /// lookup name (e.g. copies imported from other databases), the one co-located with the reference
+    /// table wins - the command requires them on the same server anyway.
     /// </summary>
     public static void TryResolve(ICatalogueRepository repository,
         out ColumnInfo groupColumn, out ColumnInfo lookupKey, out ColumnInfo lookupLabel)
     {
-        groupColumn = null;
+        ColumnInfo group = null;
 
         var cata = Single(repository.GetAllObjects<Catalogue>(),
             c => string.Equals(c.Name, ReferenceCatalogueName, StringComparison.OrdinalIgnoreCase));
         if (cata != null)
-            groupColumn = Single(cata.GetAllExtractionInformation(ExtractionCategory.Any),
+            group = Single(cata.GetAllExtractionInformation(ExtractionCategory.Any),
                     e => string.Equals(e.GetRuntimeName(), GroupColumnName, StringComparison.OrdinalIgnoreCase))
                 ?.ColumnInfo;
 
-        var lookupTable = Single(repository.GetAllObjects<TableInfo>(),
-            t => string.Equals(t.GetRuntimeName(), LookupTableName, StringComparison.OrdinalIgnoreCase));
+        var candidates = repository.GetAllObjects<TableInfo>()
+            .Where(t => string.Equals(t.GetRuntimeName(), LookupTableName, StringComparison.OrdinalIgnoreCase))
+            .ToArray();
 
+        // disambiguate by co-location with the reference table: same server AND database first,
+        // then same server; only give up (prompt) if still not exactly one
+        if (candidates.Length > 1 && group != null)
+        {
+            var sameServerAndDb = candidates.Where(t =>
+                    SameName(t.Server, group.TableInfo.Server) && SameName(t.Database, group.TableInfo.Database))
+                .ToArray();
+            var sameServer = candidates.Where(t => SameName(t.Server, group.TableInfo.Server)).ToArray();
+
+            candidates = sameServerAndDb.Length == 1 ? sameServerAndDb
+                : sameServer.Length == 1 ? sameServer
+                : candidates;
+        }
+
+        var lookupTable = candidates.Length == 1 ? candidates[0] : null;
+
+        groupColumn = group;
         lookupKey = LookupColumn(lookupTable, LookupKeyColumnName);
         lookupLabel = LookupColumn(lookupTable, LookupLabelColumnName);
     }
+
+    private static bool SameName(string a, string b) =>
+        string.Equals(a?.Trim(), b?.Trim(), StringComparison.OrdinalIgnoreCase);
 
     private static ColumnInfo LookupColumn(TableInfo table, string name) =>
         table == null

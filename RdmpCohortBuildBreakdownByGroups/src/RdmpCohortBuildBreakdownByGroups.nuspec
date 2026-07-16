@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
   <metadata>
     <id>RdmpCohortBuildBreakdownByGroups</id>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
     <authors>HIC</authors>
     <description>Reproduces the Cohort Builder's per-set / per-container count tree (FinalCount and
       cumulative running totals) split by an arbitrary group column (e.g. health board), labelled and
