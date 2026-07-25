@@ -79,8 +79,11 @@ One row per count point (name written once), a `Metric` column (Final and Cumula
 (RDMP's national number), one column per group recognised by the lookup, then `Other` and `NotKnown`.
 The column header is repeated above two percentage rows: `% of final cohort` and `% of reference
 population` (each group's share of the whole reference table, a cohort-vs-population sanity check).
-Groups + Other + NotKnown reconcile to Total on every row. (If the final cohort is empty the two
-percentage rows are omitted - a share of zero patients is undefined.)
+Groups + Other + NotKnown reconcile to Total on every row. Columns appear only for groups OBSERVED in
+the cohort or in the reference population; a lookup code with no members anywhere is omitted (any group
+with at least one patient in the reference table gets a column, showing zeros where the cohort has
+none). (If the final cohort is empty the two percentage rows are omitted - a share of zero patients is
+undefined.)
 
 ## Validation
 

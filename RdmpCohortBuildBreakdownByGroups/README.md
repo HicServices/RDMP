@@ -15,6 +15,7 @@ This folder is a self-contained package: the ready-to-install plugin, install/us
 | `RdmpCohortBuildBreakdownByGroups.rdmp` | the built plugin (drop into RDMP / add via the Plugins node) |
 | `INSTALL.md` | install + usage (GUI right-click and CLI), including the lookup-table expectations |
 | `src/` | plugin source (command, report, group lookup, models, SHARE preset, UI hook, csproj, nuspec) |
+| `tests/` | the NUnit test source + TESTING.md (how to run them and results; not wired into this repo's CI) |
 
 ## How it works (in one paragraph)
 
@@ -46,8 +47,9 @@ column (RDMP's national number), one column per group recognised by the lookup, 
 codes the lookup does not recognise) and `NotKnown` (not in the reference table / null group). The
 column header is repeated above a `% of final cohort` row and a `% of reference population` row (each
 group's share of the whole reference table, for a cohort-vs-population sanity check). Groups + Other +
-NotKnown reconcile to Total on every row. (Both percentage rows are omitted if the final cohort is
-empty.)
+NotKnown reconcile to Total on every row. Columns appear only for groups observed in the cohort or in
+the reference population; a lookup code with no members anywhere is omitted. (Both percentage rows are
+omitted if the final cohort is empty.)
 
 ## Validation
 

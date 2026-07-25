@@ -21,6 +21,11 @@ namespace RdmpCohortBuildBreakdownByGroups;
 /// (patients not in the reference table / NULL group). Two bottom rows give each group's share of the
 /// final cohort and of the whole reference population (a sanity check). Groups + Other + NotKnown reconcile
 /// to Total on every row.
+///
+/// <para>Columns are emitted only for group codes OBSERVED in the cohort or in the reference
+/// population; a lookup code with no members anywhere is omitted. Because the reference row scans the
+/// whole reference table, any group with at least one patient gets a column (showing zeros where the
+/// cohort has none).</para>
 /// </summary>
 public static class CohortBuildBreakdownByGroupsReport
 {
