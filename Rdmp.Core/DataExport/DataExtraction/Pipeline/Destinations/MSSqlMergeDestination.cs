@@ -279,6 +279,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
 
                             existing = targetDb.ExpectTable(tblName);
                             implementor = triggerFactory.Create(existing);
+                            implementor.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
                             try
                             {
                                 triggerPresent = implementor.GetTriggerStatus() == DataLoad.Triggers.TriggerStatus.Enabled;
