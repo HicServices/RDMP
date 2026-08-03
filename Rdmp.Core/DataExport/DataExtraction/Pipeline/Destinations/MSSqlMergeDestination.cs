@@ -80,6 +80,13 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
         {
         }
 
+        private bool hasStructuralChanges(DataTable source, DiscoveredTable destination)
+        {
+            var sourceColumns = source.Columns.Cast<DataColumn>().Select(c => c.ColumnName).ToList();
+            var destinationColumns = destination.DiscoverColumns().Select(c => c.GetRuntimeName()).ToList();
+            return !sourceColumns.All(destinationColumns.Contains) || !destinationColumns.All(sourceColumns.Contains);
+        }
+
         private string GetTableName(string suffix, DataTable dt)
         {
             string tblName = TableNamingPattern;
@@ -136,7 +143,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
 
 
 
-        public static string GetMergeSQL(string destinationTableName,string tempTableName, DataColumn[] pkColumns, DataColumn[] nonPkColumns, bool performDeletes,IQuerySyntaxHelper syntaxHelper)
+        public static string GetMergeSQL(string destinationTableName, string tempTableName, DataColumn[] pkColumns, DataColumn[] nonPkColumns, bool performDeletes, IQuerySyntaxHelper syntaxHelper)
         {
             List<DataColumn> columns = new();
             columns.AddRange(pkColumns);
@@ -230,6 +237,95 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
                         Destination PKs: {string.Join(", ", remotePKs)}
                         """);
                     }
+                    TriggerImplementerFactory triggerFactory = new TriggerImplementerFactory(FAnsi.DatabaseType.MicrosoftSQLServer);
+                    var implementor = triggerFactory.Create(existing);
+                    bool triggerPresent;
+                    try
+                    {
+                        triggerPresent = implementor.GetTriggerStatus() == DataLoad.Triggers.TriggerStatus.Enabled;
+                    }
+                    catch (TriggerMissingException)
+                    {
+                        triggerPresent = false;
+                    }
+                    if (hasStructuralChanges(toProcess, existing))
+                    {
+                        var sourceColumns = toProcess.Columns.Cast<DataColumn>().Select(c => c.ColumnName).ToList();
+                        var destinationColumns = existing.DiscoverColumns().Select(c => c.GetRuntimeName()).ToList();
+
+                        if (triggerPresent && destinationColumns.Except(sourceColumns).Where(c => !SpecialFieldNames.IsHicPrefixed(c)).Any())//only mess about with column removal if there is an archive trigger
+                        {
+
+                            //move everything into the archive - do this by updating the HIC_validfrom
+                            var sql = $"UPDATE {existing.GetFullyQualifiedName()} set {SpecialFieldNames.ValidFrom} = GETDATE()";
+                            using var con = targetDb.Server.GetConnection();
+                            con.Open();
+                            using var cmd = targetDb.Server.GetCommand(sql, con);
+                            cmd.CommandTimeout = 30000;
+                            cmd.ExecuteNonQuery();
+
+                            var removedColumns = destinationColumns.Except(sourceColumns).Where(c => !SpecialFieldNames.IsHicPrefixed(c));
+                            foreach (var column in removedColumns.Select(c => existing.DiscoverColumn(c)))
+                            {
+                                existing.DropColumn(column);
+                            }
+                            string triggerProblems = "";
+                            string triggerOK = "";
+                            implementor.DropTrigger(out triggerProblems, out triggerOK);
+                            if (triggerProblems != "")
+                            {
+                                throw new Exception(triggerProblems);
+                            }
+
+                            existing = targetDb.ExpectTable(tblName);
+                            implementor = triggerFactory.Create(existing);
+                            implementor.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
+                            try
+                            {
+                                triggerPresent = implementor.GetTriggerStatus() == DataLoad.Triggers.TriggerStatus.Enabled;
+                            }
+                            catch (TriggerMissingException)
+                            {
+                                triggerPresent = false;
+                            }
+                        }
+                        if (triggerPresent && sourceColumns.Except(destinationColumns).Where(c => !SpecialFieldNames.IsHicPrefixed(c)).Any())
+                        {
+                            var addedColumns = sourceColumns.Except(destinationColumns).Where(c => !SpecialFieldNames.IsHicPrefixed(c));
+                            var archiveTable = existing.Database.ExpectTable(tblName + "_Archive");
+                            foreach (var column in addedColumns)
+                            {
+                                var colType = toProcess.Columns[column].DataType;
+                                existing.AddColumn(column, new TypeGuesser.DatabaseTypeRequest(colType), true, 30000);
+                                if (archiveTable.Exists() && archiveTable.DiscoverColumns().All(col => col.GetRuntimeName() != column))
+                                {
+                                    archiveTable.AddColumn(column, new TypeGuesser.DatabaseTypeRequest(toProcess.Columns[column].DataType), true, 30000);
+                                }
+                            }
+                            string triggerProblems = "";
+                            string triggerOK = "";
+                            implementor.DropTrigger(out triggerProblems, out triggerOK);
+                            if (triggerProblems != "")
+                            {
+                                throw new Exception(triggerProblems);
+                            }
+
+                            existing = targetDb.ExpectTable(tblName);
+                            implementor = triggerFactory.Create(existing);
+                            try
+                            {
+                                triggerPresent = implementor.GetTriggerStatus() == DataLoad.Triggers.TriggerStatus.Enabled;
+                            }
+                            catch (TriggerMissingException)
+                            {
+                                triggerPresent = false;
+                            }
+                        }
+                    }
+                    if (!triggerPresent && UseArchiveTrigger)
+                    {
+                        implementor.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
+                    }
                 }
             }
             _toProcess = toProcess;
@@ -287,7 +383,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
             if (UseArchiveTrigger)
             {
                 TriggerImplementerFactory triggerFactory = new TriggerImplementerFactory(FAnsi.DatabaseType.MicrosoftSQLServer);
-                var implementor = triggerFactory.Create(destinationTable, false, true);
+                var implementor = triggerFactory.Create(destinationTable);
                 bool present;
                 try
                 {
@@ -299,7 +395,14 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
                 }
                 if (!present)
                 {
-                    implementor.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
+                    try
+                    {
+                        implementor.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
+                    }
+                    catch (Exception e)
+                    {
+                        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, $"Failed to create archive trigger on {destinationTable.GetFullyQualifiedName()}: {e.Message}"));
+                    }
                 }
             }
 
