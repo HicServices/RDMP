@@ -136,9 +136,10 @@ public abstract class TriggerImplementer : ITriggerImplementer
     private string WorkOutArchiveTableCreationSQL()
     {
         //script original table
-        var createTableSQL = _table.ScriptTableCreation(true, true, true);
+        var tbl = _archiveTable.Exists() ? _archiveTable : _table;
+        var createTableSQL = tbl.ScriptTableCreation(true, true, true);
 
-        var toReplaceTableName = $"CREATE TABLE {_table.GetFullyQualifiedName()}";
+        var toReplaceTableName = $"CREATE TABLE {tbl.GetFullyQualifiedName()}";
 
         if (!createTableSQL.Contains(toReplaceTableName))
             throw new Exception($"Expected to find occurrence of {toReplaceTableName} in the SQL {createTableSQL}");

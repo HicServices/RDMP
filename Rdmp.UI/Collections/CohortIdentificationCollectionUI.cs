@@ -94,6 +94,7 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
                 CohortIdentificationConfiguration cic = (CohortIdentificationConfiguration)x;
                 return cic.GetVersions();
             }
+
             return Activator.CoreChildProvider.GetChildren(x);
         };
 

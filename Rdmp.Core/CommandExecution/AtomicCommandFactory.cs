@@ -735,6 +735,7 @@ public class AtomicCommandFactory : CommandFactoryBase
 
             yield return new ExecuteCommandViewExtractionSql(_activator, sds);
             yield return new ExecuteCommandViewArchiveTriggerSql(_activator, sds);
+            yield return new ExecuteCommandViewMergeSql(_activator, sds);
             yield return new ExecuteCommandAddExtractionProgress(_activator, sds)
             { SuggestedCategory = Batching, Weight = 1.1f };
             yield return new ExecuteCommandResetExtractionProgress(_activator, sds)

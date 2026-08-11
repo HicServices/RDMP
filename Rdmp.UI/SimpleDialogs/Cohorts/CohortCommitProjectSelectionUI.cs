@@ -101,14 +101,11 @@ namespace Rdmp.UI.SimpleDialogs.Cohorts
             if (result == DialogResult.OK)
             {
                 project.SaveToDatabase();
-                if (_currentProject != null)
+                _cic.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively().Select(ac => ac.Catalogue).Distinct().Where(c => c.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository)).ToList().ForEach(c =>
                 {
-                    _cic.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively().Select(ac => ac.Catalogue).Distinct().Where(c => c.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository)).ToList().ForEach(c =>
-                    {
-                        var cmd = new ExecuteCommandMakeCatalogueProjectSpecific(_activator, c, Result, true);
-                        cmd.Execute();
-                    });
-                }
+                    var cmd = new ExecuteCommandMakeCatalogueProjectSpecific(_activator, c, project, true);
+                    cmd.Execute();
+                });
 
                 _activator.Publish(project);
                 DialogResult = DialogResult.OK;

@@ -71,9 +71,20 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
 
         private DiscoveredDatabase db;
         private DataTable _toProcess;
+        private string mergeTableName;
+        private DiscoveredTable tmpTbl;
+        private DataColumn[] pkColumns;
+        private DataColumn[] nonPkColumns;
 
         public MSSqlMergeDestination() : base(false)
         {
+        }
+
+        private bool hasStructuralChanges(DataTable source, DiscoveredTable destination)
+        {
+            var sourceColumns = source.Columns.Cast<DataColumn>().Select(c => c.ColumnName).ToList();
+            var destinationColumns = destination.DiscoverColumns().Select(c => c.GetRuntimeName()).ToList();
+            return !sourceColumns.All(destinationColumns.Contains) || !destinationColumns.All(sourceColumns.Contains);
         }
 
         private string GetTableName(string suffix, DataTable dt)
@@ -130,8 +141,49 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
         {
         }
 
+
+
+        public static string GetMergeSQL(string destinationTableName, string tempTableName, DataColumn[] pkColumns, DataColumn[] nonPkColumns, bool performDeletes, IQuerySyntaxHelper syntaxHelper)
+        {
+            List<DataColumn> columns = new();
+            columns.AddRange(pkColumns);
+            columns.AddRange(nonPkColumns);
+            var mergeSql = $"""
+                MERGE INTO {destinationTableName} WITH (HOLDLOCK) AS target
+                USING {tempTableName} AS source
+                    ON {string.Join(" AND ", pkColumns.Select(pkc => $"target.{pkc.ColumnName} = source.{pkc.ColumnName}"))}
+                WHEN MATCHED AND(
+                {string.Join(" OR ", nonPkColumns.Select(c => GetORLine(c, syntaxHelper)))}
+                )
+                THEN 
+                    UPDATE SET {string.Join(" , ", nonPkColumns.Select(pkc => $"target.{pkc.ColumnName} = source.{pkc.ColumnName}"))}
+                WHEN NOT MATCHED BY TARGET THEN
+                    INSERT ({string.Join(" , ", columns.Cast<DataColumn>().Select(pkc => pkc.ColumnName))})
+                    VALUES ({string.Join(" , ", columns.Cast<DataColumn>().Select(pkc => $"source.{pkc.ColumnName}"))}){(performDeletes ? "" : ";")}
+                {(performDeletes ? """
+                WHEN NOT MATCHED BY SOURCE THEN
+                    DELETE;
+                """ : "")}
+                """;
+            return mergeSql;
+        }
+
         public override void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
         {
+
+            if (tmpTbl == null) return;
+            var _managedConnection = tmpTbl.Database.Server.GetManagedConnection();
+
+            if (!db.Exists()) return;
+            var tableName = GetTableName(null, null);
+            var destinationTable = db.ExpectTable(tableName);
+            var mergeSql = GetMergeSQL(destinationTable.GetFullyQualifiedName(), tmpTbl.GetFullyQualifiedName(), pkColumns, nonPkColumns, AllowMergeToPerformDeletes, db.Server.GetQuerySyntaxHelper());
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"{mergeSql}"));
+            var cmd = new SqlCommand(mergeSql, (SqlConnection)_managedConnection.Connection);
+            cmd.CommandTimeout = SQLMergeTimeout;
+            var rowCount = cmd.ExecuteNonQuery();
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Merged {rowCount} rows into {destinationTable.GetFullyQualifiedName()}."));
+            if (DeleteMergeTempTable) tmpTbl.Drop();
         }
 
         public override string GetDestinationDescription()
@@ -163,7 +215,12 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
         protected override void Open(DataTable toProcess, IDataLoadEventListener job, GracefulCancellationToken cancellationToken)
         {
             var discoveredServer = DataAccessPortal.ExpectServer(TargetDatabaseServer, DataAccessContext.DataExport, false);
-            var tblName = _toProcess.TableName;
+            //sort out the naming 
+            var dbName = GetDatabaseName();
+
+            //make sure the db exist
+            db = discoveredServer.ExpectDatabase(dbName);
+            var tblName = GetTableName(null, _toProcess);
             var targetDb = discoveredServer.ExpectDatabase(GetDatabaseName());
             if (targetDb.Exists())
             {
@@ -173,12 +230,101 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
                     var remotePKs = existing.DiscoverColumns().Where(col => col.IsPrimaryKey).Select(col => col.GetRuntimeName()).ToList();
                     var rdmpPKs = toProcess.PrimaryKey.Cast<DataColumn>().Select(col => col.ColumnName).ToList();
                     if (!remotePKs.All(rdmpPKs.Contains) || remotePKs.Count != rdmpPKs.Count)
-                    { 
+                    {
                         throw new Exception($"""
                         Table {existing.GetFullyQualifiedName()} already exists and has different PKs to the source table.                            
                         Source PKs: {string.Join(", ", rdmpPKs)}
                         Destination PKs: {string.Join(", ", remotePKs)}
                         """);
+                    }
+                    TriggerImplementerFactory triggerFactory = new TriggerImplementerFactory(FAnsi.DatabaseType.MicrosoftSQLServer);
+                    var implementor = triggerFactory.Create(existing);
+                    bool triggerPresent;
+                    try
+                    {
+                        triggerPresent = implementor.GetTriggerStatus() == DataLoad.Triggers.TriggerStatus.Enabled;
+                    }
+                    catch (TriggerMissingException)
+                    {
+                        triggerPresent = false;
+                    }
+                    if (hasStructuralChanges(toProcess, existing))
+                    {
+                        var sourceColumns = toProcess.Columns.Cast<DataColumn>().Select(c => c.ColumnName).ToList();
+                        var destinationColumns = existing.DiscoverColumns().Select(c => c.GetRuntimeName()).ToList();
+
+                        if (triggerPresent && destinationColumns.Except(sourceColumns).Where(c => !SpecialFieldNames.IsHicPrefixed(c)).Any())//only mess about with column removal if there is an archive trigger
+                        {
+
+                            //move everything into the archive - do this by updating the HIC_validfrom
+                            var sql = $"UPDATE {existing.GetFullyQualifiedName()} set {SpecialFieldNames.ValidFrom} = GETDATE()";
+                            using var con = targetDb.Server.GetConnection();
+                            con.Open();
+                            using var cmd = targetDb.Server.GetCommand(sql, con);
+                            cmd.CommandTimeout = 30000;
+                            cmd.ExecuteNonQuery();
+
+                            var removedColumns = destinationColumns.Except(sourceColumns).Where(c => !SpecialFieldNames.IsHicPrefixed(c));
+                            foreach (var column in removedColumns.Select(c => existing.DiscoverColumn(c)))
+                            {
+                                existing.DropColumn(column);
+                            }
+                            string triggerProblems = "";
+                            string triggerOK = "";
+                            implementor.DropTrigger(out triggerProblems, out triggerOK);
+                            if (triggerProblems != "")
+                            {
+                                throw new Exception(triggerProblems);
+                            }
+
+                            existing = targetDb.ExpectTable(tblName);
+                            implementor = triggerFactory.Create(existing);
+                            implementor.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
+                            try
+                            {
+                                triggerPresent = implementor.GetTriggerStatus() == DataLoad.Triggers.TriggerStatus.Enabled;
+                            }
+                            catch (TriggerMissingException)
+                            {
+                                triggerPresent = false;
+                            }
+                        }
+                        if (triggerPresent && sourceColumns.Except(destinationColumns).Where(c => !SpecialFieldNames.IsHicPrefixed(c)).Any())
+                        {
+                            var addedColumns = sourceColumns.Except(destinationColumns).Where(c => !SpecialFieldNames.IsHicPrefixed(c));
+                            var archiveTable = existing.Database.ExpectTable(tblName + "_Archive");
+                            foreach (var column in addedColumns)
+                            {
+                                var colType = toProcess.Columns[column].DataType;
+                                existing.AddColumn(column, new TypeGuesser.DatabaseTypeRequest(colType), true, 30000);
+                                if (archiveTable.Exists() && archiveTable.DiscoverColumns().All(col => col.GetRuntimeName() != column))
+                                {
+                                    archiveTable.AddColumn(column, new TypeGuesser.DatabaseTypeRequest(toProcess.Columns[column].DataType), true, 30000);
+                                }
+                            }
+                            string triggerProblems = "";
+                            string triggerOK = "";
+                            implementor.DropTrigger(out triggerProblems, out triggerOK);
+                            if (triggerProblems != "")
+                            {
+                                throw new Exception(triggerProblems);
+                            }
+
+                            existing = targetDb.ExpectTable(tblName);
+                            implementor = triggerFactory.Create(existing);
+                            try
+                            {
+                                triggerPresent = implementor.GetTriggerStatus() == DataLoad.Triggers.TriggerStatus.Enabled;
+                            }
+                            catch (TriggerMissingException)
+                            {
+                                triggerPresent = false;
+                            }
+                        }
+                    }
+                    if (!triggerPresent && UseArchiveTrigger)
+                    {
+                        implementor.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
                     }
                 }
             }
@@ -205,11 +351,9 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
             _toProcess = toProcess;
             var discoveredServer = DataAccessPortal.ExpectServer(TargetDatabaseServer, DataAccessContext.DataExport, false);
 
-            //sort out the naming 
             var dbName = GetDatabaseName();
-
-            //make sure the db exist
             db = discoveredServer.ExpectDatabase(dbName);
+
             if (!db.Exists())
                 db.Create();
 
@@ -239,7 +383,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
             if (UseArchiveTrigger)
             {
                 TriggerImplementerFactory triggerFactory = new TriggerImplementerFactory(FAnsi.DatabaseType.MicrosoftSQLServer);
-                var implementor = triggerFactory.Create(destinationTable, false, true);
+                var implementor = triggerFactory.Create(destinationTable);
                 bool present;
                 try
                 {
@@ -251,51 +395,42 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
                 }
                 if (!present)
                 {
-                    implementor.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
+                    try
+                    {
+                        implementor.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
+                    }
+                    catch (Exception e)
+                    {
+                        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, $"Failed to create archive trigger on {destinationTable.GetFullyQualifiedName()}: {e.Message}"));
+                    }
                 }
             }
 
-            var pkColumns = toProcess.PrimaryKey;
-            var nonPkColumns = toProcess.Columns.Cast<DataColumn>().Where(dc => !pkColumns.Contains(dc) && !dc.ColumnName.StartsWith("hic_")).ToArray();
+            pkColumns = toProcess.PrimaryKey;
+            nonPkColumns = toProcess.Columns.Cast<DataColumn>().Where(dc => !pkColumns.Contains(dc) && !dc.ColumnName.StartsWith("hic_")).ToArray();
             //merge
             List<DatabaseColumnRequest> columnTypes = new List<DatabaseColumnRequest>() { };
             foreach (var column in destinationTable.DiscoverColumns())
             {
                 columnTypes.Add(new DatabaseColumnRequest(column.GetRuntimeName(), column.DataType.ToString(), column.AllowNulls));
             }
-
-            var tmpTbl = db.CreateTable(
-                out Dictionary<string, Guesser> _dataTypeDictionary,
-                $"mergeTempTable_{tableName}_{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture).Replace('.', '-')}",
-                toProcess, columnTypes.ToArray(), true, null);
+            if (mergeTableName is null)
+            {
+                mergeTableName = $"mergeTempTable_{tableName}_{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture).Replace('.', '-')}";
+            }
+            tmpTbl = db.ExpectTable(mergeTableName);
+            if (!tmpTbl.Exists())
+            {
+                db.CreateTable(
+                    out Dictionary<string, Guesser> _dataTypeDictionary,
+                    mergeTableName,
+                    toProcess, columnTypes.ToArray(), true, null);
+            }
             var _managedConnection = tmpTbl.Database.Server.GetManagedConnection();
             var _bulkcopy = tmpTbl.BeginBulkInsert(CultureInfo.CurrentCulture, _managedConnection.ManagedTransaction);
             _bulkcopy.Timeout = SQLMergeTimeout;
             _bulkcopy.Upload(toProcess);
             _bulkcopy.Dispose();
-            var mergeSql = $"""
-                MERGE INTO {destinationTable.GetFullyQualifiedName()} WITH (HOLDLOCK) AS target
-                USING {tmpTbl.GetFullyQualifiedName()} AS source
-                    ON {string.Join(" AND ", pkColumns.Select(pkc => $"target.{pkc.ColumnName} = source.{pkc.ColumnName}"))}
-                WHEN MATCHED AND(
-                {string.Join(" OR ", nonPkColumns.Select(c => GetORLine(c, db.Server.GetQuerySyntaxHelper())))}
-                )
-                THEN 
-                    UPDATE SET {string.Join(" , ", nonPkColumns.Select(pkc => $"target.{pkc.ColumnName} = source.{pkc.ColumnName}"))}
-                WHEN NOT MATCHED BY TARGET THEN
-                    INSERT ({string.Join(" , ", toProcess.Columns.Cast<DataColumn>().Select(pkc => pkc.ColumnName))})
-                    VALUES ({string.Join(" , ", toProcess.Columns.Cast<DataColumn>().Select(pkc => $"source.{pkc.ColumnName}"))}){(AllowMergeToPerformDeletes ? "" : ";")}
-                {(AllowMergeToPerformDeletes ? """
-                WHEN NOT MATCHED BY SOURCE THEN
-                    DELETE;
-                """ : "")}
-                """;
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"{mergeSql}"));
-            var cmd = new SqlCommand(mergeSql, (SqlConnection)_managedConnection.Connection);
-            cmd.CommandTimeout = SQLMergeTimeout;
-            var rowCount = cmd.ExecuteNonQuery();
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Merged {rowCount} rows into {destinationTable.GetFullyQualifiedName()}."));
-            if (DeleteMergeTempTable) tmpTbl.Drop();
             _managedConnection.Dispose();
         }
 
