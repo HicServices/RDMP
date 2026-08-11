@@ -1341,8 +1341,13 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         //it has an associated query cache
         if (cic.QueryCachingServer_ID != null)
-            children.Add(new QueryCacheUsedByCohortIdentificationNode(cic,
-                AllExternalServers.Single(s => s.ID == cic.QueryCachingServer_ID)));
+        {
+            var server = AllExternalServers.SingleOrDefault(s => s.ID == cic.QueryCachingServer_ID);
+            if (server is not null)
+            {
+                children.Add(new QueryCacheUsedByCohortIdentificationNode(cic, server));
+            }
+        }
 
         var parameters = AllAnyTableParameters.Where(p => p.IsReferenceTo(cic)).Cast<ISqlParameter>().ToArray();
         foreach (var p in parameters) children.Add(p);
@@ -1350,9 +1355,12 @@ public class CatalogueChildProvider : ICoreChildProvider
         //if it has a root container
         if (cic.RootCohortAggregateContainer_ID != null)
         {
-            var container = AllCohortAggregateContainers.Single(c => c.ID == cic.RootCohortAggregateContainer_ID);
-            AddChildren(container, descendancy.Add(container).SetBetterRouteExists());
-            children.Add(container);
+            var container = AllCohortAggregateContainers.SingleOrDefault(c => c.ID == cic.RootCohortAggregateContainer_ID);
+            if (container is not null)
+            {
+                AddChildren(container, descendancy.Add(container).SetBetterRouteExists());
+                children.Add(container);
+            }
         }
 
         //get the patient index tables
