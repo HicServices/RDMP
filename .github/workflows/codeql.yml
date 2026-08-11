@@ -41,8 +41,8 @@ jobs:
       - name: Build
         run: dotnet build
         env:
-          SixLaboursLicenseKey: ${{ secrets.SIXLABOR }}
-          SixLaboursLicenseFile: ${{ secrets.SIXLABOR }}
+          SixLaboursLicenseKey: "${{ secrets.SIXLABOR }}"
+          SixLaboursLicenseFile: "${{ secrets.SIXLABOR }}"
 
       - name: SecurityCodescan
         run: |
