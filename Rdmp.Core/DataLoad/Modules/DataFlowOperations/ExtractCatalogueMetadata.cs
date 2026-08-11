@@ -79,7 +79,7 @@ public class ExtractCatalogueMetadata : IPluginDataFlowComponent<DataTable>, IPi
         switch (_request)
         {
             case ExtractDatasetCommand extractDatasetCommand:
-                tblName = tblName.Replace("$d", extractDatasetCommand.DatasetBundle.DataSet.Catalogue.Name);
+                tblName = tblName.Replace("$d", extractDatasetCommand.DatasetBundle.DataSet.Catalogue.ExtractionName ?? extractDatasetCommand.DatasetBundle.DataSet.Catalogue.Name);
                 tblName = tblName.Replace("$a", extractDatasetCommand.DatasetBundle.DataSet.Catalogue.Acronym);
                 break;
             case ExtractGlobalsCommand:

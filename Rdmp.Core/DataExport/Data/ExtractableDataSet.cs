@@ -129,8 +129,10 @@ public class ExtractableDataSet : DatabaseEntity, IExtractableDataSet, IInjectKn
         if (Catalogue == null)
             return $"DELETED CATALOGUE {Catalogue_ID}";
 
+
+        string name = Catalogue.ExtractionName ?? Catalogue.Name;
         //only bother refreshing Catalogue details if we will be able to get a legit catalogue name
-        return Catalogue.IsDeprecated ? $"DEPRECATED CATALOGUE {Catalogue.Name}" : Catalogue.Name;
+        return Catalogue.IsDeprecated ? $"DEPRECATED CATALOGUE {name}" : name;
     }
 
     #region Stuff for updating our internal database records
