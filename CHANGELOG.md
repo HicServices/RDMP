@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Allow Merge code to be viewed in UI
 - Fix bug with catalogues not becoming project specific when commit from another project
 - Improve displayed reason for being unable to make Catalogue Project Specific
+- Fix issue with extraction progresses being unable to use temp cohort tables
 - Fix issue with template CICs replacing CICs with matching folder structures
 
 ## [9.2.3] - 2026-05-28
