@@ -41,6 +41,7 @@ jobs:
       - name: Build
         run: |
           echo "${{ secrets.SIXLABOR }}" > sixlabors.loc
+          export SixLaborsLicenseKey=${{ secrets.SIXLABOR }}
           dotnet build
 
       - name: SecurityCodescan
