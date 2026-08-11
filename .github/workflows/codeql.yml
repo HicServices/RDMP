@@ -40,11 +40,8 @@ jobs:
 
       - name: Build
         run: |
-          cat "${{ SixLaboursLicenseKey }}" >> sixlabors.loc
+          cat "${{ secrets.SIXLABOR }}" >> sixlabors.loc
           dotnet build
-        env:
-          SixLaboursLicenseKey: "${{ secrets.SIXLABOR }}"
-          SixLaboursLicenseFile: "${{ secrets.SIXLABOR }}"
 
       - name: SecurityCodescan
         run: |
