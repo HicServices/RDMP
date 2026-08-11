@@ -39,10 +39,9 @@ jobs:
           config-file: ./.github/configs/codeql.yml
 
       - name: Build
-        run: dotnet build
-        env:
-          SixLaboursLicenseKey: "${{ secrets.SIXLABOR }}"
-          SixLaboursLicenseFile: "${{ secrets.SIXLABOR }}"
+        run: |
+          cat secret.SIXLABOR >> sixlabors.loc
+          dotnet build
 
       - name: SecurityCodescan
         run: |
