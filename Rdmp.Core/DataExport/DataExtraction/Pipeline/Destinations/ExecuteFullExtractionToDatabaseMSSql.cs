@@ -468,7 +468,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         indexName = indexName.Replace("$e", _request.Configuration.ID.ToString());
         if (_request is ExtractDatasetCommand extractDatasetCommand)
         {
-            indexName = indexName.Replace("$d", extractDatasetCommand.DatasetBundle.DataSet.Catalogue.ExtractionName != null ? extractDatasetCommand.DatasetBundle.DataSet.Catalogue.ExtractionName : extractDatasetCommand.DatasetBundle.DataSet.Catalogue.Name);
+            indexName = indexName.Replace("$d", extractDatasetCommand.DatasetBundle.DataSet.Catalogue.ExtractionName ?? extractDatasetCommand.DatasetBundle.DataSet.Catalogue.Name);
             indexName = indexName.Replace("$a", extractDatasetCommand.DatasetBundle.DataSet.Catalogue.Acronym);
         }
 
@@ -505,7 +505,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
 
         if (_request is ExtractDatasetCommand extractDatasetCommand)
         {
-            tblName = tblName.Replace("$d", extractDatasetCommand.DatasetBundle.DataSet.Catalogue.ExtractionName != null ? extractDatasetCommand.DatasetBundle.DataSet.Catalogue.ExtractionName : extractDatasetCommand.DatasetBundle.DataSet.Catalogue.Name);
+            tblName = tblName.Replace("$d", extractDatasetCommand.DatasetBundle.DataSet.Catalogue.ExtractionName ?? extractDatasetCommand.DatasetBundle.DataSet.Catalogue.Name);
             tblName = tblName.Replace("$a", extractDatasetCommand.DatasetBundle.DataSet.Catalogue.Acronym);
         }
 
