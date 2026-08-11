@@ -40,6 +40,8 @@ jobs:
 
       - name: Build
         run: dotnet build
+        env:
+          SixLaboursLicenseKey: ${{ secrets.SIXLABOR }}
 
       - name: SecurityCodescan
         run: |
