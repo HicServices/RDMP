@@ -40,7 +40,7 @@ jobs:
 
       - name: Build
         run: |
-          cat "${{ secrets.SIXLABOR }}" >> sixlabors.loc
+          echo "${{ secrets.SIXLABOR }}" > sixlabors.loc
           dotnet build
 
       - name: SecurityCodescan
