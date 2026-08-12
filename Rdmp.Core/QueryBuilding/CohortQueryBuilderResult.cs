@@ -80,6 +80,8 @@ public class CohortQueryBuilderResult
     public int CountOfSubQueries => Dependencies.Count;
     public int CountOfCachedSubQueries { get; private set; }
 
+    public bool DangerouslyIgnoreCacheRequirements { get; private set; } = false;
+
     public IReadOnlyCollection<IPluginCohortCompiler> PluginCohortCompilers { get; } =
         Array.Empty<PluginCohortCompiler>().ToList().AsReadOnly();
 
@@ -90,15 +92,17 @@ public class CohortQueryBuilderResult
     /// <param name="childProvider"></param>
     /// <param name="helper"></param>
     /// <param name="customise"></param>
+    /// <param name="dangerouslyIgnoreCacheRequirements"></param>
     /// <param name="cancellationToken"></param>
     public CohortQueryBuilderResult(ExternalDatabaseServer cacheServer, ICoreChildProvider childProvider,
-        CohortQueryBuilderHelper helper, QueryBuilderCustomArgs customise, CancellationToken cancellationToken)
+        CohortQueryBuilderHelper helper, QueryBuilderCustomArgs customise, bool dangerouslyIgnoreCacheRequirements, CancellationToken cancellationToken)
     {
         CacheServer = cacheServer;
         ChildProvider = childProvider;
         Helper = helper;
         Customise = customise;
         CancellationToken = cancellationToken;
+        DangerouslyIgnoreCacheRequirements = dangerouslyIgnoreCacheRequirements;
 
         if (cacheServer != null)
         {
@@ -184,7 +188,6 @@ public class CohortQueryBuilderResult
                 case CacheUsage.MustUse:
                     throw new QueryBuildingException(
                         $"Could not build final SQL because some queries are not fully cached and {uncached}");
-
                 case CacheUsage.Opportunistic:
 
                     //The cache and dataset are on the same server so run it
@@ -334,7 +337,7 @@ public class CohortQueryBuilderResult
         {
             case CacheUsage.MustUse:
                 throw new QueryBuildingException(
-                    $"Could not build final SQL because {dependency} is not fully cached and CacheUsageDecision is {CacheUsageDecision}");
+                  $"Could not build final SQL because {dependency} is not fully cached and CacheUsageDecision is {CacheUsageDecision}");
 
             case CacheUsage.Opportunistic:
 
@@ -429,7 +432,7 @@ public class CohortQueryBuilderResult
                 _log.AppendLine($"Found problematic dependent table '{dependantTable}'");
 
                 //if there's no cache server that's a problem!
-                if (CacheServer == null)
+                if (!DangerouslyIgnoreCacheRequirements && CacheServer == null)
                     throw new QueryBuildingException(
                         $"Table {dependantTable} is on a different server (or uses different access credentials) from previously seen dependencies and no QueryCache is configured");
 
@@ -443,7 +446,7 @@ public class CohortQueryBuilderResult
                 {
                     _log.AppendLine($"Avoided problematic dependent table '{dependantTable}' by using the cache");
                 }
-                else
+                else if (!DangerouslyIgnoreCacheRequirements)
                 {
                     DependenciesSingleServer = null;
 

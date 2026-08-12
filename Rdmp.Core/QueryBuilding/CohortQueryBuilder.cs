@@ -72,6 +72,9 @@ public class CohortQueryBuilder
     private CohortQueryBuilderHelper helper;
     public CohortQueryBuilderResult Results { get; private set; }
 
+    public bool DangerouslyIgnoreCacheRequirements { get; set; } = false;
+
+
     #region constructors
 
     //Constructors - This one is the base one called by all others
@@ -201,7 +204,7 @@ public class CohortQueryBuilder
     private void RecreateHelpers(QueryBuilderCustomArgs customizations, CancellationToken cancellationToken)
     {
         helper = new CohortQueryBuilderHelper();
-        Results = new CohortQueryBuilderResult(CacheServer, _childProvider, helper, customizations, cancellationToken);
+        Results = new CohortQueryBuilderResult(CacheServer, _childProvider, helper, customizations, DangerouslyIgnoreCacheRequirements, cancellationToken);
     }
 
     /// <summary>

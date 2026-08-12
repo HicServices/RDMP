@@ -469,6 +469,9 @@ public class AtomicCommandFactory : CommandFactoryBase
 
             yield return new ExecuteCommandViewData(_activator, cic, ViewType.All, null, true) { Weight = -99.7f };
             yield return new ExecuteCommandViewData(_activator, cic, ViewType.All, null, false) { Weight = -99.6f };
+            yield return new ExecuteCommandViewData(_activator, cic, ViewType.All, null, false,true) { 
+                Weight = -99.6f 
+            };
 
             if (cic != null && cic.IsTemplate)
             {

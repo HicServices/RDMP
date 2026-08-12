@@ -24,6 +24,7 @@ public class ExecuteCommandViewData : ExecuteCommandViewDataBase, IAtomicCommand
     private readonly ViewType _viewType;
     private readonly IMapsDirectlyToDatabaseTable _obj;
     private readonly bool _useCache;
+    private readonly bool _dangerouslyIgnoreCacheRequirements;
 
     #region Constructors
 
@@ -34,6 +35,7 @@ public class ExecuteCommandViewData : ExecuteCommandViewDataBase, IAtomicCommand
     /// <param name="viewType"></param>
     /// <param name="toFile"></param>
     /// <param name="useCache"></param>
+    /// <param name="dangerouslyIgnoreCacheRequirements"></param>
     /// <param name="obj"></param>
     /// <exception cref="ArgumentException"></exception>
     [UseWithObjectConstructor]
@@ -48,11 +50,15 @@ public class ExecuteCommandViewData : ExecuteCommandViewDataBase, IAtomicCommand
         FileInfo toFile = null,
         [DemandsInitialization(
             "Applies only to CohortIdentificationConfigurations.  Defaults to true.  Set to false to disable query cache use.")]
-        bool useCache = true) : base(activator, toFile)
+        bool useCache = true,
+        [DemandsInitialization("Applies only to CohortIdentificationConfigurations. Defaults to false. Will generate SQL and ignore any corss-server issues that arise")]
+        bool dangerouslyIgnoreCacheRequirements = false
+        ) : base(activator, toFile)
     {
         _viewType = viewType;
         _obj = obj;
         _useCache = useCache;
+        _dangerouslyIgnoreCacheRequirements = dangerouslyIgnoreCacheRequirements;
 
         switch (obj)
         {
@@ -118,7 +124,8 @@ public class ExecuteCommandViewData : ExecuteCommandViewDataBase, IAtomicCommand
 
         return new ViewCohortIdentificationConfigurationSqlCollection(cic)
         {
-            UseQueryCache = _useCache
+            UseQueryCache = _useCache,
+            DangerouslyIgnoreCacheRequirements = _dangerouslyIgnoreCacheRequirements
         };
     }
 
@@ -193,9 +200,16 @@ public class ExecuteCommandViewData : ExecuteCommandViewDataBase, IAtomicCommand
         if (!string.IsNullOrWhiteSpace(OverrideCommandName))
             return OverrideCommandName;
 
-        return _obj is CohortIdentificationConfiguration
-            ? _useCache ? "Query Builder SQL/Results" : "Query Builder SQL/Results (No Cache)"
-            : $"View {_viewType.ToString().Replace("_", " ")}";
+        if(_obj is CohortIdentificationConfiguration)
+        {
+            if(_dangerouslyIgnoreCacheRequirements)
+                return "Query Builder SQL/Results (Ignore Cache Requirements)";
+            if (_useCache)
+                return "Query Builder SQL/Results";
+            return "Query Builder SQL/Results (No Cache)";
+        }
+
+        return $"View {_viewType.ToString().Replace("_", " ")}";
     }
 
     protected override IViewSQLAndResultsCollection GetCollection() => _collection;

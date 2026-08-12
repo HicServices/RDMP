@@ -22,6 +22,8 @@ internal class ViewCohortIdentificationConfigurationSqlCollection : PersistableO
     public bool UseQueryCache { get; set; }
     public bool DisableRun => false;
 
+    public bool DangerouslyIgnoreCacheRequirements { get; set; } = false;
+
     public ViewCohortIdentificationConfigurationSqlCollection()
     {
     }
@@ -55,6 +57,7 @@ internal class ViewCohortIdentificationConfigurationSqlCollection : PersistableO
             return cache;
 
         var builder = new CohortQueryBuilder(CohortIdentificationConfiguration, null);
+        builder.DangerouslyIgnoreCacheRequirements = DangerouslyIgnoreCacheRequirements;
         builder.RegenerateSQL();
         return new SelfCertifyingDataAccessPoint(builder.Results.TargetServer);
     }
@@ -62,7 +65,7 @@ internal class ViewCohortIdentificationConfigurationSqlCollection : PersistableO
     public string GetSql()
     {
         var builder = new CohortQueryBuilder(CohortIdentificationConfiguration, null);
-
+        builder.DangerouslyIgnoreCacheRequirements = DangerouslyIgnoreCacheRequirements;
         if (!UseQueryCache && CohortIdentificationConfiguration.QueryCachingServer_ID.HasValue)
             builder.CacheServer = null;
 
