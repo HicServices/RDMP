@@ -145,31 +145,55 @@ public abstract class BasicActivateItems : IBasicActivateItems
     protected virtual ICoreChildProvider GetChildProvider()
     {
         // Build new CoreChildProvider in a temp then update to it to avoid stale references
-        ICoreChildProvider temp = null;
 
-        //prefer a linked repository with both
-        if (RepositoryLocator.DataExportRepository != null)
-            try
-            {
-                temp = new DataExportChildProvider(RepositoryLocator, PluginUserInterfaces.ToArray(),
-                    GlobalErrorCheckNotifier, CoreChildProvider as DataExportChildProvider);
-            }
-            catch (Exception e)
-            {
-                ShowException("Error constructing DataExportChildProvider", e);
-            }
+        ////prefer a linked repository with both
+        //if (RepositoryLocator.DataExportRepository != null)
+        //    try
+        //    {
+        //        temp = new DataExportChildProvider(RepositoryLocator, PluginUserInterfaces.ToArray(),
+        //            GlobalErrorCheckNotifier, CoreChildProvider as DataExportChildProvider);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        ShowException("Error constructing DataExportChildProvider", e);
+        //    }
 
-        //there was an error generating a data export repository or there was no repository specified
+        ////there was an error generating a data export repository or there was no repository specified
 
-        //so just create a catalogue one
-        temp ??= new CatalogueChildProvider(RepositoryLocator.CatalogueRepository, PluginUserInterfaces.ToArray(),
-            GlobalErrorCheckNotifier, CoreChildProvider as CatalogueChildProvider);
+        ////so just create a catalogue one
+        //temp ??= new CatalogueChildProvider(RepositoryLocator.CatalogueRepository, PluginUserInterfaces.ToArray(),
+        //    GlobalErrorCheckNotifier, CoreChildProvider as CatalogueChildProvider);
 
-        // first time
-        if (CoreChildProvider == null)
+        //// first time
+        //if (CoreChildProvider == null)
+        //    CoreChildProvider = temp;
+        //else
+        //    CoreChildProvider.UpdateTo(temp);
+        if(CoreChildProvider == null)
+        {
+            ICoreChildProvider temp = null;
+            if (RepositoryLocator.DataExportRepository != null)
+                try
+                {
+                    temp = new DataExportChildProvider(RepositoryLocator, PluginUserInterfaces.ToArray(),
+                        GlobalErrorCheckNotifier, CoreChildProvider as DataExportChildProvider);
+                }
+                catch (Exception e)
+                {
+                    ShowException("Error constructing DataExportChildProvider", e);
+                }
+
+            //there was an error generating a data export repository or there was no repository specified
+
+            //so just create a catalogue one
+            temp ??= new CatalogueChildProvider(RepositoryLocator.CatalogueRepository, PluginUserInterfaces.ToArray(),
+                GlobalErrorCheckNotifier, CoreChildProvider as CatalogueChildProvider);
             CoreChildProvider = temp;
+        }
         else
-            CoreChildProvider.UpdateTo(temp);
+        {
+            CoreChildProvider.RefreshAsync().GetAwaiter().GetResult();
+        }
 
         return CoreChildProvider;
     }

@@ -4,8 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
@@ -21,6 +19,10 @@ using Rdmp.Core.Providers.Nodes.CohortNodes;
 using Rdmp.Core.Providers.Nodes.PipelineNodes;
 using Rdmp.Core.Providers.Nodes.SharingNodes;
 using Rdmp.Core.Repositories.Managers;
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Rdmp.Core.Providers;
 
@@ -173,4 +175,6 @@ public interface ICoreChildProvider : IChildProvider
     /// <returns>True if it was possible to selectively refresh part of the child provider</returns>
     /// <param name="databaseEntity"></param>
     bool SelectiveRefresh(IMapsDirectlyToDatabaseTable databaseEntity);
+
+    Task RefreshAsync(CancellationToken ct = default);
 }
