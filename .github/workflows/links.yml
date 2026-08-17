@@ -11,6 +11,7 @@ on:
       - '**.md'
 env:
   DISABLE_TELEMETRY: 1
+  SIXLABORS_LICENSE_KEY: ${{ secrets.SIXLABORS_LICENSE_KEY }}
 jobs:
   markdown-link-check:
     name: Broken Links
