@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using NUnit.Framework;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data.Cohort;
 using System.Linq;
 
@@ -15,7 +16,7 @@ internal class CohortIdentificationConfigurationMergerTests : CohortIdentificati
     [Test]
     public void TestSimpleMerge()
     {
-        var merger = new CohortIdentificationConfigurationMerger(CatalogueRepository);
+        var merger = new CohortIdentificationConfigurationMerger(RepositoryLocator);
 
         var cic1 = new CohortIdentificationConfiguration(CatalogueRepository, "cic1");
         var cic2 = new CohortIdentificationConfiguration(CatalogueRepository, "cic2");
@@ -90,7 +91,7 @@ internal class CohortIdentificationConfigurationMergerTests : CohortIdentificati
     [Test]
     public void TestSimpleUnMerge()
     {
-        var merger = new CohortIdentificationConfigurationMerger(CatalogueRepository);
+        var merger = new CohortIdentificationConfigurationMerger(RepositoryLocator);
 
         var cicInput = new CohortIdentificationConfiguration(CatalogueRepository, "cic99");
 
@@ -153,7 +154,7 @@ internal class CohortIdentificationConfigurationMergerTests : CohortIdentificati
     [Test]
     public void TestSimpleImportCic()
     {
-        var merger = new CohortIdentificationConfigurationMerger(CatalogueRepository);
+        var merger = new CohortIdentificationConfigurationMerger(RepositoryLocator);
 
         var cic1 = new CohortIdentificationConfiguration(CatalogueRepository, "cic1");
         var cic2 = new CohortIdentificationConfiguration(CatalogueRepository, "cic2");

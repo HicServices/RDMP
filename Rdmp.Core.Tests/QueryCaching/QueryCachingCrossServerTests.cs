@@ -23,11 +23,13 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 using Tests.Common;
 using Tests.Common.Scenarios;
 using TypeGuesser;
+using Rdmp.Core.CommandExecution;
 
 namespace Rdmp.Core.Tests.QueryCaching;
 
 internal class QueryCachingCrossServerTests : TestsRequiringA
 {
+
     [TestCase(DatabaseType.MicrosoftSQLServer, typeof(QueryCachingPatcher))]
     [TestCase(DatabaseType.MySql, typeof(QueryCachingPatcher))]
     [TestCase(DatabaseType.Oracle, typeof(QueryCachingPatcher))]
@@ -85,7 +87,7 @@ internal class QueryCachingCrossServerTests : TestsRequiringA
         var root = cic.RootCohortAggregateContainer;
         root.AddChild(ac1, 0);
 
-        var compiler = new CohortCompiler(cic);
+        var compiler = new CohortCompiler(new ThrowImmediatelyActivator(RepositoryLocator,null),cic);
         var runner = new CohortCompilerRunner(compiler, 50000);
         runner.Run(new CancellationToken());
 
@@ -143,7 +145,7 @@ internal class QueryCachingCrossServerTests : TestsRequiringA
         root.AddChild(ac1, 0);
         root.AddChild(ac2, 1);
 
-        var compiler = new CohortCompiler(cic);
+        var compiler = new CohortCompiler(new ThrowImmediatelyActivator(RepositoryLocator, null),cic);
         var runner = new CohortCompilerRunner(compiler, 50000);
         runner.Run(new CancellationToken());
 
@@ -220,7 +222,7 @@ internal class QueryCachingCrossServerTests : TestsRequiringA
         var root = cic.RootCohortAggregateContainer;
         root.AddChild(ac, 0);
 
-        var compiler = new CohortCompiler(cic);
+        var compiler = new CohortCompiler(new ThrowImmediatelyActivator(RepositoryLocator, null),cic);
         var runner = new CohortCompilerRunner(compiler, 50000);
         runner.Run(new CancellationToken());
 
@@ -296,7 +298,7 @@ internal class QueryCachingCrossServerTests : TestsRequiringA
         root.AddChild(ac1, 0);
         root.AddChild(ac2, 1);
 
-        var compiler = new CohortCompiler(cic);
+        var compiler = new CohortCompiler(new ThrowImmediatelyActivator(RepositoryLocator, null),cic);
         var runner = new CohortCompilerRunner(compiler, 50000);
 
         runner.Run(new CancellationToken());
@@ -367,7 +369,7 @@ internal class QueryCachingCrossServerTests : TestsRequiringA
         var hospitalAdmissions = SetupPatientIndexTableUser(db, people, r, cic, joinable);
         cic.RootCohortAggregateContainer.AddChild(hospitalAdmissions, 0);
 
-        var compiler = new CohortCompiler(cic);
+        var compiler = new CohortCompiler(new ThrowImmediatelyActivator(RepositoryLocator, null),cic);
         var runner = new CohortCompilerRunner(compiler, 50000);
 
         runner.Run(new CancellationToken());
@@ -427,7 +429,7 @@ internal class QueryCachingCrossServerTests : TestsRequiringA
         var hospitalAdmissions = SetupPatientIndexTableUser(db, people, r, cic, joinable);
         cic.RootCohortAggregateContainer.AddChild(hospitalAdmissions, 0);
 
-        var compiler = new CohortCompiler(cic);
+        var compiler = new CohortCompiler(new ThrowImmediatelyActivator(RepositoryLocator, null),cic);
         var runner = new CohortCompilerRunner(compiler, 50000);
 
         runner.Run(new CancellationToken());
@@ -479,7 +481,7 @@ internal class QueryCachingCrossServerTests : TestsRequiringA
         var hospitalAdmissions = SetupPatientIndexTableUser(server2, people, r, cic, joinable);
         cic.RootCohortAggregateContainer.AddChild(hospitalAdmissions, 0);
 
-        var compiler = new CohortCompiler(cic);
+        var compiler = new CohortCompiler(new ThrowImmediatelyActivator(RepositoryLocator, null),cic);
         var runner = new CohortCompilerRunner(compiler, 50000);
 
         runner.Run(new CancellationToken());
@@ -535,7 +537,7 @@ internal class QueryCachingCrossServerTests : TestsRequiringA
         var hospitalAdmissions = SetupPatientIndexTableUser(server2, people, r, cic, joinable);
         cic.RootCohortAggregateContainer.AddChild(hospitalAdmissions, 0);
 
-        var compiler = new CohortCompiler(cic);
+        var compiler = new CohortCompiler(new ThrowImmediatelyActivator(RepositoryLocator, null),cic);
         var runner = new CohortCompilerRunner(compiler, 50000);
 
         runner.Run(new CancellationToken());
@@ -602,7 +604,7 @@ internal class QueryCachingCrossServerTests : TestsRequiringA
         root.Operation = SetOperation.EXCEPT;
         root.SaveToDatabase();
 
-        var compiler = new CohortCompiler(cic);
+        var compiler = new CohortCompiler(new ThrowImmediatelyActivator(RepositoryLocator, null),cic);
         var runner = new CohortCompilerRunner(compiler, 50000);
 
         runner.Run(new CancellationToken());

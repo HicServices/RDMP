@@ -44,4 +44,10 @@ public interface ITriggerImplementer
     /// </summary>
     /// <returns></returns>
     bool CheckUpdateTriggerIsEnabledAndHasExpectedBody();
+
+    /// <summary>
+    /// Returns the SQL query that would be used to create the trigger if <see cref="CreateTrigger"/> were called.
+    /// </summary>
+    /// <returns></returns>
+    string GetCreateTriggerSQL();
 }

@@ -11,6 +11,7 @@ using FAnsi;
 using FAnsi.Discovery;
 using NUnit.Framework;
 using Rdmp.Core.CohortCreation.Execution;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
@@ -28,7 +29,7 @@ public class CohortCompilerRunnerTests : DatabaseTests
     {
         SetupCohort(out var db, out var cic, out var dt);
 
-        var compiler = new CohortCompiler(cic);
+        var compiler = new CohortCompiler(new ThrowImmediatelyActivator(RepositoryLocator,null), cic);
 
         var runner = new CohortCompilerRunner(compiler, 5000);
         runner.Run(new CancellationToken());
@@ -62,7 +63,7 @@ public class CohortCompilerRunnerTests : DatabaseTests
         cic.QueryCachingServer_ID = serverReference.ID;
         cic.SaveToDatabase();
 
-        var compiler = new CohortCompiler(cic);
+        var compiler = new CohortCompiler(new ThrowImmediatelyActivator(RepositoryLocator, null), cic);
 
         var runner = new CohortCompilerRunner(compiler, 5000);
         runner.Run(new CancellationToken());

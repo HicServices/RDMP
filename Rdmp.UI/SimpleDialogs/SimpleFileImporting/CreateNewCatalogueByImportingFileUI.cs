@@ -287,7 +287,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
         try
         {
             var source = DataFlowPipelineEngineFactory.CreateSourceIfExists(p);
-            ((IPipelineRequirement<FlatFileToLoad>)source).PreInitialize(new FlatFileToLoad(_selectedFile),
+            ((IPipelineRequirement<FlatFileToLoad>)source).PreInitialize(null,new FlatFileToLoad(_selectedFile),
                 new FromCheckNotifierToDataLoadEventListener(ragSmileyFile));
             ((ICheckable)source).Check(ragSmileyFile);
         }
@@ -331,7 +331,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
 
         var source = (IDataFlowSource<DataTable>)DataFlowPipelineEngineFactory.CreateSourceIfExists(p);
 
-        ((IPipelineRequirement<FlatFileToLoad>)source).PreInitialize(new FlatFileToLoad(_selectedFile),
+        ((IPipelineRequirement<FlatFileToLoad>)source).PreInitialize(null,new FlatFileToLoad(_selectedFile),
             new FromCheckNotifierToDataLoadEventListener(ragSmileyFile));
 
         Cursor.Current = Cursors.WaitCursor;

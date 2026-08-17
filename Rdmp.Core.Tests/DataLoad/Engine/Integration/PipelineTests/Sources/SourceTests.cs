@@ -4,9 +4,8 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Data;
 using NUnit.Framework;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataFlowPipeline;
@@ -16,6 +15,8 @@ using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Sources;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Progress;
+using System;
+using System.Data;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Sources;
@@ -196,7 +197,7 @@ public class SourceTests : DatabaseTests
             throw new NotImplementedException();
         }
 
-        public void PreInitialize(TableInfo value, IDataLoadEventListener listener)
+        public void PreInitialize(IBasicActivateItems activator, TableInfo value, IDataLoadEventListener listener)
         {
             PreInitToThis = value;
         }
@@ -220,13 +221,13 @@ public class SourceTests : DatabaseTests
             throw new NotImplementedException();
         }
 
-        public void PreInitialize(TableInfo value, IDataLoadEventListener listener)
+        public void PreInitialize(IBasicActivateItems activator, TableInfo value, IDataLoadEventListener listener)
         {
             PreInitToThis = value;
         }
 
 
-        public void PreInitialize(LoadModuleAssembly value, IDataLoadEventListener listener)
+        public void PreInitialize(IBasicActivateItems activator, LoadModuleAssembly value, IDataLoadEventListener listener)
         {
             throw new NotImplementedException();
         }
@@ -267,7 +268,7 @@ public class TestObject_Suspicious : IDataFlowComponent<DataTable>, IPipelineReq
         throw new NotImplementedException();
     }
 
-    public void PreInitialize(object value, IDataLoadEventListener listener)
+    public void PreInitialize(IBasicActivateItems activator, object value, IDataLoadEventListener listener)
     {
         Object = value;
     }
@@ -292,12 +293,12 @@ public class TestObject_ExtraSuspicious : IDataFlowComponent<DataTable>, IPipeli
         throw new NotImplementedException();
     }
 
-    public void PreInitialize(object value, IDataLoadEventListener listener)
+    public void PreInitialize(IBasicActivateItems activator, object value, IDataLoadEventListener listener)
     {
         Object = value;
     }
 
-    public void PreInitialize(string value, IDataLoadEventListener listener)
+    public void PreInitialize(IBasicActivateItems activator, string value, IDataLoadEventListener listener)
     {
         Object = value;
     }

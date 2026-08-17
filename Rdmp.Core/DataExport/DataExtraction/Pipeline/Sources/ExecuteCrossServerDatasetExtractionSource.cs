@@ -292,7 +292,7 @@ public class ExecuteCrossServerDatasetExtractionSource : ExecuteDatasetExtractio
         }
 
         var destination = new DataTableUploadDestination();
-        destination.PreInitialize(_tempDb, listener);
+        destination.PreInitialize(null,_tempDb, listener);
         destination.ProcessPipelineData(cohortDataTable, listener, cancellationToken);
         destination.Dispose(listener, null);
 

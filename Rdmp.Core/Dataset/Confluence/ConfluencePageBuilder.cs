@@ -88,6 +88,7 @@ namespace Rdmp.Core.Dataset.Confluence
 
         private static string BuildDataVariableRecord(CatalogueItem catalogueItem)
         {
+            if (catalogueItem.ExtractionInformation is null || catalogueItem.ColumnInfo is null) return null;
             var lookups = catalogueItem.CatalogueRepository.GetAllObjectsWhere<Lookup>("ForeignKey_ID", catalogueItem.ColumnInfo.ID);
             return $"""
                 <tr>
@@ -238,7 +239,7 @@ namespace Rdmp.Core.Dataset.Confluence
                         Has Lookups
                     </th>
                 </tr>
-                {string.Join("", catalogue.CatalogueItems.Where(ci => ci.ExtractionInformation is not null).Select(ci => BuildDataVariableRecord(ci)))}
+                {string.Join("", catalogue.CatalogueItems.Where(ci => ci.ExtractionInformation is not null && ci.ExtractionInformation.ExtractionCategory is ExtractionCategory.Core).Select(ci => BuildDataVariableRecord(ci)))}
             </table>
             """;
         }

@@ -36,7 +36,6 @@ namespace Rdmp.UI.Collections
             olvName = new OLVColumn();
             olvAssociatedProjects = new OLVColumn();
             olvFrozen = new OLVColumn();
-            tbFilter = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)tlvCohortIdentificationConfigurations).BeginInit();
             SuspendLayout();
             // 
@@ -46,7 +45,7 @@ namespace Rdmp.UI.Collections
             tlvCohortIdentificationConfigurations.AllColumns.Add(olvAssociatedProjects);
             tlvCohortIdentificationConfigurations.AllColumns.Add(olvFrozen);
             tlvCohortIdentificationConfigurations.CellEditUseWholeCell = false;
-            tlvCohortIdentificationConfigurations.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { olvName, olvAssociatedProjects,olvFrozen });
+            tlvCohortIdentificationConfigurations.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { olvName, olvAssociatedProjects, olvFrozen });
             tlvCohortIdentificationConfigurations.Dock = System.Windows.Forms.DockStyle.Fill;
             tlvCohortIdentificationConfigurations.Location = new System.Drawing.Point(0, 0);
             tlvCohortIdentificationConfigurations.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -65,7 +64,7 @@ namespace Rdmp.UI.Collections
             olvName.Sortable = false;
             olvName.Text = "Cohort Identification Configurations";
             olvName.Width = 100;
-            //
+            // 
             // olvAssociatedProjects
             // 
             olvAssociatedProjects.IsEditable = false;
@@ -76,26 +75,16 @@ namespace Rdmp.UI.Collections
             olvFrozen.IsEditable = false;
             olvFrozen.Text = "Frozen";
             // 
-            // tbFilter
-            // 
-            tbFilter.Dock = System.Windows.Forms.DockStyle.Bottom;
-            tbFilter.Location = new System.Drawing.Point(0, 669);
-            tbFilter.Name = "tbFilter";
-            tbFilter.Size = new System.Drawing.Size(583, 23);
-            tbFilter.TabIndex = 1;
-            // 
             // CohortIdentificationCollectionUI
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            Controls.Add(tbFilter);
             Controls.Add(tlvCohortIdentificationConfigurations);
             Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             Name = "CohortIdentificationCollectionUI";
             Size = new System.Drawing.Size(583, 692);
             ((System.ComponentModel.ISupportInitialize)tlvCohortIdentificationConfigurations).EndInit();
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
@@ -104,6 +93,5 @@ namespace Rdmp.UI.Collections
         private OLVColumn olvName;
         private OLVColumn olvAssociatedProjects;
         private OLVColumn olvFrozen;
-        private System.Windows.Forms.TextBox tbFilter;
     }
 }

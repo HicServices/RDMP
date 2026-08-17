@@ -4,6 +4,56 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [9.3.0] - 2026-08-13
+- Add Extraction Name to Catalogues
+- Improve SQL Extraction Merge
+- Allow Merge code to be viewed in UI
+- Fix bug with catalogues not becoming project specific when commit from another project
+- Improve displayed reason for being unable to make Catalogue Project Specific
+- Fix issue with extraction progresses being unable to use temp cohort tables
+- Fix issue with template CICs replacing CICs with matching folder structures
+
+## [9.2.3] - 2026-05-28
+- Fix issue with extractable project data set creation for project specific catalogues
+- Add ability to view proposed Archive Trigger SQL on an Extraction Dataset
+- Ensure PK Parity when using the MSSQLExtraction and MSSQLMerge destinations
+- Add support for developing on macOS
+- Fix Cohort Builder context menu freeze after partial refresh
+- Add instance setting to set custom update URL
+- Improve Confluence builder tool to alphabetize Catalogues and only include Core Catalogue Items
+
+## [9.2.2] - 2026-05-19
+- Add ability to force primary keys at each batch of data when extracting to a database
+- Update security vulnerability scanning dependencies
+
+## [9.2.1] - 2026-04-07
+- Update Sql Merge component to force destination column types
+- Update Sql merge to correctly match updates
+- Update archive trigger to ignore hic_DataLoadRunID on extractions
+- Fix issue with flickering tooltips
+- Fix issue with cohort builder needing refreshed after every update
+
+## [9.2.0] - 2026-03-10
+- Add Internal Note to Catalogue
+- Fix issue where project associations were not copied when a CIC was cloned
+- Fix issue with using Internal Catalogues in Cohort Identification Configurations
+- Fix issue with using Project Specific Catalogues in Cohort Identification Configurations when not associated to project
+- Fix bug with copying project specific Catalogues between Projects when committing a Cohort
+- Remove Tree filters from UI
+
+- Simplify Project Cohorts tree
+- Fix bug with copying project specific Catalogues between Projects when committing a Cohort
+- Remove Tree filters from UI
+- Fix issue with Web File Downloader not releasing files after download complete
+- Fix Extraction primary Key case sensitivity issue
+- Automatically fetch user settings from previous versions of RDMP when installing the latest version
+- Allow new columns to be added to archive extractions
+- Simplify use of Extraction Progress
+- Update CHI validation to allow mod10 CHIs
+- Hardened Confluence export functionality
+- Fix issue with using Internal Catalogues in Cohort Identification Configurations
+- Add new SQL merge extraction component
+
 ## [9.1.1] - 2025-12-02
 - Allow Atlassian service workers to write to Confluence from RDMP
 

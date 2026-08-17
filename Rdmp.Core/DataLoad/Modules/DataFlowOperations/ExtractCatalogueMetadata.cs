@@ -79,7 +79,7 @@ public class ExtractCatalogueMetadata : IPluginDataFlowComponent<DataTable>, IPi
         switch (_request)
         {
             case ExtractDatasetCommand extractDatasetCommand:
-                tblName = tblName.Replace("$d", extractDatasetCommand.DatasetBundle.DataSet.Catalogue.Name);
+                tblName = tblName.Replace("$d", extractDatasetCommand.DatasetBundle.DataSet.Catalogue.ExtractionName ?? extractDatasetCommand.DatasetBundle.DataSet.Catalogue.Name);
                 tblName = tblName.Replace("$a", extractDatasetCommand.DatasetBundle.DataSet.Catalogue.Acronym);
                 break;
             case ExtractGlobalsCommand:
@@ -108,12 +108,12 @@ public class ExtractCatalogueMetadata : IPluginDataFlowComponent<DataTable>, IPi
                     CheckResult.Fail));
     }
 
-    public void PreInitialize(IExtractCommand value, IDataLoadEventListener listener)
+    public void PreInitialize(IBasicActivateItems activator, IExtractCommand value, IDataLoadEventListener listener)
     {
         _request = value;
     }
 
-    public void PreInitialize(IBasicActivateItems value, IDataLoadEventListener listener)
+    public void PreInitialize(IBasicActivateItems activator, IBasicActivateItems value, IDataLoadEventListener listener)
     {
         _activator = value;
     }

@@ -67,6 +67,7 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
     private Uri _queryToolUrl;
     private Uri _sourceUrl;
     private string _countryOfOrigin;
+    private string _internalNote;
 
 
     private string _dataStandards;
@@ -105,6 +106,8 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
     private string _doi;
     private Lazy<CatalogueItem[]> _knownCatalogueItems;
 
+    private string _extractionName;
+
 
     /// <inheritdoc/>
     [Unique]
@@ -126,6 +129,13 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
     {
         get => _name;
         set => SetField(ref _name, value);
+    }
+
+    [Unique]
+    public string ExtractionName
+    {
+        get => _extractionName;
+        set => SetField(ref _extractionName, value);
     }
 
     /// <inheritdoc/>
@@ -425,6 +435,15 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
     }
 
     /// <summary>
+    /// User specified free text field for internal notes about the Catalogue. Not published externally to RDMP
+    /// </summary>
+    public string InternalNote
+    {
+        get => _internalNote;
+        set => SetField(ref _internalNote, value);
+    }
+
+    /// <summary>
     /// Identifier for a ticket in your <see cref="ITicketingSystem"/> for documenting / auditing work on the Catalogue and for
     /// recording issues (if you are not using the RDMP issue system (see CatalogueItemIssue))
     /// </summary>
@@ -549,7 +568,7 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
     /// <inheritdoc/>
     public LoadMetadata[] LoadMetadatas()
     {
-        
+
         var loadMetadataLinkIDs = Repository.GetAllObjectsWhere<LoadMetadataCatalogueLinkage>("CatalogueID", ID).Select(l => l.LoadMetadataID);
 
         return Repository.GetAllObjects<LoadMetadata>().Where(cat => loadMetadataLinkIDs.Contains(cat.ID)).ToArray();
@@ -962,6 +981,7 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
 
         Acronym = r["Acronym"].ToString();
         Name = r["Name"].ToString();
+        ExtractionName = r["ExtractionName"].ToString();
         Description = r["Description"].ToString();
 
         //detailed info url with support for invalid urls
@@ -1112,6 +1132,7 @@ public sealed class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInject
         DataType = r["DataType"].ToString();
         DataSubType = r["DataSubType"].ToString();
         Doi = r["Doi"].ToString();
+        InternalNote = r["InternalNote"].ToString();
         var updateLag = r["UpdateLag"];
         if (updateLag == null || updateLag == DBNull.Value)
         {

@@ -35,7 +35,6 @@ namespace Rdmp.UI.Collections
             tlvLoadMetadata = new TreeListView();
             olvName = new OLVColumn();
             olvValue = new OLVColumn();
-            tbFilter = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)tlvLoadMetadata).BeginInit();
             SuspendLayout();
             // 
@@ -70,26 +69,16 @@ namespace Rdmp.UI.Collections
             olvValue.IsEditable = false;
             olvValue.Text = "Value";
             // 
-            // tbFilter
-            // 
-            tbFilter.Dock = System.Windows.Forms.DockStyle.Bottom;
-            tbFilter.Location = new System.Drawing.Point(0, 669);
-            tbFilter.Name = "tbFilter";
-            tbFilter.Size = new System.Drawing.Size(583, 23);
-            tbFilter.TabIndex = 1;
-            // 
             // LoadMetadataCollectionUI
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            Controls.Add(tbFilter);
             Controls.Add(tlvLoadMetadata);
             Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             Name = "LoadMetadataCollectionUI";
             Size = new System.Drawing.Size(583, 692);
             ((System.ComponentModel.ISupportInitialize)tlvLoadMetadata).EndInit();
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
@@ -97,6 +86,5 @@ namespace Rdmp.UI.Collections
         private TreeListView tlvLoadMetadata;
         private OLVColumn olvName;
         private OLVColumn olvValue;
-        private System.Windows.Forms.TextBox tbFilter;
     }
 }

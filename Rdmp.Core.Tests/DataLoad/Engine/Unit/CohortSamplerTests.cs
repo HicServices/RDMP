@@ -6,14 +6,15 @@
 
 using NUnit.Framework;
 using Rdmp.Core.CohortCommitting.Pipeline;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Modules.DataFlowOperations;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 using System;
 using System.Data;
 using System.Linq;
 using System.Threading;
-using Rdmp.Core.ReusableLibraryCode.Progress;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Unit;
@@ -191,7 +192,7 @@ internal class CohortSamplerTests : UnitTests
 
         var request = new CohortCreationRequest(p, definition, Repository, "Cohort read from space!!!");
 
-        sampler.PreInitialize(request, ThrowImmediatelyDataLoadEventListener.Quiet);
+        sampler.PreInitialize(new ThrowImmediatelyActivator(RepositoryLocator, null), request, ThrowImmediatelyDataLoadEventListener.Quiet);
 
         return sampler;
     }

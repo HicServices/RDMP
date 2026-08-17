@@ -36,7 +36,6 @@ namespace Rdmp.UI.Collections
             olvProjectNumber = new OLVColumn();
             olvCohortSource = new OLVColumn();
             olvCohortVersion = new OLVColumn();
-            tbFilter = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)tlvDataExport).BeginInit();
             SuspendLayout();
             // 
@@ -82,26 +81,16 @@ namespace Rdmp.UI.Collections
             // 
             olvCohortVersion.Text = "Version";
             // 
-            // tbFilter
-            // 
-            tbFilter.Dock = System.Windows.Forms.DockStyle.Bottom;
-            tbFilter.Location = new System.Drawing.Point(0, 778);
-            tbFilter.Name = "tbFilter";
-            tbFilter.Size = new System.Drawing.Size(449, 23);
-            tbFilter.TabIndex = 1;
-            // 
             // DataExportCollectionUI
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            Controls.Add(tbFilter);
             Controls.Add(tlvDataExport);
             Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             Name = "DataExportCollectionUI";
             Size = new System.Drawing.Size(449, 801);
             ((System.ComponentModel.ISupportInitialize)tlvDataExport).EndInit();
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
@@ -111,6 +100,5 @@ namespace Rdmp.UI.Collections
         private OLVColumn olvProjectNumber;
         private OLVColumn olvCohortSource;
         private OLVColumn olvCohortVersion;
-        private System.Windows.Forms.TextBox tbFilter;
     }
 }

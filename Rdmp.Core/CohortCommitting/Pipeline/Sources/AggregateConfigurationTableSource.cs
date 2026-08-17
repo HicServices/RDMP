@@ -6,6 +6,7 @@
 
 using System;
 using System.Data;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
@@ -129,7 +130,7 @@ public class AggregateConfigurationTableSource : IPluginDataFlowSource<DataTable
         }
     }
 
-    public virtual void PreInitialize(AggregateConfiguration value, IDataLoadEventListener listener)
+    public virtual void PreInitialize(IBasicActivateItems activator, AggregateConfiguration value, IDataLoadEventListener listener)
     {
         AggregateConfiguration = value;
 

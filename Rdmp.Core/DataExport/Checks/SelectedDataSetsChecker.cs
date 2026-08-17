@@ -305,8 +305,11 @@ public class SelectedDataSetsChecker : ICheckable
 
         var whereSql = cohort.WhereSQL();
 
-        if (!rp.SqlExtracted.Contains(whereSql))
+
+        if (!rp.SqlExtracted.Contains(whereSql) && !rp.SqlExtracted.Contains("The ID of the cohort in #"))//If the Cohort starts with  a #, then a temp table was used and we can' use it as a check
+        {
             notifier.OnCheckPerformed(new CheckEventArgs(ErrorCodes.CohortSwappedMidExtraction, progress, whereSql));
+        }
     }
 
     /// <summary>

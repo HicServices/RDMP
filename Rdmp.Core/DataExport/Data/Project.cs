@@ -199,7 +199,7 @@ public class Project : DatabaseEntity, IProject, ICustomSearchString, ICheckable
     /// <inheritdoc/>
     public ICatalogue[] GetAllProjectCatalogues()
     {
-        return Repository.GetAllObjects<ExtractableDataSetProject>().Where(edsp => edsp.Project_ID == this.ID).Select(edsp => edsp.DataSet.Catalogue).ToArray(); 
+        return Repository.GetAllObjects<ExtractableDataSetProject>().Where(edsp => edsp.Project_ID == this.ID).Select(edsp => edsp.DataSet?.Catalogue).Where(v => v != null).ToArray(); 
     }
 
     /// <inheritdoc/>

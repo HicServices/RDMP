@@ -232,6 +232,7 @@ CREATE TABLE [dbo].[Catalogue](
 	[ID] [int] IDENTITY(1,1) NOT NULL,
 	[Acronym] [varchar](50) NULL,
 	[Name] [varchar](1000) NULL,
+	[ExtractionName] [varchar](1000) NULL,
 	[Description] [text] NULL,
 	[Detail_Page_URL] [varchar](150) NULL,
 	[Type] [varchar](50) NULL,
@@ -289,7 +290,8 @@ CREATE TABLE [dbo].[Catalogue](
 	[AssociatedPeople] [nvarchar](MAX) NULL,
 	[Doi] [nvarchar](50) NULL,
 	[Purpose] [nvarchar](255) NULL,
-	[AssociatedMedia] [nvarchar](max) NULL
+	[AssociatedMedia] [nvarchar](max) NULL,
+	[InternalNote] [nvarchar](max) NULL,
  CONSTRAINT [PK_Data_Catalogue] PRIMARY KEY CLUSTERED 
 (
 	[ID] ASC

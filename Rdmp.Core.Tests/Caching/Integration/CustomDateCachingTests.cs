@@ -4,11 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.Caching;
@@ -16,6 +11,7 @@ using Rdmp.Core.Caching.Layouts;
 using Rdmp.Core.Caching.Pipeline.Destinations;
 using Rdmp.Core.Caching.Pipeline.Sources;
 using Rdmp.Core.Caching.Requests;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cache;
@@ -25,6 +21,11 @@ using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.Caching.Integration;
@@ -182,7 +183,7 @@ public class TestCacheDestination : IPluginDataFlowComponent<ICacheChunk>, IData
 
     private ILoadDirectory project;
 
-    public void PreInitialize(ILoadDirectory value, IDataLoadEventListener listener)
+    public void PreInitialize(IBasicActivateItems activator, ILoadDirectory value, IDataLoadEventListener listener)
     {
         project = value;
     }

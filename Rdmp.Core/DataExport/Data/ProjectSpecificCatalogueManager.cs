@@ -15,18 +15,28 @@ namespace Rdmp.Core.DataExport.Data
     static class ProjectSpecificCatalogueManager
     {
 
-        public static bool CanMakeCatalogueProjectSpecific(IDataExportRepository dqeRepo, ICatalogue catalogue, IProject project, List<int> projectIdsToIgnore)
+        public static bool CanMakeCatalogueProjectSpecific(IDataExportRepository dqeRepo, ICatalogue catalogue, IProject project, List<int> projectIdsToIgnore, out string reason)
         {
+            reason = null;
             var status = catalogue.GetExtractabilityStatus(dqeRepo);
 
             if (!status.IsExtractable)
+            {
+                reason = "Catalogue is not marked as extractable";
                 return false;
+            }
 
             var ei = catalogue.GetAllExtractionInformation(ExtractionCategory.Any);
             if (!ei.Any())
+            {
+                reason = "Catalogue has no columns marked as extractable";
                 return false;
+            }
             if (ei.Count(e => e.IsExtractionIdentifier) < 1)
+            {
+                reason = "Catalogue has no columns marked as extraction identifiers";
                 return false;
+            }
             var edss = dqeRepo.GetAllObjectsWithParent<ExtractableDataSet>(catalogue);
             if (edss.Any(e => e.Projects.Select(p => p.ID).Contains(project.ID)))
             {
@@ -37,7 +47,11 @@ namespace Rdmp.Core.DataExport.Data
             {
                 var alreadyInConfiguration = eds.ExtractionConfigurations.FirstOrDefault(ec => ec.Project_ID != project.ID && !projectIdsToIgnore.Contains(ec.Project_ID));
                 //already used in a project that we're not manipulating
-                if (alreadyInConfiguration != null) return false;
+                if (alreadyInConfiguration != null)
+                {
+                    reason = $"Catalogue is already used in extraction configuration '{alreadyInConfiguration.Name}' in project '{alreadyInConfiguration.Project.Name}'";
+                    return false;
+                }
             }
 
             return true;
@@ -52,8 +66,12 @@ namespace Rdmp.Core.DataExport.Data
                 eds.SaveToDatabase();
             }
 
-            var edsp = new ExtractableDataSetProject(dqeRepo, eds, project);
-            edsp.SaveToDatabase();
+            var edsp = dqeRepo.GetAllObjects<ExtractableDataSetProject>().Where(edsp => edsp.ExtractableDataSet_ID == eds.ID && edsp.Project_ID == project.ID).FirstOrDefault();
+            if (edsp is null)
+            {
+                edsp = new ExtractableDataSetProject(dqeRepo, eds, project);
+                edsp.SaveToDatabase();
+            }
             foreach (var ei in catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Where(ei => ei.ExtractionCategory is ExtractionCategory.Core))
             {
                 ei.ExtractionCategory = ExtractionCategory.ProjectSpecific;

@@ -70,7 +70,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands
                 }
             }
             base.Execute();
-            var clone = _cic.CreateClone(ThrowImmediatelyCheckNotifier.Quiet);
+            var clone = _cic.CreateClone(ThrowImmediatelyCheckNotifier.Quiet, _activator.RepositoryLocator.DataExportRepository);
             clone.IsTemplate = false;
             clone.Name = RenameTemplateForUse(clone.Name);
             clone.SaveToDatabase();

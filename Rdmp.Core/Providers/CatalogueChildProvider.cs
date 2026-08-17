@@ -406,6 +406,11 @@ public class CatalogueChildProvider : ICoreChildProvider
         LoadMetadataRootFolder = FolderHelper.BuildFolderTree(AllLoadMetadatas.Where(lmd => lmd.RootLoadMetadata_ID is null).ToArray());
         AddChildren(LoadMetadataRootFolder, new DescendancyList(LoadMetadataRootFolder));
 
+        AllTemplateCohortIdentificationConfigurationsNode = new AllTemplateCohortIdentificationConfigurationsNode();
+        var templateCICTree = FolderHelper.BuildFolderTree(AllTemplateCohortIdentificationConfigurations);
+        templateCICTree.Name = "templates";
+        AddChildren(templateCICTree, new DescendancyList(AllTemplateCohortIdentificationConfigurationsNode));
+
         CohortIdentificationConfigurationRootFolder =
             FolderHelper.BuildFolderTree(AllCohortIdentificationConfigurations);
         AddChildren(CohortIdentificationConfigurationRootFolder,
@@ -421,9 +426,7 @@ public class CatalogueChildProvider : ICoreChildProvider
                     .Where(p => p.ReferencedObjectType.Equals(nameof(AggregateConfiguration)))
                     .Select(r => r.ReferencedObjectID));
 
-        AllTemplateCohortIdentificationConfigurationsNode = new AllTemplateCohortIdentificationConfigurationsNode();
-        var templateCICTree = FolderHelper.BuildFolderTree(AllTemplateCohortIdentificationConfigurations);
-        AddChildren(templateCICTree, new DescendancyList(AllTemplateCohortIdentificationConfigurationsNode));
+
 
         TemplateAggregateConfigurations = AllAggregateConfigurations
             .Where(ac => templateAggregateConfigurationIds.Contains(ac.ID)).ToArray();
@@ -574,6 +577,21 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         foreach (var d in AllAggregateDimensions)
             d.InjectKnown(AllExtractionInformationsDictionary[d.ExtractionInformation_ID]);
+
+        // When called from a partial refresh (e.g. SelectiveRefresh on a CohortAggregateContainer)
+        // AllJoinables is already populated from the prior full rebuild, but we have just
+        // replaced AllAggregateConfigurations with fresh instances whose joinable Lazy defaults
+        // to a per-object database lookup.  Without this re-injection, any subsequent enumeration
+        // that calls IsJoinablePatientIndexTable() (e.g. building the right-click menu for an
+        // aggregate container) fires N database round-trips at HIC scale — observed at >7s.
+        // No-op on first call from the main constructor: AllJoinables is null at that point and
+        // the explicit injection block in the constructor handles it.
+        if (AllJoinables != null)
+        {
+            var joinableDictionary = AllJoinables.ToDictionaryEx(j => j.AggregateConfiguration_ID, v => v);
+            foreach (var configuration in AllAggregateConfigurations)
+                configuration.InjectKnown(joinableDictionary.GetValueOrDefault(configuration.ID));
+        }
 
         ReportProgress("AggregateDimension injections");
 
@@ -1323,8 +1341,13 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         //it has an associated query cache
         if (cic.QueryCachingServer_ID != null)
-            children.Add(new QueryCacheUsedByCohortIdentificationNode(cic,
-                AllExternalServers.Single(s => s.ID == cic.QueryCachingServer_ID)));
+        {
+            var server = AllExternalServers.SingleOrDefault(s => s.ID == cic.QueryCachingServer_ID);
+            if (server is not null)
+            {
+                children.Add(new QueryCacheUsedByCohortIdentificationNode(cic, server));
+            }
+        }
 
         var parameters = AllAnyTableParameters.Where(p => p.IsReferenceTo(cic)).Cast<ISqlParameter>().ToArray();
         foreach (var p in parameters) children.Add(p);
@@ -1332,9 +1355,12 @@ public class CatalogueChildProvider : ICoreChildProvider
         //if it has a root container
         if (cic.RootCohortAggregateContainer_ID != null)
         {
-            var container = AllCohortAggregateContainers.Single(c => c.ID == cic.RootCohortAggregateContainer_ID);
-            AddChildren(container, descendancy.Add(container).SetBetterRouteExists());
-            children.Add(container);
+            var container = AllCohortAggregateContainers.SingleOrDefault(c => c.ID == cic.RootCohortAggregateContainer_ID);
+            if (container is not null)
+            {
+                AddChildren(container, descendancy.Add(container).SetBetterRouteExists());
+                children.Add(container);
+            }
         }
 
         //get the patient index tables
@@ -1873,10 +1899,49 @@ public class CatalogueChildProvider : ICoreChildProvider
             AggregateFilter af => SelectiveRefresh(af),
             AggregateFilterContainer afc => SelectiveRefresh(afc),
             CohortAggregateContainer cac => SelectiveRefresh(cac),
+            AggregateConfiguration ac => SelectiveRefresh(ac),
             ExtractionInformation ei => SelectiveRefresh(ei),
             CatalogueItem ci => SelectiveRefresh(ci),
             _ => false
         };
+    }
+
+    public bool SelectiveRefresh(AggregateConfiguration ac)
+    {
+        var descendancy = GetDescendancyListIfAnyFor(ac);
+        if (descendancy == null) return false;
+
+        // Cohort builder set member: the aggregate sits under a CohortAggregateContainer.
+        // Refreshing the immediate parent container is enough — re-fetching all aggregates
+        // and the container hierarchy, then re-rendering the parent's subtree.
+        var parentContainer = descendancy.Parents.OfType<CohortAggregateContainer>().LastOrDefault();
+        if (parentContainer != null)
+        {
+            var parentDescendancy = GetDescendancyListIfAnyFor(parentContainer);
+            if (parentDescendancy != null)
+            {
+                BuildAggregateConfigurations();
+                BuildCohortCohortAggregateContainers();
+                AddChildren(parentContainer, parentDescendancy.Add(parentContainer));
+                return true;
+            }
+        }
+
+        // Graph / aggregate-graph aggregate: hangs directly off a Catalogue.
+        var parentCatalogue = descendancy.Parents.OfType<Catalogue>().LastOrDefault();
+        if (parentCatalogue != null)
+        {
+            var cataDescendancy = GetDescendancyListIfAnyFor(parentCatalogue);
+            if (cataDescendancy != null)
+            {
+                BuildAggregateConfigurations();
+                AddChildren(parentCatalogue, cataDescendancy.Add(parentCatalogue));
+                return true;
+            }
+        }
+
+        // Could not place the aggregate in a known subtree; fall back to full rebuild.
+        return false;
     }
 
 

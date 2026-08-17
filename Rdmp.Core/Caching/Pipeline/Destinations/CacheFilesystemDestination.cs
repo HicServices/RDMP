@@ -4,15 +4,16 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.IO;
 using Rdmp.Core.Caching.Layouts;
 using Rdmp.Core.Caching.Requests;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
+using System;
+using System.IO;
 
 namespace Rdmp.Core.Caching.Pipeline.Destinations;
 
@@ -41,7 +42,7 @@ public abstract class CacheFilesystemDestination : ICacheFileSystemDestination, 
     public abstract ICacheChunk ProcessPipelineData(ICacheChunk toProcess, IDataLoadEventListener listener,
         GracefulCancellationToken cancellationToken);
 
-    public void PreInitialize(ILoadDirectory value, IDataLoadEventListener listener)
+    public void PreInitialize(IBasicActivateItems activator, ILoadDirectory value, IDataLoadEventListener listener)
     {
         // CacheDirectory overrides LoadDirectory, so only set CacheDirectory if it is null (i.e. no alternative cache location has been configured in the destination component)
         CacheDirectory ??= value.Cache ??

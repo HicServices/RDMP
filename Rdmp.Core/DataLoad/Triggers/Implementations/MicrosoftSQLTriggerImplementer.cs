@@ -36,9 +36,9 @@ public class MicrosoftSQLTriggerImplementer : TriggerImplementer
     private string _schema;
     private string _triggerName;
 
-    /// <inheritdoc cref="TriggerImplementer(DiscoveredTable,bool)"/>
-    public MicrosoftSQLTriggerImplementer(DiscoveredTable table, bool createDataLoadRunIDAlso = true) : base(table,
-        createDataLoadRunIDAlso)
+    /// <inheritdoc cref="TriggerImplementer(DiscoveredTable,bool,bool)"/>
+    public MicrosoftSQLTriggerImplementer(DiscoveredTable table, bool createDataLoadRunIDAlso = true, bool dontAddDataLoadrunID = false) : base(table,
+        createDataLoadRunIDAlso, dontAddDataLoadrunID)
     {
         _schema = string.IsNullOrWhiteSpace(_table.Schema) ? "dbo" : _table.Schema;
         _triggerName = $"{_schema}.{GetTriggerName()}";
@@ -147,7 +147,7 @@ public class MicrosoftSQLTriggerImplementer : TriggerImplementer
         return createArchiveTableSQL;
     }
 
-    private string GetCreateTriggerSQL()
+    public override string GetCreateTriggerSQL()
     {
         if (!_primaryKeys.Any())
             throw new TriggerException("There must be at least 1 primary key");
@@ -171,7 +171,7 @@ public class MicrosoftSQLTriggerImplementer : TriggerImplementer
 
         var columnNames = _columns.Select(c => c.GetRuntimeName()).ToList();
 
-        if (!columnNames.Contains(SpecialFieldNames.DataLoadRunID, StringComparer.CurrentCultureIgnoreCase))
+        if (!columnNames.Contains(SpecialFieldNames.DataLoadRunID, StringComparer.CurrentCultureIgnoreCase) && !_dontAddDataLoadRunId)
             columnNames.Add(SpecialFieldNames.DataLoadRunID);
 
         if (!columnNames.Contains(SpecialFieldNames.ValidFrom, StringComparer.CurrentCultureIgnoreCase))
@@ -259,10 +259,22 @@ END
 
         //these were added during transaction so we have to specify them again here because transaction will not have been committed yet
         sqlToRun = sqlToRun.Trim();
-        sqlToRun += $",{Environment.NewLine}";
-        sqlToRun += $"\thic_validTo datetime,{Environment.NewLine}";
-        sqlToRun += "\thic_userID varchar(128),";
-        sqlToRun += "\thic_status char(1)";
+        if (!sqlToRun.Contains("hic_validTo"))
+        {
+            sqlToRun += $",{Environment.NewLine}";
+            sqlToRun += $"hic_validTo datetime";
+        }
+        if (!sqlToRun.Contains("hic_userID"))
+        {
+            sqlToRun += $",{Environment.NewLine}";
+
+            sqlToRun += "hic_userID varchar(128)";
+        }
+        if (!sqlToRun.Contains("hic_status"))
+        {
+            sqlToRun += $",{Environment.NewLine}";
+            sqlToRun += "hic_status char(1)";
+        }
 
 
         sqlToRun += $"){Environment.NewLine}";
@@ -270,12 +282,16 @@ END
         sqlToRun += $"BEGIN{Environment.NewLine}";
         sqlToRun += Environment.NewLine;
 
-        var liveCols = _columns.Select(c => $"[{c.GetRuntimeName()}]").Union(new string[]
-        {
-            $"[{SpecialFieldNames.DataLoadRunID}]", $"[{SpecialFieldNames.ValidFrom}]"
-        }).ToArray();
 
-        var archiveCols = $"{string.Join(",", liveCols)},hic_validTo,hic_userID,hic_status";
+        var liveCols = _archiveTable.DiscoverColumns().Select(c => $"[{c.GetRuntimeName()}]")
+            .ToList();
+
+        if (!liveCols.Contains($"[{SpecialFieldNames.DataLoadRunID}]")) liveCols.Add($"[{SpecialFieldNames.DataLoadRunID}]");
+        if (!liveCols.Contains($"[{SpecialFieldNames.ValidFrom}]")) liveCols.Add($"[{SpecialFieldNames.ValidFrom}]");
+        liveCols = liveCols.Where(col => !_dontAddDataLoadRunId || col != $"[{SpecialFieldNames.DataLoadRunID}]").ToList();
+
+        var archiveCols = $"{string.Join(",", liveCols)}";
+
         var cDotArchiveCols = string.Join(",", liveCols.Select(s => $"c.{s}"));
 
 
@@ -285,9 +301,14 @@ END
             ", '1899/01/01') AND hic_validTo" + Environment.NewLine, _archiveTable);
         sqlToRun += Environment.NewLine;
 
+        //these are columns that exist in the archive, but not the table. So have to be set as NULL as <value>
+        var nullColumns = _archiveTable.DiscoverColumns().Select(c => $"[{c.GetRuntimeName()}]").Except(_table.DiscoverColumns().Select(c => $"[{c.GetRuntimeName()}]")).ToList();
+
+        cDotArchiveCols = string.Join(",", liveCols.Select(s => nullColumns.Contains(s) ? $"NULL AS {s}" : $"c.{s}"));
+
         sqlToRun += $"\tINSERT @returntable{Environment.NewLine}";
         sqlToRun +=
-            $"\tSELECT {cDotArchiveCols},NULL AS hic_validTo, NULL AS hic_userID, 'C' AS hic_status{Environment.NewLine}"; //c is for current
+            $"\tSELECT {cDotArchiveCols}";
         sqlToRun += string.Format("\tFROM [{0}] c" + Environment.NewLine, _table.GetRuntimeName());
         sqlToRun += $"\tLEFT OUTER JOIN @returntable a ON {Environment.NewLine}";
 
@@ -401,4 +422,5 @@ END
 
         return true;
     }
+
 }

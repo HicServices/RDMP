@@ -95,7 +95,7 @@ public interface ICatalogue : IHasDependencies, IHasQuerySyntaxHelper, INamed, I
     /// </summary>
     string Description { get; set; }
 
-
+    string ExtractionName { get; set; }
     string ShortDescription { get;set; }
     string DataType { get; set; }
     string DataSubType { get; set; }
