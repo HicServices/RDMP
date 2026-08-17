@@ -2349,8 +2349,7 @@ public class CatalogueChildProvider : ICoreChildProvider
             foreach (var (id, op) in catalogueChanges)
             {
                 if (op == ChangeOperation.Delete)
-                    //_catalogues.Remove(id);
-                    AllCatalogues = (Catalogue[])AllCatalogues.Where(c => c.ID != id);
+                    AllCatalogues = AllCatalogues.ToList().Where(c => c.ID != id).ToArray();
                 else
                 {
                     var c = _catalogueRepository.GetAllObjectsWhere<Catalogue>("ID", id).First();
@@ -2361,16 +2360,15 @@ public class CatalogueChildProvider : ICoreChildProvider
                     }
                     else
                     {
-                        AllCatalogues.Append(c);
-                        //AllCatalogues = [...AllCatalogue, c];
+                        AllCatalogues = AllCatalogues.Append(c).ToArray();
                     }
                 }
-
-                //_catalogues[id] = await FetchSingleCatalogueAsync(id, ct); // one-row fetch, not a full table scan
+                AllCataloguesDictionary = AllCatalogues.ToDictionaryEx(i => i.ID, o => o);
+                CatalogueRootFolder = FolderHelper.BuildFolderTree(AllCatalogues);
+                AddChildren(CatalogueRootFolder, new DescendancyList(CatalogueRootFolder));
             }
 
         // ...same pattern for CatalogueItem, ColumnInfo, etc.
-
         _lastSeenVersion = changes.CurrentVersion;
     }
 }
