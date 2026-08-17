@@ -953,6 +953,8 @@ public class DataExportChildProvider : CatalogueChildProvider
         if (changes.ChangesByTable.TryGetValue("ExtractableDataSetPackage", out var extractableDataSetPackageChanges))
         {
             HandleObjectRefresh(extractableDataSetPackageChanges, AllPackages);
+            foreach (var package in AllPackages)
+                AddChildren(package, new DescendancyList(package));
         }
 
         //if (changes.ChangesByTable.TryGetValue("ExtractableDataSetPackage_ExtractableDataSet", out var extractableDataSetPackage_ExtractableDataSetChanges))
@@ -1008,6 +1010,8 @@ public class DataExportChildProvider : CatalogueChildProvider
         if (changes.ChangesByTable.TryGetValue("ExternalCohortTable", out var externalCohortTableChanges))
         {
             HandleObjectRefresh(externalCohortTableChanges, CohortSources);
+            RootCohortsNode = new AllCohortsNode();
+            AddChildren(RootCohortsNode, new DescendancyList(RootCohortsNode));
         }
 
         if (changes.ChangesByTable.TryGetValue("ExtractableCohort", out var extractableCohortChanges))
@@ -1053,6 +1057,8 @@ public class DataExportChildProvider : CatalogueChildProvider
         if (changes.ChangesByTable.TryGetValue("Project", out var projectChanges))
         {
             HandleObjectRefresh(projectChanges, Projects);
+            ProjectRootFolder = FolderHelper.BuildFolderTree(Projects);
+            AddChildren(ProjectRootFolder, new DescendancyList(ProjectRootFolder));
         }
 
         //if (changes.ChangesByTable.TryGetValue("Project_DataUser", out var project_DataUserChanges))
