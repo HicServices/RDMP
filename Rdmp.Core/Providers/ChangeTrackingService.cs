@@ -86,20 +86,18 @@ namespace Rdmp.Core.Providers
         private readonly string _connectionString;
         private readonly IReadOnlyList<string> _trackedTables;
 
-        public static readonly List<string> DEFAULT_TABLE_NAMES = new()
+        public static readonly List<string> Catalogue_DEFAULT_TABLE_NAMES = new()
         {
             //Catalogue DB
             "Favourite",
             "Dataset",
             "Pipeline",
             "AggregateTopX",
-            "LoadMetadataCatalogueLinkage",
             "PipelineComponent",
             "PipelineComponentArgument",
             "DashboardLayout",
             "DashboardControl",
             "DataAccessCredentials",
-            "DataAccessCredentials_TableInfo",
             "DashboardObjectUse",
             "RemoteRDMP",
             "ObjectImport",
@@ -111,25 +109,19 @@ namespace Rdmp.Core.Providers
             "TicketingSystemConfiguration",
             "CacheFetchFailure",
             "CohortAggregateContainer",
-            "CohortAggregateSubContainer",
             "CohortIdentificationConfiguration",
-            "CohortAggregateContainer_AggregateConfiguration",
             "ANOTable",
             "AggregateConfiguration",
             "GovernanceDocument",
             "AggregateContinuousDateAxis",
             "GovernancePeriod",
             "AggregateDimension",
-            "GovernancePeriod_Catalogue",
             "AggregateFilter",
             "AggregateFilterContainer",
             "AggregateFilterParameter",
             "StandardRegex",
-            "AggregateFilterSubContainer",
             "AnyTableSqlParameter",
-            "AggregateForcedJoin",
             "Catalogue",
-            "PasswordEncryptionKeyLocation",
             "CatalogueItem",
             "CatalogueItemIssue",
             "Plugin",
@@ -144,32 +136,31 @@ namespace Rdmp.Core.Providers
             "LoadMetadata",
             "JoinableCohortAggregateConfiguration",
             "LoadModuleAssembly",
-            "TicketingSystemReleaseStatus",
             "JoinableCohortAggregateConfigurationUse",
             "LoadProgress",
             "Lookup",
             "LookupCompositeJoinInfo",
-            "Setting",
             "PreLoadDiscardedColumn",
             "RegexRedactionConfiguration",
             "ProcessTask",
             "RegexRedaction",
             "ProcessTaskArgument",
             "ExtractionFilterParameterSet",
-            "ServerDefaults",
             "RegexRedactionKey",
             "SupportingDocument",
             "ExtractionFilterParameterSetValue",
             "SupportingSQLTable",
-            "TableInfo",
+            "TableInfo"          
+        };
+
+        public static List<string> DataExport_DEFAULT_TABLE_NAMES = new()
+        {
             //Data Export DB
             "ExtractableDataSetPackage",
-            "ExtractableDataSetPackage_ExtractableDataSet",
             "ProjectCohortIdentificationConfigurationAssociation",
             "SelectedDataSetsForcedJoin",
             "SupplementalExtractionResults",
             "ExtractionProgress",
-            "ConfigurationProperties",
             "CumulativeExtractionResults",
             "DataUser",
             "DeployedExtractionFilter",
@@ -178,13 +169,10 @@ namespace Rdmp.Core.Providers
             "ExtractableCohort",
             "ExtractableColumn",
             "ExtractableDataSet",
-            "ExtractableDataSetProject",
             "ExtractionConfiguration",
             "FilterContainer",
-            "FilterContainerSubcontainers",
             "GlobalExtractionFilterParameter",
             "Project",
-            "Project_DataUser",
             "ReleaseLog",
             "SelectedDataSets"
         };
@@ -260,9 +248,10 @@ namespace Rdmp.Core.Providers
             var result = cmd.ExecuteScalar();
             // NULL means change tracking isn't enabled on this table at all.
             if (result is null or DBNull)
-                throw new InvalidOperationException(
-                    $"Table '{table}' does not have CHANGE_TRACKING enabled. " +
-                    "Run ALTER TABLE dbo.{table} ENABLE CHANGE_TRACKING; first.");
+                //throw new InvalidOperationException(
+                //    $"Table '{table}' does not have CHANGE_TRACKING enabled. " +
+                //    "Run ALTER TABLE dbo.{table} ENABLE CHANGE_TRACKING; first.");
+                return -1; // Return -1 to indicate that change tracking is not enabled for this table.
 
             return Convert.ToInt64(result);
         }
@@ -283,6 +272,7 @@ namespace Rdmp.Core.Providers
             cmd.Parameters.Add(new SqlParameter("@sinceVersion", SqlDbType.BigInt) { Value = sinceVersion });
 
             var rows = new List<ChangedRow>();
+            Console.WriteLine("changing: " + table);
             using var reader = cmd.ExecuteReader();
             while (reader.Read())
             {

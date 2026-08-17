@@ -239,7 +239,7 @@ public class CatalogueChildProvider : ICoreChildProvider
     public CatalogueChildProvider(ICatalogueRepository repository, IChildProvider[] pluginChildProviders,
         ICheckNotifier errorsCheckNotifier, CatalogueChildProvider previousStateIfKnown)
     {
-        _changeTracking = new ChangeTrackingService(((CatalogueRepository)repository).ConnectionString, ChangeTrackingService.DEFAULT_TABLE_NAMES);
+        _changeTracking = new ChangeTrackingService(((CatalogueRepository)repository).ConnectionString, ChangeTrackingService.Catalogue_DEFAULT_TABLE_NAMES);
         _lastSeenVersion = _changeTracking.GetCurrentVersion();
         _commentStore = repository.CommentStore;
         _catalogueRepository = repository;
@@ -2733,7 +2733,9 @@ public class CatalogueChildProvider : ICoreChildProvider
             }
             else
             {
-                var c = _catalogueRepository.GetAllObjectsWhere<ColumnInfo>("ID", id).First();
+                var c = _catalogueRepository.GetAllObjectsWhere<ColumnInfo>("ID", id).FirstOrDefault();
+                if(c is null)
+                    continue;
                 var index = list.FindIndex(existing => existing.ID == id);
 
                 if (index != -1)

@@ -113,7 +113,7 @@ public class DataExportChildProvider : CatalogueChildProvider
         DataExportChildProvider previousStateIfKnown) : base(repositoryLocator.CatalogueRepository,
         pluginChildProviders, errorsCheckNotifier, previousStateIfKnown)
     {
-        _changeTracking = new ChangeTrackingService(((DataExportRepository)repositoryLocator.DataExportRepository).ConnectionString, ChangeTrackingService.DEFAULT_TABLE_NAMES);
+        _changeTracking = new ChangeTrackingService(((DataExportRepository)repositoryLocator.DataExportRepository).ConnectionString, ChangeTrackingService.DataExport_DEFAULT_TABLE_NAMES);
         _lastSeenVersion = _changeTracking.GetCurrentVersion();
         ForbidListedSources = previousStateIfKnown?.ForbidListedSources ?? new List<ExternalCohortTable>();
         _errorsCheckNotifier = errorsCheckNotifier;
