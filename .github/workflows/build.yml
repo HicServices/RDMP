@@ -9,6 +9,7 @@ env:
   DOTNET_NOLOGO: 1
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
   SIXLABORS_LICENSE_KEY: ${{ secrets.SIXLABORS_LICENSE_KEY }}
+  SixLaborsLicenseKey: ${{ secrets.SIXLABORS_LICENSE_KEY }}
 
 jobs:
   # Set the job key. The key is displayed as the job name
