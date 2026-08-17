@@ -16,25 +16,28 @@ using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.Processing;
 using Tests.Common;
 using Color = SixLabors.ImageSharp.Color;
+using NSubstitute.Exceptions;
 
 namespace Rdmp.Core.Tests.Reports;
 
 internal class DocumentationReportDatabaseEntitiesTests : UnitTests
 {
-        [Test]
-        public void Test_DocumentationReportDatabaseEntities_Normal()
+    [Test]
+    public void Test_DocumentationReportDatabaseEntities_Normal()
+    {
+        var store = new CommentStore();
+        store.ReadComments(TestContext.CurrentContext.TestDirectory);
+
+        var reporter = new DocumentationReportDatabaseEntities();
+
+        Image img = new Image<Rgba32>(19, 19);
+        img.Mutate(x => x.Paint(canvas =>
         {
-                var store = new CommentStore();
-                store.ReadComments(TestContext.CurrentContext.TestDirectory);
+            canvas.Fill(Brushes.Solid(Color.DarkMagenta));
+        }));
+        var iconProvider = Substitute.For<IIconProvider>();
+        iconProvider.GetImage(Arg.Any<object>(), Arg.Any<OverlayKind>()).Returns(img);
 
-                var reporter = new DocumentationReportDatabaseEntities();
-
-                Image img = new Image<Rgba32>(19, 19);
-                img.Mutate(x => x.Fill(Color.DarkMagenta));
-
-                var iconProvider = Substitute.For<IIconProvider>();
-                iconProvider.GetImage(Arg.Any<object>(), Arg.Any<OverlayKind>()).Returns(img);
-
-                reporter.GenerateReport(store, ThrowImmediatelyCheckNotifier.Quiet, iconProvider, false);
-        }
+        reporter.GenerateReport(store, ThrowImmediatelyCheckNotifier.Quiet, iconProvider, false);
+    }
 }
