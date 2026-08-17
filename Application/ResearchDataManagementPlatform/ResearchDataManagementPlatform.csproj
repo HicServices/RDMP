@@ -30,6 +30,7 @@
     <PackageReference Include="Autoupdater.NET.Official" />
     <PackageReference Include="DockPanelSuite.ThemeVS2015" />
     <PackageReference Include="SharpCompress" />
+    <PackageReference Include="SkiaSharp" />
     <PackageReference Include="Snappier" />
   </ItemGroup>
   <ItemGroup>

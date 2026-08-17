@@ -344,6 +344,7 @@
 		<PackageReference Include="SharpCompress" />
 		<PackageReference Include="SixLabors.ImageSharp" />
 		<PackageReference Include="SixLabors.ImageSharp.Drawing" />
+		<PackageReference Include="SkiaSharp" />
 		<PackageReference Include="Snappier" />
 		<PackageReference Include="Spectre.Console" />
 		<PackageReference Include="SSH.NET" />

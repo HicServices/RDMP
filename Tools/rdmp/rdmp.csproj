@@ -42,6 +42,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\Rdmp.Core\Rdmp.Core.csproj" />
 		<PackageReference Include="SharpCompress" />
+		<PackageReference Include="SkiaSharp" />
 		<PackageReference Include="Snappier" />
 		<PackageReference Include="System.Security.Cryptography.Xml" />
 		<PackageReference Include="Terminal.Gui" />
