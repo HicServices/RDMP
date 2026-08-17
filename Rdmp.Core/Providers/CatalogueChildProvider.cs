@@ -237,7 +237,7 @@ public class CatalogueChildProvider : ICoreChildProvider
     public CatalogueChildProvider(ICatalogueRepository repository, IChildProvider[] pluginChildProviders,
         ICheckNotifier errorsCheckNotifier, CatalogueChildProvider previousStateIfKnown)
     {
-        _lastSeenVersion = _changeTracking.GetCurrentVersionAsync(new CancellationToken()).GetAwaiter().GetResult();
+        _lastSeenVersion = _changeTracking.GetCurrentVersion();
         _commentStore = repository.CommentStore;
         _catalogueRepository = repository;
         _catalogueRepository?.EncryptionManager?.ClearAllInjections();
@@ -2330,12 +2330,12 @@ public class CatalogueChildProvider : ICoreChildProvider
         ChangeSet changes;
         try
         {
-            changes = await _changeTracking.GetChangesSinceAsync(_lastSeenVersion, ct);
+            changes = _changeTracking.GetChangesSince(_lastSeenVersion);
         }
         catch (ChangeTrackingExpiredException)
         {
             FullReloadAsync(_catalogueRepository);   // your existing GetAllObjects<T>() based load
-            _lastSeenVersion = await _changeTracking.GetCurrentVersionAsync(ct);
+            _lastSeenVersion = _changeTracking.GetCurrentVersion();
             return;
         }
 
