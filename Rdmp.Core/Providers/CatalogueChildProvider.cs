@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using FAnsi.Discovery;
 using MathNet.Numerics.Distributions;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
@@ -57,7 +58,7 @@ namespace Rdmp.Core.Providers;
 public class CatalogueChildProvider : ICoreChildProvider
 {
 
-    private ChangeTrackingService _changeTracking = new ChangeTrackingService("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=RDMP_Catalogue;Integrated Security=True;Multiple Active Result Sets=True", new List<string>() { "Catalogue" });
+    private ChangeTrackingService _changeTracking;
     private long _lastSeenVersion;
     //Load System
     public LoadMetadata[] AllLoadMetadatas { get; set; }
@@ -237,6 +238,7 @@ public class CatalogueChildProvider : ICoreChildProvider
     public CatalogueChildProvider(ICatalogueRepository repository, IChildProvider[] pluginChildProviders,
         ICheckNotifier errorsCheckNotifier, CatalogueChildProvider previousStateIfKnown)
     {
+        _changeTracking = new ChangeTrackingService(((CatalogueRepository)repository).ConnectionString, ChangeTrackingService.DEFAULT_TABLE_NAMES);
         _lastSeenVersion = _changeTracking.GetCurrentVersion();
         _commentStore = repository.CommentStore;
         _catalogueRepository = repository;
@@ -2066,8 +2068,6 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         // all the objects which are
         AllMasqueraders = new ConcurrentDictionary<object, HashSet<IMasqueradeAs>>();
-
-        //_pluginChildProviders = pluginChildProviders ?? Array.Empty<IChildProvider>();
 
         ReportProgress("Before object fetches");
 
