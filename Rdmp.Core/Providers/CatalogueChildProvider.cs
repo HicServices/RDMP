@@ -4,16 +4,9 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.ClientModel.Primitives;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using FAnsi.Discovery;
 using MathNet.Numerics.Distributions;
+using MongoDB.Driver;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cache;
@@ -38,6 +31,14 @@ using Rdmp.Core.Repositories.Managers.HighPerformance;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Comments;
 using Rdmp.Core.ReusableLibraryCode.Settings;
+using System;
+using System.ClientModel.Primitives;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Rdmp.Core.Providers;
 
@@ -88,7 +89,7 @@ public class CatalogueChildProvider : ICoreChildProvider
     //this tells you for a given child object what the navigation tree down to get to it is e.g. ascendancy[child] would return [root,grandParent,parent]
     private ConcurrentDictionary<object, DescendancyList> _descendancyDictionary = new();
 
-    public IEnumerable<CatalogueItem> AllCatalogueItems => AllCatalogueItemsDictionary.Values;
+    public IEnumerable<CatalogueItem> AllCatalogueItems { get; set; }
 
     private Dictionary<int, List<CatalogueItem>> _catalogueToCatalogueItems;
     public Dictionary<int, CatalogueItem> AllCatalogueItemsDictionary { get; private set; }
@@ -167,7 +168,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     //Filters for Aggregates (includes filter containers (AND/OR)
     public Dictionary<int, AggregateFilterContainer> AllAggregateContainersDictionary { get; private set; }
-    public AggregateFilterContainer[] AllAggregateContainers => AllAggregateContainersDictionary.Values.ToArray();
+    public AggregateFilterContainer[] AllAggregateContainers { get; set; }
 
     public AggregateFilter[] AllAggregateFilters { get; private set; }
     public AggregateFilterParameter[] AllAggregateFilterParameters { get; private set; }
@@ -514,8 +515,9 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     private void FetchCatalogueItems()
     {
+        AllCatalogueItems = GetAllObjects<CatalogueItem>(_catalogueRepository);
         AllCatalogueItemsDictionary =
-            GetAllObjects<CatalogueItem>(_catalogueRepository).ToDictionaryEx(i => i.ID, o => o);
+            AllCatalogueItems.ToDictionaryEx(i => i.ID, o => o);
 
         ReportProgress("After CatalogueItem getting");
 
@@ -615,8 +617,8 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     private void BuildAggregateFilterContainers()
     {
-        AllAggregateContainersDictionary = GetAllObjects<AggregateFilterContainer>(_catalogueRepository)
-            .ToDictionaryEx(o => o.ID, o2 => o2);
+        AllAggregateContainers = GetAllObjects<AggregateFilterContainer>(_catalogueRepository);
+        AllAggregateContainersDictionary = AllAggregateContainers.ToDictionaryEx(o => o.ID, o2 => o2);
         AllAggregateFilters = GetAllObjects<AggregateFilter>(_catalogueRepository);
         AllAggregateFilterParameters = GetAllObjects<AggregateFilterParameter>(_catalogueRepository);
 
@@ -2325,7 +2327,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         ReportProgress("After building exports");
     }
 
-    public async Task RefreshAsync(CancellationToken ct = default)
+    public virtual async Task RefreshAsync(CancellationToken ct = default)
     {
         ChangeSet changes;
         try
@@ -2346,29 +2348,401 @@ public class CatalogueChildProvider : ICoreChildProvider
         }
 
         if (changes.ChangesByTable.TryGetValue("Catalogue", out var catalogueChanges))
-            foreach (var (id, op) in catalogueChanges)
-            {
-                if (op == ChangeOperation.Delete)
-                    AllCatalogues = AllCatalogues.ToList().Where(c => c.ID != id).ToArray();
-                else
-                {
-                    var c = _catalogueRepository.GetAllObjectsWhere<Catalogue>("ID", id).First();
-                    var index = AllCatalogues.IndexOf(c);
-                    if (index != -1)
-                    {
-                        AllCatalogues[index] = c;
-                    }
-                    else
-                    {
-                        AllCatalogues = AllCatalogues.Append(c).ToArray();
-                    }
-                }
-                AllCataloguesDictionary = AllCatalogues.ToDictionaryEx(i => i.ID, o => o);
-                CatalogueRootFolder = FolderHelper.BuildFolderTree(AllCatalogues);
-                AddChildren(CatalogueRootFolder, new DescendancyList(CatalogueRootFolder));
-            }
+        {
+            HandleObjectRefresh(catalogueChanges, AllCatalogues);
+            AllCataloguesDictionary = AllCatalogues.ToDictionaryEx(i => i.ID, o => o);
+            CatalogueRootFolder = FolderHelper.BuildFolderTree(AllCatalogues);
+            AddChildren(CatalogueRootFolder, new DescendancyList(CatalogueRootFolder));
+        }
+        if (changes.ChangesByTable.TryGetValue("CatalogueItem", out var catalogueItemChanges))
+        {
+            HandleObjectRefresh(catalogueItemChanges, AllCatalogueItems);
+            AllCatalogueItemsDictionary = AllCatalogueItems.ToDictionaryEx(i => i.ID, o => o);
+        }
+        if (changes.ChangesByTable.TryGetValue("ColumnInfo", out var columnInfoChanges))
+        {
+            HandleObjectRefresh(columnInfoChanges, AllColumnInfos);
+        }
+        //if (changes.ChangesByTable.TryGetValue("Favourite", out var favouriteChanges))
+        //{
+        //    HandleObjectRefresh(favouriteChanges, AllFavourites);
+        //}
 
-        // ...same pattern for CatalogueItem, ColumnInfo, etc.
+        if (changes.ChangesByTable.TryGetValue("Dataset", out var datasetChanges))
+        {
+            HandleObjectRefresh(datasetChanges, AllDatasets);
+        }
+
+        if (changes.ChangesByTable.TryGetValue("Pipeline", out var pipelineChanges))
+        {
+            HandleObjectRefresh(pipelineChanges, AllPipelines);
+        }
+
+        //if (changes.ChangesByTable.TryGetValue("AggregateTopX", out var aggregateTopXChanges))
+        //{
+        //    HandleObjectRefresh(aggregateTopXChanges, AllAggregateTopXs);
+        //}
+
+        if (changes.ChangesByTable.TryGetValue("LoadMetadataCatalogueLinkage", out var loadMetadataCatalogueLinkageChanges))
+        {
+            HandleObjectRefresh(loadMetadataCatalogueLinkageChanges, AllLoadMetadataCatalogueLinkages);
+        }
+
+        if (changes.ChangesByTable.TryGetValue("PipelineComponent", out var pipelineComponentChanges))
+        {
+            HandleObjectRefresh(pipelineComponentChanges, AllPipelineComponents);
+        }
+
+        if (changes.ChangesByTable.TryGetValue("PipelineComponentArgument", out var pipelineComponentArgumentChanges))
+        {
+            HandleObjectRefresh(pipelineComponentArgumentChanges, AllPipelineComponentsArguments);
+        }
+
+        if (changes.ChangesByTable.TryGetValue("DashboardLayout", out var dashboardLayoutChanges))
+        {
+            HandleObjectRefresh(dashboardLayoutChanges, AllDashboards);
+        }
+
+        //if (changes.ChangesByTable.TryGetValue("DashboardControl", out var dashboardControlChanges))
+        //{
+        //    HandleObjectRefresh(dashboardControlChanges, AllDashboardControls);
+        //}
+
+        if (changes.ChangesByTable.TryGetValue("DataAccessCredentials", out var dataAccessCredentialsChanges))
+        {
+            HandleObjectRefresh(dataAccessCredentialsChanges, AllDataAccessCredentials);
+        }
+
+        //if (changes.ChangesByTable.TryGetValue("DataAccessCredentials_TableInfo", out var dataAccessCredentialsTableInfoChanges))
+        //{
+        //    HandleObjectRefresh(dataAccessCredentialsTableInfoChanges, AllDataAccessCredentials_TableInfos);
+        //}
+
+        //if (changes.ChangesByTable.TryGetValue("DashboardObjectUse", out var dashboardObjectUseChanges))
+        //{
+        //    HandleObjectRefresh(dashboardObjectUseChanges, AllDashboardObjectUses);
+        //}
+
+        if (changes.ChangesByTable.TryGetValue("RemoteRDMP", out var remoteRDMPChanges))
+        {
+            HandleObjectRefresh(remoteRDMPChanges, AllRemoteRDMPs);
+        }
+
+        if (changes.ChangesByTable.TryGetValue("ObjectImport", out var objectImportChanges))
+        {
+            HandleObjectRefresh(objectImportChanges, AllImports);
+        }
+
+        if (changes.ChangesByTable.TryGetValue("ObjectExport", out var objectExportChanges))
+        {
+            HandleObjectRefresh(objectExportChanges, AllExports);
+        }
+
+        if (changes.ChangesByTable.TryGetValue("CacheProgress", out var cacheProgressChanges))
+        {
+            HandleObjectRefresh(cacheProgressChanges, AllCacheProgresses);
+        }
+
+        if (changes.ChangesByTable.TryGetValue("ConnectionStringKeyword", out var connectionStringKeywordChanges))
+        {
+            HandleObjectRefresh(connectionStringKeywordChanges, AllConnectionStringKeywords);
+        }
+
+        //if (changes.ChangesByTable.TryGetValue("WindowLayout", out var windowLayoutChanges))
+        //{
+        //    HandleObjectRefresh(windowLayoutChanges, AllWindowLayouts);
+        //}
+
+        if (changes.ChangesByTable.TryGetValue("PermissionWindow", out var permissionWindowChanges))
+        {
+            HandleObjectRefresh(permissionWindowChanges, AllPermissionWindows);
+        }
+
+        //if (changes.ChangesByTable.TryGetValue("TicketingSystemConfiguration", out var ticketingSystemConfigurationChanges))
+        //{
+        //    HandleObjectRefresh(ticketingSystemConfigurationChanges, AllTicketingSystemConfigurations);
+        //}
+
+        //if (changes.ChangesByTable.TryGetValue("CacheFetchFailure", out var cacheFetchFailureChanges))
+        //{
+        //    HandleObjectRefresh(cacheFetchFailureChanges, AllCacheFetchFailures);
+        //}
+
+        if (changes.ChangesByTable.TryGetValue("CohortAggregateContainer", out var cohortAggregateContainerChanges))
+        {
+            HandleObjectRefresh(cohortAggregateContainerChanges, AllCohortAggregateContainers);
+        }
+
+        //if (changes.ChangesByTable.TryGetValue("CohortAggregateSubContainer", out var cohortAggregateSubContainerChanges))
+        //{
+        //    HandleObjectRefresh(cohortAggregateSubContainerChanges, AllCohortAggregateSubContainers);
+        //}
+
+        if (changes.ChangesByTable.TryGetValue("CohortIdentificationConfiguration", out var cohortIdentificationConfigurationChanges))
+        {
+            HandleObjectRefresh(cohortIdentificationConfigurationChanges, AllCohortIdentificationConfigurations);
+        }
+
+        //if (changes.ChangesByTable.TryGetValue("CohortAggregateContainer_AggregateConfiguration", out var cohortAggregateContainer_AggregateConfigurationChanges))
+        //{
+        //    HandleObjectRefresh(cohortAggregateContainer_AggregateConfigurationChanges, AllCohortAggregateContainer_AggregateConfigurations);
+        //}
+
+        if (changes.ChangesByTable.TryGetValue("ANOTable", out var anoTableChanges))
+        {
+            HandleObjectRefresh(anoTableChanges, AllANOTables);
+        }
+
+        if (changes.ChangesByTable.TryGetValue("AggregateConfiguration", out var aggregateConfigurationChanges))
+        {
+            HandleObjectRefresh(aggregateConfigurationChanges, AllAggregateConfigurations);
+        }
+
+        if (changes.ChangesByTable.TryGetValue("GovernanceDocument", out var governanceDocumentChanges))
+        {
+            HandleObjectRefresh(governanceDocumentChanges, AllGovernanceDocuments);
+        }
+
+        if (changes.ChangesByTable.TryGetValue("AggregateContinuousDateAxis", out var aggregateContinuousDateAxisChanges))
+        {
+            HandleObjectRefresh(aggregateContinuousDateAxisChanges, AllAggregateContinuousDateAxis);
+        }
+
+        if (changes.ChangesByTable.TryGetValue("GovernancePeriod", out var governancePeriodChanges))
+        {
+            HandleObjectRefresh(governancePeriodChanges, AllGovernancePeriods);
+        }
+
+        if (changes.ChangesByTable.TryGetValue("AggregateDimension", out var aggregateDimensionChanges))
+        {
+            HandleObjectRefresh(aggregateDimensionChanges, AllAggregateDimensions);
+        }
+
+        //if (changes.ChangesByTable.TryGetValue("GovernancePeriod_Catalogue", out var governancePeriod_CatalogueChanges))
+        //{
+        //    HandleObjectRefresh(governancePeriod_CatalogueChanges, AllGovernancePeriod_Catalogues);
+        //}
+
+        if (changes.ChangesByTable.TryGetValue("AggregateFilter", out var aggregateFilterChanges))
+        {
+            HandleObjectRefresh(aggregateFilterChanges, AllAggregateFilters);
+        }
+
+        if (changes.ChangesByTable.TryGetValue("AggregateFilterContainer", out var aggregateFilterContainerChanges))
+        {
+            HandleObjectRefresh(aggregateFilterContainerChanges, AllAggregateContainers);
+        }
+
+        if (changes.ChangesByTable.TryGetValue("AggregateFilterParameter", out var aggregateFilterParameterChanges))
+        {
+            HandleObjectRefresh(aggregateFilterParameterChanges, AllAggregateFilterParameters);
+        }
+
+        if (changes.ChangesByTable.TryGetValue("StandardRegex", out var standardRegexChanges))
+        {
+            HandleObjectRefresh(standardRegexChanges, AllStandardRegexes);
+        }
+
+        //if (changes.ChangesByTable.TryGetValue("AggregateFilterSubContainer", out var aggregateFilterSubContainerChanges))
+        //{
+        //    HandleObjectRefresh(aggregateFilterSubContainerChanges, AllAggregateFilterSubContainers);
+        //}
+
+        if (changes.ChangesByTable.TryGetValue("AnyTableSqlParameter", out var anyTableSqlParameterChanges))
+        {
+            HandleObjectRefresh(anyTableSqlParameterChanges, AllAnyTableParameters);
+        }
+
+        //if (changes.ChangesByTable.TryGetValue("AggregateForcedJoin", out var aggregateForcedJoinChanges))
+        //{
+        //    HandleObjectRefresh(aggregateForcedJoinChanges, AllAggregateForcedJoins);
+        //}
+
+        //if (changes.ChangesByTable.TryGetValue("PasswordEncryptionKeyLocation", out var passwordEncryptionKeyLocationChanges))
+        //{
+        //    HandleObjectRefresh(passwordEncryptionKeyLocationChanges, AllPasswordEncryptionKeyLocations);
+        //}
+
+        //if (changes.ChangesByTable.TryGetValue("CatalogueItemIssue", out var catalogueItemIssueChanges))
+        //{
+        //    HandleObjectRefresh(catalogueItemIssueChanges, AllCatalogueItemIssues);
+        //}
+
+        //if (changes.ChangesByTable.TryGetValue("Plugin", out var pluginChanges))
+        //{
+        //    HandleObjectRefresh(pluginChanges, AllPlugins);
+        //}
+
+        if (changes.ChangesByTable.TryGetValue("ExternalDatabaseServer", out var externalDatabaseServerChanges))
+        {
+            HandleObjectRefresh(externalDatabaseServerChanges, AllExternalServers);
+        }
+
+        if (changes.ChangesByTable.TryGetValue("ExtractionFilter", out var extractionFilterChanges))
+        {
+            HandleObjectRefresh(extractionFilterChanges, AllCatalogueFilters);
+        }
+
+        if (changes.ChangesByTable.TryGetValue("ExtractionFilterParameter", out var extractionFilterParameterChanges))
+        {
+            HandleObjectRefresh(extractionFilterParameterChanges, AllCatalogueParameters);
+        }
+
+        if (changes.ChangesByTable.TryGetValue("ExtractionInformation", out var extractionInformationChanges))
+        {
+            HandleObjectRefresh(extractionInformationChanges, AllExtractionInformations);
+        }
+
+        //if (changes.ChangesByTable.TryGetValue("IssueSystemUser", out var issueSystemUserChanges))
+        //{
+        //    HandleObjectRefresh(issueSystemUserChanges, AllIssueSystemUsers);
+        //}
+
+        //if (changes.ChangesByTable.TryGetValue("ExtendedProperty", out var extendedPropertyChanges))
+        //{
+        //    HandleObjectRefresh(extendedPropertyChanges, AllExtendedProperties);
+        //}
+
+        if (changes.ChangesByTable.TryGetValue("JoinInfo", out var joinInfoChanges))
+        {
+            HandleObjectRefresh(joinInfoChanges, AllJoinInfos);
+        }
+
+        //if (changes.ChangesByTable.TryGetValue("Commit", out var commitChanges))
+        //{
+        //    HandleObjectRefresh(commitChanges, AllCommits);
+        //}
+
+        if (changes.ChangesByTable.TryGetValue("LoadMetadata", out var loadMetadataChanges))
+        {
+            HandleObjectRefresh(loadMetadataChanges, AllLoadMetadatas);
+        }
+
+        if (changes.ChangesByTable.TryGetValue("JoinableCohortAggregateConfiguration", out var joinableCohortAggregateConfigurationChanges))
+        {
+            HandleObjectRefresh(joinableCohortAggregateConfigurationChanges, AllJoinables);
+        }
+
+        //if (changes.ChangesByTable.TryGetValue("LoadModuleAssembly", out var loadModuleAssemblyChanges))
+        //{
+        //    HandleObjectRefresh(loadModuleAssemblyChanges, AllLoadModuleAssemblies);
+        //}
+
+        //if (changes.ChangesByTable.TryGetValue("TicketingSystemReleaseStatus", out var ticketingSystemReleaseStatusChanges))
+        //{
+        //    HandleObjectRefresh(ticketingSystemReleaseStatusChanges, AllTicketingSystemReleaseStatuses);
+        //}
+
+        if (changes.ChangesByTable.TryGetValue("JoinableCohortAggregateConfigurationUse", out var joinableCohortAggregateConfigurationUseChanges))
+        {
+            HandleObjectRefresh(joinableCohortAggregateConfigurationUseChanges, AllJoinUses);
+        }
+
+        if (changes.ChangesByTable.TryGetValue("LoadProgress", out var loadProgressChanges))
+        {
+            HandleObjectRefresh(loadProgressChanges, AllLoadProgresses);
+        }
+
+        if (changes.ChangesByTable.TryGetValue("Lookup", out var lookupChanges))
+        {
+            HandleObjectRefresh(lookupChanges, AllLookups);
+        }
+
+        //if (changes.ChangesByTable.TryGetValue("LookupCompositeJoinInfo", out var lookupCompositeJoinInfoChanges))
+        //{
+        //    HandleObjectRefresh(lookupCompositeJoinInfoChanges, AllLookupCompositeJoinInfos);
+        //}
+
+        //if (changes.ChangesByTable.TryGetValue("Setting", out var settingChanges))
+        //{
+        //    HandleObjectRefresh(settingChanges, AllSettings);
+        //}
+
+        if (changes.ChangesByTable.TryGetValue("PreLoadDiscardedColumn", out var preLoadDiscardedColumnChanges))
+        {
+            HandleObjectRefresh(preLoadDiscardedColumnChanges, AllPreLoadDiscardedColumns);
+        }
+
+        if (changes.ChangesByTable.TryGetValue("RegexRedactionConfiguration", out var regexRedactionConfigurationChanges))
+        {
+            HandleObjectRefresh(regexRedactionConfigurationChanges, AllRegexRedactionConfigurations);
+        }
+
+        if (changes.ChangesByTable.TryGetValue("ProcessTask", out var processTaskChanges))
+        {
+            HandleObjectRefresh(processTaskChanges, AllProcessTasks);
+        }
+
+        //if (changes.ChangesByTable.TryGetValue("RegexRedaction", out var regexRedactionChanges))
+        //{
+        //    HandleObjectRefresh(regexRedactionChanges, AllRegexRedactions);
+        //}
+
+        if (changes.ChangesByTable.TryGetValue("ProcessTaskArgument", out var processTaskArgumentChanges))
+        {
+            HandleObjectRefresh(processTaskArgumentChanges, AllProcessTasksArguments);
+        }
+
+        if (changes.ChangesByTable.TryGetValue("ExtractionFilterParameterSet", out var extractionFilterParameterSetChanges))
+        {
+            HandleObjectRefresh(extractionFilterParameterSetChanges, AllCatalogueValueSets);
+        }
+
+        //if (changes.ChangesByTable.TryGetValue("ServerDefaults", out var serverDefaultsChanges))
+        //{
+        //    HandleObjectRefresh(serverDefaultsChanges, AllServerDefaults);
+        //}
+
+        //if (changes.ChangesByTable.TryGetValue("RegexRedactionKey", out var regexRedactionKeyChanges))
+        //{
+        //    HandleObjectRefresh(regexRedactionKeyChanges, AllRegexRedactionKeys);
+        //}
+
+        if (changes.ChangesByTable.TryGetValue("SupportingDocument", out var supportingDocumentChanges))
+        {
+            HandleObjectRefresh(supportingDocumentChanges, AllSupportingDocuments);
+        }
+
+        if (changes.ChangesByTable.TryGetValue("ExtractionFilterParameterSetValue", out var extractionFilterParameterSetValueChanges))
+        {
+            HandleObjectRefresh(extractionFilterParameterSetValueChanges, AllCatalogueValueSetValues);
+        }
+
+        if (changes.ChangesByTable.TryGetValue("SupportingSQLTable", out var supportingSQLTableChanges))
+        {
+            HandleObjectRefresh(supportingSQLTableChanges, AllSupportingSQL);
+        }
+
+        if (changes.ChangesByTable.TryGetValue("TableInfo", out var tableInfoChanges))
+        {
+            HandleObjectRefresh(tableInfoChanges, AllTableInfos);
+        }
+
         _lastSeenVersion = changes.CurrentVersion;
+    }
+
+    protected void HandleObjectRefresh(IReadOnlyList<ChangedRow> changes, IEnumerable<DatabaseEntity> allItems)
+    {
+        var list = allItems.ToList();
+
+        foreach (var (id, op) in changes)
+        {
+            if (op == ChangeOperation.Delete)
+            {
+                list.RemoveAll(c => c.ID == id);
+            }
+            else
+            {
+                var c = _catalogueRepository.GetAllObjectsWhere<ColumnInfo>("ID", id).First();
+                var index = list.FindIndex(existing => existing.ID == id);
+
+                if (index != -1)
+                    list[index] = c;
+                else
+                    list.Add(c);
+            }
+        }
+
+        allItems = list.ToArray();
     }
 }

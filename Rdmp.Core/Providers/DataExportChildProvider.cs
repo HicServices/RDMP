@@ -29,8 +29,10 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.Core.ReusableLibraryCode.Settings;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 
 namespace Rdmp.Core.Providers;
@@ -42,6 +44,9 @@ namespace Rdmp.Core.Providers;
 /// </summary>
 public class DataExportChildProvider : CatalogueChildProvider
 {
+
+    private ChangeTrackingService _changeTracking;
+    private long _lastSeenVersion;
     //root objects
     public AllCohortsNode RootCohortsNode { get; private set; }
 
@@ -108,6 +113,8 @@ public class DataExportChildProvider : CatalogueChildProvider
         DataExportChildProvider previousStateIfKnown) : base(repositoryLocator.CatalogueRepository,
         pluginChildProviders, errorsCheckNotifier, previousStateIfKnown)
     {
+        _changeTracking = new ChangeTrackingService(((DataExportRepository)repositoryLocator.DataExportRepository).ConnectionString, ChangeTrackingService.DEFAULT_TABLE_NAMES);
+        _lastSeenVersion = _changeTracking.GetCurrentVersion();
         ForbidListedSources = previousStateIfKnown?.ForbidListedSources ?? new List<ExternalCohortTable>();
         _errorsCheckNotifier = errorsCheckNotifier;
         dataExportRepository = repositoryLocator.DataExportRepository;
@@ -916,4 +923,153 @@ public class DataExportChildProvider : CatalogueChildProvider
         AddChildren((Project)project, new DescendancyList(project));
         return true;
     }
+
+
+    public override async Task RefreshAsync(CancellationToken ct = default)
+    {
+        ChangeSet changes;
+        try
+        {
+            changes = _changeTracking.GetChangesSince(_lastSeenVersion);
+        }
+        catch (ChangeTrackingExpiredException)
+        {
+            //FullReloadAsync(_catalogueRepository);   // your existing GetAllObjects<T>() based load
+            _lastSeenVersion = _changeTracking.GetCurrentVersion();
+            return;
+        }
+
+        if (changes.IsEmpty)
+        {
+            _lastSeenVersion = changes.CurrentVersion;
+            return;
+        }
+
+        if (changes.IsEmpty)
+        {
+            _lastSeenVersion = changes.CurrentVersion;
+            return;
+        }
+        if (changes.ChangesByTable.TryGetValue("ExtractableDataSetPackage", out var extractableDataSetPackageChanges))
+        {
+            HandleObjectRefresh(extractableDataSetPackageChanges, AllPackages);
+        }
+
+        //if (changes.ChangesByTable.TryGetValue("ExtractableDataSetPackage_ExtractableDataSet", out var extractableDataSetPackage_ExtractableDataSetChanges))
+        //{
+        //    HandleObjectRefresh(extractableDataSetPackage_ExtractableDataSetChanges, AllExtractableDataSetPackage_ExtractableDataSets);
+        //}
+
+        //if (changes.ChangesByTable.TryGetValue("ProjectCohortIdentificationConfigurationAssociation", out var projectCohortIdentificationConfigurationAssociationChanges))
+        //{
+        //    HandleObjectRefresh(projectCohortIdentificationConfigurationAssociationChanges, AllProjectCohortIdentificationConfigurationAssociations);
+        //}
+
+        //if (changes.ChangesByTable.TryGetValue("SelectedDataSetsForcedJoin", out var selectedDataSetsForcedJoinChanges))
+        //{
+        //    HandleObjectRefresh(selectedDataSetsForcedJoinChanges, AllSelectedDataSetsForcedJoins);
+        //}
+
+        //if (changes.ChangesByTable.TryGetValue("SupplementalExtractionResults", out var supplementalExtractionResultsChanges))
+        //{
+        //    HandleObjectRefresh(supplementalExtractionResultsChanges, AllSupplementalExtractionResults);
+        //}
+
+        //if (changes.ChangesByTable.TryGetValue("ExtractionProgress", out var extractionProgressChanges))
+        //{
+        //    HandleObjectRefresh(extractionProgressChanges, AllExtractionProgresses);
+        //}
+
+        //if (changes.ChangesByTable.TryGetValue("ConfigurationProperties", out var configurationPropertiesChanges))
+        //{
+        //    HandleObjectRefresh(configurationPropertiesChanges, AllConfigurationProperties);
+        //}
+
+        //if (changes.ChangesByTable.TryGetValue("CumulativeExtractionResults", out var cumulativeExtractionResultsChanges))
+        //{
+        //    HandleObjectRefresh(cumulativeExtractionResultsChanges, AllCumulativeExtractionResults);
+        //}
+
+        //if (changes.ChangesByTable.TryGetValue("DataUser", out var dataUserChanges))
+        //{
+        //    HandleObjectRefresh(dataUserChanges, AllDataUsers);
+        //}
+
+        if (changes.ChangesByTable.TryGetValue("DeployedExtractionFilter", out var deployedExtractionFilterChanges))
+        {
+            HandleObjectRefresh(deployedExtractionFilterChanges, AllDeployedExtractionFilters);
+        }
+
+        if (changes.ChangesByTable.TryGetValue("DeployedExtractionFilterParameter", out var deployedExtractionFilterParameterChanges))
+        {
+            HandleObjectRefresh(deployedExtractionFilterParameterChanges, _allParameters);
+        }
+
+        if (changes.ChangesByTable.TryGetValue("ExternalCohortTable", out var externalCohortTableChanges))
+        {
+            HandleObjectRefresh(externalCohortTableChanges, CohortSources);
+        }
+
+        if (changes.ChangesByTable.TryGetValue("ExtractableCohort", out var extractableCohortChanges))
+        {
+            HandleObjectRefresh(extractableCohortChanges, Cohorts);
+        }
+
+        //if (changes.ChangesByTable.TryGetValue("ExtractableColumn", out var extractableColumnChanges))
+        //{
+        //    HandleObjectRefresh(extractableColumnChanges, AllExtractableColumns);
+        //}
+
+        if (changes.ChangesByTable.TryGetValue("ExtractableDataSet", out var extractableDataSetChanges))
+        {
+            HandleObjectRefresh(extractableDataSetChanges, ExtractableDataSets);
+        }
+
+        if (changes.ChangesByTable.TryGetValue("ExtractableDataSetProject", out var extractableDataSetProjectChanges))
+        {
+            HandleObjectRefresh(extractableDataSetProjectChanges, ExtractableDataSetProjects);
+        }
+
+        if (changes.ChangesByTable.TryGetValue("ExtractionConfiguration", out var extractionConfigurationChanges))
+        {
+            HandleObjectRefresh(extractionConfigurationChanges, ExtractionConfigurations);
+        }
+
+        //if (changes.ChangesByTable.TryGetValue("FilterContainer", out var filterContainerChanges))
+        //{
+        //    HandleObjectRefresh(filterContainerChanges, AllFilterContainers);
+        //}
+
+        //if (changes.ChangesByTable.TryGetValue("FilterContainerSubcontainers", out var filterContainerSubcontainersChanges))
+        //{
+        //    HandleObjectRefresh(filterContainerSubcontainersChanges, AllFilterContainerSubcontainers);
+        //}
+
+        if (changes.ChangesByTable.TryGetValue("GlobalExtractionFilterParameter", out var globalExtractionFilterParameterChanges))
+        {
+            HandleObjectRefresh(globalExtractionFilterParameterChanges, AllGlobalExtractionFilterParameters);
+        }
+
+        if (changes.ChangesByTable.TryGetValue("Project", out var projectChanges))
+        {
+            HandleObjectRefresh(projectChanges, Projects);
+        }
+
+        //if (changes.ChangesByTable.TryGetValue("Project_DataUser", out var project_DataUserChanges))
+        //{
+        //    HandleObjectRefresh(project_DataUserChanges, AllProject_DataUsers);
+        //}
+
+        //if (changes.ChangesByTable.TryGetValue("ReleaseLog", out var releaseLogChanges))
+        //{
+        //    HandleObjectRefresh(releaseLogChanges, AllReleaseLogs);
+        //}
+
+        if (changes.ChangesByTable.TryGetValue("SelectedDataSets", out var selectedDataSetsChanges))
+        {
+            HandleObjectRefresh(selectedDataSetsChanges, SelectedDataSets);
+        }
+        await base.RefreshAsync(ct);
+    }
+
 }
