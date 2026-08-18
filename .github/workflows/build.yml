@@ -278,7 +278,7 @@ jobs:
             dist
       - name: Cache Build
         id: cache-build
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v5
         with:
           path: ${{ github.workspace }}/
           key: ${{ github.sha }}-your-cache-key-bundled
@@ -289,7 +289,7 @@ jobs:
     needs: ['bundle','tests_db','tests_file_system']
     if: contains(github.ref, 'refs/tags/v')
     steps:
-      - uses: actions/cache/restore@v4
+      - uses: actions/cache/restore@v5
         id: restore-build
         with:
           path: ${{ github.workspace }}/
