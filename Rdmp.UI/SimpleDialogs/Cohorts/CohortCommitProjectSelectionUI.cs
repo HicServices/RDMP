@@ -100,6 +100,7 @@ namespace Rdmp.UI.SimpleDialogs.Cohorts
             var result = dialog.ShowDialog();
             if (result == DialogResult.OK)
             {
+                
                 project.SaveToDatabase();
                 _cic.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively().Select(ac => ac.Catalogue).Distinct().Where(c => c.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository)).ToList().ForEach(c =>
                 {
@@ -111,6 +112,10 @@ namespace Rdmp.UI.SimpleDialogs.Cohorts
                 DialogResult = DialogResult.OK;
                 Result = project;
                 Close();
+            }
+            else
+            {
+                project.DeleteInDatabase();
             }
         }
         private void btnExistingProject_Click(object sender, EventArgs e)
