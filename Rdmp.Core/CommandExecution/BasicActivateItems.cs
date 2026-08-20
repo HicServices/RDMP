@@ -144,7 +144,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
 
     protected virtual ICoreChildProvider GetChildProvider()
     {
-        if(CoreChildProvider == null)
+        if (CoreChildProvider == null)
         {
             ICoreChildProvider temp = null;
             if (RepositoryLocator.DataExportRepository != null)
@@ -162,7 +162,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
             CoreChildProvider = temp;
         }
         else
-        
+        {
             CoreChildProvider.RefreshAsync().GetAwaiter().GetResult();
         }
 
