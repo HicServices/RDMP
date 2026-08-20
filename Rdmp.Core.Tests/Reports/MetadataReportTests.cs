@@ -10,6 +10,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Reports;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Drawing;
 using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
@@ -28,7 +29,10 @@ internal class MetadataReportTests : UnitTests
 
         //setup delegate for returning images
         var bmp = new Image<Rgba32>(200, 200);
-        bmp.Mutate(x => x.Fill(Color.Black, new RectangleF(10.0f, 10.0f, 50.0f, 50.0f)));
+        bmp.Mutate(x => x.Paint(canvas =>
+        {
+            canvas.Fill(Brushes.Solid(Color.Black), new RectanglePolygon(10.0f, 10.0f, 50.0f, 50.0f));
+        }));
 
         reporter.RequestCatalogueImages += s =>
         {

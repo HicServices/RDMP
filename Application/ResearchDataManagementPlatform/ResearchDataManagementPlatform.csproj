@@ -14,9 +14,6 @@
     <ServerGarbageCollection>true</ServerGarbageCollection>
   </PropertyGroup>
   <PropertyGroup>
-    
-  </PropertyGroup>
-  <PropertyGroup>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <ApplicationIcon>Icon\main.ico</ApplicationIcon>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -33,6 +30,7 @@
     <PackageReference Include="Autoupdater.NET.Official" />
     <PackageReference Include="DockPanelSuite.ThemeVS2015" />
     <PackageReference Include="SharpCompress" />
+    <PackageReference Include="SkiaSharp" />
     <PackageReference Include="Snappier" />
   </ItemGroup>
   <ItemGroup>
