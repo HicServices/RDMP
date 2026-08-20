@@ -178,22 +178,12 @@ namespace Rdmp.Core.Providers
         };
 
 
-        /// <param name="connectionString">Connection string to the tracked database.</param>
-        /// <param name="trackedTables">
-        /// Table names (unqualified, e.g. "Catalogue", "CatalogueItem") that have
-        /// CHANGE_TRACKING enabled. Every table here must have an integer primary
-        /// key column named "ID" — adjust GetChangesSinceAsync if that's not the case.
-        /// </param>
         public ChangeTrackingService(string connectionString, IReadOnlyList<string> trackedTables)
         {
             _connectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
             _trackedTables = trackedTables ?? throw new ArgumentNullException(nameof(trackedTables));
         }
 
-        /// <summary>
-        /// The current change-tracking version. Call this once after a full load and
-        /// remember the result — that's the "version X" you'll pass to GetChangesSinceAsync later.
-        /// </summary>
         public long GetCurrentVersion()
         {
             using var conn = new SqlConnection(_connectionString);
@@ -208,12 +198,6 @@ namespace Rdmp.Core.Providers
             return result is null or DBNull ? 0 : Convert.ToInt64(result);
         }
 
-        /// <summary>
-        /// Returns everything that changed across all tracked tables since <paramref name="sinceVersion"/>,
-        /// plus the new current version to remember for next time.
-        /// Throws <see cref="ChangeTrackingExpiredException"/> if sinceVersion has fallen out of the
-        /// retention window — the caller should catch this and do a full reload instead.
-        /// </summary>
         public ChangeSet GetChangesSince(long sinceVersion)
         {
             using var conn = new SqlConnection(_connectionString);
