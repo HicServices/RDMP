@@ -239,8 +239,15 @@ public class CatalogueChildProvider : ICoreChildProvider
     public CatalogueChildProvider(ICatalogueRepository repository, IChildProvider[] pluginChildProviders,
         ICheckNotifier errorsCheckNotifier, CatalogueChildProvider previousStateIfKnown)
     {
-        _changeTracking = new ChangeTrackingService(((CatalogueRepository)repository).ConnectionString, ChangeTrackingService.Catalogue_DEFAULT_TABLE_NAMES);
-        _lastSeenVersion = _changeTracking.GetCurrentVersion();
+        try
+        {
+            _changeTracking = new ChangeTrackingService(((CatalogueRepository)repository).ConnectionString, ChangeTrackingService.Catalogue_DEFAULT_TABLE_NAMES);
+            _lastSeenVersion = _changeTracking.GetCurrentVersion();
+
+        }
+        catch
+        {
+        }
         _commentStore = repository.CommentStore;
         _catalogueRepository = repository;
         _catalogueRepository?.EncryptionManager?.ClearAllInjections();
@@ -2329,6 +2336,11 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     public virtual async Task RefreshAsync(CancellationToken ct = default)
     {
+        if(_changeTracking is null)
+        {
+            FullReloadAsync(_catalogueRepository);
+            return;
+        }
         ChangeSet changes;
         try
         {
@@ -2734,7 +2746,7 @@ public class CatalogueChildProvider : ICoreChildProvider
             else
             {
                 var c = _catalogueRepository.GetAllObjectsWhere<ColumnInfo>("ID", id).FirstOrDefault();
-                if(c is null)
+                if (c is null)
                     continue;
                 var index = list.FindIndex(existing => existing.ID == id);
 

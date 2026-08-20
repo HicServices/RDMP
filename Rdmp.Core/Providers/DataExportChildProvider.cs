@@ -113,8 +113,11 @@ public class DataExportChildProvider : CatalogueChildProvider
         DataExportChildProvider previousStateIfKnown) : base(repositoryLocator.CatalogueRepository,
         pluginChildProviders, errorsCheckNotifier, previousStateIfKnown)
     {
-        _changeTracking = new ChangeTrackingService(((DataExportRepository)repositoryLocator.DataExportRepository).ConnectionString, ChangeTrackingService.DataExport_DEFAULT_TABLE_NAMES);
-        _lastSeenVersion = _changeTracking.GetCurrentVersion();
+        try
+        {
+            _changeTracking = new ChangeTrackingService(((DataExportRepository)repositoryLocator.DataExportRepository).ConnectionString, ChangeTrackingService.DataExport_DEFAULT_TABLE_NAMES);
+            _lastSeenVersion = _changeTracking.GetCurrentVersion();
+        }catch { }
         ForbidListedSources = previousStateIfKnown?.ForbidListedSources ?? new List<ExternalCohortTable>();
         _errorsCheckNotifier = errorsCheckNotifier;
         dataExportRepository = repositoryLocator.DataExportRepository;
@@ -924,9 +927,17 @@ public class DataExportChildProvider : CatalogueChildProvider
         return true;
     }
 
+    private void FullReloadAsync(IDataExportRepository repository) {
+        //todo
+    }
 
     public override async Task RefreshAsync(CancellationToken ct = default)
     {
+        if (_changeTracking is null)
+        {
+            FullReloadAsync(dataExportRepository);
+            return;
+        }
         ChangeSet changes;
         try
         {

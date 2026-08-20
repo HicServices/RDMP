@@ -162,7 +162,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
             CoreChildProvider = temp;
         }
         else
-        {
+        
             CoreChildProvider.RefreshAsync().GetAwaiter().GetResult();
         }
 
