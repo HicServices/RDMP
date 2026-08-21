@@ -34,8 +34,10 @@ namespace Rdmp.UI.SimpleDialogs.Cohorts
             _currentProject = currentProject;
             _projects = projects;
             _cic = cic;
+            System.Windows.Forms.ToolTip ToolTip1 = new System.Windows.Forms.ToolTip();
             if (_currentProject != null)
             {
+                ToolTip1.SetToolTip(this.btnCurrentProject, _currentProject.Name);
                 btnCurrentProject.Text = $"This Project ({_currentProject.Name.Substring(0, Math.Min(10, _currentProject.Name.Length))}{(_currentProject.Name.Length > 0 ? "..." : "")})";
             }
             else
