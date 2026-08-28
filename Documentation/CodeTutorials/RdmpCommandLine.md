@@ -109,6 +109,41 @@ Some commands require specifying a database (e.g. `CreateNewCatalogueByImporting
 
 See [the technical documentation](../../Rdmp.Core/CommandLine/Runners/ExecuteCommandRunner.md) for how this parsing occurs in code.
 
+### Exporting and rebuilding a cohort
+
+A [CohortIdentificationConfiguration] can be exported as a portable, data-free script and rebuilt
+later (e.g. on another RDMP instance).  No patient data is written - only catalogue/table/column
+names and the cohort's filter logic.
+
+Export a cohort to a folder:
+
+```
+./rdmp ExportCohortAsScript CohortIdentificationConfiguration:12 ./out
+```
+*Writes `./out/<cohort name>/` containing `build.script.yaml` (a runnable command script that
+recreates the cohort), `query.sql` (the SQL RDMP would run), `catalogue-manifest.yaml` (the
+extractable columns, patient-identifier column(s) and published filters of just the catalogues
+this cohort uses) and a `requirement.md` placeholder.*
+
+If the cohort cannot be expressed as a single query - typically because its sets span multiple
+servers/credentials and no QueryCache is configured (RDMP cannot `UNION`/`INTERSECT`/`EXCEPT`
+across servers) - `query.sql` falls back to a *best-effort* document: each cohort set's SQL is
+emitted individually with the set-operation tree shown as comments, and a notes block at the end
+lists what could not be combined. Each per-set query is valid against its own server.
+
+Rebuild an identical cohort from that script:
+
+```
+./rdmp BuildCohortFromScript ./out/<cohort name>/build.script.yaml "My rebuilt cohort"
+```
+*Replays the script to create a new `CohortIdentificationConfiguration` named "My rebuilt cohort".*
+
+The script captures set operations, nested cohort sub-containers (with their names and order),
+imported and hand-written filters with their parameters, global (cohort-level) and aggregate-level
+parameters, nested AND/OR filter containers, HAVING clauses, patient index tables (joinables) with
+their joins/filters/parameters and column aliases, forced joins, disabled sets, sub-containers and
+filters, and the Project association (if any).
+
 ## Terminal GUI
 
 You can access an interactive terminal similar to the RDMP gui client by running:
@@ -135,3 +170,4 @@ For a selection of example scripts see the [scripts folder](../../scripts/)
 
 [Pipeline]: ./Glossary.md#Pipeline
 [Catalogue]: ./Glossary.md#Catalogue
+[CohortIdentificationConfiguration]: ./Glossary.md#CohortIdentificationConfiguration
