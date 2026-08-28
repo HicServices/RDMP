@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <AssemblyName>RdmpCohortBuildBreakdownByGroups</AssemblyName>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <!-- only this plugin's dll goes in the .rdmp; the host RDMP provides Rdmp.Core etc. -->
+    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+    <!-- standalone: opt out of the host repo Central Package Management so the pinned Version applies anywhere -->
+    <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Pinned released RDMP dependency: the plugin builds standalone from any checkout,
+         against exactly the version it targets (no in-tree Rdmp.Core reference). -->
+    <PackageReference Include="HIC.RDMP.Plugin" Version="9.2.3">
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+</Project>

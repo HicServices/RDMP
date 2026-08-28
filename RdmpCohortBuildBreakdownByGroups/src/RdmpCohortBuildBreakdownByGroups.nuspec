@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>RdmpCohortBuildBreakdownByGroups</id>
+    <version>0.0.2</version>
+    <authors>HIC</authors>
+    <description>Reproduces the Cohort Builder's per-set / per-container count tree (FinalCount and
+      cumulative running totals) split by an arbitrary group column (e.g. health board), labelled and
+      ordered by a user-supplied lookup table. Builds the cohort once, then recomposes every count point
+      from the cached per-set tables (cohort-set source queries are never re-run). CLI:
+      ExportCohortBuildBreakDownByGroups; GUI: right-click a cohort identification configuration
+      (SHARE preset or choose inputs).</description>
+    <dependencies>
+      <!-- major.minor must match the running RDMP (set to your release, e.g. 9.2). -->
+      <dependency id="HIC.RDMP.Plugin" version="9.2" />
+    </dependencies>
+  </metadata>
+</package>
