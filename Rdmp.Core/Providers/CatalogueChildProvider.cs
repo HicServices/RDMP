@@ -2344,6 +2344,8 @@ public class CatalogueChildProvider : ICoreChildProvider
         ReportProgress("After building exports");
     }
 
+    protected virtual void RebuildPipelineTree() { }
+
     public virtual async Task RefreshAsync(CancellationToken ct = default)
     {
         if (_changeTracking is null)
@@ -2391,7 +2393,7 @@ public class CatalogueChildProvider : ICoreChildProvider
             AllPipelines = HandleObjectRefresh(pipelineChanges, AllPipelines);
             foreach (var p in AllPipelines)
                 p.InjectKnown(AllPipelineComponents.Where(pc => pc.Pipeline_ID == p.ID).ToArray());
-            //RebuildPipelineTree();
+            RebuildPipelineTree();
         }
 
         // -- AggregateTopX --
@@ -2405,7 +2407,7 @@ public class CatalogueChildProvider : ICoreChildProvider
             AllPipelineComponents = HandleObjectRefresh(pipelineComponentChanges, AllPipelineComponents);
             foreach (var p in AllPipelines)
                 p.InjectKnown(AllPipelineComponents.Where(pc => pc.Pipeline_ID == p.ID).ToArray());
-            //RebuildPipelineTree();
+            RebuildPipelineTree();
         }
 
         // -- PipelineComponentArgument --
@@ -2414,7 +2416,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         if (changes.ChangesByTable.TryGetValue("PipelineComponentArgument", out var pipelineComponentArgumentChanges))
         {
             AllPipelineComponentsArguments = HandleObjectRefresh(pipelineComponentArgumentChanges, AllPipelineComponentsArguments);
-            //RebuildPipelineTree();
+            RebuildPipelineTree();
         }
 
         // -- DashboardLayout --
@@ -2952,7 +2954,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         _lastSeenVersion = changes.CurrentVersion;
     }
-    private void RebuildCatalogueTree()
+    protected void RebuildCatalogueTree()
     {
         CatalogueRootFolder = FolderHelper.BuildFolderTree(AllCatalogues);
         AddChildren(CatalogueRootFolder, new DescendancyList(CatalogueRootFolder));
