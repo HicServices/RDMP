@@ -7,6 +7,8 @@
 using FAnsi.Discovery;
 using MathNet.Numerics.Distributions;
 using MongoDB.Driver;
+using Rdmp.Core.Caching.Pipeline;
+using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cache;
@@ -19,6 +21,9 @@ using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.Curation.Data.Remoting;
 using Rdmp.Core.Curation.DataHelper.RegexRedaction;
+using Rdmp.Core.DataExport.DataExtraction.Pipeline;
+using Rdmp.Core.DataExport.DataRelease.Pipeline;
+using Rdmp.Core.DataLoad.Engine.Pipeline;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Providers.Nodes.CohortNodes;
@@ -523,8 +528,13 @@ public class CatalogueChildProvider : ICoreChildProvider
     private void FetchCatalogueItems()
     {
         AllCatalogueItems = GetAllObjects<CatalogueItem>(_catalogueRepository);
+        CurateCatalogueItems();
+    }
+
+    private void CurateCatalogueItems()
+    {
         AllCatalogueItemsDictionary =
-            AllCatalogueItems.ToDictionaryEx(i => i.ID, o => o);
+           AllCatalogueItems.ToDictionaryEx(i => i.ID, o => o);
 
         ReportProgress("After CatalogueItem getting");
 
@@ -2336,11 +2346,12 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     public virtual async Task RefreshAsync(CancellationToken ct = default)
     {
-        if(_changeTracking is null)
+        if (_changeTracking is null)
         {
             FullReloadAsync(_catalogueRepository);
             return;
         }
+
         ChangeSet changes;
         try
         {
@@ -2348,7 +2359,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         }
         catch (ChangeTrackingExpiredException)
         {
-            FullReloadAsync(_catalogueRepository);   // your existing GetAllObjects<T>() based load
+            FullReloadAsync(_catalogueRepository);
             _lastSeenVersion = _changeTracking.GetCurrentVersion();
             return;
         }
@@ -2359,381 +2370,625 @@ public class CatalogueChildProvider : ICoreChildProvider
             return;
         }
 
-        if (changes.ChangesByTable.TryGetValue("Catalogue", out var catalogueChanges))
-        {
-            HandleObjectRefresh(catalogueChanges, AllCatalogues);
-            AllCataloguesDictionary = AllCatalogues.ToDictionaryEx(i => i.ID, o => o);
-            CatalogueRootFolder = FolderHelper.BuildFolderTree(AllCatalogues);
-            AddChildren(CatalogueRootFolder, new DescendancyList(CatalogueRootFolder));
-        }
-        if (changes.ChangesByTable.TryGetValue("CatalogueItem", out var catalogueItemChanges))
-        {
-            HandleObjectRefresh(catalogueItemChanges, AllCatalogueItems);
-            AllCatalogueItemsDictionary = AllCatalogueItems.ToDictionaryEx(i => i.ID, o => o);
-        }
-        if (changes.ChangesByTable.TryGetValue("ColumnInfo", out var columnInfoChanges))
-        {
-            HandleObjectRefresh(columnInfoChanges, AllColumnInfos);
-        }
-        //if (changes.ChangesByTable.TryGetValue("Favourite", out var favouriteChanges))
-        //{
-        //    HandleObjectRefresh(favouriteChanges, AllFavourites);
-        //}
+        // -- Favourite --
+        // NOT APPLICABLE: no AllFavourites property in CatalogueChildProvider.
 
+        // -- Dataset --
+        // Missing: return-value assignment; AddChildren rebuilds use AllDatasets field.
         if (changes.ChangesByTable.TryGetValue("Dataset", out var datasetChanges))
         {
-            HandleObjectRefresh(datasetChanges, AllDatasets);
+            AllDatasets = HandleObjectRefresh(datasetChanges, AllDatasets);
+            DatasetRootFolder = FolderHelper.BuildFolderTree(AllDatasets);
+            AddChildren(DatasetRootFolder, new DescendancyList(DatasetRootFolder));
+            AllDatasetsNode = new AllDatasetsNode();
+            AddChildren(AllDatasetsNode);
         }
 
+        // -- Pipeline --
+        // Missing: return-value assignment; pipeline use-case tree not rebuilt.
         if (changes.ChangesByTable.TryGetValue("Pipeline", out var pipelineChanges))
         {
-            HandleObjectRefresh(pipelineChanges, AllPipelines);
+            AllPipelines = HandleObjectRefresh(pipelineChanges, AllPipelines);
+            foreach (var p in AllPipelines)
+                p.InjectKnown(AllPipelineComponents.Where(pc => pc.Pipeline_ID == p.ID).ToArray());
+            //RebuildPipelineTree();
         }
 
-        //if (changes.ChangesByTable.TryGetValue("AggregateTopX", out var aggregateTopXChanges))
-        //{
-        //    HandleObjectRefresh(aggregateTopXChanges, AllAggregateTopXs);
-        //}
+        // -- AggregateTopX --
+        // NOT APPLICABLE: no AllAggregateTopXs property in CatalogueChildProvider.
 
-        if (changes.ChangesByTable.TryGetValue("LoadMetadataCatalogueLinkage", out var loadMetadataCatalogueLinkageChanges))
-        {
-            HandleObjectRefresh(loadMetadataCatalogueLinkageChanges, AllLoadMetadataCatalogueLinkages);
-        }
-
+        // -- PipelineComponent --
+        // Missing: return-value assignment; components not re-injected into pipelines;
+        // pipeline tree not rebuilt.
         if (changes.ChangesByTable.TryGetValue("PipelineComponent", out var pipelineComponentChanges))
         {
-            HandleObjectRefresh(pipelineComponentChanges, AllPipelineComponents);
+            AllPipelineComponents = HandleObjectRefresh(pipelineComponentChanges, AllPipelineComponents);
+            foreach (var p in AllPipelines)
+                p.InjectKnown(AllPipelineComponents.Where(pc => pc.Pipeline_ID == p.ID).ToArray());
+            //RebuildPipelineTree();
         }
 
+        // -- PipelineComponentArgument --
+        // Missing: return-value assignment; pipeline tree not rebuilt (arguments appear
+        // as children of PipelineComponent nodes).
         if (changes.ChangesByTable.TryGetValue("PipelineComponentArgument", out var pipelineComponentArgumentChanges))
         {
-            HandleObjectRefresh(pipelineComponentArgumentChanges, AllPipelineComponentsArguments);
+            AllPipelineComponentsArguments = HandleObjectRefresh(pipelineComponentArgumentChanges, AllPipelineComponentsArguments);
+            //RebuildPipelineTree();
         }
 
+        // -- DashboardLayout --
+        // Missing: return-value assignment; AddChildren(AllDashboardsNode) not called
+        // so the node's child list is stale.
         if (changes.ChangesByTable.TryGetValue("DashboardLayout", out var dashboardLayoutChanges))
         {
-            HandleObjectRefresh(dashboardLayoutChanges, AllDashboards);
+            AllDashboards = HandleObjectRefresh(dashboardLayoutChanges, AllDashboards);
+            AddChildren(AllDashboardsNode);
         }
 
-        //if (changes.ChangesByTable.TryGetValue("DashboardControl", out var dashboardControlChanges))
-        //{
-        //    HandleObjectRefresh(dashboardControlChanges, AllDashboardControls);
-        //}
+        // -- DashboardControl --
+        // NOT APPLICABLE: no AllDashboardControls property in CatalogueChildProvider.
 
+        // -- DataAccessCredentials --
+        // Missing: return-value assignment; AllDataAccessCredentialUsages not refreshed
+        // (links credentials to table infos); server tree not rebuilt (usage nodes appear
+        // under TableInfo).
         if (changes.ChangesByTable.TryGetValue("DataAccessCredentials", out var dataAccessCredentialsChanges))
         {
-            HandleObjectRefresh(dataAccessCredentialsChanges, AllDataAccessCredentials);
+            AllDataAccessCredentials = HandleObjectRefresh(dataAccessCredentialsChanges, AllDataAccessCredentials);
+            AllDataAccessCredentialUsages = _catalogueRepository.TableInfoCredentialsManager
+                .GetAllCredentialUsagesBy(AllDataAccessCredentials, AllTableInfos);
+            AddChildren(AllDataAccessCredentialsNode);
+            BuildServerNodes();
         }
 
-        //if (changes.ChangesByTable.TryGetValue("DataAccessCredentials_TableInfo", out var dataAccessCredentialsTableInfoChanges))
-        //{
-        //    HandleObjectRefresh(dataAccessCredentialsTableInfoChanges, AllDataAccessCredentials_TableInfos);
-        //}
+        // -- DashboardObjectUse --
+        // NOT APPLICABLE: no AllDashboardObjectUses property in CatalogueChildProvider.
 
-        //if (changes.ChangesByTable.TryGetValue("DashboardObjectUse", out var dashboardObjectUseChanges))
-        //{
-        //    HandleObjectRefresh(dashboardObjectUseChanges, AllDashboardObjectUses);
-        //}
-
+        // -- RemoteRDMP --
+        // Missing: return-value assignment; AddChildren(AllRDMPRemotesNode) not called.
         if (changes.ChangesByTable.TryGetValue("RemoteRDMP", out var remoteRDMPChanges))
         {
-            HandleObjectRefresh(remoteRDMPChanges, AllRemoteRDMPs);
+            AllRemoteRDMPs = HandleObjectRefresh(remoteRDMPChanges, AllRemoteRDMPs);
+            AddChildren(AllRDMPRemotesNode);
         }
 
+        // -- ObjectImport --
+        // Missing: return-value assignment; AddChildren(AllObjectSharingNode) not called
+        // so the import list under the sharing node is stale.
         if (changes.ChangesByTable.TryGetValue("ObjectImport", out var objectImportChanges))
         {
-            HandleObjectRefresh(objectImportChanges, AllImports);
+            AllImports = HandleObjectRefresh(objectImportChanges, AllImports);
+            AddChildren(AllObjectSharingNode);
         }
 
+        // -- ObjectExport --
+        // Missing: return-value assignment; AddChildren(AllObjectSharingNode) not called.
+        // Note: the constructor also injects known referenced objects into AllExports
+        // (lines 507-517); that injection is not replicated here as it requires
+        // rebuilding the full searchables dictionary.
         if (changes.ChangesByTable.TryGetValue("ObjectExport", out var objectExportChanges))
         {
-            HandleObjectRefresh(objectExportChanges, AllExports);
+            AllExports = HandleObjectRefresh(objectExportChanges, AllExports);
+            AddChildren(AllObjectSharingNode);
         }
 
+        // -- CacheProgress --
+        // Missing: return-value assignment; LMD tree not rebuilt (CacheProgress appears
+        // under LoadProgress → LoadMetadataScheduleNode); permission window tree not
+        // rebuilt (PermissionWindowUsedByCacheProgressNode).
         if (changes.ChangesByTable.TryGetValue("CacheProgress", out var cacheProgressChanges))
         {
-            HandleObjectRefresh(cacheProgressChanges, AllCacheProgresses);
+            AllCacheProgresses = HandleObjectRefresh(cacheProgressChanges, AllCacheProgresses);
+            RebuildLoadMetadataTree();
+            AddChildren(AllPermissionWindowsNode);
         }
 
+        // -- ConnectionStringKeyword --
+        // Missing: return-value assignment; AddToDictionaries not called so the keyword
+        // node's children are stale.
         if (changes.ChangesByTable.TryGetValue("ConnectionStringKeyword", out var connectionStringKeywordChanges))
         {
-            HandleObjectRefresh(connectionStringKeywordChanges, AllConnectionStringKeywords);
+            AllConnectionStringKeywords = HandleObjectRefresh(connectionStringKeywordChanges, AllConnectionStringKeywords);
+            AddToDictionaries(new HashSet<object>(AllConnectionStringKeywords),
+                new DescendancyList(AllConnectionStringKeywordsNode));
         }
 
-        //if (changes.ChangesByTable.TryGetValue("WindowLayout", out var windowLayoutChanges))
-        //{
-        //    HandleObjectRefresh(windowLayoutChanges, AllWindowLayouts);
-        //}
+        // -- WindowLayout --
+        // NOT APPLICABLE: no AllWindowLayouts property in CatalogueChildProvider.
 
+        // -- PermissionWindow --
+        // Missing: return-value assignment; AddChildren(AllPermissionWindowsNode) not called
+        // so PermissionWindowUsedByCacheProgressNode children are stale.
         if (changes.ChangesByTable.TryGetValue("PermissionWindow", out var permissionWindowChanges))
         {
-            HandleObjectRefresh(permissionWindowChanges, AllPermissionWindows);
+            AllPermissionWindows = HandleObjectRefresh(permissionWindowChanges, AllPermissionWindows);
+            AddChildren(AllPermissionWindowsNode);
         }
 
-        //if (changes.ChangesByTable.TryGetValue("TicketingSystemConfiguration", out var ticketingSystemConfigurationChanges))
-        //{
-        //    HandleObjectRefresh(ticketingSystemConfigurationChanges, AllTicketingSystemConfigurations);
-        //}
+        // -- TicketingSystemConfiguration --
+        // NOT APPLICABLE: no AllTicketingSystemConfigurations property in CatalogueChildProvider.
 
-        //if (changes.ChangesByTable.TryGetValue("CacheFetchFailure", out var cacheFetchFailureChanges))
-        //{
-        //    HandleObjectRefresh(cacheFetchFailureChanges, AllCacheFetchFailures);
-        //}
+        // -- CacheFetchFailure --
+        // NOT APPLICABLE: no AllCacheFetchFailures property in CatalogueChildProvider.
 
+        // -- CohortAggregateContainer --
+        // Missing: return-value assignment; CIC tree not rebuilt (containers appear as
+        // children of CohortIdentificationConfiguration).
         if (changes.ChangesByTable.TryGetValue("CohortAggregateContainer", out var cohortAggregateContainerChanges))
         {
-            HandleObjectRefresh(cohortAggregateContainerChanges, AllCohortAggregateContainers);
+            AllCohortAggregateContainers = HandleObjectRefresh(cohortAggregateContainerChanges, AllCohortAggregateContainers);
+            RebuildCICTrees();
         }
 
-        //if (changes.ChangesByTable.TryGetValue("CohortAggregateSubContainer", out var cohortAggregateSubContainerChanges))
-        //{
-        //    HandleObjectRefresh(cohortAggregateSubContainerChanges, AllCohortAggregateSubContainers);
-        //}
-
+        // -- CohortIdentificationConfiguration --
+        // Missing: return-value assignment; AllTemplateCohortIdentificationConfigurations
+        // not updated; neither CIC folder tree nor template tree rebuilt.
+        // The two arrays are split by IsTemplate so changes are applied to the combined
+        // set then re-partitioned.
         if (changes.ChangesByTable.TryGetValue("CohortIdentificationConfiguration", out var cohortIdentificationConfigurationChanges))
         {
-            HandleObjectRefresh(cohortIdentificationConfigurationChanges, AllCohortIdentificationConfigurations);
+            var allCICs = AllCohortIdentificationConfigurations
+                .Concat(AllTemplateCohortIdentificationConfigurations).ToArray();
+            var updatedCICs = HandleObjectRefresh(cohortIdentificationConfigurationChanges, allCICs);
+            AllCohortIdentificationConfigurations = updatedCICs.Where(cic => !cic.IsTemplate).ToArray();
+            AllTemplateCohortIdentificationConfigurations = updatedCICs.Where(cic => cic.IsTemplate).ToArray();
+            RebuildCICTrees();
         }
 
-        //if (changes.ChangesByTable.TryGetValue("CohortAggregateContainer_AggregateConfiguration", out var cohortAggregateContainer_AggregateConfigurationChanges))
-        //{
-        //    HandleObjectRefresh(cohortAggregateContainer_AggregateConfigurationChanges, AllCohortAggregateContainer_AggregateConfigurations);
-        //}
-
+        // -- ANOTable --
+        // Missing: return-value assignment; AddChildren(AllANOTablesNode) not called.
         if (changes.ChangesByTable.TryGetValue("ANOTable", out var anoTableChanges))
         {
-            HandleObjectRefresh(anoTableChanges, AllANOTables);
+            AllANOTables = HandleObjectRefresh(anoTableChanges, AllANOTables);
+            AddChildren(AllANOTablesNode);
         }
 
+        // -- AggregateConfiguration --
+        // Missing: return-value assignment; catalogue and dimension objects not re-injected;
+        // joinable knowledge not re-injected; catalogue tree and CIC tree not rebuilt.
         if (changes.ChangesByTable.TryGetValue("AggregateConfiguration", out var aggregateConfigurationChanges))
         {
-            HandleObjectRefresh(aggregateConfigurationChanges, AllAggregateConfigurations);
+            AllAggregateConfigurations = HandleObjectRefresh(aggregateConfigurationChanges, AllAggregateConfigurations);
+
+            foreach (var configuration in AllAggregateConfigurations)
+            {
+                configuration.InjectKnown(AllCataloguesDictionary[configuration.Catalogue_ID]);
+                configuration.InjectKnown(
+                    AllAggregateDimensions.Where(d => d.AggregateConfiguration_ID == configuration.ID).ToArray());
+            }
+
+            var joinableDictionary = AllJoinables.ToDictionaryEx(j => j.AggregateConfiguration_ID, v => v);
+            foreach (var configuration in AllAggregateConfigurations)
+                configuration.InjectKnown(joinableDictionary.GetValueOrDefault(configuration.ID));
+
+            RebuildCatalogueTree();
+            RebuildCICTrees();
         }
 
+        // -- GovernanceDocument --
+        // Missing: return-value assignment; governance tree not rebuilt (documents appear
+        // under GovernancePeriod → AllGovernanceNode).
         if (changes.ChangesByTable.TryGetValue("GovernanceDocument", out var governanceDocumentChanges))
         {
-            HandleObjectRefresh(governanceDocumentChanges, AllGovernanceDocuments);
+            AllGovernanceDocuments = HandleObjectRefresh(governanceDocumentChanges, AllGovernanceDocuments);
+            AddChildren(AllGovernanceNode);
         }
 
+        // -- AggregateContinuousDateAxis --
+        // Missing: return-value assignment; catalogue tree not rebuilt (axis objects appear
+        // as children of AggregateConfiguration).
         if (changes.ChangesByTable.TryGetValue("AggregateContinuousDateAxis", out var aggregateContinuousDateAxisChanges))
         {
-            HandleObjectRefresh(aggregateContinuousDateAxisChanges, AllAggregateContinuousDateAxis);
+            AllAggregateContinuousDateAxis = HandleObjectRefresh(aggregateContinuousDateAxisChanges, AllAggregateContinuousDateAxis);
+            RebuildCatalogueTree();
         }
 
+        // -- GovernancePeriod --
+        // Missing: return-value assignment; GovernanceCoverage not refreshed; governance
+        // tree not rebuilt.
         if (changes.ChangesByTable.TryGetValue("GovernancePeriod", out var governancePeriodChanges))
         {
-            HandleObjectRefresh(governancePeriodChanges, AllGovernancePeriods);
+            AllGovernancePeriods = HandleObjectRefresh(governancePeriodChanges, AllGovernancePeriods);
+            GovernanceCoverage = _catalogueRepository.GovernanceManager
+                .GetAllGovernedCataloguesForAllGovernancePeriods();
+            AddChildren(AllGovernanceNode);
         }
 
+        // -- AggregateDimension --
+        // Missing: return-value assignment; ExtractionInformation not re-injected into
+        // dimensions; dimensions not re-injected into their AggregateConfigurations;
+        // catalogue tree not rebuilt.
         if (changes.ChangesByTable.TryGetValue("AggregateDimension", out var aggregateDimensionChanges))
         {
-            HandleObjectRefresh(aggregateDimensionChanges, AllAggregateDimensions);
+            AllAggregateDimensions = HandleObjectRefresh(aggregateDimensionChanges, AllAggregateDimensions);
+
+            foreach (var d in AllAggregateDimensions)
+                if (AllExtractionInformationsDictionary.TryGetValue(d.ExtractionInformation_ID, out var ei))
+                    d.InjectKnown(ei);
+
+            foreach (var configuration in AllAggregateConfigurations)
+                configuration.InjectKnown(
+                    AllAggregateDimensions.Where(d => d.AggregateConfiguration_ID == configuration.ID).ToArray());
+
+            RebuildCatalogueTree();
         }
 
-        //if (changes.ChangesByTable.TryGetValue("GovernancePeriod_Catalogue", out var governancePeriod_CatalogueChanges))
-        //{
-        //    HandleObjectRefresh(governancePeriod_CatalogueChanges, AllGovernancePeriod_Catalogues);
-        //}
-
+        // -- AggregateFilter --
+        // Missing: return-value assignment; catalogue tree not rebuilt (filters appear
+        // under AggregateFilterContainer → AggregateConfiguration).
         if (changes.ChangesByTable.TryGetValue("AggregateFilter", out var aggregateFilterChanges))
         {
-            HandleObjectRefresh(aggregateFilterChanges, AllAggregateFilters);
+            AllAggregateFilters = HandleObjectRefresh(aggregateFilterChanges, AllAggregateFilters);
+            RebuildCatalogueTree();
         }
 
+        // -- AggregateFilterContainer --
+        // Missing: return-value assignment; AllAggregateContainersDictionary not rebuilt;
+        // catalogue tree not rebuilt.
         if (changes.ChangesByTable.TryGetValue("AggregateFilterContainer", out var aggregateFilterContainerChanges))
         {
-            HandleObjectRefresh(aggregateFilterContainerChanges, AllAggregateContainers);
+            AllAggregateContainers = HandleObjectRefresh(aggregateFilterContainerChanges, AllAggregateContainers);
+            AllAggregateContainersDictionary = AllAggregateContainers.ToDictionaryEx(o => o.ID, o2 => o2);
+            RebuildCatalogueTree();
         }
 
+        // -- AggregateFilterParameter --
+        // Missing: return-value assignment; catalogue tree not rebuilt (parameters appear
+        // under AggregateFilter).
         if (changes.ChangesByTable.TryGetValue("AggregateFilterParameter", out var aggregateFilterParameterChanges))
         {
-            HandleObjectRefresh(aggregateFilterParameterChanges, AllAggregateFilterParameters);
+            AllAggregateFilterParameters = HandleObjectRefresh(aggregateFilterParameterChanges, AllAggregateFilterParameters);
+            RebuildCatalogueTree();
         }
 
+        // -- StandardRegex --
+        // Missing: return-value assignment; AddToDictionaries not called so the regex
+        // node's children are stale.
         if (changes.ChangesByTable.TryGetValue("StandardRegex", out var standardRegexChanges))
         {
-            HandleObjectRefresh(standardRegexChanges, AllStandardRegexes);
+            AllStandardRegexes = HandleObjectRefresh(standardRegexChanges, AllStandardRegexes);
+            AddToDictionaries(new HashSet<object>(AllStandardRegexes),
+                new DescendancyList(AllStandardRegexesNode));
         }
 
-        //if (changes.ChangesByTable.TryGetValue("AggregateFilterSubContainer", out var aggregateFilterSubContainerChanges))
-        //{
-        //    HandleObjectRefresh(aggregateFilterSubContainerChanges, AllAggregateFilterSubContainers);
-        //}
-
+        // -- AnyTableSqlParameter --
+        // Missing: return-value assignment; catalogue tree not rebuilt (parameters appear
+        // under AggregateConfiguration); CIC tree not rebuilt (parameters also appear
+        // under CohortIdentificationConfiguration).
         if (changes.ChangesByTable.TryGetValue("AnyTableSqlParameter", out var anyTableSqlParameterChanges))
         {
-            HandleObjectRefresh(anyTableSqlParameterChanges, AllAnyTableParameters);
+            AllAnyTableParameters = HandleObjectRefresh(anyTableSqlParameterChanges, AllAnyTableParameters);
+            RebuildCatalogueTree();
+            RebuildCICTrees();
         }
 
-        //if (changes.ChangesByTable.TryGetValue("AggregateForcedJoin", out var aggregateForcedJoinChanges))
-        //{
-        //    HandleObjectRefresh(aggregateForcedJoinChanges, AllAggregateForcedJoins);
-        //}
+        // -- Catalogue --
+        // Missing: AggregateConfigurations not re-injected with updated Catalogue objects.
+        if (changes.ChangesByTable.TryGetValue("Catalogue", out var catalogueChanges))
+        {
+            AllCatalogues = HandleObjectRefresh(catalogueChanges, AllCatalogues);
+            AllCataloguesDictionary = AllCatalogues.ToDictionaryEx(i => i.ID, o => o);
 
-        //if (changes.ChangesByTable.TryGetValue("PasswordEncryptionKeyLocation", out var passwordEncryptionKeyLocationChanges))
-        //{
-        //    HandleObjectRefresh(passwordEncryptionKeyLocationChanges, AllPasswordEncryptionKeyLocations);
-        //}
+            foreach (var configuration in AllAggregateConfigurations)
+                configuration.InjectKnown(AllCataloguesDictionary[configuration.Catalogue_ID]);
 
-        //if (changes.ChangesByTable.TryGetValue("CatalogueItemIssue", out var catalogueItemIssueChanges))
-        //{
-        //    HandleObjectRefresh(catalogueItemIssueChanges, AllCatalogueItemIssues);
-        //}
+            RebuildCatalogueTree();
+        }
 
-        //if (changes.ChangesByTable.TryGetValue("Plugin", out var pluginChanges))
-        //{
-        //    HandleObjectRefresh(pluginChanges, AllPlugins);
-        //}
+        // -- CatalogueItem --
+        // Missing: return-value assignment; InjectCatalogueItems() not called (so
+        // ExtractionInformation is not re-injected into the updated CatalogueItem
+        // objects, causing every item to land in the notExtractable bucket);
+        // catalogue tree not rebuilt.
+        if (changes.ChangesByTable.TryGetValue("CatalogueItem", out var catalogueItemChanges))
+        {
+            AllCatalogueItems = HandleObjectRefresh(catalogueItemChanges, AllCatalogueItems);
+            CurateCatalogueItems();
+            InjectCatalogueItems();
+            RebuildCatalogueTree();
+        }
 
+        // -- CatalogueItemIssue --
+        // NOT APPLICABLE: no AllCatalogueItemIssues property in CatalogueChildProvider.
+
+        // -- Plugin --
+        // NOT APPLICABLE: AllPluginsNode uses LoadModuleAssembly.Assemblies (static),
+        // not a DB-queried Plugin collection.
+
+        // -- ColumnInfo --
+        // Missing: return-value assignment; _allColumnInfos dictionary not rebuilt;
+        // ColumnInfo not re-injected into CatalogueItems; ExtractionInformation not
+        // re-injected via InjectCatalogueItems(); SetKnownColumns not re-called on
+        // Lookups and JoinInfos; server tree not rebuilt.
+        if (changes.ChangesByTable.TryGetValue("ColumnInfo", out var columnInfoChanges))
+        {
+            AllColumnInfos = HandleObjectRefresh(columnInfoChanges, AllColumnInfos);
+            TableInfosToColumnInfos = AllColumnInfos.GroupBy(c => c.TableInfo_ID)
+                .ToDictionaryEx(gdc => gdc.Key, gdc => gdc.ToList());
+            CurateCatalogueItems();   // rebuilds _allColumnInfos; re-injects ColumnInfo into CatalogueItems
+            InjectCatalogueItems();   // re-injects ExtractionInformation into CatalogueItems
+
+            foreach (var l in AllLookups)
+                l.SetKnownColumns(_allColumnInfos[l.PrimaryKey_ID],
+                                  _allColumnInfos[l.ForeignKey_ID],
+                                  _allColumnInfos[l.Description_ID]);
+
+            foreach (var j in AllJoinInfos)
+                j.SetKnownColumns(_allColumnInfos[j.PrimaryKey_ID], _allColumnInfos[j.ForeignKey_ID]);
+
+            BuildServerNodes();
+        }
+
+        // -- ExternalDatabaseServer --
+        // Missing: return-value assignment; AllExternalServersNode not rebuilt;
+        // CIC tree not rebuilt (QueryCacheUsedByCohortIdentificationNode);
+        // LMD tree not rebuilt (OverrideRawServerNode);
+        // server tree not rebuilt (IdentifierDumpServerUsageNode under TableInfo).
         if (changes.ChangesByTable.TryGetValue("ExternalDatabaseServer", out var externalDatabaseServerChanges))
         {
-            HandleObjectRefresh(externalDatabaseServerChanges, AllExternalServers);
+            AllExternalServers = HandleObjectRefresh(externalDatabaseServerChanges, AllExternalServers);
+            AddChildren(AllExternalServersNode);
+            RebuildCICTrees();
+            RebuildLoadMetadataTree();
+            BuildServerNodes();
         }
 
+        // -- ExtractionFilter --
+        // Missing: return-value assignment; catalogue tree not rebuilt (filters appear
+        // under ExtractionInformation).
         if (changes.ChangesByTable.TryGetValue("ExtractionFilter", out var extractionFilterChanges))
         {
-            HandleObjectRefresh(extractionFilterChanges, AllCatalogueFilters);
+            AllCatalogueFilters = HandleObjectRefresh(extractionFilterChanges, AllCatalogueFilters);
+            RebuildCatalogueTree();
         }
 
+        // -- ExtractionFilterParameter --
+        // Missing: return-value assignment; catalogue tree not rebuilt (parameters appear
+        // under ExtractionFilter).
         if (changes.ChangesByTable.TryGetValue("ExtractionFilterParameter", out var extractionFilterParameterChanges))
         {
-            HandleObjectRefresh(extractionFilterParameterChanges, AllCatalogueParameters);
+            AllCatalogueParameters = HandleObjectRefresh(extractionFilterParameterChanges, AllCatalogueParameters);
+            RebuildCatalogueTree();
         }
 
-        if (changes.ChangesByTable.TryGetValue("ExtractionInformation", out var extractionInformationChanges))
+        // -- ExtractionInformation --
+        // AllExtractionInformations is a computed property (AllExtractionInformationsDictionary.Values)
+        // so HandleObjectRefresh cannot be used directly — the return value would have
+        // nowhere to go. Call FetchExtractionInformations() instead, which re-fetches
+        // all rows, rebuilds the dictionary and _extractionInformationsByCatalogueItem,
+        // and re-injects CatalogueItem/ColumnInfo into each EI.
+        // Then InjectCatalogueItems() re-injects the updated EIs back into CatalogueItems.
+        // Finally re-inject into AggregateDimensions (which hold EI references).
+        if (changes.ChangesByTable.TryGetValue("ExtractionInformation", out _))
         {
-            HandleObjectRefresh(extractionInformationChanges, AllExtractionInformations);
+            FetchExtractionInformations();
+            InjectCatalogueItems();
+
+            foreach (var d in AllAggregateDimensions)
+                if (AllExtractionInformationsDictionary.TryGetValue(d.ExtractionInformation_ID, out var ei))
+                    d.InjectKnown(ei);
+
+            RebuildCatalogueTree();
         }
 
-        //if (changes.ChangesByTable.TryGetValue("IssueSystemUser", out var issueSystemUserChanges))
-        //{
-        //    HandleObjectRefresh(issueSystemUserChanges, AllIssueSystemUsers);
-        //}
+        // -- ExtendedProperty --
+        // NOT APPLICABLE: ExtendedProperty is used for TemplateAggregateConfigurations
+        // detection but there is no AllExtendedProperties collection to patch. A change
+        // here requires a full reload or a targeted re-query via
+        // repository.GetExtendedProperties(ExtendedProperty.IsTemplate).
 
-        //if (changes.ChangesByTable.TryGetValue("ExtendedProperty", out var extendedPropertyChanges))
-        //{
-        //    HandleObjectRefresh(extendedPropertyChanges, AllExtendedProperties);
-        //}
-
+        // -- JoinInfo --
+        // Missing: return-value assignment; SetKnownColumns not re-called; server tree
+        // not rebuilt (JoinInfo appears as child of ColumnInfo in the server tree).
         if (changes.ChangesByTable.TryGetValue("JoinInfo", out var joinInfoChanges))
         {
-            HandleObjectRefresh(joinInfoChanges, AllJoinInfos);
+            AllJoinInfos = HandleObjectRefresh(joinInfoChanges, AllJoinInfos);
+
+            foreach (var j in AllJoinInfos)
+                j.SetKnownColumns(_allColumnInfos[j.PrimaryKey_ID], _allColumnInfos[j.ForeignKey_ID]);
+
+            BuildServerNodes();
         }
 
-        //if (changes.ChangesByTable.TryGetValue("Commit", out var commitChanges))
-        //{
-        //    HandleObjectRefresh(commitChanges, AllCommits);
-        //}
+        // -- Commit --
+        // NOT APPLICABLE: no AllCommits property in CatalogueChildProvider.
 
+        // -- LoadMetadata --
+        // Missing: return-value assignment; LMD folder tree not rebuilt.
         if (changes.ChangesByTable.TryGetValue("LoadMetadata", out var loadMetadataChanges))
         {
-            HandleObjectRefresh(loadMetadataChanges, AllLoadMetadatas);
+            AllLoadMetadatas = HandleObjectRefresh(loadMetadataChanges, AllLoadMetadatas);
+            RebuildLoadMetadataTree();
         }
 
+        // -- JoinableCohortAggregateConfiguration --
+        // Missing: return-value assignment; joinable knowledge not re-injected into
+        // AggregateConfigurations (IsJoinablePatientIndexTable() would go back to hitting
+        // the DB per object); CIC tree not rebuilt.
         if (changes.ChangesByTable.TryGetValue("JoinableCohortAggregateConfiguration", out var joinableCohortAggregateConfigurationChanges))
         {
-            HandleObjectRefresh(joinableCohortAggregateConfigurationChanges, AllJoinables);
+            AllJoinables = HandleObjectRefresh(joinableCohortAggregateConfigurationChanges, AllJoinables);
+
+            var joinableDictionary = AllJoinables.ToDictionaryEx(j => j.AggregateConfiguration_ID, v => v);
+            foreach (var configuration in AllAggregateConfigurations)
+                configuration.InjectKnown(joinableDictionary.GetValueOrDefault(configuration.ID));
+
+            RebuildCICTrees();
         }
 
-        //if (changes.ChangesByTable.TryGetValue("LoadModuleAssembly", out var loadModuleAssemblyChanges))
-        //{
-        //    HandleObjectRefresh(loadModuleAssemblyChanges, AllLoadModuleAssemblies);
-        //}
+        // -- LoadModuleAssembly --
+        // NOT APPLICABLE: AllPluginsNode uses the static LoadModuleAssembly.Assemblies
+        // list, not a DB-queried collection.
 
-        //if (changes.ChangesByTable.TryGetValue("TicketingSystemReleaseStatus", out var ticketingSystemReleaseStatusChanges))
-        //{
-        //    HandleObjectRefresh(ticketingSystemReleaseStatusChanges, AllTicketingSystemReleaseStatuses);
-        //}
-
+        // -- JoinableCohortAggregateConfigurationUse --
+        // Missing: return-value assignment; AllJoinableCohortAggregateConfigurationUse
+        // (the second field holding the same type, used by BuildAggregateConfigurations)
+        // is not kept in sync; CIC tree not rebuilt.
         if (changes.ChangesByTable.TryGetValue("JoinableCohortAggregateConfigurationUse", out var joinableCohortAggregateConfigurationUseChanges))
         {
-            HandleObjectRefresh(joinableCohortAggregateConfigurationUseChanges, AllJoinUses);
+            AllJoinUses = HandleObjectRefresh(joinableCohortAggregateConfigurationUseChanges, AllJoinUses);
+            AllJoinableCohortAggregateConfigurationUse = AllJoinUses;
+            RebuildCICTrees();
         }
 
+        // -- LoadProgress --
+        // Missing: return-value assignment; LMD tree not rebuilt (LoadProgress appears
+        // under LoadMetadataScheduleNode → LoadMetadata).
         if (changes.ChangesByTable.TryGetValue("LoadProgress", out var loadProgressChanges))
         {
-            HandleObjectRefresh(loadProgressChanges, AllLoadProgresses);
+            AllLoadProgresses = HandleObjectRefresh(loadProgressChanges, AllLoadProgresses);
+            RebuildLoadMetadataTree();
         }
 
+        // -- Lookup --
+        // Missing: return-value assignment; SetKnownColumns not re-called; catalogue
+        // tree not rebuilt (CatalogueLookupsNode under Catalogue); server tree not
+        // rebuilt (Lookup appears as child of ColumnInfo in the server tree).
         if (changes.ChangesByTable.TryGetValue("Lookup", out var lookupChanges))
         {
-            HandleObjectRefresh(lookupChanges, AllLookups);
+            AllLookups = HandleObjectRefresh(lookupChanges, AllLookups);
+
+            foreach (var l in AllLookups)
+                l.SetKnownColumns(_allColumnInfos[l.PrimaryKey_ID],
+                                  _allColumnInfos[l.ForeignKey_ID],
+                                  _allColumnInfos[l.Description_ID]);
+
+            RebuildCatalogueTree();
+            BuildServerNodes();
         }
 
-        //if (changes.ChangesByTable.TryGetValue("LookupCompositeJoinInfo", out var lookupCompositeJoinInfoChanges))
-        //{
-        //    HandleObjectRefresh(lookupCompositeJoinInfoChanges, AllLookupCompositeJoinInfos);
-        //}
+        // -- LookupCompositeJoinInfo --
+        // NOT APPLICABLE: no AllLookupCompositeJoinInfos property in CatalogueChildProvider.
 
-        //if (changes.ChangesByTable.TryGetValue("Setting", out var settingChanges))
-        //{
-        //    HandleObjectRefresh(settingChanges, AllSettings);
-        //}
-
+        // -- PreLoadDiscardedColumn --
+        // Missing: return-value assignment; server tree not rebuilt (discarded columns
+        // appear under PreLoadDiscardedColumnsNode → TableInfo).
         if (changes.ChangesByTable.TryGetValue("PreLoadDiscardedColumn", out var preLoadDiscardedColumnChanges))
         {
-            HandleObjectRefresh(preLoadDiscardedColumnChanges, AllPreLoadDiscardedColumns);
+            AllPreLoadDiscardedColumns = HandleObjectRefresh(preLoadDiscardedColumnChanges, AllPreLoadDiscardedColumns);
+            BuildServerNodes();
         }
 
+        // -- RegexRedactionConfiguration --
+        // Missing: return-value assignment; AddChildren(AllRegexRedactionConfigurationsNode)
+        // not called.
         if (changes.ChangesByTable.TryGetValue("RegexRedactionConfiguration", out var regexRedactionConfigurationChanges))
         {
-            HandleObjectRefresh(regexRedactionConfigurationChanges, AllRegexRedactionConfigurations);
+            AllRegexRedactionConfigurations = HandleObjectRefresh(regexRedactionConfigurationChanges, AllRegexRedactionConfigurations);
+            AddChildren(AllRegexRedactionConfigurationsNode);
         }
 
+        // -- ProcessTask --
+        // Missing: return-value assignment; LMD tree not rebuilt (tasks appear under
+        // LoadStageNode → AllProcessTasksUsedByLoadMetadataNode → LoadMetadata).
         if (changes.ChangesByTable.TryGetValue("ProcessTask", out var processTaskChanges))
         {
-            HandleObjectRefresh(processTaskChanges, AllProcessTasks);
+            AllProcessTasks = HandleObjectRefresh(processTaskChanges, AllProcessTasks);
+            RebuildLoadMetadataTree();
         }
 
-        //if (changes.ChangesByTable.TryGetValue("RegexRedaction", out var regexRedactionChanges))
-        //{
-        //    HandleObjectRefresh(regexRedactionChanges, AllRegexRedactions);
-        //}
+        // -- RegexRedaction --
+        // NOT APPLICABLE: no AllRegexRedactions property in CatalogueChildProvider.
 
+        // -- ProcessTaskArgument --
+        // Missing: return-value assignment; LMD tree not rebuilt (arguments appear under
+        // ProcessTask).
         if (changes.ChangesByTable.TryGetValue("ProcessTaskArgument", out var processTaskArgumentChanges))
         {
-            HandleObjectRefresh(processTaskArgumentChanges, AllProcessTasksArguments);
+            AllProcessTasksArguments = HandleObjectRefresh(processTaskArgumentChanges, AllProcessTasksArguments);
+            RebuildLoadMetadataTree();
         }
 
+        // -- ExtractionFilterParameterSet --
+        // Missing: return-value assignment; catalogue tree not rebuilt (parameter sets
+        // and their InjectKnown call appear under ExtractionFilter).
         if (changes.ChangesByTable.TryGetValue("ExtractionFilterParameterSet", out var extractionFilterParameterSetChanges))
         {
-            HandleObjectRefresh(extractionFilterParameterSetChanges, AllCatalogueValueSets);
+            AllCatalogueValueSets = HandleObjectRefresh(extractionFilterParameterSetChanges, AllCatalogueValueSets);
+            RebuildCatalogueTree();
         }
 
-        //if (changes.ChangesByTable.TryGetValue("ServerDefaults", out var serverDefaultsChanges))
-        //{
-        //    HandleObjectRefresh(serverDefaultsChanges, AllServerDefaults);
-        //}
+        // -- RegexRedactionKey --
+        // NOT APPLICABLE: no AllRegexRedactionKeys property in CatalogueChildProvider.
 
-        //if (changes.ChangesByTable.TryGetValue("RegexRedactionKey", out var regexRedactionKeyChanges))
-        //{
-        //    HandleObjectRefresh(regexRedactionKeyChanges, AllRegexRedactionKeys);
-        //}
-
+        // -- SupportingDocument --
+        // Missing: return-value assignment; catalogue tree not rebuilt (documents appear
+        // inside DocumentationNode under Catalogue).
         if (changes.ChangesByTable.TryGetValue("SupportingDocument", out var supportingDocumentChanges))
         {
-            HandleObjectRefresh(supportingDocumentChanges, AllSupportingDocuments);
+            AllSupportingDocuments = HandleObjectRefresh(supportingDocumentChanges, AllSupportingDocuments);
+            RebuildCatalogueTree();
         }
 
+        // -- ExtractionFilterParameterSetValue --
+        // Missing: return-value assignment; catalogue tree not rebuilt (values appear
+        // under ExtractionFilterParameterSet).
         if (changes.ChangesByTable.TryGetValue("ExtractionFilterParameterSetValue", out var extractionFilterParameterSetValueChanges))
         {
-            HandleObjectRefresh(extractionFilterParameterSetValueChanges, AllCatalogueValueSetValues);
+            AllCatalogueValueSetValues = HandleObjectRefresh(extractionFilterParameterSetValueChanges, AllCatalogueValueSetValues);
+            RebuildCatalogueTree();
         }
 
+        // -- SupportingSQLTable --
+        // Missing: return-value assignment; catalogue tree not rebuilt (SQL tables appear
+        // inside DocumentationNode under Catalogue alongside SupportingDocuments).
         if (changes.ChangesByTable.TryGetValue("SupportingSQLTable", out var supportingSQLTableChanges))
         {
-            HandleObjectRefresh(supportingSQLTableChanges, AllSupportingSQL);
+            AllSupportingSQL = HandleObjectRefresh(supportingSQLTableChanges, AllSupportingSQL);
+            RebuildCatalogueTree();
         }
 
+        // -- TableInfo --
+        // Missing: return-value assignment; AllDataAccessCredentialUsages not refreshed;
+        // server tree not rebuilt.
         if (changes.ChangesByTable.TryGetValue("TableInfo", out var tableInfoChanges))
         {
-            HandleObjectRefresh(tableInfoChanges, AllTableInfos);
+            AllTableInfos = HandleObjectRefresh(tableInfoChanges, AllTableInfos);
+            AllDataAccessCredentialUsages = _catalogueRepository.TableInfoCredentialsManager
+                .GetAllCredentialUsagesBy(AllDataAccessCredentials, AllTableInfos);
+            BuildServerNodes();
         }
 
         _lastSeenVersion = changes.CurrentVersion;
     }
+    private void RebuildCatalogueTree()
+    {
+        CatalogueRootFolder = FolderHelper.BuildFolderTree(AllCatalogues);
+        AddChildren(CatalogueRootFolder, new DescendancyList(CatalogueRootFolder));
+    }
 
-    protected void HandleObjectRefresh(IReadOnlyList<ChangedRow> changes, IEnumerable<DatabaseEntity> allItems)
+    private void RebuildLoadMetadataTree()
+    {
+        LoadMetadataRootFolder = FolderHelper.BuildFolderTree(
+            AllLoadMetadatas.Where(lmd => lmd.RootLoadMetadata_ID is null).ToArray());
+        AddChildren(LoadMetadataRootFolder, new DescendancyList(LoadMetadataRootFolder));
+    }
+
+    private void RebuildCICTrees()
+    {
+        // Reset orphan tracking so AddChildren(CohortAggregateContainer) can repopulate it
+        OrphanAggregateConfigurations =
+            new HashSet<AggregateConfiguration>(
+                AllAggregateConfigurations.Where(ac => ac.IsCohortIdentificationAggregate));
+
+        CohortIdentificationConfigurationRootFolder =
+            FolderHelper.BuildFolderTree(AllCohortIdentificationConfigurations);
+        AddChildren(CohortIdentificationConfigurationRootFolder,
+            new DescendancyList(CohortIdentificationConfigurationRootFolder));
+
+        CohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations =
+            FolderHelper.BuildFolderTree(
+                AllCohortIdentificationConfigurations.Where(cic => cic.Version is null).ToArray());
+        AddChildren(CohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations,
+            new DescendancyList(CohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations));
+
+        var templateCICTree = FolderHelper.BuildFolderTree(AllTemplateCohortIdentificationConfigurations);
+        templateCICTree.Name = "templates";
+        AddChildren(templateCICTree, new DescendancyList(AllTemplateCohortIdentificationConfigurationsNode));
+    }
+
+    protected T[] HandleObjectRefresh<T>(IReadOnlyList<ChangedRow> changes, IEnumerable<T> allItems) where T : DatabaseEntity
     {
         var list = allItems.ToList();
 
@@ -2745,7 +3000,7 @@ public class CatalogueChildProvider : ICoreChildProvider
             }
             else
             {
-                var c = _catalogueRepository.GetAllObjectsWhere<ColumnInfo>("ID", id).FirstOrDefault();
+                var c = _catalogueRepository.GetAllObjectsWhere<T>("ID", id).FirstOrDefault();
                 if (c is null)
                     continue;
                 var index = list.FindIndex(existing => existing.ID == id);
@@ -2757,6 +3012,7 @@ public class CatalogueChildProvider : ICoreChildProvider
             }
         }
 
-        allItems = list.ToArray();
+        return list.ToArray();
+
     }
 }
