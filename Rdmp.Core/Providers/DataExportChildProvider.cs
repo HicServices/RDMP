@@ -1168,13 +1168,13 @@ public class DataExportChildProvider : CatalogueChildProvider
         // Missing: return-value assignment; GetCohortAvailability() not called so new
         // or changed cohort sources are never probed for reachability and cohort data
         // is not injected into their ExtractableCohort children.
-        if (changes.ChangesByTable.TryGetValue("ExternalCohortTable", out var externalCohortTableChanges))
-        {
-            CohortSources = HandleObjectRefresh(externalCohortTableChanges, CohortSources);
-            GetCohortAvailability();    // re-probes all non-forbidlisted sources
-            RebuildCohortTree();
-            RebuildProjectTree();       // CohortSourceUsedByProjectNode under ProjectSavedCohortsNode
-        }
+        //if (changes.ChangesByTable.TryGetValue("ExternalCohortTable", out var externalCohortTableChanges))
+        //{
+        //    CohortSources = HandleObjectRefresh(externalCohortTableChanges, CohortSources);
+        //    GetCohortAvailability();    // re-probes all non-forbidlisted sources
+        //    RebuildCohortTree();
+        //    RebuildProjectTree();       // CohortSourceUsedByProjectNode under ProjectSavedCohortsNode
+        //}
 
         // -- ExtractableCohort --
         // Missing: return-value assignment; _cohortsByOriginId not rebuilt (used by
