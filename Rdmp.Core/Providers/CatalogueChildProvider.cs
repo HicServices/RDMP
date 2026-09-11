@@ -2555,11 +2555,19 @@ public class CatalogueChildProvider : ICoreChildProvider
 
             foreach (var configuration in AllAggregateConfigurations)
             {
-                configuration.InjectKnown(AllCataloguesDictionary[configuration.Catalogue_ID]);
-                configuration.InjectKnown(
-                    AllAggregateDimensions.Where(d => d.AggregateConfiguration_ID == configuration.ID).ToArray());
+                try
+                {
+                    configuration.InjectKnown(AllCataloguesDictionary[configuration.Catalogue_ID]);
+                    configuration.InjectKnown(
+                        AllAggregateDimensions.Where(d => d.AggregateConfiguration_ID == configuration.ID).ToArray());
+                }
+                catch (KeyNotFoundException)
+                {
+                    // If the catalogue is missing, we can still inject the dimensions.
+                    configuration.InjectKnown(
+                        AllAggregateDimensions.Where(d => d.AggregateConfiguration_ID == configuration.ID).ToArray());
+                }
             }
-
             var joinableDictionary = AllJoinables.ToDictionaryEx(j => j.AggregateConfiguration_ID, v => v);
             foreach (var configuration in AllAggregateConfigurations)
                 configuration.InjectKnown(joinableDictionary.GetValueOrDefault(configuration.ID));
