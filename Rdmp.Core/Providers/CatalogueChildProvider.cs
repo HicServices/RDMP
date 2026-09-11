@@ -3010,15 +3010,19 @@ public class CatalogueChildProvider : ICoreChildProvider
             }
             else
             {
-                var c = _catalogueRepository.GetAllObjectsWhere<T>("ID", id).FirstOrDefault();
-                if (c is null)
-                    continue;
-                var index = list.FindIndex(existing => existing.ID == id);
+                try
+                {
+                    var c = _catalogueRepository.GetAllObjectsWhere<T>("ID", id).FirstOrDefault();
+                    if (c is null)
+                        continue;
+                    var index = list.FindIndex(existing => existing.ID == id);
 
-                if (index != -1)
-                    list[index] = c;
-                else
-                    list.Add(c);
+                    if (index != -1)
+                        list[index] = c;
+                    else
+                        list.Add(c);
+                }
+                catch (Exception) { }
             }
         }
 
