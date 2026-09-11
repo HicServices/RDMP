@@ -1209,30 +1209,30 @@ public class DataExportChildProvider : CatalogueChildProvider
         // injected from a dictionary built from ExtractableDataSets); project tree not
         // rebuilt; package children not rebuilt; catalogue tree not rebuilt (extractability
         // status is shown on each Catalogue node).
-        if (changes.ChangesByTable.TryGetValue("ExtractableDataSet", out var extractableDataSetChanges))
-        {
-            ExtractableDataSets = HandleObjectRefresh(extractableDataSetChanges, ExtractableDataSets);
+        //if (changes.ChangesByTable.TryGetValue("ExtractableDataSet", out var extractableDataSetChanges))
+        //{
+        //    ExtractableDataSets = HandleObjectRefresh(extractableDataSetChanges, ExtractableDataSets);
 
-            // Re-inject known Catalogue into each EDS
-            var catalogueIdDict = AllCataloguesDictionary;
-            foreach (var ds in ExtractableDataSets)
-                if (catalogueIdDict.TryGetValue(ds.Catalogue_ID, out var cata))
-                    ds.InjectKnown(cata);
+        //    // Re-inject known Catalogue into each EDS
+        //    var catalogueIdDict = AllCataloguesDictionary;
+        //    foreach (var ds in ExtractableDataSets)
+        //        if (catalogueIdDict.TryGetValue(ds.Catalogue_ID, out var cata))
+        //            ds.InjectKnown(cata);
 
-            // Re-inject CatalogueExtractabilityStatus into each Catalogue
-            foreach (var catalogue in AllCatalogues)
-            {
-                var eds = ExtractableDataSets.Where(e => e.Catalogue_ID == catalogue.ID).ToList();
-                catalogue.InjectKnown(eds.Any()
-                    ? new CatalogueExtractabilityStatus(true, eds.First().Projects.Any())
-                    : new CatalogueExtractabilityStatus(false, false));
-            }
+        //    // Re-inject CatalogueExtractabilityStatus into each Catalogue
+        //    foreach (var catalogue in AllCatalogues)
+        //    {
+        //        var eds = ExtractableDataSets.Where(e => e.Catalogue_ID == catalogue.ID).ToList();
+        //        catalogue.InjectKnown(eds.Any()
+        //            ? new CatalogueExtractabilityStatus(true, eds.First().Projects.Any())
+        //            : new CatalogueExtractabilityStatus(false, false));
+        //    }
 
-            BuildSelectedDatasets();    // re-injects EDS into SelectedDataSets; rebuilds _configurationToDatasetMapping
-            RebuildPackageChildren();
-            RebuildProjectTree();
-            RebuildCatalogueTree();     // catalogue nodes show updated extractability status
-        }
+        //    BuildSelectedDatasets();    // re-injects EDS into SelectedDataSets; rebuilds _configurationToDatasetMapping
+        //    RebuildPackageChildren();
+        //    RebuildProjectTree();
+        //    RebuildCatalogueTree();     // catalogue nodes show updated extractability status
+        //}
 
         // -- ExtractionConfiguration --
         // Missing: return-value assignment; ExtractionConfigurationsByProject not rebuilt
