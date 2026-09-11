@@ -278,9 +278,16 @@ public class DataExportChildProvider : CatalogueChildProvider
             .ToDictionaryEx(ds => ds.SelectedDataSets_ID, d => d);
 
         var dsDictionary = ExtractableDataSets.ToDictionaryEx(ds => ds.ID, d => d);
-        foreach (var s in SelectedDataSets)
-            s.InjectKnown(dsDictionary[s.ExtractableDataSet_ID]);
-
+        try
+        {
+            foreach (var s in SelectedDataSets)
+                s.InjectKnown(dsDictionary[s.ExtractableDataSet_ID]);
+        }
+        catch (Exception ex)
+        {
+            _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs("Failed to inject ExtractableDataSet into SelectedDataSets",
+                CheckResult.Fail, ex));
+        }
         ReportProgress("Injecting SelectedDataSets");
 
         _configurationToDatasetMapping = new Dictionary<IExtractionConfiguration, List<SelectedDataSets>>();
@@ -1224,7 +1231,7 @@ public class DataExportChildProvider : CatalogueChildProvider
         //    {
         //        var eds = ExtractableDataSets.Where(e => e.Catalogue_ID == catalogue.ID).ToList();
         //        catalogue.InjectKnown(eds.Any()
-        //            ? new CatalogueExtractabilityStatus(true, eds.First().Projects.Any())
+        //            ? new CatalogueExtractabilityStExtractionConfigurationatus(true, eds.First().Projects.Any())
         //            : new CatalogueExtractabilityStatus(false, false));
         //    }
 
