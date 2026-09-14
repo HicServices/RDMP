@@ -150,7 +150,7 @@ namespace Rdmp.Core.Providers
             "SupportingDocument",
             "ExtractionFilterParameterSetValue",
             "SupportingSQLTable",
-            "TableInfo"          
+            "TableInfo"
         };
 
         public static List<string> DataExport_DEFAULT_TABLE_NAMES = new()
@@ -175,6 +175,12 @@ namespace Rdmp.Core.Providers
             "Project",
             "ReleaseLog",
             "SelectedDataSets"
+        };
+
+
+        private static readonly HashSet<string> _compositePkTables = new(StringComparer.OrdinalIgnoreCase)
+        {
+            "ExtractableDataSetProject"
         };
 
 
@@ -243,6 +249,8 @@ namespace Rdmp.Core.Providers
         private static List<ChangedRow> GetChangedRows(
             SqlConnection conn, string table, long sinceVersion)
         {
+            if (_compositePkTables.Contains(table))
+                return GetChangedRowsForCompositePkTable(conn, table, sinceVersion);
             // Table name is validated against the caller-supplied _trackedTables list (not
             // user input), so string interpolation here is safe — CHANGETABLE's target table
             // can't be parameterised in T-SQL.
@@ -271,8 +279,31 @@ namespace Rdmp.Core.Providers
                 };
                 rows.Add(new ChangedRow(id, operation));
             }
-
             return rows;
+        }
+
+        private static List<ChangedRow> GetChangedRowsForCompositePkTable(
+            SqlConnection conn, string table, long sinceVersion)
+        {
+            var sql = $"""
+            SELECT COUNT(*)
+            FROM CHANGETABLE(CHANGES dbo.[{table}], @sinceVersion) AS ct
+            """;
+
+            using var cmd = new SqlCommand(sql, conn);
+            cmd.Parameters.Add(new SqlParameter("@sinceVersion", SqlDbType.BigInt) { Value = sinceVersion });
+
+            try
+            {
+                var count = Convert.ToInt32(cmd.ExecuteScalar());
+                // Id=0 is a sentinel meaning "something changed, reload the whole table"
+                return count > 0 ? [new ChangedRow(0, ChangeOperation.Update)] : [];
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return [];
+            }
         }
     }
 }

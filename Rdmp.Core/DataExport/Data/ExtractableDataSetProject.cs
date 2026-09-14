@@ -16,6 +16,7 @@ namespace Rdmp.Core.DataExport.Data
     public class ExtractableDataSetProject : DatabaseEntity, IMapsDirectlyToDatabaseTable
     {
         #region Database Properties
+
         private int _projectID;
         private int _extractableDataSetID;
 
@@ -30,6 +31,7 @@ namespace Rdmp.Core.DataExport.Data
             get => _extractableDataSetID;
             set => SetField(ref _extractableDataSetID, value);
         }
+
         #endregion
         #region Relationships
         [NoMappingToDatabase]

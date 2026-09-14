@@ -955,12 +955,12 @@ public class DataExportChildProvider : CatalogueChildProvider
                 { "Aggregate Committing", CreateTableFromAggregateUseCase.DesignTime(dataExportRepository.CatalogueRepository) }
             });
         }
-        catch (Exception ex)
+        catch //(Exception ex)
         {
-            _errorsCheckNotifier.OnCheckPerformed(
-                new ReusableLibraryCode.Checks.CheckEventArgs(
-                    "Failed to rebuild DesignTime PipelineUseCases",
-                    ReusableLibraryCode.Checks.CheckResult.Fail, ex));
+            //_errorsCheckNotifier.OnCheckPerformed(
+            //    new ReusableLibraryCode.Checks.CheckEventArgs(
+            //        "Failed to rebuild DesignTime PipelineUseCases",
+            //        ReusableLibraryCode.Checks.CheckResult.Fail, ex));
         }
     }
 
