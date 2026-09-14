@@ -995,13 +995,13 @@ public class DataExportChildProvider : CatalogueChildProvider
 
         if (changes.ChangesByTable.TryGetValue("ExtractableDataSetPackage", out var extractableDataSetPackageChanges))
         {
-            AllPackages = HandleObjectRefresh(extractableDataSetPackageChanges, AllPackages);
+            AllPackages = HandleObjectRefresh(extractableDataSetPackageChanges, AllPackages, dataExportRepository);
             RebuildPackageChildren();
         }
 
         if (changes.ChangesByTable.TryGetValue("ProjectCohortIdentificationConfigurationAssociation", out var projectCICAssociationChanges))
         {
-            AllProjectAssociatedCics = HandleObjectRefresh(projectCICAssociationChanges, AllProjectAssociatedCics);
+            AllProjectAssociatedCics = HandleObjectRefresh(projectCICAssociationChanges, AllProjectAssociatedCics, dataExportRepository);
             _cicAssociations = new HashSet<int>(
                 AllProjectAssociatedCics.Select(a => a.CohortIdentificationConfiguration_ID));
             RebuildProjectTree();
@@ -1017,14 +1017,14 @@ public class DataExportChildProvider : CatalogueChildProvider
 
         if (changes.ChangesByTable.TryGetValue("DeployedExtractionFilter", out var deployedExtractionFilterChanges))
         {
-            AllDeployedExtractionFilters = HandleObjectRefresh(deployedExtractionFilterChanges, AllDeployedExtractionFilters);
+            AllDeployedExtractionFilters = HandleObjectRefresh(deployedExtractionFilterChanges, AllDeployedExtractionFilters, dataExportRepository);
             BuildExtractionFilters();   // recreates _dataExportFilterManager with updated data
             RebuildProjectTree();
         }
 
         if (changes.ChangesByTable.TryGetValue("DeployedExtractionFilterParameter", out var deployedExtractionFilterParameterChanges))
         {
-            _allParameters = HandleObjectRefresh(deployedExtractionFilterParameterChanges, _allParameters);
+            _allParameters = HandleObjectRefresh(deployedExtractionFilterParameterChanges, _allParameters, dataExportRepository);
             RebuildProjectTree();
         }
 
@@ -1047,7 +1047,7 @@ public class DataExportChildProvider : CatalogueChildProvider
         // (cohorts appear under CohortSourceUsedByProjectNode → ProjectSavedCohortsNode).
         if (changes.ChangesByTable.TryGetValue("ExtractableCohort", out var extractableCohortChanges))
         {
-            Cohorts = HandleObjectRefresh(extractableCohortChanges, Cohorts);
+            Cohorts = HandleObjectRefresh(extractableCohortChanges, Cohorts, dataExportRepository);
 
             _cohortsByOriginId = new Dictionary<int, HashSet<ExtractableCohort>>();
             foreach (var c in Cohorts)
@@ -1089,7 +1089,7 @@ public class DataExportChildProvider : CatalogueChildProvider
 
         if (changes.ChangesByTable.TryGetValue("ExtractionConfiguration", out var extractionConfigurationChanges))
         {
-            ExtractionConfigurations = HandleObjectRefresh(extractionConfigurationChanges, ExtractionConfigurations);
+            ExtractionConfigurations = HandleObjectRefresh(extractionConfigurationChanges, ExtractionConfigurations, dataExportRepository);
 
             ExtractionConfigurationsByProject = ExtractionConfigurations
                 .GroupBy(k => k.Project_ID)
@@ -1108,19 +1108,19 @@ public class DataExportChildProvider : CatalogueChildProvider
         if (changes.ChangesByTable.TryGetValue("GlobalExtractionFilterParameter", out var globalExtractionFilterParameterChanges))
         {
             AllGlobalExtractionFilterParameters = HandleObjectRefresh(
-                globalExtractionFilterParameterChanges, AllGlobalExtractionFilterParameters);
+                globalExtractionFilterParameterChanges, AllGlobalExtractionFilterParameters, dataExportRepository);
             RebuildProjectTree();
         }
 
         if (changes.ChangesByTable.TryGetValue("Project", out var projectChanges))
         {
-            Projects = HandleObjectRefresh(projectChanges, Projects);
+            Projects = HandleObjectRefresh(projectChanges, Projects, dataExportRepository);
             RebuildProjectTree();
         }
 
         if (changes.ChangesByTable.TryGetValue("SelectedDataSets", out var selectedDataSetsChanges))
         {
-            SelectedDataSets = HandleObjectRefresh(selectedDataSetsChanges, SelectedDataSets);
+            SelectedDataSets = HandleObjectRefresh(selectedDataSetsChanges, SelectedDataSets, dataExportRepository);
             BuildSelectedDatasets();
             RebuildProjectTree();
         }

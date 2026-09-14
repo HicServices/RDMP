@@ -2109,7 +2109,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         if (changes.ChangesByTable.TryGetValue("Dataset", out var datasetChanges))
         {
-            AllDatasets = HandleObjectRefresh(datasetChanges, AllDatasets);
+            AllDatasets = HandleObjectRefresh(datasetChanges, AllDatasets, _catalogueRepository);
             DatasetRootFolder = FolderHelper.BuildFolderTree(AllDatasets);
             AddChildren(DatasetRootFolder, new DescendancyList(DatasetRootFolder));
             AllDatasetsNode = new AllDatasetsNode();
@@ -2118,7 +2118,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         if (changes.ChangesByTable.TryGetValue("Pipeline", out var pipelineChanges))
         {
-            AllPipelines = HandleObjectRefresh(pipelineChanges, AllPipelines);
+            AllPipelines = HandleObjectRefresh(pipelineChanges, AllPipelines, _catalogueRepository);
             foreach (var p in AllPipelines)
                 p.InjectKnown(AllPipelineComponents.Where(pc => pc.Pipeline_ID == p.ID).ToArray());
             RebuildPipelineTree();
@@ -2126,7 +2126,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         if (changes.ChangesByTable.TryGetValue("PipelineComponent", out var pipelineComponentChanges))
         {
-            AllPipelineComponents = HandleObjectRefresh(pipelineComponentChanges, AllPipelineComponents);
+            AllPipelineComponents = HandleObjectRefresh(pipelineComponentChanges, AllPipelineComponents, _catalogueRepository);
             foreach (var p in AllPipelines)
                 p.InjectKnown(AllPipelineComponents.Where(pc => pc.Pipeline_ID == p.ID).ToArray());
             RebuildPipelineTree();
@@ -2134,19 +2134,19 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         if (changes.ChangesByTable.TryGetValue("PipelineComponentArgument", out var pipelineComponentArgumentChanges))
         {
-            AllPipelineComponentsArguments = HandleObjectRefresh(pipelineComponentArgumentChanges, AllPipelineComponentsArguments);
+            AllPipelineComponentsArguments = HandleObjectRefresh(pipelineComponentArgumentChanges, AllPipelineComponentsArguments, _catalogueRepository);
             RebuildPipelineTree();
         }
 
         if (changes.ChangesByTable.TryGetValue("DashboardLayout", out var dashboardLayoutChanges))
         {
-            AllDashboards = HandleObjectRefresh(dashboardLayoutChanges, AllDashboards);
+            AllDashboards = HandleObjectRefresh(dashboardLayoutChanges, AllDashboards, _catalogueRepository);
             AddChildren(AllDashboardsNode);
         }
 
         if (changes.ChangesByTable.TryGetValue("DataAccessCredentials", out var dataAccessCredentialsChanges))
         {
-            AllDataAccessCredentials = HandleObjectRefresh(dataAccessCredentialsChanges, AllDataAccessCredentials);
+            AllDataAccessCredentials = HandleObjectRefresh(dataAccessCredentialsChanges, AllDataAccessCredentials, _catalogueRepository);
             AllDataAccessCredentialUsages = _catalogueRepository.TableInfoCredentialsManager
                 .GetAllCredentialUsagesBy(AllDataAccessCredentials, AllTableInfos);
             AddChildren(AllDataAccessCredentialsNode);
@@ -2155,45 +2155,45 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         if (changes.ChangesByTable.TryGetValue("RemoteRDMP", out var remoteRDMPChanges))
         {
-            AllRemoteRDMPs = HandleObjectRefresh(remoteRDMPChanges, AllRemoteRDMPs);
+            AllRemoteRDMPs = HandleObjectRefresh(remoteRDMPChanges, AllRemoteRDMPs, _catalogueRepository);
             AddChildren(AllRDMPRemotesNode);
         }
 
         if (changes.ChangesByTable.TryGetValue("ObjectImport", out var objectImportChanges))
         {
-            AllImports = HandleObjectRefresh(objectImportChanges, AllImports);
+            AllImports = HandleObjectRefresh(objectImportChanges, AllImports, _catalogueRepository);
             AddChildren(AllObjectSharingNode);
         }
 
         if (changes.ChangesByTable.TryGetValue("ObjectExport", out var objectExportChanges))
         {
-            AllExports = HandleObjectRefresh(objectExportChanges, AllExports);
+            AllExports = HandleObjectRefresh(objectExportChanges, AllExports, _catalogueRepository);
             AddChildren(AllObjectSharingNode);
         }
 
         if (changes.ChangesByTable.TryGetValue("CacheProgress", out var cacheProgressChanges))
         {
-            AllCacheProgresses = HandleObjectRefresh(cacheProgressChanges, AllCacheProgresses);
+            AllCacheProgresses = HandleObjectRefresh(cacheProgressChanges, AllCacheProgresses, _catalogueRepository);
             RebuildLoadMetadataTree();
             AddChildren(AllPermissionWindowsNode);
         }
 
         if (changes.ChangesByTable.TryGetValue("ConnectionStringKeyword", out var connectionStringKeywordChanges))
         {
-            AllConnectionStringKeywords = HandleObjectRefresh(connectionStringKeywordChanges, AllConnectionStringKeywords);
+            AllConnectionStringKeywords = HandleObjectRefresh(connectionStringKeywordChanges, AllConnectionStringKeywords, _catalogueRepository);
             AddToDictionaries(new HashSet<object>(AllConnectionStringKeywords),
                 new DescendancyList(AllConnectionStringKeywordsNode));
         }
 
         if (changes.ChangesByTable.TryGetValue("PermissionWindow", out var permissionWindowChanges))
         {
-            AllPermissionWindows = HandleObjectRefresh(permissionWindowChanges, AllPermissionWindows);
+            AllPermissionWindows = HandleObjectRefresh(permissionWindowChanges, AllPermissionWindows, _catalogueRepository);
             AddChildren(AllPermissionWindowsNode);
         }
 
         if (changes.ChangesByTable.TryGetValue("CohortAggregateContainer", out var cohortAggregateContainerChanges))
         {
-            AllCohortAggregateContainers = HandleObjectRefresh(cohortAggregateContainerChanges, AllCohortAggregateContainers);
+            AllCohortAggregateContainers = HandleObjectRefresh(cohortAggregateContainerChanges, AllCohortAggregateContainers, _catalogueRepository);
             RebuildCICTrees();
         }
 
@@ -2201,7 +2201,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         {
             var allCICs = AllCohortIdentificationConfigurations
                 .Concat(AllTemplateCohortIdentificationConfigurations).ToArray();
-            var updatedCICs = HandleObjectRefresh(cohortIdentificationConfigurationChanges, allCICs);
+            var updatedCICs = HandleObjectRefresh(cohortIdentificationConfigurationChanges, allCICs, _catalogueRepository);
             AllCohortIdentificationConfigurations = updatedCICs.Where(cic => !cic.IsTemplate).ToArray();
             AllTemplateCohortIdentificationConfigurations = updatedCICs.Where(cic => cic.IsTemplate).ToArray();
             RebuildCICTrees();
@@ -2209,13 +2209,13 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         if (changes.ChangesByTable.TryGetValue("ANOTable", out var anoTableChanges))
         {
-            AllANOTables = HandleObjectRefresh(anoTableChanges, AllANOTables);
+            AllANOTables = HandleObjectRefresh(anoTableChanges, AllANOTables, _catalogueRepository);
             AddChildren(AllANOTablesNode);
         }
 
         if (changes.ChangesByTable.TryGetValue("AggregateConfiguration", out var aggregateConfigurationChanges))
         {
-            AllAggregateConfigurations = HandleObjectRefresh(aggregateConfigurationChanges, AllAggregateConfigurations);
+            AllAggregateConfigurations = HandleObjectRefresh(aggregateConfigurationChanges, AllAggregateConfigurations, _catalogueRepository);
 
             foreach (var configuration in AllAggregateConfigurations)
             {
@@ -2242,19 +2242,19 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         if (changes.ChangesByTable.TryGetValue("GovernanceDocument", out var governanceDocumentChanges))
         {
-            AllGovernanceDocuments = HandleObjectRefresh(governanceDocumentChanges, AllGovernanceDocuments);
+            AllGovernanceDocuments = HandleObjectRefresh(governanceDocumentChanges, AllGovernanceDocuments, _catalogueRepository);
             AddChildren(AllGovernanceNode);
         }
 
         if (changes.ChangesByTable.TryGetValue("AggregateContinuousDateAxis", out var aggregateContinuousDateAxisChanges))
         {
-            AllAggregateContinuousDateAxis = HandleObjectRefresh(aggregateContinuousDateAxisChanges, AllAggregateContinuousDateAxis);
+            AllAggregateContinuousDateAxis = HandleObjectRefresh(aggregateContinuousDateAxisChanges, AllAggregateContinuousDateAxis, _catalogueRepository);
             RebuildCatalogueTree();
         }
 
         if (changes.ChangesByTable.TryGetValue("GovernancePeriod", out var governancePeriodChanges))
         {
-            AllGovernancePeriods = HandleObjectRefresh(governancePeriodChanges, AllGovernancePeriods);
+            AllGovernancePeriods = HandleObjectRefresh(governancePeriodChanges, AllGovernancePeriods, _catalogueRepository);
             GovernanceCoverage = _catalogueRepository.GovernanceManager
                 .GetAllGovernedCataloguesForAllGovernancePeriods();
             AddChildren(AllGovernanceNode);
@@ -2262,7 +2262,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         if (changes.ChangesByTable.TryGetValue("AggregateDimension", out var aggregateDimensionChanges))
         {
-            AllAggregateDimensions = HandleObjectRefresh(aggregateDimensionChanges, AllAggregateDimensions);
+            AllAggregateDimensions = HandleObjectRefresh(aggregateDimensionChanges, AllAggregateDimensions, _catalogueRepository);
 
             foreach (var d in AllAggregateDimensions)
                 if (AllExtractionInformationsDictionary.TryGetValue(d.ExtractionInformation_ID, out var ei))
@@ -2277,40 +2277,40 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         if (changes.ChangesByTable.TryGetValue("AggregateFilter", out var aggregateFilterChanges))
         {
-            AllAggregateFilters = HandleObjectRefresh(aggregateFilterChanges, AllAggregateFilters);
+            AllAggregateFilters = HandleObjectRefresh(aggregateFilterChanges, AllAggregateFilters, _catalogueRepository);
             RebuildCatalogueTree();
         }
 
         if (changes.ChangesByTable.TryGetValue("AggregateFilterContainer", out var aggregateFilterContainerChanges))
         {
-            AllAggregateContainers = HandleObjectRefresh(aggregateFilterContainerChanges, AllAggregateContainers);
+            AllAggregateContainers = HandleObjectRefresh(aggregateFilterContainerChanges, AllAggregateContainers, _catalogueRepository);
             AllAggregateContainersDictionary = AllAggregateContainers.ToDictionaryEx(o => o.ID, o2 => o2);
             RebuildCatalogueTree();
         }
 
         if (changes.ChangesByTable.TryGetValue("AggregateFilterParameter", out var aggregateFilterParameterChanges))
         {
-            AllAggregateFilterParameters = HandleObjectRefresh(aggregateFilterParameterChanges, AllAggregateFilterParameters);
+            AllAggregateFilterParameters = HandleObjectRefresh(aggregateFilterParameterChanges, AllAggregateFilterParameters, _catalogueRepository);
             RebuildCatalogueTree();
         }
 
         if (changes.ChangesByTable.TryGetValue("StandardRegex", out var standardRegexChanges))
         {
-            AllStandardRegexes = HandleObjectRefresh(standardRegexChanges, AllStandardRegexes);
+            AllStandardRegexes = HandleObjectRefresh(standardRegexChanges, AllStandardRegexes, _catalogueRepository);
             AddToDictionaries(new HashSet<object>(AllStandardRegexes),
                 new DescendancyList(AllStandardRegexesNode));
         }
 
         if (changes.ChangesByTable.TryGetValue("AnyTableSqlParameter", out var anyTableSqlParameterChanges))
         {
-            AllAnyTableParameters = HandleObjectRefresh(anyTableSqlParameterChanges, AllAnyTableParameters);
+            AllAnyTableParameters = HandleObjectRefresh(anyTableSqlParameterChanges, AllAnyTableParameters, _catalogueRepository);
             RebuildCatalogueTree();
             RebuildCICTrees();
         }
 
         if (changes.ChangesByTable.TryGetValue("Catalogue", out var catalogueChanges))
         {
-            AllCatalogues = HandleObjectRefresh(catalogueChanges, AllCatalogues);
+            AllCatalogues = HandleObjectRefresh(catalogueChanges, AllCatalogues, _catalogueRepository);
             AllCataloguesDictionary = AllCatalogues.ToDictionaryEx(i => i.ID, o => o);
 
             foreach (var configuration in AllAggregateConfigurations)
@@ -2321,7 +2321,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         if (changes.ChangesByTable.TryGetValue("CatalogueItem", out var catalogueItemChanges))
         {
-            AllCatalogueItems = HandleObjectRefresh(catalogueItemChanges, AllCatalogueItems);
+            AllCatalogueItems = HandleObjectRefresh(catalogueItemChanges, AllCatalogueItems, _catalogueRepository);
             CurateCatalogueItems();
             InjectCatalogueItems();
             RebuildCatalogueTree();
@@ -2329,7 +2329,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         if (changes.ChangesByTable.TryGetValue("ColumnInfo", out var columnInfoChanges))
         {
-            AllColumnInfos = HandleObjectRefresh(columnInfoChanges, AllColumnInfos);
+            AllColumnInfos = HandleObjectRefresh(columnInfoChanges, AllColumnInfos, _catalogueRepository);
             TableInfosToColumnInfos = AllColumnInfos.GroupBy(c => c.TableInfo_ID)
                 .ToDictionaryEx(gdc => gdc.Key, gdc => gdc.ToList());
             CurateCatalogueItems();   // rebuilds _allColumnInfos; re-injects ColumnInfo into CatalogueItems
@@ -2348,7 +2348,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         if (changes.ChangesByTable.TryGetValue("ExternalDatabaseServer", out var externalDatabaseServerChanges))
         {
-            AllExternalServers = HandleObjectRefresh(externalDatabaseServerChanges, AllExternalServers);
+            AllExternalServers = HandleObjectRefresh(externalDatabaseServerChanges, AllExternalServers, _catalogueRepository);
             AddChildren(AllExternalServersNode);
             RebuildCICTrees();
             RebuildLoadMetadataTree();
@@ -2357,13 +2357,13 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         if (changes.ChangesByTable.TryGetValue("ExtractionFilter", out var extractionFilterChanges))
         {
-            AllCatalogueFilters = HandleObjectRefresh(extractionFilterChanges, AllCatalogueFilters);
+            AllCatalogueFilters = HandleObjectRefresh(extractionFilterChanges, AllCatalogueFilters, _catalogueRepository);
             RebuildCatalogueTree();
         }
 
         if (changes.ChangesByTable.TryGetValue("ExtractionFilterParameter", out var extractionFilterParameterChanges))
         {
-            AllCatalogueParameters = HandleObjectRefresh(extractionFilterParameterChanges, AllCatalogueParameters);
+            AllCatalogueParameters = HandleObjectRefresh(extractionFilterParameterChanges, AllCatalogueParameters, _catalogueRepository);
             RebuildCatalogueTree();
         }
 
@@ -2380,7 +2380,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         if (changes.ChangesByTable.TryGetValue("JoinInfo", out var joinInfoChanges))
         {
-            AllJoinInfos = HandleObjectRefresh(joinInfoChanges, AllJoinInfos);
+            AllJoinInfos = HandleObjectRefresh(joinInfoChanges, AllJoinInfos, _catalogueRepository);
 
             foreach (var j in AllJoinInfos)
                 j.SetKnownColumns(_allColumnInfos[j.PrimaryKey_ID], _allColumnInfos[j.ForeignKey_ID]);
@@ -2390,13 +2390,13 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         if (changes.ChangesByTable.TryGetValue("LoadMetadata", out var loadMetadataChanges))
         {
-            AllLoadMetadatas = HandleObjectRefresh(loadMetadataChanges, AllLoadMetadatas);
+            AllLoadMetadatas = HandleObjectRefresh(loadMetadataChanges, AllLoadMetadatas, _catalogueRepository);
             RebuildLoadMetadataTree();
         }
 
         if (changes.ChangesByTable.TryGetValue("JoinableCohortAggregateConfiguration", out var joinableCohortAggregateConfigurationChanges))
         {
-            AllJoinables = HandleObjectRefresh(joinableCohortAggregateConfigurationChanges, AllJoinables);
+            AllJoinables = HandleObjectRefresh(joinableCohortAggregateConfigurationChanges, AllJoinables, _catalogueRepository);
 
             var joinableDictionary = AllJoinables.ToDictionaryEx(j => j.AggregateConfiguration_ID, v => v);
             foreach (var configuration in AllAggregateConfigurations)
@@ -2407,20 +2407,20 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         if (changes.ChangesByTable.TryGetValue("JoinableCohortAggregateConfigurationUse", out var joinableCohortAggregateConfigurationUseChanges))
         {
-            AllJoinUses = HandleObjectRefresh(joinableCohortAggregateConfigurationUseChanges, AllJoinUses);
+            AllJoinUses = HandleObjectRefresh(joinableCohortAggregateConfigurationUseChanges, AllJoinUses, _catalogueRepository);
             AllJoinableCohortAggregateConfigurationUse = AllJoinUses;
             RebuildCICTrees();
         }
 
         if (changes.ChangesByTable.TryGetValue("LoadProgress", out var loadProgressChanges))
         {
-            AllLoadProgresses = HandleObjectRefresh(loadProgressChanges, AllLoadProgresses);
+            AllLoadProgresses = HandleObjectRefresh(loadProgressChanges, AllLoadProgresses, _catalogueRepository);
             RebuildLoadMetadataTree();
         }
 
         if (changes.ChangesByTable.TryGetValue("Lookup", out var lookupChanges))
         {
-            AllLookups = HandleObjectRefresh(lookupChanges, AllLookups);
+            AllLookups = HandleObjectRefresh(lookupChanges, AllLookups, _catalogueRepository);
 
             foreach (var l in AllLookups)
                 l.SetKnownColumns(_allColumnInfos[l.PrimaryKey_ID],
@@ -2433,55 +2433,55 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         if (changes.ChangesByTable.TryGetValue("PreLoadDiscardedColumn", out var preLoadDiscardedColumnChanges))
         {
-            AllPreLoadDiscardedColumns = HandleObjectRefresh(preLoadDiscardedColumnChanges, AllPreLoadDiscardedColumns);
+            AllPreLoadDiscardedColumns = HandleObjectRefresh(preLoadDiscardedColumnChanges, AllPreLoadDiscardedColumns, _catalogueRepository);
             BuildServerNodes();
         }
 
         if (changes.ChangesByTable.TryGetValue("RegexRedactionConfiguration", out var regexRedactionConfigurationChanges))
         {
-            AllRegexRedactionConfigurations = HandleObjectRefresh(regexRedactionConfigurationChanges, AllRegexRedactionConfigurations);
+            AllRegexRedactionConfigurations = HandleObjectRefresh(regexRedactionConfigurationChanges, AllRegexRedactionConfigurations, _catalogueRepository);
             AddChildren(AllRegexRedactionConfigurationsNode);
         }
 
         if (changes.ChangesByTable.TryGetValue("ProcessTask", out var processTaskChanges))
         {
-            AllProcessTasks = HandleObjectRefresh(processTaskChanges, AllProcessTasks);
+            AllProcessTasks = HandleObjectRefresh(processTaskChanges, AllProcessTasks, _catalogueRepository);
             RebuildLoadMetadataTree();
         }
 
         if (changes.ChangesByTable.TryGetValue("ProcessTaskArgument", out var processTaskArgumentChanges))
         {
-            AllProcessTasksArguments = HandleObjectRefresh(processTaskArgumentChanges, AllProcessTasksArguments);
+            AllProcessTasksArguments = HandleObjectRefresh(processTaskArgumentChanges, AllProcessTasksArguments, _catalogueRepository);
             RebuildLoadMetadataTree();
         }
 
         if (changes.ChangesByTable.TryGetValue("ExtractionFilterParameterSet", out var extractionFilterParameterSetChanges))
         {
-            AllCatalogueValueSets = HandleObjectRefresh(extractionFilterParameterSetChanges, AllCatalogueValueSets);
+            AllCatalogueValueSets = HandleObjectRefresh(extractionFilterParameterSetChanges, AllCatalogueValueSets, _catalogueRepository);
             RebuildCatalogueTree();
         }
 
         if (changes.ChangesByTable.TryGetValue("SupportingDocument", out var supportingDocumentChanges))
         {
-            AllSupportingDocuments = HandleObjectRefresh(supportingDocumentChanges, AllSupportingDocuments);
+            AllSupportingDocuments = HandleObjectRefresh(supportingDocumentChanges, AllSupportingDocuments, _catalogueRepository);
             RebuildCatalogueTree();
         }
 
         if (changes.ChangesByTable.TryGetValue("ExtractionFilterParameterSetValue", out var extractionFilterParameterSetValueChanges))
         {
-            AllCatalogueValueSetValues = HandleObjectRefresh(extractionFilterParameterSetValueChanges, AllCatalogueValueSetValues);
+            AllCatalogueValueSetValues = HandleObjectRefresh(extractionFilterParameterSetValueChanges, AllCatalogueValueSetValues, _catalogueRepository);
             RebuildCatalogueTree();
         }
 
         if (changes.ChangesByTable.TryGetValue("SupportingSQLTable", out var supportingSQLTableChanges))
         {
-            AllSupportingSQL = HandleObjectRefresh(supportingSQLTableChanges, AllSupportingSQL);
+            AllSupportingSQL = HandleObjectRefresh(supportingSQLTableChanges, AllSupportingSQL, _catalogueRepository);
             RebuildCatalogueTree();
         }
 
         if (changes.ChangesByTable.TryGetValue("TableInfo", out var tableInfoChanges))
         {
-            AllTableInfos = HandleObjectRefresh(tableInfoChanges, AllTableInfos);
+            AllTableInfos = HandleObjectRefresh(tableInfoChanges, AllTableInfos, _catalogueRepository);
             AllDataAccessCredentialUsages = _catalogueRepository.TableInfoCredentialsManager
                 .GetAllCredentialUsagesBy(AllDataAccessCredentials, AllTableInfos);
             BuildServerNodes();
@@ -2525,7 +2525,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         AddChildren(templateCICTree, new DescendancyList(AllTemplateCohortIdentificationConfigurationsNode));
     }
 
-    protected T[] HandleObjectRefresh<T>(IReadOnlyList<ChangedRow> changes, IEnumerable<T> allItems) where T : DatabaseEntity
+    protected T[] HandleObjectRefresh<T>(IReadOnlyList<ChangedRow> changes, IEnumerable<T> allItems, IRepository repo) where T : DatabaseEntity
     {
         var list = allItems.ToList();
 
@@ -2539,7 +2539,7 @@ public class CatalogueChildProvider : ICoreChildProvider
             {
                 try
                 {
-                    var c = _catalogueRepository.GetAllObjectsWhere<T>("ID", id).FirstOrDefault();
+                    var c = repo.GetAllObjectsWhere<T>("ID", id).FirstOrDefault();
                     if (c is null)
                         continue;
                     var index = list.FindIndex(existing => existing.ID == id);
@@ -2549,7 +2549,9 @@ public class CatalogueChildProvider : ICoreChildProvider
                     else
                         list.Add(c);
                 }
-                catch (Exception) { }
+                catch (Exception e) {
+                    Console.WriteLine(e);
+                }
             }
         }
 
