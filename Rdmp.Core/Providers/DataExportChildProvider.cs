@@ -118,7 +118,7 @@ public class DataExportChildProvider : CatalogueChildProvider
             _changeTracking = new ChangeTrackingService(((DataExportRepository)repositoryLocator.DataExportRepository).ConnectionString, ChangeTrackingService.DataExport_DEFAULT_TABLE_NAMES);
             _lastSeenVersion = _changeTracking.GetCurrentVersion();
         }
-        catch (Exception e)
+        catch //(Exception e)
         {
             //errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs("Failed to initialise ChangeTrackingService for DataExportChildProvider", CheckResult.Warning, e));
         }

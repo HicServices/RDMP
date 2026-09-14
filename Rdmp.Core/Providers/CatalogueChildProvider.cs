@@ -253,7 +253,7 @@ public class CatalogueChildProvider : ICoreChildProvider
             _lastSeenVersion = _changeTracking.GetCurrentVersion();
 
         }
-        catch(Exception e)
+        catch//(Exception e)
         {
             //errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs("Failed to initialise ChangeTrackingService for CatalogueChildProvider", CheckResult.Warning, e));
         }
