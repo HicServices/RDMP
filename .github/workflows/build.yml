@@ -66,7 +66,7 @@ jobs:
         shell: bash
         run: |
           rm -rf coverage
-          curl -L "https://dl.min.io/server/minio/release/windows-amd64/minio.exe" > minio.exe
+          curl -L "https://dl.min.io/aistor/minio/release/windows-amd64/minio.exe" > minio.exe
           ./minio.exe server ./minio --console-address :9001 &
           mkdir ~/.aws
           echo -e "[minio]\naws_access_key_id=minioadmin\naws_secret_access_key=minioadmin\naws_endpoint_url=http://127.0.0.1:9001" > ~/.aws/credentials
