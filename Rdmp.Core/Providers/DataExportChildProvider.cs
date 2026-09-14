@@ -120,7 +120,7 @@ public class DataExportChildProvider : CatalogueChildProvider
         }
         catch (Exception e)
         {
-            errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs("Failed to initialise ChangeTrackingService for DataExportChildProvider", CheckResult.Warning, e));
+            //errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs("Failed to initialise ChangeTrackingService for DataExportChildProvider", CheckResult.Warning, e));
         }
         ForbidListedSources = previousStateIfKnown?.ForbidListedSources ?? new List<ExternalCohortTable>();
         _errorsCheckNotifier = errorsCheckNotifier;
