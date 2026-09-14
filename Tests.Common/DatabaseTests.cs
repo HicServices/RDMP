@@ -311,7 +311,7 @@ public partial class DatabaseTests
             .GetCurrentDatabase().GetRuntimeName();
 
         UsefulStuff.ExecuteBatchNonQuery(string.Format(BlitzDatabases, catalogueDatabaseName, dataExportDatabaseName),
-            con.Connection, con.Transaction);
+            con.Connection, con.Transaction,timeout:60);
     }
 
     /// <summary>

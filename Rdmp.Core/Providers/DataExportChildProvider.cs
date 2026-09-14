@@ -174,16 +174,12 @@ public class DataExportChildProvider : CatalogueChildProvider
             .ToDictionaryEx(ds => ds.SelectedDataSets_ID, d => d);
 
         var dsDictionary = ExtractableDataSets.ToDictionaryEx(ds => ds.ID, d => d);
-        try
-        {
-            foreach (var s in SelectedDataSets)
+        foreach (var s in SelectedDataSets)
+            try
+            {
                 s.InjectKnown(dsDictionary[s.ExtractableDataSet_ID]);
-        }
-        catch (Exception ex)
-        {
-            _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs("Failed to inject ExtractableDataSet into SelectedDataSets",
-                CheckResult.Fail, ex));
-        }
+            }
+            catch { }
         ReportProgress("Injecting SelectedDataSets");
 
         _configurationToDatasetMapping = new Dictionary<IExtractionConfiguration, List<SelectedDataSets>>();
