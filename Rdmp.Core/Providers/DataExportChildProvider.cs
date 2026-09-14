@@ -117,120 +117,15 @@ public class DataExportChildProvider : CatalogueChildProvider
         {
             _changeTracking = new ChangeTrackingService(((DataExportRepository)repositoryLocator.DataExportRepository).ConnectionString, ChangeTrackingService.DataExport_DEFAULT_TABLE_NAMES);
             _lastSeenVersion = _changeTracking.GetCurrentVersion();
-        }catch { }
+        }
+        catch (Exception e)
+        {
+            errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs("Failed to initialise ChangeTrackingService for DataExportChildProvider", CheckResult.Warning, e));
+        }
         ForbidListedSources = previousStateIfKnown?.ForbidListedSources ?? new List<ExternalCohortTable>();
         _errorsCheckNotifier = errorsCheckNotifier;
         dataExportRepository = repositoryLocator.DataExportRepository;
-
-        AllProjectAssociatedCics =
-            GetAllObjects<ProjectCohortIdentificationConfigurationAssociation>(dataExportRepository);
-
-        _cicAssociations =
-            new HashSet<int>(AllProjectAssociatedCics.Select(a => a.CohortIdentificationConfiguration_ID));
-
-        CohortSources = GetAllObjects<ExternalCohortTable>(dataExportRepository);
-        ExtractableDataSets = GetAllObjects<ExtractableDataSet>(dataExportRepository);
-        ExtractableDataSetProjects = GetAllObjects<ExtractableDataSetProject>(dataExportRepository);
-        //This means that the ToString method in ExtractableDataSet doesn't need to go lookup catalogue info
-        var catalogueIdDict = AllCatalogues.ToDictionaryEx(c => c.ID, c2 => c2);
-        foreach (var ds in ExtractableDataSets)
-            if (catalogueIdDict.TryGetValue(ds.Catalogue_ID, out var cata))
-                ds.InjectKnown(cata);
-
-        ReportProgress("Injecting ExtractableDataSet");
-
-        AllPackages = GetAllObjects<ExtractableDataSetPackage>(dataExportRepository);
-
-        Projects = GetAllObjects<Project>(dataExportRepository);
-        ExtractionConfigurations = GetAllObjects<ExtractionConfiguration>(dataExportRepository);
-
-        ReportProgress("Get Projects and Configurations");
-
-        ExtractionConfigurationsByProject = ExtractionConfigurations.GroupBy(k => k.Project_ID)
-            .ToDictionaryEx(gdc => gdc.Key, gdc => gdc.ToList());
-
-        ReportProgress("Grouping Extractions by Project");
-
-        BuildSelectedDatasets();
-
-        AllGlobalExtractionFilterParameters = GetAllObjects<GlobalExtractionFilterParameter>(dataExportRepository);
-
-        BuildExtractionFilters();
-
-        ReportProgress("Building FilterManager");
-
-        Cohorts = GetAllObjects<ExtractableCohort>(dataExportRepository);
-        _cohortsByOriginId = new Dictionary<int, HashSet<ExtractableCohort>>();
-
-        foreach (var c in Cohorts)
-        {
-            if (!_cohortsByOriginId.ContainsKey(c.OriginID))
-                _cohortsByOriginId.Add(c.OriginID, new HashSet<ExtractableCohort>());
-
-            _cohortsByOriginId[c.OriginID].Add(c);
-        }
-
-
-        ReportProgress("Fetching Cohorts");
-
-        GetCohortAvailability();
-
-        ReportProgress("GetCohortAvailability");
-
-
-        ReportProgress("Mapping configurations to datasets");
-
-        RootCohortsNode = new AllCohortsNode();
-        AddChildren(RootCohortsNode, new DescendancyList(RootCohortsNode));
-
-        foreach (var package in AllPackages)
-            AddChildren(package, new DescendancyList(package));
-
-        ReportProgress("Packages and Cohorts");
-
-        ProjectRootFolder = FolderHelper.BuildFolderTree(Projects);
-        AddChildren(ProjectRootFolder, new DescendancyList(ProjectRootFolder));
-
-        ReportProgress("Projects");
-        //inject extractability into Catalogues
-        foreach (var catalogue in AllCatalogues)
-        {
-            var eds = ExtractableDataSets.Where(e => e.Catalogue_ID == catalogue.ID).ToList();
-            if (!eds.Any())
-            {
-                catalogue.InjectKnown(new CatalogueExtractabilityStatus(false, false));
-            }
-            else
-            {
-                catalogue.InjectKnown(new CatalogueExtractabilityStatus(true, eds.First().Projects.Any()));
-            }
-        }
-        ReportProgress("Catalogue extractability injection");
-
-        try
-        {
-            AddPipelineUseCases(new Dictionary<string, PipelineUseCase>
-            {
-                { "File Import", UploadFileUseCase.DesignTime() },
-                { "Extraction", ExtractionPipelineUseCase.DesignTime() },
-                { "Release", ReleaseUseCase.DesignTime() },
-                { "Cohort Creation", CohortCreationRequest.DesignTime() },
-                { "Caching", CachingPipelineUseCase.DesignTime() },
-                {
-                    "Aggregate Committing",
-                    CreateTableFromAggregateUseCase.DesignTime(repositoryLocator.CatalogueRepository)
-                }
-            });
-        }
-        catch (Exception ex)
-        {
-            _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs("Failed to build DesignTime PipelineUseCases",
-                CheckResult.Fail, ex));
-        }
-
-        ReportProgress("Pipeline adding");
-
-        GetPluginChildren();
+        FullReloadAsync(dataExportRepository);
     }
 
 
@@ -747,7 +642,7 @@ public class DataExportChildProvider : CatalogueChildProvider
             //get the saved cohorts folder under it
             var projectSavedCohortsNode = GetChildren(projectCohortsNode).OfType<ProjectSavedCohortsNode>().Single();
 
-            //if ther are no children that are Cohort Sources (cohort databases) under this saved cohorts folder then the Project has no
+            //if there are no children that are Cohort Sources (cohort databases) under this saved cohorts folder then the Project has no
             return GetChildren(projectSavedCohortsNode).OfType<CohortSourceUsedByProjectNode>().All(s => s.IsEmptyNode);
         }
     }
@@ -934,7 +829,8 @@ public class DataExportChildProvider : CatalogueChildProvider
         return true;
     }
 
-    private void FullReloadAsync(IDataExportRepository repository) {
+    private void FullReloadAsync(IDataExportRepository repository)
+    {
         AllProjectAssociatedCics =
             GetAllObjects<ProjectCohortIdentificationConfigurationAssociation>(dataExportRepository);
 
@@ -1035,22 +931,18 @@ public class DataExportChildProvider : CatalogueChildProvider
         AddChildren(ProjectRootFolder, new DescendancyList(ProjectRootFolder));
     }
 
-    // Rebuilds the cohort source → cohort hierarchy under AllCohortsNode.
     private void RebuildCohortTree()
     {
         RootCohortsNode = new AllCohortsNode();
         AddChildren(RootCohortsNode, new DescendancyList(RootCohortsNode));
     }
 
-    // Rebuilds the package → dataset children for every package.
     private void RebuildPackageChildren()
     {
         foreach (var package in AllPackages)
             AddChildren(package, new DescendancyList(package));
     }
 
-    // Override: calls AddPipelineUseCases with the DataExport use-case dictionary,
-    // matching what the constructor already does in its try/catch block.
     protected override void RebuildPipelineTree()
     {
         try
@@ -1100,19 +992,12 @@ public class DataExportChildProvider : CatalogueChildProvider
             return;
         }
 
-        // -- ExtractableDataSetPackage --
-        // Missing: return-value assignment. The subsequent foreach rebuilds package
-        // children correctly but iterates the stale array until the assignment is fixed.
         if (changes.ChangesByTable.TryGetValue("ExtractableDataSetPackage", out var extractableDataSetPackageChanges))
         {
             AllPackages = HandleObjectRefresh(extractableDataSetPackageChanges, AllPackages);
             RebuildPackageChildren();
         }
 
-        // -- ProjectCohortIdentificationConfigurationAssociation --
-        // Currently not handled. Missing: fetch and assign AllProjectAssociatedCics;
-        // rebuild _cicAssociations; rebuild project tree (associated CIC folders
-        // appear under ProjectCohortsNode → AssociatedCohortIdentificationTemplatesNode).
         if (changes.ChangesByTable.TryGetValue("ProjectCohortIdentificationConfigurationAssociation", out var projectCICAssociationChanges))
         {
             AllProjectAssociatedCics = HandleObjectRefresh(projectCICAssociationChanges, AllProjectAssociatedCics);
@@ -1121,18 +1006,6 @@ public class DataExportChildProvider : CatalogueChildProvider
             RebuildProjectTree();
         }
 
-        // -- SelectedDataSetsForcedJoin --
-        // NOT APPLICABLE: no cached AllSelectedDataSetsForcedJoins property.
-
-        // -- SupplementalExtractionResults --
-        // NOT APPLICABLE: no cached property in DataExportChildProvider.
-
-        // -- ExtractionProgress --
-        // Currently not handled. ExtractionProgress is stored only as a dictionary
-        // keyed by SelectedDataSets_ID (not a flat array), so HandleObjectRefresh
-        // cannot be used directly. Rebuild the dictionary by re-fetching all rows,
-        // then rebuild the project tree (ExtractionProgress appears as a child of
-        // SelectedDataSets inside each ExtractionConfiguration).
         if (changes.ChangesByTable.TryGetValue("ExtractionProgress", out _))
         {
             _extractionProgressesBySelectedDataSetID =
@@ -1141,20 +1014,6 @@ public class DataExportChildProvider : CatalogueChildProvider
             RebuildProjectTree();
         }
 
-        // -- CumulativeExtractionResults --
-        // NOT APPLICABLE: no cached property in DataExportChildProvider.
-
-        // -- DataUser --
-        // NOT APPLICABLE: no cached property in DataExportChildProvider.
-
-        // -- DeployedExtractionFilter --
-        // Missing: return-value assignment. Also, _dataExportFilterManager is a
-        // DataExportFilterManagerFromChildProvider backed by AllDeployedExtractionFilters;
-        // it must be recreated after the array changes (BuildExtractionFilters does this).
-        // Project tree must be rebuilt (filters appear under FilterContainer →
-        // SelectedDataSets → ExtractionConfiguration).
-        // Because BuildExtractionFilters also re-fetches AllContainers and _allParameters,
-        // it is the safest single call to make here even if only filters changed.
         if (changes.ChangesByTable.TryGetValue("DeployedExtractionFilter", out var deployedExtractionFilterChanges))
         {
             AllDeployedExtractionFilters = HandleObjectRefresh(deployedExtractionFilterChanges, AllDeployedExtractionFilters);
@@ -1162,9 +1021,6 @@ public class DataExportChildProvider : CatalogueChildProvider
             RebuildProjectTree();
         }
 
-        // -- DeployedExtractionFilterParameter --
-        // Missing: return-value assignment; project tree not rebuilt (parameters appear
-        // under DeployedExtractionFilter → FilterContainer).
         if (changes.ChangesByTable.TryGetValue("DeployedExtractionFilterParameter", out var deployedExtractionFilterParameterChanges))
         {
             _allParameters = HandleObjectRefresh(deployedExtractionFilterParameterChanges, _allParameters);
@@ -1205,17 +1061,6 @@ public class DataExportChildProvider : CatalogueChildProvider
             RebuildProjectTree();
         }
 
-        // -- ExtractableColumn --
-        // NOT APPLICABLE: ExtractableColumn has no cached array. It is fetched on
-        // demand via GetAllExtractableColumns(IDataExportRepository).
-
-        // -- ExtractableDataSet --
-        // Missing: return-value assignment; Catalogue not re-injected into fresh EDS
-        // objects; CatalogueExtractabilityStatus not re-injected into AllCatalogues;
-        // BuildSelectedDatasets() not called (SelectedDataSets hold an EDS reference
-        // injected from a dictionary built from ExtractableDataSets); project tree not
-        // rebuilt; package children not rebuilt; catalogue tree not rebuilt (extractability
-        // status is shown on each Catalogue node).
         //if (changes.ChangesByTable.TryGetValue("ExtractableDataSet", out var extractableDataSetChanges))
         //{
         //    ExtractableDataSets = HandleObjectRefresh(extractableDataSetChanges, ExtractableDataSets);
@@ -1241,10 +1086,6 @@ public class DataExportChildProvider : CatalogueChildProvider
         //    RebuildCatalogueTree();     // catalogue nodes show updated extractability status
         //}
 
-        // -- ExtractionConfiguration --
-        // Missing: return-value assignment; ExtractionConfigurationsByProject not rebuilt
-        // (used by AddChildren(ExtractionConfigurationsNode, ...) to list configs under
-        // each project); _configurationToDatasetMapping not rebuilt; project tree not rebuilt.
         if (changes.ChangesByTable.TryGetValue("ExtractionConfiguration", out var extractionConfigurationChanges))
         {
             ExtractionConfigurations = HandleObjectRefresh(extractionConfigurationChanges, ExtractionConfigurations);
@@ -1257,22 +1098,12 @@ public class DataExportChildProvider : CatalogueChildProvider
             RebuildProjectTree();
         }
 
-        // -- FilterContainer --
-        // Currently not handled. AllContainers is a Dictionary<int, FilterContainer>
-        // built in BuildExtractionFilters(); it cannot be patched with HandleObjectRefresh
-        // directly. Calling BuildExtractionFilters() is the correct fix — it re-fetches
-        // AllContainers, AllDeployedExtractionFilters, _allParameters and recreates
-        // _dataExportFilterManager. Project tree must then be rebuilt (containers appear
-        // under SelectedDataSets).
         if (changes.ChangesByTable.TryGetValue("FilterContainer", out _))
         {
             BuildExtractionFilters();
             RebuildProjectTree();
         }
 
-        // -- GlobalExtractionFilterParameter --
-        // Missing: return-value assignment; project tree not rebuilt (global parameters
-        // appear as direct children of ExtractionConfiguration).
         if (changes.ChangesByTable.TryGetValue("GlobalExtractionFilterParameter", out var globalExtractionFilterParameterChanges))
         {
             AllGlobalExtractionFilterParameters = HandleObjectRefresh(
@@ -1280,30 +1111,16 @@ public class DataExportChildProvider : CatalogueChildProvider
             RebuildProjectTree();
         }
 
-        // -- Project --
-        // Missing: return-value assignment. The folder tree rebuild already happens,
-        // so only the assignment is needed.
         if (changes.ChangesByTable.TryGetValue("Project", out var projectChanges))
         {
             Projects = HandleObjectRefresh(projectChanges, Projects);
             RebuildProjectTree();
         }
 
-        // -- ReleaseLog --
-        // NOT APPLICABLE: no cached AllReleaseLogs property in DataExportChildProvider.
-
-        // -- SelectedDataSets --
-        // Missing: return-value assignment; _selectedDataSetsWithNoIsExtractionIdentifier
-        // not rebuilt (used by IsMissingExtractionIdentifier()); _configurationToDatasetMapping
-        // not rebuilt (used by GetDatasets(IExtractionConfiguration)); EDS not re-injected
-        // into fresh SelectedDataSets objects; project tree not rebuilt (SelectedDataSets
-        // appear under ExtractionConfiguration, with ExtractionProgress and FilterContainer
-        // as children).
         if (changes.ChangesByTable.TryGetValue("SelectedDataSets", out var selectedDataSetsChanges))
         {
             SelectedDataSets = HandleObjectRefresh(selectedDataSetsChanges, SelectedDataSets);
-            BuildSelectedDatasets();    // rebuilds _selectedDataSetsWithNoIsExtractionIdentifier,
-                                        // re-injects EDS into SDS, rebuilds _configurationToDatasetMapping
+            BuildSelectedDatasets();
             RebuildProjectTree();
         }
 
