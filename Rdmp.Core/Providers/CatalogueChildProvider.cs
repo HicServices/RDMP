@@ -244,6 +244,9 @@ public class CatalogueChildProvider : ICoreChildProvider
     public CatalogueChildProvider(ICatalogueRepository repository, IChildProvider[] pluginChildProviders,
         ICheckNotifier errorsCheckNotifier, CatalogueChildProvider previousStateIfKnown)
     {
+        _catalogueRepository = repository;
+
+        _errorsCheckNotifier = errorsCheckNotifier ?? IgnoreAllErrorsCheckNotifier.Instance;
         try
         {
             _changeTracking = new ChangeTrackingService(((CatalogueRepository)repository).ConnectionString, ChangeTrackingService.Catalogue_DEFAULT_TABLE_NAMES);
@@ -1809,7 +1812,6 @@ public class CatalogueChildProvider : ICoreChildProvider
     private void FullReloadAsync(ICatalogueRepository repository)
     {
         _commentStore = repository.CommentStore;
-        //_catalogueRepository = repository;
         _catalogueRepository?.EncryptionManager?.ClearAllInjections();
 
         //_errorsCheckNotifier = errorsCheckNotifier ?? IgnoreAllErrorsCheckNotifier.Instance;
