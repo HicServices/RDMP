@@ -14,3 +14,5 @@ IF NOT EXISTS (SELECT 1 FROM sys.change_tracking_tables WHERE object_id = OBJECT
 	ALTER TABLE RegexRedaction							ENABLE CHANGE_TRACKING
 IF NOT EXISTS (SELECT 1 FROM sys.change_tracking_tables WHERE object_id = OBJECT_ID('RegexRedactionKey')) 
 	ALTER TABLE RegexRedactionKey							ENABLE CHANGE_TRACKING
+IF NOT EXISTS (SELECT 1 FROM sys.change_tracking_tables WHERE object_id = OBJECT_ID('Commit')) 
+	ALTER TABLE [Commit]							ENABLE CHANGE_TRACKING

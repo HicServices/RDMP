@@ -125,6 +125,7 @@ public class DataExportChildProvider : CatalogueChildProvider
         ForbidListedSources = previousStateIfKnown?.ForbidListedSources ?? new List<ExternalCohortTable>();
         _errorsCheckNotifier = errorsCheckNotifier;
         dataExportRepository = repositoryLocator.DataExportRepository;
+        base.FullReloadAsync(repositoryLocator.CatalogueRepository);
         FullReloadAsync(dataExportRepository);
     }
 
@@ -831,6 +832,7 @@ public class DataExportChildProvider : CatalogueChildProvider
 
     private void FullReloadAsync(IDataExportRepository repository)
     {
+        base.FullReloadAsync(repository.CatalogueRepository);
         AllProjectAssociatedCics =
             GetAllObjects<ProjectCohortIdentificationConfigurationAssociation>(dataExportRepository);
 
@@ -968,6 +970,9 @@ public class DataExportChildProvider : CatalogueChildProvider
 
     public override async Task RefreshAsync(CancellationToken ct = default)
     {
+        // Delegate to base so that Catalogue-side tracked tables are also patched.
+        await base.RefreshAsync(ct);
+
         if (_changeTracking is null)
         {
             FullReloadAsync(dataExportRepository);
@@ -1126,8 +1131,7 @@ public class DataExportChildProvider : CatalogueChildProvider
 
         _lastSeenVersion = changes.CurrentVersion;
 
-        // Delegate to base so that Catalogue-side tracked tables are also patched.
-        await base.RefreshAsync(ct);
+
     }
 
 }

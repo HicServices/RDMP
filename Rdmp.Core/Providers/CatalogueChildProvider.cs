@@ -1809,7 +1809,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         return true;
     }
 
-    private void FullReloadAsync(ICatalogueRepository repository)
+    protected void FullReloadAsync(ICatalogueRepository repository)
     {
         _commentStore = repository.CommentStore;
         _catalogueRepository?.EncryptionManager?.ClearAllInjections();
@@ -1822,7 +1822,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         // all the objects which are
         AllMasqueraders = new ConcurrentDictionary<object, HashSet<IMasqueradeAs>>();
-
+        _pluginChildProviders = Array.Empty<IChildProvider>();
         ReportProgress("Before object fetches");
 
         AllAnyTableParameters = GetAllObjects<AnyTableSqlParameter>(repository);
