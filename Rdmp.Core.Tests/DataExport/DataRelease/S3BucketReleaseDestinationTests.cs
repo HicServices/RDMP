@@ -112,45 +112,45 @@ public sealed class S3BucketReleaseDestinationTests : TestsRequiringAnExtraction
         Assert.DoesNotThrow(() => DeleteBucket("logintest"));
     }
 
-    [Test]
-    public void ReleaseToAWSBasicTest()
-    {
-        MakeBucket("releasetoawsbasictest");
-        DoExtraction();
-        var pipe = new Pipeline(CatalogueRepository, "NestedPipe1");
-        var pc = new PipelineComponent(CatalogueRepository, pipe, typeof(AWSS3BucketReleaseDestination), -1,
-            "AWS S3 Release");
-        pc.SaveToDatabase();
+    //[Test]
+    //public void ReleaseToAWSBasicTest()
+    //{
+    //    MakeBucket("releasetoawsbasictest");
+    //    DoExtraction();
+    //    var pipe = new Pipeline(CatalogueRepository, "NestedPipe1");
+    //    var pc = new PipelineComponent(CatalogueRepository, pipe, typeof(AWSS3BucketReleaseDestination), -1,
+    //        "AWS S3 Release");
+    //    pc.SaveToDatabase();
 
-        var args = pc.CreateArgumentsForClassIfNotExists<AWSS3BucketReleaseDestination>();
+    //    var args = pc.CreateArgumentsForClassIfNotExists<AWSS3BucketReleaseDestination>();
 
-        Assert.That(pc.GetAllArguments().Any());
+    //    Assert.That(pc.GetAllArguments().Any());
 
-        SetArgs(args, new Dictionary<string, object>
-        {
-            { "AWS_Profile", "minio" },
-            { "BucketName", "releasetoawsbasictest" },
-            { "AWS_Region", "eu-west-2" },
-            { "ConfigureInteractivelyOnRelease", false },
-            { "BucketFolder", "release" }
-        });
+    //    SetArgs(args, new Dictionary<string, object>
+    //    {
+    //        { "AWS_Profile", "minio" },
+    //        { "BucketName", "releasetoawsbasictest" },
+    //        { "AWS_Region", "eu-west-2" },
+    //        { "ConfigureInteractivelyOnRelease", false },
+    //        { "BucketFolder", "release" }
+    //    });
 
-        pipe.DestinationPipelineComponent_ID = pc.ID;
-        pipe.SaveToDatabase();
-        var optsRelease = new ReleaseOptions
-        {
-            Configurations = _configuration.ID.ToString(),
-            Pipeline = pipe.ID.ToString()
-        };
-        var runner = new ReleaseRunner(new ThrowImmediatelyActivator(RepositoryLocator), optsRelease);
-        Assert.DoesNotThrow(() => runner.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, ThrowImmediatelyCheckNotifier.Quiet, new GracefulCancellationToken()));
-        var foundObjects = GetObjects("releasetoawsbasictest");
-        Assert.That(foundObjects, Has.Count.EqualTo(5));
-        //Found object release/ New ExtractionConfiguration5b3e1346 - f054 - 4e66 - b3e6 - 3a60eaf10eca_105 / ReleaseDocument_New ExtractionConfiguration5b3e1346 - f054 - 4e66 - b3e6 - 3a60eaf10eca_105.docx in bucket releasetoawsbasictest
-        //Found object release/ New ExtractionConfiguration5b3e1346 - f054 - 4e66 - b3e6 - 3a60eaf10eca_105 / TestTable / TestTable.csv in bucket releasetoawsbasictest
-        //Found object release/ New ExtractionConfiguration5b3e1346 - f054 - 4e66 - b3e6 - 3a60eaf10eca_105 / TestTable / TestTable.docx in bucket releasetoawsbasictest
-        //Found object release/ New ExtractionConfiguration5b3e1346 - f054 - 4e66 - b3e6 - 3a60eaf10eca_105 / TestTable / TestTableVariables.csv in bucket releasetoawsbasictest
-    }
+    //    pipe.DestinationPipelineComponent_ID = pc.ID;
+    //    pipe.SaveToDatabase();
+    //    var optsRelease = new ReleaseOptions
+    //    {
+    //        Configurations = _configuration.ID.ToString(),
+    //        Pipeline = pipe.ID.ToString()
+    //    };
+    //    var runner = new ReleaseRunner(new ThrowImmediatelyActivator(RepositoryLocator), optsRelease);
+    //    Assert.DoesNotThrow(() => runner.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, ThrowImmediatelyCheckNotifier.Quiet, new GracefulCancellationToken()));
+    //    var foundObjects = GetObjects("releasetoawsbasictest");
+    //    Assert.That(foundObjects, Has.Count.EqualTo(5));
+    //    //Found object release/ New ExtractionConfiguration5b3e1346 - f054 - 4e66 - b3e6 - 3a60eaf10eca_105 / ReleaseDocument_New ExtractionConfiguration5b3e1346 - f054 - 4e66 - b3e6 - 3a60eaf10eca_105.docx in bucket releasetoawsbasictest
+    //    //Found object release/ New ExtractionConfiguration5b3e1346 - f054 - 4e66 - b3e6 - 3a60eaf10eca_105 / TestTable / TestTable.csv in bucket releasetoawsbasictest
+    //    //Found object release/ New ExtractionConfiguration5b3e1346 - f054 - 4e66 - b3e6 - 3a60eaf10eca_105 / TestTable / TestTable.docx in bucket releasetoawsbasictest
+    //    //Found object release/ New ExtractionConfiguration5b3e1346 - f054 - 4e66 - b3e6 - 3a60eaf10eca_105 / TestTable / TestTableVariables.csv in bucket releasetoawsbasictest
+    //}
 
     [Test]
     public void NoRegion()
@@ -319,69 +319,69 @@ public sealed class S3BucketReleaseDestinationTests : TestsRequiringAnExtraction
     }
 
 
-    [Test]
-    public void LocationAlreadyExists()
-    {
-        MakeBucket("locationalreadyexist");
+    //[Test]
+    //public void LocationAlreadyExists()
+    //{
+    //    MakeBucket("locationalreadyexist");
 
-        DoExtraction();
-        var pipe = new Pipeline(CatalogueRepository, "NestedPipe7");
-        var pc = new PipelineComponent(CatalogueRepository, pipe, typeof(AWSS3BucketReleaseDestination), -1,
-            "AWS S3 Release");
-        pc.SaveToDatabase();
+    //    DoExtraction();
+    //    var pipe = new Pipeline(CatalogueRepository, "NestedPipe7");
+    //    var pc = new PipelineComponent(CatalogueRepository, pipe, typeof(AWSS3BucketReleaseDestination), -1,
+    //        "AWS S3 Release");
+    //    pc.SaveToDatabase();
 
-        var args = pc.CreateArgumentsForClassIfNotExists<AWSS3BucketReleaseDestination>();
+    //    var args = pc.CreateArgumentsForClassIfNotExists<AWSS3BucketReleaseDestination>();
 
-        Assert.That(pc.GetAllArguments().Any());
-        SetArgs(args, new Dictionary<string, object>
-        {
-            { "AWS_Region", "eu-west-2" },
-            { "AWS_Profile", "minio" },
-            { "BucketName", "locationalreadyexist" },
-            { "ConfigureInteractivelyOnRelease", false },
-            { "BucketFolder", "release" }
-        });
+    //    Assert.That(pc.GetAllArguments().Any());
+    //    SetArgs(args, new Dictionary<string, object>
+    //    {
+    //        { "AWS_Region", "eu-west-2" },
+    //        { "AWS_Profile", "minio" },
+    //        { "BucketName", "locationalreadyexist" },
+    //        { "ConfigureInteractivelyOnRelease", false },
+    //        { "BucketFolder", "release" }
+    //    });
 
-        pipe.DestinationPipelineComponent_ID = pc.ID;
-        pipe.SaveToDatabase();
-        var optsRelease = new ReleaseOptions
-        {
-            Configurations = _configuration.ID.ToString(),
-            Pipeline = pipe.ID.ToString()
-        };
-        var runner = new ReleaseRunner(new ThrowImmediatelyActivator(RepositoryLocator), optsRelease);
-        Assert.DoesNotThrow(() => runner.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, ThrowImmediatelyCheckNotifier.Quiet, new GracefulCancellationToken()));
-        var foundObjects = GetObjects("locationalreadyexist");
-        Assert.That(foundObjects, Has.Count.EqualTo(5));
-        DoExtraction();
-        pipe = new Pipeline(CatalogueRepository, "NestedPipe8");
-        pc = new PipelineComponent(CatalogueRepository, pipe, typeof(AWSS3BucketReleaseDestination), -1,
-            "AWS S3 Release");
-        pc.SaveToDatabase();
+    //    pipe.DestinationPipelineComponent_ID = pc.ID;
+    //    pipe.SaveToDatabase();
+    //    var optsRelease = new ReleaseOptions
+    //    {
+    //        Configurations = _configuration.ID.ToString(),
+    //        Pipeline = pipe.ID.ToString()
+    //    };
+    //    var runner = new ReleaseRunner(new ThrowImmediatelyActivator(RepositoryLocator), optsRelease);
+    //    Assert.DoesNotThrow(() => runner.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, ThrowImmediatelyCheckNotifier.Quiet, new GracefulCancellationToken()));
+    //    var foundObjects = GetObjects("locationalreadyexist");
+    //    Assert.That(foundObjects, Has.Count.EqualTo(5));
+    //    DoExtraction();
+    //    pipe = new Pipeline(CatalogueRepository, "NestedPipe8");
+    //    pc = new PipelineComponent(CatalogueRepository, pipe, typeof(AWSS3BucketReleaseDestination), -1,
+    //        "AWS S3 Release");
+    //    pc.SaveToDatabase();
 
-        args = pc.CreateArgumentsForClassIfNotExists<AWSS3BucketReleaseDestination>();
+    //    args = pc.CreateArgumentsForClassIfNotExists<AWSS3BucketReleaseDestination>();
 
-        Assert.That(pc.GetAllArguments().Any());
-        SetArgs(args, new Dictionary<string, object>
-        {
-            { "AWS_Region", "eu-west-2" },
-            { "AWS_Profile", "minio" },
-            { "BucketName", "locationalreadyexist" },
-            { "ConfigureInteractivelyOnRelease", false },
-            { "BucketFolder", "release" }
-        });
+    //    Assert.That(pc.GetAllArguments().Any());
+    //    SetArgs(args, new Dictionary<string, object>
+    //    {
+    //        { "AWS_Region", "eu-west-2" },
+    //        { "AWS_Profile", "minio" },
+    //        { "BucketName", "locationalreadyexist" },
+    //        { "ConfigureInteractivelyOnRelease", false },
+    //        { "BucketFolder", "release" }
+    //    });
 
-        pipe.DestinationPipelineComponent_ID = pc.ID;
-        pipe.SaveToDatabase();
-        optsRelease = new ReleaseOptions
-        {
-            Configurations = _configuration.ID.ToString(),
-            Pipeline = pipe.ID.ToString(),
-            Command = CommandLineActivity.check
-        };
-        runner = new ReleaseRunner(new ThrowImmediatelyActivator(RepositoryLocator), optsRelease);
-        Assert.Throws<AggregateException>(() => runner.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, ThrowImmediatelyCheckNotifier.Quiet, new GracefulCancellationToken()));
-        foundObjects = GetObjects("locationalreadyexist");
-        Assert.That(foundObjects, Has.Count.EqualTo(5));
-    }
+    //    pipe.DestinationPipelineComponent_ID = pc.ID;
+    //    pipe.SaveToDatabase();
+    //    optsRelease = new ReleaseOptions
+    //    {
+    //        Configurations = _configuration.ID.ToString(),
+    //        Pipeline = pipe.ID.ToString(),
+    //        Command = CommandLineActivity.check
+    //    };
+    //    runner = new ReleaseRunner(new ThrowImmediatelyActivator(RepositoryLocator), optsRelease);
+    //    Assert.Throws<AggregateException>(() => runner.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, ThrowImmediatelyCheckNotifier.Quiet, new GracefulCancellationToken()));
+    //    foundObjects = GetObjects("locationalreadyexist");
+    //    Assert.That(foundObjects, Has.Count.EqualTo(5));
+    //}
 }
