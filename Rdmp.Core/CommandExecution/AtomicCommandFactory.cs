@@ -147,6 +147,11 @@ public class AtomicCommandFactory : CommandFactoryBase
                     Weight = -99.0009f,
                     SuggestedCategory = Extraction
                 };
+                yield return new ExecuteCommandMakeCatalogueProjectSpecificForAllAssociatedProjects(_activator, c, true)
+                {
+                    Weight = -99.0009f,
+                    SuggestedCategory = Extraction
+                };
 
                 if (c.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository))
                 {
