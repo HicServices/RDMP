@@ -1,4 +1,4 @@
-﻿--Version: 9.3.0
+﻿--Version: 9.3.1
 --Description: Add new metadata fields for catalogues
 IF NOT EXISTS (SELECT 1 FROM sys.change_tracking_tables WHERE object_id = OBJECT_ID('Dataset')) 
 	ALTER TABLE Dataset								    ENABLE CHANGE_TRACKING

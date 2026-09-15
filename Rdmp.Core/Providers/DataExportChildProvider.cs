@@ -1028,23 +1028,15 @@ public class DataExportChildProvider : CatalogueChildProvider
             RebuildProjectTree();
         }
 
-        // -- ExternalCohortTable --
-        // Missing: return-value assignment; GetCohortAvailability() not called so new
-        // or changed cohort sources are never probed for reachability and cohort data
-        // is not injected into their ExtractableCohort children.
-        //if (changes.ChangesByTable.TryGetValue("ExternalCohortTable", out var externalCohortTableChanges))
-        //{
-        //    CohortSources = HandleObjectRefresh(externalCohortTableChanges, CohortSources);
-        //    GetCohortAvailability();    // re-probes all non-forbidlisted sources
-        //    RebuildCohortTree();
-        //    RebuildProjectTree();       // CohortSourceUsedByProjectNode under ProjectSavedCohortsNode
-        //}
+        if (changes.ChangesByTable.TryGetValue("ExternalCohortTable", out var externalCohortTableChanges))
+        {
+            CohortSources = HandleObjectRefresh(externalCohortTableChanges, CohortSources, dataExportRepository);
+            GetCohortAvailability();    // re-probes all non-forbidlisted sources
+            RebuildCohortTree();
+            RebuildProjectTree();       // CohortSourceUsedByProjectNode under ProjectSavedCohortsNode
+        }
 
-        // -- ExtractableCohort --
-        // Missing: return-value assignment; _cohortsByOriginId not rebuilt (used by
-        // GetCohortAvailability to inject external data); cohort availability not
-        // re-checked for new cohorts; cohort tree not rebuilt; project tree not rebuilt
-        // (cohorts appear under CohortSourceUsedByProjectNode → ProjectSavedCohortsNode).
+
         if (changes.ChangesByTable.TryGetValue("ExtractableCohort", out var extractableCohortChanges))
         {
             Cohorts = HandleObjectRefresh(extractableCohortChanges, Cohorts, dataExportRepository);
@@ -1062,30 +1054,30 @@ public class DataExportChildProvider : CatalogueChildProvider
             RebuildProjectTree();
         }
 
-        //if (changes.ChangesByTable.TryGetValue("ExtractableDataSet", out var extractableDataSetChanges))
-        //{
-        //    ExtractableDataSets = HandleObjectRefresh(extractableDataSetChanges, ExtractableDataSets);
+        if (changes.ChangesByTable.TryGetValue("ExtractableDataSet", out var extractableDataSetChanges))
+        {
+            ExtractableDataSets = HandleObjectRefresh(extractableDataSetChanges, ExtractableDataSets,dataExportRepository);
 
-        //    // Re-inject known Catalogue into each EDS
-        //    var catalogueIdDict = AllCataloguesDictionary;
-        //    foreach (var ds in ExtractableDataSets)
-        //        if (catalogueIdDict.TryGetValue(ds.Catalogue_ID, out var cata))
-        //            ds.InjectKnown(cata);
+            // Re-inject known Catalogue into each EDS
+            var catalogueIdDict = AllCataloguesDictionary;
+            foreach (var ds in ExtractableDataSets)
+                if (catalogueIdDict.TryGetValue(ds.Catalogue_ID, out var cata))
+                    ds.InjectKnown(cata);
 
-        //    // Re-inject CatalogueExtractabilityStatus into each Catalogue
-        //    foreach (var catalogue in AllCatalogues)
-        //    {
-        //        var eds = ExtractableDataSets.Where(e => e.Catalogue_ID == catalogue.ID).ToList();
-        //        catalogue.InjectKnown(eds.Any()
-        //            ? new CatalogueExtractabilityStExtractionConfigurationatus(true, eds.First().Projects.Any())
-        //            : new CatalogueExtractabilityStatus(false, false));
-        //    }
+            // Re-inject CatalogueExtractabilityStatus into each Catalogue
+            foreach (var catalogue in AllCatalogues)
+            {
+                var eds = ExtractableDataSets.Where(e => e.Catalogue_ID == catalogue.ID).ToList();
+                catalogue.InjectKnown(eds.Any()
+                    ? new CatalogueExtractabilityStatus(true, eds.First().Projects.Any())
+                    : new CatalogueExtractabilityStatus(false, false));
+            }
 
-        //    BuildSelectedDatasets();    // re-injects EDS into SelectedDataSets; rebuilds _configurationToDatasetMapping
-        //    RebuildPackageChildren();
-        //    RebuildProjectTree();
-        //    RebuildCatalogueTree();     // catalogue nodes show updated extractability status
-        //}
+            BuildSelectedDatasets();    // re-injects EDS into SelectedDataSets; rebuilds _configurationToDatasetMapping
+            RebuildPackageChildren();
+            RebuildProjectTree();
+            RebuildCatalogueTree();     // catalogue nodes show updated extractability status
+        }
 
         if (changes.ChangesByTable.TryGetValue("ExtractionConfiguration", out var extractionConfigurationChanges))
         {

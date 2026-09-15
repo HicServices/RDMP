@@ -2537,21 +2537,15 @@ public class CatalogueChildProvider : ICoreChildProvider
             }
             else
             {
-                try
-                {
-                    var c = repo.GetAllObjectsWhere<T>("ID", id).FirstOrDefault();
-                    if (c is null)
-                        continue;
-                    var index = list.FindIndex(existing => existing.ID == id);
+                var c = repo.GetAllObjectsWhere<T>("ID", id).FirstOrDefault();
+                if (c is null)
+                    continue;
+                var index = list.FindIndex(existing => existing.ID == id);
 
-                    if (index != -1)
-                        list[index] = c;
-                    else
-                        list.Add(c);
-                }
-                catch (Exception e) {
-                    Console.WriteLine(e);
-                }
+                if (index != -1)
+                    list[index] = c;
+                else
+                    list.Add(c)
             }
         }
 
