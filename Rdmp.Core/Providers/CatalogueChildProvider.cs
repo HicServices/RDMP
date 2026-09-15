@@ -2545,7 +2545,7 @@ public class CatalogueChildProvider : ICoreChildProvider
                 if (index != -1)
                     list[index] = c;
                 else
-                    list.Add(c)
+                    list.Add(c);
             }
         }
 
