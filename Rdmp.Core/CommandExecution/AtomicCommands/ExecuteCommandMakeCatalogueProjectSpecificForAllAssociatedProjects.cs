@@ -65,13 +65,10 @@ public class ExecuteCommandMakeCatalogueProjectSpecificForAllAssociatedProjects 
         var dataExportChildProvider = ((DataExportChildProvider)_activator.CoreChildProvider);
         var eds = _activator.RepositoryLocator.DataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(_catalogue);
         var projects = eds.SelectMany(e => e.ExtractionConfigurations.Select(ec => ec.Project));
-        //var edsp = _activator.RepositoryLocator.DataExportRepository.GetAllObjects<ExtractableDataSetProject>().Where(edsp => eds.Contains(edsp.DataSet));
-        //var pti = edsp.Select(e => e.Project_ID).ToList();
-        //var projects = dataExportChildProvider.Projects.ToList();
         if (YesNo($"""
             You are about to make Catalogue {_catalogue.Name} project specific.
             It will be associated with the following projects:
-            {string.Join(Environment.NewLine, projects.Select(p => p.Name))}
+            {string.Join(Environment.NewLine, projects.Select(p => $"{p.ProjectNumber}: {p.Name}"))}
 
             Are you sure you want to continue?
             ""","Make Catalogue Project Specific"))
