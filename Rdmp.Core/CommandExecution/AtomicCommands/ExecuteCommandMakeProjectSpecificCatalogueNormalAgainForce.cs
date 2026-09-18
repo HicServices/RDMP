@@ -48,47 +48,25 @@ public class ExecuteCommandMakeProjectSpecificCatalogueNormalAgainForce : BasicC
 
         base.Execute();
         var eds = dataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(_catalogue);
-        //var projects = eds.SelectMany(e => e.ExtractionConfigurations.Select(ec => ec.Project));
-        foreach (var e in eds)
+        var foundprojects = eds.SelectMany(e => e.ExtractionConfigurations.Select(ec => ec.Project));
+        if (YesNo($"""
+            You are about to make Catalogue {_catalogue.Name} NOT project specific.
+            It will no longer be associated with the following projects:
+            {string.Join(Environment.NewLine, foundprojects.Select(p => $"{p.ProjectNumber}: {p.Name}"))}
+
+            Are you sure you want to continue?
+            """, "Make Catalogue NOT Project Specific"))
         {
-            var projects = e.ExtractionConfigurations.Select(ec => ec.Project);
-            foreach (var project in projects)
+            foreach (var e in eds)
             {
-                ProjectSpecificCatalogueManager.MakeCatalogueNonProjectSpecific(BasicActivator.RepositoryLocator.DataExportRepository, _catalogue, e, project as Project);
+                var projects = e.ExtractionConfigurations.Select(ec => ec.Project);
+                foreach (var project in projects)
+                {
+                    ProjectSpecificCatalogueManager.MakeCatalogueNonProjectSpecific(BasicActivator.RepositoryLocator.DataExportRepository, _catalogue, e, project as Project);
+                }
             }
+            Publish(_catalogue);
         }
-        Publish(_catalogue);
-        //_extractableDataSets = dataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(_catalogue).Where(eds => eds.Projects.Any() && eds.Projects.Select(p => ProjectSpecificCatalogueManager.CanMakeCatalogueNonProjectSpecific(dataExportRepository, _catalogue, eds, p)).Contains(true)).ToList();
-        //if (!_extractableDataSets.Any())
-        //{
-        //    SetImpossible("Cannot make Catalogue Non-Project specific");
-        //    return;
-        //}
-
-
-
-        //if (_extractableDataSet is null)
-        //{
-
-        //    var projectIds = _extractableDataSets.SelectMany(eds => eds.Projects.Where(p => ProjectSpecificCatalogueManager.CanMakeCatalogueNonProjectSpecific(dataExportRepository,_catalogue, eds,p))).Select(p => p.ID);
-        //    _selectedProj = SelectOne<Project>(BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjectsInIDList<Project>(projectIds).ToList());
-        //    if (_selectedProj is null) return;
-        //    _extractableDataSet = _extractableDataSets.FirstOrDefault(eds => eds.Projects.Select(p => p.ID).Contains(_selectedProj.ID));
-        //}
-        //if (_extractableDataSet == null)
-        //{
-        //    return;
-        //}
-
-        //if (!_extractableDataSet.Projects.Any())
-        //{
-        //    SetImpossible("Catalogue is not a project specific Catalogue");
-        //    return;
-        //}
-
-        //ProjectSpecificCatalogueManager.MakeCatalogueNonProjectSpecific(BasicActivator.RepositoryLocator.DataExportRepository, _catalogue, _extractableDataSet,_selectedProj);
-
-        //Publish(_catalogue);
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
