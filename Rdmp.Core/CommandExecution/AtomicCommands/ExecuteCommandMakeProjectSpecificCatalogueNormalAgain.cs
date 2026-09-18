@@ -46,7 +46,7 @@ public class ExecuteCommandMakeProjectSpecificCatalogueNormalAgain : BasicComman
         var dataExportRepository = BasicActivator.RepositoryLocator.DataExportRepository;
 
         base.Execute();
-        _extractableDataSets = dataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(_catalogue).Where(eds => eds.Projects.Any() && eds.Projects.Select(p => ProjectSpecificCatalogueManager.CanMakeCatalogueNonProjectSpecific(dataExportRepository, _catalogue, eds, p)).Contains(true)).ToList();
+        _extractableDataSets = dataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(_catalogue).Where(eds => eds.Projects.Any()).ToList();// && eds.Projects.Select(p => ProjectSpecificCatalogueManager.CanMakeCatalogueNonProjectSpecific(dataExportRepository, _catalogue, eds, p)).Contains(true)).ToList();
         if (!_extractableDataSets.Any())
         {
             SetImpossible("Cannot make Catalogue Non-Project specific");
