@@ -88,7 +88,7 @@ public class ExecuteCommandAddCatalogueToCohortIdentificationSetContainer : Basi
                     return;
                 }
 
-                if (identifierColumn.CatalogueItem_ID != catalogue.ID)
+                if (identifierColumn.CatalogueItem.Catalogue_ID != catalogue.ID)
                 {
                     SetImpossible(
                         $"Column '{identifierColumn}'(ID={identifierColumn.ID}) is not from the same Catalogue as '{catalogue}'(ID={catalogue.ID})");
