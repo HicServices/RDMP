@@ -68,7 +68,7 @@ jobs:
           rm -rf coverage
           curl -L  "https://github.com/versity/versitygw/releases/download/v1.10.0/versitygw_v1.10.0_Windows_x86_64.zip" > versitygw.zip
           unzip versitygw.zip
-          cp ./versitygw/versitygw_v1.10.0_Windows_x86_64/versitygw.exe .
+          cp ./versitygw_v1.10.0_Windows_x86_64/versitygw.exe .
           #curl -L "https://dl.min.io/server/minio/release/windows-amd64/minio.exe" > minio.exe
           #./minio.exe server ./minio --console-address :9001 &
           mkdir C:\temp
