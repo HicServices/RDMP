@@ -130,7 +130,7 @@ public sealed class S3BucketReleaseDestinationTests : TestsRequiringAnExtraction
         {
             { "AWS_Profile", "minio" },
             { "BucketName", "releasetoawsbasictest" },
-            { "AWS_Region", "eu-west-2" },
+            { "AWS_Region", "us-east-1" },
             { "ConfigureInteractivelyOnRelease", false },
             { "BucketFolder", "release" }
         });
