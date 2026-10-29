@@ -147,8 +147,8 @@ jobs:
           cp ./versitygw_v1.10.0_Windows_x86_64/versitygw.exe .
           #curl -L "https://dl.min.io/server/minio/release/windows-amd64/minio.exe" > minio.exe
           #./minio.exe server ./minio --console-address :9001 &
-          #mkdir C:\temp
-          mkdir data
+          mkdir C:\temp
+          mkdir C:\temp\data
           mkdir metadata
           mkdir vgw
           ./versitygw.exe --access myaccess --secret mysecret --iam-dir vgw posix --sidecar metadata data &
