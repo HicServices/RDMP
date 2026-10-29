@@ -44,5 +44,6 @@
 | Snappier | [GitHub](https://github.com/brantburnett/Snappier) | [License](https://github.com/brantburnett/Snappier?tab=License-1-ov-file#readme)| |
 | SharpCompress | [GitHub](https://github.com/adamhathcock/sharpcompress) | [MIT](https://opensource.org/licenses/MIT) | |
 | SkiaSharp | [GitHub](https://github.com/mono/skiasharp) | [MIT](https://opensource.org/licenses/MIT) | |
+| MySqlConnector | [GitHub]() | LICENCE GOES HERE | |
 
 [DBMS]: ./Glossary.md#DBMS
