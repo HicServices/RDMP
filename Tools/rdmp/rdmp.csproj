@@ -41,6 +41,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\Rdmp.Core\Rdmp.Core.csproj" />
+		<PackageReference Include="MySqlConnector" />
 		<PackageReference Include="SharpCompress" />
 		<PackageReference Include="SkiaSharp" />
 		<PackageReference Include="Snappier" />
