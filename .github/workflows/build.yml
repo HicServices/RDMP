@@ -150,10 +150,11 @@ jobs:
           ./versitygw.exe --access myaccess --secret mysecret --iam-dir /temp/vgw posix --sidecar /temp/metadata /temp/data &
           mkdir ~/.aws
           echo -e "[minio]\naws_access_key_id=myaccess\naws_secret_access_key=mysecret\naws_endpoint_url=http://127.0.0.1:7070" > ~/.aws/credentials
+
           dotnet test Rdmp.UI.Tests/Rdmp.UI.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release -e AWS_ENDPOINT_URL="http://127.0.0.1:7070" --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
-          mv `find coverage -type f` db-ui.lcov
-          dotnet test Rdmp.Core.Tests/Rdmp.Core.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release -e AWS_ENDPOINT_URL="http://127.0.0.1:7070" --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
-          mv `find coverage -type f` db-core.lcov
+          mv `find coverage -type f` fs-ui.lcov
+          dotnet test Rdmp.Core.Tests/Rdmp.Core.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release  -e AWS_ENDPOINT_URL="http://127.0.0.1:7070" --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
+          mv `find coverage -type f` fs-core.lcov
       - uses: coverallsapp/github-action@v2.3.6
         with:
           github-token: ${{ secrets.github_token }}
