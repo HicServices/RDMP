@@ -291,7 +291,8 @@ internal class DocumentationCrossExaminationTest
         "YourStrong",
         "TreatWarningsAsErrors",
         "PreserveNewest",
-        "DBMS"
+        "DBMS",
+        "FQDNs"
     };
 
     #endregion

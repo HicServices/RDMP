@@ -20,6 +20,7 @@
     </PackageVersion>
     <PackageVersion Include="Minio" Version="7.0.0" />
     <PackageVersion Include="MongoDB.Driver" Version="3.11.0" />
+    <PackageVersion Include="MySqlConnector" Version="2.6.2" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageVersion Include="NPOI" Version="2.8.0" />
     <PackageVersion Include="NLog" Version="6.2.0" />
